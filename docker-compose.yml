@@ -1,0 +1,87 @@
+version: "3.9"
+
+services:
+  backend:
+    image: comunicat/backend
+    build: backend
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    entrypoint: ["wait-for-it", "database:5432", "--", "python", "manage.py"]
+    command: ["runserver", "0.0.0.0:8000"]
+    networks:
+      - comunicat
+    volumes:
+      - ./backend:/backend/backend:cached
+      - internal-media:/backend/internal_media:cached
+    ports:
+      - 8000:8000
+    depends_on:
+      - database
+      - redis
+    env_file:
+      - envs/local.env
+  database:
+    image: postgres:17.2
+    ports:
+      - 5432:5432
+    networks:
+      - comunicat
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      DJANGO_WATCHMAN_TIMEOUT: 20
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: comunicat
+      POSTGRES_PASSWORD: comunicat
+      POSTGRES_DB: comunicat
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6390:6379
+    networks:
+      - comunicat
+  worker:
+    image: comunicat/backend
+    stdin_open: true
+    tty: true
+    entrypoint: [ "celery" ]
+    command: [ "-A", "comunicat", "worker", "-Q", "default,essential,important" ]
+    depends_on:
+      - redis
+      - database
+    volumes:
+      - ./backend:/backend/backend:cached
+      - internal-media:/backend/internal_media:cached
+    networks:
+      - comunicat
+    env_file:
+      - envs/local.env
+  beat:
+    image: comunicat/backend
+    entrypoint: [ "celery" ]
+    command:
+      [ "-A", "knepp", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
+    depends_on:
+      - worker
+    volumes:
+      - celerybeat-data:/data
+      - ./backend:/backend/backend:cached
+    networks:
+      - comunicat
+    env_file:
+      - envs/local.env
+
+volumes:
+  internal-media:
+  postgres-data:
+  redis-data:
+  celerybeat-data:
+
+networks:
+  comunicat:
+    ipam:
+      config:
+        - subnet: 172.24.0.0/16
