@@ -34,7 +34,23 @@ services:
     volumes:
       - ./frontend-towers/towers:/frontend-towers/frontend-towers/towers:cached
     ports:
-      - 3000:3000
+      - 3100:3100
+    env_file:
+      - envs/local.env
+  frontend-org:
+    image: comunicat/frontend-org
+    build: frontend-org
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    entrypoint: ["npm"]
+    command: ["start"]
+    networks:
+      - comunicat
+    volumes:
+      - ./frontend-org/org:/frontend-org/frontend-org/org:cached
+    ports:
+      - 3200:3200
     env_file:
       - envs/local.env
   database:

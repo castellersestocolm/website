@@ -12,7 +12,7 @@
 1. Build the `backend` image.
 
 ```shell
-docker-compose build backend
+docker-compose build backend frontend-towers
 ```
 
 2. Create the containers.
