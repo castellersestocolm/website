@@ -21,6 +21,22 @@ services:
       - redis
     env_file:
       - envs/local.env
+  frontend-towers:
+    image: comunicat/frontend-towers
+    build: frontend-towers
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    entrypoint: ["npm"]
+    command: ["start"]
+    networks:
+      - comunicat
+    volumes:
+      - ./frontend-towers/towers:/frontend-towers/frontend-towers/towers:cached
+    ports:
+      - 3000:3000
+    env_file:
+      - envs/local.env
   database:
     image: postgres:17.2
     ports:
