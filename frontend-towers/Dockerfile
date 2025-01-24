@@ -8,6 +8,6 @@ WORKDIR /frontend-towers/frontend-towers/app
 
 RUN npm install
 
-EXPOSE 3100
+EXPOSE 3000
 
-CMD ["npm", "start", "--port", "3100"]
+CMD ["npm", "start"]
