@@ -1,0 +1,12 @@
+.navBar {
+    border: none;
+    background-color: var(--primary);;
+}
+
+.navIcon{
+    svg {
+    height: 48px;
+        width: fit-content;
+        margin: 16px 32px 16px 0;
+    }
+}

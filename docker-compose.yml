@@ -32,7 +32,7 @@ services:
     networks:
       - comunicat
     volumes:
-      - ./frontend-towers/towers:/frontend-towers/frontend-towers/towers:cached
+      - ./frontend-towers/app:/frontend-towers/frontend-towers/app:cached
     ports:
       - 3100:3000
     env_file:
@@ -48,7 +48,7 @@ services:
     networks:
       - comunicat
     volumes:
-      - ./frontend-org/org:/frontend-org/frontend-org/org:cached
+      - ./frontend-org/app:/frontend-org/frontend-org/app:cached
     ports:
       - 3200:3000
     env_file:
