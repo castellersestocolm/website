@@ -1,0 +1,44 @@
+.hero {
+    background-color: #ffde59;
+    display: flex;
+    flex-basis: 0;
+    align-items: center;
+    padding: 132px 0;
+}
+
+.heroGridLeft {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    svg {
+        height: 150px;
+        width: fit-content;
+    }
+}
+
+.heroImage {
+    width: 100%;
+    height: 500px;
+    border-radius: 8px;
+    background-position: center;
+    background-size: cover;
+}
+
+.heroTextBox {
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.heroTitle {
+    color: #1d1d1d;
+    font-size: 42px !important;
+    margin: 24px 0 16px 0 !important;
+}
+
+.heroSubtitle {
+    font-size: 18px !important;
+    color: #1d1d1d;
+}
