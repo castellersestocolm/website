@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/home";
-import UserJoinPage from "./pages/user-join";
+import ResourcesPage from "./pages/resources";
 import { ThemeProvider } from "@mui/material";
 import { appTheme } from "./themes/theme";
 import NavBar from "./components/NavBar/NavBar";
@@ -36,7 +36,7 @@ const App = () => {
           <NavBar />
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/user/join" element={<UserJoinPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
           </Routes>
           <Footer />
         </BrowserRouter>

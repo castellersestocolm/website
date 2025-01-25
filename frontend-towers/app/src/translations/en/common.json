@@ -1,5 +1,6 @@
 {
   "components.navbar-menu.home": "Home",
+  "components.navbar-menu.resources": "Resources",
   "pages.home-hero.title": "Stockholm human towers",
   "pages.home-hero.subtitle": "Come and try building human towers with us!",
   "pages.home-hero.subtitle2": "Climb to the top or support the structure, there is a place for everyone!",
@@ -12,5 +13,6 @@
   "pages.home-rehearsals.box2.text1": "Skytteholmsskolan (T-bana Solna centrum)",
   "pages.home-rehearsals.box2.text2": "North side, by Skytteholmsfältet",
   "pages.home-rehearsals.box3.title": "Clothes",
-  "pages.home-rehearsals.box3.text1": "You should bring a shirt and long jeans"
+  "pages.home-rehearsals.box3.text1": "You should bring a shirt and long jeans",
+  "pages.resources.title": "Resources"
 }

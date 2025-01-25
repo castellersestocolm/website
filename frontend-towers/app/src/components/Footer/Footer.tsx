@@ -12,7 +12,10 @@ import IconButton from "@mui/material/IconButton";
 export default function Footer() {
   const { t } = useTranslation("common");
 
-  const pages = [t("components.navbar-menu.home")];
+  const pages = [
+    { name: t("components.navbar-menu.home"), path: "/" },
+    { name: t("components.navbar-menu.resources"), path: "/resources" },
+  ];
 
   return (
     <Box component="section" className={styles.footerBar}>
@@ -24,11 +27,13 @@ export default function Footer() {
           <Box className={styles.footerMenu}>
             {pages.map((page) => (
               <MenuItem
-                key={page}
+                key={page.name}
                 disableTouchRipple
                 className={styles.footerMenuItem}
+                component={Link}
+                href={page.path}
               >
-                <Typography fontWeight={600}>{page}</Typography>
+                <Typography fontWeight={600}>{page.name}</Typography>
               </MenuItem>
             ))}
           </Box>

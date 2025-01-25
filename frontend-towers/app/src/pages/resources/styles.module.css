@@ -1,0 +1,24 @@
+.resources {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+  padding: 64px 0;
+}
+
+.resourcesTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+}
+
+.resourcesGrid {
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.resourcesFileImage {
+  width: 100%;
+}

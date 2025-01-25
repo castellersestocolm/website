@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import styles from "./styles.module.css";
-import { Container, MenuItem, Typography } from "@mui/material";
+import { Container, Link, MenuItem, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "../LanguageSelector/LanguageSelector";
 
@@ -18,7 +18,10 @@ import { LanguageSelector } from "../LanguageSelector/LanguageSelector";
 export default function NavBar() {
   const { t } = useTranslation("common");
 
-  const pages = [t("components.navbar-menu.home")];
+  const pages = [
+    { name: t("components.navbar-menu.home"), path: "/" },
+    { name: t("components.navbar-menu.resources"), path: "/resources" },
+  ];
 
   return (
     <AppBar className={styles.navBar} position="static" elevation={0}>
@@ -29,11 +32,13 @@ export default function NavBar() {
           >
             {pages.map((page) => (
               <MenuItem
-                key={page}
+                key={page.name}
                 disableTouchRipple
                 className={styles.navMenuItem}
+                component={Link}
+                href={page.path}
               >
-                <Typography fontWeight={600}>{page}</Typography>
+                <Typography fontWeight={600}>{page.name}</Typography>
               </MenuItem>
             ))}
           </Box>

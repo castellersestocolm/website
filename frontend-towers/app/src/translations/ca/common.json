@@ -1,5 +1,6 @@
 {
   "components.navbar-menu.home": "Inici",
+  "components.navbar-menu.resources": "Material",
   "pages.home-hero.title": "Castellers d'Estocolm",
   "pages.home-hero.subtitle": "Vine i prova de fer castells amb nosaltres!",
   "pages.home-hero.subtitle2": "Fes el cim o dóna suport a l'estructure, hi ha lloc per a tothom!",
@@ -11,5 +12,6 @@
   "pages.home-rehearsals.box2.text1": "Skytteholmsskolan (T-bana Solna centrum)",
   "pages.home-rehearsals.box2.text2": "Zona nord, al costat de Skytteholmsfältet",
   "pages.home-rehearsals.box3.title": "Roba",
-  "pages.home-rehearsals.box3.text1": "Porta una camisa de cotó i texans"
+  "pages.home-rehearsals.box3.text1": "Porta una camisa de cotó i texans",
+  "pages.resources.title": "Material"
 }
