@@ -6,13 +6,13 @@ export const appTheme = createTheme({
       light: "#ffde59",
       main: "#ffde59",
       dark: "#ffde59",
-      contrastText: '#1d1d1d',
+      contrastText: "#1d1d1d",
     },
     secondary: {
       light: "#8b0934",
       main: "#8b0934",
       dark: "#8b0934",
-      contrastText: '#ffffff',
+      contrastText: "#ffffff",
     },
     grey: {
       700: "#1d1d1d",
@@ -21,14 +21,14 @@ export const appTheme = createTheme({
   cssVariables: true,
   typography: {
     fontFamily: [
-      'DM Sans',
-      'Roboto',
-      'Arial',
-      'sans-serif',
+      "DM Sans",
+      "Roboto",
+      "Arial",
+      "sans-serif",
       '"Apple Color Emoji"',
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
-    ].join(','),
+    ].join(","),
   },
   shadows: [
     "none",
@@ -55,8 +55,8 @@ export const appTheme = createTheme({
     "0px 10px 13px -6px rgba(0,0,0,0.2),0px 21px 33px 3px rgba(0,0,0,0.04),0px 8px 40px 7px rgba(0,0,0,0.02)",
     "0px 10px 14px -6px rgba(0,0,0,0.2),0px 22px 35px 3px rgba(0,0,0,0.04),0px 8px 42px 7px rgba(0,0,0,0.02)",
     "0px 11px 14px -7px rgba(0,0,0,0.2),0px 23px 36px 3px rgba(0,0,0,0.04),0px 9px 44px 8px rgba(0,0,0,0.02)",
-    "0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.04),0px 9px 46px 8px rgba(0,0,0,0.02)"
-  ]
+    "0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.04),0px 9px 46px 8px rgba(0,0,0,0.02)",
+  ],
 });
 
 /*

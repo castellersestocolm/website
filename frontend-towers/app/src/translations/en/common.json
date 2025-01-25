@@ -1,6 +1,16 @@
 {
-  "components.navbar-menu.test": "Test",
+  "components.navbar-menu.home": "Home",
   "pages.home-hero.title": "Stockholm human towers",
   "pages.home-hero.subtitle": "Come and try building human towers with us!",
-  "pages.home-hero.subtitle2": "Climb to the top or support the structure, there is a place for everyone!"
+  "pages.home-hero.subtitle2": "Climb to the top or support the structure, there is a place for everyone!",
+  "components.footer.support": "With the support of the Catalan association Les quatre barres.",
+  "pages.home-rehearsals.title": "Rehearsals",
+  "pages.home-rehearsals.box1.title": "Schedule",
+  "pages.home-rehearsals.box1.text1": "Generally every Sunday from 14:45 to 17:00",
+  "pages.home-rehearsals.box1.text2": "Check the calendar for more details",
+  "pages.home-rehearsals.box2.title": "Address",
+  "pages.home-rehearsals.box2.text1": "Skytteholmsskolan (T-bana Solna centrum)",
+  "pages.home-rehearsals.box2.text2": "North side, by Skytteholmsfältet",
+  "pages.home-rehearsals.box3.title": "Clothes",
+  "pages.home-rehearsals.box3.text1": "You should bring a shirt and long jeans"
 }

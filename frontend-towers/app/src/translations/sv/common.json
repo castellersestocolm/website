@@ -1,6 +1,16 @@
 {
-  "components.navbar-menu.test": "Test",
+  "components.navbar-menu.home": "Start",
   "pages.home-hero.title": "Stockholms mänkliga torn",
-  "pages.home-hero.subtitle": "Come and try building human towers with us!",
-  "pages.home-hero.subtitle2": "Climb to the top or support the structure, there is a place for everyone!"
+  "pages.home-hero.subtitle": "Kom och testa att bygga mänskliga torn med oss!",
+  "pages.home-hero.subtitle2": "Klättra till toppen eller stöda strukturen, vi har plats för alla!",
+  "components.footer.support": "Med stöd av den katalanska föreningen Les quatre barres.",
+  "pages.home-rehearsals.title": "Repetitioner",
+  "pages.home-rehearsals.box1.title": "Schema",
+  "pages.home-rehearsals.box1.text1": "Vanligtvis varje söndag från 14:45 till 17:00",
+  "pages.home-rehearsals.box1.text2": "Kolla kalendern för mer information",
+  "pages.home-rehearsals.box2.title": "Adress",
+  "pages.home-rehearsals.box2.text1": "Skytteholmsskolan (T-bana Solna centrum)",
+  "pages.home-rehearsals.box2.text2": "Norra sidan, vid Skytteholmsfältet",
+  "pages.home-rehearsals.box3.title": "Kläder",
+  "pages.home-rehearsals.box3.text1": "Ta med en bomullsskjorta och långa jeans"
 }

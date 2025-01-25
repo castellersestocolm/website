@@ -1,9 +1,7 @@
 function UserJoinPage() {
   return (
     <div>
-      <p>
-        TEST JOIN
-      </p>
+      <p>TEST JOIN</p>
     </div>
   );
 }

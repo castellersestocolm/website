@@ -1,9 +1,17 @@
 .navBar {
-    border: none;
-    background-color: var(--primary);
-    border-bottom: rgba(29, 29, 29, 0.1) solid 1px;
+  border: none;
+  background-color: var(--primary);
+  border-bottom: rgba(29, 29, 29, 0.1) solid 1px;
 }
 
 .navContainer {
-    padding: 0 !important;
+  padding: 0 !important;
+}
+
+.navMenuItem {
+  padding: 0 16px 0 0 !important;
+}
+
+.navMenuItem:hover {
+  background-color: unset !important;
 }

@@ -1,0 +1,64 @@
+.footerBar {
+  background-color: #f8f8f8;
+  width: 100%;
+}
+
+.footerContainer {
+  padding: 32px 0;
+}
+
+.footerContainerBox1 {
+  margin-bottom: 16px;
+  display: flex;
+}
+
+.footerContainerBox2 {
+  display: flex;
+}
+
+.footerIcon {
+  float: left;
+  svg {
+    height: 48px;
+    width: fit-content;
+  }
+}
+
+.footerMenu {
+  float: right;
+  flex-grow: 1;
+  display: flex;
+  align-content: center;
+  justify-content: end;
+}
+
+.footerSupport {
+  margin-top: 16px;
+}
+
+.footerSocial {
+  margin-top: 8px;
+  float: right;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: end;
+}
+
+.footerMenuItem:hover {
+  background-color: unset !important;
+}
+
+.footerTextEmail {
+  padding-right: 16px;
+  font-size: 14px !important;
+  a {
+    color: #1d1d1d !important;
+  }
+}
+
+.footerTextSuport {
+  font-size: 14px !important;
+  color: #1d1d1d;
+}
