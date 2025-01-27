@@ -20,7 +20,7 @@ services:
       - database
       - redis
     env_file:
-      - envs/local.env
+      - ./envs/local.env
   frontend-towers:
     image: comunicat/frontend-towers
     build: frontend-towers
@@ -36,7 +36,7 @@ services:
     ports:
       - 3100:3000
     env_file:
-      - envs/local.env
+      - ./envs/local.env
   frontend-org:
     image: comunicat/frontend-org
     build: frontend-org
@@ -52,7 +52,7 @@ services:
     ports:
       - 3200:3000
     env_file:
-      - envs/local.env
+      - ./envs/local.env
   database:
     image: postgres:17.2
     ports:
@@ -90,7 +90,7 @@ services:
     networks:
       - comunicat
     env_file:
-      - envs/local.env
+      - ./envs/local.env
   beat:
     image: comunicat/backend
     entrypoint: [ "celery" ]
@@ -104,7 +104,7 @@ services:
     networks:
       - comunicat
     env_file:
-      - envs/local.env
+      - ./envs/local.env
 
 volumes:
   internal-media:
