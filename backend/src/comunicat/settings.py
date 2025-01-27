@@ -26,6 +26,16 @@ ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS", "*")]
 if os.getenv("CSRF_TRUSTED_ORIGINS"):
     CSRF_TRUSTED_ORIGINS = [os.getenv("CSRF_TRUSTED_ORIGINS")]
 
+CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN", None)
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = None
+
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_DOMAIN = os.getenv("SESSION_COOKIE_DOMAIN", None)
+SESSION_COOKIE_AGE = os.getenv("SESSION_COOKIE_AGE", 60 * 60 * 24 * 14)
+SESSION_CACHE_ALIAS = os.getenv("SESSION_CACHE_ALIAS", "session")
 
 # Application definition
 
@@ -175,3 +185,26 @@ CELERY_TASK_EAGER_PROPAGATES = bool(os.getenv("CELERY_TASK_EAGER_PROPAGATES", Fa
 # Set up custom authentication
 
 AUTH_USER_MODEL = "user.User"
+
+# Cache configuration
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+    "session": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("CELERY_BROKER_URL", "redis://redis:6379/0"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": SESSION_CACHE_ALIAS,
+        "TIMEOUT": SESSION_COOKIE_AGE,
+    },
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
