@@ -1,0 +1,13 @@
+.userLogin {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+  padding: 64px 0;
+}
+
+.userLoginTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+  margin-bottom: 32px !important;
+}

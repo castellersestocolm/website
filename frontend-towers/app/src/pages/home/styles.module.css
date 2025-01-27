@@ -1,12 +1,12 @@
 .hero {
-  background-color: #ffde59;
+  background-color: #ffe16a;
   display: flex;
   flex-basis: 0;
   align-items: center;
   padding: 132px 0;
 }
 
-.heroGridLeft {
+.heroGrid {
   width: 100%;
   display: flex;
   align-items: center;
@@ -34,13 +34,57 @@
 
 .heroTitle {
   color: #1d1d1d;
-  font-size: 42px !important;
+  font-size: 48px !important;
   margin: 24px 0 16px 0 !important;
 }
 
 .heroSubtitle {
   font-size: 16px !important;
   color: #1d1d1d;
+}
+
+.join {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+  padding: 64px 0;
+  background-color: #f8f8f8;
+}
+
+.joinImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background-position: center;
+  background-size: cover;
+}
+
+.joinTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+}
+
+.joinListTitle {
+  text-align: center;
+  color: #1d1d1d;
+}
+
+.joinGrid {
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.joinList {
+  display: flex;
+  justify-content: center;
+}
+
+.joinButtons {
+  display: flex;
+  justify-content: center;
 }
 
 .rehearsals {
@@ -54,6 +98,30 @@
   text-align: center;
   color: #1d1d1d;
   font-size: 42px !important;
+}
+
+.timeline {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+  padding: 64px 0;
+}
+
+.timelineTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+}
+
+.timelineGrid {
+  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.timelineIcon {
+  color: var(--mui-palette-action-active) !important;
 }
 
 .mapEmbed {
@@ -100,8 +168,14 @@
 }
 
 .rehearsalsCardText {
+  display: flex;
+  align-items: center;
+  svg {
+    font-size: 18px !important;
+    margin: -1px 4px 0 -1px;
+  }
 }
 
 .rehearsalsCardText2 {
-  font-style: italic;
+  color: var(--mui-palette-text-secondary);
 }

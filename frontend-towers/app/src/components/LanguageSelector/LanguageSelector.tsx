@@ -18,10 +18,10 @@ export const LanguageSelector = () => {
               disableTouchRipple
               {...bindTrigger(popupState)}
             >
-              {i18n.language}
+              {i18n.resolvedLanguage}
             </Button>
             <Menu {...bindMenu(popupState)}>
-              {i18n.language !== "en" && (
+              {i18n.resolvedLanguage !== "en" && (
                 <MenuItem
                   onClick={() => {
                     i18n.changeLanguage("en");
@@ -31,7 +31,7 @@ export const LanguageSelector = () => {
                   EN
                 </MenuItem>
               )}
-              {i18n.language !== "sv" && (
+              {i18n.resolvedLanguage !== "sv" && (
                 <MenuItem
                   onClick={() => {
                     i18n.changeLanguage("sv");
@@ -41,7 +41,7 @@ export const LanguageSelector = () => {
                   SV
                 </MenuItem>
               )}
-              {i18n.language !== "ca" && (
+              {i18n.resolvedLanguage !== "ca" && (
                 <MenuItem
                   onClick={() => {
                     i18n.changeLanguage("ca");

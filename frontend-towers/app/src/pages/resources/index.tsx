@@ -17,7 +17,7 @@ function ResourcesPage() {
   return (
     <>
       <Box component="section" className={styles.resources}>
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Typography
             variant="h3"
             fontWeight="700"

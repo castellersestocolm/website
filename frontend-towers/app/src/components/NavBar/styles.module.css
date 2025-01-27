@@ -15,3 +15,17 @@
 .navMenuItem:hover {
   background-color: unset !important;
 }
+
+.navMenuLogin {
+  margin-left: 16px !important;
+  color: #1d1d1d !important;
+}
+
+.navMenuLogin:hover {
+  background-color: unset !important;
+}
+
+.navMenuAccount {
+  margin-left: 16px !important;
+  color: #1d1d1d !important;
+}

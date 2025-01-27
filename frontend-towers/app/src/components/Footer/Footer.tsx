@@ -19,7 +19,7 @@ export default function Footer() {
 
   return (
     <Box component="section" className={styles.footerBar}>
-      <Container maxWidth="lg" className={styles.footerContainer}>
+      <Container maxWidth="xl" className={styles.footerContainer}>
         <Box className={styles.footerContainerBox1}>
           <Box className={styles.footerIcon}>
             <IconLogoLong />
