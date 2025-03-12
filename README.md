@@ -24,13 +24,13 @@ docker-compose up -d
 3. Migrate the database.
 
 ```shell
-docker exec -it comunicat_backend_1 python manage.py migrate
+docker exec -it website_backend_1 python manage.py migrate
 ```
 
 4. You can make a superuser so you can access the admin.
 
 ```shell
-docker exec -it comunicat_backend_1 python manage.py createsuperuser
+docker exec -it website_backend_1 python manage.py createsuperuser
 ```
 
 5. After development, to turn down the containers.
