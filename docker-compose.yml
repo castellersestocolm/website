@@ -80,7 +80,7 @@ services:
     stdin_open: true
     tty: true
     entrypoint: [ "celery" ]
-    command: [ "-A", "comunicat", "worker", "-Q", "default,essential,important" ]
+    command: [ "-A", "comunicat", "worker", "-Q", "default" ]
     depends_on:
       - redis
       - database
@@ -95,7 +95,7 @@ services:
     image: comunicat/backend
     entrypoint: [ "celery" ]
     command:
-      [ "-A", "knepp", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
+      [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
     depends_on:
       - worker
     volumes:
@@ -105,10 +105,56 @@ services:
       - comunicat
     env_file:
       - ./envs/local.env
+  pinyator:
+    image: comunicat/pinyator
+    build: pinyator
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    networks:
+      - comunicat
+    volumes:
+      - ./pinyator/src:/pinyator/pinyator:cached
+    ports:
+      - 8100:80
+    depends_on:
+      - php
+    env_file:
+      - ./envs/local.env
+  php:
+    image: comunicat/php
+    build: php
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    # entrypoint: ["wait-for-it", "database:5432", "--", "php"]
+    # command: ["-S", "0.0.0.0:8110", "./pinyator/Pinyator.php"]
+    networks:
+      - comunicat
+    volumes:
+      - ./pinyator/src:/pinyator/pinyator:cached
+    depends_on:
+      - mysql
+    env_file:
+      - ./envs/local.env
+  mysql:
+    image: mysql:8.4.4
+    ports:
+      - 3306:3306
+    networks:
+      - comunicat
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pinyator
+      MYSQL_USER: pinyator
+      MYSQL_PASSWORD: pinyator
+      MYSQL_DATABASE: pinyator
 
 volumes:
   internal-media:
   postgres-data:
+  mysql-data:
   redis-data:
   celerybeat-data:
 

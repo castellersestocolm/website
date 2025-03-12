@@ -1,0 +1,17 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "You have been invited to join a family membership by" %} {{ user_sender_obj.firstname }} {{ user_sender_obj.lastname }}.</p>
+    {% if user_obj %}
+        <p>{% trans 'As you are already a member the only thing you need to do is to accept the invitation if you wish to merge your families. You can do this by logging in, navigating to your dashboard and reviewing your invitations under "Family requests".' %}</p>
+    {% else %}
+        <p>{% trans 'In order to accept this invitation you first need to become a member which you can do directly in our website. After having registered and confirmed your email you will be able to accept this invitation under "Family requests" on your dashboard.' %}</p>
+    {% endif %}
+{% endblock %}
+
+{% block email_button_url %}{% if user_obj %}{% full_towers_url "user/dashboard/" %}{% else %}{% full_towers_url "user/join/" %}{% endif %}{% endblock %}
+
+{% block email_button_text %}{% if user_obj %}{% trans "Review the invitation" %}{% else %}{% trans "Become a member" %}{% endif %}{% endblock %}
+
+{% block email_closing %}{% endblock %}

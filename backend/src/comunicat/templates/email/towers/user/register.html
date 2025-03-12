@@ -1,0 +1,10 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "Thank you for joining! In order to complete your registration we need you to confirm this email as soon as possible by clicking the following button." %}</p>
+{% endblock %}
+
+{% block email_button_url %}{% with "user/verify/"|add:token as user_verify_link %}{% full_towers_url user_verify_link %}{% endwith %}{% endblock %}
+
+{% block email_button_text %}{% trans "Confirm email" %}{% endblock %}

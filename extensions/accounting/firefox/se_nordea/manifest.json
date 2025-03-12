@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Borderify",
+  "version": "1.0",
+
+  "description": "Adds a red border to all webpages matching mozilla.org.",
+
+  "icons": {
+    "48": "icons/border-48.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "file:///home/oriol/Documents/Casal/Bank%20scrapper/1/Nordea%20-%20Kontoh%C3%A4ndelser%20&%20detaljer.html",
+        "file:///home/oriol/Documents/Casal/Bank%20scrapper/2/Nordea%20-%20Kontoh%C3%A4ndelser%20&%20detaljer.html",
+        "*://corporate.nordea.se/accounts/details/*"
+      ],
+      "js": ["download.js"]
+    }
+  ]
+}

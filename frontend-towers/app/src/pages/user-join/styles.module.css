@@ -2,7 +2,7 @@
   display: flex;
   flex-basis: 0;
   align-items: center;
-  padding: 64px 0;
+  flex-direction: column;
 }
 
 .userJoinTitle {
@@ -10,4 +10,10 @@
   color: #1d1d1d;
   font-size: 42px !important;
   margin-bottom: 32px !important;
+}
+
+.carouselTop {
+  padding-top: 64px;
+  height: 350px;
+  width: 100%;
 }

@@ -1,18 +1,54 @@
-from typing import Optional
+import datetime
+from typing import List
+
+from django.apps import apps
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import IntegrityError
+from django.db.models import Exists, Subquery, Q, OuterRef
+
+from comunicat.enums import Module
+
+from django.conf import settings
+
+from membership.enums import MembershipStatus
 
 
 class UserManager(BaseUserManager):
+    def with_has_active_membership(self, modules: List[Module] | None = None):
+        MembershipModule = apps.get_model("membership", "MembershipModule")
+
+        module_filter = Q()
+        if modules is not None:
+            module_filter = Q(module__in=modules)
+
+        return self.annotate(
+            has_active_membership=Exists(
+                Subquery(
+                    MembershipModule.objects.filter(
+                        module_filter,
+                        status=MembershipStatus.ACTIVE,
+                        membership__status=MembershipStatus.ACTIVE,
+                        membership__membership_users__user_id=OuterRef("id"),
+                    )
+                )
+            )
+        )
+
     def create_user(
         self,
         email: str,
-        firstname: Optional[str] = None,
-        lastname: Optional[str] = None,
-        password: Optional[str] = None,
+        firstname: str | None = None,
+        lastname: str | None = None,
+        password: str | None = None,
+        phone: str | None = None,
+        birthday: datetime.date | None = None,
+        origin_module: Module = settings.MODULE_DEFAULT,
         is_staff: bool = False,
         is_superuser: bool = False,
+        email_verified: bool = False,
+        consent_pictures: bool = False,
+        preferred_language: str | None = None,
     ):
         if not firstname or not lastname:
             firstname = email.split("@")[0].capitalize()
@@ -32,6 +68,12 @@ class UserManager(BaseUserManager):
                 email=email.lower(),
                 firstname=firstname,
                 lastname=lastname,
+                phone=phone,
+                birthday=birthday,
+                consent_pictures=consent_pictures,
+                preferred_language=preferred_language,
+                email_verified=email_verified,
+                origin_module=origin_module,
                 is_staff=is_staff,
                 is_superuser=is_superuser,
             )
@@ -51,8 +93,11 @@ class UserManager(BaseUserManager):
             firstname=firstname,
             lastname=lastname,
             password=password,
+            origin_module=settings.MODULE_DEFAULT,
             is_staff=True,
             is_superuser=True,
+            email_verified=True,
+            consent_pictures=True,
         )
         user.save(using=self._db)
         return user

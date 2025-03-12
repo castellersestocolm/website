@@ -1,0 +1,31 @@
+.markerIcon {
+  width: 22px;
+  height: 22px;
+  background-color: #000;
+  border: var(--mui-palette-divider) solid 1px;
+  border-radius: 4px;
+  padding: 1px !important;
+  display: flex;
+
+  svg {
+    font-size: 20px !important;
+    color: #fff !important;
+    margin: 1px !important;
+  }
+}
+
+.marker {
+}
+
+.markerTooltip {
+  box-shadow: none;
+  margin: 2px 0;
+  padding: 3px 6px;
+  font-weight: 600;
+  background-color: #ffffff;
+  font-family: "DM Sans", "Roboto", sans-serif;
+
+  &::before {
+    display: none;
+  }
+}

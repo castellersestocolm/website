@@ -8,47 +8,100 @@ import IconFacebook from "@mui/icons-material/Facebook";
 import IconInstagram from "@mui/icons-material/Instagram";
 import IconWhatsApp from "@mui/icons-material/WhatsApp";
 import IconButton from "@mui/material/IconButton";
+import { ROUTES } from "../../routes";
+import { useAppContext } from "../AppContext/AppContext";
+
+const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 
 export default function Footer() {
   const { t } = useTranslation("common");
 
+  const { user } = useAppContext();
+
   const pages = [
-    { name: t("components.navbar-menu.home"), path: "/" },
-    { name: t("components.navbar-menu.resources"), path: "/resources" },
+    {
+      name: t("components.navbar-menu.home"),
+      path: ROUTES.home.path,
+      target: "_self",
+    },
+    {
+      name: t("components.navbar-menu.calendar"),
+      path: ROUTES.calendar.path,
+      target: "_self",
+    },
+    !user && {
+      name: t("components.navbar-menu.membership"),
+      path: ROUTES["user-join"].path,
+      target: "_self",
+    },
+    user && {
+      name: t("components.navbar-menu.equipmment"),
+      path: ROUTES["external-form-equipment"].path,
+      target: "_blank",
+    },
+    {
+      name: t("components.navbar-menu.resources"),
+      path: ROUTES.resources.path,
+      target: "_self",
+    },
   ];
 
   return (
     <Box component="section" className={styles.footerBar}>
       <Container maxWidth="xl" className={styles.footerContainer}>
-        <Box className={styles.footerContainerBox1}>
+        <Box
+          sx={{ justifyContent: { xs: "center", md: "start" } }}
+          className={styles.footerContainerBox1}
+        >
           <Box className={styles.footerIcon}>
             <IconLogoLong />
           </Box>
-          <Box className={styles.footerMenu}>
+          <Box
+            sx={{ display: { xs: "none", md: "flex" } }}
+            className={styles.footerMenu}
+          >
             {pages.map((page) => (
-              <MenuItem
-                key={page.name}
-                disableTouchRipple
-                className={styles.footerMenuItem}
-                component={Link}
-                href={page.path}
-              >
-                <Typography fontWeight={600}>{page.name}</Typography>
-              </MenuItem>
+              <>
+                {page && (
+                  <MenuItem
+                    key={page.name}
+                    disableTouchRipple
+                    className={styles.footerMenuItem}
+                    component={Link}
+                    href={page.path}
+                  >
+                    <Typography fontWeight={600}>{page.name}</Typography>
+                  </MenuItem>
+                )}
+              </>
             ))}
           </Box>
         </Box>
         <Divider />
-        <Box className={styles.footerContainerBox2}>
-          <Box className={styles.footerSupport}>
-            <Typography className={styles.footerTextSuport}>
+        <Box
+          sx={{ flexDirection: { xs: "column", md: "row" } }}
+          className={styles.footerContainerBox2}
+        >
+          <Box
+            sx={{ textAlign: { xs: "center", md: "left" } }}
+            className={styles.footerSupport}
+          >
+            <Link
+              className={styles.footerTextSuport}
+              href={ROUTES["external-casal"].path}
+              color="inherit"
+              underline="none"
+            >
               {t("components.footer.support")}
-            </Typography>
+            </Link>
           </Box>
-          <Box className={styles.footerSocial}>
+          <Box
+            sx={{ justifyContent: { xs: "center", md: "end" } }}
+            className={styles.footerSocial}
+          >
             <Typography className={styles.footerTextEmail}>
-              <Link href="mailto:info@castellersestocolm.se" underline="none">
-                info@castellersestocolm.se
+              <Link href={"mailto:" + TOWERS_INFO_EMAIL} underline="none">
+                {TOWERS_INFO_EMAIL}
               </Link>
             </Typography>
             <IconButton

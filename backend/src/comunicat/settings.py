@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from corsheaders.defaults import default_headers
+from django.utils.translation import gettext_lazy as _
+
+from comunicat.enums import Module
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,20 +25,36 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
 DOMAIN = os.getenv("DOMAIN")
-ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS", "*")]
+HTTP_PROTOCOL = "http" if DEBUG else "https"
+ALLOWED_HOSTS = list(filter(None, os.getenv("ALLOWED_HOSTS", "*").split(",")))
 if os.getenv("CSRF_TRUSTED_ORIGINS"):
-    CSRF_TRUSTED_ORIGINS = [os.getenv("CSRF_TRUSTED_ORIGINS")]
+    CSRF_TRUSTED_ORIGINS = list(
+        filter(None, os.getenv("CSRF_TRUSTED_ORIGINS").split(","))
+    )
 
 CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN", None)
+CSRF_COOKIE_DOMAIN_DYNAMIC = list(
+    filter(None, os.getenv("CSRF_COOKIE_DOMAIN_DYNAMIC", "").split(","))
+)
 CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SAMESITE = None
 
-SESSION_COOKIE_SAMESITE = None
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_DOMAIN = os.getenv("SESSION_COOKIE_DOMAIN", None)
+SESSION_COOKIE_DOMAIN_DYNAMIC = list(
+    filter(None, os.getenv("SESSION_COOKIE_DOMAIN_DYNAMIC", "").split(","))
+)
 SESSION_COOKIE_AGE = os.getenv("SESSION_COOKIE_AGE", 60 * 60 * 24 * 14)
 SESSION_CACHE_ALIAS = os.getenv("SESSION_CACHE_ALIAS", "session")
+
+if not DEBUG:
+    CSRF_COOKIE_SAMESITE = "None"
+    SESSION_COOKIE_SAMESITE = "None"
+
+# Timezone
+
+USE_TZ = True
+TIME_ZONE = os.getenv("TIME_ZONE", "Europe/Stockholm")
 
 # Application definition
 
@@ -46,15 +65,26 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.gis",
     "corsheaders",
     "rest_framework",
     "drf_yasg",
+    "jsoneditor",
+    "djmoney",
     "comunicat",
     "user",
+    "payment",
+    "membership",
+    "event",
+    "document",
+    "notify",
+    "pinyator",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "comunicat.middleware.SessionMiddlewareDynamicDomain",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -62,7 +92,18 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
 ]
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 
 ROOT_URLCONF = "comunicat.urls"
 
@@ -78,6 +119,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
+            "libraries": {"comunicat_tags": "comunicat.template_tags.comunicat_tags"},
         },
     },
 ]
@@ -96,7 +138,15 @@ DATABASES = {
         "PASSWORD": "comunicat",
         "HOST": "database",
         "PORT": 5432,
-    }
+    },
+    "pinyator": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "pinyator",
+        "USER": "pinyator",
+        "PASSWORD": "pinyator",
+        "HOST": "mysql",
+        "PORT": 3306,
+    },
 }
 
 
@@ -122,8 +172,21 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-gb"
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "sv_SE")
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
+
+LANGUAGES = [
+    (language.split(":")[0], _(language.split(":")[-1]))
+    for language in filter(
+        None, os.getenv("LANGUAGES", "en-English,sv-Swedish,ca-Catalan").split(",")
+    )
+]
+LANGUAGES_FALLBACK = {
+    language.split(":")[0]: language.split(":")[-1].split("-")
+    for language in filter(
+        None, os.getenv("LANGUAGES_FALLBACK", "en:sv-ca,ca:en-sv,sv:en-ca").split(",")
+    )
+}
 
 TIME_ZONE = "Europe/Stockholm"
 
@@ -152,13 +215,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CORS
 # https://github.com/OttoYiu/django-cors-headers
 
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://0.0.0.0").split(",")
+CORS_ALLOWED_ORIGINS = list(
+    filter(None, os.getenv("CORS_ALLOWED_ORIGINS", "http://0.0.0.0").split(","))
+)
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    "x-http-method-override",
-]
+CORS_ALLOW_HEADERS = list(default_headers) + ["x-http-method-override", "X-CSRFToken"]
+
+CORS_EXPOSE_HEADERS = []
 
 # CORS_URLS_REGEX = r"^(?!(^/static/.*$)).*$"
 
@@ -171,7 +236,34 @@ REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_THROTTLE_CLASSES": ("comunicat.utils.drf.MScopedRateThrottle",),
     "DEFAULT_THROTTLE_RATES": {
-        "user.login": os.getenv("USER_LOGIN_THROTTLE_RATE", "4/minute"),
+        "user.login": os.getenv("USER_LOGIN_THROTTLE_RATE", "10/minute"),
+        "user.create": os.getenv("USER_CREATE_THROTTLE_RATE", "10/minute"),
+        "user.partial_update": os.getenv(
+            "USER_PARTIAL_UPDATE_THROTTLE_RATE", "10/minute"
+        ),
+        "user.request_password": os.getenv(
+            "USER_REQUEST_PASSWORD_THROTTLE_RATE", "5/minute"
+        ),
+        "user.request_password": os.getenv(
+            "USER_REQUEST_PASSWORD_THROTTLE_RATE", "5/minute"
+        ),
+        "user.password": os.getenv("USER_PASSWORD_THROTTLE_RATE", "5/minute"),
+        "user.request_verify": os.getenv(
+            "USER_REQUEST_VERIFY_THROTTLE_RATE", "5/minute"
+        ),
+        "user.verify": os.getenv("USER_VERIFY_THROTTLE_RATE", "5/minute"),
+        "user-family-member.create": os.getenv(
+            "USER_FAMILY_MEMBER_CREATE_THROTTLE_RATE", "5/minute"
+        ),
+        "user-family-member.update": os.getenv(
+            "USER_FAMILY_MEMBER_UPDATE_THROTTLE_RATE", "10/minute"
+        ),
+        "user-family-member-request.create": os.getenv(
+            "USER_FAMILY_MEMBER_REQUEST_CREATE_THROTTLE_RATE", "5/minute"
+        ),
+        "event-registration.create": os.getenv(
+            "EVENT_REGISTRATION_CREATE_THROTTLE_RATE", "5/second"
+        ),
     },
     "EXCEPTION_HANDLER": "comunicat.utils.exceptions.full_details_exception_handler",
 }
@@ -209,3 +301,175 @@ CACHES = {
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+# Modular variables
+
+MODULE_ORG_ENABLED = os.getenv("MODULE_ORG_ENABLED", "true").lower() == "true"
+MODULE_TOWERS_ENABLED = os.getenv("MODULE_TOWERS_ENABLED", "true").lower() == "true"
+
+MODULE_DEFAULT = os.getenv("MODULE_DEFAULT", Module.ORG)
+
+MODULE_ALL_USER_FIELDS = list(
+    filter(None, os.getenv("MODULE_ALL_USER_FIELDS", "").split(","))
+)
+MODULE_ALL_USER_MINIMUM_AGE = int(os.getenv("MODULE_ALL_USER_MINIMUM_AGE", 18))
+MODULE_ALL_MEMBERSHIP_REQUIRED = [
+    Module[module.upper()]
+    for module in filter(
+        None, os.getenv("MODULE_ALL_MEMBERSHIP_REQUIRED", "").split(",")
+    )
+]
+MODULE_ALL_MEMBERSHIP_START_DATES = [
+    [int(d) for d in dates.split("-")]
+    for dates in filter(
+        None, os.getenv("MODULE_ALL_MEMBERSHIP_START_DATES", "").split(",")
+    )
+]
+MODULE_ALL_MEMBERSHIP_LIMIT_ADULTS = os.getenv("MODULE_ALL_MEMBERSHIP_MAX_ADULTS", 5)
+MODULE_ALL_MEMBERSHIP_LIMIT_ALL = os.getenv("MODULE_ALL_MEMBERSHIP_LIMIT_ALL", 10)
+MODULE_ALL_MEMBERSHIP_CONFIG = [
+    config.split("-")
+    for config in filter(None, os.getenv("MODULE_ALL_MEMBERSHIP_CONFIG", "").split(","))
+]
+MODULE_ALL_CURRENCY = os.getenv("MODULE_ALL_CURRENCY", "SEK")
+MODULE_ALL_CURRENCIES = list(
+    filter(None, os.getenv("MODULE_ALL_CURRENCIES", MODULE_ALL_CURRENCY).split(","))
+)
+MODULE_ALL_CURRENCY_LOCALE = os.getenv("MODULE_ALL_CURRENCY_LOCALE", "sv_SE")
+MODULE_ALL_VAT = os.getenv("MODULE_ALL_VAT", 0)
+MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES = [
+    Module[module.upper()]
+    for module in filter(
+        None,
+        os.getenv("MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES", "towers").split(","),
+    )
+]
+
+MODULE_ORG_NAME = os.getenv("MODULE_ORG_NAME")
+MODULE_ORG_SHORT_NAME = os.getenv("MODULE_ORG_SHORT_NAME", MODULE_ORG_NAME)
+MODULE_ORG_CODE_NAME = os.getenv("MODULE_ORG_CODE_NAME", MODULE_ORG_NAME)
+MODULE_ORG_DOMAIN = os.getenv("MODULE_ORG_DOMAIN", DOMAIN)
+MODULE_ORG_USER_FIELDS = list(
+    filter(None, os.getenv("MODULE_ORG_USER_FIELDS", "").split(","))
+)
+MODULE_ORG_EMAIL_FROM_NAME = os.getenv("MODULE_ORG_EMAIL_FROM_NAME", MODULE_ORG_NAME)
+MODULE_ORG_EMAIL_FROM_ADDRESS = os.getenv(
+    "MODULE_ORG_EMAIL_FROM_ADDRESS", f"info@{MODULE_ORG_DOMAIN}"
+)
+MODULE_ORG_EMAIL_FROM_FULL = (
+    f"{MODULE_ORG_EMAIL_FROM_NAME} <{MODULE_ORG_EMAIL_FROM_ADDRESS}>"
+)
+MODULE_ORG_MEMBERSHIP_CONFIG = [
+    config.split("-")
+    for config in filter(None, os.getenv("MODULE_ORG_MEMBERSHIP_CONFIG", "").split(","))
+]
+MODULE_ORG_MEMBERSHIP_ACCOUNT_CONFIG = [
+    config.split("-")
+    for config in filter(
+        None, os.getenv("MODULE_ORG_MEMBERSHIP_ACCOUNT_CONFIG", "").split(",")
+    )
+]
+
+MODULE_TOWERS_NAME = os.getenv("MODULE_TOWERS_NAME")
+MODULE_TOWERS_SHORT_NAME = os.getenv("MODULE_TOWERS_SHORT_NAME", MODULE_ORG_NAME)
+MODULE_TOWERS_CODE_NAME = os.getenv("MODULE_TOWERS_CODE_NAME", MODULE_ORG_NAME)
+MODULE_TOWERS_DOMAIN = os.getenv("MODULE_TOWERS_DOMAIN", DOMAIN)
+MODULE_TOWERS_USER_FIELDS = list(
+    filter(None, os.getenv("MODULE_TOWERS_USER_FIELDS", "").split(","))
+)
+MODULE_TOWERS_EMAIL_FROM_NAME = os.getenv(
+    "MODULE_TOWERS_EMAIL_FROM_NAME", MODULE_TOWERS_NAME
+)
+MODULE_TOWERS_EMAIL_FROM_ADDRESS = os.getenv(
+    "MODULE_TOWERS_EMAIL_FROM_ADDRESS", f"info@{MODULE_TOWERS_DOMAIN}"
+)
+MODULE_TOWERS_EMAIL_FROM_FULL = (
+    f"{MODULE_TOWERS_EMAIL_FROM_NAME} <{MODULE_TOWERS_EMAIL_FROM_ADDRESS}>"
+)
+MODULE_TOWERS_MEMBERSHIP_CONFIG = [
+    config.split("-")
+    for config in filter(
+        None, os.getenv("MODULE_TOWERS_MEMBERSHIP_CONFIG", "").split(",")
+    )
+]
+MODULE_TOWERS_MEMBERSHIP_ACCOUNT_CONFIG = [
+    config.split("-")
+    for config in filter(
+        None, os.getenv("MODULE_TOWERS_MEMBERSHIP_ACCOUNT_CONFIG", "").split(",")
+    )
+]
+
+# Django money
+
+CURRENCIES = MODULE_ALL_CURRENCIES
+# MONEY_FORMAT = {"locale": MODULE_ALL_CURRENCY_LOCALE}
+
+# SMTP settings
+# Docker container -> Host machine -> Postfix -> Google
+# https://support.google.com/a/answer/2956491?hl=en
+# http://satishgandham.com/2016/12/sending-email-from-docker-through-postfix-installed-on-the-host/
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "172.17.0.1"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = MODULE_ORG_EMAIL_FROM_ADDRESS
+
+# SSO
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", None)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", None
+)
+SOCIAL_AUTH_ENABLED = False
+
+if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:
+    SOCIAL_AUTH_ENABLED = True
+    SOCIAL_AUTH_LOGIN_URL = "/google-oauth2/"
+    SOCIAL_AUTH_URL_NAMESPACE = "user_social"
+    SOCIAL_AUTH_USER_MODEL = "user.GoogleUser"
+    SOCIAL_AUTH_JSONFIELD_ENABLED = True
+    SOCIAL_AUTH_SANITIZE_REDIRECTS = True
+    SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = (
+        list(
+            filter(None, os.getenv("SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS", "").split(","))
+        )
+        or ALLOWED_HOSTS
+    )
+    SOCIAL_AUTH_REDIRECT_IS_HTTPS = not DEBUG
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+        # "https://www.googleapis.com/auth/profile.language.read",
+        # "https://www.googleapis.com/auth/user.birthday.read",
+        # "https://www.googleapis.com/auth/user.phonenumbers.read",
+    ]
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+    INSTALLED_APPS += ["social_django"]
+    TEMPLATES[0]["OPTIONS"]["context_processors"] += [
+        "social_django.context_processors.backends",
+        "social_django.context_processors.login_redirect",
+    ]
+    AUTHENTICATION_BACKENDS = (
+        "social_core.backends.google.GoogleOAuth2",
+        "django.contrib.auth.backends.ModelBackend",
+    )
+    SOCIAL_AUTH_PIPELINE = (
+        "social_core.pipeline.social_auth.social_details",
+        "social_core.pipeline.social_auth.social_uid",
+        "social_core.pipeline.social_auth.auth_allowed",
+        "social_core.pipeline.social_auth.social_user",
+        "social_core.pipeline.user.get_username",
+        "social_core.pipeline.social_auth.associate_by_email",
+        "social_core.pipeline.user.create_user",
+        "social_core.pipeline.social_auth.associate_user",
+        "social_core.pipeline.social_auth.load_extra_data",
+        "social_core.pipeline.user.user_details",
+        "comunicat.pipeline.user.module_data",
+    )
+
+# Phone number
+
+PHONENUMBER_DEFAULT_REGION = os.getenv("PHONENUMBER_DEFAULT_REGION", "SE")

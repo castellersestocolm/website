@@ -1,0 +1,24 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #f8f8f8 inset !important;
+  -webkit-text-fill-color: #000000 !important;
+  caret-color: #000000 !important;
+}
+
+.error {
+  text-align: center !important;
+  margin: 8px 0 !important;
+}
+
+.alert {
+  width: 100%;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+.listButtons {
+  width: 100%;
+  padding: 0 !important;
+}

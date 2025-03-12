@@ -1,7 +1,7 @@
 from django.urls import include, path, re_path
 from drf_yasg.views import get_schema_view
 
-from comunicat.rest.views import user
+from comunicat.rest.views import user, membership, payment, event
 from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -9,6 +9,16 @@ from rest_framework import permissions
 
 router = UUIDRouter()
 router.register("user", user.UserAPI, "user")
+router.register("user/family/member", user.UserFamilyMemberAPI, "user_family_member")
+router.register(
+    "user/family/member/request",
+    user.UserFamilyMemberRequestAPI,
+    "user_family_member_request",
+)
+router.register("membership", membership.MembershipAPI, "membership")
+router.register("payment", payment.PaymentAPI, "payment")
+router.register("event", event.EventAPI, "event")
+router.register("event/registration", event.RegistrationAPI, "event_registration")
 
 
 api_patterns = [

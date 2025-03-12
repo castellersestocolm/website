@@ -4,7 +4,7 @@ import ResourcesPage from "./pages/resources";
 import UserLoginPage from "./pages/user-login";
 import UserJoinPage from "./pages/user-join";
 import UserPasswordPage from "./pages/user-password";
-import {ThemeProvider} from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import { appTheme } from "./themes/theme";
 import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
@@ -15,8 +15,15 @@ import common_sv from "./translations/sv/common.json";
 import common_ca from "./translations/ca/common.json";
 import LngDetector from "i18next-browser-languagedetector";
 import Box from "@mui/material/Box";
-
-
+import * as React from "react";
+import { apiEventList, apiUserMe } from "./api";
+import AppContext from "./components/AppContext/AppContext";
+import { useState } from "react";
+import UserDashboardPage from "./pages/user-dashboard";
+import { ROUTES } from "./routes";
+import UserVerifyPage from "./pages/user-verify";
+import CalendarPage from "./pages/calendar";
+import { EventType } from "./enums";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -36,24 +43,95 @@ i18next.use(LngDetector).init({
 });
 
 const App = () => {
+  const [user, setUser] = useState(undefined);
+  const [messages, setMessages] = useState(undefined);
+  const [familyMemberRequests, setFamilyMemberRequests] =
+    React.useState(undefined);
+  const [familyMemberRequestsReceived, setFamilyMemberRequestsReceived] =
+    React.useState(undefined);
+  const [rehearsal, setRehearsal] = useState(undefined);
+
+  React.useEffect(() => {
+    apiUserMe().then((response) => {
+      if (response.status === 200) {
+        setUser(response.data);
+      } else if (response.status === 204) {
+        setUser(null);
+      }
+    });
+  }, [setUser]);
+
   return (
-    <ThemeProvider theme={appTheme}>
-      <I18nextProvider i18n={i18next}>
-        <BrowserRouter>
-          <Box style={{position: "relative", minHeight: "100vh"}}>
-          <NavBar />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/resources" element={<ResourcesPage />} />
-            <Route path="/user/login" element={<UserLoginPage />} />
-            <Route path="/user/join" element={<UserJoinPage />} />
-            <Route path="/user/password" element={<UserPasswordPage />} />
-          </Routes>
-          <Footer />
-          </Box>
-        </BrowserRouter>
-      </I18nextProvider>
-    </ThemeProvider>
+    <AppContext.Provider
+      value={{
+        user,
+        setUser,
+        messages,
+        setMessages,
+        familyMemberRequests,
+        setFamilyMemberRequests,
+        familyMemberRequestsReceived,
+        setFamilyMemberRequestsReceived,
+        rehearsal,
+        setRehearsal,
+      }}
+    >
+      <ThemeProvider theme={appTheme}>
+        <I18nextProvider i18n={i18next}>
+          <BrowserRouter>
+            <Box
+              style={{
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "100vh",
+                overflowX: "hidden",
+              }}
+            >
+              <NavBar />
+              <Box style={{ flexGrow: 1 }}>
+                <Routes>
+                  <Route path={ROUTES.home.path} element={<HomePage />} />
+                  <Route
+                    path={ROUTES.resources.path}
+                    element={<ResourcesPage />}
+                  />
+                  <Route
+                    path={ROUTES.calendar.path}
+                    element={<CalendarPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-login"].path}
+                    element={<UserLoginPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-join"].path}
+                    element={<UserJoinPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-password"].path}
+                    element={<UserPasswordPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-set-password"].path}
+                    element={<UserPasswordPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-set-verify"].path}
+                    element={<UserVerifyPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-dashboard"].path}
+                    element={<UserDashboardPage />}
+                  />
+                </Routes>
+              </Box>
+              <Footer />
+            </Box>
+          </BrowserRouter>
+        </I18nextProvider>
+      </ThemeProvider>
+    </AppContext.Provider>
   );
 };
 

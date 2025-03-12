@@ -18,6 +18,7 @@
 
 .navMenuLogin {
   margin-left: 16px !important;
+  margin-right: -8px !important;
   color: #1d1d1d !important;
 }
 
@@ -27,5 +28,14 @@
 
 .navMenuAccount {
   margin-left: 16px !important;
+  margin-right: -8px !important;
+  color: #1d1d1d !important;
+}
+
+.drawer {
+  min-width: 250px;
+}
+
+.drawerItem {
   color: #1d1d1d !important;
 }

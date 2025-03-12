@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-16 12:39+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: comunicat/db/mixins.py:15
+msgid "created"
+msgstr "skapad"
+
+#: comunicat/db/mixins.py:16
+msgid "updated"
+msgstr "uppdaterad"
+
+#: comunicat/rest/serializers/user.py:191
+#, python-format
+msgid "The minimum age to join is %s."
+msgstr "Minsta ålder för att gå med är %s."
+
+#: comunicat/rest/serializers/user.py:200
+#, python-format
+msgid "Only the following languages are allowed: %s."
+msgstr ""
+
+#: comunicat/rest/serializers/user.py:211
+#: comunicat/rest/serializers/user.py:270
+#: comunicat/rest/serializers/user.py:310
+#, python-format
+msgid "Members over %s must consent in order to become members."
+msgstr ""
+
+#: comunicat/rest/serializers/user.py:230
+msgid "The passwords do not match."
+msgstr "Lösenorden stämmer inte överens."
+
+#: comunicat/rest/serializers/user.py:259
+#, python-format
+msgid "The family member must be below %s to update."
+msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
+
+#: comunicat/rest/serializers/user.py:299
+#, fuzzy, python-format
+#| msgid "The family member must be below %s to update."
+msgid "The family member must be below %s to create."
+msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
+
+#: comunicat/rest/utils/fields.py:18 comunicat/rest/utils/fields.py:51
+msgid "Invalid value."
+msgstr "Ogiltigt värde."
+
+#: comunicat/rest/utils/fields.py:19 comunicat/rest/utils/fields.py:52
+#, python-brace-format
+msgid "\"{input}\" is not a valid choice."
+msgstr "\"{input}\" är inte ett giltigt val."
+
+#: comunicat/rest/utils/fields.py:84
+msgid "Not money."
+msgstr ""
+
+#: comunicat/rest/utils/fields.py:85
+msgid "Missing amount or currency."
+msgstr ""
+
+#: comunicat/templates/email/towers/base.html:28
+#: comunicat/templates/email/towers/base.html:30
+msgid "Hello"
+msgstr "Hej"
+
+#: comunicat/templates/email/towers/base.html:35
+msgid ""
+"Looks like there's been a problem, this email doesn't have content! Please, "
+"let us know if this is the result of registering, subscribing or any other "
+"action you might think that have caused this."
+msgstr ""
+
+#: comunicat/templates/email/towers/base.html:42
+msgid "Contact us"
+msgstr "Kontakta oss"
+
+#: comunicat/templates/email/towers/base.html:52
+msgid "Best"
+msgstr "Hälsningar"
+
+#: comunicat/templates/email/towers/base.html:61
+msgid "Sent with"
+msgstr "Skickat med"
+
+#: comunicat/templates/email/towers/base.html:61
+msgid "by"
+msgstr "av"
+
+#: comunicat/templates/email/towers/user/invite.html:5
+msgid "You have been invited to join a family membership by"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/invite.html:15
+msgid "Review the invitation"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/invite.html:15
+msgid "Become a member"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/register.html:5
+msgid ""
+"Thank you for joining! In order to complete your registration we need you to "
+"confirm this email as soon as possible by clicking the following button."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/register.html:10
+msgid "Confirm email"
+msgstr "Bekräfta epost"
+
+#: comunicat/templates/email/towers/user/welcome.html:5
+msgid ""
+"You have now completed the registration process and are part of the "
+"Castellers d'Estocolm, welcome!"
+msgstr ""
+
+#: notify/consts.py:34 notify/consts.py:56
+msgid "Confirm your email to finish your registration"
+msgstr "Bekräfta din epost för att slutföra din registrering"
+
+#: notify/consts.py:38 notify/consts.py:60
+msgid "Reset your password to login"
+msgstr "Återställ ditt lösenord för att logga in"
+
+#: notify/consts.py:42 notify/consts.py:64
+#, python-format
+msgid "Welcome to %s"
+msgstr "Välkommen to %s"
+
+#: notify/consts.py:46 notify/consts.py:68
+msgid "You have been invited to join a family"
+msgstr ""
+
+#: payment/managers.py:68 payment/managers.py:141
+msgid "Membership update"
+msgstr "Medlemskapsuppdatering"
+
+#: payment/managers.py:74 payment/managers.py:143
+msgid "Membership"
+msgstr "Medlemskap"
+
+#: payment/managers.py:83
+msgid "Payment"
+msgstr "Betalning"
+
+#: payment/managers.py:148
+msgid "Unspecified"
+msgstr "Ospecificerad"
+
+#: user/api/family_member_request.py:52
+msgid ""
+"You have too many pending requests, cancel some of them before you send a "
+"new one."
+msgstr ""
+
+#: user/api/family_member_request.py:64
+msgid "The member already belongs to your family."
+msgstr ""
+
+#: user/api/family_member_request.py:71
+msgid "You have reached the maximum amount of members in your family."
+msgstr ""
+
+#: user/api/family_member_request.py:86
+msgid "You have reached the maximum amount of adult members in your family."
+msgstr ""
+
+#: user/models.py:28
+msgid "staff status"
+msgstr "personalstatus"
+
+#: user/models.py:32
+msgid "active"
+msgstr "aktiv"
+
+#~ msgid "Membership from"
+#~ msgstr "Medlemskap från"
+
+#~ msgid "to"
+#~ msgstr "till"

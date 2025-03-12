@@ -3,15 +3,18 @@ import ImageHero from "../../assets/images/hero.jpg";
 import ImageJoin from "../../assets/images/join.jpg";
 import styles from "./styles.module.css";
 import {
-    Button,
-    CardContent,
-    Container,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    Stack,
-    Typography
+  Button,
+  Card,
+  CardContent,
+  Container,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -20,7 +23,6 @@ import IconTbana from "../../components/IconTbana/IconTbana.jsx";
 import Grid from "@mui/material/Grid2";
 import IconSchedule from "@mui/icons-material/Schedule";
 import IconPlace from "@mui/icons-material/Place";
-import IconBackpack from "@mui/icons-material/Backpack";
 import IconGroups from "@mui/icons-material/Groups";
 import IconSportsGymnastics from "@mui/icons-material/SportsGymnastics";
 import IconEmergency from "@mui/icons-material/Emergency";
@@ -34,50 +36,126 @@ import IconFitnessCenter from "@mui/icons-material/FitnessCenter";
 import IconLocalActivity from "@mui/icons-material/LocalActivity";
 import IconAcUnit from "@mui/icons-material/AcUnit";
 import IconMic from "@mui/icons-material/Mic";
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
-import TimelineDot from '@mui/lab/TimelineDot';
+import Timeline from "@mui/lab/Timeline";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import TimelineDot from "@mui/lab/TimelineDot";
+import { ROUTES } from "../../routes";
+import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
+import { useAppContext } from "../../components/AppContext/AppContext";
+import Alerts from "../../components/Alerts/Alerts";
+import { apiEventList } from "../../api";
+import { EventType, TRANSPORT_MODE_ICON } from "../../enums";
+import { capitalizeFirstLetter } from "../../utils/string";
+import EventCalendar from "../../components/EventCalendar/EventCalendar";
+import Map from "../../components/Map/Map";
 
 function HomePage() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
+
+  const [events, setEvents] = React.useState(undefined);
+  const { user, messages, rehearsal, setRehearsal } = useAppContext();
+
+  const theme = useTheme();
+  const timelineMatches = useMediaQuery(theme.breakpoints.up("md"));
+
+  React.useEffect(() => {
+    apiEventList().then((response) => {
+      if (response.status === 200) {
+        setRehearsal(
+          response.data.find((event: any) => {
+            return (
+              event.type === EventType.REHEARSAL &&
+              new Date(event.time_to) >= new Date()
+            );
+          }),
+        );
+      }
+    });
+  }, [setRehearsal, i18n.resolvedLanguage]);
+
+  React.useEffect(() => {
+    apiEventList().then((response) => {
+      if (response.status === 200) {
+        setEvents(response.data);
+      }
+    });
+  }, [setEvents]);
 
   return (
     <>
       <Box component="section" className={styles.hero}>
-        <Container maxWidth="xl">
-          <Grid container spacing={2} className={styles.heroGrid}>
-            <Grid size={6}>
-              <IconLogoColour />
-              <Typography
-                variant="h3"
-                fontWeight="700"
-                className={styles.heroTitle}
+        <Box
+          component="section"
+          className={styles.heroInner}
+          sx={{
+            marginTop: { xs: "57px", md: "65px" },
+            padding: {
+              xs: messages ? "32px 0 64px 0" : "64px 0",
+              md: messages ? "64px 0 132px 0" : "132px 0",
+            },
+          }}
+        >
+          <Container maxWidth="xl">
+            <Alerts />
+            <Grid
+              container
+              spacing={2}
+              sx={{ textAlign: { xs: "center", md: "left" } }}
+              className={styles.heroGrid}
+            >
+              <Grid
+                size={{ xs: 12, md: 6 }}
+                sx={{ marginBottom: { xs: "32px", md: "0" } }}
               >
-                {t("pages.home-hero.title")}
-              </Typography>
-              <Typography
-                variant="h5"
-                fontWeight="700"
-                className={styles.heroSubtitle}
-              >
-                {t("pages.home-hero.subtitle")}
-              </Typography>
-              <Typography variant="h6" className={styles.heroSubtitle}>
-                {t("pages.home-hero.subtitle2")}
-              </Typography>
+                <IconLogoColour />
+                <Typography
+                  variant="h3"
+                  fontWeight="700"
+                  className={styles.heroTitle}
+                >
+                  {t("pages.home-hero.title")}
+                </Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight="700"
+                  className={styles.heroSubtitle}
+                >
+                  {t("pages.home-hero.subtitle")}
+                </Typography>
+                <Typography variant="h6" className={styles.heroSubtitle}>
+                  {t("pages.home-hero.subtitle2")}
+                </Typography>
+                {!user && (
+                  <Button
+                    variant="outlined"
+                    href={ROUTES["user-join"].path}
+                    className={styles.heroButton}
+                    disableElevation
+                  >
+                    {t("pages.home-join.list.button-join")}
+                  </Button>
+                )}
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box
+                  sx={{ height: { xs: "300px", md: "500px" } }}
+                  className={styles.heroImage}
+                  style={{ backgroundImage: "url(" + ImageHero + ")" }}
+                />
+              </Grid>
             </Grid>
-            <Grid size={6}>
-              <Box
-                className={styles.heroImage}
-                style={{ backgroundImage: "url(" + ImageHero + ")" }}
-              />
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
+          <Box
+            className={styles.carouselTop}
+            sx={{ display: { xs: "none", md: "flex" } }}
+          >
+            <ImageCarousel dense={false} />
+          </Box>
+        </Box>
       </Box>
       <Box component="section" className={styles.rehearsals}>
         <Container maxWidth="lg">
@@ -89,7 +167,10 @@ function HomePage() {
             {t("pages.home-rehearsals.title")}
           </Typography>
           <Grid container spacing={4} className={styles.rehearsalsGrid}>
-            <Grid size={5}>
+            <Grid
+              size={{ xs: 12, md: 5 }}
+              sx={{ display: "flex", flexDirection: "column" }}
+            >
               <React.Fragment>
                 <CardContent className={styles.rehearsalsCard}>
                   <IconSchedule className={styles.rehearsalsIcon} />
@@ -99,10 +180,48 @@ function HomePage() {
                       fontWeight="600"
                       className={styles.rehearsalsCardTitle}
                     >
-                      {t("pages.home-rehearsals.box1.title")}
+                      {rehearsal
+                        ? t("pages.home-rehearsals.box1.title-rehearsal")
+                        : t("pages.home-rehearsals.box1.title")}
                     </Typography>
                     <Typography className={styles.rehearsalsCardText}>
-                      {t("pages.home-rehearsals.box1.text1")}
+                      {rehearsal
+                        ? capitalizeFirstLetter(
+                            new Date(rehearsal.time_from).toLocaleDateString(
+                              i18n.resolvedLanguage,
+                              { weekday: "long" },
+                            ),
+                          ) +
+                          " " +
+                          capitalizeFirstLetter(
+                            new Date(rehearsal.time_from).toLocaleDateString(
+                              i18n.resolvedLanguage,
+                              { day: "numeric", month: "long" },
+                            ),
+                          ) +
+                          " " +
+                          t("pages.home-rehearsals.box1.text1-from") +
+                          " " +
+                          new Date(rehearsal.time_from).toLocaleTimeString(
+                            i18n.resolvedLanguage,
+                            {
+                              hour12: false,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          ) +
+                          " " +
+                          t("pages.home-rehearsals.box1.text1-to") +
+                          " " +
+                          new Date(rehearsal.time_to).toLocaleTimeString(
+                            i18n.resolvedLanguage,
+                            {
+                              hour12: false,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )
+                        : t("pages.home-rehearsals.box1.text1")}
                     </Typography>
                     <Typography className={styles.rehearsalsCardText2}>
                       {t("pages.home-rehearsals.box1.text2")}
@@ -122,40 +241,83 @@ function HomePage() {
                       {t("pages.home-rehearsals.box2.title")}
                     </Typography>
                     <Typography className={styles.rehearsalsCardText}>
-                      {t("pages.home-rehearsals.box2.text1-1")}{" ("}
-                        <IconTbana />
-                      {t("pages.home-rehearsals.box2.text1-2")}{")"}
+                      {rehearsal ? (
+                        rehearsal.location ? (
+                          <>
+                            {rehearsal.location.name}
+                            {rehearsal.location.connections.length > 0 && (
+                              <>
+                                {" ("}
+                                {
+                                  TRANSPORT_MODE_ICON[
+                                    rehearsal.location.connections[0].type
+                                  ]
+                                }
+                                {rehearsal.location.connections[0].name}
+                                {")"}
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          t("pages.home-rehearsals.box2.text1-location")
+                        )
+                      ) : (
+                        <>
+                          {t("pages.home-rehearsals.box2.text1-1")}
+                          {" ("}
+                          <IconTbana />
+                          {t("pages.home-rehearsals.box2.text1-2")}
+                          {")"}
+                        </>
+                      )}
                     </Typography>
-                    <Typography className={styles.rehearsalsCardText2}>
-                      {t("pages.home-rehearsals.box2.text2")}
-                    </Typography>
+                    {rehearsal &&
+                    rehearsal.location &&
+                    rehearsal.location.description ? (
+                      <Typography className={styles.rehearsalsCardText2}>
+                        {rehearsal.location.description}
+                      </Typography>
+                    ) : !rehearsal ? (
+                      <Typography className={styles.rehearsalsCardText2}>
+                        {t("pages.home-rehearsals.box2.text2")}
+                      </Typography>
+                    ) : undefined}
                   </Box>
                 </CardContent>
               </React.Fragment>
               <React.Fragment>
-                <CardContent className={styles.rehearsalsCard}>
-                  <IconBackpack className={styles.rehearsalsIcon} />
-                  <Box>
-                    <Typography
-                      variant="h5"
-                      fontWeight="600"
-                      className={styles.rehearsalsCardTitle}
-                    >
-                      {t("pages.home-rehearsals.box3.title")}
-                    </Typography>
-                    <Typography className={styles.rehearsalsCardText}>
-                      {t("pages.home-rehearsals.box3.text1")}
-                    </Typography>
-                  </Box>
+                <CardContent className={styles.mapCard}>
+                  <Map
+                    location={
+                      rehearsal && rehearsal.location
+                        ? rehearsal.location
+                        : undefined
+                    }
+                    coordinates={
+                      rehearsal && rehearsal.location
+                        ? [
+                            rehearsal.location.coordinate_lat,
+                            rehearsal.location.coordinate_lon,
+                          ]
+                        : [59.3576, 17.9941]
+                    }
+                    connections={
+                      rehearsal &&
+                      rehearsal.location &&
+                      rehearsal.location.connections
+                    }
+                  />
                 </CardContent>
               </React.Fragment>
             </Grid>
-            <Grid size={7}>
-              <iframe
-                title="calendar"
-                className={styles.calendarEmbed}
-                src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FStockholm&bgcolor=%23ffffff&showTitle=0&hl=en_GB&showTz=0&showCalendars=0&showPrint=0&title=Castellers%20d'Estocolm&src=Y19jMzM5YTdmZWI1YzA5YzEyNTE2OTU1ODMwNjg3ZmI3MDY1YTVmODgzYTZiZGNiYTc0Y2U1NzgxMTIzYjJjN2Y2QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%238E24AA"
-              ></iframe>
+            <Grid
+              size={{ xs: 12, md: 7 }}
+              display={{ xs: "none", md: "initial" }}
+              className={styles.calendarBox}
+            >
+              <Card variant="outlined" className={styles.calendarCard}>
+                <EventCalendar events={events} compact={true} />
+              </Card>
             </Grid>
           </Grid>
         </Container>
@@ -163,111 +325,156 @@ function HomePage() {
       <Box component="section" className={styles.join}>
         <Container maxWidth="lg">
           <Grid container spacing={4}>
-            <Grid size={4}>
+            <Grid size={4} sx={{ display: { xs: "none", md: "block" } }}>
               <Box
                 className={styles.joinImage}
                 style={{ backgroundImage: "url(" + ImageJoin + ")" }}
               />
             </Grid>
-            <Grid size={8}>
+            <Grid size={{ xs: 12, md: 8 }}>
               <Typography
-            variant="h3"
-            fontWeight="700"
-            className={styles.joinTitle}
-          >
-            {t("pages.home-join.title")}
-          </Typography>
-          <Grid container spacing={1} className={styles.joinGrid}>
-            <Grid size={12}>
-              <Typography
-            variant="h5"
-            fontWeight="700" className={styles.joinListTitle}
-          >
-            {t("pages.home-join.list.title")}
-              </Typography></Grid>
-            <Grid size={12} className={styles.joinList}>
-              <List dense={true}>
-              <ListItem>
-                  <ListItemIcon>
-                    <IconGroups />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t("pages.home-join.list.item-1.title")}
-                    secondary={t("pages.home-join.list.item-1.subtitle") ? t("pages.home-join.list.item-1.subtitle") : null}
-                  />
-                </ListItem>
-              <ListItem>
-                  <ListItemIcon>
-                    <IconSportsGymnastics />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t("pages.home-join.list.item-2.title")}
-                    secondary={t("pages.home-join.list.item-2.subtitle") ? t("pages.home-join.list.item-2.subtitle") : null}
-                  />
-                </ListItem>
-              <ListItem>
-                  <ListItemIcon>
-                    <IconEmergency />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t("pages.home-join.list.item-3.title")}
-                    secondary={t("pages.home-join.list.item-3.subtitle") ? t("pages.home-join.list.item-3.subtitle") : null}
-                  />
-                </ListItem>
-              <ListItem>
-                  <ListItemIcon>
-                    <IconLoyalty />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t("pages.home-join.list.item-4.title")}
-                    secondary={t("pages.home-join.list.item-4.subtitle") ? t("pages.home-join.list.item-4.subtitle") : null}
-                  />
-                </ListItem>
-              <ListItem>
-                  <ListItemIcon>
-                    <IconCreditCardOff />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t("pages.home-join.list.item-5.title")}
-                    secondary={t("pages.home-join.list.item-5.subtitle") ? t("pages.home-join.list.item-5.subtitle") : null}
-                  />
-                </ListItem>
-              </List></Grid>
-              <Grid size={12}>
-              <Typography
-            variant="h5"
-            fontWeight="700" className={styles.joinListTitle}
-          >
-            {t("pages.home-join.list-like.title")}
-              </Typography></Grid>
-              <Grid size={12} className={styles.joinList}>
-              <List dense={true}>
-              <ListItem>
-                  <ListItemIcon>
-                    <IconCheckroom />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t("pages.home-join.list-like.item-1.title")}
-                    secondary={t("pages.home-join.list-like.item-1.subtitle") ? t("pages.home-join.list-like.item-1.subtitle") : null}
-                  />
-                </ListItem>
-              <ListItem>
-                  <ListItemIcon>
-                    <IconPayment />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t("pages.home-join.list-like.item-2.title")}
-                    secondary={t("pages.home-join.list-like.item-2.subtitle") ? t("pages.home-join.list-like.item-2.subtitle") : null}
-                  />
-                </ListItem>
-              </List>
+                variant="h3"
+                fontWeight="700"
+                className={styles.joinTitle}
+              >
+                {t("pages.home-join.title")}
+              </Typography>
+              <Grid container spacing={1} className={styles.joinGrid}>
+                <Grid size={12}>
+                  <Typography
+                    variant="h5"
+                    fontWeight="700"
+                    className={styles.joinListTitle}
+                  >
+                    {t("pages.home-join.list.title")}
+                  </Typography>
+                </Grid>
+                <Grid size={12} className={styles.joinList}>
+                  <List dense={true}>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconGroups />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t("pages.home-join.list.item-1.title")}
+                        secondary={
+                          t("pages.home-join.list.item-1.subtitle")
+                            ? t("pages.home-join.list.item-1.subtitle")
+                            : null
+                        }
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconSportsGymnastics />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t("pages.home-join.list.item-2.title")}
+                        secondary={
+                          t("pages.home-join.list.item-2.subtitle")
+                            ? t("pages.home-join.list.item-2.subtitle")
+                            : null
+                        }
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconEmergency />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t("pages.home-join.list.item-3.title")}
+                        secondary={
+                          t("pages.home-join.list.item-3.subtitle")
+                            ? t("pages.home-join.list.item-3.subtitle")
+                            : null
+                        }
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconLoyalty />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t("pages.home-join.list.item-4.title")}
+                        secondary={
+                          t("pages.home-join.list.item-4.subtitle")
+                            ? t("pages.home-join.list.item-4.subtitle")
+                            : null
+                        }
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconCreditCardOff />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t("pages.home-join.list.item-5.title")}
+                        secondary={
+                          t("pages.home-join.list.item-5.subtitle")
+                            ? t("pages.home-join.list.item-5.subtitle")
+                            : null
+                        }
+                      />
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid size={12}>
+                  <Typography
+                    variant="h5"
+                    fontWeight="700"
+                    className={styles.joinListTitle}
+                  >
+                    {t("pages.home-join.list-like.title")}
+                  </Typography>
+                </Grid>
+                <Grid size={12} className={styles.joinList}>
+                  <List dense={true}>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconCheckroom />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t("pages.home-join.list-like.item-1.title")}
+                        secondary={
+                          t("pages.home-join.list-like.item-1.subtitle")
+                            ? t("pages.home-join.list-like.item-1.subtitle")
+                            : null
+                        }
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconPayment />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={t("pages.home-join.list-like.item-2.title")}
+                        secondary={
+                          t("pages.home-join.list-like.item-2.subtitle")
+                            ? t("pages.home-join.list-like.item-2.subtitle")
+                            : null
+                        }
+                      />
+                    </ListItem>
+                  </List>
+                </Grid>
+                {!user && (
+                  <Grid size={12}>
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      className={styles.joinButtons}
+                    >
+                      <Button
+                        variant="contained"
+                        href={ROUTES["user-join"].path}
+                        disableElevation
+                      >
+                        {t("pages.home-join.list.button-join")}
+                      </Button>
+                    </Stack>
+                  </Grid>
+                )}
               </Grid>
-            <Grid size={12}>
-        <Stack direction="row" spacing={2} className={styles.joinButtons}>
-        <Button variant="contained" href="/user/join" disableElevation>{t("pages.home-join.list.button-join")}</Button>
-        </Stack>
-          </Grid>
-          </Grid>
             </Grid>
           </Grid>
         </Container>
@@ -282,175 +489,199 @@ function HomePage() {
             {t("pages.home-timeline.title")}
           </Typography>
           <Grid container spacing={4} className={styles.timelineGrid}>
-              <Timeline position="alternate">
-      <TimelineItem>
-        <TimelineOppositeContent
-          sx={{ m: 'auto 0' }}
-          align="right"
-          variant="body2"
-          color="text.secondary"
-        >
-          {t("pages.home-timeline.item-1.time")}
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineConnector />
-          <TimelineDot color="primary">
-            <IconGroups className={styles.timelineIcon} />
-          </TimelineDot>
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent sx={{ py: '12px', px: 2 }}>
-          <Typography variant="h6" component="span">
-            {t("pages.home-timeline.item-1.title")}
-          </Typography>
-          <Typography>{t("pages.home-timeline.item-1.subtitle")}</Typography>
-        </TimelineContent>
-      </TimelineItem>
-                  <TimelineItem>
-        <TimelineOppositeContent
-          sx={{ m: 'auto 0' }}
-          variant="body2"
-          color="text.secondary"
-        >
-          {t("pages.home-timeline.item-2.time")}
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineConnector />
-          <TimelineDot color="primary">
-            <IconVisibility className={styles.timelineIcon} />
-          </TimelineDot>
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent sx={{ py: '12px', px: 2 }}>
-          <Typography variant="h6" component="span">
-            {t("pages.home-timeline.item-2.title")}
-          </Typography>
-          <Typography>{t("pages.home-timeline.item-2.subtitle")}</Typography>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineOppositeContent
-          sx={{ m: 'auto 0' }}
-          align="right"
-          variant="body2"
-          color="text.secondary"
-        >
-          {t("pages.home-timeline.item-3.time")}
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineConnector />
-          <TimelineDot color="primary">
-            <IconNaturePeople className={styles.timelineIcon} />
-          </TimelineDot>
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent sx={{ py: '12px', px: 2 }}>
-          <Typography variant="h6" component="span">
-            {t("pages.home-timeline.item-3.title")}
-          </Typography>
-          <Typography>{t("pages.home-timeline.item-3.subtitle")}</Typography>
-        </TimelineContent>
-      </TimelineItem>
-                  <TimelineItem>
-        <TimelineOppositeContent
-          sx={{ m: 'auto 0' }}
-          variant="body2"
-          color="text.secondary"
-        >
-          {t("pages.home-timeline.item-4.time")}
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineConnector />
-          <TimelineDot color="primary">
-            <IconFitnessCenter className={styles.timelineIcon} />
-          </TimelineDot>
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent sx={{ py: '12px', px: 2 }}>
-          <Typography variant="h6" component="span">
-            {t("pages.home-timeline.item-4.title")}
-          </Typography>
-          <Typography>{t("pages.home-timeline.item-4.subtitle")}</Typography>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineOppositeContent
-          sx={{ m: 'auto 0' }}
-          align="right"
-          variant="body2"
-          color="text.secondary"
-        >
-          {t("pages.home-timeline.item-5.time")}
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineConnector />
-          <TimelineDot color="primary">
-            <IconLocalActivity className={styles.timelineIcon} />
-          </TimelineDot>
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent sx={{ py: '12px', px: 2 }}>
-          <Typography variant="h6" component="span">
-            {t("pages.home-timeline.item-5.title")}
-          </Typography>
-          <Typography>{t("pages.home-timeline.item-5.subtitle")}</Typography>
-        </TimelineContent>
-      </TimelineItem>
-                  <TimelineItem>
-        <TimelineOppositeContent
-          sx={{ m: 'auto 0' }}
-          variant="body2"
-          color="text.secondary"
-        >
-          {t("pages.home-timeline.item-6.time")}
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineConnector />
-          <TimelineDot color="primary">
-            <IconAcUnit className={styles.timelineIcon} />
-          </TimelineDot>
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent sx={{ py: '12px', px: 2 }}>
-          <Typography variant="h6" component="span">
-            {t("pages.home-timeline.item-6.title")}
-          </Typography>
-          <Typography>{t("pages.home-timeline.item-6.subtitle")}</Typography>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem>
-        <TimelineOppositeContent
-          sx={{ m: 'auto 0' }}
-          align="right"
-          variant="body2"
-          color="text.secondary"
-        >
-          {t("pages.home-timeline.item-7.time")}
-        </TimelineOppositeContent>
-        <TimelineSeparator>
-          <TimelineConnector />
-          <TimelineDot color="primary">
-            <IconMic className={styles.timelineIcon} />
-          </TimelineDot>
-          <TimelineConnector />
-        </TimelineSeparator>
-        <TimelineContent sx={{ py: '12px', px: 2 }}>
-          <Typography variant="h6" component="span">
-            {t("pages.home-timeline.item-7.title")}
-          </Typography>
-          <Typography>{t("pages.home-timeline.item-7.subtitle")}</Typography>
-        </TimelineContent>
-      </TimelineItem>
-              </Timeline>
+            <Timeline position={timelineMatches ? "alternate" : "left"}>
+              <TimelineItem>
+                <TimelineOppositeContent
+                  sx={{ m: "auto 0" }}
+                  align="right"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {t("pages.home-timeline.item-1.time")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot color="primary">
+                    <IconGroups className={styles.timelineIcon} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent sx={{ py: "12px", px: 2 }}>
+                  <Typography variant="h6" component="span">
+                    {t("pages.home-timeline.item-1.title")}
+                  </Typography>
+                  <Typography>
+                    {t("pages.home-timeline.item-1.subtitle")}
+                  </Typography>
+                </TimelineContent>
+              </TimelineItem>
+              <TimelineItem>
+                <TimelineOppositeContent
+                  sx={{ m: "auto 0" }}
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {t("pages.home-timeline.item-2.time")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot color="primary">
+                    <IconVisibility className={styles.timelineIcon} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent sx={{ py: "12px", px: 2 }}>
+                  <Typography variant="h6" component="span">
+                    {t("pages.home-timeline.item-2.title")}
+                  </Typography>
+                  <Typography>
+                    {t("pages.home-timeline.item-2.subtitle")}
+                  </Typography>
+                </TimelineContent>
+              </TimelineItem>
+              <TimelineItem>
+                <TimelineOppositeContent
+                  sx={{ m: "auto 0" }}
+                  align="right"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {t("pages.home-timeline.item-3.time")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot color="primary">
+                    <IconNaturePeople className={styles.timelineIcon} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent sx={{ py: "12px", px: 2 }}>
+                  <Typography variant="h6" component="span">
+                    {t("pages.home-timeline.item-3.title")}
+                  </Typography>
+                  <Typography>
+                    {t("pages.home-timeline.item-3.subtitle")}
+                  </Typography>
+                </TimelineContent>
+              </TimelineItem>
+              <TimelineItem>
+                <TimelineOppositeContent
+                  sx={{ m: "auto 0" }}
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {t("pages.home-timeline.item-4.time")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot color="primary">
+                    <IconFitnessCenter className={styles.timelineIcon} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent sx={{ py: "12px", px: 2 }}>
+                  <Typography variant="h6" component="span">
+                    {t("pages.home-timeline.item-4.title")}
+                  </Typography>
+                  <Typography>
+                    {t("pages.home-timeline.item-4.subtitle")}
+                  </Typography>
+                </TimelineContent>
+              </TimelineItem>
+              <TimelineItem>
+                <TimelineOppositeContent
+                  sx={{ m: "auto 0" }}
+                  align="right"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {t("pages.home-timeline.item-5.time")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot color="primary">
+                    <IconLocalActivity className={styles.timelineIcon} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent sx={{ py: "12px", px: 2 }}>
+                  <Typography variant="h6" component="span">
+                    {t("pages.home-timeline.item-5.title")}
+                  </Typography>
+                  <Typography>
+                    {t("pages.home-timeline.item-5.subtitle")}
+                  </Typography>
+                </TimelineContent>
+              </TimelineItem>
+              <TimelineItem>
+                <TimelineOppositeContent
+                  sx={{ m: "auto 0" }}
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {t("pages.home-timeline.item-6.time")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot color="primary">
+                    <IconAcUnit className={styles.timelineIcon} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent sx={{ py: "12px", px: 2 }}>
+                  <Typography variant="h6" component="span">
+                    {t("pages.home-timeline.item-6.title")}
+                  </Typography>
+                  <Typography>
+                    {t("pages.home-timeline.item-6.subtitle")}
+                  </Typography>
+                </TimelineContent>
+              </TimelineItem>
+              <TimelineItem>
+                <TimelineOppositeContent
+                  sx={{ m: "auto 0" }}
+                  align="right"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {t("pages.home-timeline.item-7.time")}
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineConnector />
+                  <TimelineDot color="primary">
+                    <IconMic className={styles.timelineIcon} />
+                  </TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent sx={{ py: "12px", px: 2 }}>
+                  <Typography variant="h6" component="span">
+                    {t("pages.home-timeline.item-7.title")}
+                  </Typography>
+                  <Typography>
+                    {t("pages.home-timeline.item-7.subtitle")}
+                  </Typography>
+                </TimelineContent>
+              </TimelineItem>
+            </Timeline>
           </Grid>
         </Container>
       </Box>
-      <Box component="section">
-        <object
-          className={styles.mapEmbed}
-          aria-label="map"
-          data="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d10549.351169868873!2d17.99051515699911!3d59.35840008798483!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNTnCsDIxJzI3LjQiTiAxN8KwNTknMzguOCJF!5e0!3m2!1sca!2sse!4v1726217485573!5m2!1sca!2sse"
-        ></object>
+      <Box
+        component="section"
+        sx={{ height: { xs: "300px", md: "750px" } }}
+        className={styles.mapBox}
+      >
+        <Map
+          coordinates={
+            rehearsal && rehearsal.location
+              ? [
+                  rehearsal.location.coordinate_lat,
+                  rehearsal.location.coordinate_lon,
+                ]
+              : [59.3576, 17.9941]
+          }
+          zoom={15}
+        />
       </Box>
     </>
   );

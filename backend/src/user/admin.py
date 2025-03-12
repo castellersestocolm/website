@@ -1,6 +1,45 @@
-from django.contrib import admin, messages
+from django.contrib import admin
+from django.urls import reverse
+from django.utils import translation
+from django.utils.safestring import mark_safe
 
-from user.models import User
+from notify.enums import EmailType
+from user.models import User, FamilyMember, Family, FamilyMemberRequest
+from django.conf import settings
+
+import user.api
+import notify.tasks
+
+
+class FamilyMemberRequestSentInline(admin.TabularInline):
+    model = FamilyMemberRequest
+    fk_name = "user_sender"
+    extra = 0
+
+
+class FamilyMemberRequestReceivedInline(admin.TabularInline):
+    model = FamilyMemberRequest
+    fk_name = "user_receiver"
+    extra = 0
+
+
+@admin.action(description="Send verification email")
+def send_verification_email(modeladmin, request, queryset):
+    for user_obj in queryset:
+        if not user_obj.email_verified:
+            user.api.request_verify(email=user_obj.email, module=user_obj.origin_module)
+
+
+@admin.action(description="Send welcome email")
+def send_welcome_email(modeladmin, request, queryset):
+    for user_obj in queryset:
+        if user_obj.registration_finished(module=user_obj.origin_module):
+            notify.tasks.send_user_email.delay(
+                user_id=user_obj.id,
+                email_type=EmailType.WELCOME,
+                module=user_obj.origin_module,
+                locale=user_obj.preferred_language or translation.get_language(),
+            )
 
 
 @admin.register(User)
@@ -13,16 +52,123 @@ class UserAdmin(admin.ModelAdmin):
         "phone",
         "email_verified",
         "is_active",
-        "created_at",
+        "consent_pictures",
+        "preferred_language",
+        "origin_module",
     )
-    list_filter = (
-        "email_verified",
-        "is_active",
-    )
+    list_filter = ("email_verified", "is_active", "consent_pictures")
     readonly_fields = (
         "groups",
         "last_login",
         "created_at",
+        "alias",
+        "height_shoulders",
+        "height_arms",
+        "family",
     )
     exclude = ("password", "user_permissions")
     ordering = ("-created_at",)
+    inlines = (FamilyMemberRequestSentInline, FamilyMemberRequestReceivedInline)
+    actions = (send_verification_email, send_welcome_email)
+
+    fieldset_base = (
+        (
+            None,
+            {
+                "fields": (
+                    "email",
+                    "firstname",
+                    "lastname",
+                    "phone",
+                    "birthday",
+                    "family",
+                    "preferred_language",
+                    "email_verified",
+                    "consent_pictures",
+                    "origin_module",
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "created_at",
+                )
+            },
+        ),
+    )
+
+    fieldset_towers = (
+        (
+            (
+                settings.MODULE_TOWERS_SHORT_NAME,
+                {"fields": settings.MODULE_TOWERS_USER_FIELDS},
+            )
+            if settings.MODULE_TOWERS_USER_FIELDS
+            else ()
+        ),
+    )
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_fieldsets(self, request, obj=None):
+        if hasattr(obj, "towers") and settings.MODULE_TOWERS_USER_FIELDS:
+            return self.fieldset_base + self.fieldset_towers
+
+        return self.fieldset_base
+
+    def height_shoulders(self, obj):
+        if hasattr(obj, "towers"):
+            return obj.towers.height_shoulders
+        return "-"
+
+    def height_arms(self, obj):
+        if hasattr(obj, "towers"):
+            return obj.towers.height_arms
+        return "-"
+
+    def alias(self, obj):
+        if hasattr(obj, "towers"):
+            return obj.towers.alias
+        return "-"
+
+    def family(self, obj):
+        if hasattr(obj, "family_member"):
+            family_link = reverse(
+                "admin:user_family_change", args=(obj.family_member.family_id,)
+            )
+            return mark_safe(
+                f'<a href="{family_link}">{str(obj.family_member.family)}</a>'
+            )
+        return "-"
+
+
+class FamilyMemberInlineForFamily(admin.TabularInline):
+    model = FamilyMember
+    extra = 0
+
+
+@admin.register(Family)
+class FamilyAdmin(admin.ModelAdmin):
+    search_fields = ("id",)
+    inlines = (FamilyMemberInlineForFamily,)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(FamilyMember)
+class FamilyMemberAdmin(admin.ModelAdmin):
+    search_fields = ("id", "user", "family")
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(FamilyMemberRequest)
+class FamilyMemberRequestAdmin(admin.ModelAdmin):
+    search_fields = ("id", "user_sender", "email_receiver", "user_receiver", "family")
+
+    def has_delete_permission(self, request, obj=None):
+        return False

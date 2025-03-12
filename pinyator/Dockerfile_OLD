@@ -1,0 +1,19 @@
+FROM php:7.2-cli
+
+ENV APT_WAIT_FOR_IT_VERSION 0.0~git20180723-1
+
+# Install system dependencies
+# SC2215 is ignored due to https://github.com/hadolint/hadolint/issues/347
+# hadolint ignore=SC2215
+RUN set -x && apt-get update && apt-get install --no-install-recommends -y \
+    wait-for-it=$APT_WAIT_FOR_IT_VERSION \
+    && apt-get clean \
+    && rm -rf "/var/lib/apt/lists/*"
+
+COPY ./php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+
+RUN mkdir /pinyator && mkdir /pinyator/pinyator
+COPY ./src /pinyator/pinyator
+WORKDIR /pinyator
+
+VOLUME ["/pinyator"]

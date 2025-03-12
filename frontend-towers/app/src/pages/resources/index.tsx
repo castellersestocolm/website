@@ -10,14 +10,23 @@ import ImagePositions3 from "../../assets/images/resources/positions-3.png";
 import FilePositions1 from "../../assets/files/resources/positions-1.pdf";
 import FilePositions2 from "../../assets/files/resources/positions-2.pdf";
 import FilePositions3 from "../../assets/files/resources/positions-3.pdf";
+import Alerts from "../../components/Alerts/Alerts";
 
 function ResourcesPage() {
   const { t } = useTranslation("common");
 
   return (
     <>
-      <Box component="section" className={styles.resources}>
+      <Box
+        component="section"
+        className={styles.resources}
+        sx={{
+          marginTop: { xs: "57px", md: "65px" },
+          padding: { xs: "32px 0", md: "64px 0" },
+        }}
+      >
         <Container maxWidth="xl">
+          <Alerts />
           <Typography
             variant="h3"
             fontWeight="700"
@@ -26,7 +35,7 @@ function ResourcesPage() {
             {t("pages.resources.title")}
           </Typography>
           <Grid container spacing={4} className={styles.resourcesGrid}>
-            <Grid size={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Link href={FilePositions1}>
                 <img
                   src={ImagePositions1}
@@ -35,7 +44,7 @@ function ResourcesPage() {
                 />
               </Link>
             </Grid>
-            <Grid size={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Link href={FilePositions2}>
                 <img
                   src={ImagePositions2}
@@ -44,7 +53,7 @@ function ResourcesPage() {
                 />
               </Link>
             </Grid>
-            <Grid size={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Link href={FilePositions3}>
                 <img
                   src={ImagePositions3}

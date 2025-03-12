@@ -3,11 +3,23 @@ import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import styles from "./styles.module.css";
-import { Container, Link, MenuItem, Typography } from "@mui/material";
+import {
+  Container,
+  Link,
+  List,
+  ListItem,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "../LanguageSelector/LanguageSelector";
 import IconAccountCircle from "@mui/icons-material/AccountCircle";
 import IconButton from "@mui/material/IconButton";
+import IconMenu from "@mui/icons-material/Menu";
+import { useAppContext } from "../AppContext/AppContext";
+import { ROUTES } from "../../routes";
+import { useState } from "react";
+import Drawer from "@mui/material/Drawer";
 
 /*
         <IconButton size="large" aria-label="show 2 new messages" color="inherit">
@@ -20,49 +32,117 @@ import IconButton from "@mui/material/IconButton";
 export default function NavBar() {
   const { t } = useTranslation("common");
 
+  const { user } = useAppContext();
+
   const pages = [
-    { name: t("components.navbar-menu.home"), path: "/" },
-    { name: t("components.navbar-menu.resources"), path: "/resources" },
+    {
+      name: t("components.navbar-menu.home"),
+      path: ROUTES.home.path,
+      target: "_self",
+    },
+    {
+      name: t("components.navbar-menu.calendar"),
+      path: ROUTES.calendar.path,
+      target: "_self",
+    },
+    !user && {
+      name: t("components.navbar-menu.membership"),
+      path: ROUTES["user-join"].path,
+      target: "_self",
+    },
+    user && {
+      name: t("components.navbar-menu.equipmment"),
+      path: ROUTES["external-form-equipment"].path,
+      target: "_blank",
+    },
+    {
+      name: t("components.navbar-menu.resources"),
+      path: ROUTES.resources.path,
+      target: "_self",
+    },
   ];
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   return (
-    <AppBar className={styles.navBar} position="sticky" elevation={0}>
+    <AppBar className={styles.navBar} position="fixed" elevation={0}>
+      <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+        <List className={styles.drawer}>
+          {pages.map((page) => (
+            <>
+              {page && (
+                <ListItem
+                  key={page.name}
+                  component={Link}
+                  href={page.path}
+                  target={page.target}
+                  className={styles.drawerItem}
+                >
+                  <Typography>{page.name}</Typography>
+                </ListItem>
+              )}
+            </>
+          ))}
+        </List>
+      </Drawer>
+
       <Container maxWidth="xl" className={styles.navContainer}>
         <Toolbar>
           <Box
             sx={{ flexGrow: 1, display: "flex", alignContent: "start", px: 0 }}
           >
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={() => setIsDrawerOpen(true)}
+              sx={{ display: { xs: "flex", md: "none" } }}
+            >
+              <IconMenu />
+            </IconButton>
             {pages.map((page) => (
-              <MenuItem
-                key={page.name}
-                disableTouchRipple
-                className={styles.navMenuItem}
-                component={Link}
-                href={page.path}
-              >
-                <Typography fontWeight={600}>{page.name}</Typography>
-              </MenuItem>
+              <>
+                {page && (
+                  <MenuItem
+                    key={page.name}
+                    disableTouchRipple
+                    className={styles.navMenuItem}
+                    component={Link}
+                    href={page.path}
+                    target={page.target}
+                    sx={{ display: { xs: "none", md: "flex" } }}
+                  >
+                    <Typography fontWeight={600}>{page.name}</Typography>
+                  </MenuItem>
+                )}
+              </>
             ))}
           </Box>
           <Box sx={{ display: "flex", alignItems: "end", px: 0 }}>
-            <Box sx={{ display: { xs: "none", md: "flex" } }}>
+            <Box sx={{ display: "flex" }}>
               <>
                 <LanguageSelector />
-                {false ? <IconButton
-              href="/user/dashboard"
-              rel="nofollow"
-              aria-label="account"
-              className={styles.navMenuAccount}
-            >
-              <IconAccountCircle />
-            </IconButton> : <MenuItem
-                disableTouchRipple
-                className={styles.navMenuLogin}
-                component={Link}
-                href="/user/login"
-              >
-                <Typography fontWeight={600}>{t("components.navbar-menu.login")}</Typography>
-              </MenuItem>}
+                {user ? (
+                  <IconButton
+                    href={ROUTES["user-dashboard"].path}
+                    rel="nofollow"
+                    aria-label="account"
+                    className={styles.navMenuAccount}
+                  >
+                    <IconAccountCircle />
+                  </IconButton>
+                ) : (
+                  <MenuItem
+                    disableTouchRipple
+                    className={styles.navMenuLogin}
+                    component={Link}
+                    href={ROUTES["user-login"].path}
+                  >
+                    <Typography fontWeight={600}>
+                      {t("components.navbar-menu.login")}
+                    </Typography>
+                  </MenuItem>
+                )}
               </>
             </Box>
           </Box>

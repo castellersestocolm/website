@@ -1,0 +1,15 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "You have now completed the registration process and are part of the Castellers d'Estocolm, welcome!" %}</p>
+    <p>{% trans "In this email attached you will find some information with hopefully answers to all your questions. However, if you still want to reach out and ask us anything the best way is through the WhatsApp community. All active members are part of it as it's where we discuss and share rehearsal information, post pictures and much more. Please note that we only accept requests into some of the groups if your phone matches the one you used to register with us. If that's not the case please do let us know and we'll fix it for you!" %}</p>
+{% endblock %}
+
+{% block email_closing %}
+    <p style="margin:0;">{% trans "See you around!" %}</p>
+{% endblock %}
+
+{% block email_button_url %}https://chat.whatsapp.com/KOvo9eolMXcA6vwwEVip1p{% endblock %}
+
+{% block email_button_text %}{% trans "Join the community" %}{% endblock %}

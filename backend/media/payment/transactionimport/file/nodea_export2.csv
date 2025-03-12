@@ -1,0 +1,6 @@
+method;amount;text;sender;reference;external_id;date_accounting;date_interest;se_swish:phone_sender;se_swish:phone_receiver
+se_swish;500,00;Calçotada Oriol Closa & Anya Kurylovich;CLOSA MARQUEZ,ORIOL;1780943338166419;f3e94100-7d42-4dde-a75f-bad0569530ec;2025-02-10;2025-02-11;123-068 88 20;070 296 59 16
+transfer;150,00;Individuell medlemskap - Rundelsgrand 6A lgh 5, 75312 Uppsala - Andrea Soler - andreasolerlm AT gmail.com;LENNEMYR AHLSTRÖM GUSTAV;;b566e651-3c3e-4bed-81b2-e95ce4ad3d37;2025-01-28;2025-01-28;;
+transfer;150,00;individuell medlemskap - Gustav Ahlström - Grindstugegatan 9A 752 57 Uppsala - gustavlennemyrATgmail.com;LENNEMYR AHLSTRÖM GUSTAV;;078cde7a-3b74-475e-ad02-436002dbba8d;2025-01-28;2025-01-28;;
+transfer;250,00;Inscripcio familiar Anna Palau i Aran Esplai;Anna Palau De Miguel;;22551e3b-e945-47ff-9df4-69c866cc8edd;2025-01-28;2025-01-28;;
+se_swish;200,00;Donació canalla Diada Berlín 2025.;CLOSA MARQUEZ,ORIOL;1779423796976562;07896fd6-e7a1-4f7d-91ea-ce4d6ba72d10;2025-01-24;2025-01-27;123-068 88 20;070 296 59 16

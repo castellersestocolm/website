@@ -1,15 +1,15 @@
-import hashlib
 import os
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db import models
-from django.utils import timezone
-from django.utils.crypto import get_random_string
+from django.db import models, transaction
 from django.utils.functional import cached_property
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from comunicat.db.mixins import Timestamps, StandardModel
+from comunicat.enums import Module
+from user.enums import FamilyMemberRole, FamilyMemberStatus, FamilyMemberRequestStatus
 from user.managers import UserManager
+from user.utils import is_over_minimum_age
 
 
 def user_picture_filename(instance, filename):
@@ -32,9 +32,16 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
         default=True,
     )
 
+    consent_pictures = models.BooleanField(default=False)
+
+    preferred_language = models.CharField(max_length=255, null=True, blank=True)
+
+    # Tracks where the user was created
+    origin_module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+    )
+
     email_verified = models.BooleanField(default=False)
-    verify_key = models.CharField(max_length=127, blank=True, null=True)
-    verify_expiration = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
 
@@ -43,6 +50,10 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
     REQUIRED_FIELDS = ("firstname", "lastname")
 
     def __str__(self) -> str:
+        if self.firstname:
+            if self.lastname:
+                return f"{self.firstname} {self.lastname} <{self.email}>"
+            return f"{self.firstname} <{self.email}>"
         return self.email
 
     def get_fullname_or_email(self) -> str:
@@ -64,28 +75,107 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
             return f"{self.firstname} {self.lastname}"
         return self.firstname
 
+    @cached_property
+    def is_adult(self):
+        return is_over_minimum_age(date=self.birthday)
+
+    @cached_property
+    def can_manage(self) -> bool:
+        if not self.birthday:
+            return False
+
+        return self.is_adult
+
+    def registration_finished(self, module: Module) -> bool:
+        if not self.birthday:
+            return False
+
+        if module == Module.TOWERS:
+            if not hasattr(self, "towers") or not self.towers.height_shoulders or not self.towers.height_arms:
+                return False
+
+        return True
+
     def disable_verify(self):
         self.email_verified = False
         self.save()
 
-    def update_verify(self):
-        chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
-        secret_key = get_random_string(32, chars)
-        self.verify_key = hashlib.sha256(
-            (secret_key + self.email).encode("utf-8")
-        ).hexdigest()
-        self.verify_expiration = timezone.now() + timezone.timedelta(days=1)
-        self.save(update_fields=("verify_key", "verify_expiration"))
+    def save(self, *args, **kwargs):
+        import pinyator.tasks
 
-    def delete_verify_key(self):
-        self.verify_key = None
-        self.save(update_fields=("verify_key",))
+        transaction.on_commit(
+            lambda: pinyator.tasks.update_or_create_user.delay(user_id=self.id)
+        )
 
-    def verify(self, verify_key):
-        if timezone.now() <= self.verify_expiration and self.verify_key == verify_key:
-            self.email_verified = True
-            self.delete_verify_key()
-            self.save(update_fields=("email_verified",))
+        super().save(*args, **kwargs)
+
+
+class TowersUser(StandardModel, Timestamps):
+    user = models.OneToOneField("User", related_name="towers", on_delete=models.CASCADE)
+
+    alias = models.CharField(unique=True)
+    height_shoulders = models.PositiveIntegerField(null=True, blank=True)
+    height_arms = models.PositiveIntegerField(null=True, blank=True)
+
+
+class Family(StandardModel, Timestamps):
+    def __str__(self) -> str:
+        member_objs = self.members.filter(
+            status=FamilyMemberStatus.ACTIVE, role=FamilyMemberRole.MANAGER
+        ).order_by("user__lastname")
+        if member_objs:
+            return "-".join([member_obj.user.lastname for member_obj in member_objs])
+        return str(self.id)
+
+    class Meta:
+        verbose_name = "family"
+        verbose_name_plural = "families"
+
+
+class FamilyMember(StandardModel, Timestamps):
+    user = models.OneToOneField(
+        User, related_name="family_member", on_delete=models.CASCADE
+    )
+    family = models.ForeignKey(Family, related_name="members", on_delete=models.CASCADE)
+    role = models.PositiveSmallIntegerField(
+        choices=((fmr.value, fmr.name) for fmr in FamilyMemberRole),
+        default=FamilyMemberRole.MEMBER,
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((fms.value, fms.name) for fms in FamilyMemberStatus),
+        default=FamilyMemberStatus.REQUESTED,
+    )
+
+    def __str__(self) -> str:
+        return str(self.user)
+
+    class Meta:
+        unique_together = ("user", "family")
+
+
+class FamilyMemberRequest(StandardModel, Timestamps):
+    user_sender = models.ForeignKey(
+        User, related_name="family_member_sent_requests", on_delete=models.CASCADE
+    )
+    email_receiver = models.EmailField()
+    user_receiver = models.ForeignKey(
+        User,
+        null=True,
+        related_name="family_member_received_requests",
+        on_delete=models.CASCADE,
+    )
+    family = models.ForeignKey(
+        Family, related_name="member_requests", on_delete=models.CASCADE
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((fmrs.value, fmrs.name) for fmrs in FamilyMemberRequestStatus),
+        default=FamilyMemberRequestStatus.REQUESTED,
+    )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        self.user = User.objects.filter(email=self.email_receiver).first()
+        return super().save(*args, **kwargs)
 
 
 class GoogleUser(User):

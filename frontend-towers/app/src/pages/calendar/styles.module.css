@@ -1,0 +1,135 @@
+.dashboard {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+}
+
+.dashboardTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+}
+
+.dashboardTemporary {
+  margin-bottom: 8px !important;
+}
+
+.link {
+  display: inline-flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.iconEast {
+  margin-top: -2px;
+  margin-left: 4px;
+}
+
+.dashboardGrid {
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.userFamilyBox {
+}
+
+.userFamilyList {
+  width: 100%;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  div:first-of-type {
+    min-width: 32px !important;
+  }
+}
+
+.userFamilyListActionButtons {
+  align-self: stretch;
+  align-items: center;
+  display: flex;
+  margin: -4px 0;
+}
+
+.userFamilyMemberUpdate {
+  padding: 12px 16px 16px 16px;
+}
+
+.calendarAttendanceUpdate {
+  padding: 8px 16px;
+}
+
+.userFamilyEmpty {
+  padding: 12px 16px 16px 16px;
+}
+
+.userTopBox {
+  padding: 12px 16px;
+  background-color: var(--mui-palette-primary-main);
+}
+
+.userDetailsBox {
+  padding: 8px 16px;
+  flex: 1 1 auto;
+}
+
+.calendarBox {
+  flex-grow: 1;
+
+  div div div,
+  div div:nth-child(2) {
+    border-bottom: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+  }
+  div div div p:last-child,
+  div div:nth-child(2) span:nth-of-type(7n) {
+    border-right: 0 !important;
+  }
+  div div:nth-child(2) span:nth-last-child(-n + 7) {
+    border-bottom: 0 !important;
+  }
+  button {
+    color: #1d1d1d;
+  }
+}
+
+.userMembershipInfoBox {
+  padding: 12px 16px 16px 16px;
+}
+
+.userList {
+  li {
+    padding: 0 !important;
+    div {
+      min-width: 32px !important;
+    }
+  }
+}
+
+.dashboardMembershipModule {
+  display: block;
+}
+
+.paymentRefundIcon {
+  margin-bottom: -2px;
+}
+
+.mapCard {
+  display: flex;
+  flex: 1;
+  border: var(--mui-palette-divider) solid 1px;
+  border-radius: 4px;
+  padding: 0 !important;
+  margin-bottom: 0;
+  min-height: 300px;
+}
+
+.mapBox {
+  display: flex;
+  flex: 1;
+  padding: 0 !important;
+  margin-bottom: 0;
+}
