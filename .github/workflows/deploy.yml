@@ -19,6 +19,7 @@ jobs:
       name: Build backend
       with:
         name: backend
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
   build-frontend-org:
     runs-on: ubuntu-latest
