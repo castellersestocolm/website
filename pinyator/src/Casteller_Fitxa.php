@@ -136,8 +136,10 @@
 		<div class="form_group">
 			<label>ID</label>
 			<p><?php echo $id ?></p>
+			<input type="hidden" name="id" value="<?php echo $id ?>">
 			<label>MalNom</label>
 			<p><?php echo $malnom ?></p>
+			<input type="hidden" name="malnom" value="<?php echo $malnom ?>">
 			<table>
 				<tr>
 					<th>Lesió</th><th>Portar peu</th><th>Novell/a</th><th>Vacuna COVID</th>
@@ -172,17 +174,22 @@
 			<br>
 			<label>Nom</label>
 			<p><?php echo $nom ?></p>
+			<input type="hidden" name="nom" value="<?php echo nom ?>">
 			<label>Cognoms</label>
 			<p><?php echo $cognom1 ?></p>
+			<input type="hidden" name="cognom1" value="<?php echo $cognom1 ?>">
+			<input type="hidden" name="cognom2" value="<?php echo $cognom2 ?>">
 			<table style="width:100%;">
 				<tr>
 					<td style="padding-right:20px">
 						<label>Altura espatlles</label>
 						<p><?php echo $altura ?></p>
+			            <input type="hidden" name="altura" value="<?php echo $altura ?>">
 					</td>
 					<td>
 						<label>Altura mans</label>
 						<p><?php echo $alturaTroncs ?></p>
+			            <input type="hidden" name="altura" value="<?php echo $alturaTroncs ?>">
 					</td>
 				</tr>
 			</table>
@@ -313,6 +320,7 @@
 			<br><br>
 			<label>Baixa</label>
 			<p><?php if ($estat == 2) echo "Sí"; else echo "No";?></p>
+			<input type="hidden" name="estat" value=<?php echo $estat ?>>
 			<br>
 			<button type="Submit" name= "Desa" value="desar" class="boto">Desa</button>
 			<button type="Submit" name= "Desa" value="desarievents" class="boto" style="float:right">Desa sense sortir</button>

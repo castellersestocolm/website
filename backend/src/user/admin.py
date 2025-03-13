@@ -1,14 +1,19 @@
+from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.urls import reverse
 from django.utils import translation
 from django.utils.safestring import mark_safe
 
 from notify.enums import EmailType
-from user.models import User, FamilyMember, Family, FamilyMemberRequest
+from user.models import User, FamilyMember, Family, FamilyMemberRequest, TowersUser
 from django.conf import settings
 
 import user.api
 import notify.tasks
+
+from django.utils.translation import gettext_lazy as _
 
 
 class FamilyMemberRequestSentInline(admin.TabularInline):
@@ -42,6 +47,42 @@ def send_welcome_email(modeladmin, request, queryset):
             )
 
 
+class UserAdminForm(forms.ModelForm):
+    alias = forms.CharField()
+    height_shoulders = forms.IntegerField(min_value=0, max_value=200)
+    height_arms = forms.IntegerField(min_value=0, max_value=250)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if hasattr(self.instance, "towers"):
+            self.fields["alias"].initial = self.instance.towers.alias
+            self.fields["height_shoulders"].initial = self.instance.towers.height_shoulders
+            self.fields["height_arms"].initial = self.instance.towers.height_arms
+
+    def clean(self):
+        super().clean()
+
+        if hasattr(self.instance, "towers") and TowersUser.objects.filter(alias=self.cleaned_data["alias"]).exclude(id=self.instance.towers.id).exists():
+            raise ValidationError({"alias": _("Another user already has the same alias.")})
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        self.save_m2m()
+
+        if hasattr(instance, "towers"):
+            instance.towers.alias = self.cleaned_data["alias"]
+            instance.towers.height_shoulders = self.cleaned_data["height_shoulders"]
+            instance.towers.height_arms = self.cleaned_data["height_arms"]
+            instance.towers.save(update_fields=("alias", "height_shoulders", "height_arms"))
+
+        return instance
+
+    class Meta:
+        model = User
+        fields = "__all__"
+
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     search_fields = ("id", "email", "firstname", "lastname", "phone")
@@ -61,15 +102,13 @@ class UserAdmin(admin.ModelAdmin):
         "groups",
         "last_login",
         "created_at",
-        "alias",
-        "height_shoulders",
-        "height_arms",
         "family",
     )
     exclude = ("password", "user_permissions")
     ordering = ("-created_at",)
     inlines = (FamilyMemberRequestSentInline, FamilyMemberRequestReceivedInline)
     actions = (send_verification_email, send_welcome_email)
+    form = UserAdminForm
 
     fieldset_base = (
         (
@@ -111,6 +150,9 @@ class UserAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("towers")
 
     def get_fieldsets(self, request, obj=None):
         if hasattr(obj, "towers") and settings.MODULE_TOWERS_USER_FIELDS:
