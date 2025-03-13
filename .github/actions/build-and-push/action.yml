@@ -18,10 +18,13 @@ runs:
         ref: ${{ github.sha }}
 
     - name: Build image
+      shell: bash
       run: docker build ${{ inputs.name }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
 
     - name: Log in to registry
+      shell: bash
       run: echo "${{ inputs.github_token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Push image
+      shell: bash
       run: docker push ghcr.io/castellersestocolm/${{ inputs.name }} --all-tags
