@@ -70,9 +70,18 @@ def logout(request: HttpRequest) -> None:
 def generate_alias(firstname: str, lastname: str) -> str:
     existing_aliases = TowersUser.objects.values_list("alias", flat=True)
 
-    alias = base_alias = unicodedata.normalize("NFKD", firstname + lastname).replace(
+    firstname = unicodedata.normalize("NFKD", firstname).replace(
         " ", ""
     )
+
+    if firstname not in existing_aliases:
+        return firstname
+
+    lastname = unicodedata.normalize("NFKD", firstname).replace(
+        " ", ""
+    )
+
+    alias = base_alias = firstname + lastname
 
     while alias in existing_aliases:
         alias = base_alias + str(random.randint(0, 10000))

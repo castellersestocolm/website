@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   backend:
-    image: comunicat/backend
+    image: ghcr.io/castellersestocolm/backend
     build: backend
     stdin_open: true
     tty: true
@@ -22,7 +22,7 @@ services:
     env_file:
       - ./envs/local.env
   frontend-towers:
-    image: comunicat/frontend-towers
+    image: ghcr.io/castellersestocolm/frontend-towers
     build: frontend-towers
     stdin_open: true
     tty: true
@@ -38,7 +38,7 @@ services:
     env_file:
       - ./envs/local.env
   frontend-org:
-    image: comunicat/frontend-org
+    image: ghcr.io/castellersestocolm/frontend-org
     build: frontend-org
     stdin_open: true
     tty: true
@@ -76,7 +76,7 @@ services:
     networks:
       - comunicat
   worker:
-    image: comunicat/backend
+    image: ghcr.io/castellersestocolm/backend
     stdin_open: true
     tty: true
     entrypoint: [ "celery" ]
@@ -92,7 +92,7 @@ services:
     env_file:
       - ./envs/local.env
   beat:
-    image: comunicat/backend
+    image: ghcr.io/castellersestocolm/backend
     entrypoint: [ "celery" ]
     command:
       [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
@@ -106,7 +106,7 @@ services:
     env_file:
       - ./envs/local.env
   pinyator:
-    image: comunicat/pinyator
+    image: ghcr.io/castellersestocolm/pinyator
     build: pinyator
     stdin_open: true
     tty: true
@@ -122,7 +122,7 @@ services:
     env_file:
       - ./envs/local.env
   php:
-    image: comunicat/php
+    image: ghcr.io/castellersestocolm/php
     build: php
     stdin_open: true
     tty: true
