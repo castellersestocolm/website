@@ -27,8 +27,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    - name: Build frontend-org
-      run: docker build frontend-org --tag comunicat/frontend-org:${{ github.sha }} --tag comunicat/frontend-org:${{ github.ref_name }}
+
+    - uses: ./.github/actions/build-and-push
+      name: Build frontend-org
+      with:
+        name: frontend-org
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
   build-frontend-towers:
     runs-on: ubuntu-latest
@@ -36,8 +40,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    - name: Build frontend-towers
-      run: docker build frontend-towers --tag comunicat/frontend-towers:${{ github.sha }} --tag comunicat/frontend-towers:${{ github.ref_name }}
+
+    - uses: ./.github/actions/build-and-push
+      name: Build frontend-towers
+      with:
+        name: frontend-towers
+        github_token: ${{ secrets.GITHUB_TOKEN }}
       
   build-pinyator:
     runs-on: ubuntu-latest
@@ -45,8 +53,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    - name: Build pinyator
-      run: docker build pinyator --tag comunicat/pinyator:${{ github.sha }} --tag comunicat/pinyator:${{ github.ref_name }}
+
+    - uses: ./.github/actions/build-and-push
+      name: Build pinyator
+      with:
+        name: pinyator
+        github_token: ${{ secrets.GITHUB_TOKEN }}
       
   build-php:
     runs-on: ubuntu-latest
@@ -54,5 +66,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    - name: Build php
-      run: docker build php --tag comunicat/php:${{ github.sha }} --tag comunicat/php:${{ github.ref_name }}
+
+    - uses: ./.github/actions/build-and-push
+      name: Build php
+      with:
+        name: php
+        github_token: ${{ secrets.GITHUB_TOKEN }}
