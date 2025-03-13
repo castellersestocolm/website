@@ -23,7 +23,7 @@ jobs:
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       
     - name: Push image
-      run: docker push comunicat/backend
+      run: docker push ghcr.io/comunicat/backend --all-tags
 
   build-frontend-org:
     runs-on: ubuntu-latest
