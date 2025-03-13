@@ -4,6 +4,9 @@ on:
   push:
     branches: [ "master", "dev" ]
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
 
   build-backend:
@@ -12,8 +15,15 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+    
     - name: Build backend
       run: docker build backend --tag comunicat/backend:${{ github.sha }} --tag comunicat/backend:${{ github.ref_name }}
+    
+    - name: Log in to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+    - name: Push image
+      run: docker push comunicat/backend
 
   build-frontend-org:
     runs-on: ubuntu-latest
