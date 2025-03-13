@@ -1,31 +1,52 @@
-name: Build images
+name: Deploy
 
 on:
   push:
     branches: [ "master", "dev" ]
-  pull_request:
-    branches: [ "master", "dev" ]
 
 jobs:
 
-  build:
-
+  build-backend:
     runs-on: ubuntu-latest
-
+    name: Build backend
+    
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Build the backend
+    - name: Build backend
       run: docker build backend --tag comunicat/backend:${{ github.sha }} --tag comunicat/backend:${{ github.ref_name }}
 
-    - name: Build the organisation frontend
+  build-frontend-org:
+    runs-on: ubuntu-latest
+    name: Build frontend-org
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build frontend-org
       run: docker build frontend-org --tag comunicat/frontend-org:${{ github.sha }} --tag comunicat/frontend-org:${{ github.ref_name }}
 
-    - name: Build the towers frontend
+  build-frontend-towers:
+    runs-on: ubuntu-latest
+    name: Build frontend-towers
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build frontend-towers
       run: docker build frontend-towers --tag comunicat/frontend-towers:${{ github.sha }} --tag comunicat/frontend-towers:${{ github.ref_name }}
       
-    - name: Build the pinyator
+  build-pinyator:
+    runs-on: ubuntu-latest
+    name: Build pinyator
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build pinyator
       run: docker build pinyator --tag comunicat/pinyator:${{ github.sha }} --tag comunicat/pinyator:${{ github.ref_name }}
       
-    - name: Build the pinyator server
+  build-php:
+    runs-on: ubuntu-latest
+    name: Build php
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build php
       run: docker build php --tag comunicat/php:${{ github.sha }} --tag comunicat/php:${{ github.ref_name }}
