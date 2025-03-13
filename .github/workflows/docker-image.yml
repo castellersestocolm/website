@@ -1,0 +1,31 @@
+name: Build images
+
+on:
+  push:
+    branches: [ "master", "dev" ]
+  pull_request:
+    branches: [ "master", "dev" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build the backend
+      run: docker build backend --tag comunicat/backend:${{ github.sha }} --tag comunicat/backend:${{ github.ref_name }}
+
+    - name: Build the organisation frontend
+      run: docker build frontend-org --tag comunicat/frontend-org:${{ github.sha }} --tag comunicat/frontend-org:${{ github.ref_name }}
+
+    - name: Build the towers frontend
+      run: docker build frontend-towers --tag comunicat/frontend-towers:${{ github.sha }} --tag comunicat/frontend-towers:${{ github.ref_name }}
+      
+    - name: Build the pinyator
+      run: docker build pinyator --tag comunicat/pinyator:${{ github.sha }} --tag comunicat/pinyator:${{ github.ref_name }}
+      
+    - name: Build the pinyator server
+      run: docker build php --tag comunicat/php:${{ github.sha }} --tag comunicat/php:${{ github.ref_name }}
