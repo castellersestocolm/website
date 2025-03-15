@@ -79,16 +79,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
+    # needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
     name: Deploy
 
     steps:
+    - uses: actions/checkout@v4
+
     - name: Test connection
       uses: appleboy/ssh-action@v1.2.2
       with:
         host: ${{ secrets.SSH_REMOTE_HOST }}
         username: ${{ secrets.SSH_REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        command_timeout: 5m
         script: | 
           touch "test.txt"
