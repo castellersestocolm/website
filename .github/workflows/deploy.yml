@@ -75,6 +75,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
     name: Deploy
 
     steps:
