@@ -88,10 +88,13 @@ jobs:
 
     - name: Test connection
       uses: appleboy/ssh-action@v1.2.2
+      env:
+        BUILD_TARGET: ${{ github.sha }}
       with:
         host: ${{ secrets.SSH_REMOTE_HOST }}
         username: ${{ secrets.SSH_REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        envs: BUILD_TARGET
         script: |
-          export BUILD_TARGET=${{ github.sha }}
+          cat $BUILD_TARGET
           docker stack deploy --compose-file website/docker-compose.yml comunicat
