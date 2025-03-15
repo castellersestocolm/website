@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BUILD_TARGET: ${{ github.ref_name }}
+  BUILD_TARGET: ${{ github.sha }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
