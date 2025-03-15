@@ -7,6 +7,9 @@ on:
 env:
   REGISTRY: ghcr.io
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   build-backend:
     runs-on: ubuntu-latest
