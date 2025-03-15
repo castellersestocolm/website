@@ -6,7 +6,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BUILD_TARGET: ${{ github.sha }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -89,6 +88,8 @@ jobs:
 
     - name: Test connection
       uses: appleboy/ssh-action@v1.2.2
+      env:
+        BUILD_TARGET: ${{ github.sha }}
       with:
         host: ${{ secrets.SSH_REMOTE_HOST }}
         username: ${{ secrets.SSH_REMOTE_USER }}
