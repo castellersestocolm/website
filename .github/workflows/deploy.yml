@@ -6,6 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  BUILD_TARGET: ${{ github.ref_name }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -92,5 +93,6 @@ jobs:
         host: ${{ secrets.SSH_REMOTE_HOST }}
         username: ${{ secrets.SSH_REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        envs: BUILD_TARGET
         script: | 
           docker stack deploy --compose-file website/docker-compose.yml comunicat
