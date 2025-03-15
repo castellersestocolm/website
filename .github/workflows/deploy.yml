@@ -79,7 +79,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment: master
+    environment: ${{ github.ref_name }}
     # needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
     name: Deploy
 
