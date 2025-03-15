@@ -93,4 +93,4 @@ jobs:
         username: ${{ secrets.SSH_REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: | 
-          touch "test.txt"
+          docker stack deploy --compose-file docker-compose.yml comunicat
