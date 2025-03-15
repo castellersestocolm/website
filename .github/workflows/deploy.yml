@@ -72,3 +72,17 @@ jobs:
       with:
         name: php
         github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+
+    steps:
+      - uses: serversideup/github-action-docker-swarm-deploy@v3
+        with:
+          ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+          ssh_remote_hostname: "${{ secrets.SSH_REMOTE_HOST }}"
+          registry: "ghcr.io"
+          registry-username: "${{ github.actor }}"
+          registry-token: "${{ secrets.GITHUB_TOKEN }}"
+          stack_name: "comunicat"

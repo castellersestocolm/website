@@ -57,3 +57,13 @@ inet_protocols = ipv4
 myorigin = /etc/mailname
 masquerade_domains = castellersestocolm.se lesquatrebarres.org
 ```
+
+### Docker stack
+
+Create a personal token with "package:read" access.
+
+```bash
+docker login ghcr.io --username $GITHUB_USERNAME -p $GITHUB_TOKEN
+docker swarm init --advertise-addr $PUBLIC_IP
+docker stack deploy --compose-file docker-compose.yml comunicat
+```
