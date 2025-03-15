@@ -84,7 +84,7 @@ jobs:
 
     steps:
     - name: Test connection
-      uses: appleboy/ssh-action@v1
+      uses: appleboy/ssh-action@v1.2.2
       with:
         host: ${{ secrets.SSH_REMOTE_HOST }}
         username: ${{ secrets.SSH_REMOTE_USER }}
