@@ -13,6 +13,7 @@ concurrency:
 jobs:
   build-backend:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     name: Build backend
     
     steps:
@@ -40,6 +41,7 @@ jobs:
 
   build-frontend-towers:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     name: Build frontend-towers
     
     steps:
@@ -60,6 +62,7 @@ jobs:
       
   build-pinyator:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     name: Build pinyator
     
     steps:
@@ -74,6 +77,7 @@ jobs:
       
   build-php:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     name: Build php
     
     steps:
