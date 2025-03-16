@@ -12,6 +12,24 @@ inputs:
   github_token:
     description: The GitHub token secret
     required: true
+  build_target:
+    description: The build target (dev/live)
+    required: false
+  react_app_api_base_url:
+    description: The base URL for the API
+    required: false
+  react_app_org_base_url:
+    description: The base URL for the org site
+    required: false
+  react_app_org_info_email:
+    description: The email for the org site
+    required: false
+  react_app_towers_base_url:
+    description: The base URL for the towers site
+    required: false
+  react_app_towers_info_email:
+    description: The email for the towers site
+    required: false
 
 runs:
   using: "composite"
@@ -23,7 +41,18 @@ runs:
 
     - name: Build image
       shell: bash
-      run: docker build ${{ inputs.name }} -f ${{ inputs.name }}/${{ inputs.dockerfile }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
+      run: |
+        docker build ${{ inputs.name }} \
+        -f ${{ inputs.name }}/${{ inputs.dockerfile }} \
+        --build-arg BUILD_TARGET=${{ inputs.build_target }} \
+        --build-arg BUILD_TAG=${{ github.sha }} \
+        --build-arg REACT_APP_API_BASE_URL=${{ inputs.react_app_api_base_url }} \
+        --build-arg REACT_APP_ORG_BASE_URL=${{ inputs.react_app_org_base_url }} \
+        --build-arg REACT_APP_ORG_INFO_EMAIL=${{ inputs.react_app_org_info_email }} \
+        --build-arg REACT_APP_TOWERS_BASE_URL=${{ inputs.react_app_towers_base_url }} \
+        --build-arg REACT_APP_TOWERS_INFO_EMAIL=${{ inputs.react_app_towers_info_email }} \
+        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
+        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
 
     - name: Log in to registry
       shell: bash

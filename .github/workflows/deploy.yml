@@ -23,6 +23,7 @@ jobs:
       with:
         name: backend
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        build_target: ${{ env.BUILD_TARGET }}
 
 #  build-frontend-org:
 #    runs-on: ubuntu-latest
@@ -50,6 +51,12 @@ jobs:
         name: frontend-towers
         dockerfile: Dockerfile-prod
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        build_target: ${{ env.BUILD_TARGET }}
+        react_app_api_base_url: ${{ env.REACT_APP_API_BASE_URL }}
+        react_app_org_base_url: ${{ env.REACT_APP_ORG_BASE_URL }}
+        react_app_org_info_email: ${{ env.REACT_APP_ORG_INFO_EMAIL }}
+        react_app_towers_base_url: ${{ env.REACT_APP_TOWERS_BASE_URL }}
+        react_app_towers_info_email: ${{ env.REACT_APP_TOWERS_INFO_EMAIL }}
       
   build-pinyator:
     runs-on: ubuntu-latest
@@ -63,6 +70,7 @@ jobs:
       with:
         name: pinyator
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        build_target: ${{ env.BUILD_TARGET }}
       
   build-php:
     runs-on: ubuntu-latest
@@ -76,6 +84,7 @@ jobs:
       with:
         name: php
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        build_target: ${{ env.BUILD_TARGET }}
 
   deploy:
     runs-on: ubuntu-latest
