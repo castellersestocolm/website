@@ -6,8 +6,6 @@ const SvgComponent = (props) => (
     aria-hidden="true"
     className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
     data-testid="ScheduleIcon"
-    viewBox="0 0 24 24"
-    {...props}
   >
     <g fillRule="evenodd" clipRule="evenodd">
       <path

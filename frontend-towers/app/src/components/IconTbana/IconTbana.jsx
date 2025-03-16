@@ -8,7 +8,6 @@ const SvgIcon = (props) => (
     className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium styles_rehearsalsIcon__YK7+E css-4uxqju-MuiSvgIcon-root"
     data-testid="ScheduleIcon"
     version="1.1"
-    viewBox="0 0 24 24"
   >
     <g id="g919" fill="none" stroke="currentColor">
       <circle
