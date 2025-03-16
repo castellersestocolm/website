@@ -65,5 +65,5 @@ Create a personal token with "package:read" access.
 ```bash
 docker login ghcr.io --username $GITHUB_USERNAME -p $GITHUB_TOKEN
 docker swarm init --advertise-addr $PUBLIC_IP
-docker stack deploy --compose-file docker-compose.yml comunicat
+docker stack deploy --with-registry-auth --compose-file docker-compose-prod.yml --detach=true comunicat
 ```

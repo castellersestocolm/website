@@ -1,10 +1,8 @@
-FROM node:18-alpine
+FROM node:23-alpine
 
 WORKDIR /frontend-towers
 
-COPY . frontend-towers
-
-WORKDIR /frontend-towers/frontend-towers/app
+COPY app .
 
 RUN npm install
 

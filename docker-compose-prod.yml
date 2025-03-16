@@ -47,24 +47,28 @@ services:
     env_file:
       - ./envs/local.env
   frontend-towers:
-    image: ghcr.io/castellersestocolm/frontend-towers:${BUILD_TARGET:-dev}
-    build: frontend-towers
+    image: ghcr.io/castellersestocolm/frontend-towers-prod:${BUILD_TARGET:-dev}
+    build:
+      context: frontend-towers
+      dockerfile: Dockerfile-prod
+      args:
+        - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL:-http://localhost:8000/api/1.0}
+        - REACT_APP_ORG_BASE_URL=${REACT_APP_ORG_BASE_URL:-http://localhost:3200}
+        - REACT_APP_ORG_INFO_EMAIL=${REACT_APP_ORG_INFO_EMAIL:-info@lesquatrebarres.org}
+        - REACT_APP_TOWERS_BASE_URL=${REACT_APP_TOWERS_BASE_URL:-http://localhost:3100}
+        - REACT_APP_TOWERS_INFO_EMAIL=${REACT_APP_TOWERS_INFO_EMAIL:-info@castellersestocolm.se}
     stdin_open: true
     tty: true
     restart: on-failure
-    entrypoint: ["npm"]
-    command: ["start"]
     networks:
       - comunicat
     volumes:
       - ./frontend-towers/app:/frontend-towers/frontend-towers/app:cached
     ports:
-      - target: 3000
+      - target: 80
         published: 3200
         protocol: tcp
         mode: host
-    env_file:
-      - ./envs/local.env
   database:
     image: postgres:17.2
     ports:

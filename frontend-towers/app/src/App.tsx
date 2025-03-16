@@ -16,14 +16,13 @@ import common_ca from "./translations/ca/common.json";
 import LngDetector from "i18next-browser-languagedetector";
 import Box from "@mui/material/Box";
 import * as React from "react";
-import { apiEventList, apiUserMe } from "./api";
+import { apiUserMe } from "./api";
 import AppContext from "./components/AppContext/AppContext";
 import { useState } from "react";
 import UserDashboardPage from "./pages/user-dashboard";
 import { ROUTES } from "./routes";
 import UserVerifyPage from "./pages/user-verify";
 import CalendarPage from "./pages/calendar";
-import { EventType } from "./enums";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
