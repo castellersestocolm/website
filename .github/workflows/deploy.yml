@@ -91,11 +91,12 @@ jobs:
     - uses: appleboy/ssh-action@v1.2.2
       name: Deploy
       env:
-        BUILD_TARGET: ${{ github.sha }}
+        BUILD_TAG: ${{ github.sha }}
+        BUILD_TARGET: ${{ env.BUILD_TARGET }}
       with:
         host: ${{ secrets.SSH_REMOTE_HOST }}
         username: ${{ secrets.SSH_REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        envs: BUILD_TARGET
+        envs: BUILD_TAG,BUILD_TARGET
         script: |
           docker stack deploy --with-registry-auth --compose-file website/docker-compose-prod.yml --detach=true comunicat
