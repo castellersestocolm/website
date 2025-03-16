@@ -27,25 +27,25 @@ services:
       - redis
     env_file:
       - ./envs/local.env
-  frontend-org:
-    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TARGET:-dev}
-    build: frontend-org
-    stdin_open: true
-    tty: true
-    restart: on-failure
-    entrypoint: ["npm"]
-    command: ["start"]
-    networks:
-      - comunicat
-    volumes:
-      - ./frontend-org/app:/frontend-org/frontend-org/app:cached
-    ports:
-      - target: 3000
-        published: 3100
-        protocol: tcp
-        mode: host
-    env_file:
-      - ./envs/local.env
+#  frontend-org:
+#    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TARGET:-dev}
+#    build: frontend-org
+#    stdin_open: true
+#    tty: true
+#    restart: on-failure
+#    entrypoint: ["npm"]
+#    command: ["start"]
+#    networks:
+#      - comunicat
+#    volumes:
+#      - ./frontend-org/app:/frontend-org/frontend-org/app:cached
+#    ports:
+#      - target: 3000
+#        published: 3100
+#        protocol: tcp
+#        mode: host
+#    env_file:
+#      - ./envs/local.env
   frontend-towers:
     image: ghcr.io/castellersestocolm/frontend-towers-prod:${BUILD_TARGET:-dev}
     build:

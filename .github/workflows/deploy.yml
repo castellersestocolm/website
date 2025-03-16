@@ -24,18 +24,18 @@ jobs:
         name: backend
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-frontend-org:
-    runs-on: ubuntu-latest
-    name: Build frontend-org
-    
-    steps:
-    - uses: actions/checkout@v4
-
-    - uses: ./.github/actions/build-and-push
-      name: Build frontend-org
-      with:
-        name: frontend-org
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+#  build-frontend-org:
+#    runs-on: ubuntu-latest
+#    name: Build frontend-org
+#
+#    steps:
+#    - uses: actions/checkout@v4
+#
+#    - uses: ./.github/actions/build-and-push
+#      name: Build frontend-org
+#      with:
+#        name: frontend-org
+#        github_token: ${{ secrets.GITHUB_TOKEN }}
 
   build-frontend-towers:
     runs-on: ubuntu-latest
@@ -48,6 +48,7 @@ jobs:
       name: Build frontend-towers
       with:
         name: frontend-towers
+        dockerfile: Dockerfile-prod
         github_token: ${{ secrets.GITHUB_TOKEN }}
       
   build-pinyator:

@@ -5,6 +5,10 @@ inputs:
   name:
     description: The image name
     required: true
+  dockerfile:
+    description: The dockerfile location
+    required: false
+    default: Dockerfile
   github_token:
     description: The GitHub token secret
     required: true
@@ -19,7 +23,7 @@ runs:
 
     - name: Build image
       shell: bash
-      run: docker build ${{ inputs.name }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
+      run: docker build ${{ inputs.name }} -f ${{ inputs.dockerfile }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
 
     - name: Log in to registry
       shell: bash
