@@ -6,6 +6,7 @@ const SvgComponent = (props) => (
     aria-hidden="true"
     className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
     data-testid="ScheduleIcon"
+    {...props}
   >
     <path
       stroke="currentColor"
