@@ -42,7 +42,7 @@ runs:
     - name: Build image
       shell: bash
       run: |
-        docker build ${{ inputs.name }} \
+        docker build --no-cache ${{ inputs.name }} \
         -f ${{ inputs.name }}/${{ inputs.dockerfile }} \
         --build-arg BUILD_TARGET=${{ inputs.build_target }} \
         --build-arg BUILD_TAG=${{ github.sha }} \
@@ -52,7 +52,8 @@ runs:
         --build-arg REACT_APP_TOWERS_BASE_URL=${{ inputs.react_app_towers_base_url }} \
         --build-arg REACT_APP_TOWERS_INFO_EMAIL=${{ inputs.react_app_towers_info_email }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
-        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
+        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }} \
+        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:latest
 
     - name: Log in to registry
       shell: bash
