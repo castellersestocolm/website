@@ -2,11 +2,11 @@ version: "3.9"
 
 services:
   backend:
-    image: ghcr.io/castellersestocolm/backend:${-BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
     build:
       context: backend
       args:
-        - BUILD_TARGET=${-BUILD_TARGET:-dev}
+        - BUILD_TARGET=${BUILD_TARGET:-dev}
     stdin_open: true
     tty: true
     restart: on-failure
@@ -28,7 +28,7 @@ services:
     env_file:
       - ./envs/local.env
   frontend-org:
-    image: ghcr.io/castellersestocolm/frontend-org:${-BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TAG:-dev}
     build: frontend-org
     stdin_open: true
     tty: true
@@ -47,7 +47,7 @@ services:
     env_file:
       - ./envs/local.env
   frontend-towers:
-    image: ghcr.io/castellersestocolm/frontend-towers:${-BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/frontend-towers:${BUILD_TAG:-dev}
     build: frontend-towers
     stdin_open: true
     tty: true
@@ -88,7 +88,7 @@ services:
     networks:
       - comunicat
   worker:
-    image: ghcr.io/castellersestocolm/backend:${-BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
     stdin_open: true
     tty: true
     entrypoint: [ "celery" ]
@@ -104,7 +104,7 @@ services:
     env_file:
       - ./envs/local.env
   beat:
-    image: ghcr.io/castellersestocolm/backend:${-BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
     entrypoint: [ "celery" ]
     command:
       [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
@@ -118,7 +118,7 @@ services:
     env_file:
       - ./envs/local.env
   pinyator:
-    image: ghcr.io/castellersestocolm/pinyator:${-BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/pinyator:${BUILD_TAG:-dev}
     build: pinyator
     stdin_open: true
     tty: true
@@ -137,7 +137,7 @@ services:
     env_file:
       - ./envs/local.env
   php:
-    image: ghcr.io/castellersestocolm/php:${-BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/php:${BUILD_TAG:-dev}
     build: php
     stdin_open: true
     tty: true
