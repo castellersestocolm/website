@@ -23,7 +23,7 @@ runs:
 
     - name: Build image
       shell: bash
-      run: docker build ${{ inputs.name }} -f ${{ inputs.dockerfile }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
+      run: docker build ${{ inputs.name }} -f ${{ inputs.name }}/${{ inputs.dockerfile }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }}
 
     - name: Log in to registry
       shell: bash
