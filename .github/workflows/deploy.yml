@@ -81,7 +81,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment: ${{ github.ref_name }}
-    needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
+    # needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
+    needs: [ build-backend, build-frontend-towers, build-pinyator, build-php ]
     name: Deploy
 
     steps:
