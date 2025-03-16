@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-16 12:39+0100\n"
+"POT-Creation-Date: 2025-03-16 11:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,33 +26,34 @@ msgstr "skapad"
 msgid "updated"
 msgstr "uppdaterad"
 
-#: comunicat/rest/serializers/user.py:191
+#: comunicat/rest/serializers/user.py:196
 #, python-format
 msgid "The minimum age to join is %s."
 msgstr "Minsta ålder för att gå med är %s."
 
-#: comunicat/rest/serializers/user.py:200
+#: comunicat/rest/serializers/user.py:205
 #, python-format
 msgid "Only the following languages are allowed: %s."
 msgstr ""
 
-#: comunicat/rest/serializers/user.py:211
-#: comunicat/rest/serializers/user.py:270
-#: comunicat/rest/serializers/user.py:310
+#: comunicat/rest/serializers/user.py:216
+#: comunicat/rest/serializers/user.py:275
+#: comunicat/rest/serializers/user.py:315
 #, python-format
 msgid "Members over %s must consent in order to become members."
 msgstr ""
 
-#: comunicat/rest/serializers/user.py:230
+#: comunicat/rest/serializers/user.py:235
+#: comunicat/rest/serializers/user.py:342
 msgid "The passwords do not match."
 msgstr "Lösenorden stämmer inte överens."
 
-#: comunicat/rest/serializers/user.py:259
+#: comunicat/rest/serializers/user.py:264
 #, python-format
 msgid "The family member must be below %s to update."
 msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
 
-#: comunicat/rest/serializers/user.py:299
+#: comunicat/rest/serializers/user.py:304
 #, fuzzy, python-format
 #| msgid "The family member must be below %s to update."
 msgid "The family member must be below %s to create."
@@ -103,8 +104,82 @@ msgstr "Skickat med"
 msgid "by"
 msgstr "av"
 
+#: comunicat/templates/email/towers/user/imported.html:5
+msgid ""
+"We are very excited to introduce to you our new website, a new way of "
+"managing your membership and registering for rehearsals. We are reaching out "
+"to give you a quick run down of some new features and hopefully answer any "
+"questions you may have regarding the system."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:6
+msgid "Right now, the following features are up and running on our site."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:8
+msgid "Membership and family management."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:9
+msgid "Calendar and events registration."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:10
+msgid "Payments overview."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:11
+msgid "Google single-sign on (optional)."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:13
+msgid ""
+"We have more features coming soon, and will keep you all updated as we "
+"continue to implement them on the site."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:14
+msgid ""
+"As you currently have a membership registered we have automatically migrated "
+"your data to the new platform, you can set a new password via the link below "
+"or use Google single-sign on directly on our website if you wish to."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:19
+msgid "Set a new password"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:22
+msgid "Have any more questions? Feel free to drop an email at"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:22
+msgid "or reach out on WhatsApp!"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/imported.html:26
+#: comunicat/templates/email/towers/user/welcome.html:10
+msgid "See you around!"
+msgstr ""
+
 #: comunicat/templates/email/towers/user/invite.html:5
 msgid "You have been invited to join a family membership by"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/invite.html:7
+msgid ""
+"As you are already a member the only thing you need to do is to accept the "
+"invitation if you wish to merge your families. You can do this by logging "
+"in, navigating to your dashboard and reviewing your invitations under "
+"\"Family requests\"."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/invite.html:9
+msgid ""
+"In order to accept this invitation you first need to become a member which "
+"you can do directly in our website. After having registered and confirmed "
+"your email you will be able to accept this invitation under \"Family requests"
+"\" on your dashboard."
 msgstr ""
 
 #: comunicat/templates/email/towers/user/invite.html:15
@@ -113,6 +188,16 @@ msgstr ""
 
 #: comunicat/templates/email/towers/user/invite.html:15
 msgid "Become a member"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/password.html:5
+msgid ""
+"Did you request to change your password? To update it click on the following "
+"button. If you didn't request this you can ignore this email."
+msgstr ""
+
+#: comunicat/templates/email/towers/user/password.html:10
+msgid "Change password"
 msgstr ""
 
 #: comunicat/templates/email/towers/user/register.html:5
@@ -131,38 +216,71 @@ msgid ""
 "Castellers d'Estocolm, welcome!"
 msgstr ""
 
-#: notify/consts.py:34 notify/consts.py:56
+#: comunicat/templates/email/towers/user/welcome.html:6
+msgid ""
+"In this email attached you will find some information with hopefully answers "
+"to all your questions. However, if you still want to reach out and ask us "
+"anything the best way is through the WhatsApp community. All active members "
+"are part of it as it's where we discuss and share rehearsal information, "
+"post pictures and much more. Please note that we only accept requests into "
+"some of the groups if your phone matches the one you used to register with "
+"us. If that's not the case please do let us know and we'll fix it for you!"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/welcome.html:15
+msgid "Join the community"
+msgstr ""
+
+#: event/models.py:105
+msgid "End time must be greater than start time."
+msgstr ""
+
+#: notify/consts.py:34 notify/consts.py:60
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din epost för att slutföra din registrering"
 
-#: notify/consts.py:38 notify/consts.py:60
+#: notify/consts.py:38 notify/consts.py:64
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
-#: notify/consts.py:42 notify/consts.py:64
+#: notify/consts.py:42 notify/consts.py:68
 #, python-format
 msgid "Welcome to %s"
 msgstr "Välkommen to %s"
 
-#: notify/consts.py:46 notify/consts.py:68
+#: notify/consts.py:46 notify/consts.py:72
+#, fuzzy, python-format
+#| msgid "Welcome to %s"
+msgid "Welcome to %s new website"
+msgstr "Välkommen to %s"
+
+#: notify/consts.py:50 notify/consts.py:76
 msgid "You have been invited to join a family"
 msgstr ""
 
-#: payment/managers.py:68 payment/managers.py:141
+#: payment/managers.py:69 payment/managers.py:174
 msgid "Membership update"
 msgstr "Medlemskapsuppdatering"
 
-#: payment/managers.py:74 payment/managers.py:143
+#: payment/managers.py:75 payment/managers.py:176
 msgid "Membership"
 msgstr "Medlemskap"
 
-#: payment/managers.py:83
+#: payment/managers.py:84
 msgid "Payment"
 msgstr "Betalning"
 
-#: payment/managers.py:148
+#: payment/managers.py:181
 msgid "Unspecified"
 msgstr "Ospecificerad"
+
+#: payment/models.py:198
+msgid "Category must be set for accounts with parent."
+msgstr ""
+
+#: user/admin.py:78
+msgid "Another user already has the same alias."
+msgstr ""
 
 #: user/api/family_member_request.py:52
 msgid ""
@@ -182,11 +300,11 @@ msgstr ""
 msgid "You have reached the maximum amount of adult members in your family."
 msgstr ""
 
-#: user/models.py:28
+#: user/models.py:27
 msgid "staff status"
 msgstr "personalstatus"
 
-#: user/models.py:32
+#: user/models.py:31
 msgid "active"
 msgstr "aktiv"
 

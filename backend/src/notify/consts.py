@@ -42,6 +42,10 @@ TEMPLATE_BY_MODULE = {
                     "subject": _("Welcome to %s") % (settings.MODULE_ORG_NAME,),
                     "html": "email/org/user/welcome.html",
                 },
+                EmailType.IMPORTED: {
+                    "subject": _("Welcome to %s new website") % (settings.MODULE_ORG_NAME,),
+                    "html": "email/org/user/imported.html",
+                },
                 EmailType.FAMILY_INVITE: {
                     "subject": _("You have been invited to join a family"),
                     "html": "email/org/user/invite.html",
@@ -63,6 +67,10 @@ TEMPLATE_BY_MODULE = {
                 EmailType.WELCOME: {
                     "subject": _("Welcome to %s") % (settings.MODULE_TOWERS_NAME,),
                     "html": "email/towers/user/welcome.html",
+                },
+                EmailType.IMPORTED: {
+                    "subject": _("Welcome to %s new website") % (settings.MODULE_TOWERS_NAME,),
+                    "html": "email/towers/user/imported.html",
                 },
                 EmailType.FAMILY_INVITE: {
                     "subject": _("You have been invited to join a family"),

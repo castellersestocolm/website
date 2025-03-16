@@ -47,6 +47,17 @@ def send_welcome_email(modeladmin, request, queryset):
             )
 
 
+@admin.action(description="Send imported email")
+def send_imported_email(modeladmin, request, queryset):
+    for user_obj in queryset:
+        notify.tasks.send_user_email.delay(
+            user_id=user_obj.id,
+            email_type=EmailType.IMPORTED,
+            module=user_obj.origin_module,
+            locale=user_obj.preferred_language or translation.get_language(),
+        )
+
+
 class UserAdminForm(forms.ModelForm):
     alias = forms.CharField()
     height_shoulders = forms.IntegerField(min_value=0, max_value=200)
@@ -107,7 +118,7 @@ class UserAdmin(admin.ModelAdmin):
     exclude = ("password", "user_permissions")
     ordering = ("-created_at",)
     inlines = (FamilyMemberRequestSentInline, FamilyMemberRequestReceivedInline)
-    actions = (send_verification_email, send_welcome_email)
+    actions = (send_verification_email, send_welcome_email, send_imported_email)
     form = UserAdminForm
 
     fieldset_base = (

@@ -1,0 +1,27 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "We are very excited to introduce to you our new website, a new way of managing your membership and registering for rehearsals. We are reaching out to give you a quick run down of some new features and hopefully answer any questions you may have regarding the system." %}</p>
+    <p>{% trans "Right now, the following features are up and running on our site." %}</p>
+    <ul>
+        <li>{% trans "Membership and family management." %}</li>
+        <li>{% trans "Calendar and events registration." %}</li>
+        <li>{% trans "Payments overview." %}</li>
+        <li>{% trans "Google single-sign on (optional)." %}</li>
+    </ul>
+    <p>{% trans "We have more features coming soon, and will keep you all updated as we continue to implement them on the site." %}</p>
+    <p>{% trans "As you currently have a membership registered we have automatically migrated your data to the new platform, you can set a new password via the link below or use Google single-sign on directly on our website if you wish to." %}</p>
+{% endblock %}
+
+{% block email_button_url %}{% full_towers_url "user/password/" %}{% endblock %}
+
+{% block email_button_text %}{% trans "Set a new password" %}{% endblock %}
+
+{% block email_message_post %}
+    <p>{% trans "Have any more questions? Feel free to drop an email at" %} <a class="link-colour" href="mailto:{{ 'MODULE_TOWERS_EMAIL_FROM_ADDRESS'|settings_value }}">{{ "MODULE_TOWERS_EMAIL_FROM_ADDRESS"|settings_value }}</a> {% trans "or reach out on WhatsApp!" %}</p>
+{% endblock %}
+
+{% block email_closing %}
+    <p style="margin:0;">{% trans "See you around!" %}</p>
+{% endblock %}
