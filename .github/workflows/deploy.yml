@@ -113,3 +113,4 @@ jobs:
         envs: BUILD_TAG,BUILD_TARGET
         script: |
           docker stack deploy --with-registry-auth --compose-file website/docker-compose-prod.yml --detach=true comunicat
+          docker image prune --all
