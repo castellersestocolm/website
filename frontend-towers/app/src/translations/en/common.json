@@ -153,6 +153,7 @@
   "pages.user-rehearsal.rehearsal.attending-list": "Attending",
   "pages.user-rehearsal.rehearsal.attending-empty": "Not attending",
   "pages.calendar.title": "Calendar",
+  "pages.calendar.subtitle": "Rehearsals and events",
   "pages.calendar.section.calendar.month": "Monthly overview",
   "pages.calendar.section.agenda.title": "Events",
   "pages.calendar.section.agenda.empty": "There are no scheduled events.",

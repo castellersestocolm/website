@@ -1,12 +1,16 @@
-.userJoin {
+.page {
   padding-top: 0 !important;
 }
 
-.userJoinTitle {
+.pageTitle {
   color: var(--mui-palette-secondary-contrastText);
 }
 
-.userJoinTitleBox {
+.pageForm {
+  margin-top: 32px !important;
+}
+
+.pageTitleBox {
   position: absolute;
   text-align: center;
   top: 50%;

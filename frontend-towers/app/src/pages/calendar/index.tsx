@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { apiEventList } from "../../api";
-import PageBase from "../../components/PageBase/PageBase";
+import ImageHeroCalendar from "../../assets/images/heros/calendar.jpg";
 import Grid from "@mui/material/Grid2";
 import {
   Card,
@@ -23,6 +23,7 @@ import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import { capitalizeFirstLetter } from "../../utils/string";
+import PageImageHero from "../../components/PageImageHero/PageImageHero";
 
 function CalendarPage() {
   const [t, i18n] = useTranslation("common");
@@ -69,155 +70,167 @@ function CalendarPage() {
   }, [setEvents, setNextEvents, setRehearsal]);
 
   const content = (
-    <Grid
-      container
-      spacing={4}
-      className={styles.dashboardGrid}
-      display="flex"
-      alignItems="stretch"
-    >
+    <>
+      <Typography
+        variant="h4"
+        fontWeight="700"
+        align="center"
+        marginBottom="48px"
+      >
+        {t("pages.calendar.subtitle")}
+      </Typography>
       <Grid
         container
-        size={{ xs: 12, md: 8 }}
-        order={{ xs: 2, md: 1 }}
-        display={{ xs: "none", md: "initial" }}
         spacing={4}
-        direction="column"
+        className={styles.dashboardGrid}
+        display="flex"
+        alignItems="stretch"
       >
-        <Card
-          variant="outlined"
-          sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+        <Grid
+          container
+          size={{ xs: 12, md: 8 }}
+          order={{ xs: 2, md: 1 }}
+          display={{ xs: "none", md: "initial" }}
+          spacing={4}
+          direction="column"
         >
-          <Box className={styles.userTopBox}>
-            <Typography variant="h6" fontWeight="600" component="div">
-              {t("pages.calendar.section.calendar.month")}
-            </Typography>
-          </Box>
-          <Divider />
-          <Box className={styles.calendarBox}>
-            <EventCalendar events={events} compact={false} />
-          </Box>
-        </Card>
-      </Grid>
-      <Grid
-        container
-        size={{ xs: 12, md: 4 }}
-        order={{ xs: 1, md: 2 }}
-        spacing={4}
-        direction="column"
-        sx={{ display: "flex", flexDirection: "column" }}
-      >
-        <Grid>
-          <Card variant="outlined">
+          <Card
+            variant="outlined"
+            sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+          >
             <Box className={styles.userTopBox}>
               <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.calendar.section.agenda.title")}
+                {t("pages.calendar.section.calendar.month")}
               </Typography>
             </Box>
             <Divider />
-            <Box className={styles.userFamilyBox}>
-              {nextEvents && nextEvents.length > 0 ? (
-                <List className={styles.userFamilyList}>
-                  {nextEvents.map((event: any, i: number, row: any) => (
-                    <Box key={event.id}>
-                      <ListItemButton
-                        onClick={() => handleEventClick(event.id)}
-                        dense={true}
-                      >
-                        <ListItemIcon>
-                          {EVENT_TYPE_ICON[event.type]}
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={
-                            event.title +
-                            (event.type === EventType.REHEARSAL &&
-                            event.location !== null
-                              ? " — " + event.location.name
-                              : "")
-                          }
-                          secondary={
-                            capitalizeFirstLetter(
-                              new Date(event.time_from).toLocaleDateString(
-                                i18n.resolvedLanguage,
-                                {
-                                  day: "numeric",
-                                  month: "long",
-                                  year: "numeric",
-                                },
-                              ),
-                            ) +
-                            " " +
-                            new Date(event.time_from)
-                              .toTimeString()
-                              .slice(0, 5) +
-                            " → " +
-                            new Date(event.time_to).toTimeString().slice(0, 5)
-                          }
-                        />
-                        {user &&
-                          event.require_signup &&
-                          (eventsOpen[event.id] ? (
-                            <IconExpandLess />
-                          ) : (
-                            <IconExpandMore />
-                          ))}
-                      </ListItemButton>
-                      {user && event.require_signup && (
-                        <Collapse
-                          in={eventsOpen[event.id]}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          <Box className={styles.calendarAttendanceUpdate}>
-                            <Typography fontWeight={600} marginBottom="4px">
-                              {t("pages.calendar.agenda.attendance")}
-                            </Typography>
-                            <FormCalendarRegistrationCreate event={event} />
-                          </Box>
-                        </Collapse>
-                      )}
-
-                      {i + 1 < row.length && <Divider />}
-                    </Box>
-                  ))}
-                </List>
-              ) : (
-                <Box className={styles.userFamilyEmpty}>
-                  <Typography component="div">
-                    {t("pages.calendar.section.agenda.empty")}
-                  </Typography>
-                </Box>
-              )}
+            <Box className={styles.calendarBox}>
+              <EventCalendar events={events} compact={false} />
             </Box>
           </Card>
         </Grid>
-        <Grid className={styles.mapCard}>
-          <Map
-            location={
-              rehearsal && rehearsal.location ? rehearsal.location : undefined
-            }
-            coordinates={
-              rehearsal && rehearsal.location
-                ? [
-                    rehearsal.location.coordinate_lat,
-                    rehearsal.location.coordinate_lon,
-                  ]
-                : [59.3576, 17.9941]
-            }
-            connections={
-              rehearsal && rehearsal.location && rehearsal.location.connections
-            }
-          />
+        <Grid
+          container
+          size={{ xs: 12, md: 4 }}
+          order={{ xs: 1, md: 2 }}
+          spacing={4}
+          direction="column"
+          sx={{ display: "flex", flexDirection: "column" }}
+        >
+          <Grid>
+            <Card variant="outlined">
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.calendar.section.agenda.title")}
+                </Typography>
+              </Box>
+              <Divider />
+              <Box className={styles.userFamilyBox}>
+                {nextEvents && nextEvents.length > 0 ? (
+                  <List className={styles.userFamilyList}>
+                    {nextEvents.map((event: any, i: number, row: any) => (
+                      <Box key={event.id}>
+                        <ListItemButton
+                          onClick={() => handleEventClick(event.id)}
+                          dense={true}
+                        >
+                          <ListItemIcon>
+                            {EVENT_TYPE_ICON[event.type]}
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              event.title +
+                              (event.type === EventType.REHEARSAL &&
+                              event.location !== null
+                                ? " — " + event.location.name
+                                : "")
+                            }
+                            secondary={
+                              capitalizeFirstLetter(
+                                new Date(event.time_from).toLocaleDateString(
+                                  i18n.resolvedLanguage,
+                                  {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                  },
+                                ),
+                              ) +
+                              " " +
+                              new Date(event.time_from)
+                                .toTimeString()
+                                .slice(0, 5) +
+                              " → " +
+                              new Date(event.time_to).toTimeString().slice(0, 5)
+                            }
+                          />
+                          {user &&
+                            event.require_signup &&
+                            (eventsOpen[event.id] ? (
+                              <IconExpandLess />
+                            ) : (
+                              <IconExpandMore />
+                            ))}
+                        </ListItemButton>
+                        {user && event.require_signup && (
+                          <Collapse
+                            in={eventsOpen[event.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <Box className={styles.calendarAttendanceUpdate}>
+                              <Typography fontWeight={600} marginBottom="4px">
+                                {t("pages.calendar.agenda.attendance")}
+                              </Typography>
+                              <FormCalendarRegistrationCreate event={event} />
+                            </Box>
+                          </Collapse>
+                        )}
+
+                        {i + 1 < row.length && <Divider />}
+                      </Box>
+                    ))}
+                  </List>
+                ) : (
+                  <Box className={styles.userFamilyEmpty}>
+                    <Typography component="div">
+                      {t("pages.calendar.section.agenda.empty")}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </Card>
+          </Grid>
+          <Grid className={styles.mapCard}>
+            <Map
+              location={
+                rehearsal && rehearsal.location ? rehearsal.location : undefined
+              }
+              coordinates={
+                rehearsal && rehearsal.location
+                  ? [
+                      rehearsal.location.coordinate_lat,
+                      rehearsal.location.coordinate_lon,
+                    ]
+                  : [59.3576, 17.9941]
+              }
+              connections={
+                rehearsal &&
+                rehearsal.location &&
+                rehearsal.location.connections
+              }
+            />
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 
   return (
-    <PageBase
+    <PageImageHero
       title={t("pages.calendar.title")}
       content={content}
-      finishedRegistration={true}
+      hero={ImageHeroCalendar}
     />
   );
 }
