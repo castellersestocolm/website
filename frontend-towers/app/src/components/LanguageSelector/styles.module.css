@@ -1,5 +1,5 @@
 .languageButton {
-  color: #1d1d1d !important;
+  color: var(--mui-palette-primary-contrastText) !important;
   padding: 0 0 0 16px !important;
   text-align: right !important;
   min-width: unset !important;

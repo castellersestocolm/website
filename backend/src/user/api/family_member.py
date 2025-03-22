@@ -114,7 +114,9 @@ def update(
 
     family_member_obj.user.towers.height_shoulders = towers.get("height_shoulders")
     family_member_obj.user.towers.height_arms = towers.get("height_arms")
-    family_member_obj.user.towers.save(update_fields=("height_shoulders", "height_arms"))
+    family_member_obj.user.towers.save(
+        update_fields=("height_shoulders", "height_arms")
+    )
 
     return family_member_obj
 

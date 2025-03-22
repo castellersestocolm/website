@@ -369,3 +369,23 @@ export const apiEventRegistrationDelete = async (registrationId: string) => {
     throw error;
   }
 };
+
+export const apiLegalTeamList = async () => {
+  try {
+    return await instance.get("/legal/team/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiLegalBylawsList = async () => {
+  try {
+    return await instance.get("/legal/bylaws/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

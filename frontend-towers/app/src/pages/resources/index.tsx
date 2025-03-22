@@ -11,12 +11,13 @@ import FilePositions1 from "../../assets/files/resources/positions-1.pdf";
 import FilePositions2 from "../../assets/files/resources/positions-2.pdf";
 import FilePositions3 from "../../assets/files/resources/positions-3.pdf";
 import Alerts from "../../components/Alerts/Alerts";
+import ImageHeroResources from "../../assets/images/heros/resources.jpg";
 
 function ResourcesPage() {
   const { t } = useTranslation("common");
 
   return (
-    <>
+      <>
       <Box
         component="section"
         className={styles.resources}
@@ -25,16 +26,31 @@ function ResourcesPage() {
           padding: { xs: "32px 0", md: "64px 0" },
         }}
       >
-        <Container maxWidth="xl">
+              <Grid direction="column" display="flex" alignItems="center" flexDirection="column">
+        <Container className={styles.heroContainer}>
+            <Box className={styles.resourcesTitleBox}>
+              <Typography
+                variant="h3"
+                fontWeight="700"
+                className={styles.resourcesTitle}
+              >
+                {t("pages.resources.title")}
+            </Typography>
+            </Box>
+            <Box
+              sx={{ height: { xs: "300px", md: "500px" } }}
+              className={styles.heroImage}
+              style={{ backgroundImage: "url(" + ImageHeroResources + ")" }}
+            />
+        </Container>
+        <Container maxWidth="xl"
+        sx={{
+          marginTop: { xs: "16px", md: "32px" },
+          paddingTop: { xs: "32px", md: "64px" },
+          paddingBottom: { xs: "32px", md: "64px" },
+        }}>
           <Alerts />
-          <Typography
-            variant="h3"
-            fontWeight="700"
-            className={styles.resourcesTitle}
-          >
-            {t("pages.resources.title")}
-          </Typography>
-          <Grid container spacing={4} className={styles.resourcesGrid}>
+         <Grid container spacing={4} className={styles.resourcesGrid}>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Link href={FilePositions1}>
                 <img
@@ -64,6 +80,7 @@ function ResourcesPage() {
             </Grid>
           </Grid>
         </Container>
+              </Grid>
       </Box>
     </>
   );

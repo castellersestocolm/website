@@ -3,10 +3,6 @@
   width: 100%;
 }
 
-.footerContainer {
-  padding: 32px 0;
-}
-
 .footerContainerBox1 {
   margin-bottom: 16px;
   display: flex;
@@ -27,7 +23,6 @@
 .footerMenu {
   float: right;
   flex-grow: 1;
-  display: flex;
   flex-direction: row;
   align-content: center;
   justify-content: end;
@@ -50,6 +45,10 @@
   background-color: unset !important;
 }
 
+.footerMenuItem:last-child {
+  padding-right: 0 !important;
+}
+
 .footerTextEmail {
   padding-right: 16px;
   font-size: 14px !important;
@@ -61,4 +60,9 @@
 .footerTextSuport {
   font-size: 14px !important;
   color: #1d1d1d;
+}
+
+.externalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
 }

@@ -2,6 +2,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
@@ -16,9 +17,16 @@ import event.api
 import event.api.registration
 
 
+class EventResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class EventAPI(ComuniCatViewSet):
     serializer_class = EventSerializer
     permission_classes = (permissions.AllowAny,)
+    pagination_class = EventResultsSetPagination
     lookup_field = "id"
 
     @swagger_auto_schema(
@@ -31,10 +39,12 @@ class EventAPI(ComuniCatViewSet):
             module=self.module,
         )
 
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(event_objs, request)
         serializer = self.serializer_class(
-            event_objs, context={"module": self.module}, many=True
+            result_page, context={"module": self.module}, many=True
         )
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class RegistrationAPI(ComuniCatViewSet):

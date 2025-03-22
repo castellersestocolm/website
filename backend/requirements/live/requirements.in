@@ -33,3 +33,6 @@ mysqlclient ~= 2.2.7
 
 # Admin static
 whitenoise ~= 6.9.0
+
+# Images
+django-versatileimagefield~=3.1

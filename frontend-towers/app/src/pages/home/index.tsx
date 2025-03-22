@@ -66,7 +66,7 @@ function HomePage() {
     apiEventList().then((response) => {
       if (response.status === 200) {
         setRehearsal(
-          response.data.find((event: any) => {
+          response.data.results.find((event: any) => {
             return (
               event.type === EventType.REHEARSAL &&
               new Date(event.time_to) >= new Date()

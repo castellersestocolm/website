@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "membership",
     "event",
     "document",
+    "legal",
     "notify",
     "pinyator",
 ]
@@ -410,7 +411,7 @@ CURRENCIES = MODULE_ALL_CURRENCIES
 # http://satishgandham.com/2016/12/sending-email-from-docker-through-postfix-installed-on-the-host/
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "172.17.0.1"
+EMAIL_HOST = "mail"
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""

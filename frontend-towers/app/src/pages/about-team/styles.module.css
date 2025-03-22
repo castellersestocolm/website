@@ -1,0 +1,65 @@
+.aboutTeam {
+  padding-top: 0 !important;
+}
+
+.aboutTeamTitle {
+  color: var(--mui-palette-secondary-contrastText);
+}
+
+.aboutTeamTitleBox {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+.heroContainer {
+  width: 100% !important;
+  max-width: unset !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: var(--mui-palette-secondary-main);
+  position: relative;
+}
+
+.heroImage {
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.15;
+}
+
+.aboutTeamBox {
+  margin: 64px 0;
+}
+
+.aboutTeamContainerBox .aboutTeamBox:first-child {
+  margin-top: 0 !important;
+}
+
+.aboutTeamContainerBox .aboutTeamBox:last-child {
+  margin-bottom: 0 !important;
+}
+
+.aboutTeamBoxTitle {
+  text-align: center;
+  margin-bottom: 32px !important;
+}
+
+.aboutTeamGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.aboutTeamBoxMember {
+  min-width: 150px !important;
+}
+
+.aboutTeamAvatar {
+  width: 124px !important;
+  height: 124px !important;
+  margin-bottom: 16px;
+}

@@ -48,16 +48,16 @@ function CalendarPage() {
   React.useEffect(() => {
     apiEventList().then((response) => {
       if (response.status === 200) {
-        setEvents(response.data);
+        setEvents(response.data.results);
         setNextEvents(
-          response.data
+          response.data.results
             .filter((event: any) => {
               return new Date(event.time_to) >= new Date();
             })
             .slice(0, 5),
         );
         setRehearsal(
-          response.data.find((event: any) => {
+          response.data.results.find((event: any) => {
             return (
               event.type === EventType.REHEARSAL &&
               new Date(event.time_to) >= new Date()

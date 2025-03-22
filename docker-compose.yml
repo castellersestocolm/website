@@ -35,7 +35,7 @@ services:
     networks:
       - comunicat
     volumes:
-      - ./frontend-org/app:/frontend-org/frontend-org/app:cached
+      - ./frontend-org/app:/frontend-org:cached
     ports:
       - target: 3000
         published: 3100
@@ -54,14 +54,19 @@ services:
     networks:
       - comunicat
     volumes:
-      - ./frontend-towers/app:/frontend-towers/frontend-towers/app:cached
+      - ./frontend-towers/app:/frontend-towers:cached
     ports:
-      - target: 3000
+      - target: 3200
         published: 3200
         protocol: tcp
         mode: host
     env_file:
       - ./envs/local.env
+    environment:
+      PORT: 3200
+      WDS_SOCKET_HOST: 127.0.0.1
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
   database:
     image: postgres:17.2
     ports:
@@ -162,6 +167,41 @@ services:
       MYSQL_USER: pinyator
       MYSQL_PASSWORD: pinyator
       MYSQL_DATABASE: pinyator
+#  mail:
+#    image: ghcr.io/docker-mailserver/docker-mailserver:15.0.0
+#    deploy:
+#      replicas: 1
+#    restart: always
+#    ports:
+#      - target: 25
+#        published: 25
+#        protocol: tcp
+#        mode: host
+#      - target: 587
+#        published: 587
+#        protocol: tcp
+#        mode: host
+#      - target: 993
+#        published: 993
+#        protocol: tcp
+#        mode: host
+#      - target: 995
+#        published: 995
+#        protocol: tcp
+#        mode: host
+#    volumes:
+#      - ./docker-data/dms/mail-data/:/var/mail/
+#      - ./docker-data/dms/mail-state/:/var/mail-state/
+#      - ./docker-data/dms/mail-logs/:/var/log/mail/
+#      - ./docker-data/dms/config/:/tmp/docker-mailserver/
+#    environment:
+#      - PERMIT_DOCKER=network
+#      - DEFAULT_RELAY_HOST=[smtp-relay.gmail.com]:587
+#      - SSL_TYPE=
+#      - OVERRIDE_HOSTNAME=mail.castellersestocolm.se
+#      - LOG_LEVEL=debug
+#    networks:
+#      - comunicat
 
 volumes:
   internal-media:

@@ -1,0 +1,36 @@
+.aboutBylaws {
+  padding-top: 0 !important;
+}
+
+.aboutBylawsTitle {
+  color: var(--mui-palette-secondary-contrastText);
+}
+
+.aboutBylawsTitleBox {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+.heroContainer {
+  width: 100% !important;
+  max-width: unset !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: var(--mui-palette-secondary-main);
+  position: relative;
+}
+
+.heroImage {
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.15;
+}
+
+.aboutBylawsContainerBox {
+  margin-top: -20px;
+  line-height: 1.6;
+}

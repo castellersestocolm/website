@@ -68,14 +68,23 @@ class UserAdminForm(forms.ModelForm):
 
         if hasattr(self.instance, "towers"):
             self.fields["alias"].initial = self.instance.towers.alias
-            self.fields["height_shoulders"].initial = self.instance.towers.height_shoulders
+            self.fields["height_shoulders"].initial = (
+                self.instance.towers.height_shoulders
+            )
             self.fields["height_arms"].initial = self.instance.towers.height_arms
 
     def clean(self):
         super().clean()
 
-        if hasattr(self.instance, "towers") and TowersUser.objects.filter(alias=self.cleaned_data["alias"]).exclude(id=self.instance.towers.id).exists():
-            raise ValidationError({"alias": _("Another user already has the same alias.")})
+        if (
+            hasattr(self.instance, "towers")
+            and TowersUser.objects.filter(alias=self.cleaned_data["alias"])
+            .exclude(id=self.instance.towers.id)
+            .exists()
+        ):
+            raise ValidationError(
+                {"alias": _("Another user already has the same alias.")}
+            )
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -85,7 +94,9 @@ class UserAdminForm(forms.ModelForm):
             instance.towers.alias = self.cleaned_data["alias"]
             instance.towers.height_shoulders = self.cleaned_data["height_shoulders"]
             instance.towers.height_arms = self.cleaned_data["height_arms"]
-            instance.towers.save(update_fields=("alias", "height_shoulders", "height_arms"))
+            instance.towers.save(
+                update_fields=("alias", "height_shoulders", "height_arms")
+            )
 
         return instance
 

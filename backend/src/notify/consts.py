@@ -43,7 +43,8 @@ TEMPLATE_BY_MODULE = {
                     "html": "email/org/user/welcome.html",
                 },
                 EmailType.IMPORTED: {
-                    "subject": _("Welcome to %s new website") % (settings.MODULE_ORG_NAME,),
+                    "subject": _("Welcome to %s new website")
+                    % (settings.MODULE_ORG_NAME,),
                     "html": "email/org/user/imported.html",
                 },
                 EmailType.FAMILY_INVITE: {
@@ -69,7 +70,8 @@ TEMPLATE_BY_MODULE = {
                     "html": "email/towers/user/welcome.html",
                 },
                 EmailType.IMPORTED: {
-                    "subject": _("Welcome to %s new website") % (settings.MODULE_TOWERS_NAME,),
+                    "subject": _("Welcome to %s new website")
+                    % (settings.MODULE_TOWERS_NAME,),
                     "html": "email/towers/user/imported.html",
                 },
                 EmailType.FAMILY_INVITE: {

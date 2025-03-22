@@ -4,10 +4,11 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import styles from "./styles.module.css";
 import {
+  Button,
   Container,
   Link,
   List,
-  ListItem,
+  ListItem, Menu,
   MenuItem,
   Typography,
 } from "@mui/material";
@@ -16,10 +17,12 @@ import { LanguageSelector } from "../LanguageSelector/LanguageSelector";
 import IconAccountCircle from "@mui/icons-material/AccountCircle";
 import IconButton from "@mui/material/IconButton";
 import IconMenu from "@mui/icons-material/Menu";
+import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import { useAppContext } from "../AppContext/AppContext";
 import { ROUTES } from "../../routes";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
+import PopupState, {bindMenu, bindTrigger} from "material-ui-popup-state";
 
 /*
         <IconButton size="large" aria-label="show 2 new messages" color="inherit">
@@ -59,6 +62,21 @@ export default function NavBar() {
       name: t("components.navbar-menu.resources"),
       path: ROUTES.resources.path,
       target: "_self",
+    },
+    {
+      name: t("components.navbar-menu.about"),
+      children: [
+        {
+          name: t("components.navbar-menu.about.team"),
+          path: ROUTES["about-team"].path,
+          target: "_self",
+        },
+        {
+          name: t("components.navbar-menu.about.bylaws"),
+          path: ROUTES["about-bylaws"].path,
+          target: "_self",
+        }
+      ]
     },
   ];
 
@@ -103,7 +121,35 @@ export default function NavBar() {
             {pages.map((page) => (
               <>
                 {page && (
-                  <MenuItem
+                  page.children ? <PopupState variant="popover" popupId="demo-popup-menu">
+        {(popupState) => (
+          <React.Fragment>
+            <Button
+              key={page.name}
+              disableTouchRipple
+              className={styles.navMenuItem}
+              component={Link}
+              sx={{ display: { xs: "none", md: "flex" } }}
+              {...bindTrigger(popupState)}
+            >
+              <Typography fontWeight={600}>{page.name}</Typography>
+            </Button>
+            <Menu {...bindMenu(popupState)} className={styles.nestedNavMenu}>
+              {page.children.map((childrenPage) => (
+                <MenuItem
+                    key={childrenPage.name}
+                    className={styles.nestedNavButton}
+                    component={Link}
+                    href={childrenPage.path}
+                    target={childrenPage.target}
+                  >
+                    <Typography fontWeight={600}>{childrenPage.name}</Typography>
+                  </MenuItem>
+              ))}
+            </Menu>
+          </React.Fragment>
+        )}
+      </PopupState> : <MenuItem
                     key={page.name}
                     disableTouchRipple
                     className={styles.navMenuItem}
@@ -113,6 +159,7 @@ export default function NavBar() {
                     sx={{ display: { xs: "none", md: "flex" } }}
                   >
                     <Typography fontWeight={600}>{page.name}</Typography>
+                    {page.target === "_blank" && <IconArrowOutward className={styles.externalIcon} />}
                   </MenuItem>
                 )}
               </>

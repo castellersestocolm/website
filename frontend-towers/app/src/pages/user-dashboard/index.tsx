@@ -136,7 +136,7 @@ function UserDashboardPage() {
         if (response.status === 200) {
           setMemberships(response.data);
           setMembership(
-            response.data.find((membership: any) => {
+            response.data.results.find((membership: any) => {
               return membership.is_active;
             }),
           );
@@ -177,7 +177,7 @@ function UserDashboardPage() {
     apiEventList().then((response) => {
       if (response.status === 200) {
         setRehearsal(
-          response.data.find((event: any) => {
+          response.data.results.find((event: any) => {
             return (
               event.type === EventType.REHEARSAL &&
               new Date(event.time_to) >= new Date()

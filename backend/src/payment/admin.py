@@ -15,6 +15,8 @@ from payment.models import (
 
 from jsoneditor.forms import JSONEditor
 
+from django.utils.translation import gettext_lazy as _
+
 
 class PaymentLineForPaymentInline(admin.TabularInline):
     model = PaymentLine
@@ -147,7 +149,7 @@ class AccountAdmin(admin.ModelAdmin):
     def account_name(self, obj):
         return str(obj)
 
-    account_name.short_description = "Name"
+    account_name.short_description = _("name")
 
 
 @admin.register(Entity)

@@ -91,7 +91,11 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
             return False
 
         if module == Module.TOWERS:
-            if not hasattr(self, "towers") or not self.towers.height_shoulders or not self.towers.height_arms:
+            if (
+                not hasattr(self, "towers")
+                or not self.towers.height_shoulders
+                or not self.towers.height_arms
+            ):
                 return False
 
         return True

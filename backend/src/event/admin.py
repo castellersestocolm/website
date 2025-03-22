@@ -68,11 +68,12 @@ class EventAdmin(admin.ModelAdmin):
         "time_from",
         "time_to",
         "type",
+        "status",
         "module",
         "location",
         "max_registrations",
     )
-    list_filter = ("type", "module")
+    list_filter = ("type", "status", "module")
     ordering = ("-time_from",)
     inlines = (
         EventModuleInline,

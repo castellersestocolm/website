@@ -9,6 +9,8 @@
 }
 
 .navMenuItem {
+  color: var(--mui-palette-primary-contrastText) !important;
+  text-transform: unset !important;
   padding: 0 32px 0 0 !important;
 }
 
@@ -19,7 +21,7 @@
 .navMenuLogin {
   margin-left: 16px !important;
   margin-right: -8px !important;
-  color: #1d1d1d !important;
+  color: var(--mui-palette-primary-contrastText) !important;
 }
 
 .navMenuLogin:hover {
@@ -29,7 +31,19 @@
 .navMenuAccount {
   margin-left: 16px !important;
   margin-right: -8px !important;
-  color: #1d1d1d !important;
+  color: var(--mui-palette-primary-contrastText) !important;
+}
+
+.nestedNavMenu {
+  margin-top: 8px;
+  margin-left: -16px;
+}
+
+.nestedNavButton {
+  color: var(--mui-palette-primary-contrastText) !important;
+  padding: 6px 16px !important;
+  text-align: right !important;
+  min-width: unset !important;
 }
 
 .drawer {
@@ -38,4 +52,9 @@
 
 .drawerItem {
   color: #1d1d1d !important;
+}
+
+.externalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
 }

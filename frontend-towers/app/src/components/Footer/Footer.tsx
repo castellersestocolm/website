@@ -10,6 +10,7 @@ import IconWhatsApp from "@mui/icons-material/WhatsApp";
 import IconButton from "@mui/material/IconButton";
 import { ROUTES } from "../../routes";
 import { useAppContext } from "../AppContext/AppContext";
+import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 
@@ -48,7 +49,7 @@ export default function Footer() {
 
   return (
     <Box component="section" className={styles.footerBar}>
-      <Container maxWidth="xl" className={styles.footerContainer}>
+      <Container maxWidth="xl" sx={{padding: {xs: "32px 16px", md: "32px 32px"}}}>
         <Box
           sx={{ justifyContent: { xs: "center", md: "start" } }}
           className={styles.footerContainerBox1}
@@ -71,6 +72,7 @@ export default function Footer() {
                     href={page.path}
                   >
                     <Typography fontWeight={600}>{page.name}</Typography>
+                    {page.target === "_blank" && <IconArrowOutward className={styles.externalIcon} />}
                   </MenuItem>
                 )}
               </>
@@ -96,7 +98,7 @@ export default function Footer() {
             </Link>
           </Box>
           <Box
-            sx={{ justifyContent: { xs: "center", md: "end" } }}
+            sx={{ justifyContent: { xs: "center", md: "end" }, marginRight: {md: "-8px"} }}
             className={styles.footerSocial}
           >
             <Typography className={styles.footerTextEmail}>

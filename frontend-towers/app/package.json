@@ -62,6 +62,7 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^22.13.11",
     "lint": "^0.8.19",
     "loader-utils": "^3.3.1",
     "prettier": "^3.4.2",

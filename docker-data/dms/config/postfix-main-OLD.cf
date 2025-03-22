@@ -1,0 +1,47 @@
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+
+# See http://www.postfix.org/COMPATIBILITY_README.html -- default to 3.6 on
+# fresh installs.
+compatibility_level = 3.6
+
+# TLS parameters
+smtpd_tls_cert_file=/etc/postfix/certificates/mail.example.com.crt
+smtpd_tls_key_file=/etc/postfix/certificates/mail.example.com.key
+smtpd_tls_security_level=may
+smtp_tls_CApath=/etc/ssl/certs
+smtp_tls_security_level=may
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+alias_database = hash:/etc/aliases
+alias_maps = hash:/etc/aliases
+maillog_file = /var/log/postfix.log
+mailbox_size_limit = 0
+inet_interfaces = all
+inet_protocols = ipv4
+readme_directory = no
+recipient_delimiter = +
+
+# Customizations relevant to this guide:
+myhostname = comunicat
+myorigin = /etc/mailname
+mydestination = localhost.$mydomain, localhost, $myhostname
+relayhost = [smtp-relay.gmail.com]:587
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 172.16.0.0/12
+smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+transport_maps = hash:/etc/postfix/transport
+relay_domains = $mydestination, hash:/etc/postfix/relay
+masquerade_domains = castellersestocolm.se lesquatrebarres.org
+relay_domains = castellersestocolm.se lesquatrebarres.org
+
+# Disable local system accounts and delivery:
+local_recipient_maps =
+local_transport = error:local mail delivery is disabled
