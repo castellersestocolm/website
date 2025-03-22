@@ -28,6 +28,7 @@
   "pages.resources.title": "Material",
   "pages.user-login.title": "Entra",
   "pages.user-join.title": "Uneix-te als castellers",
+  "pages.user-join.subtitle": "Sol·licitud de membre",
   "pages.user-join.form.first-name": "Nom",
   "pages.user-join.form.last-name": "Cognom",
   "pages.user-join.form.email": "Correu electrònic",

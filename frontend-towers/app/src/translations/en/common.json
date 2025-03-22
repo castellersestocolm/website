@@ -28,6 +28,7 @@
   "pages.resources.title": "Resources",
   "pages.user-login.title": "Login",
   "pages.user-join.title": "Join the human towers",
+  "pages.user-join.subtitle": "Membership application",
   "pages.user-join.form.first-name": "First name",
   "pages.user-join.form.last-name": "Last name",
   "pages.user-join.form.email": "Email",

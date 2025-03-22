@@ -28,6 +28,7 @@
   "pages.resources.title": "Resurser",
   "pages.user-login.title": "Logga in",
   "pages.user-join.title": "Gå med i mänskliga torn",
+  "pages.user-join.subtitle": "Medlemsansökan",
   "pages.user-join.form.first-name": "Förnamn",
   "pages.user-join.form.last-name": "Efternamn",
   "pages.user-join.form.email": "Epost",

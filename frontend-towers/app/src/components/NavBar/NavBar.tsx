@@ -8,7 +8,8 @@ import {
   Container,
   Link,
   List,
-  ListItem, Menu,
+  ListItem,
+  Menu,
   MenuItem,
   Typography,
 } from "@mui/material";
@@ -22,7 +23,7 @@ import { useAppContext } from "../AppContext/AppContext";
 import { ROUTES } from "../../routes";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
-import PopupState, {bindMenu, bindTrigger} from "material-ui-popup-state";
+import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 
 /*
         <IconButton size="large" aria-label="show 2 new messages" color="inherit">
@@ -75,8 +76,8 @@ export default function NavBar() {
           name: t("components.navbar-menu.about.bylaws"),
           path: ROUTES["about-bylaws"].path,
           target: "_self",
-        }
-      ]
+        },
+      ],
     },
   ];
 
@@ -88,17 +89,30 @@ export default function NavBar() {
         <List className={styles.drawer}>
           {pages.map((page) => (
             <>
-              {page && (
-                <ListItem
-                  key={page.name}
-                  component={Link}
-                  href={page.path}
-                  target={page.target}
-                  className={styles.drawerItem}
-                >
-                  <Typography>{page.name}</Typography>
-                </ListItem>
-              )}
+              {page &&
+                (page.children ? (
+                  page.children.map((childrenPage: any) => (
+                    <ListItem
+                      key={childrenPage.name}
+                      component={Link}
+                      href={childrenPage.path}
+                      target={childrenPage.target}
+                      className={styles.drawerItem}
+                    >
+                      <Typography>{childrenPage.name}</Typography>
+                    </ListItem>
+                  ))
+                ) : (
+                  <ListItem
+                    key={page.name}
+                    component={Link}
+                    href={page.path}
+                    target={page.target}
+                    className={styles.drawerItem}
+                  >
+                    <Typography>{page.name}</Typography>
+                  </ListItem>
+                ))}
             </>
           ))}
         </List>
@@ -120,48 +134,60 @@ export default function NavBar() {
             </IconButton>
             {pages.map((page) => (
               <>
-                {page && (
-                  page.children ? <PopupState variant="popover" popupId="demo-popup-menu">
-        {(popupState) => (
-          <React.Fragment>
-            <Button
-              key={page.name}
-              disableTouchRipple
-              className={styles.navMenuItem}
-              component={Link}
-              sx={{ display: { xs: "none", md: "flex" } }}
-              {...bindTrigger(popupState)}
-            >
-              <Typography fontWeight={600}>{page.name}</Typography>
-            </Button>
-            <Menu {...bindMenu(popupState)} className={styles.nestedNavMenu}>
-              {page.children.map((childrenPage) => (
-                <MenuItem
-                    key={childrenPage.name}
-                    className={styles.nestedNavButton}
-                    component={Link}
-                    href={childrenPage.path}
-                    target={childrenPage.target}
-                  >
-                    <Typography fontWeight={600}>{childrenPage.name}</Typography>
-                  </MenuItem>
-              ))}
-            </Menu>
-          </React.Fragment>
-        )}
-      </PopupState> : <MenuItem
-                    key={page.name}
-                    disableTouchRipple
-                    className={styles.navMenuItem}
-                    component={Link}
-                    href={page.path}
-                    target={page.target}
-                    sx={{ display: { xs: "none", md: "flex" } }}
-                  >
-                    <Typography fontWeight={600}>{page.name}</Typography>
-                    {page.target === "_blank" && <IconArrowOutward className={styles.externalIcon} />}
-                  </MenuItem>
-                )}
+                {page &&
+                  (page.children ? (
+                    <PopupState variant="popover" popupId="demo-popup-menu">
+                      {(popupState) => (
+                        <React.Fragment>
+                          <Button
+                            key={page.name}
+                            disableTouchRipple
+                            className={styles.navMenuItem}
+                            component={Link}
+                            sx={{ display: { xs: "none", md: "flex" } }}
+                            {...bindTrigger(popupState)}
+                          >
+                            <Typography fontWeight={600}>
+                              {page.name}
+                            </Typography>
+                          </Button>
+                          <Menu
+                            {...bindMenu(popupState)}
+                            className={styles.nestedNavMenu}
+                          >
+                            {page.children.map((childrenPage) => (
+                              <MenuItem
+                                key={childrenPage.name}
+                                className={styles.nestedNavButton}
+                                component={Link}
+                                href={childrenPage.path}
+                                target={childrenPage.target}
+                              >
+                                <Typography fontWeight={600}>
+                                  {childrenPage.name}
+                                </Typography>
+                              </MenuItem>
+                            ))}
+                          </Menu>
+                        </React.Fragment>
+                      )}
+                    </PopupState>
+                  ) : (
+                    <MenuItem
+                      key={page.name}
+                      disableTouchRipple
+                      className={styles.navMenuItem}
+                      component={Link}
+                      href={page.path}
+                      target={page.target}
+                      sx={{ display: { xs: "none", md: "flex" } }}
+                    >
+                      <Typography fontWeight={600}>{page.name}</Typography>
+                      {page.target === "_blank" && (
+                        <IconArrowOutward className={styles.externalIcon} />
+                      )}
+                    </MenuItem>
+                  ))}
               </>
             ))}
           </Box>

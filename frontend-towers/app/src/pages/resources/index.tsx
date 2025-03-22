@@ -17,7 +17,7 @@ function ResourcesPage() {
   const { t } = useTranslation("common");
 
   return (
-      <>
+    <>
       <Box
         component="section"
         className={styles.resources}
@@ -26,8 +26,13 @@ function ResourcesPage() {
           padding: { xs: "32px 0", md: "64px 0" },
         }}
       >
-              <Grid direction="column" display="flex" alignItems="center" flexDirection="column">
-        <Container className={styles.heroContainer}>
+        <Grid
+          direction="column"
+          display="flex"
+          alignItems="center"
+          flexDirection="column"
+        >
+          <Container className={styles.heroContainer}>
             <Box className={styles.resourcesTitleBox}>
               <Typography
                 variant="h3"
@@ -35,52 +40,54 @@ function ResourcesPage() {
                 className={styles.resourcesTitle}
               >
                 {t("pages.resources.title")}
-            </Typography>
+              </Typography>
             </Box>
             <Box
               sx={{ height: { xs: "300px", md: "500px" } }}
               className={styles.heroImage}
               style={{ backgroundImage: "url(" + ImageHeroResources + ")" }}
             />
-        </Container>
-        <Container maxWidth="xl"
-        sx={{
-          marginTop: { xs: "16px", md: "32px" },
-          paddingTop: { xs: "32px", md: "64px" },
-          paddingBottom: { xs: "32px", md: "64px" },
-        }}>
-          <Alerts />
-         <Grid container spacing={4} className={styles.resourcesGrid}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Link href={FilePositions1}>
-                <img
-                  src={ImagePositions1}
-                  className={styles.resourcesFileImage}
-                  alt="positions for a pillar"
-                />
-              </Link>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Link href={FilePositions2}>
-                <img
-                  src={ImagePositions2}
-                  className={styles.resourcesFileImage}
-                  alt="positions for a tower"
-                />
-              </Link>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Link href={FilePositions3}>
-                <img
-                  src={ImagePositions3}
-                  className={styles.resourcesFileImage}
-                  alt="positions for a three"
-                />
-              </Link>
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
+          <Container
+            maxWidth="xl"
+            sx={{
+              marginTop: { xs: "16px", md: "32px" },
+              paddingTop: { xs: "32px", md: "64px" },
+              paddingBottom: { xs: "32px", md: "64px" },
+            }}
+          >
+            <Alerts />
+            <Grid container spacing={4} className={styles.resourcesGrid}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Link href={FilePositions1}>
+                  <img
+                    src={ImagePositions1}
+                    className={styles.resourcesFileImage}
+                    alt="positions for a pillar"
+                  />
+                </Link>
               </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Link href={FilePositions2}>
+                  <img
+                    src={ImagePositions2}
+                    className={styles.resourcesFileImage}
+                    alt="positions for a tower"
+                  />
+                </Link>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Link href={FilePositions3}>
+                  <img
+                    src={ImagePositions3}
+                    className={styles.resourcesFileImage}
+                    alt="positions for a three"
+                  />
+                </Link>
+              </Grid>
+            </Grid>
+          </Container>
+        </Grid>
       </Box>
     </>
   );
