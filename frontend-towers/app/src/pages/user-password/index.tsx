@@ -18,7 +18,7 @@ function UserLoginPage() {
         component="section"
         className={styles.userPassword}
         sx={{
-          marginTop: { xs: "57px", md: "65px" },
+          marginTop: { xs: "56px", md: "65px" },
           padding: { xs: "32px 0", md: "64px 0" },
         }}
       >

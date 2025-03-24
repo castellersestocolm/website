@@ -92,7 +92,7 @@ function HomePage() {
           component="section"
           className={styles.heroInner}
           sx={{
-            marginTop: { xs: "57px", md: "65px" },
+            marginTop: { xs: "56px", md: "65px" },
             padding: {
               xs: messages ? "32px 0 64px 0" : "64px 0",
               md: messages ? "64px 0 132px 0" : "132px 0",

@@ -429,8 +429,6 @@ SOCIAL_AUTH_ENABLED = False
 if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:
     SOCIAL_AUTH_ENABLED = True
     LOGIN_URL = "/user/login/google-oauth2/"
-    LOGIN_REDIRECT_URL = "/user/dashboard"
-    LOGOUT_REDIRECT_URL = "/"
     SOCIAL_AUTH_LOGIN_URL = "/google-oauth2/"
     SOCIAL_AUTH_URL_NAMESPACE = "user_social"
     SOCIAL_AUTH_USER_MODEL = "user.GoogleUser"
