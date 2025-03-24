@@ -60,8 +60,8 @@ def send_imported_email(modeladmin, request, queryset):
 
 class UserAdminForm(forms.ModelForm):
     alias = forms.CharField()
-    height_shoulders = forms.IntegerField(min_value=0, max_value=200)
-    height_arms = forms.IntegerField(min_value=0, max_value=250)
+    height_shoulders = forms.IntegerField(min_value=0, max_value=200, required=False)
+    height_arms = forms.IntegerField(min_value=0, max_value=250, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -167,11 +167,11 @@ class UserAdmin(admin.ModelAdmin):
         ),
     )
 
-    def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False
+    # def has_add_permission(self, request, obj=None):
+    #     return False
+    #
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("towers")
