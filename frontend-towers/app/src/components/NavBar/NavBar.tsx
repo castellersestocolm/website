@@ -51,9 +51,15 @@ export default function NavBar() {
     },
     !user && {
       name: t("components.navbar-menu.membership"),
-      path: ROUTES["user-join"].path,
-      target: "_self",
+      path: ROUTES["external-form-membership"].path,
+      target: "_blank",
     },
+    // TODO: Temporary until we start accepting sign-ups
+    // !user && {
+    //   name: t("components.navbar-menu.membership"),
+    //   path: ROUTES["user-join"].path,
+    //   target: "_self",
+    // },
     user && {
       name: t("components.navbar-menu.equipmment"),
       path: ROUTES["external-form-equipment"].path,
