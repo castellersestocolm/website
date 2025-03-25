@@ -61,7 +61,12 @@ function AboutTeamPage() {
                           {member.user.firstname} {member.user.lastname}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {member.role.name}
+                          {team.members.filter(
+                            (teamMember: any) =>
+                              teamMember.role.id === member.role.id,
+                          ).length > 1
+                            ? member.role.name_plural
+                            : member.role.name}
                         </Typography>
                       </Grid>
                     ))}
