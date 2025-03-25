@@ -106,6 +106,9 @@ export default function NavBar() {
                       className={styles.drawerItem}
                     >
                       <Typography>{childrenPage.name}</Typography>
+                      {childrenPage.target === "_blank" && (
+                        <IconArrowOutward className={styles.externalIcon} />
+                      )}
                     </ListItem>
                   ))
                 ) : (
@@ -117,6 +120,9 @@ export default function NavBar() {
                     className={styles.drawerItem}
                   >
                     <Typography>{page.name}</Typography>
+                    {page.target === "_blank" && (
+                      <IconArrowOutward className={styles.externalIcon} />
+                    )}
                   </ListItem>
                 ))}
             </>
@@ -172,6 +178,11 @@ export default function NavBar() {
                                 <Typography fontWeight={600}>
                                   {childrenPage.name}
                                 </Typography>
+                                {childrenPage.target === "_blank" && (
+                                  <IconArrowOutward
+                                    className={styles.externalIcon}
+                                  />
+                                )}
                               </MenuItem>
                             ))}
                           </Menu>

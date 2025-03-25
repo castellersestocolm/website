@@ -69,6 +69,20 @@
   align-items: center;
   padding: 64px 0;
   background-color: #f8f8f8;
+  position: relative;
+  overflow: hidden;
+}
+
+.joinHero {
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.1;
+  position: absolute;
+  left: -5px;
+  right: -5px;
+  top: -5px;
+  bottom: -5px;
+  filter: blur(5px);
 }
 
 .joinImage {
@@ -235,4 +249,11 @@
 
 .calendarCard {
   height: 100%;
+}
+
+.externalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
+  height: 20px !important;
+  width: 20px !important;
 }

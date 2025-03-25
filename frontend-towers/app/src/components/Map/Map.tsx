@@ -4,7 +4,13 @@ import styles from "./styles.module.css";
 import MapMarker from "../MapMarker/MapMarker";
 import MapConnectionMarker from "../MapConnectionMarker/MapConnectionMarker";
 
-export default function Map({ location, coordinates, connections, zoom }: any) {
+export default function Map({
+  location,
+  coordinates,
+  connections,
+  showConnectionLines,
+  zoom,
+}: any) {
   const coordinate_lats = [
     coordinates[0],
     ...(connections
@@ -32,7 +38,7 @@ export default function Map({ location, coordinates, connections, zoom }: any) {
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
       <MapMarker
         name={location ? location.name : undefined}

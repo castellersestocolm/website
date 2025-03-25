@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import ImageHero from "../../assets/images/hero.jpg";
 import ImageJoin from "../../assets/images/join.jpg";
+import ImageJoinBackground from "../../assets/images/join-background.jpg";
 import styles from "./styles.module.css";
 import {
   Button,
@@ -52,6 +53,7 @@ import { EventType, TRANSPORT_MODE_ICON } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
+import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -132,11 +134,12 @@ function HomePage() {
                 {!user && (
                   <Button
                     variant="outlined"
-                    href={ROUTES["user-join"].path}
+                    href={ROUTES["external-form-membership"].path}
                     className={styles.heroButton}
                     disableElevation
                   >
                     {t("pages.home-join.list.button-join")}
+                    <IconArrowOutward className={styles.externalIcon} />
                   </Button>
                 )}
               </Grid>
@@ -323,6 +326,10 @@ function HomePage() {
         </Container>
       </Box>
       <Box component="section" className={styles.join}>
+        <Box
+          className={styles.joinHero}
+          style={{ backgroundImage: "url(" + ImageJoinBackground + ")" }}
+        />
         <Container maxWidth="lg">
           <Grid container spacing={4}>
             <Grid size={4} sx={{ display: { xs: "none", md: "block" } }}>
@@ -466,10 +473,11 @@ function HomePage() {
                     >
                       <Button
                         variant="contained"
-                        href={ROUTES["user-join"].path}
+                        href={ROUTES["external-form-membership"].path}
                         disableElevation
                       >
                         {t("pages.home-join.list.button-join")}
+                        <IconArrowOutward className={styles.externalIcon} />
                       </Button>
                     </Stack>
                   </Grid>
@@ -672,6 +680,9 @@ function HomePage() {
         className={styles.mapBox}
       >
         <Map
+          location={
+            rehearsal && rehearsal.location ? rehearsal.location : undefined
+          }
           coordinates={
             rehearsal && rehearsal.location
               ? [
@@ -680,7 +691,7 @@ function HomePage() {
                 ]
               : [59.3576, 17.9941]
           }
-          zoom={15}
+          zoom={12}
         />
       </Box>
     </>

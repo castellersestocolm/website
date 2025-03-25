@@ -42,11 +42,11 @@ def update_or_create_user(user_id: UUID) -> None:
 
     if exists:
         cursor.execute(
-            f"UPDATE CASTELLER SET MalNom='{user_obj.towers.alias}', Altura={user_obj.towers.height_shoulders}, ALTURA_TRONCS={user_obj.towers.height_arms}, Nom='{user_obj.firstname}', Cognom_1='{user_obj.lastname}', Cognom_2='', Estat={user_status} WHERE Codi='{user_obj.id}'"
+            f"UPDATE CASTELLER SET MalNom='{user_obj.towers.alias}', Altura={user_obj.towers.height_shoulders or 0}, ALTURA_TRONCS={user_obj.towers.height_arms or 0}, Nom='{user_obj.firstname}', Cognom_1='{user_obj.lastname}', Cognom_2='', Estat={user_status} WHERE Codi='{user_obj.id}'"
         )
     else:
         cursor.execute(
-            f"INSERT INTO CASTELLER (MalNom, Altura, ALTURA_TRONCS, POSICIO_PINYA_ID, Nom, Cognom_1, Cognom_2, Codi, Familia_ID, Estat) VALUES ('{user_obj.towers.alias}', {user_obj.towers.height_shoulders}, {user_obj.towers.height_arms}, 0, '{user_obj.firstname}', '{user_obj.lastname}', '', '{user_obj.id}', 0, {user_status})"
+            f"INSERT INTO CASTELLER (MalNom, Altura, ALTURA_TRONCS, POSICIO_PINYA_ID, Nom, Cognom_1, Cognom_2, Codi, Familia_ID, Estat) VALUES ('{user_obj.towers.alias}', {user_obj.towers.height_shoulders or 0}, {user_obj.towers.height_arms or 0}, 0, '{user_obj.firstname}', '{user_obj.lastname}', '', '{user_obj.id}', 0, {user_status})"
         )
 
     cursor.close()
