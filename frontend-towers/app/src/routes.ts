@@ -35,6 +35,9 @@ export const ROUTES = {
   calendar: {
     path: "/calendar",
   },
+  "trips-2025-berlin": {
+    path: "/trips/2025/berlin",
+  },
   "external-form-membership": {
     path: "https://docs.google.com/forms/d/e/1FAIpQLSc9wMkRaa-nkX8NgSBj3zDLFWQtRKxBOzchbdznQ8plWRHOaQ/viewform",
   },

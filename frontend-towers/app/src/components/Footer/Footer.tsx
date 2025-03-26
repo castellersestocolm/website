@@ -51,6 +51,11 @@ export default function Footer() {
       path: ROUTES.resources.path,
       target: "_self",
     },
+    {
+      name: t("components.navbar-menu.trips.2025.berlin"),
+      path: ROUTES["trips-2025-berlin"].path,
+      target: "_self",
+    },
   ];
 
   return (

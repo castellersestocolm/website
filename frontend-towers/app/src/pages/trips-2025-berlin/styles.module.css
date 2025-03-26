@@ -1,0 +1,12 @@
+.memberTeam {
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.memberName {
+  white-space: nowrap;
+}
+
+.memberSeparator {
+  padding: 0 8px;
+}

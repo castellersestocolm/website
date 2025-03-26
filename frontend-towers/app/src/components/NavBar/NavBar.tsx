@@ -71,6 +71,16 @@ export default function NavBar() {
       target: "_self",
     },
     {
+      name: t("components.navbar-menu.trips"),
+      children: [
+        {
+          name: t("components.navbar-menu.trips.2025.berlin"),
+          path: ROUTES["trips-2025-berlin"].path,
+          target: "_self",
+        },
+      ],
+    },
+    {
       name: t("components.navbar-menu.about"),
       children: [
         {

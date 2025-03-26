@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import ImageHero from "../../assets/images/hero.jpg";
 import ImageJoin from "../../assets/images/join.jpg";
-import ImageJoinBackground from "../../assets/images/join-background.jpg";
 import styles from "./styles.module.css";
 import {
   Button,
@@ -359,17 +358,11 @@ function HomePage() {
                         <IconGroups />
                       </ListItemIcon>
                       <ListItemText
-                        primary={
-                          <Typography className={styles.joinListPrimary}>
-                            {t("pages.home-join.list.item-1.title")}
-                          </Typography>
-                        }
+                        primary={t("pages.home-join.list.item-1.title")}
                         secondary={
-                          t("pages.home-join.list.item-1.subtitle") ? (
-                            <Typography className={styles.joinListSecondary}>
-                              {t("pages.home-join.list.item-1.subtitle")}
-                            </Typography>
-                          ) : null
+                          t("pages.home-join.list.item-1.subtitle")
+                            ? t("pages.home-join.list.item-1.subtitle")
+                            : null
                         }
                       />
                     </ListItem>
@@ -378,17 +371,11 @@ function HomePage() {
                         <IconSportsGymnastics />
                       </ListItemIcon>
                       <ListItemText
-                        primary={
-                          <Typography className={styles.joinListPrimary}>
-                            {t("pages.home-join.list.item-2.title")}
-                          </Typography>
-                        }
+                        primary={t("pages.home-join.list.item-2.title")}
                         secondary={
-                          t("pages.home-join.list.item-2.subtitle") ? (
-                            <Typography className={styles.joinListSecondary}>
-                              {t("pages.home-join.list.item-2.subtitle")}
-                            </Typography>
-                          ) : null
+                          t("pages.home-join.list.item-2.subtitle")
+                            ? t("pages.home-join.list.item-2.subtitle")
+                            : null
                         }
                       />
                     </ListItem>
@@ -397,17 +384,11 @@ function HomePage() {
                         <IconEmergency />
                       </ListItemIcon>
                       <ListItemText
-                        primary={
-                          <Typography className={styles.joinListPrimary}>
-                            {t("pages.home-join.list.item-3.title")}
-                          </Typography>
-                        }
+                        primary={t("pages.home-join.list.item-3.title")}
                         secondary={
-                          t("pages.home-join.list.item-3.subtitle") ? (
-                            <Typography className={styles.joinListSecondary}>
-                              {t("pages.home-join.list.item-3.subtitle")}
-                            </Typography>
-                          ) : null
+                          t("pages.home-join.list.item-3.subtitle")
+                            ? t("pages.home-join.list.item-3.subtitle")
+                            : null
                         }
                       />
                     </ListItem>
@@ -416,17 +397,11 @@ function HomePage() {
                         <IconLoyalty />
                       </ListItemIcon>
                       <ListItemText
-                        primary={
-                          <Typography className={styles.joinListPrimary}>
-                            {t("pages.home-join.list.item-4.title")}
-                          </Typography>
-                        }
+                        primary={t("pages.home-join.list.item-4.title")}
                         secondary={
-                          t("pages.home-join.list.item-4.subtitle") ? (
-                            <Typography className={styles.joinListSecondary}>
-                              {t("pages.home-join.list.item-4.subtitle")}
-                            </Typography>
-                          ) : null
+                          t("pages.home-join.list.item-4.subtitle")
+                            ? t("pages.home-join.list.item-4.subtitle")
+                            : null
                         }
                       />
                     </ListItem>
@@ -435,17 +410,11 @@ function HomePage() {
                         <IconCreditCardOff />
                       </ListItemIcon>
                       <ListItemText
-                        primary={
-                          <Typography className={styles.joinListPrimary}>
-                            {t("pages.home-join.list.item-5.title")}
-                          </Typography>
-                        }
+                        primary={t("pages.home-join.list.item-5.title")}
                         secondary={
-                          t("pages.home-join.list.item-5.subtitle") ? (
-                            <Typography className={styles.joinListSecondary}>
-                              {t("pages.home-join.list.item-5.subtitle")}
-                            </Typography>
-                          ) : null
+                          t("pages.home-join.list.item-5.subtitle")
+                            ? t("pages.home-join.list.item-5.subtitle")
+                            : null
                         }
                       />
                     </ListItem>
@@ -467,17 +436,11 @@ function HomePage() {
                         <IconCheckroom />
                       </ListItemIcon>
                       <ListItemText
-                        primary={
-                          <Typography className={styles.joinListPrimary}>
-                            {t("pages.home-join.list-like.item-1.title")}
-                          </Typography>
-                        }
+                        primary={t("pages.home-join.list-like.item-1.title")}
                         secondary={
-                          t("pages.home-join.list-like.item-1.subtitle") ? (
-                            <Typography className={styles.joinListSecondary}>
-                              {t("pages.home-join.list-like.item-1.subtitle")}
-                            </Typography>
-                          ) : null
+                          t("pages.home-join.list-like.item-1.subtitle")
+                            ? t("pages.home-join.list-like.item-1.subtitle")
+                            : null
                         }
                       />
                     </ListItem>
@@ -486,17 +449,11 @@ function HomePage() {
                         <IconPayment />
                       </ListItemIcon>
                       <ListItemText
-                        primary={
-                          <Typography className={styles.joinListPrimary}>
-                            {t("pages.home-join.list-like.item-2.title")}
-                          </Typography>
-                        }
+                        primary={t("pages.home-join.list-like.item-2.title")}
                         secondary={
-                          t("pages.home-join.list-like.item-2.subtitle") ? (
-                            <Typography className={styles.joinListSecondary}>
-                              {t("pages.home-join.list-like.item-2.subtitle")}
-                            </Typography>
-                          ) : null
+                          t("pages.home-join.list-like.item-2.subtitle")
+                            ? t("pages.home-join.list-like.item-2.subtitle")
+                            : null
                         }
                       />
                     </ListItem>
