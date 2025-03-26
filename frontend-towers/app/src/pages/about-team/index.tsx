@@ -15,6 +15,8 @@ function AboutTeamPage() {
 
   const [teams, setTeams] = React.useState(undefined);
 
+  const refMembers = React.useRef([]);
+
   React.useEffect(() => {
     apiLegalTeamList().then((response) => {
       if (response.status === 200) {
@@ -23,6 +25,25 @@ function AboutTeamPage() {
     });
   }, [setTeams, i18n.resolvedLanguage]);
 
+  React.useEffect(() => {
+    if (teams != null && refMembers != null) {
+      for (let i = 0; i < teams.length; i++) {
+        const memberTeamIds = teams[i].members.map((member: any) => member.id);
+        const memberIds = Object.keys(refMembers.current);
+        const members = Object.values(refMembers.current).filter(
+          (member: any, i: number, row: any) =>
+            memberTeamIds.includes(memberIds[i]),
+        );
+        const width = Math.max(
+          ...members.map((member: any) => member.offsetWidth),
+        );
+        for (let j = 0; j < members.length; j++) {
+          members[j].style.minWidth = width + "px";
+        }
+      }
+    }
+  }, [teams]);
+
   const content = (
     <>
       <Box className={styles.aboutTeamContainerBox}>
@@ -30,7 +51,7 @@ function AboutTeamPage() {
           teams.length > 0 &&
           teams.map((team: any, i: number, row: any) => (
             <>
-              <Box className={styles.aboutTeamBox}>
+              <Box className={styles.aboutTeamBox} key={team.id}>
                 <Typography
                   variant="h5"
                   fontWeight="600"
@@ -39,16 +60,19 @@ function AboutTeamPage() {
                 >
                   {team.name}
                 </Typography>
-                <Grid container spacing={4} className={styles.aboutTeamGrid}>
+                <Grid container spacing={3} className={styles.aboutTeamGrid}>
                   {team.members &&
                     team.members.length > 0 &&
                     team.members.map((member: any) => (
                       <Grid
+                        key={member.id}
                         direction="column"
                         display="flex"
                         alignItems="center"
                         flexDirection="column"
-                        className={styles.aboutTeamBoxMember}
+                        ref={(ref) => {
+                          refMembers.current[member.id] = ref;
+                        }}
                       >
                         <Avatar
                           alt={
@@ -61,12 +85,7 @@ function AboutTeamPage() {
                           {member.user.firstname} {member.user.lastname}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                          {team.members.filter(
-                            (teamMember: any) =>
-                              teamMember.role.id === member.role.id,
-                          ).length > 1
-                            ? member.role.name_plural
-                            : member.role.name}
+                          {member.role.name}
                         </Typography>
                       </Grid>
                     ))}

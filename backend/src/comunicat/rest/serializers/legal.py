@@ -21,18 +21,21 @@ class MemberUserSerializer(s.ModelSerializer):
 
 class RoleSerializer(s.ModelSerializer):
     name = s.SerializerMethodField(read_only=True)
+    name_plural = s.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Role
         fields = (
             "id",
             "name",
+            "name_plural",
             "order",
             "created_at",
         )
         read_only_fields = (
             "id",
             "name",
+            "name_plural",
             "order",
             "created_at",
         )
@@ -40,6 +43,12 @@ class RoleSerializer(s.ModelSerializer):
     @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
     def get_name(self, obj):
         return obj.name.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_name_plural(self, obj):
+        return obj.name_plural.get(translation.get_language()) or obj.name.get(
+            translation.get_language()
+        )
 
 
 class MemberSerializer(s.ModelSerializer):

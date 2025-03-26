@@ -8,6 +8,7 @@ from django.db import models
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 from legal.enums import TeamType
+from legal.managers import RoleQuerySet
 
 
 class Team(StandardModel, Timestamps):
@@ -28,7 +29,11 @@ class Team(StandardModel, Timestamps):
 
 class Role(StandardModel, Timestamps):
     name = JSONField(default=language_field_default)
+    name_plural = JSONField(default=language_field_default)
+
     order = models.PositiveSmallIntegerField()
+
+    objects = RoleQuerySet.as_manager()
 
     def __str__(self) -> str:
         return self.name.get(translation.get_language()) or list(self.name.values())[0]

@@ -1,39 +1,54 @@
+from uuid import UUID
+
 from django.apps import apps
 from django.db.models import (
     QuerySet,
-    Sum,
     IntegerField,
     Value,
     Subquery,
     OuterRef,
+    Count,
 )
 from django.db.models.functions import Coalesce
 
-from user.enums import FamilyMemberRole
 
+class RoleQuerySet(QuerySet):
+    def with_member_amount(self, team_id: UUID):
+        Member = apps.get_model("legal", "Member")
 
-class MembershipQuerySet(QuerySet):
-    def with_amount(self):
         return self.annotate(
-            amount=Coalesce(
-                Sum("modules__amount"), Value(0), output_field=IntegerField()
-            )
+            member_amount=Coalesce(
+                Subquery(
+                    Member.objects.filter(
+                        role_id=OuterRef("id"),
+                        team_id=team_id,
+                    )
+                    .values("role_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1]
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
         )
 
 
-class MembershipUserQuerySet(QuerySet):
-    def with_family_role(self):
-        FamilyMember = apps.get_model("user", "FamilyMember")
+class MemberQuerySet(QuerySet):
+    def with_amount(self):
+        Member = apps.get_model("legal", "Member")
 
         return self.annotate(
-            family_role=Coalesce(
+            amount=Coalesce(
                 Subquery(
-                    FamilyMember.objects.filter(
-                        user_id=OuterRef("user_id"),
-                        family_id=OuterRef("family_id"),
-                    ).values("role")[:1]
+                    Member.objects.filter(
+                        role_id=OuterRef("role_id"),
+                        team_id=OuterRef("team_id"),
+                    )
+                    .values("role_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1]
                 ),
-                Value(FamilyMemberRole.MEMBER),
+                Value(0),
                 output_field=IntegerField(),
-            )
+            ),
         )
