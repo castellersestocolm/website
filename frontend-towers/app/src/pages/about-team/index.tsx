@@ -35,6 +35,7 @@ function AboutTeamPage() {
             memberTeamIds.includes(memberIds[i]),
         );
         const width = Math.max(
+          150,
           ...members.map((member: any) => member.offsetWidth),
         );
         for (let j = 0; j < members.length; j++) {
