@@ -8,7 +8,7 @@ import styles from "./styles.module.css";
 
 const DONATIONS = [
   [
-    "golden",
+    "gold",
     [
       "Artur Pérez",
       "Albert Borrell",
@@ -31,7 +31,10 @@ const DONATIONS = [
       "Katarina Sundström",
     ],
   ],
-  ["bronze", ["Helena Mir Hugas", "Pau Guinart", "Oriol Closa"]],
+  [
+    "bronze",
+    ["Helena Mir Hugas", "Pau Guinart", "Oriol Closa", "Anya Kurylovich"],
+  ],
 ];
 
 function Trips2025BerlinPage() {
