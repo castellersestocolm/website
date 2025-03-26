@@ -4,9 +4,6 @@
 }
 
 .memberName {
-  white-space: nowrap;
-}
-
-.memberSeparator {
   padding: 0 8px;
+  white-space: nowrap;
 }

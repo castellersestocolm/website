@@ -70,9 +70,6 @@ function Trips2025BerlinPage() {
                     <Typography variant="body1" className={styles.memberName}>
                       {member}
                     </Typography>
-                    {i + 1 < row.length && (
-                      <span className={styles.memberSeparator}>{"·"}</span>
-                    )}
                   </>
                 );
               })}
