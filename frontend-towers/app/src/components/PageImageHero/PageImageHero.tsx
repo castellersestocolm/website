@@ -6,8 +6,8 @@ import Box from "@mui/material/Box";
 import { useAppContext } from "../AppContext/AppContext";
 import { useTranslation } from "react-i18next";
 import FormUpdate from "../FormUpdate/FormUpdate";
-import ImageHeroUserJoin from "../../assets/images/heros/user-join.jpg";
 import Grid from "@mui/material/Grid2";
+import Hero from "../Hero/Hero";
 
 export default function PageImageHero({
   title,
@@ -35,22 +35,7 @@ export default function PageImageHero({
           alignItems="center"
           flexDirection="column"
         >
-          <Container className={styles.heroContainer}>
-            <Box className={styles.pageTitleBox}>
-              <Typography
-                variant="h3"
-                fontWeight="700"
-                className={styles.pageTitle}
-              >
-                {title}
-              </Typography>
-            </Box>
-            <Box
-              sx={{ height: { xs: "300px", md: "500px" } }}
-              className={styles.heroImage}
-              style={{ backgroundImage: "url(" + hero + ")" }}
-            />
-          </Container>
+          <Hero title={title} hero={hero} />
           <Container
             maxWidth="xl"
             sx={{

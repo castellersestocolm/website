@@ -1,0 +1,34 @@
+.heroTitle {
+  color: var(--mui-palette-secondary-contrastText);
+}
+
+.heroTitleBox {
+  text-align: center;
+  padding: 24px 12px;
+  max-width: calc(100% - 24px);
+  z-index: 100;
+}
+
+.heroContainer {
+  width: 100% !important;
+  max-width: unset !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: var(--mui-palette-secondary-main);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroImage {
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.15;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+}

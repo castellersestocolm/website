@@ -41,7 +41,7 @@ function Trips2025BerlinPage() {
   const { t } = useTranslation("common");
 
   const content = (
-    <>
+    <Box id="donations">
       <Typography
         variant="h4"
         fontWeight="700"
@@ -80,7 +80,7 @@ function Trips2025BerlinPage() {
           </Container>
         );
       })}
-    </>
+    </Box>
   );
 
   return (

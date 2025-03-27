@@ -53,6 +53,8 @@ import { capitalizeFirstLetter } from "../../utils/string";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
+import Hero from "../../components/Hero/Hero";
+import ImageHeroTrips2025Berlin from "../../assets/images/heros/trips-2025-berlin.jpg";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -134,6 +136,7 @@ function HomePage() {
                   <Button
                     variant="outlined"
                     href={ROUTES["external-form-membership"].path}
+                    target={"_blank"}
                     className={styles.heroButton}
                     disableElevation
                   >
@@ -159,6 +162,48 @@ function HomePage() {
           </Box>
         </Box>
       </Box>
+      <Hero
+        title={t("pages.trips-2025-berlin.title")}
+        hero={ImageHeroTrips2025Berlin}
+        content={
+          <Box>
+            <Typography
+              variant="h4"
+              className={styles.heroSectionSubtitle}
+              marginTop="12px"
+            >
+              {t("pages.home-berlin.description")}
+            </Typography>
+            <Grid size={12} marginTop="24px">
+              <Stack direction="row" spacing={2} className={styles.joinButtons}>
+                <Button
+                  variant="contained"
+                  href={ROUTES["trips-2025-berlin"].path}
+                  disableElevation
+                >
+                  {t("pages.home-berlin.button-page")}
+                </Button>
+                <Button
+                  variant="contained"
+                  href={ROUTES["trips-2025-berlin"].path + "#donations"}
+                  disableElevation
+                >
+                  {t("pages.home-berlin.button-donations")}
+                </Button>
+                <Button
+                  variant="contained"
+                  href={ROUTES["external-berlin-diada-2025"].path}
+                  target={"_blank"}
+                  disableElevation
+                >
+                  {t("pages.home-berlin.button-diada")}
+                  <IconArrowOutward className={styles.externalIcon} />
+                </Button>
+              </Stack>
+            </Grid>
+          </Box>
+        }
+      />
       <Box component="section" className={styles.rehearsals}>
         <Container maxWidth="lg">
           <Typography
@@ -469,6 +514,7 @@ function HomePage() {
                       <Button
                         variant="contained"
                         href={ROUTES["external-form-membership"].path}
+                        target={"_blank"}
                         disableElevation
                       >
                         {t("pages.home-join.list.button-join")}

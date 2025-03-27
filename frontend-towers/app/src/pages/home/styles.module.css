@@ -245,3 +245,8 @@
   height: 20px !important;
   width: 20px !important;
 }
+
+.heroSectionSubtitle {
+  font-size: 16px !important;
+  color: #fff;
+}
