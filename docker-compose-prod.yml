@@ -17,13 +17,12 @@ services:
     networks:
       - comunicat
     volumes:
-      - ./backend:/backend/backend:cached
+      - ./backend/media:/backend/media:cached
       - internal-media:/backend/internal_media:cached
     ports:
       - target: 8000
         published: 8000
         protocol: tcp
-        mode: host
     depends_on:
       - database
       - redis
@@ -61,14 +60,12 @@ services:
         - REACT_APP_TOWERS_BASE_URL=${REACT_APP_TOWERS_BASE_URL:-http://localhost:3100}
         - REACT_APP_TOWERS_INFO_EMAIL=${REACT_APP_TOWERS_INFO_EMAIL:-info@castellersestocolm.se}
     deploy:
-      replicas: 2
+      replicas: 1
     stdin_open: true
     tty: true
     restart: on-failure
     networks:
       - comunicat
-    volumes:
-      - ./frontend-towers/app:/frontend-towers/app:cached
     ports:
       - target: 80
         published: 3200
@@ -220,6 +217,22 @@ services:
       - SSL_TYPE=
       - OVERRIDE_HOSTNAME=mail.castellersestocolm.se
       - LOG_LEVEL=debug
+    networks:
+      - comunicat
+  proxy:
+    image: haproxytech/haproxy-alpine:3.2
+    deploy:
+      replicas: 1
+    restart: on-failure
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+    volumes:
+      - ./docker-data/haproxy/:/usr/local/etc/haproxy:ro
+    depends_on:
+      - backend
     networks:
       - comunicat
 

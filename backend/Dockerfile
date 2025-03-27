@@ -39,6 +39,8 @@ RUN set -x && apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /backend/venv
 WORKDIR /backend
 
+COPY src src
+
 # Install dependencies
 COPY "requirements/$BUILD_TARGET/requirements.txt" .
 RUN set -x && \
@@ -100,9 +102,12 @@ RUN set -x && apt-get update && apt-get install --no-install-recommends -y \
 RUN mkdir /data && chown -R backend:backend /data
 
 # Install source code
-COPY --from=builder /backend/venv backend/venv
-COPY --chown=backend:backend . backend/backend
-WORKDIR /backend/backend/src
+COPY --from=builder /backend/venv /backend/venv
+
+# Copy the src directory
+COPY --from=builder --chown=backend:backend /backend/src /backend/src
+
+WORKDIR /backend/src
 
 # Collect static files
 RUN set -x && \

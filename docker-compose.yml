@@ -12,7 +12,8 @@ services:
     networks:
       - comunicat
     volumes:
-      - ./backend:/backend/backend:cached
+      - ./backend/src:/backend/src:cached
+      - ./backend/media:/backend/media:cached
       - internal-media:/backend/internal_media:cached
     ports:
       - target: 8000
