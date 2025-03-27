@@ -17,7 +17,7 @@ services:
     networks:
       - comunicat
     volumes:
-      - ./backend/media:/backend/media:cached
+      - media-files:/backend/backend/media
       - internal-media:/backend/internal_media:cached
     ports:
       - target: 8000
@@ -108,7 +108,7 @@ services:
       - database
       - mail
     volumes:
-      - ./backend:/backend/backend:cached
+      - media-files:/backend/backendmedia
       - internal-media:/backend/internal_media:cached
     networks:
       - comunicat
@@ -125,7 +125,6 @@ services:
       - worker
     volumes:
       - celerybeat-data:/data
-      - ./backend:/backend/backend:cached
     networks:
       - comunicat
     env_file:
@@ -237,6 +236,7 @@ services:
       - comunicat
 
 volumes:
+  media-files:
   internal-media:
   postgres-data:
   mysql-data:

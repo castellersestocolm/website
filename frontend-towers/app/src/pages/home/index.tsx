@@ -83,7 +83,7 @@ function HomePage() {
   React.useEffect(() => {
     apiEventList().then((response) => {
       if (response.status === 200) {
-        setEvents(response.data);
+        setEvents(response.data.results);
       }
     });
   }, [setEvents]);
