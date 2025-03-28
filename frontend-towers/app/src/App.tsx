@@ -138,6 +138,10 @@ const App = () => {
                     path={ROUTES["trips-2025-berlin"].path}
                     element={<Trips2025BerlinPage />}
                   />
+                  <Route
+                    path={ROUTES["trips-2025-berlin"].path + "-asds"}
+                    element={<Trips2025BerlinPage />}
+                  />
                 </Routes>
               </Box>
               <Footer />
