@@ -165,7 +165,9 @@ services:
       - ./envs/local.env
   pinyator:
     image: ghcr.io/castellersestocolm/pinyator:${BUILD_TAG:-dev}
-    build: pinyator
+    build:
+      context: pinyator
+      dockerfile: Dockerfile-prod
     deploy:
       replicas: 1
       update_config:
