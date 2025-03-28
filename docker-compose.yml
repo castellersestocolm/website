@@ -25,25 +25,25 @@ services:
       - redis
     env_file:
       - ./envs/local.env
-  frontend-org:
-    image: frontend-org
-    build: frontend-org
-    stdin_open: true
-    tty: true
-    restart: on-failure
-    entrypoint: ["npm"]
-    command: ["start"]
-    networks:
-      - comunicat
-    volumes:
-      - ./frontend-org/app:/frontend-org:cached
-    ports:
-      - target: 3000
-        published: 3100
-        protocol: tcp
-        mode: host
-    env_file:
-      - ./envs/local.env
+#  frontend-org:
+#    image: frontend-org
+#    build: frontend-org
+#    stdin_open: true
+#    tty: true
+#    restart: on-failure
+#    entrypoint: ["npm"]
+#    command: ["start"]
+#    networks:
+#      - comunicat
+#    volumes:
+#      - ./frontend-org/app:/frontend-org:cached
+#    ports:
+#      - target: 3000
+#        published: 3100
+#        protocol: tcp
+#        mode: host
+#    env_file:
+#      - ./envs/local.env
   frontend-towers:
     image: frontend-towers
     build: frontend-towers

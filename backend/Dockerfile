@@ -73,6 +73,7 @@ ENV APT_LIB_MYSQL_CLIENT_DEV 8.0.41-*
 ENV APT_BUILD_ESSENTIAL 12.9*
 ENV APT_DEFAULT_LIB_MYSQL_CLIENT_DEV 1.0.7*
 ENV APT_PKG_CONFIG 0.29.2-*
+ENV APT_WGET 1.21-*
 
 # Django settings
 ENV DJANGO_SETTINGS_MODULE comunicat.settings
@@ -96,6 +97,7 @@ RUN set -x && apt-get update && apt-get install --no-install-recommends -y \
     build-essential=$APT_BUILD_ESSENTIAL \
     default-libmysqlclient-dev=$APT_DEFAULT_LIB_MYSQL_CLIENT_DEV \
     pkg-config=$APT_PKG_CONFIG \
+    wget=$APT_WGET \
     && apt-get clean \
     && rm -rf "/var/lib/apt/lists/*"
 

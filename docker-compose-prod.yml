@@ -23,7 +23,7 @@ services:
         max_attempts: 3
         window: 120s
     healthcheck:
-      test: curl --fail http://localhost:8000/health || exit 1
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
       interval: 60s
       retries: 5
       start_period: 30s
@@ -40,12 +40,10 @@ services:
       - internal-media:/backend/internal_media:cached
     ports:
       - target: 8000
-        published: 8000
         protocol: tcp
     depends_on:
       - database
       - redis
-      - mail
     env_file:
       - ./envs/local.env
 #  frontend-org:
@@ -79,7 +77,7 @@ services:
         - REACT_APP_TOWERS_BASE_URL=${REACT_APP_TOWERS_BASE_URL:-http://localhost:3100}
         - REACT_APP_TOWERS_INFO_EMAIL=${REACT_APP_TOWERS_INFO_EMAIL:-info@castellersestocolm.se}
     deploy:
-      replicas: 1
+      replicas: 2
       update_config:
         parallelism: 1
         order: start-first
@@ -93,6 +91,12 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
+      interval: 60s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
     stdin_open: true
     tty: true
     restart: on-failure
@@ -100,9 +104,7 @@ services:
       - comunicat
     ports:
       - target: 80
-        published: 3200
         protocol: tcp
-        mode: host
   database:
     image: postgres:17.2
     deploy:
@@ -140,7 +142,6 @@ services:
     depends_on:
       - redis
       - database
-      - mail
     volumes:
       - media-files:/backend/backendmedia
       - internal-media:/backend/internal_media:cached
@@ -170,26 +171,11 @@ services:
       dockerfile: Dockerfile-prod
     deploy:
       replicas: 1
-      update_config:
-        parallelism: 1
-        order: start-first
-        failure_action: rollback
-        delay: 10s
-      rollback_config:
-        parallelism: 0
-        order: stop-first
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
     stdin_open: true
     tty: true
     restart: on-failure
     networks:
       - comunicat
-    volumes:
-      - ./pinyator/src:/pinyator/pinyator:cached
     ports:
       - target: 80
         published: 8100
@@ -301,6 +287,10 @@ services:
     ports:
       - target: 8080
         published: 8080
+        protocol: tcp
+        mode: host
+      - target: 3210
+        published: 3210
         protocol: tcp
         mode: host
     volumes:
