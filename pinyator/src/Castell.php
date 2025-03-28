@@ -56,8 +56,8 @@
 		$where=" E.ESTAT=".$estat;
 	}
 
-	$sql="SELECT CASTELL_ID, C.NOM, E.NOM AS EVENT, date_format(E.DATA, '%d-%m-%Y %H:%i') AS DATA, 
-	date_format(C.DATA_CREACIO, '%d-%m-%Y %H:%i') AS DATA_CREACIO, 
+	$sql="SELECT CASTELL_ID, C.NOM, E.NOM AS EVENT, date_format(E.DATA, '%Y-%m-%d %H:%i') AS DATA,
+	date_format(C.DATA_CREACIO, '%Y-%m-%d %H:%i') AS DATA_CREACIO,
 	C.EVENT_ID AS EVENT_ID, C.ORDRE, C.PUBLIC,
 	(SELECT COUNT(*) 
 			FROM CASTELL_POSICIO AS CPR 

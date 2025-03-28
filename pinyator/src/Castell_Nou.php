@@ -40,8 +40,11 @@ include "$_SERVER[DOCUMENT_ROOT]/pinyator/Connexio.php";
 	{
 		$where=" AND EVENT_ID=".$event." ";
 	}
+    else{
+        $where=" AND DATA>= CURDATE() ";
+    }
 
-	$sql="SELECT EVENT_ID, NOM
+	$sql="SELECT EVENT_ID, NOM, DATA
 	FROM EVENT
 	WHERE 1=1
 	".$where."
@@ -54,7 +57,7 @@ include "$_SERVER[DOCUMENT_ROOT]/pinyator/Connexio.php";
 	{
 		while($row = mysqli_fetch_assoc($result))
 		{			
-			echo "<option value=".$row["EVENT_ID"].">".$row["NOM"]."</option>";
+			echo "<option value=".$row["EVENT_ID"].">".substr($row["DATA"], 0, 10)." - ".$row["NOM"]."</option>";
 		}
 	}
 	else if (mysqli_error($conn) != "")
