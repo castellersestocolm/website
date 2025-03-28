@@ -9,6 +9,25 @@ services:
         - BUILD_TARGET=${BUILD_TARGET:-dev}
     deploy:
       replicas: 2
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 30s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    healthcheck:
+      test: curl --fail http://localhost:8000/health || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     stdin_open: true
     tty: true
     restart: on-failure
@@ -61,6 +80,19 @@ services:
         - REACT_APP_TOWERS_INFO_EMAIL=${REACT_APP_TOWERS_INFO_EMAIL:-info@castellersestocolm.se}
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     stdin_open: true
     tty: true
     restart: on-failure
@@ -99,6 +131,8 @@ services:
       - comunicat
   worker:
     image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
+    deploy:
+      replicas: 1
     stdin_open: true
     tty: true
     entrypoint: [ "celery" ]
@@ -134,6 +168,19 @@ services:
     build: pinyator
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     stdin_open: true
     tty: true
     restart: on-failure
@@ -187,6 +234,19 @@ services:
     image: ghcr.io/docker-mailserver/docker-mailserver:15.0.0
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 30s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     restart: always
     ports:
       - target: 25
@@ -222,6 +282,19 @@ services:
     image: haproxytech/haproxy-alpine:3.2
     deploy:
       replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     restart: on-failure
     ports:
       - target: 8080
