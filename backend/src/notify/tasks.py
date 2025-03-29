@@ -43,6 +43,7 @@ def send_user_email(
         ]
         from_email = EMAIL_BY_MODULE[module]
         body = render_to_string(template["html"], context_full)
+        subject = str(template["subject"])
 
     attachments = []
     for email_attachment_obj in (
@@ -66,14 +67,14 @@ def send_user_email(
         user=user_obj,
         email=email or user_obj.email,
         type=email_type,
-        subject=template["subject"],
+        subject=subject,
         context=context,
         module=module,
         locale=locale,
     )
 
     send_email(
-        subject=template["subject"],
+        subject=subject,
         body=body,
         from_email=from_email,
         to=email or user_obj.email,

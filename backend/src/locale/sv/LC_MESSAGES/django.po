@@ -124,15 +124,15 @@ msgstr "Just nu är följande funktioner igång på vår hemsida"
 
 #: comunicat/templates/email/towers/user/imported.html:8
 msgid "Membership and family management."
-msgstr "Medlemskap och familjeförvaltning"
+msgstr "Medlemskap och familjeförvaltning."
 
 #: comunicat/templates/email/towers/user/imported.html:9
 msgid "Calendar and events registration."
-msgstr "Kalender och evenemang registrering"
+msgstr "Kalender och evenemang registrering."
 
 #: comunicat/templates/email/towers/user/imported.html:10
 msgid "Payments overview."
-msgstr "Översikt av betalningar"
+msgstr "Översikt av betalningar."
 
 #: comunicat/templates/email/towers/user/imported.html:11
 msgid "Google single sign-on (optional)."
