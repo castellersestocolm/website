@@ -41,7 +41,7 @@ msgstr ""
 #: comunicat/rest/serializers/user.py:315
 #, python-format
 msgid "Members over %s must consent in order to become members."
-msgstr ""
+msgstr "Medlemmar över %s måste ge sitt samtycke för att kunna bli medlemmar."
 
 #: comunicat/rest/serializers/user.py:235
 #: comunicat/rest/serializers/user.py:342
@@ -70,11 +70,11 @@ msgstr "\"{input}\" är inte ett giltigt val."
 
 #: comunicat/rest/utils/fields.py:84
 msgid "Not money."
-msgstr ""
+msgstr "Inte ett betalningsmedel."
 
 #: comunicat/rest/utils/fields.py:85
 msgid "Missing amount or currency."
-msgstr ""
+msgstr "Det saknas mängd eller valuta."
 
 #: comunicat/templates/email/towers/base.html:28
 #: comunicat/templates/email/towers/base.html:30
@@ -87,6 +87,8 @@ msgid ""
 "let us know if this is the result of registering, subscribing or any other "
 "action you might think that have caused this."
 msgstr ""
+"Det ser ut att vara ett problem, det här mejlet har inget innehåll! Var så god och "
+"låt oss veta om det beror på registreringen, prenumerationen eller något annat."
 
 #: comunicat/templates/email/towers/base.html:42
 msgid "Contact us"
@@ -111,60 +113,70 @@ msgid ""
 "to give you a quick run down of some new features and hopefully answer any "
 "questions you may have regarding the system."
 msgstr ""
+"Vi är extremt glada att kunna introducera vår nya hemsida, ett nytt sätt att "
+"hantera ditt medlemskap och för att registrera om du kommer till repetitionerna. "
+"Vi vill nå ut till er för att visa de nya funktionerna och förhoppningsvis "
+"svara på era frågor angående det nya systemet."
 
 #: comunicat/templates/email/towers/user/imported.html:6
 msgid "Right now, the following features are up and running on our site."
-msgstr ""
+msgstr "Just nu är följande funktioner igång på vår hemsida"
 
 #: comunicat/templates/email/towers/user/imported.html:8
 msgid "Membership and family management."
-msgstr ""
+msgstr "Medlemskap och familjeförvaltning"
 
 #: comunicat/templates/email/towers/user/imported.html:9
 msgid "Calendar and events registration."
-msgstr ""
+msgstr "Kalender och evenemang registrering"
 
 #: comunicat/templates/email/towers/user/imported.html:10
 msgid "Payments overview."
-msgstr ""
+msgstr "Översikt av betalningar"
 
 #: comunicat/templates/email/towers/user/imported.html:11
-msgid "Google single-sign on (optional)."
-msgstr ""
+msgid "Google single sign-on (optional)."
+msgstr "Google single sign-on (frivillig)."
 
 #: comunicat/templates/email/towers/user/imported.html:13
 msgid ""
 "We have more features coming soon, and will keep you all updated as we "
 "continue to implement them on the site."
 msgstr ""
+"Det kommer snart fler funktioner och vi kommer hålla er uppdaterade "
+"allteftersom fler funktioner kommer."
 
 #: comunicat/templates/email/towers/user/imported.html:14
 msgid ""
 "As you currently have a membership registered we have automatically migrated "
 "your data to the new platform, you can set a new password via the link below "
-"or use Google single-sign on directly on our website if you wish to."
+"or use Google single sign-on directly on our website if you wish to."
 msgstr ""
+"Eftersom du som redan har ett medlemskap registrerat hos oss kommer det att "
+"automatiskt migrera dina data till den nya hemsidan, där kan du också ställa "
+"in ett nytt lösenord via länken nedan, eller använda ett Google single sign-on på "
+"vår hemsida om du helst vill det."
 
 #: comunicat/templates/email/towers/user/imported.html:19
 msgid "Set a new password"
-msgstr ""
+msgstr "Ställ in ditt nya lösenord"
 
 #: comunicat/templates/email/towers/user/imported.html:22
 msgid "Have any more questions? Feel free to drop an email at"
-msgstr ""
+msgstr "Har du fler frågor? Skicka dem till oss via e-post"
 
 #: comunicat/templates/email/towers/user/imported.html:22
 msgid "or reach out on WhatsApp!"
-msgstr ""
+msgstr "eller skriv till oss på Whatsapp!"
 
 #: comunicat/templates/email/towers/user/imported.html:26
 #: comunicat/templates/email/towers/user/welcome.html:10
 msgid "See you around!"
-msgstr ""
+msgstr "Vi syns!"
 
 #: comunicat/templates/email/towers/user/invite.html:5
 msgid "You have been invited to join a family membership by"
-msgstr ""
+msgstr "Du har blivit inbjuden att gå med i ett familjemedlemskap av"
 
 #: comunicat/templates/email/towers/user/invite.html:7
 msgid ""
@@ -173,6 +185,9 @@ msgid ""
 "in, navigating to your dashboard and reviewing your invitations under "
 "\"Family requests\"."
 msgstr ""
+"Eftersom du redan är medlem behöver du bara acceptera inbjudningen om du "
+"önskar förena din familj. Du kan göra det genom att logga in, navigera till "
+"din panel och titta på dina inbjudningar i \"Familje förfrågningar\"."
 
 #: comunicat/templates/email/towers/user/invite.html:9
 msgid ""
@@ -181,40 +196,49 @@ msgid ""
 "your email you will be able to accept this invitation under \"Family requests"
 "\" on your dashboard."
 msgstr ""
+"För att kunna acceptera denna inbjudan måste du först bli medlem som du kan "
+"göra direkt på vår hemsida. Efter du gjort det kan du acceptera inbjudan i "
+"\"Familje förfrågningar\" i panelen."
 
 #: comunicat/templates/email/towers/user/invite.html:15
 msgid "Review the invitation"
-msgstr ""
+msgstr "Se över inbjudan"
 
 #: comunicat/templates/email/towers/user/invite.html:15
 msgid "Become a member"
-msgstr ""
+msgstr "Bli medlem"
 
 #: comunicat/templates/email/towers/user/password.html:5
 msgid ""
 "Did you request to change your password? To update it click on the following "
 "button. If you didn't request this you can ignore this email."
 msgstr ""
+"Har du anhållit om att ändra lösenord? För att uppdatera det klicka på följande "
+"knapp. Om du inte begärde det så kan du strunta i det här emailet."
 
 #: comunicat/templates/email/towers/user/password.html:10
 msgid "Change password"
-msgstr ""
+msgstr "Ändra lösenord"
 
 #: comunicat/templates/email/towers/user/register.html:5
 msgid ""
 "Thank you for joining! In order to complete your registration we need you to "
 "confirm this email as soon as possible by clicking the following button."
 msgstr ""
+"Tack för du gått med! För att fullfölja din registrering behöver vi att du "
+"konfirmerar din e-post så snart som möjligt genom att klicka på följande knapp."
 
 #: comunicat/templates/email/towers/user/register.html:10
 msgid "Confirm email"
-msgstr "Bekräfta epost"
+msgstr "Bekräfta e-post"
 
 #: comunicat/templates/email/towers/user/welcome.html:5
 msgid ""
 "You have now completed the registration process and are part of the "
 "Castellers d'Estocolm, welcome!"
 msgstr ""
+"Du har nu slutfört din registrering och är nu en del av Castellers d'Estocolm, "
+"hjärtligt välkommen!"
 
 #: comunicat/templates/email/towers/user/welcome.html:6
 msgid ""
@@ -226,18 +250,26 @@ msgid ""
 "some of the groups if your phone matches the one you used to register with "
 "us. If that's not the case please do let us know and we'll fix it for you!"
 msgstr ""
+"I medföljande mejlet finner du information och förhoppningsvis svar till alla "
+"dina frågor. Men, om du fortfarande skulle ha några tvivel eller frågor kan du "
+"kontakta oss enklast genom Whatsapp gemenskapen. Alla aktiva medlemmar är där "
+"eftersom vi ofta diskuterar och delger varandra information om repetitioner, "
+"framträdanden, bilder, video och mycket annat. Märk att vi bara accepterar "
+"förfrågningar om tillträde till en del av grupperna om ditt nummer matchar det "
+"du har registrerat hos oss. Om inte så kan du kontakta oss så ordnar vi det åt "
+"dig!"
 
 #: comunicat/templates/email/towers/user/welcome.html:15
 msgid "Join the community"
-msgstr ""
+msgstr "Gå med i gemenskapen"
 
 #: event/models.py:105
 msgid "End time must be greater than start time."
-msgstr ""
+msgstr "Sluttiden måste vara större än starttiden."
 
 #: notify/consts.py:34 notify/consts.py:60
 msgid "Confirm your email to finish your registration"
-msgstr "Bekräfta din epost för att slutföra din registrering"
+msgstr "Bekräfta din e-post för att slutföra din registrering"
 
 #: notify/consts.py:38 notify/consts.py:64
 msgid "Reset your password to login"
@@ -275,29 +307,31 @@ msgstr "Ospecificerad"
 
 #: payment/models.py:198
 msgid "Category must be set for accounts with parent."
-msgstr ""
+msgstr "Kategorin måste vara inställd för konto med förälder."
 
 #: user/admin.py:78
 msgid "Another user already has the same alias."
-msgstr ""
+msgstr "En annan användare har redan samma alias."
 
 #: user/api/family_member_request.py:52
 msgid ""
 "You have too many pending requests, cancel some of them before you send a "
 "new one."
 msgstr ""
+"Du har redan för många väntande förfrågningar, cancellera några av dem innan "
+"du skickar en ny."
 
 #: user/api/family_member_request.py:64
 msgid "The member already belongs to your family."
-msgstr ""
+msgstr "Den här familjemedlemmen ingår redan i din familj."
 
 #: user/api/family_member_request.py:71
 msgid "You have reached the maximum amount of members in your family."
-msgstr ""
+msgstr "Du har nått högsta mängd av medlemmar i din familj."
 
 #: user/api/family_member_request.py:86
 msgid "You have reached the maximum amount of adult members in your family."
-msgstr ""
+msgstr "Du har redan nått högsta mängd av vuxna medlemmar i din familj."
 
 #: user/models.py:27
 msgid "staff status"

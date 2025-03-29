@@ -8,10 +8,10 @@
         <li>{% trans "Membership and family management." %}</li>
         <li>{% trans "Calendar and events registration." %}</li>
         <li>{% trans "Payments overview." %}</li>
-        <li>{% trans "Google single-sign on (optional)." %}</li>
+        <li>{% trans "Google single sign-on (optional)." %}</li>
     </ul>
     <p>{% trans "We have more features coming soon, and will keep you all updated as we continue to implement them on the site." %}</p>
-    <p>{% trans "As you currently have a membership registered we have automatically migrated your data to the new platform, you can set a new password via the link below or use Google single-sign on directly on our website if you wish to." %}</p>
+    <p>{% trans "As you currently have a membership registered we have automatically migrated your data to the new platform, you can set a new password via the link below or use Google single sign-on directly on our website if you wish to." %}</p>
 {% endblock %}
 
 {% block email_button_url %}{% full_towers_url "user/password/" %}{% endblock %}

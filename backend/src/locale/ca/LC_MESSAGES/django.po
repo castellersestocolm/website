@@ -136,7 +136,7 @@ msgid "Payments overview."
 msgstr "Historial de pagaments."
 
 #: comunicat/templates/email/towers/user/imported.html:11
-msgid "Google single-sign on (optional)."
+msgid "Google single sign-on (optional)."
 msgstr "Entra amb Google (opcional)."
 
 #: comunicat/templates/email/towers/user/imported.html:13
@@ -151,7 +151,7 @@ msgstr ""
 msgid ""
 "As you currently have a membership registered we have automatically migrated "
 "your data to the new platform, you can set a new password via the link below "
-"or use Google single-sign on directly on our website if you wish to."
+"or use Google single sign-on directly on our website if you wish to."
 msgstr ""
 "Com que tens una quota registrada hem migrat automàticament les teves dades "
 "a la nova plataforma, pots configurar una contrasenya nova a través del següent "
