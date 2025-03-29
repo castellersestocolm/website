@@ -39,11 +39,11 @@ TEMPLATE_BY_MODULE = {
                     "html": "email/org/user/password.html",
                 },
                 EmailType.WELCOME: {
-                    "subject": _("Welcome to %s") % (settings.MODULE_ORG_NAME,),
+                    "subject": _("Welcome to Les Quatre Barres"),
                     "html": "email/org/user/welcome.html",
                 },
                 EmailType.IMPORTED: {
-                    "subject": _("Welcome to %s new website")
+                    "subject": _("Welcome to Les Quatre Barres new website")
                     % (settings.MODULE_ORG_NAME,),
                     "html": "email/org/user/imported.html",
                 },
@@ -66,12 +66,11 @@ TEMPLATE_BY_MODULE = {
                     "html": "email/towers/user/password.html",
                 },
                 EmailType.WELCOME: {
-                    "subject": _("Welcome to %s") % (settings.MODULE_TOWERS_NAME,),
+                    "subject": _("Welcome to Castellers d'Estocolm"),
                     "html": "email/towers/user/welcome.html",
                 },
                 EmailType.IMPORTED: {
-                    "subject": _("Welcome to %s new website")
-                    % (settings.MODULE_TOWERS_NAME,),
+                    "subject": _("Welcome to Castellers d'Estocolm new website"),
                     "html": "email/towers/user/imported.html",
                 },
                 EmailType.FAMILY_INVITE: {

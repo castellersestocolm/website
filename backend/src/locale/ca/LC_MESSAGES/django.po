@@ -276,13 +276,13 @@ msgstr "Reinicia la teva contrasenya per entrar"
 
 #: notify/consts.py:42 notify/consts.py:68
 #, python-format
-msgid "Welcome to %s"
-msgstr "Benvingut/da a %s"
+msgid "Welcome to Castellers d'Estocolm"
+msgstr "Benvingut/da als Castellers d'Estocolm"
 
 #: notify/consts.py:46 notify/consts.py:72
 #| msgid "Welcome to %s"
-msgid "Welcome to %s new website"
-msgstr "Benvingut/da a la nova web de %s"
+msgid "Welcome to Castellers d'Estocolm new website"
+msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 
 #: notify/consts.py:50 notify/consts.py:76
 msgid "You have been invited to join a family"

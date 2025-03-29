@@ -128,6 +128,7 @@ class UserAdmin(admin.ModelAdmin):
     )
     exclude = ("password", "user_permissions")
     ordering = ("-created_at",)
+    filter_horizontal = ("groups", "user_permissions")
     inlines = (FamilyMemberRequestSentInline, FamilyMemberRequestReceivedInline)
     actions = (send_verification_email, send_welcome_email, send_imported_email)
     form = UserAdminForm
@@ -150,6 +151,7 @@ class UserAdmin(admin.ModelAdmin):
                     "is_active",
                     "is_staff",
                     "is_superuser",
+                    "groups",
                     "created_at",
                 )
             },
