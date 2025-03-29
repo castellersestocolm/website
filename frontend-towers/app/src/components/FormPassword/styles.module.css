@@ -47,3 +47,9 @@
   font-size: 500px !important;
   opacity: 0.25;
 }
+
+@media screen and (max-width: 900px) {
+  .passwordIcon {
+    font-size: 250px !important;
+  }
+}

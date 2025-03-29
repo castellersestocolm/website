@@ -40,6 +40,12 @@
   opacity: 0.25;
 }
 
+@media screen and (max-width: 900px) {
+  .joinIcon {
+    font-size: 250px !important;
+  }
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
