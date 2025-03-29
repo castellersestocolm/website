@@ -7,14 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0016_alter_source_name'),
+        ("payment", "0016_alter_source_name"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='transactionimport',
-            name='source',
-            field=models.ForeignKey(default='9a29616c-0279-4576-889b-44d5cf3831c4', on_delete=django.db.models.deletion.CASCADE, related_name='transaction_imports', to='payment.source'),
+            model_name="transactionimport",
+            name="source",
+            field=models.ForeignKey(
+                default="9a29616c-0279-4576-889b-44d5cf3831c4",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="transaction_imports",
+                to="payment.source",
+            ),
             preserve_default=False,
         ),
     ]

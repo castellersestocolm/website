@@ -9,51 +9,102 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0007_alter_registration_unique_together'),
+        ("event", "0007_alter_registration_unique_together"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='location',
-            name='coordinate_lat',
+            model_name="location",
+            name="coordinate_lat",
             field=models.FloatField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='location',
-            name='coordinate_lon',
+            model_name="location",
+            name="coordinate_lon",
             field=models.FloatField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='location',
-            name='description',
+            model_name="location",
+            name="description",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='registration',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'REQUESTED'), (20, 'ACTIVE'), (30, 'CANCELLED'), (40, 'TENTATIVE')], default=event.enums.RegistrationStatus['REQUESTED']),
+            model_name="registration",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "REQUESTED"),
+                    (20, "ACTIVE"),
+                    (30, "CANCELLED"),
+                    (40, "TENTATIVE"),
+                ],
+                default=event.enums.RegistrationStatus["REQUESTED"],
+            ),
         ),
         migrations.AlterField(
-            model_name='registrationlog',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'REQUESTED'), (20, 'ACTIVE'), (30, 'CANCELLED'), (40, 'TENTATIVE')]),
+            model_name="registrationlog",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "REQUESTED"),
+                    (20, "ACTIVE"),
+                    (30, "CANCELLED"),
+                    (40, "TENTATIVE"),
+                ]
+            ),
         ),
         migrations.CreateModel(
-            name='Connection',
+            name="Connection",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'BUS'), (20, 'TROLLEYBUS'), (30, 'TRAM'), (40, 'METRO'), (50, 'RAIL'), (60, 'WATER'), (70, 'FERRY')])),
-                ('coordinate_lat', models.FloatField()),
-                ('coordinate_lon', models.FloatField()),
-                ('location', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='connections', to='event.location')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "BUS"),
+                            (20, "TROLLEYBUS"),
+                            (30, "TRAM"),
+                            (40, "METRO"),
+                            (50, "RAIL"),
+                            (60, "WATER"),
+                            (70, "FERRY"),
+                        ]
+                    ),
+                ),
+                ("coordinate_lat", models.FloatField()),
+                ("coordinate_lon", models.FloatField()),
+                (
+                    "location",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="connections",
+                        to="event.location",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

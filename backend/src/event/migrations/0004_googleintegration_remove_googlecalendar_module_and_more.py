@@ -8,31 +8,55 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0003_rename_time_start_agendaitem_time_from_and_more'),
+        ("event", "0003_rename_time_start_agendaitem_time_from_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GoogleIntegration',
+            name="GoogleIntegration",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')])),
-                ('authorized_user_info', models.JSONField(default=dict)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")]
+                    ),
+                ),
+                ("authorized_user_info", models.JSONField(default=dict)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.RemoveField(
-            model_name='googlecalendar',
-            name='module',
+            model_name="googlecalendar",
+            name="module",
         ),
         migrations.AddField(
-            model_name='googlecalendar',
-            name='google_integration',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='google_calendars', to='event.googleintegration'),
+            model_name="googlecalendar",
+            name="google_integration",
+            field=models.ForeignKey(
+                default="",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="google_calendars",
+                to="event.googleintegration",
+            ),
             preserve_default=False,
         ),
     ]

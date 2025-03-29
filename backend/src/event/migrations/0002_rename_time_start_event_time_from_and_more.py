@@ -6,23 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0001_initial'),
+        ("event", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='event',
-            old_name='time_start',
-            new_name='time_from',
+            model_name="event",
+            old_name="time_start",
+            new_name="time_from",
         ),
         migrations.RenameField(
-            model_name='event',
-            old_name='time_end',
-            new_name='time_to',
+            model_name="event",
+            old_name="time_end",
+            new_name="time_to",
         ),
         migrations.AlterField(
-            model_name='event',
-            name='module',
-            field=models.PositiveSmallIntegerField(blank=True, choices=[(10, 'ORG'), (20, 'TOWERS')], null=True),
+            model_name="event",
+            name="module",
+            field=models.PositiveSmallIntegerField(
+                blank=True, choices=[(10, "ORG"), (20, "TOWERS")], null=True
+            ),
         ),
     ]

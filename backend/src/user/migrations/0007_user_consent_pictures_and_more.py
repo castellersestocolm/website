@@ -7,18 +7,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0006_alter_familymemberrequest_user_receiver'),
+        ("user", "0006_alter_familymemberrequest_user_receiver"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='consent_pictures',
+            model_name="user",
+            name="consent_pictures",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='familymemberrequest',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'REQUESTED'), (20, 'ACCEPTED'), (30, 'DELETED'), (40, 'REJECTED')], default=user.enums.FamilyMemberRequestStatus['REQUESTED']),
+            model_name="familymemberrequest",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "REQUESTED"),
+                    (20, "ACCEPTED"),
+                    (30, "DELETED"),
+                    (40, "REJECTED"),
+                ],
+                default=user.enums.FamilyMemberRequestStatus["REQUESTED"],
+            ),
         ),
     ]

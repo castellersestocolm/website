@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0009_alter_location_description'),
+        ("event", "0009_alter_location_description"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='connection',
-            name='path',
-            field=django.contrib.postgres.fields.ArrayField(base_field=django.contrib.postgres.fields.ArrayField(base_field=models.FloatField(), default=list, size=None), default=list, size=None),
+            model_name="connection",
+            name="path",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=django.contrib.postgres.fields.ArrayField(
+                    base_field=models.FloatField(), default=list, size=None
+                ),
+                default=list,
+                size=None,
+            ),
         ),
     ]

@@ -7,18 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0017_transactionimport_source'),
+        ("payment", "0017_transactionimport_source"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='transactionimport',
-            name='file',
-            field=models.FileField(blank=True, null=True, upload_to='payment/transactionimport/file/', validators=[django.core.validators.FileExtensionValidator(['csv'])]),
+            model_name="transactionimport",
+            name="file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="payment/transactionimport/file/",
+                validators=[django.core.validators.FileExtensionValidator(["csv"])],
+            ),
         ),
         migrations.AlterField(
-            model_name='transactionimport',
-            name='input',
+            model_name="transactionimport",
+            name="input",
             field=models.TextField(blank=True, max_length=10000, null=True),
         ),
     ]

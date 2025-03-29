@@ -6,13 +6,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0012_account_module'),
+        ("payment", "0012_account_module"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='account',
-            name='category',
-            field=models.PositiveSmallIntegerField(blank=True, choices=[(10, 'ASSETS'), (20, 'SAVINGS'), (30, 'GRANTS'), (40, 'DONATIONS'), (50, 'DEBTS'), (60, 'MEMBERSHIPS'), (70, 'EVENTS'), (80, 'EXPENSES'), (90, 'RENT'), (100, 'SALARIES'), (110, 'TAX'), (120, 'INSURANCE'), (130, 'LOSSES')], null=True),
+            model_name="account",
+            name="category",
+            field=models.PositiveSmallIntegerField(
+                blank=True,
+                choices=[
+                    (10, "ASSETS"),
+                    (20, "SAVINGS"),
+                    (30, "GRANTS"),
+                    (40, "DONATIONS"),
+                    (50, "DEBTS"),
+                    (60, "MEMBERSHIPS"),
+                    (70, "EVENTS"),
+                    (80, "EXPENSES"),
+                    (90, "RENT"),
+                    (100, "SALARIES"),
+                    (110, "TAX"),
+                    (120, "INSURANCE"),
+                    (130, "LOSSES"),
+                ],
+                null=True,
+            ),
         ),
     ]

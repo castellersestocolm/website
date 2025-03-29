@@ -6,13 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0001_initial'),
+        ("document", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='emailattachment',
-            name='type',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'REGISTER'), (11, 'PASSWORD'), (12, 'WELCOME'), (13, 'IMPORTED'), (20, 'FAMILY_INVITE')]),
+            model_name="emailattachment",
+            name="type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "REGISTER"),
+                    (11, "PASSWORD"),
+                    (12, "WELCOME"),
+                    (13, "IMPORTED"),
+                    (20, "FAMILY_INVITE"),
+                ]
+            ),
         ),
     ]

@@ -10,74 +10,178 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0004_alter_paymentline_item_id_and_more'),
+        ("payment", "0004_alter_paymentline_item_id_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Source',
+            name="Source",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'BANK')], default=payment.enums.SourceType['BANK'])),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "BANK")], default=payment.enums.SourceType["BANK"]
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AlterField(
-            model_name='paymentline',
-            name='vat',
+            model_name="paymentline",
+            name="vat",
             field=models.PositiveSmallIntegerField(default=0),
         ),
         migrations.CreateModel(
-            name='Account',
+            name="Account",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('code', models.PositiveSmallIntegerField(unique=True)),
-                ('allow_transactions', models.BooleanField(default=True)),
-                ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='subaccounts', to='payment.account')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("code", models.PositiveSmallIntegerField(unique=True)),
+                ("allow_transactions", models.BooleanField(default=True)),
+                (
+                    "parent",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subaccounts",
+                        to="payment.account",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='payment',
-            name='account',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='payments', to='payment.account'),
+            model_name="payment",
+            name="account",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="payments",
+                to="payment.account",
+            ),
         ),
         migrations.CreateModel(
-            name='Transaction',
+            name="Transaction",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('method', models.PositiveIntegerField(choices=[(10, 'CASH'), (20, 'TRANSFER'), (75201, 'SE_SWISH'), (75202, 'SE_PLUSGIRO')], default=payment.enums.PaymentMethod['TRANSFER'])),
-                ('amount_currency', djmoney.models.fields.CurrencyField(choices=[('SEK', 'Swedish Krona')], default='SEK', editable=False, max_length=3)),
-                ('amount', djmoney.models.fields.MoneyField(decimal_places=2, default_currency='SEK', max_digits=7)),
-                ('vat', models.PositiveSmallIntegerField(default=0)),
-                ('text', models.CharField(blank=True, max_length=255, null=True)),
-                ('sender', models.CharField(blank=True, max_length=255, null=True)),
-                ('reference', models.CharField(blank=True, max_length=255, null=True)),
-                ('external_id', models.CharField(blank=True, max_length=255, null=True)),
-                ('date_accounting', models.DateField()),
-                ('date_interest', models.DateField(blank=True, null=True)),
-                ('extra', models.JSONField(default=dict)),
-                ('source', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='transactions', to='payment.source')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "method",
+                    models.PositiveIntegerField(
+                        choices=[
+                            (10, "CASH"),
+                            (20, "TRANSFER"),
+                            (75201, "SE_SWISH"),
+                            (75202, "SE_PLUSGIRO"),
+                        ],
+                        default=payment.enums.PaymentMethod["TRANSFER"],
+                    ),
+                ),
+                (
+                    "amount_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[("SEK", "Swedish Krona")],
+                        default="SEK",
+                        editable=False,
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "amount",
+                    djmoney.models.fields.MoneyField(
+                        decimal_places=2, default_currency="SEK", max_digits=7
+                    ),
+                ),
+                ("vat", models.PositiveSmallIntegerField(default=0)),
+                ("text", models.CharField(blank=True, max_length=255, null=True)),
+                ("sender", models.CharField(blank=True, max_length=255, null=True)),
+                ("reference", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "external_id",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                ("date_accounting", models.DateField()),
+                ("date_interest", models.DateField(blank=True, null=True)),
+                ("extra", models.JSONField(default=dict)),
+                (
+                    "source",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="transactions",
+                        to="payment.source",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='payment',
-            name='transactions',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='payments', to='payment.transaction'),
+            model_name="payment",
+            name="transactions",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="payments",
+                to="payment.transaction",
+            ),
         ),
     ]

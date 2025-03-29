@@ -7,18 +7,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('membership', '0002_alter_membershipuser_family'),
+        ("membership", "0002_alter_membershipuser_family"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='membershipmodule',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'REQUESTED'), (1, 'PROCESSING'), (2, 'ACTIVE'), (3, 'EXPIRED')], default=membership.enums.MembershipStatus['REQUESTED']),
+            model_name="membershipmodule",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (0, "REQUESTED"),
+                    (1, "PROCESSING"),
+                    (2, "ACTIVE"),
+                    (3, "EXPIRED"),
+                ],
+                default=membership.enums.MembershipStatus["REQUESTED"],
+            ),
         ),
         migrations.AlterField(
-            model_name='membershipmodule',
-            name='module',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')]),
+            model_name="membershipmodule",
+            name="module",
+            field=models.PositiveSmallIntegerField(
+                choices=[(10, "ORG"), (20, "TOWERS")]
+            ),
         ),
     ]

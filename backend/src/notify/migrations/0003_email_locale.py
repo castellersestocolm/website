@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notify', '0002_email_module'),
+        ("notify", "0002_email_module"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='email',
-            name='locale',
-            field=models.CharField(default='en', max_length=5),
+            model_name="email",
+            name="locale",
+            field=models.CharField(default="en", max_length=5),
             preserve_default=False,
         ),
     ]

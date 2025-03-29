@@ -13,72 +13,234 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Payer',
+            name="Payer",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('firstname', models.CharField(blank=True, max_length=255, null=True)),
-                ('lastname', models.CharField(blank=True, max_length=255, null=True)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('phone', models.CharField(blank=True, max_length=255, null=True)),
-                ('user', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("firstname", models.CharField(blank=True, max_length=255, null=True)),
+                ("lastname", models.CharField(blank=True, max_length=255, null=True)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("phone", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'DEBIT'), (20, 'CREDIT')], default=payment.enums.PaymentType['DEBIT'])),
-                ('status', models.PositiveSmallIntegerField(choices=[(10, 'PENDING'), (20, 'PROCESSING'), (30, 'COMPLETED'), (40, 'CANCELED')], default=payment.enums.PaymentStatus['PENDING'])),
-                ('method', models.PositiveIntegerField(blank=True, choices=[(10, 'CASH'), (20, 'TRANSFER'), (75201, 'SE_SWISH'), (75202, 'SE_PLUSGIRO')], null=True)),
-                ('debit_payment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='credit_payments', to='payment.payment')),
-                ('payer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='payment.payer')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "DEBIT"), (20, "CREDIT")],
+                        default=payment.enums.PaymentType["DEBIT"],
+                    ),
+                ),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "PENDING"),
+                            (20, "PROCESSING"),
+                            (30, "COMPLETED"),
+                            (40, "CANCELED"),
+                        ],
+                        default=payment.enums.PaymentStatus["PENDING"],
+                    ),
+                ),
+                (
+                    "method",
+                    models.PositiveIntegerField(
+                        blank=True,
+                        choices=[
+                            (10, "CASH"),
+                            (20, "TRANSFER"),
+                            (75201, "SE_SWISH"),
+                            (75202, "SE_PLUSGIRO"),
+                        ],
+                        null=True,
+                    ),
+                ),
+                (
+                    "debit_payment",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="credit_payments",
+                        to="payment.payment",
+                    ),
+                ),
+                (
+                    "payer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payments",
+                        to="payment.payer",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='PaymentLine',
+            name="PaymentLine",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('amount_currency', djmoney.models.fields.CurrencyField(choices=[('SEK', 'Swedish Krona')], default='SEK', editable=False, max_length=3)),
-                ('amount', djmoney.models.fields.MoneyField(decimal_places=2, default_currency='SEK', max_digits=7)),
-                ('vat', models.PositiveSmallIntegerField()),
-                ('item_id', models.CharField(max_length=255, null=True)),
-                ('debit_line', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='credit_lines', to='payment.paymentline')),
-                ('item_type', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('payment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines', to='payment.payment')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "amount_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[("SEK", "Swedish Krona")],
+                        default="SEK",
+                        editable=False,
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "amount",
+                    djmoney.models.fields.MoneyField(
+                        decimal_places=2, default_currency="SEK", max_digits=7
+                    ),
+                ),
+                ("vat", models.PositiveSmallIntegerField()),
+                ("item_id", models.CharField(max_length=255, null=True)),
+                (
+                    "debit_line",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="credit_lines",
+                        to="payment.paymentline",
+                    ),
+                ),
+                (
+                    "item_type",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
+                (
+                    "payment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lines",
+                        to="payment.payment",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='PaymentLog',
+            name="PaymentLog",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('status', models.PositiveSmallIntegerField(choices=[(10, 'PENDING'), (20, 'PROCESSING'), (30, 'COMPLETED'), (40, 'CANCELED')])),
-                ('payment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='logs', to='payment.payment')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "PENDING"),
+                            (20, "PROCESSING"),
+                            (30, "COMPLETED"),
+                            (40, "CANCELED"),
+                        ]
+                    ),
+                ),
+                (
+                    "payment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="logs",
+                        to="payment.payment",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

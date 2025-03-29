@@ -12,56 +12,146 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('user', '0004_user_origin_module'),
+        ("user", "0004_user_origin_module"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Membership',
+            name="Membership",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('status', models.PositiveSmallIntegerField(choices=[(0, 'REQUESTED'), (1, 'PROCESSING'), (2, 'ACTIVE'), (3, 'EXPIRED')], default=membership.enums.MembershipStatus['REQUESTED'])),
-                ('date_from', models.DateField()),
-                ('date_to', models.DateField()),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (0, "REQUESTED"),
+                            (1, "PROCESSING"),
+                            (2, "ACTIVE"),
+                            (3, "EXPIRED"),
+                        ],
+                        default=membership.enums.MembershipStatus["REQUESTED"],
+                    ),
+                ),
+                ("date_from", models.DateField()),
+                ("date_to", models.DateField()),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='MembershipModule',
+            name="MembershipModule",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('amount', models.PositiveIntegerField()),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'TOWERS'), (20, 'ORG')])),
-                ('membership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modules', to='membership.membership')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("amount", models.PositiveIntegerField()),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "TOWERS"), (20, "ORG")]
+                    ),
+                ),
+                (
+                    "membership",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="modules",
+                        to="membership.membership",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='MembershipUser',
+            name="MembershipUser",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('family', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='membership_users', to='user.family')),
-                ('membership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='membership_users', to='membership.membership')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='membership_users', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "family",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="membership_users",
+                        to="user.family",
+                    ),
+                ),
+                (
+                    "membership",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="membership_users",
+                        to="membership.membership",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="membership_users",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='membership',
-            name='users',
-            field=models.ManyToManyField(related_name='memberships', through='membership.MembershipUser', to=settings.AUTH_USER_MODEL),
+            model_name="membership",
+            name="users",
+            field=models.ManyToManyField(
+                related_name="memberships",
+                through="membership.MembershipUser",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

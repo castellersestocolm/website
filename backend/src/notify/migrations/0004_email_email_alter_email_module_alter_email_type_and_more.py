@@ -8,30 +8,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notify', '0003_email_locale'),
+        ("notify", "0003_email_locale"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='email',
-            name='email',
-            field=models.EmailField(default='', max_length=254),
+            model_name="email",
+            name="email",
+            field=models.EmailField(default="", max_length=254),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='email',
-            name='module',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')]),
+            model_name="email",
+            name="module",
+            field=models.PositiveSmallIntegerField(
+                choices=[(10, "ORG"), (20, "TOWERS")]
+            ),
         ),
         migrations.AlterField(
-            model_name='email',
-            name='type',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'REGISTER'), (11, 'PASSWORD'), (12, 'WELCOME'), (20, 'FAMILY_INVITE')]),
+            model_name="email",
+            name="type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "REGISTER"),
+                    (11, "PASSWORD"),
+                    (12, "WELCOME"),
+                    (20, "FAMILY_INVITE"),
+                ]
+            ),
         ),
         migrations.AlterField(
-            model_name='email',
-            name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='notification_emails', to=settings.AUTH_USER_MODEL),
+            model_name="email",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="notification_emails",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

@@ -19,47 +19,141 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Role',
+            name="Role",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.JSONField(default=comunicat.utils.models.language_field_default)),
-                ('order', models.PositiveSmallIntegerField()),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "name",
+                    models.JSONField(
+                        default=comunicat.utils.models.language_field_default
+                    ),
+                ),
+                ("order", models.PositiveSmallIntegerField()),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.JSONField(default=comunicat.utils.models.language_field_default)),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'BOARD'), (20, 'TECHNICAL'), (30, 'MUSICIANS'), (40, 'COMMISSION')], default=legal.enums.TeamType['BOARD'])),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')])),
-                ('date_from', models.DateField()),
-                ('date_to', models.DateField(blank=True, null=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "name",
+                    models.JSONField(
+                        default=comunicat.utils.models.language_field_default
+                    ),
+                ),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "BOARD"),
+                            (20, "TECHNICAL"),
+                            (30, "MUSICIANS"),
+                            (40, "COMMISSION"),
+                        ],
+                        default=legal.enums.TeamType["BOARD"],
+                    ),
+                ),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")]
+                    ),
+                ),
+                ("date_from", models.DateField()),
+                ("date_to", models.DateField(blank=True, null=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Member',
+            name="Member",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('picture', versatileimagefield.fields.VersatileImageField(upload_to='legal/member/picture/', verbose_name='Image')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='members', to=settings.AUTH_USER_MODEL)),
-                ('role', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='members', to='legal.role')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='members', to='legal.team')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "picture",
+                    versatileimagefield.fields.VersatileImageField(
+                        upload_to="legal/member/picture/", verbose_name="Image"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="members",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "role",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="members",
+                        to="legal.role",
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="members",
+                        to="legal.team",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

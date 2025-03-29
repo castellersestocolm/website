@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0011_alter_account_category'),
+        ("payment", "0011_alter_account_category"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='account',
-            name='module',
-            field=models.PositiveSmallIntegerField(blank=True, choices=[(10, 'ORG'), (20, 'TOWERS')], null=True),
+            model_name="account",
+            name="module",
+            field=models.PositiveSmallIntegerField(
+                blank=True, choices=[(10, "ORG"), (20, "TOWERS")], null=True
+            ),
         ),
     ]

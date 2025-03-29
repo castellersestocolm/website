@@ -7,21 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('legal', '0002_bylaws'),
+        ("legal", "0002_bylaws"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='bylaws',
-            options={'verbose_name': 'bylaws', 'verbose_name_plural': 'bylaws'},
+            name="bylaws",
+            options={"verbose_name": "bylaws", "verbose_name_plural": "bylaws"},
         ),
         migrations.RemoveField(
-            model_name='bylaws',
-            name='body',
+            model_name="bylaws",
+            name="body",
         ),
         migrations.AddField(
-            model_name='bylaws',
-            name='content',
-            field=models.JSONField(default=comunicat.utils.models.language_field_default),
+            model_name="bylaws",
+            name="content",
+            field=models.JSONField(
+                default=comunicat.utils.models.language_field_default
+            ),
         ),
     ]

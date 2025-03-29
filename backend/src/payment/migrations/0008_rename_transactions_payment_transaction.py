@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0007_remove_payment_account_paymentline_account'),
+        ("payment", "0007_remove_payment_account_paymentline_account"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='payment',
-            old_name='transactions',
-            new_name='transaction',
+            model_name="payment",
+            old_name="transactions",
+            new_name="transaction",
         ),
     ]

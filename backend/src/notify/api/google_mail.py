@@ -12,7 +12,15 @@ from integration.models import GoogleIntegration
 from notify.consts import GOOGLE_EMAIL_SCOPES
 
 
-def send_email(subject: str, from_email: str, to_email: str | list[str], reply_email: str, body: str, attachments: list, module: Module):
+def send_email(
+    subject: str,
+    from_email: str,
+    to_email: str | list[str],
+    reply_email: str,
+    body: str,
+    attachments: list,
+    module: Module,
+):
     google_integration_obj = GoogleIntegration.objects.filter(module=module).first()
 
     creds = Credentials.from_authorized_user_info(

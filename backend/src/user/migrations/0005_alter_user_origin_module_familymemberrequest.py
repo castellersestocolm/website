@@ -10,29 +10,72 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0004_user_origin_module'),
+        ("user", "0004_user_origin_module"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='origin_module',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')]),
+            model_name="user",
+            name="origin_module",
+            field=models.PositiveSmallIntegerField(
+                choices=[(10, "ORG"), (20, "TOWERS")]
+            ),
         ),
         migrations.CreateModel(
-            name='FamilyMemberRequest',
+            name="FamilyMemberRequest",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('email_receiver', models.EmailField(max_length=254)),
-                ('status', models.PositiveSmallIntegerField(choices=[(10, 'REQUESTED'), (20, 'ACCEPTED'), (30, 'DELETED')], default=user.enums.FamilyMemberRequestStatus['REQUESTED'])),
-                ('family', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='member_requests', to='user.family')),
-                ('user_receiver', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='family_member_received_requests', to=settings.AUTH_USER_MODEL)),
-                ('user_sender', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='family_member_sent_requests', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("email_receiver", models.EmailField(max_length=254)),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "REQUESTED"), (20, "ACCEPTED"), (30, "DELETED")],
+                        default=user.enums.FamilyMemberRequestStatus["REQUESTED"],
+                    ),
+                ),
+                (
+                    "family",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="member_requests",
+                        to="user.family",
+                    ),
+                ),
+                (
+                    "user_receiver",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="family_member_received_requests",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "user_sender",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="family_member_sent_requests",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

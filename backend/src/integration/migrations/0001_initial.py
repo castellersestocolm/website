@@ -8,21 +8,39 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='GoogleIntegration',
+            name="GoogleIntegration",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')], unique=True)),
-                ('authorized_user_info', models.JSONField(default=dict)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")], unique=True
+                    ),
+                ),
+                ("authorized_user_info", models.JSONField(default=dict)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

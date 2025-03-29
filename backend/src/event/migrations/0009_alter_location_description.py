@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0008_location_coordinate_lat_location_coordinate_lon_and_more'),
+        ("event", "0008_location_coordinate_lat_location_coordinate_lon_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='location',
-            name='description',
-            field=models.JSONField(default=comunicat.utils.models.language_field_default),
+            model_name="location",
+            name="description",
+            field=models.JSONField(
+                default=comunicat.utils.models.language_field_default
+            ),
         ),
     ]

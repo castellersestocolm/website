@@ -17,170 +17,456 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('title', models.CharField(max_length=255)),
-                ('time_start', models.DateTimeField()),
-                ('time_end', models.DateTimeField()),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'GENERAL'), (20, 'INTERNAL'), (30, 'TALK'), (40, 'GATHERING'), (50, 'REHEARSAL'), (60, 'PERFORMANCE')], default=event.enums.EventType['GENERAL'])),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')])),
-                ('max_registrations', models.PositiveSmallIntegerField(blank=True, null=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("time_start", models.DateTimeField()),
+                ("time_end", models.DateTimeField()),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "GENERAL"),
+                            (20, "INTERNAL"),
+                            (30, "TALK"),
+                            (40, "GATHERING"),
+                            (50, "REHEARSAL"),
+                            (60, "PERFORMANCE"),
+                        ],
+                        default=event.enums.EventType["GENERAL"],
+                    ),
+                ),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")]
+                    ),
+                ),
+                (
+                    "max_registrations",
+                    models.PositiveSmallIntegerField(blank=True, null=True),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='EventSeries',
+            name="EventSeries",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='GoogleCalendar',
+            name="GoogleCalendar",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('external_id', models.CharField(max_length=255)),
-                ('is_primary', models.BooleanField(default=False)),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')])),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("external_id", models.CharField(max_length=255)),
+                ("is_primary", models.BooleanField(default=False)),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")]
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Location',
+            name="Location",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('address', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("address", models.CharField(max_length=255)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='AgendaItem',
+            name="AgendaItem",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField(blank=True, max_length=1000, null=True)),
-                ('time_start', models.DateTimeField()),
-                ('time_end', models.DateTimeField(blank=True, null=True)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='agenda_items', to='event.event')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "description",
+                    models.TextField(blank=True, max_length=1000, null=True),
+                ),
+                ("time_start", models.DateTimeField()),
+                ("time_end", models.DateTimeField(blank=True, null=True)),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="agenda_items",
+                        to="event.event",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='EventModule',
+            name="EventModule",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')])),
-                ('require_signup', models.BooleanField(default=True)),
-                ('require_approve', models.BooleanField(default=False)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modules', to='event.event')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")]
+                    ),
+                ),
+                ("require_signup", models.BooleanField(default=True)),
+                ("require_approve", models.BooleanField(default=False)),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="modules",
+                        to="event.event",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='EventRequirement',
+            name="EventRequirement",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'TO_BRING')])),
-                ('only_signup', models.BooleanField(default=True)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='requirements', to='event.event')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("type", models.PositiveSmallIntegerField(choices=[(10, "TO_BRING")])),
+                ("only_signup", models.BooleanField(default=True)),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="requirements",
+                        to="event.event",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='event',
-            name='series',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='events', to='event.eventseries'),
+            model_name="event",
+            name="series",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="events",
+                to="event.eventseries",
+            ),
         ),
         migrations.CreateModel(
-            name='GoogleCalendarDefault',
+            name="GoogleCalendarDefault",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'GENERAL'), (20, 'INTERNAL'), (30, 'TALK'), (40, 'GATHERING'), (50, 'REHEARSAL'), (60, 'PERFORMANCE')], default=event.enums.EventType['GENERAL'], unique=True)),
-                ('google_calendar', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='google_defaults', to='event.googlecalendar')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "GENERAL"),
+                            (20, "INTERNAL"),
+                            (30, "TALK"),
+                            (40, "GATHERING"),
+                            (50, "REHEARSAL"),
+                            (60, "PERFORMANCE"),
+                        ],
+                        default=event.enums.EventType["GENERAL"],
+                        unique=True,
+                    ),
+                ),
+                (
+                    "google_calendar",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="google_defaults",
+                        to="event.googlecalendar",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='GoogleEvent',
+            name="GoogleEvent",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('external_id', models.CharField(max_length=255)),
-                ('event', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='google_event', to='event.event')),
-                ('google_calendar', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='google_events', to='event.googlecalendar')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("external_id", models.CharField(max_length=255)),
+                (
+                    "event",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="google_event",
+                        to="event.event",
+                    ),
+                ),
+                (
+                    "google_calendar",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="google_events",
+                        to="event.googlecalendar",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='event',
-            name='location',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='events', to='event.location'),
+            model_name="event",
+            name="location",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="events",
+                to="event.location",
+            ),
         ),
         migrations.CreateModel(
-            name='Registration',
+            name="Registration",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('status', models.PositiveSmallIntegerField(choices=[(10, 'REQUESTED'), (20, 'ACTIVE'), (30, 'CANCELLED')], default=event.enums.RegistrationStatus['REQUESTED'])),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='registrations', to='event.event')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='registrations', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "REQUESTED"), (20, "ACTIVE"), (30, "CANCELLED")],
+                        default=event.enums.RegistrationStatus["REQUESTED"],
+                    ),
+                ),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="registrations",
+                        to="event.event",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="registrations",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='RegistrationLog',
+            name="RegistrationLog",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('status', models.PositiveSmallIntegerField(choices=[(10, 'REQUESTED'), (20, 'ACTIVE'), (30, 'CANCELLED')])),
-                ('registration', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='logs', to='event.registration')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "REQUESTED"), (20, "ACTIVE"), (30, "CANCELLED")]
+                    ),
+                ),
+                (
+                    "registration",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="logs",
+                        to="event.registration",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

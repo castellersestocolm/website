@@ -229,7 +229,9 @@ class GoogleCalendar(StandardModel, Timestamps):
     is_primary = models.BooleanField(default=False)
 
     google_integration = models.ForeignKey(
-        "integration.GoogleIntegration", related_name="google_calendars", on_delete=models.CASCADE
+        "integration.GoogleIntegration",
+        related_name="google_calendars",
+        on_delete=models.CASCADE,
     )
 
 

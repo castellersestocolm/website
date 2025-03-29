@@ -7,17 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0006_accounttag'),
+        ("payment", "0006_accounttag"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='payment',
-            name='account',
+            model_name="payment",
+            name="account",
         ),
         migrations.AddField(
-            model_name='paymentline',
-            name='account',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='payments', to='payment.account'),
+            model_name="paymentline",
+            name="account",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="payments",
+                to="payment.account",
+            ),
         ),
     ]

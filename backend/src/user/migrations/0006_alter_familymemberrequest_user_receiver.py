@@ -8,13 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0005_alter_user_origin_module_familymemberrequest'),
+        ("user", "0005_alter_user_origin_module_familymemberrequest"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='familymemberrequest',
-            name='user_receiver',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='family_member_received_requests', to=settings.AUTH_USER_MODEL),
+            model_name="familymemberrequest",
+            name="user_receiver",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="family_member_received_requests",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

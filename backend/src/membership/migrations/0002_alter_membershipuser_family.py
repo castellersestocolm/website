@@ -7,14 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('membership', '0001_initial'),
-        ('user', '0004_user_origin_module'),
+        ("membership", "0001_initial"),
+        ("user", "0004_user_origin_module"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='membershipuser',
-            name='family',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='membership_users', to='user.family'),
+            model_name="membershipuser",
+            name="family",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="membership_users",
+                to="user.family",
+            ),
         ),
     ]

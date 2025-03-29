@@ -7,13 +7,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('membership', '0007_alter_membershipmodule_amount'),
+        ("membership", "0007_alter_membershipmodule_amount"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='membershipmodule',
-            name='amount_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[('SEK', 'Swedish Krona')], default='SEK', editable=False, max_length=3),
+            model_name="membershipmodule",
+            name="amount_currency",
+            field=djmoney.models.fields.CurrencyField(
+                choices=[("SEK", "Swedish Krona")],
+                default="SEK",
+                editable=False,
+                max_length=3,
+            ),
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0007_user_consent_pictures_and_more'),
+        ("user", "0007_user_consent_pictures_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='preferred_language',
+            model_name="user",
+            name="preferred_language",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
     ]

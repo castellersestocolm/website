@@ -7,13 +7,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0010_connection_path'),
+        ("event", "0010_connection_path"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='event',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'DRAFT'), (20, 'PUBLISHED'), (30, 'CANCELLED')], default=event.enums.EventStatus['DRAFT']),
+            model_name="event",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[(10, "DRAFT"), (20, "PUBLISHED"), (30, "CANCELLED")],
+                default=event.enums.EventStatus["DRAFT"],
+            ),
         ),
     ]

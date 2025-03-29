@@ -7,13 +7,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('membership', '0006_membershipmodule_amount_and_more'),
+        ("membership", "0006_membershipmodule_amount_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='membershipmodule',
-            name='amount',
-            field=djmoney.models.fields.MoneyField(decimal_places=2, default_currency='SEK', max_digits=7),
+            model_name="membershipmodule",
+            name="amount",
+            field=djmoney.models.fields.MoneyField(
+                decimal_places=2, default_currency="SEK", max_digits=7
+            ),
         ),
     ]

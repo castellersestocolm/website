@@ -7,17 +7,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0014_transactionimport_rename_payer_entity_and_more'),
+        ("payment", "0014_transactionimport_rename_payer_entity_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='entity',
-            options={'verbose_name': 'entity', 'verbose_name_plural': 'entities'},
+            name="entity",
+            options={"verbose_name": "entity", "verbose_name_plural": "entities"},
         ),
         migrations.AddField(
-            model_name='transactionimport',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'CREATED'), (20, 'RUNNING'), (30, 'COMPLETED'), (40, 'ERRORED')], default=payment.enums.TransactionImportStatus['CREATED']),
+            model_name="transactionimport",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "CREATED"),
+                    (20, "RUNNING"),
+                    (30, "COMPLETED"),
+                    (40, "ERRORED"),
+                ],
+                default=payment.enums.TransactionImportStatus["CREATED"],
+            ),
         ),
     ]

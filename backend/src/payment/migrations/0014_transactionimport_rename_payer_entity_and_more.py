@@ -9,40 +9,80 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0013_alter_account_category'),
+        ("payment", "0013_alter_account_category"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TransactionImport',
+            name="TransactionImport",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('input', models.TextField(max_length=10000)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("input", models.TextField(max_length=10000)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.RenameModel(
-            old_name='Payer',
-            new_name='Entity',
+            old_name="Payer",
+            new_name="Entity",
         ),
         migrations.RenameField(
-            model_name='payment',
-            old_name='payer',
-            new_name='entity',
+            model_name="payment",
+            old_name="payer",
+            new_name="entity",
         ),
         migrations.AlterField(
-            model_name='account',
-            name='category',
-            field=models.PositiveSmallIntegerField(blank=True, choices=[(10, 'ASSETS'), (20, 'SAVINGS'), (30, 'GRANTS'), (40, 'DONATIONS'), (50, 'DEBTS'), (60, 'MEMBERSHIPS'), (70, 'EVENTS'), (80, 'EXPENSES'), (90, 'RENT'), (100, 'SALARIES'), (110, 'TAX'), (120, 'INSURANCE'), (130, 'LOSSES'), (140, 'SALES'), (150, 'INTEREST')], null=True),
+            model_name="account",
+            name="category",
+            field=models.PositiveSmallIntegerField(
+                blank=True,
+                choices=[
+                    (10, "ASSETS"),
+                    (20, "SAVINGS"),
+                    (30, "GRANTS"),
+                    (40, "DONATIONS"),
+                    (50, "DEBTS"),
+                    (60, "MEMBERSHIPS"),
+                    (70, "EVENTS"),
+                    (80, "EXPENSES"),
+                    (90, "RENT"),
+                    (100, "SALARIES"),
+                    (110, "TAX"),
+                    (120, "INSURANCE"),
+                    (130, "LOSSES"),
+                    (140, "SALES"),
+                    (150, "INTEREST"),
+                ],
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='transaction',
-            name='importer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='transactions', to='payment.transactionimport'),
+            model_name="transaction",
+            name="importer",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="transactions",
+                to="payment.transactionimport",
+            ),
         ),
     ]

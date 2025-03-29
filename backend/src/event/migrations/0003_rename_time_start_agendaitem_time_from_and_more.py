@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0002_rename_time_start_event_time_from_and_more'),
+        ("event", "0002_rename_time_start_event_time_from_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='agendaitem',
-            old_name='time_start',
-            new_name='time_from',
+            model_name="agendaitem",
+            old_name="time_start",
+            new_name="time_from",
         ),
         migrations.RenameField(
-            model_name='agendaitem',
-            old_name='time_end',
-            new_name='time_to',
+            model_name="agendaitem",
+            old_name="time_end",
+            new_name="time_to",
         ),
     ]

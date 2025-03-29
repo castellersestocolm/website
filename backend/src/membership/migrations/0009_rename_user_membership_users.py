@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('membership', '0008_alter_membershipmodule_amount_currency'),
+        ("membership", "0008_alter_membershipmodule_amount_currency"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='membership',
-            old_name='user',
-            new_name='users',
+            model_name="membership",
+            old_name="user",
+            new_name="users",
         ),
     ]

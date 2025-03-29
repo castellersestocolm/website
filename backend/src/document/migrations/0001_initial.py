@@ -11,39 +11,103 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Document',
+            name="Document",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('code', models.CharField(max_length=255)),
-                ('language', models.CharField(max_length=255)),
-                ('version', models.PositiveIntegerField(default=0)),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'GENERAL'), (20, 'GUIDE')], default=document.enums.DocumentType['GENERAL'])),
-                ('status', models.PositiveSmallIntegerField(choices=[(10, 'DRAFT'), (20, 'PUBLISHED'), (30, 'DELETED')], default=document.enums.DocumentStatus['DRAFT'])),
-                ('file', models.FileField(upload_to='document/document/file/', validators=[django.core.validators.FileExtensionValidator(['pdf'])])),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("code", models.CharField(max_length=255)),
+                ("language", models.CharField(max_length=255)),
+                ("version", models.PositiveIntegerField(default=0)),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "GENERAL"), (20, "GUIDE")],
+                        default=document.enums.DocumentType["GENERAL"],
+                    ),
+                ),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "DRAFT"), (20, "PUBLISHED"), (30, "DELETED")],
+                        default=document.enums.DocumentStatus["DRAFT"],
+                    ),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to="document/document/file/",
+                        validators=[
+                            django.core.validators.FileExtensionValidator(["pdf"])
+                        ],
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('code', 'language', 'version')},
+                "unique_together": {("code", "language", "version")},
             },
         ),
         migrations.CreateModel(
-            name='EmailAttachment',
+            name="EmailAttachment",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'REGISTER'), (11, 'PASSWORD'), (12, 'WELCOME'), (20, 'FAMILY_INVITE')])),
-                ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='email_attachments', to='document.document')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "REGISTER"),
+                            (11, "PASSWORD"),
+                            (12, "WELCOME"),
+                            (20, "FAMILY_INVITE"),
+                        ]
+                    ),
+                ),
+                (
+                    "document",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="email_attachments",
+                        to="document.document",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]
