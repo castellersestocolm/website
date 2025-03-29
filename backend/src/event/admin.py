@@ -13,7 +13,6 @@ from event.models import (
     GoogleCalendar,
     GoogleCalendarDefault,
     GoogleEvent,
-    GoogleIntegration,
     Connection,
 )
 
@@ -112,14 +111,6 @@ class GoogleCalendarDefaultInline(admin.TabularInline):
     model = GoogleCalendarDefault
     ordering = ("type",)
     extra = 0
-
-
-@admin.register(GoogleIntegration)
-class GoogleIntegrationAdmin(admin.ModelAdmin):
-    search_fields = ("id",)
-    list_display = ("id", "module")
-    list_filter = ("module",)
-    ordering = ("module",)
 
 
 @admin.register(GoogleCalendar)

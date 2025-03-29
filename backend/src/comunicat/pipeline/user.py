@@ -26,7 +26,7 @@ def module_data(backend, response, details, user, *args, **kwargs):
 
     update_fields = ["firstname", "lastname", "origin_module"]
 
-    # social = user.social_auth.get(provider='google-oauth2')
+    # social = user.social_auth.get(provider='integration-oauth2')
     # response = requests.get(
     #     'https://people.googleapis.com/v1/people/me?personFields=birthdays,phoneNumbers',
     #     params={'access_token': social.extra_data['access_token']}

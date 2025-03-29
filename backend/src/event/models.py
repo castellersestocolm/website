@@ -1,4 +1,3 @@
-from django.contrib.gis.db.models import PointField
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
@@ -223,13 +222,6 @@ class AgendaItem(StandardModel, Timestamps):
     )
 
 
-class GoogleIntegration(StandardModel, Timestamps):
-    module = models.PositiveSmallIntegerField(
-        choices=((m.value, m.name) for m in Module),
-    )
-    authorized_user_info = JSONField(default=dict)
-
-
 class GoogleCalendar(StandardModel, Timestamps):
     name = models.CharField(max_length=255)
     external_id = models.CharField(max_length=255, unique=True)
@@ -237,7 +229,7 @@ class GoogleCalendar(StandardModel, Timestamps):
     is_primary = models.BooleanField(default=False)
 
     google_integration = models.ForeignKey(
-        GoogleIntegration, related_name="google_calendars", on_delete=models.CASCADE
+        "integration.GoogleIntegration", related_name="google_calendars", on_delete=models.CASCADE
     )
 
 

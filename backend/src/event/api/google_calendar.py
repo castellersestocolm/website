@@ -15,7 +15,6 @@ from event.consts import (
 )
 from event.enums import EventType
 from event.models import (
-    GoogleIntegration,
     Event,
     GoogleEvent,
     GoogleCalendar,
@@ -27,6 +26,7 @@ from event.models import (
 from django.conf import settings
 
 from event.utils.google_calendar import get_event_type_by_title
+from integration.models import GoogleIntegration
 from user.models import User
 
 

@@ -67,12 +67,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "corsheaders",
+    "django_extensions",
     "rest_framework",
     "drf_yasg",
     "jsoneditor",
     "djmoney",
     "comunicat",
     "user",
+    "integration",
     "payment",
     "membership",
     "event",
@@ -428,8 +430,8 @@ SOCIAL_AUTH_ENABLED = False
 
 if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:
     SOCIAL_AUTH_ENABLED = True
-    LOGIN_URL = "/user/login/google-oauth2/"
-    SOCIAL_AUTH_LOGIN_URL = "/google-oauth2/"
+    LOGIN_URL = "/user/login/integration-oauth2/"
+    SOCIAL_AUTH_LOGIN_URL = "/integration-oauth2/"
     SOCIAL_AUTH_URL_NAMESPACE = "user_social"
     SOCIAL_AUTH_USER_MODEL = "user.GoogleUser"
     SOCIAL_AUTH_JSONFIELD_ENABLED = True

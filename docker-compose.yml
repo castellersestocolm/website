@@ -100,7 +100,8 @@ services:
       - redis
       - database
     volumes:
-      - ./backend:/backend/backend:cached
+      - ./backend/src:/backend/src:cached
+      - ./backend/media:/backend/media:cached
       - internal-media:/backend/internal_media:cached
     networks:
       - comunicat

@@ -79,4 +79,5 @@ def send_user_email(
         to=email or user_obj.email,
         reply_to=from_email,
         attachments=attachments,
+        module=module,
     )

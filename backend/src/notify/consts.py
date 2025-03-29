@@ -82,3 +82,7 @@ TEMPLATE_BY_MODULE = {
         }
     },
 }
+
+GOOGLE_EMAIL_SCOPES = [
+    "https://www.googleapis.com/auth/gmail.send",
+]
