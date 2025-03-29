@@ -6,8 +6,6 @@ import Box from "@mui/material/Box";
 import { useAppContext } from "../AppContext/AppContext";
 import { useTranslation } from "react-i18next";
 import FormUpdate from "../FormUpdate/FormUpdate";
-import { Helmet } from "react-helmet";
-import ImageHero from "../../assets/images/hero.jpg";
 
 export default function PageBase({
   title,
@@ -20,26 +18,6 @@ export default function PageBase({
 
   return (
     <>
-      <Helmet>
-        <title>{title + " | " + t("pages.home-hero.title")}</title>
-        <meta
-          name="description"
-          content={
-            t("pages.home-hero.subtitle") + " " + t("pages.home-hero.subtitle2")
-          }
-        />
-        <meta
-          name="og:title"
-          content={title + " | " + t("pages.home-hero.title")}
-        />
-        <meta
-          name="og:description"
-          content={
-            t("pages.home-hero.subtitle") + " " + t("pages.home-hero.subtitle2")
-          }
-        />
-        <meta name="og:image" content={ImageHero} />
-      </Helmet>
       <Box
         component="section"
         className={styles.page}

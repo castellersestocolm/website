@@ -55,7 +55,6 @@ import Map from "../../components/Map/Map";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import Hero from "../../components/Hero/Hero";
 import ImageHeroTrips2025Berlin from "../../assets/images/heros/trips-2025-berlin.jpg";
-import { Helmet } from "react-helmet";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -91,23 +90,6 @@ function HomePage() {
 
   return (
     <>
-      <Helmet>
-        <title>{t("pages.home-hero.title")}</title>
-        <meta
-          name="description"
-          content={
-            t("pages.home-hero.subtitle") + " " + t("pages.home-hero.subtitle2")
-          }
-        />
-        <meta name="og:title" content={t("pages.home-hero.title")} />
-        <meta
-          name="og:description"
-          content={
-            t("pages.home-hero.subtitle") + " " + t("pages.home-hero.subtitle2")
-          }
-        />
-        <meta name="og:image" content={ImageHero} />
-      </Helmet>
       <Box component="section" className={styles.hero}>
         <Box
           component="section"
