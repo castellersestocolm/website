@@ -81,7 +81,7 @@ ENV DJANGO_STATIC_ROOT /backend/static
 
 # Setup app user and directory
 RUN set -x && groupadd -g 8000 backend && useradd -r -u 8000 -g backend backend -d /backend && \
-    mkdir -p /backend/internal_media && chown -R backend:backend /backend
+    mkdir -p /backend/media && mkdir -p /backend/internal_media && chown -R backend:backend /backend
 
 # Install system dependencies
 # SC2215 is ignored due to https://github.com/hadolint/hadolint/issues/347
