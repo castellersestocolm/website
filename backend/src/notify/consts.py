@@ -43,8 +43,7 @@ TEMPLATE_BY_MODULE = {
                     "html": "email/org/user/welcome.html",
                 },
                 EmailType.IMPORTED: {
-                    "subject": _("Welcome to Les Quatre Barres new website")
-                    % (settings.MODULE_ORG_NAME,),
+                    "subject": _("Welcome to Les Quatre Barres new website"),
                     "html": "email/org/user/imported.html",
                 },
                 EmailType.FAMILY_INVITE: {
