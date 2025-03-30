@@ -174,7 +174,7 @@
 			<br>
 			<label>Nom</label>
 			<p><?php echo $nom ?></p>
-			<input type="hidden" name="nom" value="<?php echo nom ?>">
+			<input type="hidden" name="nom" value="<?php echo $nom ?>">
 			<label>Cognoms</label>
 			<p><?php echo $cognom1 ?></p>
 			<input type="hidden" name="cognom1" value="<?php echo $cognom1 ?>">
