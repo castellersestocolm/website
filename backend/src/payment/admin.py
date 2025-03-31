@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.db.models import JSONField
 
+import payment.api.entity
+
 from payment.models import (
     Payment,
     PaymentLine,
@@ -152,6 +154,11 @@ class AccountAdmin(admin.ModelAdmin):
     account_name.short_description = _("name")
 
 
+@admin.action(description="Merge entities")
+def merge_entities(modeladmin, request, queryset):
+    payment.api.entity.merge(entity_ids=queryset.values_list("id", flat=True))
+
+
 @admin.register(Entity)
 class EntityAdmin(admin.ModelAdmin):
     search_fields = ("id", "firstname", "lastname", "email", "phone")
@@ -166,6 +173,7 @@ class EntityAdmin(admin.ModelAdmin):
     )
     ordering = ("lastname", "firstname", "email", "created_at")
     inlines = (PaymentInline,)
+    actions = (merge_entities,)
 
 
 @admin.register(Transaction)
