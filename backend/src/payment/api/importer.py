@@ -460,7 +460,7 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
 
             print("")
 
-        # transaction_import_obj.status = TransactionImportStatus.COMPLETED
+        transaction_import_obj.status = TransactionImportStatus.COMPLETED
     except KeyError:
         transaction_import_obj.status = TransactionImportStatus.ERRORED
 

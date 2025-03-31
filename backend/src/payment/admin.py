@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db.models import JSONField
+from django.utils import timezone
 
 import payment.api.entity
 
@@ -48,9 +49,10 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ("id", "text")
     list_display = (
         "id",
+        "date",
         "type",
         "status",
-        "text",
+        "text_short",
         "amount",
         "entity",
         "method",
@@ -71,13 +73,25 @@ class PaymentAdmin(admin.ModelAdmin):
     def amount(self, obj):
         return obj.amount
 
+    def date(self, obj):
+        return (
+            obj.transaction.date_accounting
+            if obj.transaction
+            else timezone.localdate(obj.created_at)
+        )
+
+    def text_short(self, obj):
+        return obj.text[:50] if obj.text else "-"
+
+    text_short.short_description = _("text")
+
 
 @admin.register(PaymentLine)
 class PaymentLineAdmin(admin.ModelAdmin):
     search_fields = ("id", "text", "payment__text")
     list_display = (
         "id",
-        "payment_text",
+        "text_short",
         "text",
         "account",
         "amount",
@@ -88,8 +102,10 @@ class PaymentLineAdmin(admin.ModelAdmin):
     list_filter = ("vat",)
     ordering = ("-created_at",)
 
-    def payment_text(self, obj):
-        return obj.payment.text
+    def text_short(self, obj):
+        return obj.payment.text[:50] if obj.payment.text else "-"
+
+    text_short.short_description = _("text")
 
 
 class PaymentInline(admin.TabularInline):
