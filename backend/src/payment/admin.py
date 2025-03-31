@@ -227,6 +227,6 @@ class SourceAdmin(admin.ModelAdmin):
 @admin.register(TransactionImport)
 class TransactionImportAdmin(admin.ModelAdmin):
     search_fields = ("id",)
-    list_display = ("id", "status", "created_at")
+    list_display = ("id", "source", "date_from", "date_to", "status", "created_at")
     readonly_fields = ("status",)
     ordering = ("-created_at",)

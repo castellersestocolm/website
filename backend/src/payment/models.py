@@ -280,6 +280,9 @@ class TransactionImport(StandardModel, Timestamps):
         "Source", related_name="transaction_imports", on_delete=models.CASCADE
     )
 
+    date_from = models.DateField()
+    date_to = models.DateField()
+
     status = models.PositiveSmallIntegerField(
         choices=((tis.value, tis.name) for tis in TransactionImportStatus),
         default=TransactionImportStatus.CREATED,
