@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import sentry_sdk
+
 from pathlib import Path
 from corsheaders.defaults import default_headers
 from django.utils.translation import gettext_lazy as _
+
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from comunicat.enums import Module
 
@@ -491,3 +496,21 @@ if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:
 # Phone number
 
 PHONENUMBER_DEFAULT_REGION = os.getenv("PHONENUMBER_DEFAULT_REGION", "SE")
+
+# Sentry
+
+SENTRY_DSN = os.environ.get("SENTRY_DSN")
+
+if not DEBUG and SENTRY_DSN:
+    sentry_sdk.init(
+        debug=DEBUG,
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(transaction_style="function_name"),
+            CeleryIntegration(),
+        ],
+        environment="live",
+        # release,
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )

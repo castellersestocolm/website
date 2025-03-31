@@ -36,4 +36,7 @@ mysqlclient ~= 2.2.7
 whitenoise ~= 6.9.0
 
 # Images
-django-versatileimagefield~=3.1
+django-versatileimagefield ~= 3.1
+
+# Sentry
+sentry-sdk[django] ~= 2.25.0
