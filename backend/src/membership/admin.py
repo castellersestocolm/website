@@ -39,7 +39,7 @@ class MembershipAdmin(admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
-            .prefetch_related("membership_users", "modules")
+            .prefetch_related("membership_users", "membership_users__user", "modules")
         )
 
     def user_list(self, obj):

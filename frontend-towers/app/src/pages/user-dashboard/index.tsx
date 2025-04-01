@@ -63,7 +63,6 @@ import {
 } from "../../enums";
 import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
-import IconChecklist from "@mui/icons-material/Checklist";
 import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 
@@ -108,7 +107,7 @@ function UserDashboardPage() {
   const [updateOpen, setUpdateOpen] = React.useState(false);
   const [attendanceOpen, setAttendanceOpen] = React.useState(false);
 
-  const [memberships, setMemberships] = React.useState(undefined);
+  // const [memberships, setMemberships] = React.useState(undefined);
   const [payments, setPayments] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
 
@@ -134,7 +133,7 @@ function UserDashboardPage() {
     if (user) {
       apiMembershipList().then((response) => {
         if (response.status === 200) {
-          setMemberships(response.data);
+          // setMemberships(response.data);
           setMembership(
             response.data.results.find((membership: any) => {
               return membership.is_active;
@@ -171,6 +170,8 @@ function UserDashboardPage() {
     i18n.resolvedLanguage,
     setFamilyMemberRequests,
     setFamilyMemberRequestsReceived,
+    setMembership,
+    // setMemberships
   ]);
 
   React.useEffect(() => {
@@ -699,20 +700,14 @@ function UserDashboardPage() {
                               : t("pages.user-payments.payment.date-doing")) +
                             " " +
                             new Date(
-                              payment.logs && payment.logs.length > 0
-                                ? payment.logs[0].created_at
-                                : payment.created_at,
+                              payment.transaction
+                                ? payment.transaction.date_accounting
+                                : payment.logs && payment.logs.length > 0
+                                  ? payment.logs[0].created_at
+                                  : payment.created_at,
                             )
                               .toISOString()
-                              .slice(0, 10) +
-                            " " +
-                            new Date(
-                              payment.logs && payment.logs.length > 0
-                                ? payment.logs[0].created_at
-                                : payment.created_at,
-                            )
-                              .toTimeString()
-                              .slice(0, 5)
+                              .slice(0, 10)
                           }
                         />
                         {payment.lines &&

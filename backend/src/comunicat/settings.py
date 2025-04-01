@@ -217,6 +217,11 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Admin
+
+LIST_PER_PAGE = 50
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -366,6 +371,9 @@ MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES = [
         os.getenv("MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES", "towers").split(","),
     )
 ]
+MODULE_ALL_FAMILY_SHARE_PAYMENTS = (
+    os.getenv("MODULE_ALL_FAMILY_SHARE_PAYMENTS", "true").lower() == "true"
+)
 
 MODULE_ORG_NAME = os.getenv("MODULE_ORG_NAME")
 MODULE_ORG_SHORT_NAME = os.getenv("MODULE_ORG_SHORT_NAME", MODULE_ORG_NAME)

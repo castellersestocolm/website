@@ -68,7 +68,7 @@ class PaymentAdmin(admin.ModelAdmin):
     inlines = (PaymentLineForPaymentInline, PaymentLogInline)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).with_amount()
+        return super().get_queryset(request).with_amount().select_related("transaction")
 
     def amount(self, obj):
         return obj.amount
@@ -101,6 +101,9 @@ class PaymentLineAdmin(admin.ModelAdmin):
     list_editable = ("account",)
     list_filter = ("vat",)
     ordering = ("-created_at",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("payment")
 
     def text_short(self, obj):
         return obj.payment.text[:50] if obj.payment.text else "-"

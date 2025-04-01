@@ -1,7 +1,7 @@
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import MoneyField
-from payment.models import PaymentLine, Payment, PaymentLog
+from payment.models import PaymentLine, Payment, PaymentLog, Transaction
 
 
 class PaymentLogSerializer(s.ModelSerializer):
@@ -39,9 +39,25 @@ class PaymentLineSerializer(s.ModelSerializer):
         )
 
 
+class TransactionSerializer(s.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = (
+            "id",
+            "method",
+            "date_accounting",
+        )
+        read_only_fields = (
+            "id",
+            "method",
+            "date_accounting",
+        )
+
+
 class PaymentSerializer(s.ModelSerializer):
     amount = MoneyField(read_only=True)
     description = s.CharField(read_only=True)
+    transaction = TransactionSerializer(read_only=True, required=False)
     lines = PaymentLineSerializer(many=True, read_only=True)
     logs = PaymentLogSerializer(many=True, read_only=True)
 
@@ -54,6 +70,7 @@ class PaymentSerializer(s.ModelSerializer):
             "method",
             "amount",
             "description",
+            "transaction",
             "lines",
             "logs",
             "created_at",
@@ -65,6 +82,7 @@ class PaymentSerializer(s.ModelSerializer):
             "method",
             "amount",
             "description",
+            "transaction",
             "lines",
             "logs",
             "created_at",
