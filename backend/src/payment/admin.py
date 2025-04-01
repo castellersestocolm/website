@@ -101,6 +101,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
     list_editable = ("account",)
     list_filter = ("vat",)
     ordering = ("-created_at",)
+    list_per_page = 25
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("payment")

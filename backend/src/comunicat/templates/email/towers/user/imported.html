@@ -12,6 +12,7 @@
     </ul>
     <p>{% trans "We have more features coming soon, and will keep you all updated as we continue to implement them on the site." %}</p>
     <p>{% trans "As you currently have a membership registered we have automatically migrated your data to the new platform, you can set a new password via the link below or use Google single sign-on directly on our website if you wish to." %}</p>
+    <p style="text-align: center;"><strong>{{ user_obj.email }}</strong></p>
 {% endblock %}
 
 {% block email_button_url %}{% full_towers_url "user/password/" %}{% endblock %}
