@@ -104,14 +104,19 @@ export default function Footer() {
             sx={{ textAlign: { xs: "center", md: "left" } }}
             className={styles.footerSupport}
           >
-            <Link
-              className={styles.footerTextSuport}
-              href={ROUTES["external-casal"].path}
-              color="inherit"
-              underline="none"
-            >
-              {t("components.footer.support")}
-            </Link>
+            <Typography variant="body2">
+              {t("components.footer.support-1")}{" "}
+              <Link
+                className={styles.footerTextSuport}
+                href={ROUTES.association.path}
+                color="inherit"
+                fontWeight="600"
+                underline="none"
+              >
+                {t("components.footer.support-2")}
+              </Link>
+              {"."}
+            </Typography>
           </Box>
           <Box
             sx={{

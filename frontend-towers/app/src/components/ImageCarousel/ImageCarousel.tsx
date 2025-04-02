@@ -25,9 +25,8 @@ import ImageCarousel21 from "../../assets/images/carousel/car21.jpeg";
 import ImageCarousel22 from "../../assets/images/carousel/car22.jpeg";
 
 export default function ImageCarousel({ images, dense }: any) {
-  const carouselImages =
-    images ||
-    [
+  const carouselImages = (
+    images || [
       ImageCarousel1,
       ImageCarousel2,
       ImageCarousel3,
@@ -51,9 +50,10 @@ export default function ImageCarousel({ images, dense }: any) {
       ImageCarousel21,
       ImageCarousel22,
     ]
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
+  )
+    .map((value: any) => ({ value, sort: Math.random() }))
+    .sort((a: any, b: any) => a.sort - b.sort)
+    .map(({ value }: any) => value);
 
   return (
     <Box className={styles.inner}>

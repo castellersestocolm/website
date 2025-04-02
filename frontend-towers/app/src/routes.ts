@@ -35,6 +35,9 @@ export const ROUTES = {
   calendar: {
     path: "/calendar",
   },
+  association: {
+    path: "/association",
+  },
   "trips-2025-berlin": {
     path: "/trips/2025/berlin",
   },
@@ -53,6 +56,9 @@ export const ROUTES = {
   },
   "external-casal": {
     path: "https://lesquatrebarres.org",
+  },
+  "external-casal-form-membership": {
+    path: "https://forms.gle/3UGC4Phz7z5NEwU68",
   },
   "external-berlin-diada-2025": {
     path: "https://castellers.berlin/international-diada-castellera-berlin-2025/",

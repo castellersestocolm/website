@@ -1,0 +1,49 @@
+.associationGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.associationBox {
+  background-color: #f9b900;
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.associationBoxText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.associationBoxTextInner {
+  padding: 0 32px;
+}
+
+.associationLogo {
+  width: 150px;
+  border: 5px solid #8b0934;
+}
+
+.associationButtons {
+  display: flex;
+  justify-content: center;
+}
+
+.externalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
+  height: 20px !important;
+  width: 20px !important;
+}
+
+.carouselBottom {
+  padding-bottom: 64px;
+  height: 400px;
+  width: 100%;
+}

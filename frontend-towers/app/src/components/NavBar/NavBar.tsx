@@ -93,6 +93,11 @@ export default function NavBar() {
           path: ROUTES["about-bylaws"].path,
           target: "_self",
         },
+        {
+          name: t("components.navbar-menu.about.association"),
+          path: ROUTES.association.path,
+          target: "_self",
+        },
       ],
     },
   ];

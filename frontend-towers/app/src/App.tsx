@@ -26,6 +26,7 @@ import CalendarPage from "./pages/calendar";
 import AboutTeamPage from "./pages/about-team";
 import AboutBylawsPage from "./pages/about-bylaws";
 import Trips2025BerlinPage from "./pages/trips-2025-berlin";
+import AssociationPage from "./pages/association";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -137,6 +138,10 @@ const App = () => {
                   <Route
                     path={ROUTES["trips-2025-berlin"].path}
                     element={<Trips2025BerlinPage />}
+                  />
+                  <Route
+                    path={ROUTES.association.path}
+                    element={<AssociationPage />}
                   />
                 </Routes>
               </Box>

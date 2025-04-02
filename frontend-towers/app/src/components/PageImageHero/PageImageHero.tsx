@@ -12,6 +12,7 @@ import Hero from "../Hero/Hero";
 export default function PageImageHero({
   title,
   content,
+  contentPost,
   hero,
   finishedRegistration = false,
 }: any) {
@@ -41,7 +42,7 @@ export default function PageImageHero({
             sx={{
               marginTop: { xs: "16px", md: "32px" },
               paddingTop: { xs: "32px", md: "64px" },
-              paddingBottom: { xs: "32px", md: "64px" },
+              paddingBottom: { xs: "24px", md: "32px" },
             }}
           >
             <Alerts />
@@ -65,6 +66,7 @@ export default function PageImageHero({
           </Container>
         </Grid>
       </Box>
+      {contentPost}
     </>
   );
 }
