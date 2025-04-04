@@ -1,4 +1,0 @@
-method;amount;text;sender;reference;external_id;date_accounting;date_interest;se_swish:phone_sender;se_swish:phone_receiver
-se_swish;50,00;Calçotada - Maria Otegui;OTEGUI PRADO, MARIA;1785613612303631;undefined;2025-04-04;2025-04-07;123-068 88 20;336 985 41 84
-transfer;50,00;;;;0ea078fb-71dd-4d73-9549-ae600055232d;2025-04-04;2025-04-04;;
-transfer;−9,25;;;;ee0cc7e8-a06c-44ad-9a05-7d1703095aab;2025-04-03;2025-04-03;;
