@@ -84,6 +84,7 @@ class PaymentAdmin(admin.ModelAdmin):
         return obj.text[:50] if obj.text else "-"
 
     text_short.short_description = _("text")
+    date.short_description = _("date")
 
 
 @admin.register(PaymentLine)
@@ -91,6 +92,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
     search_fields = ("id", "text", "payment__text")
     list_display = (
         "id",
+        "date",
         "text_short",
         "text",
         "entity",
@@ -105,7 +107,11 @@ class PaymentLineAdmin(admin.ModelAdmin):
     list_per_page = 25
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("payment", "payment__entity")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("payment", "payment__entity", "payment__transaction")
+        )
 
     def text_short(self, obj):
         return obj.payment.text[:50] if obj.payment.text else "-"
@@ -113,8 +119,16 @@ class PaymentLineAdmin(admin.ModelAdmin):
     def entity(self, obj):
         return obj.payment.entity if hasattr(obj.payment, "entity") else "-"
 
+    def date(self, obj):
+        return (
+            obj.payment.transaction.date_accounting
+            if obj.payment.transaction
+            else timezone.localdate(obj.created_at)
+        )
+
     text_short.short_description = _("text")
     entity.short_description = _("entity")
+    date.short_description = _("date")
 
 
 class PaymentInline(admin.TabularInline):
