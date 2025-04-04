@@ -48,7 +48,7 @@ class PaymentLogInline(admin.TabularInline):
 class PaymentAdmin(admin.ModelAdmin):
     search_fields = ("id", "text")
     list_display = (
-        "id",
+        # "id",
         "date",
         "type",
         "status",
@@ -91,7 +91,7 @@ class PaymentAdmin(admin.ModelAdmin):
 class PaymentLineAdmin(admin.ModelAdmin):
     search_fields = ("id", "text", "payment__text")
     list_display = (
-        "id",
+        # "id",
         "date",
         "text_short",
         "text",
