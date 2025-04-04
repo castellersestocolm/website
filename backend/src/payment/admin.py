@@ -49,7 +49,7 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ("id", "text")
     list_display = (
         # "id",
-        "date",
+        "date_accounting",
         "type",
         "status",
         "text_short",
@@ -60,7 +60,6 @@ class PaymentAdmin(admin.ModelAdmin):
     )
     list_filter = ("type", "status", "method")
     readonly_fields = ("debit_payment",)
-    ordering = ("-created_at",)
     raw_id_fields = (
         "entity",
         "transaction",
@@ -68,23 +67,29 @@ class PaymentAdmin(admin.ModelAdmin):
     inlines = (PaymentLineForPaymentInline, PaymentLogInline)
 
     def get_queryset(self, request):
-        return super().get_queryset(request).with_amount().select_related("transaction")
+        return (
+            super()
+            .get_queryset(request)
+            .with_dates()
+            .with_amount()
+            .select_related("transaction")
+            .order_by("-date_accounting", "-date_interest", "-created_at")
+        )
 
+    @admin.display(ordering="amount")
     def amount(self, obj):
         return obj.amount
 
-    def date(self, obj):
-        return (
-            obj.transaction.date_accounting
-            if obj.transaction
-            else timezone.localdate(obj.created_at)
-        )
+    @admin.display(ordering="date_accounting")
+    def date_accounting(self, obj):
+        return obj.date_accounting
 
+    @admin.display(ordering="text")
     def text_short(self, obj):
         return obj.text[:50] if obj.text else "-"
 
     text_short.short_description = _("text")
-    date.short_description = _("date")
+    date_accounting.short_description = _("date")
 
 
 @admin.register(PaymentLine)
@@ -92,7 +97,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
     search_fields = ("id", "text", "payment__text")
     list_display = (
         # "id",
-        "date",
+        "date_accounting",
         "text_short",
         "text",
         "entity",
@@ -103,32 +108,32 @@ class PaymentLineAdmin(admin.ModelAdmin):
     )
     list_editable = ("account",)
     list_filter = ("vat",)
-    ordering = ("-created_at",)
     list_per_page = 25
 
     def get_queryset(self, request):
         return (
             super()
             .get_queryset(request)
+            .with_dates()
             .select_related("payment", "payment__entity", "payment__transaction")
+            .order_by("-date_accounting", "-date_interest", "-created_at")
         )
 
+    @admin.display(ordering="payment__text")
     def text_short(self, obj):
         return obj.payment.text[:50] if obj.payment.text else "-"
 
+    @admin.display(ordering="payment__entity")
     def entity(self, obj):
         return obj.payment.entity if hasattr(obj.payment, "entity") else "-"
 
-    def date(self, obj):
-        return (
-            obj.payment.transaction.date_accounting
-            if obj.payment.transaction
-            else timezone.localdate(obj.created_at)
-        )
+    @admin.display(ordering="date_accounting")
+    def date_accounting(self, obj):
+        return obj.date_accounting
 
     text_short.short_description = _("text")
     entity.short_description = _("entity")
-    date.short_description = _("date")
+    date_accounting.short_description = _("date")
 
 
 class PaymentInline(admin.TabularInline):
@@ -210,7 +215,7 @@ class EntityAdmin(admin.ModelAdmin):
         "user",
         "created_at",
     )
-    ordering = ("lastname", "firstname", "email", "created_at")
+    ordering = ("firstname", "lastname", "email", "created_at")
     inlines = (PaymentInline,)
     actions = (merge_entities,)
 
@@ -219,19 +224,19 @@ class EntityAdmin(admin.ModelAdmin):
 class TransactionAdmin(admin.ModelAdmin):
     search_fields = ("id", "text", "sender", "reference")
     list_display = (
-        "id",
+        # "id",
+        "date_accounting",
         "source",
         "method",
         "amount",
         "text",
         "sender",
         "reference",
-        "date_accounting",
         "date_interest",
         "created_at",
     )
     list_filter = ("source", "method")
-    ordering = ("-date_accounting", "-created_at")
+    ordering = ("-date_accounting", "-date_interest", "-created_at")
     inlines = (PaymentInline,)
 
     formfield_overrides = {
@@ -247,9 +252,28 @@ class SourceAdmin(admin.ModelAdmin):
     ordering = ("name",)
 
 
+class TransactionInline(admin.TabularInline):
+    model = Transaction
+    exclude = ("extra",)
+    ordering = ("-date_accounting", "-date_interest", "-created_at")
+    extra = 0
+
+
+class TransactionReadOnlyInline(TransactionInline):
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(TransactionImport)
 class TransactionImportAdmin(admin.ModelAdmin):
     search_fields = ("id",)
     list_display = ("id", "source", "date_from", "date_to", "status", "created_at")
     readonly_fields = ("status",)
     ordering = ("-created_at",)
+    inlines = (TransactionReadOnlyInline,)

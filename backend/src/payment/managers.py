@@ -26,6 +26,26 @@ from comunicat.utils.managers import MoneyOutput
 
 
 class PaymentQuerySet(QuerySet):
+    def with_dates(self):
+        return self.annotate(
+            date_accounting=Case(
+                When(
+                    Q(transaction__isnull=False),
+                    then=F("transaction__date_accounting"),
+                ),
+                default=F("created_at__date"),
+                output_field=DateField(),
+            ),
+            date_interest=Case(
+                When(
+                    Q(transaction__isnull=False),
+                    then=F("transaction__date_interest"),
+                ),
+                default=F("date_accounting"),
+                output_field=DateField(),
+            ),
+        )
+
     def with_amount(self):
         return self.annotate(
             amount=Coalesce(Sum("lines__amount"), Value(0), output_field=MoneyOutput())
@@ -95,8 +115,8 @@ class AccountQuerySet(QuerySet):
             amount=Coalesce(
                 Subquery(
                     PaymentLine.objects.filter(account_id=OuterRef("id"))
-                    .with_date()
-                    .filter(date__year=timezone.localdate().year)
+                    .with_dates()
+                    .filter(date_accounting__year=timezone.localdate().year)
                     .values("account_id")
                     .annotate(amount=Sum("amount"))
                     .values("amount")[:1]
@@ -108,16 +128,24 @@ class AccountQuerySet(QuerySet):
 
 
 class PaymentLineQuerySet(QuerySet):
-    def with_date(self):
+    def with_dates(self):
         return self.annotate(
-            date=Case(
+            date_accounting=Case(
                 When(
                     Q(payment__transaction__isnull=False),
                     then=F("payment__transaction__date_accounting"),
                 ),
                 default=F("payment__created_at__date"),
                 output_field=DateField(),
-            )
+            ),
+            date_interest=Case(
+                When(
+                    Q(payment__transaction__isnull=False),
+                    then=F("payment__transaction__date_interest"),
+                ),
+                default=F("date_accounting"),
+                output_field=DateField(),
+            ),
         )
 
     def with_description(self):
