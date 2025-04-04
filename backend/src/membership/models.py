@@ -46,7 +46,7 @@ class Membership(StandardModel, Timestamps):
 
     def save(self, *args, **kwargs):
         # TODO: Update Google event calendar invitations for membership and membership module
-        if self.status != self.__status:
+        if self.pk and self.status != self.__status:
             self.modules.update(status=self.status)
 
         import pinyator.tasks

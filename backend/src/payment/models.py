@@ -71,7 +71,7 @@ class Payment(StandardModel, Timestamps):
         self.__status = self.status
 
     def save(self, *args, **kwargs):
-        if self.status != self.__status:
+        if self.pk and self.status != self.__status:
             PaymentLog.objects.create(payment_id=self.id, status=self.status)
         super().save(*args, **kwargs)
 

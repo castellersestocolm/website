@@ -174,7 +174,7 @@ class Registration(StandardModel, Timestamps):
         self.__status = self.status
 
     def save(self, *args, **kwargs):
-        if self.status != self.__status:
+        if self.pk and self.status != self.__status:
             RegistrationLog.objects.create(registration_id=self.id, status=self.status)
 
         if not self.pk or self.status != self.__status:

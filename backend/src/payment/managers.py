@@ -13,6 +13,7 @@ from django.db.models import (
     Count,
     Exists,
     DateField,
+    Func,
 )
 from django.db.models.functions import Coalesce, Cast, Concat, Substr
 from django.utils import timezone
@@ -44,6 +45,22 @@ class PaymentQuerySet(QuerySet):
                 default=F("date_accounting"),
                 output_field=DateField(),
             ),
+        )
+
+    def with_balance(self):
+        PaymentLine = apps.get_model("payment", "PaymentLine")
+
+        return self.with_dates().annotate(
+            balance=Coalesce(
+                Subquery(
+                    PaymentLine.objects.with_dates()
+                    .filter(date_accounting__lte=OuterRef("date_accounting"))
+                    .annotate(balance=Func("amount", function="Sum"))
+                    .values("balance")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            )
         )
 
     def with_amount(self):
@@ -146,6 +163,22 @@ class PaymentLineQuerySet(QuerySet):
                 default=F("date_accounting"),
                 output_field=DateField(),
             ),
+        )
+
+    def with_balance(self):
+        PaymentLine = apps.get_model("payment", "PaymentLine")
+
+        return self.with_dates().annotate(
+            balance=Coalesce(
+                Subquery(
+                    PaymentLine.objects.with_dates()
+                    .filter(date_accounting__lte=OuterRef("date_accounting"))
+                    .annotate(balance=Func("amount", function="Sum"))
+                    .values("balance")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            )
         )
 
     def with_description(self):

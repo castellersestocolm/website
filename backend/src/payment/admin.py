@@ -56,6 +56,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "amount",
         "entity",
         "method",
+        "balance",
         "created_at",
     )
     list_filter = ("type", "status", "method")
@@ -70,7 +71,7 @@ class PaymentAdmin(admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
-            .with_dates()
+            .with_balance()
             .with_amount()
             .select_related("transaction")
             .order_by("-date_accounting", "-date_interest", "-created_at")
@@ -88,8 +89,12 @@ class PaymentAdmin(admin.ModelAdmin):
     def text_short(self, obj):
         return obj.text[:50] if obj.text else "-"
 
+    def balance(self, obj):
+        return obj.balance
+
     text_short.short_description = _("text")
     date_accounting.short_description = _("date")
+    balance.short_description = _("balance")
 
 
 @admin.register(PaymentLine)
@@ -104,6 +109,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
         "account",
         "amount",
         "vat",
+        "balance",
         "created_at",
     )
     list_editable = ("account",)
@@ -114,7 +120,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
-            .with_dates()
+            .with_balance()
             .select_related("payment", "payment__entity", "payment__transaction")
             .order_by("-date_accounting", "-date_interest", "-created_at")
         )
@@ -131,9 +137,13 @@ class PaymentLineAdmin(admin.ModelAdmin):
     def date_accounting(self, obj):
         return obj.date_accounting
 
+    def balance(self, obj):
+        return obj.balance
+
     text_short.short_description = _("text")
     entity.short_description = _("entity")
     date_accounting.short_description = _("date")
+    balance.short_description = _("balance")
 
 
 class PaymentInline(admin.TabularInline):
