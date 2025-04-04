@@ -24,6 +24,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from comunicat.utils.managers import MoneyOutput
+from payment.enums import PaymentType
 
 
 class PaymentQuerySet(QuerySet):
@@ -55,7 +56,17 @@ class PaymentQuerySet(QuerySet):
                 Subquery(
                     PaymentLine.objects.with_dates()
                     .filter(date_accounting__lte=OuterRef("date_accounting"))
-                    .annotate(balance=Func("amount", function="Sum"))
+                    .annotate(
+                        actual_amount=Case(
+                            When(
+                                payment__type=PaymentType.CREDIT,
+                                then=-F("amount"),
+                            ),
+                            default=F("amount"),
+                            output_field=MoneyOutput(),
+                        ),
+                        balance=Func("actual_amount", function="Sum"),
+                    )
                     .values("balance")[:1]
                 ),
                 Value(0),
@@ -173,7 +184,17 @@ class PaymentLineQuerySet(QuerySet):
                 Subquery(
                     PaymentLine.objects.with_dates()
                     .filter(date_accounting__lte=OuterRef("date_accounting"))
-                    .annotate(balance=Func("amount", function="Sum"))
+                    .annotate(
+                        actual_amount=Case(
+                            When(
+                                payment__type=PaymentType.CREDIT,
+                                then=-F("amount"),
+                            ),
+                            default=F("amount"),
+                            output_field=MoneyOutput(),
+                        ),
+                        balance=Func("actual_amount", function="Sum"),
+                    )
                     .values("balance")[:1]
                 ),
                 Value(0),

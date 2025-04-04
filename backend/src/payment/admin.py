@@ -74,6 +74,7 @@ class PaymentAdmin(admin.ModelAdmin):
             .with_balance()
             .with_amount()
             .select_related("transaction")
+            .prefetch_related("lines")
             .order_by("-date_accounting", "-date_interest", "-created_at")
         )
 
@@ -122,6 +123,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
             .get_queryset(request)
             .with_balance()
             .select_related("payment", "payment__entity", "payment__transaction")
+            .prefetch_related("payment__lines")
             .order_by("-date_accounting", "-date_interest", "-created_at")
         )
 
