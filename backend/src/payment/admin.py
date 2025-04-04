@@ -93,6 +93,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
         "id",
         "text_short",
         "text",
+        "entity",
         "account",
         "amount",
         "vat",
@@ -109,7 +110,11 @@ class PaymentLineAdmin(admin.ModelAdmin):
     def text_short(self, obj):
         return obj.payment.text[:50] if obj.payment.text else "-"
 
+    def entity(self, obj):
+        return obj.payment.entity if hasattr(obj.payment, "entity") else "-"
+
     text_short.short_description = _("text")
+    entity.short_description = _("entity")
 
 
 class PaymentInline(admin.TabularInline):

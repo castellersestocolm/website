@@ -396,15 +396,16 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
             print(found_accounts)
             if not payment_obj:
                 # TODO: Link with existing payment based on similarity
-                payment_obj, __ = Payment.objects.update_or_create(
+                payment_obj, __ = Payment.objects.get_or_create(
                     type=payment_type,
                     status=PaymentStatus.COMPLETED,
                     method=method,
                     text=text,
                     entity=found_entity_obj,
-                    defaults={
-                        "transaction": transaction_obj,
-                    },
+                    transaction=transaction_obj,
+                    # defaults={
+                    #     "transaction": transaction_obj,
+                    # },
                 )
 
             # TODO: Create only remaining amount for existing lines within same payment if more than one line ALREADY exists
