@@ -24,13 +24,13 @@ docker-compose up -d
 3. Migrate the database.
 
 ```shell
-docker exec -it website_backend_1 python manage.py migrate
+docker exec -it website-backend-1 python manage.py migrate
 ```
 
 4. You can make a superuser so you can access the admin.
 
 ```shell
-docker exec -it website_backend_1 python manage.py createsuperuser
+docker exec -it website-backend-1 python manage.py createsuperuser
 ```
 
 5. After development, to turn down the containers.
@@ -42,6 +42,7 @@ docker-compose down
 ## Remote setup
 
 ### Postfix configuration
+
 ```bash
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
 myhostname = comunicat

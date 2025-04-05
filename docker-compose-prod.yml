@@ -23,7 +23,15 @@ services:
         max_attempts: 3
         window: 120s
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8000/health",
+        ]
       interval: 60s
       retries: 5
       start_period: 30s
@@ -46,25 +54,25 @@ services:
       - redis
     env_file:
       - ./envs/local.env
-#  frontend-org:
-#    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TAG:-dev}
-#    build: frontend-org
-#    stdin_open: true
-#    tty: true
-#    restart: on-failure
-#    entrypoint: ["npm"]
-#    command: ["start"]
-#    networks:
-#      - comunicat
-#    volumes:
-#      - ./frontend-org/app:/frontend-org/app:cached
-#    ports:
-#      - target: 3000
-#        published: 3100
-#        protocol: tcp
-#        mode: host
-#    env_file:
-#      - ./envs/local.env
+  #  frontend-org:
+  #    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TAG:-dev}
+  #    build: frontend-org
+  #    stdin_open: true
+  #    tty: true
+  #    restart: on-failure
+  #    entrypoint: ["npm"]
+  #    command: ["run", "dev"]
+  #    networks:
+  #      - comunicat
+  #    volumes:
+  #      - ./frontend-org/app:/frontend-org/app:cached
+  #    ports:
+  #      - target: 3000
+  #        published: 3100
+  #        protocol: tcp
+  #        mode: host
+  #    env_file:
+  #      - ./envs/local.env
   frontend-towers:
     image: ghcr.io/castellersestocolm/frontend-towers:${BUILD_TAG:-dev}
     build:
@@ -92,7 +100,15 @@ services:
         max_attempts: 3
         window: 120s
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost",
+        ]
       interval: 60s
       retries: 5
       start_period: 10s
@@ -137,8 +153,8 @@ services:
       replicas: 1
     stdin_open: true
     tty: true
-    entrypoint: [ "celery" ]
-    command: [ "-A", "comunicat", "worker", "-Q", "default" ]
+    entrypoint: ["celery"]
+    command: ["-A", "comunicat", "worker", "-Q", "default"]
     depends_on:
       - redis
       - database
@@ -153,9 +169,18 @@ services:
     image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
     deploy:
       replicas: 1
-    entrypoint: [ "celery" ]
+    entrypoint: ["celery"]
     command:
-      [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
+      [
+        "-A",
+        "comunicat",
+        "beat",
+        "--pidfile=",
+        "-s",
+        "/data/celerybeat-schedule",
+        "-l",
+        "debug",
+      ]
     depends_on:
       - worker
     volumes:

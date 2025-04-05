@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   backend:
     image: backend
@@ -25,49 +23,49 @@ services:
       - redis
     env_file:
       - ./envs/local.env
-#  frontend-org:
-#    image: frontend-org
-#    build: frontend-org
-#    stdin_open: true
-#    tty: true
-#    restart: on-failure
-#    entrypoint: ["npm"]
-#    command: ["start"]
-#    networks:
-#      - comunicat
-#    volumes:
-#      - ./frontend-org/app:/frontend-org:cached
-#    ports:
-#      - target: 3000
-#        published: 3100
-#        protocol: tcp
-#        mode: host
-#    env_file:
-#      - ./envs/local.env
-  frontend-towers:
-    image: frontend-towers
-    build: frontend-towers
+  frontend-org:
+    image: frontend-org
+    build: frontend-org
     stdin_open: true
     tty: true
     restart: on-failure
     entrypoint: ["npm"]
-    command: ["start"]
+    command: ["run", "dev"]
     networks:
       - comunicat
     volumes:
-      - ./frontend-towers/app:/frontend-towers:cached
+      - ./frontend-org/app:/frontend-org:cached
     ports:
-      - target: 3200
-        published: 3200
+      - target: 3000
+        published: 3100
         protocol: tcp
         mode: host
     env_file:
       - ./envs/local.env
-    environment:
-      PORT: 3200
-      WDS_SOCKET_HOST: 127.0.0.1
-      CHOKIDAR_USEPOLLING: "true"
-      WATCHPACK_POLLING: "true"
+  # frontend-towers:
+  #   image: frontend-towers
+  #   build: frontend-towers
+  #   stdin_open: true
+  #   tty: true
+  #   restart: on-failure
+  #   entrypoint: ["npm"]
+  #   command: ["start"]
+  #   networks:
+  #     - comunicat
+  #   volumes:
+  #     - ./frontend-towers/app:/frontend-towers:cached
+  #   ports:
+  #     - target: 3200
+  #       published: 3200
+  #       protocol: tcp
+  #       mode: host
+  #   env_file:
+  #     - ./envs/local.env
+  #   environment:
+  #     PORT: 3200
+  #     WDS_SOCKET_HOST: 127.0.0.1
+  #     CHOKIDAR_USEPOLLING: "true"
+  #     WATCHPACK_POLLING: "true"
   database:
     image: postgres:17.2
     ports:
@@ -94,8 +92,8 @@ services:
     image: backend
     stdin_open: true
     tty: true
-    entrypoint: [ "celery" ]
-    command: [ "-A", "comunicat", "worker", "-Q", "default" ]
+    entrypoint: ["celery"]
+    command: ["-A", "comunicat", "worker", "-Q", "default"]
     depends_on:
       - redis
       - database
@@ -109,9 +107,18 @@ services:
       - ./envs/local.env
   beat:
     image: backend
-    entrypoint: [ "celery" ]
+    entrypoint: ["celery"]
     command:
-      [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
+      [
+        "-A",
+        "comunicat",
+        "beat",
+        "--pidfile=",
+        "-s",
+        "/data/celerybeat-schedule",
+        "-l",
+        "debug",
+      ]
     depends_on:
       - worker
     volumes:
