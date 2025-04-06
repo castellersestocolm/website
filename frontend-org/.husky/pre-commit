@@ -1,2 +1,30 @@
-npx lint-staged
-npm run lint
+echo "Running pre-commit hook..."
+
+# Get all changed files for frontend
+export FE_CHANGED_FILES="$(git diff --name-only --cached --diff-filter=d | grep "website/frontend-org/")"
+
+if ! [ "$FE_CHANGED_FILES" ]; then
+	echo "Skipping frontend git hooks due to no changes..."
+else
+	echo "Running frontend git hooks..."
+
+	cd website/frontend-org || exit
+
+	# Find all files to lint and format it in a way that `next lint` expects
+	export FE_FILES_TO_LINT="$(echo "$FE_CHANGED_FILES" | grep -E "(js|jsx|ts|tsx)$" | sed 's|website/frontend-org/||' | awk '{print "--file "$0}' | xargs)"
+
+	if [ "$FE_FILES_TO_LINT" ]; then
+		# Format all changed frontend files
+		echo "$FE_FILES_TO_LINT" | xargs npx next lint --fix
+	fi
+
+	# Ensure no linting errors
+	npm run lint
+
+	cd ../.. || exit
+fi
+
+# Re-add any changes made by linting
+echo "$FE_CHANGED_FILES" | xargs git add
+
+echo "Pre-commit hook completed successfully!"
