@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 echo "Running pre-commit hook..."
 
 # Get all changed files for frontend
