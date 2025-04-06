@@ -61,7 +61,7 @@ services:
   #    tty: true
   #    restart: on-failure
   #    entrypoint: ["npm"]
-  #    command: ["run", "dev"]
+  #    command: ["start"]
   #    networks:
   #      - comunicat
   #    volumes:
