@@ -1,4 +1,4 @@
-import StartPage from "@/components/pages/StartPage";
+import StartPage from '@/components/pages/StartPage';
 
 export default function Home() {
   return <StartPage />;
