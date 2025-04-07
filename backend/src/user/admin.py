@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import translation
 from django.utils.safestring import mark_safe
 
+import event.tasks
 from notify.enums import EmailType
 from user.models import User, FamilyMember, Family, FamilyMemberRequest, TowersUser
 from django.conf import settings
@@ -26,6 +27,11 @@ class FamilyMemberRequestReceivedInline(admin.TabularInline):
     model = FamilyMemberRequest
     fk_name = "user_receiver"
     extra = 0
+
+
+@admin.action(description="Send event sign-up email")
+def send_signup_email(modeladmin, request, queryset):
+    event.tasks.send_events_signup.delay(user_ids=queryset.values_list("id", flat=True))
 
 
 @admin.action(description="Send verification email")
@@ -130,7 +136,12 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     filter_horizontal = ("groups", "user_permissions")
     inlines = (FamilyMemberRequestSentInline, FamilyMemberRequestReceivedInline)
-    actions = (send_verification_email, send_welcome_email, send_imported_email)
+    actions = (
+        send_verification_email,
+        send_welcome_email,
+        send_imported_email,
+        send_signup_email,
+    )
     form = UserAdminForm
 
     fieldset_base = (

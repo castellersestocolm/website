@@ -50,6 +50,10 @@ TEMPLATE_BY_MODULE = {
                     "subject": _("You have been invited to join a family"),
                     "html": "email/org/user/invite.html",
                 },
+                EmailType.EVENT_SIGNUP: {
+                    "subject": _("Sign-up for the upcoming events"),
+                    "html": "email/org/user/signup.html",
+                },
             },
         }
     },
@@ -75,6 +79,10 @@ TEMPLATE_BY_MODULE = {
                 EmailType.FAMILY_INVITE: {
                     "subject": _("You have been invited to join a family"),
                     "html": "email/towers/user/invite.html",
+                },
+                EmailType.EVENT_SIGNUP: {
+                    "subject": _("Sign-up for the upcoming events and rehearsals"),
+                    "html": "email/towers/user/signup.html",
                 },
             },
         }

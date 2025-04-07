@@ -394,6 +394,24 @@ MODULE_ORG_MEMBERSHIP_ACCOUNT_CONFIG = [
         None, os.getenv("MODULE_ORG_MEMBERSHIP_ACCOUNT_CONFIG", "").split(",")
     )
 ]
+MODULE_ORG_NOTIFY_EVENT_SIGNUP_TIME = (
+    dict(
+        [
+            st.split("-")
+            for st in os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_TIME").split(",")
+        ]
+    )
+    if os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_TIME")
+    else None
+)
+MODULE_ORG_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
+    [
+        int(d)
+        for d in os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_RANGE_DAYS", "2,30").split(
+            ","
+        )
+    ]
+)
 
 MODULE_TOWERS_NAME = os.getenv("MODULE_TOWERS_NAME")
 MODULE_TOWERS_SHORT_NAME = os.getenv("MODULE_TOWERS_SHORT_NAME", MODULE_TOWERS_NAME)
@@ -423,6 +441,24 @@ MODULE_TOWERS_MEMBERSHIP_ACCOUNT_CONFIG = [
         None, os.getenv("MODULE_TOWERS_MEMBERSHIP_ACCOUNT_CONFIG", "").split(",")
     )
 ]
+MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_TIME = (
+    dict(
+        [
+            st.split("-")
+            for st in os.getenv("MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_TIME").split(",")
+        ]
+    )
+    if os.getenv("MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_TIME")
+    else None
+)
+MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
+    [
+        int(d)
+        for d in os.getenv(
+            "MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_RANGE_DAYS", "2,30"
+        ).split(",")
+    ]
+)
 
 # Django money
 

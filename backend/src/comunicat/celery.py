@@ -22,4 +22,16 @@ app.conf.beat_schedule = {
     },
 }
 
+if settings.MODULE_ORG_NOTIFY_EVENT_SIGNUP_TIME:
+    app.conf.beat_schedule["event.send_events_signup_org"] = {
+        "task": "event.tasks.send_events_signup_org",
+        "schedule": crontab(**settings.MODULE_ORG_NOTIFY_EVENT_SIGNUP_TIME),
+    }
+
+if settings.MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_TIME:
+    app.conf.beat_schedule["event.send_events_signup_towers"] = {
+        "task": "event.tasks.send_events_signup_towers",
+        "schedule": crontab(**settings.MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_TIME),
+    }
+
 app.conf.task_default_queue = "default"

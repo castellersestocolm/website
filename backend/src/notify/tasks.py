@@ -2,7 +2,6 @@ from typing import Optional
 from uuid import UUID
 
 from celery import shared_task
-from django.core.files.base import ContentFile
 
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -10,6 +9,7 @@ from django.utils import translation
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
+from event.enums import RegistrationStatus
 from notify.api.email import send_email
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import NotificationType, EmailType
@@ -38,6 +38,36 @@ def send_user_email(
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
         context_full = {**context, "user_obj": user_obj}
+
+        if "event_ids" in context:
+            from event.models import Event
+
+            context_full["event_objs"] = list(
+                sorted(
+                    Event.objects.filter(id__in=context["event_ids"]),
+                    key=lambda e_obj: context["event_ids"].index(str(e_obj.id)),
+                )
+            )
+
+        if "user_ids" in context:
+            context_full["user_objs"] = list(
+                sorted(
+                    User.objects.filter(id__in=context["user_ids"]),
+                    key=lambda u_obj: context["user_ids"].index(str(u_obj.id)),
+                )
+            )
+
+        if "event_ids" in context and "user_ids" in context:
+            from event.models import Registration
+
+            context_full["registration_objs"] = list(
+                Registration.objects.filter(
+                    event_id__in=context["event_ids"],
+                    user_id__in=context["user_ids"],
+                    status=RegistrationStatus.ACTIVE,
+                )
+            )
+
         template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
             email_type
         ]

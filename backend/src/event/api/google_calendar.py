@@ -43,6 +43,7 @@ def import_events() -> None:
     }
 
     event_creates = []
+    event_updates = []
     event_module_creates = []
     google_event_creates = []
     registration_creates = []
@@ -98,6 +99,15 @@ def import_events() -> None:
                         event_key = (google_calendar_obj.external_id, event["id"])
                         if event_key in google_event_by_key:
                             event_obj = google_event_by_key[event_key].event
+
+                            event_obj.time_from = datetime.datetime.fromisoformat(
+                                event["start"]["dateTime"]
+                            )
+                            event_obj.time_to = datetime.datetime.fromisoformat(
+                                event["end"]["dateTime"]
+                            )
+                            event_updates.append(event_obj)
+
                             for attendee in event.get("attendees", []):
                                 if attendee["email"] in user_by_email:
                                     registration_obj = registration_by_key.get(
@@ -143,6 +153,7 @@ def import_events() -> None:
                                 module=google_integration_obj.module,
                             )
                             event_creates.append(event_obj)
+
                             if google_integration_obj.module == Module.TOWERS:
                                 if event_obj.type in (
                                     EventType.REHEARSAL,
@@ -187,6 +198,9 @@ def import_events() -> None:
 
     if event_creates:
         Event.objects.bulk_create(event_creates)
+
+    if event_updates:
+        Event.objects.bulk_update(event_updates)
 
     if google_event_creates:
         GoogleEvent.objects.bulk_create(google_event_creates)

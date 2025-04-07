@@ -1,8 +1,12 @@
+from typing import List
 from urllib.parse import urljoin
 
 from django.conf import settings
 from django.template.defaulttags import register
 from django.utils import timezone
+
+from event.models import Registration, Event
+from user.models import User
 
 
 @register.simple_tag
@@ -56,3 +60,17 @@ def date_is_future(date: timezone.datetime.date):
 @register.filter
 def subtract(value, arg):
     return value - arg
+
+
+@register.simple_tag
+def registration_by_event_and_user(
+    registration_objs: List[Registration], event_obj: Event, user_obj: User
+):
+    return (
+        [
+            registration_obj
+            for registration_obj in registration_objs
+            if registration_obj.event == event_obj and registration_obj.user == user_obj
+        ]
+        + [None]
+    )[0]
