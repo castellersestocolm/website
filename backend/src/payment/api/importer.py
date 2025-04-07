@@ -401,11 +401,10 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                     status=PaymentStatus.COMPLETED,
                     method=method,
                     text=text,
-                    entity=found_entity_obj,
                     transaction=transaction_obj,
-                    # defaults={
-                    #     "transaction": transaction_obj,
-                    # },
+                    defaults={
+                        "entity": found_entity_obj,
+                    },
                 )
 
             # TODO: Create only remaining amount for existing lines within same payment if more than one line ALREADY exists
