@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.db.models import JSONField
-from django.utils import timezone
 
 import payment.api.entity
 
@@ -16,6 +15,8 @@ from payment.models import (
     TransactionImport,
     PaymentReceipt,
     Receipt,
+    Expense,
+    ExpenseLog,
 )
 
 from jsoneditor.forms import JSONEditor
@@ -297,6 +298,7 @@ class TransactionReadOnlyInline(TransactionInline):
 class TransactionImportAdmin(admin.ModelAdmin):
     search_fields = ("id",)
     list_display = ("id", "source", "date_from", "date_to", "status", "created_at")
+    list_filter = ("date_from", "date_to", "status")
     readonly_fields = ("status", "created_at")
     ordering = ("-created_at",)
     inlines = (TransactionReadOnlyInline,)
@@ -304,13 +306,49 @@ class TransactionImportAdmin(admin.ModelAdmin):
 
 @admin.register(Receipt)
 class ReceiptAdmin(admin.ModelAdmin):
-    search_fields = ("id", "file")
-    list_display = ("id", "file", "type", "status", "created_at")
+    search_fields = ("id", "description", "file")
+    list_display = ("description", "date", "file", "type", "status", "created_at")
+    list_filter = ("date", "type", "status")
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
+    raw_id_fields = ("expense",)
     inlines = (PaymentReceiptInline,)
 
     def file_name(self, obj):
         return obj.file.name
 
     file_name.short_description = _("file")
+
+
+class ReceiptInline(admin.TabularInline):
+    model = Receipt
+    readonly_fields = ("created_at",)
+    ordering = ("-created_at",)
+    extra = 0
+
+
+class ExpenseLogInline(admin.TabularInline):
+    model = ExpenseLog
+    readonly_fields = ("status", "created_at")
+    ordering = ("-created_at",)
+    extra = 0
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Expense)
+class ExpenseAdmin(admin.ModelAdmin):
+    search_fields = ("id", "user__firstname", "user__lastname", "user__email")
+    list_display = ("id", "user", "status", "created_at")
+    list_filter = ("status",)
+    readonly_fields = ("created_at",)
+    ordering = ("-created_at",)
+    raw_id_fields = ("user",)
+    inlines = (ReceiptInline, ExpenseLogInline)

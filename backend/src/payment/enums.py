@@ -51,6 +51,14 @@ class TransactionImportStatus(IntEnum):
     ERRORED = 40
 
 
+class ExpenseStatus(IntEnum):
+    CREATED = 10
+    PROCESSING = 20
+    APPROVED = 30
+    REJECTED = 40
+    DELETED = 50
+
+
 class ReceiptType(IntEnum):
     PERSONAL = 10
     BUSINESS = 20

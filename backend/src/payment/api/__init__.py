@@ -5,7 +5,7 @@ from django.db.models import Prefetch, Q, Exists, OuterRef, Case, When, F, DateF
 
 from comunicat.enums import Module
 from payment.enums import PaymentStatus
-from payment.models import Payment, PaymentLine, PaymentLog
+from payment.models import Payment, PaymentLine, PaymentLog, PaymentReceipt
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 
@@ -51,6 +51,13 @@ def get_list(user_id: UUID, module: Module) -> List[Payment]:
                 "lines", PaymentLine.objects.with_description().order_by("amount")
             ),
             Prefetch("logs", PaymentLog.objects.all().order_by("-created_at")),
+            Prefetch(
+                "payment_receipts",
+                PaymentReceipt.objects.select_related("receipt").order_by(
+                    "-created_at"
+                ),
+                to_attr="receipts",
+            ),
         )
         .with_amount()
         .with_description()

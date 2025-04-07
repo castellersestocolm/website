@@ -18,6 +18,7 @@ from payment.enums import (
     TransactionImportStatus,
     ReceiptStatus,
     ReceiptType,
+    ExpenseStatus,
 )
 from payment.managers import PaymentQuerySet, PaymentLineQuerySet, AccountQuerySet
 
@@ -323,7 +324,42 @@ class TransactionImport(StandardModel, Timestamps):
             payment.api.importer.run(transaction_import_id=self.id)
 
 
+# TODO: Add "where to be paid" like bank account
+class Expense(StandardModel, Timestamps):
+    user = models.ForeignKey(
+        "user.User", related_name="expenses", on_delete=models.CASCADE
+    )
+
+    status = models.PositiveSmallIntegerField(
+        choices=((es.value, es.name) for es in ExpenseStatus),
+        default=ExpenseStatus.CREATED,
+    )
+
+    __status = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__status = self.status
+
+    def save(self, *args, **kwargs):
+        if self.pk and self.status != self.__status:
+            ExpenseLog.objects.create(expense_id=self.id, status=self.status)
+        super().save(*args, **kwargs)
+
+
+class ExpenseLog(StandardModel, Timestamps):
+    expense = models.ForeignKey(
+        "Expense", related_name="logs", on_delete=models.CASCADE
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((es.value, es.name) for es in ExpenseStatus),
+    )
+
+
 class Receipt(StandardModel, Timestamps):
+    description = models.CharField(max_length=255)
+    date = models.DateField()
+
     type = models.PositiveSmallIntegerField(
         choices=((rt.value, rt.name) for rt in ReceiptType),
         default=ReceiptType.PERSONAL,
@@ -331,6 +367,14 @@ class Receipt(StandardModel, Timestamps):
     status = models.PositiveSmallIntegerField(
         choices=((rs.value, rs.name) for rs in ReceiptStatus),
         default=ReceiptStatus.CREATED,
+    )
+
+    expense = models.ForeignKey(
+        Expense,
+        blank=True,
+        null=True,
+        related_name="expense_receipts",
+        on_delete=models.CASCADE,
     )
 
     file = models.FileField(

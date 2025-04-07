@@ -1,7 +1,14 @@
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import MoneyField
-from payment.models import PaymentLine, Payment, PaymentLog, Transaction
+from payment.models import (
+    PaymentLine,
+    Payment,
+    PaymentLog,
+    Transaction,
+    PaymentReceipt,
+    Receipt,
+)
 
 
 class PaymentLogSerializer(s.ModelSerializer):
@@ -15,6 +22,44 @@ class PaymentLogSerializer(s.ModelSerializer):
         read_only_fields = (
             "id",
             "status",
+            "created_at",
+        )
+
+
+class ReceiptSerializer(s.ModelSerializer):
+    class Meta:
+        model = Receipt
+        fields = (
+            "id",
+            "file",
+            "type",
+            "status",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "file",
+            "type",
+            "status",
+            "created_at",
+        )
+
+
+class PaymentReceiptSerializer(s.ModelSerializer):
+    receipt = ReceiptSerializer(read_only=True)
+
+    class Meta:
+        model = PaymentReceipt
+        fields = (
+            "id",
+            "receipt",
+            "amount",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "receipt",
+            "amount",
             "created_at",
         )
 
@@ -59,6 +104,7 @@ class PaymentSerializer(s.ModelSerializer):
     description = s.CharField(read_only=True)
     transaction = TransactionSerializer(read_only=True, required=False)
     lines = PaymentLineSerializer(many=True, read_only=True)
+    receipts = PaymentReceiptSerializer(many=True, read_only=True)
     logs = PaymentLogSerializer(many=True, read_only=True)
 
     class Meta:
@@ -72,6 +118,7 @@ class PaymentSerializer(s.ModelSerializer):
             "description",
             "transaction",
             "lines",
+            "receipts",
             "logs",
             "created_at",
         )
@@ -84,6 +131,7 @@ class PaymentSerializer(s.ModelSerializer):
             "description",
             "transaction",
             "lines",
+            "receipts",
             "logs",
             "created_at",
         )
