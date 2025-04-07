@@ -1,6 +1,7 @@
 import { createTheme } from "@mui/material/styles";
+import {responsiveFontSizes} from "@mui/material";
 
-export const appTheme = createTheme({
+export const appTheme = responsiveFontSizes(createTheme({
   palette: {
     primary: {
       light: "#ffe88b",
@@ -57,7 +58,7 @@ export const appTheme = createTheme({
     "0px 11px 14px -7px rgba(0,0,0,0.2),0px 23px 36px 3px rgba(0,0,0,0.04),0px 9px 44px 8px rgba(0,0,0,0.02)",
     "0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.04),0px 9px 46px 8px rgba(0,0,0,0.02)",
   ],
-});
+}));
 
 /*
 interface PaletteOptions {
