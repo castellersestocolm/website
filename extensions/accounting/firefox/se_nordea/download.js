@@ -42,6 +42,9 @@ async function main() {
                             }
                             else {
                                 transactionData["method"] = "transfer";
+                                if(!("sender" in transactionData)) {
+                                    transactionData["sender"] = transactionValue;
+                                }
                             }
                             break;
                         case "belopp":
@@ -68,15 +71,15 @@ async function main() {
                             transactionData["text"] = transactionValue;
                             break;
                         case "egnaanteckningar":
-                            if(!"text" in transactionData) {
-                                transactionData["text"] = transactionValue;
+                            if(!("text" in transactionData)) {
+                                transactionData["notes"] = transactionValue;
                             }
                             break;
                         case "referensnummerswish":
                             transactionData["reference"] = transactionValue;
                             break;
                         case "ytterligaredetaljer":
-                            if(!"text" in transactionData) {
+                            if(!("text" in transactionData)) {
                                 transactionData["text"] = transactionValue;
                             }
                             break;
