@@ -200,7 +200,7 @@ def import_events() -> None:
         Event.objects.bulk_create(event_creates)
 
     if event_updates:
-        Event.objects.bulk_update(event_updates)
+        Event.objects.bulk_update(event_updates, fields=("time_from", "time_to"))
 
     if google_event_creates:
         GoogleEvent.objects.bulk_create(google_event_creates)
