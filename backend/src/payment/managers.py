@@ -56,7 +56,7 @@ class PaymentQuerySet(QuerySet):
                 Subquery(
                     PaymentLine.objects.with_dates()
                     .filter(
-                        status=PaymentStatus.COMPLETED,
+                        payment__status=PaymentStatus.COMPLETED,
                         date_accounting__lte=OuterRef("date_accounting"),
                     )
                     .annotate(
@@ -187,7 +187,7 @@ class PaymentLineQuerySet(QuerySet):
                 Subquery(
                     PaymentLine.objects.with_dates()
                     .filter(
-                        status=PaymentStatus.COMPLETED,
+                        payment__status=PaymentStatus.COMPLETED,
                         date_accounting__lte=OuterRef("date_accounting"),
                     )
                     .annotate(
