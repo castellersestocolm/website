@@ -16,6 +16,8 @@ from payment.enums import (
     SourceType,
     AccountCategory,
     TransactionImportStatus,
+    ReceiptStatus,
+    ReceiptType,
 )
 from payment.managers import PaymentQuerySet, PaymentLineQuerySet, AccountQuerySet
 
@@ -69,6 +71,14 @@ class Payment(StandardModel, Timestamps):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__status = self.status
+
+    def __str__(self) -> str:
+        extra_str = ""
+        if self.entity:
+            extra_str += f" - {self.entity}"
+        if self.text:
+            extra_str += f" - {self.text}"
+        return f"{PaymentMethod(self.method).name if self.method else ''}{extra_str}"
 
     def save(self, *args, **kwargs):
         if self.pk and self.status != self.__status:
@@ -138,6 +148,14 @@ class PaymentLine(StandardModel, Timestamps):
     )
 
     objects = PaymentLineQuerySet.as_manager()
+
+    def __str__(self) -> str:
+        extra_str = ""
+        if self.payment.entity:
+            extra_str += f" - {self.payment.entity}"
+        if self.text or self.payment.text:
+            extra_str += f" - {self.text or self.payment.text}"
+        return f"{PaymentMethod(self.payment.method).name + ' - ' if self.payment.method else ''}{self.amount}{extra_str}"
 
 
 class PaymentLog(StandardModel, Timestamps):
@@ -303,3 +321,41 @@ class TransactionImport(StandardModel, Timestamps):
             import payment.api.importer
 
             payment.api.importer.run(transaction_import_id=self.id)
+
+
+class Receipt(StandardModel, Timestamps):
+    type = models.PositiveSmallIntegerField(
+        choices=((rt.value, rt.name) for rt in ReceiptType),
+        default=ReceiptType.PERSONAL,
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((rs.value, rs.name) for rs in ReceiptStatus),
+        default=ReceiptStatus.CREATED,
+    )
+
+    file = models.FileField(
+        upload_to="payment/receipt/file/",
+        validators=[FileExtensionValidator(["pdf", "png", "jpg", "jpeg"])],
+    )
+
+    def __str__(self) -> str:
+        return self.file.name
+
+
+class PaymentReceipt(StandardModel, Timestamps):
+    receipt = models.ForeignKey(
+        Receipt, related_name="payment_receipts", on_delete=models.CASCADE
+    )
+    payment = models.ForeignKey(
+        Payment, related_name="payment_receipts", on_delete=models.CASCADE
+    )
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self) -> str:
+        return f"{str(self.payment)} - {self.receipt}"

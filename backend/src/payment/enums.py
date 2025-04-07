@@ -49,3 +49,13 @@ class TransactionImportStatus(IntEnum):
     RUNNING = 20
     COMPLETED = 30
     ERRORED = 40
+
+
+class ReceiptType(IntEnum):
+    PERSONAL = 10
+    BUSINESS = 20
+
+
+class ReceiptStatus(IntEnum):
+    CREATED = 10
+    DELETED = 20

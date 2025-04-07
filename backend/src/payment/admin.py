@@ -14,6 +14,8 @@ from payment.models import (
     Source,
     Entity,
     TransactionImport,
+    PaymentReceipt,
+    Receipt,
 )
 
 from jsoneditor.forms import JSONEditor
@@ -25,6 +27,14 @@ class PaymentLineForPaymentInline(admin.TabularInline):
     model = PaymentLine
     ordering = ("-created_at",)
     readonly_fields = ("debit_line",)
+    extra = 0
+
+
+class PaymentReceiptInline(admin.TabularInline):
+    model = PaymentReceipt
+    readonly_fields = ("created_at",)
+    ordering = ("-created_at",)
+    raw_id_fields = ("receipt", "payment")
     extra = 0
 
 
@@ -65,7 +75,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "entity",
         "transaction",
     )
-    inlines = (PaymentLineForPaymentInline, PaymentLogInline)
+    inlines = (PaymentLineForPaymentInline, PaymentReceiptInline, PaymentLogInline)
 
     def get_queryset(self, request):
         return (
@@ -228,6 +238,7 @@ class EntityAdmin(admin.ModelAdmin):
         "created_at",
     )
     ordering = ("firstname", "lastname", "email", "created_at")
+    raw_id_fields = ("user",)
     inlines = (PaymentInline,)
     actions = (merge_entities,)
 
@@ -286,6 +297,20 @@ class TransactionReadOnlyInline(TransactionInline):
 class TransactionImportAdmin(admin.ModelAdmin):
     search_fields = ("id",)
     list_display = ("id", "source", "date_from", "date_to", "status", "created_at")
-    readonly_fields = ("status",)
+    readonly_fields = ("status", "created_at")
     ordering = ("-created_at",)
     inlines = (TransactionReadOnlyInline,)
+
+
+@admin.register(Receipt)
+class ReceiptAdmin(admin.ModelAdmin):
+    search_fields = ("id", "file")
+    list_display = ("id", "file", "type", "status", "created_at")
+    readonly_fields = ("created_at",)
+    ordering = ("-created_at",)
+    inlines = (PaymentReceiptInline,)
+
+    def file_name(self, obj):
+        return obj.file.name
+
+    file_name.short_description = _("file")
