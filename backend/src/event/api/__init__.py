@@ -87,7 +87,7 @@ def send_events_signup(
                 time_from__lte=time_to,
                 modules__module=m,
                 status=EventStatus.PUBLISHED,
-            ).order_by("time_from")
+            ).order_by("time_from")[:5]
         )
 
         if not future_event_objs:

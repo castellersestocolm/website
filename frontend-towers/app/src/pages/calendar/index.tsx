@@ -24,7 +24,8 @@ import Map from "../../components/Map/Map";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import { capitalizeFirstLetter } from "../../utils/string";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useCallback } from "react";
 
 function CalendarPage() {
   const [t, i18n] = useTranslation("common");
@@ -40,14 +41,20 @@ function CalendarPage() {
   const [family, setFamily] = React.useState(undefined);
   const [nextEvents, setNextEvents] = React.useState(undefined);
 
-  const handleEventClick = (eventId: string) => {
-    setEventsOpen({
-      ...Object.fromEntries(
-        Object.entries(eventsOpen).map(([k, v], i) => [k, false]),
-      ),
-      [eventId]: !eventsOpen[eventId],
-    });
-  };
+  const [searchParams] = useSearchParams();
+  const eventId = searchParams.get("eventId");
+
+  const handleEventClick = useCallback(
+    (eventId: string) => {
+      setEventsOpen((eventsOpen) => ({
+        ...Object.fromEntries(
+          Object.entries(eventsOpen).map(([k, v], i) => [k, false]),
+        ),
+        [eventId]: !eventsOpen[eventId],
+      }));
+    },
+    [setEventsOpen],
+  );
 
   React.useEffect(() => {
     apiEventList(token).then((response) => {
@@ -76,19 +83,19 @@ function CalendarPage() {
     if (user) {
       setFamily(user.family);
       if (nextEvents) {
-        handleEventClick(nextEvents[0].id);
+        handleEventClick(eventId || nextEvents[0].id);
       }
     } else if (token !== undefined) {
       apiUserFamily(token).then((response) => {
         if (response.status === 200) {
           setFamily(response.data);
           if (nextEvents) {
-            handleEventClick(nextEvents[0].id);
+            handleEventClick(eventId || nextEvents[0].id);
           }
         }
       });
     }
-  }, [user, setFamily, nextEvents, token]);
+  }, [user, setFamily, eventId, handleEventClick, nextEvents, token]);
 
   const content = (
     <>
