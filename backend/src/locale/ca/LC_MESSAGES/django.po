@@ -240,6 +240,8 @@ msgid ""
 "We have some upcoming events, please make sure to update your attendance as "
 "soon as you can!"
 msgstr ""
+"Tenim alguns esdeveniments propers, assegura't d'actualitzar la teva assistència "
+"tan aviat com puguis!"
 
 #: comunicat/templates/email/towers/user/signup.html:6
 msgid "Next events and rehearsals"
