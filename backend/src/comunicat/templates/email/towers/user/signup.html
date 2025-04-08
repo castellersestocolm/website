@@ -12,25 +12,27 @@
                         <div>
                             <h5 style="margin-bottom: 4px;">{{ event_obj.title }}{% if event_obj.location and event_obj.type == 50 %} — {{ event_obj.location.name }}{% endif %}</h5>
                             <h6 style="margin-bottom: 12px;">{{ event_obj.time_from|date }} {{ event_obj.time_from|date:"G:i" }} → {{ event_obj.time_to|date:"G:i" }}</h6>
-                            <div>
-                                {% for user_obj in user_objs %}
-                                    <div style="display: inline-block; padding-right: 16px;">
-                                        <p style="margin-bottom: 0;"><strong>{{ user_obj.name }}</strong></p>
-                                        {% registration_by_event_and_user registration_objs event_obj user_obj as registration_obj %}
-                                        {% if registration_obj %}
-                                            <div style="display: flex; flex-direction: row; justify-content: center; color: #2e7d32;">
-                                                <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_check_circle.png" %}"/>
-                                                <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #2e7d32;">{% trans "Attending" %}</p>
-                                            </div>
-                                        {% else %}
-                                            <div style="display: flex; flex-direction: row; justify-content: center; color: #d32f2f;">
-                                                <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_cancel.png" %}"/>
-                                                <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #d32f2f;">{% trans "Not attending" %}</p>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-                            </div>
+                            {% if event_obj.modules.all.0.require_signup %}
+                                <div>
+                                    {% for user_obj in user_objs %}
+                                        <div style="display: inline-block; padding-right: 16px;">
+                                            <p style="margin-bottom: 0;"><strong>{{ user_obj.name }}</strong></p>
+                                            {% registration_by_event_and_user registration_objs event_obj user_obj as registration_obj %}
+                                            {% if registration_obj and registration_obj.status == 20 %}
+                                                <div style="display: flex; flex-direction: row; justify-content: center; color: #2e7d32;">
+                                                    <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_check_circle.png" %}"/>
+                                                    <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #2e7d32;">{% trans "Attending" %}</p>
+                                                </div>
+                                            {% else %}
+                                                <div style="display: flex; flex-direction: row; justify-content: center; color: #d32f2f;">
+                                                    <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_cancel.png" %}"/>
+                                                    <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #d32f2f;">{% trans "Not attending" %}</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
                     </a>
                 {% endwith %}

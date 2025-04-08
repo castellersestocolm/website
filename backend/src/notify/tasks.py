@@ -2,6 +2,7 @@ from typing import Optional
 from uuid import UUID
 
 from celery import shared_task
+from django.db.models import Prefetch
 
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -10,6 +11,7 @@ from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
 from event.enums import RegistrationStatus
+from event.models import EventModule
 from notify.api.email import send_email
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import NotificationType, EmailType
@@ -44,7 +46,14 @@ def send_user_email(
 
             context_full["event_objs"] = list(
                 sorted(
-                    Event.objects.filter(id__in=context["event_ids"]),
+                    Event.objects.filter(id__in=context["event_ids"]).prefetch_related(
+                        Prefetch(
+                            "modules",
+                            EventModule.objects.filter(module=module).order_by(
+                                "module"
+                            ),
+                        )
+                    ),
                     key=lambda e_obj: context["event_ids"].index(str(e_obj.id)),
                 )
             )
