@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-16 11:15+0100\n"
+"POT-Creation-Date: 2025-04-08 13:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,8 @@ msgstr "Només els següents idiomes estan permesos: %s."
 #: comunicat/rest/serializers/user.py:315
 #, python-format
 msgid "Members over %s must consent in order to become members."
-msgstr "Membres majors de %s han de donar consentiment per tal d'esdevenir membres."
+msgstr ""
+"Membres majors de %s han de donar consentiment per tal d'esdevenir membres."
 
 #: comunicat/rest/serializers/user.py:235
 #: comunicat/rest/serializers/user.py:342
@@ -54,10 +55,9 @@ msgid "The family member must be below %s to update."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo actualitzar."
 
 #: comunicat/rest/serializers/user.py:304
-#, fuzzy, python-format
 #| msgid "The family member must be below %s to update."
 msgid "The family member must be below %s to create."
-msgstr "El membre familiar ha de ser menor de %s per poder-lo actualitzar."
+msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
 #: comunicat/rest/utils/fields.py:18 comunicat/rest/utils/fields.py:51
 msgid "Invalid value."
@@ -115,13 +115,14 @@ msgid ""
 "questions you may have regarding the system."
 msgstr ""
 "Estem molt contents d'introduïr la nostra nova web, una manera nova "
-"d'administrar la teva quota i registrar-te pels assajos. T'enviem aquest correu "
-"per donar-te un resum ràpid d'algunes de les funcions i alhora resoldre qualsevol "
-"dubte que hi pugui haver sobre el sistema."
+"d'administrar la teva quota i registrar-te pels assajos. T'enviem aquest "
+"correu per donar-te un resum ràpid d'algunes de les funcions i alhora "
+"resoldre qualsevol dubte que hi pugui haver sobre el sistema."
 
 #: comunicat/templates/email/towers/user/imported.html:6
 msgid "Right now, the following features are up and running on our site."
-msgstr "Ara mateix les següents funcionalitats es poden fer servir a la nostra web."
+msgstr ""
+"Ara mateix les següents funcionalitats es poden fer servir a la nostra web."
 
 #: comunicat/templates/email/towers/user/imported.html:8
 msgid "Membership and family management."
@@ -154,22 +155,23 @@ msgid ""
 "or use Google single sign-on directly on our website if you wish to."
 msgstr ""
 "Com que tens una quota registrada hem migrat automàticament les teves dades "
-"a la nova plataforma, pots configurar una contrasenya nova a través del següent "
-"enllaç o fer servir Google per entrar directament a la nostra web si ho prefereixes."
+"a la nova plataforma, pots configurar una contrasenya nova a través del "
+"següent enllaç o fer servir Google per entrar directament a la nostra web si "
+"ho prefereixes."
 
-#: comunicat/templates/email/towers/user/imported.html:19
+#: comunicat/templates/email/towers/user/imported.html:20
 msgid "Set a new password"
 msgstr "Configura una contrasenya nova"
 
-#: comunicat/templates/email/towers/user/imported.html:22
+#: comunicat/templates/email/towers/user/imported.html:23
 msgid "Have any more questions? Feel free to drop an email at"
 msgstr "Més preguntes? No dubtis a enviar-nos un correu a"
 
-#: comunicat/templates/email/towers/user/imported.html:22
+#: comunicat/templates/email/towers/user/imported.html:23
 msgid "or reach out on WhatsApp!"
 msgstr "o enviar-nos un missatge per WhatsApp!"
 
-#: comunicat/templates/email/towers/user/imported.html:26
+#: comunicat/templates/email/towers/user/imported.html:27
 #: comunicat/templates/email/towers/user/welcome.html:10
 msgid "See you around!"
 msgstr "Ens veiem!"
@@ -196,9 +198,10 @@ msgid ""
 "your email you will be able to accept this invitation under \"Family requests"
 "\" on your dashboard."
 msgstr ""
-"Per tal d'acceptar aquesta invitació primer has de fer-te membre, ho pots fer "
-"directament a la nostra web. Una vegada registrat i confirmat el teu correu podràs "
-"acceptar aquesta invitació a \"Peticions de família\" al teu perfil."
+"Per tal d'acceptar aquesta invitació primer has de fer-te membre, ho pots "
+"fer directament a la nostra web. Una vegada registrat i confirmat el teu "
+"correu podràs acceptar aquesta invitació a \"Peticions de família\" al teu "
+"perfil."
 
 #: comunicat/templates/email/towers/user/invite.html:15
 msgid "Review the invitation"
@@ -213,8 +216,8 @@ msgid ""
 "Did you request to change your password? To update it click on the following "
 "button. If you didn't request this you can ignore this email."
 msgstr ""
-"Has demanat canviar la contrasenya? Per actualitzar-la fes clic al següent botó. "
-"Si no has fet aquesta petició pots ignorar aquest correu."
+"Has demanat canviar la contrasenya? Per actualitzar-la fes clic al següent "
+"botó. Si no has fet aquesta petició pots ignorar aquest correu."
 
 #: comunicat/templates/email/towers/user/password.html:10
 msgid "Change password"
@@ -231,6 +234,28 @@ msgstr ""
 #: comunicat/templates/email/towers/user/register.html:10
 msgid "Confirm email"
 msgstr "Confirma el teu correu"
+
+#: comunicat/templates/email/towers/user/signup.html:5
+msgid ""
+"We have some upcoming events, please make sure to update your attendance as "
+"soon as you can!"
+msgstr ""
+
+#: comunicat/templates/email/towers/user/signup.html:6
+msgid "Next events and rehearsals"
+msgstr "Propers esdeveniments i assajos"
+
+#: comunicat/templates/email/towers/user/signup.html:19
+msgid "Attending"
+msgstr "Hi participo"
+
+#: comunicat/templates/email/towers/user/signup.html:24
+msgid "Not attending"
+msgstr "No hi participo"
+
+#: comunicat/templates/email/towers/user/signup.html:39
+msgid "Change attendance"
+msgstr "Canvia l'assistència"
 
 #: comunicat/templates/email/towers/user/welcome.html:5
 msgid ""
@@ -251,64 +276,117 @@ msgid ""
 "us. If that's not the case please do let us know and we'll fix it for you!"
 msgstr ""
 "En aquest correu hi trobaràs adjunt informació que esperem que resolgui "
-"totes les teves preguntes. Tot i això, si no tens alguna cosa clara no dubtis "
-"en preguntar-nos el que vulguis a través de la nostra comunitat de WhatsApp. "
-"Tots els membres actius en són part i és on parlem i compartim informació dels "
-"assajos, pengem imatge i molt més. Si us plau tingues en compte que només acceptem "
-"peticions a alguns dels grups si el teu telèfon coincideix amb el que tens registrat "
-"al teu compte. Si aquest no és el cas fes-nos-ho saber i t'ho arreglarem!"
+"totes les teves preguntes. Tot i això, si no tens alguna cosa clara no "
+"dubtis en preguntar-nos el que vulguis a través de la nostra comunitat de "
+"WhatsApp. Tots els membres actius en són part i és on parlem i compartim "
+"informació dels assajos, pengem imatge i molt més. Si us plau tingues en "
+"compte que només acceptem peticions a alguns dels grups si el teu telèfon "
+"coincideix amb el que tens registrat al teu compte. Si aquest no és el cas "
+"fes-nos-ho saber i t'ho arreglarem!"
 
 #: comunicat/templates/email/towers/user/welcome.html:15
 msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
-#: event/models.py:105
+#: event/models.py:104
 msgid "End time must be greater than start time."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: notify/consts.py:34 notify/consts.py:60
+#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:221
+msgid "name"
+msgstr "nom"
+
+#: membership/admin.py:96
+msgid "users"
+msgstr "usuaris"
+
+#: membership/admin.py:97
+msgid "family"
+msgstr "família"
+
+#: membership/admin.py:98
+msgid "modules"
+msgstr "mòduls"
+
+#: notify/consts.py:34 notify/consts.py:64
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
 
-#: notify/consts.py:38 notify/consts.py:64
+#: notify/consts.py:38 notify/consts.py:68
 msgid "Reset your password to login"
 msgstr "Reinicia la teva contrasenya per entrar"
 
-#: notify/consts.py:42 notify/consts.py:68
-#, python-format
-msgid "Welcome to Castellers d'Estocolm"
-msgstr "Benvingut/da als Castellers d'Estocolm"
+#: notify/consts.py:42
+msgid "Welcome to Les Quatre Barres"
+msgstr "Benvingut a Les Quatre Barres"
 
-#: notify/consts.py:46 notify/consts.py:72
-#| msgid "Welcome to %s"
-msgid "Welcome to Castellers d'Estocolm new website"
-msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
+#: notify/consts.py:46
+#| msgid "Welcome to Castellers d'Estocolm new website"
+msgid "Welcome to Les Quatre Barres new website"
+msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
-#: notify/consts.py:50 notify/consts.py:76
+#: notify/consts.py:50 notify/consts.py:80
 msgid "You have been invited to join a family"
 msgstr "Has estat convidat a unir-te a una família"
 
-#: payment/managers.py:69 payment/managers.py:174
+#: notify/consts.py:54
+msgid "Sign-up for the upcoming events"
+msgstr "Confirma l'assistència als propers esdeveniments"
+
+#: notify/consts.py:72
+msgid "Welcome to Castellers d'Estocolm"
+msgstr "Benvingut/da als Castellers d'Estocolm"
+
+#: notify/consts.py:76
+msgid "Welcome to Castellers d'Estocolm new website"
+msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
+
+#: notify/consts.py:84
+msgid "Sign-up for the upcoming events and rehearsals"
+msgstr "Confirma l'assistència als propers esdeveniments i assajos"
+
+#: payment/admin.py:107 payment/admin.py:156
+msgid "text"
+msgstr "text"
+
+#: payment/admin.py:108 payment/admin.py:158
+#| msgid "updated"
+msgid "date"
+msgstr "data"
+
+#: payment/admin.py:109 payment/admin.py:159
+msgid "balance"
+msgstr "saldo"
+
+#: payment/admin.py:157
+msgid "entity"
+msgstr "entitat"
+
+#: payment/admin.py:320
+msgid "file"
+msgstr "fitxer"
+
+#: payment/managers.py:120 payment/managers.py:262
 msgid "Membership update"
 msgstr "Actualització quota"
 
-#: payment/managers.py:75 payment/managers.py:176
+#: payment/managers.py:126 payment/managers.py:264
 msgid "Membership"
 msgstr "Quota"
 
-#: payment/managers.py:84
+#: payment/managers.py:135
 msgid "Payment"
 msgstr "Pagament"
 
-#: payment/managers.py:181
+#: payment/managers.py:269
 msgid "Unspecified"
 msgstr "Sense especificar"
 
-#: payment/models.py:198
+#: payment/models.py:217
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: user/admin.py:78
+#: user/admin.py:92
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 

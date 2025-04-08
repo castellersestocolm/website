@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-16 11:15+0100\n"
+"POT-Creation-Date: 2025-04-08 13:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr "Minsta ålder för att gå med är %s."
 #: comunicat/rest/serializers/user.py:205
 #, python-format
 msgid "Only the following languages are allowed: %s."
-msgstr ""
+msgstr "Endast följande språk är tillåtna: %s."
 
 #: comunicat/rest/serializers/user.py:216
 #: comunicat/rest/serializers/user.py:275
@@ -54,10 +54,9 @@ msgid "The family member must be below %s to update."
 msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
 
 #: comunicat/rest/serializers/user.py:304
-#, fuzzy, python-format
 #| msgid "The family member must be below %s to update."
 msgid "The family member must be below %s to create."
-msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
+msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
 #: comunicat/rest/utils/fields.py:18 comunicat/rest/utils/fields.py:51
 msgid "Invalid value."
@@ -87,8 +86,9 @@ msgid ""
 "let us know if this is the result of registering, subscribing or any other "
 "action you might think that have caused this."
 msgstr ""
-"Det ser ut att vara ett problem, det här mejlet har inget innehåll! Var så god och "
-"låt oss veta om det beror på registreringen, prenumerationen eller något annat."
+"Det ser ut att vara ett problem, det här mejlet har inget innehåll! Var så "
+"god och låt oss veta om det beror på registreringen, prenumerationen eller "
+"något annat."
 
 #: comunicat/templates/email/towers/base.html:42
 msgid "Contact us"
@@ -114,9 +114,9 @@ msgid ""
 "questions you may have regarding the system."
 msgstr ""
 "Vi är extremt glada att kunna introducera vår nya hemsida, ett nytt sätt att "
-"hantera ditt medlemskap och för att registrera om du kommer till repetitionerna. "
-"Vi vill nå ut till er för att visa de nya funktionerna och förhoppningsvis "
-"svara på era frågor angående det nya systemet."
+"hantera ditt medlemskap och för att registrera om du kommer till "
+"repetitionerna. Vi vill nå ut till er för att visa de nya funktionerna och "
+"förhoppningsvis svara på era frågor angående det nya systemet."
 
 #: comunicat/templates/email/towers/user/imported.html:6
 msgid "Right now, the following features are up and running on our site."
@@ -154,22 +154,22 @@ msgid ""
 msgstr ""
 "Eftersom du som redan har ett medlemskap registrerat hos oss kommer det att "
 "automatiskt migrera dina data till den nya hemsidan, där kan du också ställa "
-"in ett nytt lösenord via länken nedan, eller använda ett Google single sign-on på "
-"vår hemsida om du helst vill det."
+"in ett nytt lösenord via länken nedan, eller använda ett Google single sign-"
+"on på vår hemsida om du helst vill det."
 
-#: comunicat/templates/email/towers/user/imported.html:19
+#: comunicat/templates/email/towers/user/imported.html:20
 msgid "Set a new password"
 msgstr "Ställ in ditt nya lösenord"
 
-#: comunicat/templates/email/towers/user/imported.html:22
+#: comunicat/templates/email/towers/user/imported.html:23
 msgid "Have any more questions? Feel free to drop an email at"
 msgstr "Har du fler frågor? Skicka dem till oss via e-post"
 
-#: comunicat/templates/email/towers/user/imported.html:22
+#: comunicat/templates/email/towers/user/imported.html:23
 msgid "or reach out on WhatsApp!"
 msgstr "eller skriv till oss på Whatsapp!"
 
-#: comunicat/templates/email/towers/user/imported.html:26
+#: comunicat/templates/email/towers/user/imported.html:27
 #: comunicat/templates/email/towers/user/welcome.html:10
 msgid "See you around!"
 msgstr "Vi syns!"
@@ -213,8 +213,8 @@ msgid ""
 "Did you request to change your password? To update it click on the following "
 "button. If you didn't request this you can ignore this email."
 msgstr ""
-"Har du anhållit om att ändra lösenord? För att uppdatera det klicka på följande "
-"knapp. Om du inte begärde det så kan du strunta i det här emailet."
+"Har du anhållit om att ändra lösenord? För att uppdatera det klicka på "
+"följande knapp. Om du inte begärde det så kan du strunta i det här emailet."
 
 #: comunicat/templates/email/towers/user/password.html:10
 msgid "Change password"
@@ -226,19 +226,44 @@ msgid ""
 "confirm this email as soon as possible by clicking the following button."
 msgstr ""
 "Tack för du gått med! För att fullfölja din registrering behöver vi att du "
-"konfirmerar din e-post så snart som möjligt genom att klicka på följande knapp."
+"konfirmerar din e-post så snart som möjligt genom att klicka på följande "
+"knapp."
 
 #: comunicat/templates/email/towers/user/register.html:10
 msgid "Confirm email"
 msgstr "Bekräfta e-post"
+
+#: comunicat/templates/email/towers/user/signup.html:5
+msgid ""
+"We have some upcoming events, please make sure to update your attendance as "
+"soon as you can!"
+msgstr ""
+"Vi har några kommande evenemang, se till att uppdatera din närvaro så snart "
+"du kan!"
+
+#: comunicat/templates/email/towers/user/signup.html:6
+msgid "Next events and rehearsals"
+msgstr "Nästa evenemang och repetitioner"
+
+#: comunicat/templates/email/towers/user/signup.html:19
+msgid "Attending"
+msgstr "Deltar"
+
+#: comunicat/templates/email/towers/user/signup.html:24
+msgid "Not attending"
+msgstr "Deltar ej"
+
+#: comunicat/templates/email/towers/user/signup.html:39
+msgid "Change attendance"
+msgstr "Ändra närvaro"
 
 #: comunicat/templates/email/towers/user/welcome.html:5
 msgid ""
 "You have now completed the registration process and are part of the "
 "Castellers d'Estocolm, welcome!"
 msgstr ""
-"Du har nu slutfört din registrering och är nu en del av Castellers d'Estocolm, "
-"hjärtligt välkommen!"
+"Du har nu slutfört din registrering och är nu en del av Castellers "
+"d'Estocolm, hjärtligt välkommen!"
 
 #: comunicat/templates/email/towers/user/welcome.html:6
 msgid ""
@@ -250,66 +275,118 @@ msgid ""
 "some of the groups if your phone matches the one you used to register with "
 "us. If that's not the case please do let us know and we'll fix it for you!"
 msgstr ""
-"I medföljande mejlet finner du information och förhoppningsvis svar till alla "
-"dina frågor. Men, om du fortfarande skulle ha några tvivel eller frågor kan du "
-"kontakta oss enklast genom Whatsapp gemenskapen. Alla aktiva medlemmar är där "
-"eftersom vi ofta diskuterar och delger varandra information om repetitioner, "
-"framträdanden, bilder, video och mycket annat. Märk att vi bara accepterar "
-"förfrågningar om tillträde till en del av grupperna om ditt nummer matchar det "
-"du har registrerat hos oss. Om inte så kan du kontakta oss så ordnar vi det åt "
-"dig!"
+"I medföljande mejlet finner du information och förhoppningsvis svar till "
+"alla dina frågor. Men, om du fortfarande skulle ha några tvivel eller frågor "
+"kan du kontakta oss enklast genom Whatsapp gemenskapen. Alla aktiva "
+"medlemmar är där eftersom vi ofta diskuterar och delger varandra information "
+"om repetitioner, framträdanden, bilder, video och mycket annat. Märk att vi "
+"bara accepterar förfrågningar om tillträde till en del av grupperna om ditt "
+"nummer matchar det du har registrerat hos oss. Om inte så kan du kontakta "
+"oss så ordnar vi det åt dig!"
 
 #: comunicat/templates/email/towers/user/welcome.html:15
 msgid "Join the community"
 msgstr "Gå med i gemenskapen"
 
-#: event/models.py:105
+#: event/models.py:104
 msgid "End time must be greater than start time."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: notify/consts.py:34 notify/consts.py:60
+#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:221
+msgid "name"
+msgstr "namn"
+
+#: membership/admin.py:96
+msgid "users"
+msgstr "användare"
+
+#: membership/admin.py:97
+msgid "family"
+msgstr "familj"
+
+#: membership/admin.py:98
+msgid "modules"
+msgstr "moduler"
+
+#: notify/consts.py:34 notify/consts.py:64
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
 
-#: notify/consts.py:38 notify/consts.py:64
+#: notify/consts.py:38 notify/consts.py:68
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
-#: notify/consts.py:42 notify/consts.py:68
-#, python-format
-msgid "Welcome to Castellers d'Estocolm"
-msgstr "Välkommen to Castellers d'Estocolm"
+#: notify/consts.py:42
+msgid "Welcome to Les Quatre Barres"
+msgstr "Välkomen till Les Quatre Barres"
 
-#: notify/consts.py:46 notify/consts.py:72
-#| msgid "Welcome to %s"
-msgid "Welcome to Castellers d'Estocolm new website"
-msgstr "Välkommen to Castellers d'Estocolms ny hemsida"
+#: notify/consts.py:46
+#| msgid "Welcome to Castellers d'Estocolm new website"
+msgid "Welcome to Les Quatre Barres new website"
+msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:50 notify/consts.py:76
+#: notify/consts.py:50 notify/consts.py:80
 msgid "You have been invited to join a family"
-msgstr ""
+msgstr "Du har blivit inbjuden att gå med i en familj"
 
-#: payment/managers.py:69 payment/managers.py:174
+#: notify/consts.py:54
+msgid "Sign-up for the upcoming events"
+msgstr "Registrera dig till kommande evenemang"
+
+#: notify/consts.py:72
+msgid "Welcome to Castellers d'Estocolm"
+msgstr "Välkommen till Castellers d'Estocolm"
+
+#: notify/consts.py:76
+msgid "Welcome to Castellers d'Estocolm new website"
+msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
+
+#: notify/consts.py:84
+msgid "Sign-up for the upcoming events and rehearsals"
+msgstr "Registrera dig till kommande evenemang och repetitioner"
+
+#: payment/admin.py:107 payment/admin.py:156
+msgid "text"
+msgstr "text"
+
+#: payment/admin.py:108 payment/admin.py:158
+#| msgid "updated"
+msgid "date"
+msgstr "datum"
+
+#: payment/admin.py:109 payment/admin.py:159
+msgid "balance"
+msgstr "saldo"
+
+#: payment/admin.py:157
+msgid "entity"
+msgstr "enhet"
+
+#: payment/admin.py:320
+msgid "file"
+msgstr "fil"
+
+#: payment/managers.py:120 payment/managers.py:262
 msgid "Membership update"
 msgstr "Medlemskapsuppdatering"
 
-#: payment/managers.py:75 payment/managers.py:176
+#: payment/managers.py:126 payment/managers.py:264
 msgid "Membership"
 msgstr "Medlemskap"
 
-#: payment/managers.py:84
+#: payment/managers.py:135
 msgid "Payment"
 msgstr "Betalning"
 
-#: payment/managers.py:181
+#: payment/managers.py:269
 msgid "Unspecified"
 msgstr "Ospecificerad"
 
-#: payment/models.py:198
+#: payment/models.py:217
 msgid "Category must be set for accounts with parent."
 msgstr "Kategorin måste vara inställd för konto med förälder."
 
-#: user/admin.py:78
+#: user/admin.py:92
 msgid "Another user already has the same alias."
 msgstr "En annan användare har redan samma alias."
 
