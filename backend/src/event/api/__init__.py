@@ -12,6 +12,7 @@ from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 
 import user.api
+import user.api.event
 import notify.tasks
 
 from django.conf import settings
@@ -95,6 +96,8 @@ def send_events_signup(
         for user_id in user_ids:
             user_obj = user.api.get(user_id=user_id)
 
+            token = user.api.event.get_events_signup_token(user_id=user_obj.id)
+
             notify.tasks.send_user_email.delay(
                 user_id=user_obj.id,
                 email_type=EmailType.EVENT_SIGNUP,
@@ -116,6 +119,7 @@ def send_events_signup(
                         if hasattr(user_obj, "family_member")
                         else [str(user_obj.id)]
                     ),
+                    "token": token,
                 },
                 locale=user_obj.preferred_language or translation.get_language(),
             )

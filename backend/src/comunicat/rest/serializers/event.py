@@ -136,6 +136,7 @@ class EventSerializer(s.ModelSerializer):
 class CreateRegistrationSerializer(s.Serializer):
     user_id = s.UUIDField(required=True)
     event_id = s.UUIDField(required=True)
+    token = s.CharField(required=False)
 
 
 class RegistrationSerializer(RegistrationSlimSerializer):
@@ -158,3 +159,11 @@ class RegistrationSerializer(RegistrationSlimSerializer):
             "status",
             "created_at",
         )
+
+
+class ListEventSerializer(s.Serializer):
+    token = s.CharField(required=False)
+
+
+class DestroyRegistrationSerializer(s.Serializer):
+    token = s.CharField(required=False)

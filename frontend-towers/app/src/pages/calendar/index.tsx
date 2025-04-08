@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { apiEventList } from "../../api";
+import { apiEventList, apiUserFamily } from "../../api";
 import ImageHeroCalendar from "../../assets/images/heros/calendar.jpg";
 import Grid from "@mui/material/Grid2";
 import {
@@ -24,9 +24,11 @@ import Map from "../../components/Map/Map";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import { capitalizeFirstLetter } from "../../utils/string";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
+import { useParams } from "react-router-dom";
 
 function CalendarPage() {
   const [t, i18n] = useTranslation("common");
+  const { token } = useParams();
 
   const { user, rehearsal, setRehearsal } = useAppContext();
 
@@ -35,6 +37,7 @@ function CalendarPage() {
   }>({});
 
   const [events, setEvents] = React.useState(undefined);
+  const [family, setFamily] = React.useState(undefined);
   const [nextEvents, setNextEvents] = React.useState(undefined);
 
   const handleEventClick = (eventId: string) => {
@@ -47,7 +50,7 @@ function CalendarPage() {
   };
 
   React.useEffect(() => {
-    apiEventList().then((response) => {
+    apiEventList(token).then((response) => {
       if (response.status === 200) {
         setEvents(response.data.results);
         setNextEvents(
@@ -67,7 +70,25 @@ function CalendarPage() {
         );
       }
     });
-  }, [setEvents, setNextEvents, setRehearsal]);
+  }, [setEvents, setNextEvents, setRehearsal, token]);
+
+  React.useEffect(() => {
+    if (user) {
+      setFamily(user.family);
+      if (nextEvents) {
+        handleEventClick(nextEvents[0].id);
+      }
+    } else if (token !== undefined) {
+      apiUserFamily(token).then((response) => {
+        if (response.status === 200) {
+          setFamily(response.data);
+          if (nextEvents) {
+            handleEventClick(nextEvents[0].id);
+          }
+        }
+      });
+    }
+  }, [user, setFamily, nextEvents, token]);
 
   const content = (
     <>
@@ -164,7 +185,7 @@ function CalendarPage() {
                               new Date(event.time_to).toTimeString().slice(0, 5)
                             }
                           />
-                          {user &&
+                          {family &&
                             event.require_signup &&
                             (eventsOpen[event.id] ? (
                               <IconExpandLess />
@@ -172,7 +193,7 @@ function CalendarPage() {
                               <IconExpandMore />
                             ))}
                         </ListItemButton>
-                        {user && event.require_signup && (
+                        {family && event.require_signup && (
                           <Collapse
                             in={eventsOpen[event.id]}
                             timeout="auto"
@@ -182,7 +203,11 @@ function CalendarPage() {
                               <Typography fontWeight={600} marginBottom="4px">
                                 {t("pages.calendar.agenda.attendance")}
                               </Typography>
-                              <FormCalendarRegistrationCreate event={event} />
+                              <FormCalendarRegistrationCreate
+                                event={event}
+                                family={family}
+                                token={token}
+                              />
                             </Box>
                           </Collapse>
                         )}

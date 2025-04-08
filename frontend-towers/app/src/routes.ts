@@ -35,6 +35,9 @@ export const ROUTES = {
   calendar: {
     path: "/calendar",
   },
+  "calendar-signup": {
+    path: "/calendar/:token",
+  },
   association: {
     path: "/association",
   },

@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 import user.api
+import user.api.family
 import user.api.family_member
 import user.api.family_member_request
 
@@ -25,6 +26,8 @@ from comunicat.rest.serializers.user import (
     FamilyMemberRequestSlimSerializer,
     FamilyMemberRequestExtraSlimSerializer,
     UserPasswordChangeApplySerializer,
+    FamilySerializer,
+    ListFamilySerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from user.enums import FamilyMemberRole, FamilyMemberStatus
@@ -214,6 +217,44 @@ class UserAPI(ComuniCatViewSet):
             return Response(serializer.data)
 
         return Response(status=400)
+
+
+class UserFamilyAPI(ComuniCatViewSet):
+    serializer_class = FamilySerializer
+    permission_classes = (permissions.AllowAny,)
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        query_serializer=ListFamilySerializer,
+        responses={
+            200: FamilySerializer(),
+            401: Serializer(),
+        },
+    )
+    def list(self, request):
+        serializer = ListFamilySerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        token = serializer.validated_data.get("token")
+        user_obj = (
+            request.user
+            if request.user.is_authenticated
+            else (
+                user.api.event.get_user_by_events_signup_token(token=token)
+                if token
+                else None
+            )
+        )
+
+        if not user_obj:
+            return Response(status=401)
+
+        family_obj = user.api.family.get_for_user(user_id=user_obj.id)
+
+        serializer = self.serializer_class(
+            family_obj, context={"module": self.module, "user": request.user}
+        )
+        return Response(serializer.data)
 
 
 class UserFamilyMemberAPI(ComuniCatViewSet):

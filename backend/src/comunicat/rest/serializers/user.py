@@ -79,7 +79,11 @@ class FamilyMemberSerializer(s.ModelSerializer):
 
     @swagger_serializer_method(serializer_or_field=UserSlimSerializer(read_only=True))
     def get_user(self, obj):
-        if obj.user.can_manage:
+        if (
+            obj.user.can_manage
+            or "user" in self.context
+            and not self.context["user"].is_authenticated
+        ):
             return UserExtraSlimSerializer(obj.user).data
         return UserSlimSerializer(obj.user).data
 
@@ -87,6 +91,10 @@ class FamilyMemberSerializer(s.ModelSerializer):
         model = FamilyMember
         fields = ("id", "user", "role", "status", "created_at")
         read_only_fields = ("id", "user", "role", "status", "created_at")
+
+
+class ListFamilySerializer(s.Serializer):
+    token = s.CharField(required=False)
 
 
 class FamilySerializer(s.ModelSerializer):

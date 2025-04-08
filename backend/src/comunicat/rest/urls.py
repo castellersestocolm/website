@@ -9,6 +9,7 @@ from rest_framework import permissions
 
 router = UUIDRouter()
 router.register("user", user.UserAPI, "user")
+router.register("user/family", user.UserFamilyAPI, "user_family")
 router.register("user/family/member", user.UserFamilyMemberAPI, "user_family_member")
 router.register(
     "user/family/member/request",

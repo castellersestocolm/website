@@ -11,7 +11,6 @@ import {
 } from "../../api";
 import { useState } from "react";
 import { Alert } from "@mui/lab";
-import { useAppContext } from "../AppContext/AppContext";
 import { TransitionGroup } from "react-transition-group";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -31,6 +30,8 @@ interface CreateFormElement extends HTMLFormElement {
 
 export default function FormCalendarRegistrationCreate({
   event: scheduledEvent,
+  family: userFamily,
+  token: eventToken,
 }: any) {
   const { t } = useTranslation("common");
 
@@ -40,7 +41,6 @@ export default function FormCalendarRegistrationCreate({
     scheduledEvent.registrations,
   );
   const [validationErrors, setValidationErrors] = useState(undefined);
-  const { user, rehearsal, setRehearsal } = useAppContext();
 
   const [formRegistration, setFormRegistration] = useState<{
     [key: string]: boolean;
@@ -69,38 +69,34 @@ export default function FormCalendarRegistrationCreate({
       [name]: type === "checkbox" ? checked : value,
     });
     if (checked) {
-      apiEventRegistrationCreate(name, scheduledEvent.id).then((response) => {
-        if (response.status === 200) {
-          const newRegistrations = registrations.concat(response.data);
-          setRegistrations(newRegistrations);
-          setRehearsal({
-            ...scheduledEvent,
-            registrations: newRegistrations,
-          });
-          setCreated(true);
-          setTimeout(() => setCreated(false), 5000);
-        } else if (response.status === 429) {
-          setValidationErrors({ throttle: response.data.detail });
-        }
-      });
+      apiEventRegistrationCreate(name, scheduledEvent.id, eventToken).then(
+        (response) => {
+          if (response.status === 200) {
+            const newRegistrations = registrations.concat(response.data);
+            setRegistrations(newRegistrations);
+            setCreated(true);
+            setTimeout(() => setCreated(false), 5000);
+          } else if (response.status === 429) {
+            setValidationErrors({ throttle: response.data.detail });
+          }
+        },
+      );
     } else {
       const registrationId = registrationIdByUserId[name];
-      apiEventRegistrationDelete(registrationId).then((response) => {
-        if (response.status === 204) {
-          const newRegistrations = registrations.filter(
-            (registration: any) => registration.id !== registrationId,
-          );
-          setRegistrations(newRegistrations);
-          setRehearsal({
-            ...scheduledEvent,
-            registrations: newRegistrations,
-          });
-          setDeleted(true);
-          setTimeout(() => setDeleted(false), 5000);
-        } else if (response.status === 429) {
-          setValidationErrors({ throttle: response.data.detail });
-        }
-      });
+      apiEventRegistrationDelete(registrationId, eventToken).then(
+        (response) => {
+          if (response.status === 204) {
+            const newRegistrations = registrations.filter(
+              (registration: any) => registration.id !== registrationId,
+            );
+            setRegistrations(newRegistrations);
+            setDeleted(true);
+            setTimeout(() => setDeleted(false), 5000);
+          } else if (response.status === 429) {
+            setValidationErrors({ throttle: response.data.detail });
+          }
+        },
+      );
     }
   };
 
@@ -112,10 +108,9 @@ export default function FormCalendarRegistrationCreate({
     <>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={0}>
-          {user &&
-            user.family &&
-            user.family.members.length > 0 &&
-            user.family.members.map((member: any) => (
+          {userFamily &&
+            userFamily.members.length > 0 &&
+            userFamily.members.map((member: any) => (
               <FormGrid size={{ xs: 12 }}>
                 <FormControlLabel
                   key={member.id}

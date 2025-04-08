@@ -133,6 +133,16 @@ export const apiUserLogout = async () => {
   }
 };
 
+export const apiUserFamily = async (token: string = undefined) => {
+  try {
+    return await instance.get("/user/family/", { params: { token: token } });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiUserFamilyMemberCreate = async (
   firstname: string,
   lastname: string,
@@ -334,9 +344,9 @@ export const apiPaymentList = async () => {
   }
 };
 
-export const apiEventList = async () => {
+export const apiEventList = async (token: string = undefined) => {
   try {
-    return await instance.get("/event/");
+    return await instance.get("/event/", { params: { token: token } });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called
@@ -347,11 +357,13 @@ export const apiEventList = async () => {
 export const apiEventRegistrationCreate = async (
   userId: string,
   eventId: string,
+  token: string = undefined,
 ) => {
   try {
     return await instance.post("/event/registration/", {
       user_id: userId,
       event_id: eventId,
+      token: token,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -360,9 +372,15 @@ export const apiEventRegistrationCreate = async (
   }
 };
 
-export const apiEventRegistrationDelete = async (registrationId: string) => {
+export const apiEventRegistrationDelete = async (
+  registrationId: string,
+  token: string = undefined,
+) => {
   try {
-    return await instance.delete("/event/registration/" + registrationId + "/");
+    return await instance.delete(
+      "/event/registration/" + registrationId + "/",
+      { params: { token: token } },
+    );
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

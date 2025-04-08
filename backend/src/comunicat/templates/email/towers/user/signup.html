@@ -34,6 +34,6 @@
     </div>
 {% endblock %}
 
-{% block email_button_url %}{% full_towers_url "calendar/" %}{% endblock %}
+{% block email_button_url %}{% with "calendar/"|add:token as event_signup_link %}{% full_towers_url event_signup_link %}{% endwith %}{% endblock %}
 
 {% block email_button_text %}{% trans "Change attendance" %}{% endblock %}

@@ -104,6 +104,10 @@ const App = () => {
                     element={<CalendarPage />}
                   />
                   <Route
+                    path={ROUTES["calendar-signup"].path}
+                    element={<CalendarPage />}
+                  />
+                  <Route
                     path={ROUTES["user-login"].path}
                     element={<UserLoginPage />}
                   />
