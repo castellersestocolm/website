@@ -221,11 +221,12 @@ def import_events() -> None:
     if event_module_creates:
         EventModule.objects.bulk_create(event_module_creates)
 
-    if registration_creates:
-        Registration.objects.bulk_create(registration_creates)
-
-    if registration_updates:
-        Registration.objects.bulk_update(registration_updates, fields=("status",))
+    # TODO: Temporarily disable this until checked properly
+    # if registration_creates:
+    #     Registration.objects.bulk_create(registration_creates)
+    #
+    # if registration_updates:
+    #     Registration.objects.bulk_update(registration_updates, fields=("status",))
 
 
 def create_or_update_event(
