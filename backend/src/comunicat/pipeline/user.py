@@ -9,7 +9,8 @@ from django.conf import settings
 
 def module_data(backend, response, details, user, *args, **kwargs):
     request = response.get("request")
-    origin_module = Module.ORG
+    # TODO: Fix this, for now set it from TOWERS
+    origin_module = Module.TOWERS
 
     if request:
         host = request.headers.get("Host")
