@@ -91,7 +91,9 @@ def update_or_create_event(event_id: UUID) -> None:
         ]
     )
 
-    exists = cursor.execute(f"SELECT * FROM EVENT WHERE Codi='{event_obj.id}'") > 0
+    exists = (
+        cursor.execute(f"SELECT EVENT_ID FROM EVENT WHERE Codi='{event_obj.id}'") > 0
+    )
 
     if exists:
         cursor.execute(
@@ -135,7 +137,7 @@ def update_or_create_registration(registration_id: UUID) -> None:
     if not exists_event:
         return
 
-    event_id = cursor.fetchall()[0][0]
+    pinyator_event_id = cursor.fetchone()[0]
 
     exists_user = (
         cursor.execute(
@@ -147,22 +149,22 @@ def update_or_create_registration(registration_id: UUID) -> None:
     if not exists_user:
         return
 
-    user_id = cursor.fetchall()[0][0]
+    pinyator_user_id = cursor.fetchone()[0]
 
     exists = (
         cursor.execute(
-            f"SELECT * FROM INSCRITS WHERE Event_ID='{event_id}' AND Casteller_ID='{user_id}'"
+            f"SELECT * FROM INSCRITS WHERE Event_ID='{pinyator_event_id}' AND Casteller_ID='{pinyator_user_id}'"
         )
         > 0
     )
 
     if exists:
         cursor.execute(
-            f"UPDATE INSCRITS SET Estat={registration_status} WHERE Event_ID='{event_id}' AND Casteller_ID='{user_id}'"
+            f"UPDATE INSCRITS SET Estat={registration_status} WHERE Event_ID='{pinyator_event_id}' AND Casteller_ID='{pinyator_user_id}'"
         )
     else:
         cursor.execute(
-            f"INSERT INTO INSCRITS (Event_ID, Casteller_ID, Estat, Codi, ACOMPANYANTS, DATA_VINC, DATA_NOVINC) VALUES ('{event_id}', '{user_id}', {registration_status}, '{registration_obj.id}', 0, '{event_updated_at}', '{event_updated_at}')"
+            f"INSERT INTO INSCRITS (Event_ID, Casteller_ID, Estat, Codi, ACOMPANYANTS, DATA_VINC, DATA_NOVINC) VALUES ('{pinyator_event_id}', '{pinyator_user_id}', {registration_status}, '{registration_obj.id}', 0, '{event_updated_at}', '{event_updated_at}')"
         )
 
     cursor.close()

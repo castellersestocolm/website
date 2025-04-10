@@ -407,7 +407,7 @@ MODULE_ORG_NOTIFY_EVENT_SIGNUP_TIME = (
 MODULE_ORG_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
     [
         int(d)
-        for d in os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_RANGE_DAYS", "2,30").split(
+        for d in os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_RANGE_DAYS", "0,30").split(
             ","
         )
     ]
@@ -455,7 +455,7 @@ MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
     [
         int(d)
         for d in os.getenv(
-            "MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_RANGE_DAYS", "2,30"
+            "MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_RANGE_DAYS", "0,30"
         ).split(",")
     ]
 )
