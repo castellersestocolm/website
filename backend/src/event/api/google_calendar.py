@@ -13,7 +13,7 @@ from event.consts import (
     REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS,
     GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS,
 )
-from event.enums import EventType
+from event.enums import EventType, RegistrationStatus
 from event.models import (
     Event,
     GoogleEvent,
@@ -116,30 +116,36 @@ def import_events() -> None:
                                             user_by_email[attendee["email"]].id,
                                         )
                                     )
-                                    if registration_obj:
-                                        registration_status = GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS[
+                                    registration_status = (
+                                        GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS[
                                             attendee["responseStatus"]
                                         ]
-                                        if (
-                                            registration_obj.status
-                                            != registration_status
-                                        ):
-                                            registration_obj.status = (
-                                                registration_status
+                                    )
+                                    if registration_status in (
+                                        RegistrationStatus.ACTIVE,
+                                        RegistrationStatus.CANCELLED,
+                                    ):
+                                        if registration_obj:
+                                            if (
+                                                registration_obj.status
+                                                != registration_status
+                                            ):
+                                                registration_obj.status = (
+                                                    registration_status
+                                                )
+                                                registration_updates.append(
+                                                    registration_obj
+                                                )
+                                        else:
+                                            registration_creates.append(
+                                                Registration(
+                                                    event=event_obj,
+                                                    user=user_by_email[
+                                                        attendee["email"]
+                                                    ],
+                                                    status=registration_status,
+                                                )
                                             )
-                                            registration_updates.append(
-                                                registration_obj
-                                            )
-                                    else:
-                                        registration_creates.append(
-                                            Registration(
-                                                event=event_obj,
-                                                user=user_by_email[attendee["email"]],
-                                                status=GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS[
-                                                    attendee["responseStatus"]
-                                                ],
-                                            )
-                                        )
                         else:
                             event_obj = Event(
                                 title=event["summary"],
@@ -177,15 +183,22 @@ def import_events() -> None:
                                     )
                             for attendee in event.get("attendees", []):
                                 if attendee["email"] in user_by_email:
-                                    registration_creates.append(
-                                        Registration(
-                                            event=event_obj,
-                                            user=user_by_email[attendee["email"]],
-                                            status=GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS[
-                                                attendee["responseStatus"]
-                                            ],
-                                        )
+                                    registration_status = (
+                                        GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS[
+                                            attendee["responseStatus"]
+                                        ]
                                     )
+                                    if registration_status in (
+                                        RegistrationStatus.ACTIVE,
+                                        RegistrationStatus.CANCELLED,
+                                    ):
+                                        registration_creates.append(
+                                            Registration(
+                                                event=event_obj,
+                                                user=user_by_email[attendee["email"]],
+                                                status=registration_status,
+                                            )
+                                        )
                             google_event_creates.append(
                                 GoogleEvent(
                                     event=event_obj,
@@ -329,7 +342,11 @@ def create_or_update_event(
                                 attendee_status_by_email[user_obj.email]
                             ]
                         )
-                        if registration_obj.status != registration_status:
+                        if (
+                            registration_obj.status != registration_status
+                            and registration_status
+                            in (RegistrationStatus.ACTIVE, RegistrationStatus.CANCELLED)
+                        ):
                             registration_obj.status = registration_status
                             registration_updates.append(registration_obj)
                 else:
