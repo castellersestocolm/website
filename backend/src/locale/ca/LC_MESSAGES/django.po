@@ -130,7 +130,7 @@ msgstr "Quotes i gestió de família"
 
 #: comunicat/templates/email/towers/user/imported.html:9
 msgid "Calendar and events registration."
-msgstr "Calendar i registre d'esdeveniments."
+msgstr "Calendari i registre d'esdeveniments."
 
 #: comunicat/templates/email/towers/user/imported.html:10
 msgid "Payments overview."
