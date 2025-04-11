@@ -109,6 +109,7 @@ export default function FormCalendarRegistrationCreate({
       <form onSubmit={handleSubmit}>
         <Grid container spacing={0}>
           {userFamily &&
+            userFamily.members &&
             userFamily.members.length > 0 &&
             userFamily.members.map((member: any) => (
               <FormGrid size={{ xs: 12 }}>
