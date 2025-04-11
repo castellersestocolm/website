@@ -2,12 +2,13 @@ from uuid import UUID
 
 from django.db.models import Prefetch
 
-from user.enums import FamilyMemberStatus
+import user.api
+from user.enums import FamilyMemberStatus, FamilyMemberRole
 from user.models import FamilyMember, Family
 
 
-def get_for_user(user_id: UUID) -> Family:
-    return (
+def get_for_user(user_id: UUID) -> Family | None:
+    family_obj = (
         Family.objects.filter(members__user_id=user_id)
         .prefetch_related(
             Prefetch(
@@ -19,3 +20,25 @@ def get_for_user(user_id: UUID) -> Family:
         )
         .first()
     )
+
+    if not family_obj:
+        family_obj = create_for_user(user_id=user_id)
+
+    return family_obj
+
+
+def create_for_user(user_id: UUID) -> Family | None:
+    user_obj = user.api.get(user_id=user_id)
+
+    if not user_obj or not user_obj.can_manage:
+        return None
+
+    family_obj = Family.objects.create()
+    FamilyMember.objects.create(
+        user=user_obj,
+        family=family_obj,
+        role=FamilyMemberRole.MANAGER,
+        status=FamilyMemberStatus.ACTIVE,
+    )
+
+    return family_obj

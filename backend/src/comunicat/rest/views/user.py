@@ -171,6 +171,11 @@ class UserAPI(ComuniCatViewSet):
     def me(self, request):
         if request.user.is_authenticated:
             user_obj = user.api.get(user_id=request.user.id)
+
+            if not hasattr(user_obj, "family_member"):
+                user.api.family.create_for_user(user_id=user_obj.id)
+                user_obj = user.api.get(user_id=request.user.id)
+
             serializer = self.serializer_class(
                 user_obj, context={"module": self.module}
             )

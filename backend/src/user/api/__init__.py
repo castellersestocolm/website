@@ -1,5 +1,4 @@
 import datetime
-import hashlib
 import random
 import unicodedata
 from uuid import UUID
@@ -14,7 +13,6 @@ from django.db import IntegrityError, transaction
 from django.db.models import Prefetch
 from django.http import HttpRequest
 from django.utils import translation, timezone
-from django.utils.crypto import get_random_string
 from rest_framework.exceptions import AuthenticationFailed
 
 import membership.api
@@ -41,6 +39,31 @@ def get(user_id: UUID) -> User:
         )
         .first()
     )
+
+
+def get_list(
+    user_ids: list[UUID] | None = None, modules: list[Module] | None = None
+) -> list[User]:
+    user_qs = User.objects.select_related(
+        "towers", "family_member", "family_member__family"
+    ).prefetch_related(
+        Prefetch(
+            "family_member__family__members",
+            FamilyMember.objects.filter(
+                status__in=(FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
+            ).order_by("-role", "user__firstname", "user__lastname"),
+        )
+    )
+
+    if user_ids:
+        user_qs = user_qs.filter(id__in=user_ids)
+
+    if modules:
+        user_qs = user_qs.with_has_active_membership(modules=modules).filter(
+            has_active_membership=True
+        )
+
+    return list(user_qs)
 
 
 def login(email: str, password: str, request: HttpRequest, module: Module) -> User:

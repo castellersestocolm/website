@@ -93,9 +93,9 @@ def send_events_signup(
         if not future_event_objs:
             continue
 
-        for user_id in user_ids:
-            user_obj = user.api.get(user_id=user_id)
+        user_objs = user.api.get_list(user_ids=user_ids, modules=[m])
 
+        for user_obj in user_objs:
             token = user.api.event.get_events_signup_token(user_id=user_obj.id)
 
             notify.tasks.send_user_email.delay(
