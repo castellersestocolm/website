@@ -21,8 +21,8 @@ def module_data(backend, response, details, user, *args, **kwargs):
             else:
                 origin_module = Module.TOWERS
 
-    user.firstname = details.get("first_name", user.firstname)
-    user.lastname = details.get("last_name", user.lastname)
+    user.firstname = details.get("first_name", user.firstname) or user.firstname
+    user.lastname = details.get("last_name", user.lastname) or user.lastname
     user.origin_module = origin_module
 
     update_fields = ["firstname", "lastname", "origin_module"]
