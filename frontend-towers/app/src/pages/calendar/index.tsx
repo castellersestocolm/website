@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { apiEventList, apiUserFamily } from "../../api";
+import { apiEventList, apiTowersCastleList, apiUserFamily } from "../../api";
 import ImageHeroCalendar from "../../assets/images/heros/calendar.jpg";
 import Grid from "@mui/material/Grid2";
 import {
@@ -41,6 +41,10 @@ function CalendarPage() {
   const [family, setFamily] = React.useState(undefined);
   const [nextEvents, setNextEvents] = React.useState(undefined);
 
+  const [eventsCastles, setEventsCastles] = React.useState<{
+    [key: string]: any;
+  }>({});
+
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get("eventId");
 
@@ -78,6 +82,24 @@ function CalendarPage() {
       }
     });
   }, [setEvents, setNextEvents, setRehearsal, token]);
+
+  React.useEffect(() => {
+    if (events) {
+      for (let i = 0; i < events.length; i++) {
+        const event = events[i];
+        apiTowersCastleList(event.id).then((response) => {
+          if (response.status === 200) {
+            setEventsCastles((eventsCastles) => ({
+              ...eventsCastles,
+              [event.id]: response.data.results,
+            }));
+          }
+        });
+      }
+    }
+  }, [events, setEventsCastles]);
+
+  console.log(eventsCastles);
 
   React.useEffect(() => {
     if (user) {
@@ -156,72 +178,104 @@ function CalendarPage() {
               <Box className={styles.userFamilyBox}>
                 {nextEvents && nextEvents.length > 0 ? (
                   <List className={styles.userFamilyList}>
-                    {nextEvents.map((event: any, i: number, row: any) => (
-                      <Box key={event.id}>
-                        <ListItemButton
-                          onClick={() => handleEventClick(event.id)}
-                          dense={true}
-                        >
-                          <ListItemIcon>
-                            {EVENT_TYPE_ICON[event.type]}
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              event.title +
-                              (event.type === EventType.REHEARSAL &&
-                              event.location !== null
-                                ? " — " + event.location.name
-                                : "")
-                            }
-                            secondary={
-                              capitalizeFirstLetter(
-                                new Date(event.time_from).toLocaleDateString(
-                                  i18n.resolvedLanguage,
-                                  {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                  },
-                                ),
-                              ) +
-                              " " +
-                              new Date(event.time_from)
-                                .toTimeString()
-                                .slice(0, 5) +
-                              " → " +
-                              new Date(event.time_to).toTimeString().slice(0, 5)
-                            }
-                          />
-                          {family &&
-                            event.require_signup &&
-                            (eventsOpen[event.id] ? (
-                              <IconExpandLess />
-                            ) : (
-                              <IconExpandMore />
-                            ))}
-                        </ListItemButton>
-                        {family && event.require_signup && (
-                          <Collapse
-                            in={eventsOpen[event.id]}
-                            timeout="auto"
-                            unmountOnExit
-                          >
-                            <Box className={styles.calendarAttendanceUpdate}>
-                              <Typography fontWeight={600} marginBottom="4px">
-                                {t("pages.calendar.agenda.attendance")}
-                              </Typography>
-                              <FormCalendarRegistrationCreate
-                                event={event}
-                                family={family}
-                                token={token}
-                              />
-                            </Box>
-                          </Collapse>
-                        )}
+                    {nextEvents.map((event: any, i: number, row: any) => {
+                      const castles = eventsCastles[event.id];
 
-                        {i + 1 < row.length && <Divider />}
-                      </Box>
-                    ))}
+                      return (
+                        <Box key={event.id}>
+                          <ListItemButton
+                            onClick={() => handleEventClick(event.id)}
+                            dense={true}
+                          >
+                            <ListItemIcon>
+                              {EVENT_TYPE_ICON[event.type]}
+                            </ListItemIcon>
+                            <ListItemText
+                              disableTypography
+                              primary={
+                                <Typography variant="body2">
+                                  {event.title +
+                                    (event.type === EventType.REHEARSAL &&
+                                    event.location !== null
+                                      ? " — " + event.location.name
+                                      : "")}
+                                </Typography>
+                              }
+                              secondary={
+                                <>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                  >
+                                    {capitalizeFirstLetter(
+                                      new Date(
+                                        event.time_from,
+                                      ).toLocaleDateString(
+                                        i18n.resolvedLanguage,
+                                        {
+                                          day: "numeric",
+                                          month: "long",
+                                          year: "numeric",
+                                        },
+                                      ),
+                                    ) +
+                                      " " +
+                                      new Date(event.time_from)
+                                        .toTimeString()
+                                        .slice(0, 5) +
+                                      " → " +
+                                      new Date(event.time_to)
+                                        .toTimeString()
+                                        .slice(0, 5)}
+                                  </Typography>
+                                  {castles && castles.length > 0 && (
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                    >
+                                      {t(
+                                        "pages.calendar.section.agenda.castles",
+                                      )}
+                                      {": "}
+                                      {castles
+                                        .map((castle: any) => castle.name)
+                                        .join(", ")}
+                                    </Typography>
+                                  )}
+                                </>
+                              }
+                            />
+                            {family &&
+                              event.require_signup &&
+                              (eventsOpen[event.id] ? (
+                                <IconExpandLess />
+                              ) : (
+                                <IconExpandMore />
+                              ))}
+                          </ListItemButton>
+                          {family && event.require_signup && (
+                            <Collapse
+                              in={eventsOpen[event.id]}
+                              timeout="auto"
+                              unmountOnExit
+                            >
+                              <Box className={styles.calendarAttendanceUpdate}>
+                                <Typography fontWeight={600} marginBottom="4px">
+                                  {t("pages.calendar.agenda.attendance")}
+                                </Typography>
+                                <FormCalendarRegistrationCreate
+                                  event={event}
+                                  family={family}
+                                  token={token}
+                                />
+                              </Box>
+                            </Collapse>
+                          )}
+
+                          {i + 1 < row.length && <Divider />}
+                        </Box>
+                      );
+                    })}
                   </List>
                 ) : (
                   <Box className={styles.userFamilyEmpty}>

@@ -36,7 +36,7 @@ class EventAPI(ComuniCatViewSet):
         query_serializer=ListEventSerializer,
         responses={200: EventSerializer(many=True)},
     )
-    @method_decorator(cache_page(1))
+    @method_decorator(cache_page(60))
     def list(self, request):
         serializer = ListEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)

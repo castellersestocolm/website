@@ -28,7 +28,7 @@ class TeamAPI(
     @swagger_auto_schema(
         responses={200: TeamSerializer(many=True)},
     )
-    @method_decorator(cache_page(1))
+    @method_decorator(cache_page(60))
     def list(self, request):
         team_objs = legal.api.team.get_list(
             module=self.module,
@@ -59,7 +59,7 @@ class BylawsAPI(
     @swagger_auto_schema(
         responses={200: BylawsSerializer(many=True)},
     )
-    @method_decorator(cache_page(1))
+    @method_decorator(cache_page(60))
     def list(self, request):
         bylaws_objs = legal.api.bylaws.get_list(
             module=self.module,

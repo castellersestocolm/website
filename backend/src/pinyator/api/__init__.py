@@ -168,3 +168,38 @@ def update_or_create_registration(registration_id: UUID) -> None:
         )
 
     cursor.close()
+
+
+class Castle:
+    name: str
+    order: int
+
+    external_id: int
+
+    def __init__(self, name: str, order: int, external_id: int) -> None:
+        self.name = name
+        self.order = order
+
+        self.external_id = external_id
+
+
+def get_castles_for_event(event_id: UUID) -> list[Castle]:
+    cursor = connections["pinyator"].cursor()
+
+    exists = cursor.execute(f"SELECT EVENT_ID FROM EVENT WHERE Codi='{event_id}'") > 0
+
+    if not exists:
+        return list()
+
+    pinyator_event_id = cursor.fetchone()[0]
+
+    cursor.execute(
+        f"SELECT CASTELL_ID, NOM, ORDRE FROM CASTELL WHERE Event_ID='{pinyator_event_id}' ORDER BY ORDRE ASC"
+    )
+
+    pinyator_castles = cursor.fetchall()
+
+    return [
+        Castle(name=name, order=order, external_id=pinyator_castle_id)
+        for pinyator_castle_id, name, order in pinyator_castles
+    ]

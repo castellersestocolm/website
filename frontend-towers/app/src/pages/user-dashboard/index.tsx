@@ -22,6 +22,7 @@ import {
   apiEventList,
   apiMembershipList,
   apiPaymentList,
+  apiTowersCastleList,
   apiUserFamilyMemberRequestAccept,
   apiUserFamilyMemberRequestCancel,
   apiUserFamilyMemberRequestList,
@@ -65,6 +66,7 @@ import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequ
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
 import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
+import { capitalizeFirstLetter } from "../../utils/string";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 
@@ -110,6 +112,7 @@ function UserDashboardPage() {
   // const [memberships, setMemberships] = React.useState(undefined);
   const [payments, setPayments] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
+  const [castles, setCastles] = React.useState(undefined);
 
   const handleFamilyClick = (memberId: string) => {
     setFamilyMembersOpen({
@@ -177,17 +180,23 @@ function UserDashboardPage() {
   React.useEffect(() => {
     apiEventList().then((response) => {
       if (response.status === 200) {
-        setRehearsal(
-          response.data.results.find((event: any) => {
-            return (
-              event.type === EventType.REHEARSAL &&
-              new Date(event.time_to) >= new Date()
-            );
-          }),
-        );
+        const event = response.data.results.find((event: any) => {
+          return (
+            event.type === EventType.REHEARSAL &&
+            new Date(event.time_to) >= new Date()
+          );
+        });
+        setRehearsal(event);
+        if (event) {
+          apiTowersCastleList(event.id).then((response) => {
+            if (response.status === 200) {
+              setCastles(response.data.results);
+            }
+          });
+        }
       }
     });
-  }, [setRehearsal]);
+  }, [setRehearsal, setCastles]);
 
   function handleRequestCancelSubmit(id: string) {
     apiUserFamilyMemberRequestCancel(id).then((response) => {
@@ -516,23 +525,48 @@ function UserDashboardPage() {
                       {EVENT_TYPE_ICON[rehearsal.type]}
                     </ListItemIcon>
                     <ListItemText
+                      disableTypography
                       primary={
-                        rehearsal.title +
-                        (rehearsal.type === EventType.REHEARSAL &&
-                        rehearsal.location !== null
-                          ? " — " + rehearsal.location.name
-                          : "")
+                        <Typography variant="body2">
+                          {rehearsal.title +
+                            (rehearsal.type === EventType.REHEARSAL &&
+                            rehearsal.location !== null
+                              ? " — " + rehearsal.location.name
+                              : "")}
+                        </Typography>
                       }
                       secondary={
-                        new Date(rehearsal.time_from)
-                          .toISOString()
-                          .slice(0, 10) +
-                        " " +
-                        new Date(rehearsal.time_from)
-                          .toTimeString()
-                          .slice(0, 5) +
-                        " → " +
-                        new Date(rehearsal.time_to).toTimeString().slice(0, 5)
+                        <>
+                          <Typography variant="body2" color="textSecondary">
+                            {capitalizeFirstLetter(
+                              new Date(rehearsal.time_from).toLocaleDateString(
+                                i18n.resolvedLanguage,
+                                {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                },
+                              ),
+                            ) +
+                              " " +
+                              new Date(rehearsal.time_from)
+                                .toTimeString()
+                                .slice(0, 5) +
+                              " → " +
+                              new Date(rehearsal.time_to)
+                                .toTimeString()
+                                .slice(0, 5)}
+                          </Typography>
+                          {castles && castles.length > 0 && (
+                            <Typography variant="body2" color="textSecondary">
+                              {t("pages.user-rehearsal.rehearsal.castles")}
+                              {": "}
+                              {castles
+                                .map((castle: any) => castle.name)
+                                .join(", ")}
+                            </Typography>
+                          )}
+                        </>
                       }
                     />
                   </ListItemButton>
@@ -567,7 +601,10 @@ function UserDashboardPage() {
                     </ListItemButton>
                     <Collapse in={attendanceOpen} timeout="auto" unmountOnExit>
                       <Box className={styles.userAttendanceUpdate}>
-                        <FormCalendarRegistrationCreate event={rehearsal} />
+                        <FormCalendarRegistrationCreate
+                          event={rehearsal}
+                          family={user.family}
+                        />
                       </Box>
                     </Collapse>
                   </Box>
