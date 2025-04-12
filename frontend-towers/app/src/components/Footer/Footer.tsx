@@ -32,8 +32,8 @@ export default function Footer() {
     },
     !user && {
       name: t("components.navbar-menu.membership"),
-      path: ROUTES["external-form-membership"].path,
-      target: "_blank",
+      path: ROUTES["user-join"].path,
+      target: "_self",
     },
     // TODO: Temporary until we start accepting sign-ups
     // !user && {

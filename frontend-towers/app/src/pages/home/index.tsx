@@ -135,8 +135,8 @@ function HomePage() {
                 {!user && (
                   <Button
                     variant="outlined"
-                    href={ROUTES["external-form-membership"].path}
-                    target={"_blank"}
+                    href={ROUTES["user-join"].path}
+                    target={"_self"}
                     className={styles.heroButton}
                     disableElevation
                   >
@@ -513,8 +513,8 @@ function HomePage() {
                     >
                       <Button
                         variant="contained"
-                        href={ROUTES["external-form-membership"].path}
-                        target={"_blank"}
+                        href={ROUTES["user-join"].path}
+                        target={"_self"}
                         disableElevation
                       >
                         {t("pages.home-join.list.button-join")}
