@@ -44,8 +44,11 @@ def module_data(backend, response, details, user, *args, **kwargs):
 
     user.save(update_fields=update_fields)
 
-    if not hasattr(user, "family_member"):
+    if hasattr(user, "family_member"):
+        family_id = user.family_member.family_id
+    else:
         family_obj = Family.objects.create()
+        family_id = family_obj.id
         FamilyMember.objects.create(
             user=user,
             family=family_obj,
@@ -53,4 +56,6 @@ def module_data(backend, response, details, user, *args, **kwargs):
             status=FamilyMemberStatus.ACTIVE,
         )
 
-    membership.api.create_or_update(user_id=user.id, modules=[origin_module])
+    membership.api.create_or_update(
+        user_id=user.id, family_id=family_id, modules=[origin_module]
+    )
