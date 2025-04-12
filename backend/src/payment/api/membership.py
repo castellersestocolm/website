@@ -1,11 +1,10 @@
+from collections import defaultdict
 from uuid import UUID
 
-from black.trans import defaultdict
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch
 
-from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipUser
 from membership.utils import get_membership_account
 from payment.enums import PaymentType, PaymentStatus, AccountCategory
