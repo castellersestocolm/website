@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from black.trans import defaultdict
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Prefetch, Q
@@ -35,17 +36,18 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:
 
     with transaction.atomic():
         membership_module_objs = list(membership_obj.modules.all())
-        payment_line_by_membership_module_id = {
-            UUID(payment_line_obj.item_id): payment_line_obj
-            for payment_line_obj in PaymentLine.objects.filter(
-                item_type=item_type,
-                item_id__in=[
-                    membership_module_obj.id
-                    for membership_module_obj in membership_module_objs
-                ],
-                payment__type=PaymentType.DEBIT,
-            )
-        }
+        payment_lines_by_membership_module_id = defaultdict(list)
+        for payment_line_obj in PaymentLine.objects.filter(
+            item_type=item_type,
+            item_id__in=[
+                membership_module_obj.id
+                for membership_module_obj in membership_module_objs
+            ],
+            payment__type=PaymentType.DEBIT,
+        ):
+            payment_lines_by_membership_module_id[
+                UUID(payment_line_obj.item_id)
+            ].append(payment_line_obj)
         payment_line_by_missing_membership_module_type = {
             payment_line_obj.account.module: payment_line_obj
             for payment_line_obj in PaymentLine.objects.filter(
@@ -80,9 +82,16 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:
         membership_status = membership_obj.status
         for membership_module_obj in membership_module_objs:
             if (
-                membership_module_obj.id not in payment_line_by_membership_module_id
+                membership_module_obj.id not in payment_lines_by_membership_module_id
                 or membership_module_obj.amount
-                != payment_line_by_membership_module_id[membership_module_obj.id].amount
+                != sum(
+                    [
+                        pl_obj.amount
+                        for pl_obj in payment_lines_by_membership_module_id[
+                            membership_module_obj.id
+                        ]
+                    ]
+                )
             ):
                 if (
                     membership_module_obj.module
@@ -99,20 +108,22 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:
                             "item_type",
                         )
                     )
-                    payment_line_by_membership_module_id[membership_module_obj.id] = (
-                        payment_line_obj
-                    )
+                    payment_lines_by_membership_module_id[
+                        membership_module_obj.id
+                    ].append(payment_line_obj)
 
                     if payment_line_obj.payment.status != PaymentStatus.COMPLETED:
                         membership_status = membership_obj.status
                 else:
                     all_included = False
-            elif membership_module_obj.id in payment_line_by_membership_module_id:
-                if (
-                    payment_line_by_membership_module_id[
-                        membership_module_obj.id
-                    ].payment.status
-                    != PaymentStatus.COMPLETED
+            elif membership_module_obj.id in payment_lines_by_membership_module_id:
+                if any(
+                    [
+                        pl_obj.payment.status != PaymentStatus.COMPLETED
+                        for pl_obj in payment_lines_by_membership_module_id[
+                            membership_module_obj.id
+                        ]
+                    ]
                 ):
                     membership_status = membership_obj.status
 
@@ -159,7 +170,7 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:
                         item_id=membership_module_obj.id,
                     ).update(account=account_obj)
 
-            if membership_module_obj.id not in payment_line_by_membership_module_id:
+            if membership_module_obj.id not in payment_lines_by_membership_module_id:
                 if not payment_pending_obj:
                     payment_pending_obj = Payment.objects.create(
                         entity=entity_obj,
@@ -175,14 +186,22 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:
                     item_id=membership_module_obj.id,
                     account=account_obj,
                 )
-            elif (
-                membership_module_obj.amount
-                > payment_line_by_membership_module_id[membership_module_obj.id].amount
-            ):
-                payment_line_obj = payment_line_by_membership_module_id[
-                    membership_module_obj.id
+            elif membership_module_obj.amount > sum(
+                [
+                    pl_obj.amount
+                    for pl_obj in payment_lines_by_membership_module_id[
+                        membership_module_obj.id
+                    ]
                 ]
-                if payment_line_obj.payment.status > PaymentStatus.PENDING:
+            ):
+                if all(
+                    [
+                        pl_obj.payment.status > PaymentStatus.PENDING
+                        for pl_obj in payment_lines_by_membership_module_id[
+                            membership_module_obj.id
+                        ]
+                    ]
+                ):
                     if not payment_pending_obj:
                         payment_pending_obj = Payment.objects.create(
                             entity=entity_obj,
@@ -192,7 +211,15 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:
 
                     PaymentLine.objects.create(
                         payment=payment_pending_obj,
-                        amount=membership_module_obj.amount - payment_line_obj.amount,
+                        amount=membership_module_obj.amount
+                        - sum(
+                            [
+                                pl_obj.amount
+                                for pl_obj in payment_lines_by_membership_module_id[
+                                    membership_module_obj.id
+                                ]
+                            ]
+                        ),
                         vat=settings.MODULE_ALL_VAT,
                         item_type=item_type,
                         item_id=membership_module_obj.id,
