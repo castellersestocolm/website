@@ -218,15 +218,15 @@ services:
       MYSQL_USER: pinyator
       MYSQL_PASSWORD: pinyator
       MYSQL_DATABASE: pinyator
-  mail:
-    image: ghcr.io/docker-mailserver/docker-mailserver:15.0.0
+  proxy:
+    image: haproxytech/haproxy-alpine:3.2
     deploy:
       replicas: 1
       update_config:
         parallelism: 1
         order: start-first
         failure_action: rollback
-        delay: 30s
+        delay: 10s
       rollback_config:
         parallelism: 0
         order: stop-first
@@ -235,35 +235,20 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-    restart: always
+    restart: on-failure
     ports:
-      - target: 25
-        published: 25
+      - target: 8080
+        published: 8080
         protocol: tcp
         mode: host
-      - target: 587
-        published: 587
-        protocol: tcp
-        mode: host
-      - target: 993
-        published: 993
-        protocol: tcp
-        mode: host
-      - target: 995
-        published: 995
+      - target: 3210
+        published: 3210
         protocol: tcp
         mode: host
     volumes:
-      - ./docker-data/dms/mail-data/:/var/mail/
-      - ./docker-data/dms/mail-state/:/var/mail-state/
-      - ./docker-data/dms/mail-logs/:/var/log/mail/
-      - ./docker-data/dms/config/:/tmp/docker-mailserver/
-    environment:
-      - PERMIT_DOCKER=network
-      - DEFAULT_RELAY_HOST=[smtp-relay.gmail.com]:587
-      - SSL_TYPE=
-      - OVERRIDE_HOSTNAME=mail.castellersestocolm.se
-      - LOG_LEVEL=debug
+      - ./docker-data/haproxy/:/usr/local/etc/haproxy:ro
+    depends_on:
+      - backend
     networks:
       - comunicat
 
