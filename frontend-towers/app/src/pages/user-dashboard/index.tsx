@@ -71,7 +71,7 @@ import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistr
 import { capitalizeFirstLetter } from "../../utils/string";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
-const PINYATOR_BASE_URL = new URL(process.env.REACT_APP_PINYATOR_BASE_URL);
+const PINYATOR_BASE_URL = "https://localhost"  // new URL(process.env.REACT_APP_PINYATOR_BASE_URL);
 
 interface TabPanelProps {
   children?: React.ReactNode;
