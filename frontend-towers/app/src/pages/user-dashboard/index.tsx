@@ -138,6 +138,7 @@ function UserDashboardPage() {
   const [payments, setPayments] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
+  const [castlesPublished, setCastlesPublished] = React.useState(undefined);
 
   const [castlePinya, setCastlePinya] = React.useState(0);
 
@@ -225,12 +226,17 @@ function UserDashboardPage() {
           apiTowersCastleList(event.id).then((response) => {
             if (response.status === 200) {
               setCastles(response.data.results);
+              setCastlesPublished(
+                response.data.results.filter(
+                  (castle: any) => castle.is_published,
+                ),
+              );
             }
           });
         }
       }
     });
-  }, [setRehearsal, setCastles]);
+  }, [setRehearsal, setCastles, setCastlesPublished]);
 
   function handleRequestCancelSubmit(id: string) {
     apiUserFamilyMemberRequestCancel(id).then((response) => {
@@ -533,17 +539,6 @@ function UserDashboardPage() {
     </Grid>
   );
 
-  const rehearsalTime = rehearsal && new Date(rehearsal.time_from);
-  const showCastlePinyes = rehearsal
-    ? new Date().setUTCHours(0, 0, 0, 0) >=
-      new Date(rehearsalTime.setDate(rehearsalTime.getDate() - 3)).setUTCHours(
-        0,
-        0,
-        0,
-        0,
-      )
-    : false;
-
   const content = user && (
     <Grid container spacing={4} className={styles.dashboardGrid}>
       <Grid
@@ -615,7 +610,7 @@ function UserDashboardPage() {
                       }
                     />
                   </ListItemButton>
-                  {castles && castles.length > 0 && showCastlePinyes && (
+                  {castlesPublished && castlesPublished.length > 0 && (
                     <>
                       <Divider />
                       <Tabs
@@ -638,12 +633,12 @@ function UserDashboardPage() {
                           },
                         }}
                       >
-                        {castles.map((castle: any) => (
+                        {castlesPublished.map((castle: any) => (
                           <Tab label={castle.name} />
                         ))}
                       </Tabs>
                       <Divider />
-                      {castles.map((castle: any, ix: number) => (
+                      {castlesPublished.map((castle: any, ix: number) => (
                         <TabPanel value={castlePinya} index={ix}>
                           <Box className={styles.containerCastle}>
                             <iframe

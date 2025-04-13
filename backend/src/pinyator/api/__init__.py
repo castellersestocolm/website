@@ -176,9 +176,12 @@ class Castle:
 
     external_id: int
 
-    def __init__(self, name: str, order: int, external_id: int) -> None:
+    def __init__(
+        self, name: str, order: int, is_published: bool, external_id: int
+    ) -> None:
         self.name = name
         self.order = order
+        self.is_published = is_published
 
         self.external_id = external_id
 
@@ -194,12 +197,17 @@ def get_castles_for_event(event_id: UUID) -> list[Castle]:
     pinyator_event_id = cursor.fetchone()[0]
 
     cursor.execute(
-        f"SELECT CASTELL_ID, NOM, ORDRE FROM CASTELL WHERE Event_ID='{pinyator_event_id}' ORDER BY ORDRE ASC"
+        f"SELECT CASTELL_ID, NOM, ORDRE, PUBLIC FROM CASTELL WHERE Event_ID='{pinyator_event_id}' ORDER BY ORDRE ASC"
     )
 
     pinyator_castles = cursor.fetchall()
 
     return [
-        Castle(name=name, order=order, external_id=pinyator_castle_id)
-        for pinyator_castle_id, name, order in pinyator_castles
+        Castle(
+            name=name,
+            order=order,
+            is_published=bool.from_bytes(is_published),
+            external_id=pinyator_castle_id,
+        )
+        for pinyator_castle_id, name, order, is_published in pinyator_castles
     ]

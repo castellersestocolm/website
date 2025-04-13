@@ -4,6 +4,7 @@ from rest_framework import serializers as s
 class CastleSerializer(s.Serializer):
     name = s.CharField(read_only=True)
     order = s.IntegerField(read_only=True)
+    is_published = s.BooleanField(read_only=True)
 
     external_id = s.IntegerField(read_only=True)
 
