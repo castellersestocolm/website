@@ -1,14 +1,25 @@
-<?php
-    $requireLogin = false;
-    $id = intval($_GET['id']);
-    require "$_SERVER[DOCUMENT_ROOT]/pinyator/Castell_Fitxa.php";
-?>
-
-<style>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pinyator - Castell</title>
+  <script src="llibreria/castell.js?1.5"></script>
+  <script src="llibreria/disseny.js?1.5"></script>
+    <style>
     body {
         display: none;
     }
 </style>
+</head>
+<?php include "$_SERVER[DOCUMENT_ROOT]/pinyator/Style.php";?>
+<body>
+
+<?php
+    $requireLogin = false;
+    $id = intval($_GET['id']);
+
+    include "$_SERVER[DOCUMENT_ROOT]/pinyator/Castell_Fitxa_Body.php";
+?>
 
 <script>
     isDownloading = true;
@@ -31,6 +42,7 @@
 	body.innerHTML = "<img src='"+canvas.toDataURL("image/jpeg")+"' alt='from canvas'/>";
 	body.style.width = "fit-content";
 	body.style.padding = "0";
+	body.style.display = "block";
 
 	document.getElementsByTagName('html')[0].style.width = "fit-content";
 
@@ -42,3 +54,5 @@
 	isDownloading = false;
 	invalidate();
 </script>
+</body>
+</html>
