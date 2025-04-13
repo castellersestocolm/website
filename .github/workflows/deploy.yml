@@ -73,6 +73,7 @@ jobs:
       name: Build pinyator
       with:
         name: pinyator
+        dockerfile: Dockerfile-prod
         github_token: ${{ secrets.GITHUB_TOKEN }}
         build_target: ${{ vars.BUILD_TARGET }}
       
