@@ -14,6 +14,8 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  Tab,
+  Tabs,
   Typography,
 } from "@mui/material";
 import IconEast from "@mui/icons-material/East";
@@ -70,6 +72,29 @@ import { capitalizeFirstLetter } from "../../utils/string";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  dir?: string;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+    </div>
+  );
+}
+
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
 
@@ -113,6 +138,15 @@ function UserDashboardPage() {
   const [payments, setPayments] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
+
+  const [castlePinya, setCastlePinya] = React.useState(0);
+
+  const handleCastlePinyaChange = (
+    event: React.SyntheticEvent,
+    newValue: number,
+  ) => {
+    setCastlePinya(newValue);
+  };
 
   const handleFamilyClick = (memberId: string) => {
     setFamilyMembersOpen({
@@ -499,6 +533,17 @@ function UserDashboardPage() {
     </Grid>
   );
 
+  const rehearsalTime = rehearsal && new Date(rehearsal.time_from);
+  const showCastlePinyes = rehearsal
+    ? new Date().setUTCHours(0, 0, 0, 0) >=
+      new Date(rehearsalTime.setDate(rehearsalTime.getDate() - 3)).setUTCHours(
+        0,
+        0,
+        0,
+        0,
+      )
+    : false;
+
   const content = user && (
     <Grid container spacing={4} className={styles.dashboardGrid}>
       <Grid
@@ -570,6 +615,51 @@ function UserDashboardPage() {
                       }
                     />
                   </ListItemButton>
+                  {castles && castles.length > 0 && showCastlePinyes && (
+                    <>
+                      <Divider />
+                      <Tabs
+                        value={castlePinya}
+                        onChange={handleCastlePinyaChange}
+                        variant="scrollable"
+                        scrollButtons={false}
+                        allowScrollButtonsMobile
+                        aria-label="scrollable force tabs example"
+                        className={styles.tabsCastle}
+                        indicatorColor="primary"
+                        TabIndicatorProps={{
+                          style: { display: "none" },
+                        }}
+                        sx={{
+                          ".Mui-selected": {
+                            backgroundColor: "var(--mui-palette-primary-main)",
+                            color:
+                              "var(--mui-palette-primary-contrastText) !important",
+                          },
+                        }}
+                      >
+                        {castles.map((castle: any) => (
+                          <Tab label={castle.name} />
+                        ))}
+                      </Tabs>
+                      <Divider />
+                      {castles.map((castle: any, ix: number) => (
+                        <TabPanel value={castlePinya} index={ix}>
+                          <Box className={styles.containerCastle}>
+                            <iframe
+                              src={
+                                "http://localhost:8100/pinyator/Castell_Imatge.php?id=" +
+                                castle.external_id
+                              }
+                              title={"Pinya " + castle.name}
+                              className={styles.iframeCastle}
+                              scrolling="no"
+                            />
+                          </Box>
+                        </TabPanel>
+                      ))}
+                    </>
+                  )}
                   <Divider />
                   <Box>
                     <ListItemButton
