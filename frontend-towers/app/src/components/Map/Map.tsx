@@ -31,6 +31,7 @@ export default function Map({
   return (
     <MapContainer
       key={coordinates}
+      // @ts-ignore
       center={coordinatesCentre}
       zoom={zoom ? zoom : 15}
       scrollWheelZoom={false}

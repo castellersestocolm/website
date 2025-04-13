@@ -69,9 +69,9 @@ import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashbo
 import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import { capitalizeFirstLetter } from "../../utils/string";
+import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
-const PINYATOR_BASE_URL = new URL(process.env.REACT_APP_PINYATOR_BASE_URL);
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -641,18 +641,7 @@ function UserDashboardPage() {
                       <Divider />
                       {castlesPublished.map((castle: any, ix: number) => (
                         <TabPanel value={castlePinya} index={ix}>
-                          <Box className={styles.containerCastle}>
-                            <iframe
-                              src={
-                                PINYATOR_BASE_URL +
-                                "/Castell_Imatge.php?id=" +
-                                castle.external_id
-                              }
-                              title={"Pinya " + castle.name}
-                              className={styles.iframeCastle}
-                              scrolling="no"
-                            />
-                          </Box>
+                          <PinyatorIframe castle={castle} />
                         </TabPanel>
                       ))}
                     </>
