@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="width: 100%; height: 100%;">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pinyator - Castell</title>
@@ -12,7 +12,7 @@
 </style>
 </head>
 <?php include "$_SERVER[DOCUMENT_ROOT]/pinyator/Style.php";?>
-<body>
+<body style="width: 100%; height: 100%; padding: 0;">
 
 <?php
     $requireLogin = false;
@@ -37,26 +37,10 @@
 	var imgData=ctxImg.getImageData(0,0,imgWidth,imgHeight);
 	canvas.getContext('2d').putImageData(imgData,0,0);
 
-	var html = document.getElementsByTagName('html')[0];
 	var body = document.getElementsByTagName('body')[0];
 
-    html.style.width = "100%";
-    html.style.height = "100%";
-
-    body.style.width = "100%";
-    body.style.height = "100%";
-
 	body.innerHTML = "<img src='"+canvas.toDataURL("image/jpeg")+"' alt='from canvas' style='max-width: 100%; height: 100%;'/>";
-	// body.style.width = "fit-content";
-	body.style.padding = "0";
 	body.style.display = "block";
-
-	// document.getElementsByTagName('html')[0].style.width = "fit-content";
-
-	/*var link = document.createElement('a');
-    link.download = "pinya.jpg";
-    link.href = canvas.toDataURL("image/jpeg")
-    link.click();*/
 
 	isDownloading = false;
 	invalidate();
