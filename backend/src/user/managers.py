@@ -5,7 +5,7 @@ from django.apps import apps
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import IntegrityError
-from django.db.models import Exists, Subquery, Q, OuterRef
+from django.db.models import Exists, Subquery, Q, OuterRef, QuerySet
 
 from comunicat.enums import Module
 
@@ -14,7 +14,7 @@ from django.conf import settings
 from membership.enums import MembershipStatus
 
 
-class UserManager(BaseUserManager):
+class UserQuerySet(QuerySet):
     def with_has_active_membership(self, modules: List[Module] | None = None):
         MembershipModule = apps.get_model("membership", "MembershipModule")
 
@@ -34,6 +34,11 @@ class UserManager(BaseUserManager):
                 )
             )
         )
+
+
+class UserManager(BaseUserManager):
+    def get_queryset(self):
+        return UserQuerySet(model=self.model, using=self._db, hints=self._hints)
 
     def create_user(
         self,
