@@ -14,6 +14,8 @@ const DONATIONS = [
       "Albert Borrell",
       "Yu-Wei Chang",
       "Josep Puigdemont Casamajó",
+      "Miquel Espinosa Pujolràs",
+      "Neus Escobar Urdiales",
     ],
   ],
   [
