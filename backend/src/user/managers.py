@@ -40,6 +40,9 @@ class UserManager(BaseUserManager):
     def get_queryset(self):
         return UserQuerySet(model=self.model, using=self._db, hints=self._hints)
 
+    def with_has_active_membership(self, modules: List[Module] | None = None):
+        return self.get_queryset().with_has_active_membership(modules=modules)
+
     def create_user(
         self,
         email: str,
