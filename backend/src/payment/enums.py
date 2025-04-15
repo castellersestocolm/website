@@ -16,6 +16,7 @@ class PaymentStatus(IntEnum):
 class PaymentMethod(IntEnum):
     CASH = 10
     TRANSFER = 20
+    CARD = 30
 
     # https://www.iso.org/obp/ui/#iso:code:3166:SE
     SE_SWISH = 75201
