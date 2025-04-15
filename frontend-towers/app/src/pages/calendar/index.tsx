@@ -399,32 +399,18 @@ function CalendarPage() {
                                 </>
                               }
                             />
-                            <Stack
-                              direction="row"
-                              spacing={2}
-                              marginLeft={{ xs: "0", lg: "16px" }}
-                              marginTop={{ xs: "8px", lg: "0" }}
-                              marginBottom={{ xs: "8px", lg: "0" }}
-                              whiteSpace="nowrap"
-                            >
-                              {family && event.require_signup && (
-                                <Button
-                                  variant="contained"
-                                  type="submit"
-                                  style={{ width: "auto" }}
-                                  disableElevation
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEventRegistrationsClick(event.id);
-                                  }}
-                                >
-                                  {t(
-                                    "pages.calendar.section.agenda.event.attendance",
-                                  )}
-                                </Button>
-                              )}
-                              {castlesPublished &&
-                                castlesPublished.length > 0 && (
+                            {((family && event.require_signup) ||
+                              (castlesPublished &&
+                                castlesPublished.length > 0)) && (
+                              <Stack
+                                direction="row"
+                                spacing={2}
+                                marginLeft={{ xs: "0", lg: "16px" }}
+                                marginTop={{ xs: "8px", lg: "0" }}
+                                marginBottom={{ xs: "8px", lg: "0" }}
+                                whiteSpace="nowrap"
+                              >
+                                {family && event.require_signup && (
                                   <Button
                                     variant="contained"
                                     type="submit"
@@ -432,15 +418,33 @@ function CalendarPage() {
                                     disableElevation
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleEventCastlesClick(event.id);
+                                      handleEventRegistrationsClick(event.id);
                                     }}
                                   >
                                     {t(
-                                      "pages.calendar.section.agenda.event.castles",
+                                      "pages.calendar.section.agenda.event.attendance",
                                     )}
                                   </Button>
                                 )}
-                            </Stack>
+                                {castlesPublished &&
+                                  castlesPublished.length > 0 && (
+                                    <Button
+                                      variant="contained"
+                                      type="submit"
+                                      style={{ width: "auto" }}
+                                      disableElevation
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEventCastlesClick(event.id);
+                                      }}
+                                    >
+                                      {t(
+                                        "pages.calendar.section.agenda.event.castles",
+                                      )}
+                                    </Button>
+                                  )}
+                              </Stack>
+                            )}
                           </Box>
                         </ListItemButton>
                         {family && event.require_signup && (
