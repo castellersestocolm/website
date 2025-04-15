@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 from uuid import UUID
 
@@ -18,7 +19,12 @@ import notify.tasks
 from django.conf import settings
 
 
-def get_list(module: Module, request_user_id: UUID | None = None) -> List[Event]:
+def get_list(
+    module: Module,
+    request_user_id: UUID | None = None,
+    date_from: datetime.date | None = None,
+    date_to: datetime.date | None = None,
+) -> List[Event]:
     if request_user_id:
         family_user_ids = [
             family_member_obj.user_id
@@ -31,7 +37,7 @@ def get_list(module: Module, request_user_id: UUID | None = None) -> List[Event]
     else:
         family_user_ids = []
 
-    return list(
+    event_qs = (
         Event.objects.filter(
             Q(module__isnull=True) | Q(module=module) | Q(modules__module=module),
             status=EventStatus.PUBLISHED,
@@ -66,6 +72,16 @@ def get_list(module: Module, request_user_id: UUID | None = None) -> List[Event]
         .order_by("time_from", "id")
         .distinct("time_from", "id")
     )
+
+    # TODO: This can lead to timezone issues close to midnight
+    if date_from is not None:
+        event_qs = event_qs.filter(time_from__date__gte=date_from)
+
+    # TODO: This can lead to timezone issues close to midnight
+    if date_to is not None:
+        event_qs = event_qs.filter(time_from__date__lte=date_to)
+
+    return list(event_qs)
 
 
 def send_events_signup(

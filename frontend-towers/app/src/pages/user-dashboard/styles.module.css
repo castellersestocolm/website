@@ -111,5 +111,19 @@
   margin-bottom: -2px;
 }
 
-.tabsCastle {
+.eventCastlesBox {
+  display: flex;
+  flex-direction: row;
+  white-space: pre;
+}
+
+.eventCastleBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  svg {
+    font-size: 0.875rem;
+    margin: 0 -2px;
+  }
 }

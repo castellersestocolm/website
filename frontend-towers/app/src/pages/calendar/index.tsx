@@ -1,23 +1,35 @@
 import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { apiEventList, apiTowersCastleList, apiUserFamily } from "../../api";
+import {
+  apiEventCalendarList,
+  apiEventList,
+  apiTowersCastleList,
+  apiUserFamily,
+} from "../../api";
 import ImageHeroCalendar from "../../assets/images/heros/calendar.jpg";
 import Grid from "@mui/material/Grid2";
 import {
+  Button,
   Card,
   Collapse,
   Divider,
-  List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Stack,
+  Tab,
+  Tabs,
   Typography,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import IconExpandLess from "@mui/icons-material/ExpandLess";
-import IconExpandMore from "@mui/icons-material/ExpandMore";
-import { EVENT_TYPE_ICON, EventType } from "../../enums";
+import IconAttachFile from "@mui/icons-material/AttachFile";
+import {
+  EVENT_TYPE_ICON,
+  EventType,
+  REGISTRATION_STATUS_ICON,
+  RegistrationStatus,
+} from "../../enums";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
@@ -26,67 +38,129 @@ import { capitalizeFirstLetter } from "../../utils/string";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useCallback } from "react";
+import { Pagination } from "@mui/lab";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  dir?: string;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+    </div>
+  );
+}
 
 function CalendarPage() {
   const [t, i18n] = useTranslation("common");
   const { token } = useParams();
 
-  const { user, rehearsal, setRehearsal } = useAppContext();
+  const [searchParams] = useSearchParams();
+  const eventId = searchParams.get("eventId");
 
-  const [eventsOpen, setEventsOpen] = React.useState<{
+  const { user } = useAppContext();
+
+  const [calendarMonth, setCalendarMonth] = React.useState(
+    new Date().getMonth() + 1,
+  );
+  const [calendarYear, setCalendarYear] = React.useState(
+    new Date().getFullYear(),
+  );
+  const [calendarEvents, setCalendarEvents] = React.useState(undefined);
+  const [eventPage, setEventPage] = React.useState(1);
+  const [events, setEvents] = React.useState(undefined);
+  const [family, setFamily] = React.useState(undefined);
+
+  const currentEvent =
+    events && events.results && events.results.length > 0
+      ? events.results[0]
+      : undefined;
+
+  const [eventsRegistrationsOpen, setEventsRegistrationsOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
 
-  const [events, setEvents] = React.useState(undefined);
-  const [family, setFamily] = React.useState(undefined);
-  const [nextEvents, setNextEvents] = React.useState(undefined);
+  const [eventsCastlesOpen, setEventsCastlesOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
 
   const [eventsCastles, setEventsCastles] = React.useState<{
     [key: string]: any;
   }>({});
 
-  const [searchParams] = useSearchParams();
-  const eventId = searchParams.get("eventId");
+  const [castlePinya, setCastlePinya] = React.useState(0);
 
-  const handleEventClick = useCallback(
+  const handleCastlePinyaChange = (
+    event: React.SyntheticEvent,
+    newValue: number,
+  ) => {
+    setCastlePinya(newValue);
+  };
+
+  const handleEventRegistrationsClick = useCallback(
     (eventId: string) => {
-      setEventsOpen((eventsOpen) => ({
+      setEventsRegistrationsOpen((eventsRegistrationsOpen) => ({
         ...Object.fromEntries(
-          Object.entries(eventsOpen).map(([k, v], i) => [k, false]),
+          Object.entries(eventsRegistrationsOpen).map(([k, v], i) => [
+            k,
+            false,
+          ]),
         ),
-        [eventId]: !eventsOpen[eventId],
+        [eventId]: !eventsRegistrationsOpen[eventId],
       }));
+      setEventsCastlesOpen({});
     },
-    [setEventsOpen],
+    [setEventsRegistrationsOpen, setEventsCastlesOpen],
+  );
+
+  const handleEventCastlesClick = useCallback(
+    (eventId: string) => {
+      setEventsCastlesOpen((eventsCastlesOpen) => ({
+        ...Object.fromEntries(
+          Object.entries(eventsCastlesOpen).map(([k, v], i) => [k, false]),
+        ),
+        [eventId]: !eventsCastlesOpen[eventId],
+      }));
+      setEventsRegistrationsOpen({});
+    },
+    [setEventsCastlesOpen, setEventsRegistrationsOpen],
   );
 
   React.useEffect(() => {
-    apiEventList(token).then((response) => {
+    apiEventCalendarList(calendarMonth, calendarYear).then((response) => {
       if (response.status === 200) {
-        setEvents(response.data.results);
-        setNextEvents(
-          response.data.results
-            .filter((event: any) => {
-              return new Date(event.time_to) >= new Date();
-            })
-            .slice(0, 5),
-        );
-        setRehearsal(
-          response.data.results.find((event: any) => {
-            return (
-              event.type === EventType.REHEARSAL &&
-              new Date(event.time_to) >= new Date()
-            );
-          }),
-        );
+        setCalendarEvents(response.data);
       }
     });
-  }, [setEvents, setNextEvents, setRehearsal, token]);
+  }, [setCalendarEvents, calendarMonth, calendarYear]);
 
   React.useEffect(() => {
-    if (events) {
-      for (let i = 0; i < events.length; i++) {
-        const event = events[i];
+    apiEventList(eventPage, token).then((response) => {
+      if (response.status === 200) {
+        setEvents(response.data);
+      }
+    });
+  }, [setEvents, eventPage, token]);
+
+  React.useEffect(() => {
+    if (events && events.count > 0) {
+      for (let i = 0; i < events.results.length; i++) {
+        const event = events.results[i];
         apiTowersCastleList(event.id).then((response) => {
           if (response.status === 200) {
             setEventsCastles((eventsCastles) => ({
@@ -99,25 +173,23 @@ function CalendarPage() {
     }
   }, [events, setEventsCastles]);
 
-  console.log(eventsCastles);
-
   React.useEffect(() => {
     if (user) {
       setFamily(user.family);
-      if (nextEvents) {
-        handleEventClick(eventId || nextEvents[0].id);
+      if (events && events.count > 0 && eventId) {
+        handleEventRegistrationsClick(eventId);
       }
     } else if (token !== undefined) {
       apiUserFamily(token).then((response) => {
         if (response.status === 200) {
           setFamily(response.data);
-          if (nextEvents) {
-            handleEventClick(eventId || nextEvents[0].id);
+          if (events && events.count > 0 && eventId) {
+            handleEventRegistrationsClick(eventId);
           }
         }
       });
     }
-  }, [user, setFamily, eventId, handleEventClick, nextEvents, token]);
+  }, [user, setFamily, token]);
 
   const content = (
     <>
@@ -138,59 +210,56 @@ function CalendarPage() {
       >
         <Grid
           container
-          size={{ xs: 12, md: 8 }}
-          order={{ xs: 2, md: 1 }}
-          display={{ xs: "none", md: "initial" }}
-          spacing={4}
-          direction="column"
-        >
-          <Card
-            variant="outlined"
-            sx={{ height: "100%", display: "flex", flexDirection: "column" }}
-          >
-            <Box className={styles.userTopBox}>
-              <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.calendar.section.calendar.month")}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box className={styles.calendarBox}>
-              <EventCalendar events={events} compact={false} />
-            </Box>
-          </Card>
-        </Grid>
-        <Grid
-          container
-          size={{ xs: 12, md: 4 }}
+          size={{ xs: 12, md: 6 }}
           order={{ xs: 1, md: 2 }}
           spacing={4}
           direction="column"
-          sx={{ display: "flex", flexDirection: "column" }}
         >
-          <Grid>
-            <Card variant="outlined">
-              <Box className={styles.userTopBox}>
-                <Typography variant="h6" fontWeight="600" component="div">
-                  {t("pages.calendar.section.agenda.title")}
-                </Typography>
-              </Box>
-              <Divider />
-              <Box className={styles.userFamilyBox}>
-                {nextEvents && nextEvents.length > 0 ? (
-                  <List className={styles.userFamilyList}>
-                    {nextEvents.map((event: any, i: number, row: any) => {
-                      const castles = eventsCastles[event.id];
+          {events && events.count > 0 && (
+            <>
+              <Grid container spacing={2}>
+                {events.results.map((event: any, i: number, row: any) => {
+                  const castles = eventsCastles[event.id];
+                  const castlesPublished = castles
+                    ? castles.filter((castle: any) => castle.is_published)
+                    : undefined;
 
-                      return (
-                        <Box key={event.id}>
-                          <ListItemButton
-                            onClick={() => handleEventClick(event.id)}
-                            dense={true}
+                  const registrationByUserId = Object.fromEntries(
+                    event.registrations.map((registration: any) => [
+                      registration.user.id,
+                      registration,
+                    ]),
+                  );
+
+                  return (
+                    <Grid
+                      key={event.id}
+                      className={styles.eventGrid}
+                      display="flex"
+                      alignItems="stretch"
+                    >
+                      <Card variant="outlined" className={styles.eventCard}>
+                        <ListItemButton
+                          onClick={() => {
+                            setEventsRegistrationsOpen({});
+                            setEventsCastlesOpen({});
+                          }}
+                          disableTouchRipple={
+                            !eventsRegistrationsOpen[event.id] &&
+                            !eventsCastlesOpen[event.id]
+                          }
+                          dense
+                        >
+                          <ListItemIcon>
+                            {EVENT_TYPE_ICON[event.type]}
+                          </ListItemIcon>
+                          <Box
+                            className={styles.eventCardInner}
+                            flexDirection={{ xs: "column", lg: "row" }}
+                            alignItems={{ xs: "start", lg: "center" }}
                           >
-                            <ListItemIcon>
-                              {EVENT_TYPE_ICON[event.type]}
-                            </ListItemIcon>
                             <ListItemText
+                              className={styles.eventCardListItem}
                               disableTypography
                               primary={
                                 <Typography variant="body2">
@@ -229,83 +298,241 @@ function CalendarPage() {
                                         .slice(0, 5)}
                                   </Typography>
                                   {castles && castles.length > 0 && (
-                                    <Typography
-                                      variant="body2"
-                                      color="textSecondary"
-                                    >
-                                      {t(
-                                        "pages.calendar.section.agenda.castles",
+                                    <Box className={styles.eventCastlesBox}>
+                                      <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                      >
+                                        {t(
+                                          "pages.calendar.section.agenda.castles",
+                                        )}
+                                        {": "}
+                                      </Typography>
+                                      {castles.map(
+                                        (castle: any, i: number, row: any) => {
+                                          return (
+                                            <Typography
+                                              variant="body2"
+                                              color="textSecondary"
+                                              className={styles.eventCastleBox}
+                                            >
+                                              <span>{castle.name}</span>
+                                              {castle.is_published && (
+                                                <>
+                                                  {" ("}
+                                                  <IconAttachFile />
+                                                  {")"}
+                                                </>
+                                              )}
+                                              {i + 1 < row.length && ", "}
+                                            </Typography>
+                                          );
+                                        },
                                       )}
-                                      {": "}
-                                      {castles
-                                        .map((castle: any) => castle.name)
-                                        .join(", ")}
-                                    </Typography>
+                                    </Box>
                                   )}
+                                  {family &&
+                                    family.members &&
+                                    family.members.length > 0 && (
+                                      <Collapse
+                                        in={!eventsRegistrationsOpen[event.id]}
+                                        timeout="auto"
+                                        unmountOnExit
+                                      >
+                                        <Box
+                                          className={
+                                            styles.eventRegistrationsBox
+                                          }
+                                        >
+                                          {family.members.map((member: any) => {
+                                            const registration =
+                                              registrationByUserId[
+                                                member.user.id
+                                              ];
+                                            return (
+                                              <Box
+                                                className={
+                                                  styles.eventRegistrationBox
+                                                }
+                                                style={{
+                                                  color:
+                                                    registration &&
+                                                    registration.status ==
+                                                      RegistrationStatus.ACTIVE
+                                                      ? "var(--mui-palette-success-main)"
+                                                      : "var(--mui-palette-error-main)",
+                                                  whiteSpace: "nowrap",
+                                                }}
+                                              >
+                                                {
+                                                  REGISTRATION_STATUS_ICON[
+                                                    registration
+                                                      ? registration.status
+                                                      : RegistrationStatus.CANCELLED
+                                                  ]
+                                                }
+                                                <Typography variant="body2">
+                                                  {family.members.length > 1
+                                                    ? member.user.lastname
+                                                      ? member.user.firstname +
+                                                        " " +
+                                                        member.user.lastname
+                                                      : member.user.firstname
+                                                    : registration &&
+                                                        registration.status ==
+                                                          RegistrationStatus.ACTIVE
+                                                      ? t(
+                                                          "pages.calendar.section.agenda.event.attendance-attending",
+                                                        )
+                                                      : t(
+                                                          "pages.calendar.section.agenda.event.attendance-not-attending",
+                                                        )}
+                                                </Typography>
+                                              </Box>
+                                            );
+                                          })}{" "}
+                                        </Box>
+                                      </Collapse>
+                                    )}
                                 </>
                               }
                             />
-                            {family &&
-                              event.require_signup &&
-                              (eventsOpen[event.id] ? (
-                                <IconExpandLess />
-                              ) : (
-                                <IconExpandMore />
-                              ))}
-                          </ListItemButton>
-                          {family && event.require_signup && (
-                            <Collapse
-                              in={eventsOpen[event.id]}
-                              timeout="auto"
-                              unmountOnExit
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              marginLeft={{ xs: "0", lg: "16px" }}
+                              marginTop={{ xs: "8px", lg: "0" }}
+                              marginBottom={{ xs: "8px", lg: "0" }}
                             >
-                              <Box className={styles.calendarAttendanceUpdate}>
-                                <Typography fontWeight={600} marginBottom="4px">
-                                  {t("pages.calendar.agenda.attendance")}
-                                </Typography>
-                                <FormCalendarRegistrationCreate
-                                  event={event}
-                                  family={family}
-                                  token={token}
-                                />
-                              </Box>
-                            </Collapse>
-                          )}
-
-                          {i + 1 < row.length && <Divider />}
-                        </Box>
-                      );
-                    })}
-                  </List>
-                ) : (
-                  <Box className={styles.userFamilyEmpty}>
-                    <Typography component="div">
-                      {t("pages.calendar.section.agenda.empty")}
-                    </Typography>
-                  </Box>
-                )}
+                              {family && event.require_signup && (
+                                <Button
+                                  variant="contained"
+                                  type="submit"
+                                  style={{ width: "auto" }}
+                                  disableElevation
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEventRegistrationsClick(event.id);
+                                  }}
+                                >
+                                  {t(
+                                    "pages.calendar.section.agenda.event.attendance",
+                                  )}
+                                </Button>
+                              )}
+                              {castlesPublished &&
+                                castlesPublished.length > 0 && (
+                                  <Button
+                                    variant="contained"
+                                    type="submit"
+                                    style={{ width: "auto" }}
+                                    disableElevation
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEventCastlesClick(event.id);
+                                    }}
+                                  >
+                                    {t(
+                                      "pages.calendar.section.agenda.event.castles",
+                                    )}
+                                  </Button>
+                                )}
+                            </Stack>
+                          </Box>
+                        </ListItemButton>
+                        {family && event.require_signup && (
+                          <Collapse
+                            in={eventsRegistrationsOpen[event.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <Divider />
+                            <Box className={styles.calendarAttendanceUpdate}>
+                              <Typography fontWeight={600} marginBottom="4px">
+                                {t("pages.calendar.agenda.attendance")}
+                              </Typography>
+                              <FormCalendarRegistrationCreate
+                                event={event}
+                                family={family}
+                                token={token}
+                              />
+                            </Box>
+                          </Collapse>
+                        )}
+                        {castles && castles.length > 0 && (
+                          <Collapse
+                            in={eventsCastlesOpen[event.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <Divider />
+                            <Tabs
+                              value={castlePinya}
+                              onChange={handleCastlePinyaChange}
+                              variant="scrollable"
+                              scrollButtons={false}
+                              allowScrollButtonsMobile
+                              indicatorColor="primary"
+                              TabIndicatorProps={{
+                                style: { display: "none" },
+                              }}
+                              sx={{
+                                ".Mui-selected": {
+                                  backgroundColor:
+                                    "var(--mui-palette-primary-main)",
+                                  color:
+                                    "var(--mui-palette-primary-contrastText) !important",
+                                },
+                              }}
+                            >
+                              {castlesPublished.map((castle: any) => (
+                                <Tab label={castle.name} />
+                              ))}
+                            </Tabs>
+                            <Divider />
+                            {castlesPublished.map((castle: any, ix: number) => (
+                              <TabPanel value={castlePinya} index={ix}>
+                                <PinyatorIframe castle={castle} />
+                              </TabPanel>
+                            ))}
+                          </Collapse>
+                        )}
+                      </Card>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+              <Stack alignItems="center">
+                <Pagination
+                  count={Math.ceil(events.count / 10)}
+                  onChange={(e, value) => setEventPage(value)}
+                />
+              </Stack>
+            </>
+          )}
+        </Grid>
+        <Grid
+          container
+          size={{ xs: 12, md: 6 }}
+          display={{ xs: "none", md: "initial" }}
+          spacing={4}
+          direction="column"
+        >
+          <Grid>
+            <Card
+              variant="outlined"
+              sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+            >
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.calendar.section.calendar.month")}
+                </Typography>
+              </Box>
+              <Divider />
+              <Box className={styles.calendarBox}>
+                <EventCalendar events={calendarEvents} compact={false} />
               </Box>
             </Card>
-          </Grid>
-          <Grid className={styles.mapCard}>
-            <Map
-              location={
-                rehearsal && rehearsal.location ? rehearsal.location : undefined
-              }
-              coordinates={
-                rehearsal && rehearsal.location
-                  ? [
-                      rehearsal.location.coordinate_lat,
-                      rehearsal.location.coordinate_lon,
-                    ]
-                  : [59.3576, 17.9941]
-              }
-              connections={
-                rehearsal &&
-                rehearsal.location &&
-                rehearsal.location.connections
-              }
-            />
           </Grid>
         </Grid>
       </Grid>

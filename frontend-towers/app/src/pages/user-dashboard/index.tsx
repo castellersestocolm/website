@@ -70,6 +70,7 @@ import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import { capitalizeFirstLetter } from "../../utils/string";
 import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
+import IconAttachFile from "@mui/icons-material/AttachFile";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 
@@ -561,7 +562,7 @@ function UserDashboardPage() {
 
               <Box className={styles.userFamilyBox}>
                 <List className={styles.userFamilyList}>
-                  <ListItemButton dense={true}>
+                  <ListItemButton dense>
                     <ListItemIcon>
                       {EVENT_TYPE_ICON[rehearsal.type]}
                     </ListItemIcon>
@@ -599,53 +600,38 @@ function UserDashboardPage() {
                                 .slice(0, 5)}
                           </Typography>
                           {castles && castles.length > 0 && (
-                            <Typography variant="body2" color="textSecondary">
-                              {t("pages.user-rehearsal.rehearsal.castles")}
-                              {": "}
-                              {castles
-                                .map((castle: any) => castle.name)
-                                .join(", ")}
-                            </Typography>
+                            <Box className={styles.eventCastlesBox}>
+                              <Typography variant="body2" color="textSecondary">
+                                {t("pages.calendar.section.agenda.castles")}
+                                {": "}
+                              </Typography>
+                              {castles.map(
+                                (castle: any, i: number, row: any) => {
+                                  return (
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                      className={styles.eventCastleBox}
+                                    >
+                                      <span>{castle.name}</span>
+                                      {castle.is_published && (
+                                        <>
+                                          {" ("}
+                                          <IconAttachFile />
+                                          {")"}
+                                        </>
+                                      )}
+                                      {i + 1 < row.length && ", "}
+                                    </Typography>
+                                  );
+                                },
+                              )}
+                            </Box>
                           )}
                         </>
                       }
                     />
                   </ListItemButton>
-                  {castlesPublished && castlesPublished.length > 0 && (
-                    <>
-                      <Divider />
-                      <Tabs
-                        value={castlePinya}
-                        onChange={handleCastlePinyaChange}
-                        variant="scrollable"
-                        scrollButtons={false}
-                        allowScrollButtonsMobile
-                        aria-label="scrollable force tabs example"
-                        className={styles.tabsCastle}
-                        indicatorColor="primary"
-                        TabIndicatorProps={{
-                          style: { display: "none" },
-                        }}
-                        sx={{
-                          ".Mui-selected": {
-                            backgroundColor: "var(--mui-palette-primary-main)",
-                            color:
-                              "var(--mui-palette-primary-contrastText) !important",
-                          },
-                        }}
-                      >
-                        {castlesPublished.map((castle: any) => (
-                          <Tab label={castle.name} />
-                        ))}
-                      </Tabs>
-                      <Divider />
-                      {castlesPublished.map((castle: any, ix: number) => (
-                        <TabPanel value={castlePinya} index={ix}>
-                          <PinyatorIframe castle={castle} />
-                        </TabPanel>
-                      ))}
-                    </>
-                  )}
                   <Divider />
                   <Box>
                     <ListItemButton

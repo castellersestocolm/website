@@ -161,6 +161,11 @@ class RegistrationSerializer(RegistrationSlimSerializer):
         )
 
 
+class ListEventCalendarSerializer(s.Serializer):
+    month = s.IntegerField(min_value=1, max_value=12)
+    year = s.IntegerField(min_value=1950, max_value=2100)
+
+
 class ListEventSerializer(s.Serializer):
     token = s.CharField(required=False)
 

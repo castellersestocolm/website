@@ -344,9 +344,26 @@ export const apiPaymentList = async () => {
   }
 };
 
-export const apiEventList = async (token: string = undefined) => {
+export const apiEventList = async (
+  page: number = undefined,
+  token: string = undefined,
+) => {
   try {
-    return await instance.get("/event/", { params: { token: token } });
+    return await instance.get("/event/", {
+      params: { page: page, token: token },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiEventCalendarList = async (month: number, year: number) => {
+  try {
+    return await instance.get("/event/calendar/", {
+      params: { month: month, year: year },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

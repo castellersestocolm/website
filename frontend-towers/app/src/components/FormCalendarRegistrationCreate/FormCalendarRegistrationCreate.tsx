@@ -14,6 +14,7 @@ import { Alert } from "@mui/lab";
 import { TransitionGroup } from "react-transition-group";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import { RegistrationStatus } from "../../enums";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -48,7 +49,7 @@ export default function FormCalendarRegistrationCreate({
     Object.fromEntries(
       scheduledEvent.registrations.map((registration: any) => [
         registration.user.id,
-        true,
+        registration.status === RegistrationStatus.ACTIVE,
       ]),
     ),
   );

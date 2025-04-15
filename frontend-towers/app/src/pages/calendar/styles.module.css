@@ -32,7 +32,73 @@
   align-items: stretch;
 }
 
-.userFamilyBox {
+.eventGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.eventCard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  div:first-of-type {
+    min-width: 42px !important;
+  }
+}
+
+.eventCardInner {
+  display: flex;
+  flex: 1;
+}
+
+.eventCardListItem {
+  flex: 1;
+}
+
+.eventCastlesBox {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: row;
+  white-space: pre;
+}
+
+.eventCastleBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  svg {
+    font-size: 0.875rem;
+    margin: 0 -2px;
+  }
+}
+
+.eventRegistrationsBox {
+  margin-top: 8px;
+}
+
+.eventRegistrationBox {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 16px;
+  margin-bottom: 2px;
+
+  svg {
+    font-size: 0.875rem;
+    margin-right: 4px;
+  }
+}
+
+.eventRegistrationActive {
+  color: var(--mui-palette-success-main);
+}
+
+.eventRegistrationNotActive {
+  color: var(--mui-palette-error-main);
 }
 
 .userFamilyList {
@@ -114,21 +180,4 @@
 
 .paymentRefundIcon {
   margin-bottom: -2px;
-}
-
-.mapCard {
-  display: flex;
-  flex: 1;
-  border: var(--mui-palette-divider) solid 1px;
-  border-radius: 4px;
-  padding: 0 !important;
-  margin-bottom: 0;
-  min-height: 300px;
-}
-
-.mapBox {
-  display: flex;
-  flex: 1;
-  padding: 0 !important;
-  margin-bottom: 0;
 }

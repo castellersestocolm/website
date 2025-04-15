@@ -14,6 +14,9 @@ import IconBus from "./components/IconBus/IconBus.jsx";
 import IconTrolleybus from "./components/IconTrolleybus/IconTrolleybus.jsx";
 import IconRail from "./components/IconRail/IconRail.jsx";
 import IconWater from "./components/IconWater/IconWater.jsx";
+import IconCheckCircleOutlined from "@mui/icons-material/CheckCircleOutlined";
+import IconCancelOutlined from "@mui/icons-material/CancelOutlined";
+import IconHelpOutlined from "@mui/icons-material/HelpOutlined";
 
 export enum Language {
   ENGLISH = "en",
@@ -107,3 +110,17 @@ export const TRANSPORT_MODE_ICON: any = {
 export function getEnumLabel(t: any, enumName: string, value: any) {
   return t("enums." + enumName + "." + value);
 }
+
+export enum RegistrationStatus {
+  REQUESTED = 10,
+  ACTIVE = 20,
+  CANCELLED = 30,
+  TENTATIVE = 40,
+}
+
+export const REGISTRATION_STATUS_ICON: any = {
+  10: <IconHelpOutlined />,
+  20: <IconCheckCircleOutlined />,
+  30: <IconCancelOutlined />,
+  40: <IconCheckCircleOutlined />,
+};

@@ -1,3 +1,6 @@
+import calendar
+import datetime
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import permissions
@@ -13,6 +16,7 @@ from comunicat.rest.serializers.event import (
     CreateRegistrationSerializer,
     ListEventSerializer,
     DestroyRegistrationSerializer,
+    ListEventCalendarSerializer,
 )
 
 from comunicat.rest.viewsets import ComuniCatViewSet
@@ -21,7 +25,7 @@ import event.api.registration
 
 
 class EventResultsSetPagination(PageNumberPagination):
-    page_size = 20
+    page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
 
@@ -36,7 +40,7 @@ class EventAPI(ComuniCatViewSet):
         query_serializer=ListEventSerializer,
         responses={200: EventSerializer(many=True)},
     )
-    @method_decorator(cache_page(60))
+    @method_decorator(cache_page(10))
     def list(self, request):
         serializer = ListEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -63,6 +67,40 @@ class EventAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+
+class CalendarAPI(ComuniCatViewSet):
+    serializer_class = EventSerializer
+    permission_classes = (permissions.AllowAny,)
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        query_serializer=ListEventCalendarSerializer,
+        responses={200: EventSerializer(many=True)},
+    )
+    @method_decorator(cache_page(60))
+    def list(self, request):
+        serializer = ListEventCalendarSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        year = serializer.validated_data["year"]
+        month = serializer.validated_data["month"]
+
+        __, day_last = calendar.monthrange(year=year, month=month)
+
+        date_from = datetime.date(year=year, month=month, day=1)
+        date_to = datetime.date(year=year, month=month, day=day_last)
+
+        event_objs = event.api.get_list(
+            module=self.module,
+            date_from=date_from,
+            date_to=date_to,
+        )
+
+        serializer = self.serializer_class(
+            event_objs, context={"module": self.module}, many=True
+        )
+        return Response(serializer.data)
 
 
 class RegistrationAPI(ComuniCatViewSet):
