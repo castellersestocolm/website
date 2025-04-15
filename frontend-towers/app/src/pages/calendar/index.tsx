@@ -302,6 +302,7 @@ function CalendarPage() {
                                       <Typography
                                         variant="body2"
                                         color="textSecondary"
+                                        display="inline-flex"
                                       >
                                         {t(
                                           "pages.calendar.section.agenda.castles",
@@ -333,7 +334,8 @@ function CalendarPage() {
                                   )}
                                   {family &&
                                     family.members &&
-                                    family.members.length > 0 && (
+                                    family.members.length > 0 &&
+                                    event.require_signup && (
                                       <Collapse
                                         in={!eventsRegistrationsOpen[event.id]}
                                         timeout="auto"
@@ -403,6 +405,7 @@ function CalendarPage() {
                               marginLeft={{ xs: "0", lg: "16px" }}
                               marginTop={{ xs: "8px", lg: "0" }}
                               marginBottom={{ xs: "8px", lg: "0" }}
+                              whiteSpace="nowrap"
                             >
                               {family && event.require_signup && (
                                 <Button

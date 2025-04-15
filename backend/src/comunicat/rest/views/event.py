@@ -1,6 +1,7 @@
 import calendar
 import datetime
 
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import permissions
@@ -59,6 +60,7 @@ class EventAPI(ComuniCatViewSet):
         event_objs = event.api.get_list(
             request_user_id=user_obj.id if user_obj else None,
             module=self.module,
+            date_from=timezone.localdate(),
         )
 
         paginator = self.pagination_class()

@@ -60,13 +60,11 @@
 
 .eventCastlesBox {
   margin-top: 8px;
-  display: flex;
-  flex-direction: row;
-  white-space: pre;
+  white-space: break-spaces;
 }
 
 .eventCastleBox {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   align-items: center;
 
