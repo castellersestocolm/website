@@ -20,7 +20,7 @@ class TowersCastleAPI(
     ComuniCatViewSet,
 ):
     serializer_class = CastleSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     pagination_class = TowersResultsSetPagination
     lookup_field = "id"
 

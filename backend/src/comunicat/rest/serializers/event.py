@@ -167,6 +167,7 @@ class ListEventCalendarSerializer(s.Serializer):
 
 
 class ListEventSerializer(s.Serializer):
+    page_size = s.IntegerField(required=False)
     token = s.CharField(required=False)
 
 

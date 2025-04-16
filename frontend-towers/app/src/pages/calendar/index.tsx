@@ -32,16 +32,14 @@ import {
 } from "../../enums";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
-import Map from "../../components/Map/Map";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import { capitalizeFirstLetter } from "../../utils/string";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useCallback } from "react";
 import { Pagination } from "@mui/lab";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
+import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -158,7 +156,7 @@ function CalendarPage() {
   }, [setEvents, eventPage, token]);
 
   React.useEffect(() => {
-    if (events && events.count > 0) {
+    if (user && events && events.count > 0) {
       for (let i = 0; i < events.results.length; i++) {
         const event = events.results[i];
         apiTowersCastleList(event.id).then((response) => {
@@ -171,7 +169,7 @@ function CalendarPage() {
         });
       }
     }
-  }, [events, setEventsCastles]);
+  }, [user, events, setEventsCastles]);
 
   React.useEffect(() => {
     if (user) {
@@ -400,7 +398,8 @@ function CalendarPage() {
                               }
                             />
                             {((family && event.require_signup) ||
-                              (castlesPublished &&
+                              (user &&
+                                castlesPublished &&
                                 castlesPublished.length > 0)) && (
                               <Stack
                                 direction="row"
@@ -415,32 +414,51 @@ function CalendarPage() {
                                     variant="contained"
                                     type="submit"
                                     style={{ width: "auto" }}
+                                    color={
+                                      eventsRegistrationsOpen[event.id]
+                                        ? "secondary"
+                                        : "primary"
+                                    }
                                     disableElevation
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleEventRegistrationsClick(event.id);
                                     }}
                                   >
-                                    {t(
-                                      "pages.calendar.section.agenda.event.attendance",
-                                    )}
+                                    {eventsRegistrationsOpen[event.id]
+                                      ? t(
+                                          "pages.calendar.section.agenda.event.attendance-hide",
+                                        )
+                                      : t(
+                                          "pages.calendar.section.agenda.event.attendance-show",
+                                        )}
                                   </Button>
                                 )}
-                                {castlesPublished &&
+                                {user &&
+                                  castlesPublished &&
                                   castlesPublished.length > 0 && (
                                     <Button
                                       variant="contained"
                                       type="submit"
                                       style={{ width: "auto" }}
+                                      color={
+                                        eventsCastlesOpen[event.id]
+                                          ? "secondary"
+                                          : "primary"
+                                      }
                                       disableElevation
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleEventCastlesClick(event.id);
                                       }}
                                     >
-                                      {t(
-                                        "pages.calendar.section.agenda.event.castles",
-                                      )}
+                                      {eventsCastlesOpen[event.id]
+                                        ? t(
+                                            "pages.calendar.section.agenda.event.castles-hide",
+                                          )
+                                        : t(
+                                            "pages.calendar.section.agenda.event.castles-show",
+                                          )}
                                     </Button>
                                   )}
                               </Stack>
@@ -511,7 +529,7 @@ function CalendarPage() {
               </Grid>
               <Stack alignItems="center">
                 <Pagination
-                  count={Math.ceil(events.count / 10)}
+                  count={Math.ceil(events.count / API_EVENTS_LIST_PAGE_SIZE)}
                   onChange={(e, value) => setEventPage(value)}
                 />
               </Stack>

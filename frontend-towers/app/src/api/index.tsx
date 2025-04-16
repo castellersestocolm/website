@@ -1,6 +1,7 @@
 import axios from "axios";
 import i18n from "i18next";
 import { getCookie } from "typescript-cookie";
+import { API_EVENTS_LIST_PAGE_SIZE } from "../consts";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -350,7 +351,11 @@ export const apiEventList = async (
 ) => {
   try {
     return await instance.get("/event/", {
-      params: { page: page, token: token },
+      params: {
+        page_size: API_EVENTS_LIST_PAGE_SIZE,
+        page: page,
+        token: token,
+      },
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
