@@ -23,6 +23,12 @@ import ImageCarousel19 from "../../assets/images/carousel/car19.jpeg";
 import ImageCarousel20 from "../../assets/images/carousel/car20.jpeg";
 import ImageCarousel21 from "../../assets/images/carousel/car21.jpeg";
 import ImageCarousel22 from "../../assets/images/carousel/car22.jpeg";
+import ImageCarousel23 from "../../assets/images/carousel/car23.jpg";
+import ImageCarousel24 from "../../assets/images/carousel/car24.jpg";
+import ImageCarousel25 from "../../assets/images/carousel/car25.jpg";
+import ImageCarousel26 from "../../assets/images/carousel/car26.jpg";
+import ImageCarousel27 from "../../assets/images/carousel/car27.jpg";
+import ImageCarousel28 from "../../assets/images/carousel/car28.jpg";
 
 export default function ImageCarousel({ images, dense }: any) {
   const carouselImages = (
@@ -49,6 +55,12 @@ export default function ImageCarousel({ images, dense }: any) {
       ImageCarousel20,
       ImageCarousel21,
       ImageCarousel22,
+      ImageCarousel23,
+      ImageCarousel24,
+      ImageCarousel25,
+      ImageCarousel26,
+      ImageCarousel27,
+      ImageCarousel28,
     ]
   )
     .map((value: any) => ({ value, sort: Math.random() }))
