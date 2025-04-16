@@ -140,16 +140,6 @@ function UserDashboardPage() {
   const [payments, setPayments] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
-  const [castlesPublished, setCastlesPublished] = React.useState(undefined);
-
-  const [castlePinya, setCastlePinya] = React.useState(0);
-
-  const handleCastlePinyaChange = (
-    event: React.SyntheticEvent,
-    newValue: number,
-  ) => {
-    setCastlePinya(newValue);
-  };
 
   const handleFamilyClick = (memberId: string) => {
     setFamilyMembersOpen({
@@ -228,17 +218,12 @@ function UserDashboardPage() {
           apiTowersCastleList(event.id).then((response) => {
             if (response.status === 200) {
               setCastles(response.data.results);
-              setCastlesPublished(
-                response.data.results.filter(
-                  (castle: any) => castle.is_published,
-                ),
-              );
             }
           });
         }
       }
     });
-  }, [setRehearsal, setCastles, setCastlesPublished]);
+  }, [setRehearsal, setCastles]);
 
   function handleRequestCancelSubmit(id: string) {
     apiUserFamilyMemberRequestCancel(id).then((response) => {
@@ -562,75 +547,104 @@ function UserDashboardPage() {
 
               <Box className={styles.userFamilyBox}>
                 <List className={styles.userFamilyList}>
-                  <ListItemButton dense>
+                  <ListItemButton disableTouchRipple dense>
                     <ListItemIcon>
                       {EVENT_TYPE_ICON[rehearsal.type]}
                     </ListItemIcon>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography variant="body2">
-                          {rehearsal.title +
-                            (rehearsal.type === EventType.REHEARSAL &&
-                            rehearsal.location !== null
-                              ? " — " + rehearsal.location.name
-                              : "")}
-                        </Typography>
-                      }
-                      secondary={
-                        <>
-                          <Typography variant="body2" color="textSecondary">
-                            {capitalizeFirstLetter(
-                              new Date(rehearsal.time_from).toLocaleDateString(
-                                i18n.resolvedLanguage,
-                                {
+                    <Box
+                      className={styles.userFamilyListInner}
+                      flexDirection={{ xs: "column", lg: "row" }}
+                      alignItems={{ xs: "start", lg: "center" }}
+                    >
+                      <ListItemText
+                        className={styles.userFamilyListItem}
+                        disableTypography
+                        primary={
+                          <Typography variant="body2">
+                            {rehearsal.title +
+                              (rehearsal.type === EventType.REHEARSAL &&
+                              rehearsal.location !== null
+                                ? " — " + rehearsal.location.name
+                                : "")}
+                          </Typography>
+                        }
+                        secondary={
+                          <>
+                            <Typography variant="body2" color="textSecondary">
+                              {capitalizeFirstLetter(
+                                new Date(
+                                  rehearsal.time_from,
+                                ).toLocaleDateString(i18n.resolvedLanguage, {
                                   day: "numeric",
                                   month: "long",
                                   year: "numeric",
-                                },
-                              ),
-                            ) +
-                              " " +
-                              new Date(rehearsal.time_from)
-                                .toTimeString()
-                                .slice(0, 5) +
-                              " → " +
-                              new Date(rehearsal.time_to)
-                                .toTimeString()
-                                .slice(0, 5)}
-                          </Typography>
-                          {castles && castles.length > 0 && (
-                            <Box className={styles.eventCastlesBox}>
-                              <Typography variant="body2" color="textSecondary">
-                                {t("pages.calendar.section.agenda.castles")}
-                                {": "}
-                              </Typography>
-                              {castles.map(
-                                (castle: any, i: number, row: any) => {
-                                  return (
-                                    <Typography
-                                      variant="body2"
-                                      color="textSecondary"
-                                      className={styles.eventCastleBox}
-                                    >
-                                      <span>{castle.name}</span>
-                                      {castle.is_published && (
-                                        <>
-                                          {" ("}
-                                          <IconAttachFile />
-                                          {")"}
-                                        </>
-                                      )}
-                                      {i + 1 < row.length && ", "}
-                                    </Typography>
-                                  );
-                                },
-                              )}
-                            </Box>
-                          )}
-                        </>
-                      }
-                    />
+                                }),
+                              ) +
+                                " " +
+                                new Date(rehearsal.time_from)
+                                  .toTimeString()
+                                  .slice(0, 5) +
+                                " → " +
+                                new Date(rehearsal.time_to)
+                                  .toTimeString()
+                                  .slice(0, 5)}
+                            </Typography>
+                            {castles && castles.length > 0 && (
+                              <Box className={styles.eventCastlesBox}>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {t("pages.calendar.section.agenda.castles")}
+                                  {": "}
+                                </Typography>
+                                {castles.map(
+                                  (castle: any, i: number, row: any) => {
+                                    return (
+                                      <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                        className={styles.eventCastleBox}
+                                      >
+                                        <span>{castle.name}</span>
+                                        {castle.is_published && (
+                                          <>
+                                            {" ("}
+                                            <IconAttachFile />
+                                            {")"}
+                                          </>
+                                        )}
+                                        {i + 1 < row.length && ", "}
+                                      </Typography>
+                                    );
+                                  },
+                                )}
+                              </Box>
+                            )}
+                          </>
+                        }
+                      />
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        marginLeft={{ xs: "0", lg: "16px" }}
+                        marginTop={{ xs: "8px", lg: "0" }}
+                        marginBottom={{ xs: "8px", lg: "0" }}
+                        whiteSpace="nowrap"
+                      >
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          style={{ width: "auto" }}
+                          disableElevation
+                          href={
+                            ROUTES.calendar.path + "?eventId=" + rehearsal.id
+                          }
+                        >
+                          {t("pages.user-rehearsal.rehearsal.show")}
+                        </Button>
+                      </Stack>
+                    </Box>
                   </ListItemButton>
                   <Divider />
                   <Box>
@@ -744,7 +758,10 @@ function UserDashboardPage() {
                     <Box key={payment.id}>
                       <ListItemButton
                         onClick={() => handlePaymentClick(payment.id)}
-                        dense={true}
+                        disableTouchRipple={
+                          !payment.lines || !(payment.lines.length > 1)
+                        }
+                        dense
                       >
                         <ListItemIcon>
                           {PAYMENT_STATUS_ICON[payment.status]}
@@ -827,7 +844,7 @@ function UserDashboardPage() {
                             {payment.lines.map(
                               (paymentLine: any, i: number, row: any) => (
                                 <Box key={paymentLine.id}>
-                                  <ListItemButton dense={true}>
+                                  <ListItemButton disableTouchRipple dense>
                                     <ListItemText
                                       primary={paymentLine.description}
                                     />
@@ -876,7 +893,8 @@ function UserDashboardPage() {
                       <Box key={member.id}>
                         <ListItemButton
                           onClick={() => handleFamilyClick(member.id)}
-                          dense={true}
+                          disableTouchRipple={member.user.can_manage}
+                          dense
                         >
                           <ListItemIcon>
                             <IconAccountCircle />
