@@ -44,9 +44,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  div:first-of-type {
-    min-width: 42px !important;
-  }
+}
+
+.eventCardIcon {
+  min-width: 42px !important;
 }
 
 .eventCardInner {
@@ -178,4 +179,8 @@
 
 .paymentRefundIcon {
   margin-bottom: -2px;
+}
+
+.calendarMap {
+  height: 300px;
 }

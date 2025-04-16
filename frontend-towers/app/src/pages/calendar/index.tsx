@@ -40,6 +40,7 @@ import { useCallback } from "react";
 import { Pagination } from "@mui/lab";
 import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
 import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
+import Map from "../../components/Map/Map";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -84,16 +85,15 @@ function CalendarPage() {
   const [events, setEvents] = React.useState(undefined);
   const [family, setFamily] = React.useState(undefined);
 
-  const currentEvent =
-    events && events.results && events.results.length > 0
-      ? events.results[0]
-      : undefined;
-
   const [eventsRegistrationsOpen, setEventsRegistrationsOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
 
   const [eventsCastlesOpen, setEventsCastlesOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const [eventsMapOpen, setEventsMapOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
 
@@ -122,8 +122,9 @@ function CalendarPage() {
         [eventId]: !eventsRegistrationsOpen[eventId],
       }));
       setEventsCastlesOpen({});
+      setEventsMapOpen({});
     },
-    [setEventsRegistrationsOpen, setEventsCastlesOpen],
+    [setEventsRegistrationsOpen, setEventsCastlesOpen, setEventsMapOpen],
   );
 
   const handleEventCastlesClick = useCallback(
@@ -135,8 +136,23 @@ function CalendarPage() {
         [eventId]: !eventsCastlesOpen[eventId],
       }));
       setEventsRegistrationsOpen({});
+      setEventsMapOpen({});
     },
-    [setEventsCastlesOpen, setEventsRegistrationsOpen],
+    [setEventsCastlesOpen, setEventsRegistrationsOpen, setEventsMapOpen],
+  );
+
+  const handleEventMapClick = useCallback(
+    (eventId: string) => {
+      setEventsMapOpen((eventsMapOpen) => ({
+        ...Object.fromEntries(
+          Object.entries(eventsMapOpen).map(([k, v], i) => [k, false]),
+        ),
+        [eventId]: !eventsMapOpen[eventId],
+      }));
+      setEventsRegistrationsOpen({});
+      setEventsCastlesOpen({});
+    },
+    [setEventsMapOpen, setEventsCastlesOpen, setEventsRegistrationsOpen],
   );
 
   React.useEffect(() => {
@@ -174,20 +190,20 @@ function CalendarPage() {
   React.useEffect(() => {
     if (user) {
       setFamily(user.family);
-      if (events && events.count > 0 && eventId) {
-        handleEventRegistrationsClick(eventId);
+      if (events && events.results.length > 0) {
+        handleEventMapClick(eventId ? eventId : events.results[0].id);
       }
     } else if (token !== undefined) {
       apiUserFamily(token).then((response) => {
         if (response.status === 200) {
           setFamily(response.data);
-          if (events && events.count > 0 && eventId) {
-            handleEventRegistrationsClick(eventId);
+          if (events && events.results.length > 0) {
+            handleEventMapClick(eventId ? eventId : events.results[0].id);
           }
         }
       });
     }
-  }, [user, setFamily, token]);
+  }, [user, setFamily, handleEventMapClick, token, events, eventId]);
 
   const content = (
     <>
@@ -239,16 +255,17 @@ function CalendarPage() {
                       <Card variant="outlined" className={styles.eventCard}>
                         <ListItemButton
                           onClick={() => {
-                            setEventsRegistrationsOpen({});
-                            setEventsCastlesOpen({});
+                            if (!eventsMapOpen[event.id]) {
+                              handleEventMapClick(event.id);
+                            } else {
+                              setEventsRegistrationsOpen({});
+                              setEventsCastlesOpen({});
+                              setEventsMapOpen({});
+                            }
                           }}
-                          disableTouchRipple={
-                            !eventsRegistrationsOpen[event.id] &&
-                            !eventsCastlesOpen[event.id]
-                          }
                           dense
                         >
-                          <ListItemIcon>
+                          <ListItemIcon className={styles.eventCardIcon}>
                             {EVENT_TYPE_ICON[event.type]}
                           </ListItemIcon>
                           <Box
@@ -357,7 +374,7 @@ function CalendarPage() {
                                                 style={{
                                                   color:
                                                     registration &&
-                                                    registration.status ==
+                                                    registration.status ===
                                                       RegistrationStatus.ACTIVE
                                                       ? "var(--mui-palette-success-main)"
                                                       : "var(--mui-palette-error-main)",
@@ -379,7 +396,7 @@ function CalendarPage() {
                                                         member.user.lastname
                                                       : member.user.firstname
                                                     : registration &&
-                                                        registration.status ==
+                                                        registration.status ===
                                                           RegistrationStatus.ACTIVE
                                                       ? t(
                                                           "pages.calendar.section.agenda.event.attendance-attending",
@@ -520,6 +537,25 @@ function CalendarPage() {
                                 <PinyatorIframe castle={castle} />
                               </TabPanel>
                             ))}
+                          </Collapse>
+                        )}
+                        {event.location !== null && (
+                          <Collapse
+                            in={eventsMapOpen[event.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <Divider />
+                            <Box className={styles.calendarMap}>
+                              <Map
+                                location={event.location}
+                                coordinates={[
+                                  event.location.coordinate_lat,
+                                  event.location.coordinate_lon,
+                                ]}
+                                connections={event.location.connections}
+                              />
+                            </Box>
                           </Collapse>
                         )}
                       </Card>
