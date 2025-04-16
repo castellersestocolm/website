@@ -190,20 +190,20 @@ function CalendarPage() {
   React.useEffect(() => {
     if (user) {
       setFamily(user.family);
-      if (events && events.results.length > 0) {
-        handleEventMapClick(eventId ? eventId : events.results[0].id);
-      }
     } else if (token !== undefined) {
       apiUserFamily(token).then((response) => {
         if (response.status === 200) {
           setFamily(response.data);
-          if (events && events.results.length > 0) {
-            handleEventMapClick(eventId ? eventId : events.results[0].id);
-          }
         }
       });
     }
   }, [user, setFamily, handleEventMapClick, token, events, eventId]);
+
+  React.useEffect(() => {
+    if (events && events.results.length > 0) {
+      handleEventMapClick(eventId ? eventId : events.results[0].id);
+    }
+  }, [handleEventMapClick, events, eventId]);
 
   const content = (
     <>
