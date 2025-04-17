@@ -93,7 +93,7 @@
 
 .calendarEventNoneAttending {
   color: var(--mui-palette-secondary-contrastText) !important;
-  background-color: var(--mui-palette-error-main) !important;
+  background-color: var(--mui-palette-error-dark) !important;
 
   a,
   div,
@@ -114,7 +114,7 @@
     var(--mui-palette-success-main),
     var(--mui-palette-success-main) 10px,
     var(--mui-palette-success-dark) 10px,
-    var(--mui-palette-success-dark) 20px
+    var(--mui-palette-success-dark) 15px
   );
 
   a,
@@ -133,10 +133,10 @@
   color: var(--mui-palette-secondary-contrastText) !important;
   background: repeating-linear-gradient(
     -45deg,
-    var(--mui-palette-error-main),
-    var(--mui-palette-error-main) 10px,
+    var(--mui-palette-error-dark),
     var(--mui-palette-error-dark) 10px,
-    var(--mui-palette-error-dark) 20px
+    #9e2020 10px,
+    #9e2020 15px
   );
 
   a,
