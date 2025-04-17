@@ -33,6 +33,7 @@ export default function FormCalendarRegistrationCreate({
   event: scheduledEvent,
   family: userFamily,
   token: eventToken,
+  setLastChanged: setEventLastChanged,
 }: any) {
   const { t } = useTranslation("common");
 
@@ -76,6 +77,7 @@ export default function FormCalendarRegistrationCreate({
             const newRegistrations = registrations.concat(response.data);
             setRegistrations(newRegistrations);
             setCreated(true);
+            setEventLastChanged(Date.now());
             setTimeout(() => setCreated(false), 5000);
           } else if (response.status === 429) {
             setValidationErrors({ throttle: response.data.detail });
@@ -92,6 +94,7 @@ export default function FormCalendarRegistrationCreate({
             );
             setRegistrations(newRegistrations);
             setDeleted(true);
+            setEventLastChanged(Date.now());
             setTimeout(() => setDeleted(false), 5000);
           } else if (response.status === 429) {
             setValidationErrors({ throttle: response.data.detail });

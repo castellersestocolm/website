@@ -14,8 +14,6 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
-  Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
 import IconEast from "@mui/icons-material/East";
@@ -69,33 +67,9 @@ import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashbo
 import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import { capitalizeFirstLetter } from "../../utils/string";
-import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
 import IconAttachFile from "@mui/icons-material/AttachFile";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  dir?: string;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
-    </div>
-  );
-}
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
@@ -135,6 +109,9 @@ function UserDashboardPage() {
 
   const [updateOpen, setUpdateOpen] = React.useState(false);
   const [attendanceOpen, setAttendanceOpen] = React.useState(false);
+  const [lastChangedAttendance, setLastChangedAttendance] = React.useState(
+    Date.now(),
+  );
 
   // const [memberships, setMemberships] = React.useState(undefined);
   const [payments, setPayments] = React.useState(undefined);
@@ -223,7 +200,7 @@ function UserDashboardPage() {
         }
       }
     });
-  }, [setRehearsal, setCastles]);
+  }, [setRehearsal, setCastles, lastChangedAttendance]);
 
   function handleRequestCancelSubmit(id: string) {
     apiUserFamilyMemberRequestCancel(id).then((response) => {
@@ -680,6 +657,7 @@ function UserDashboardPage() {
                         <FormCalendarRegistrationCreate
                           event={rehearsal}
                           family={user.family}
+                          setLastChanged={setLastChangedAttendance}
                         />
                       </Box>
                     </Collapse>

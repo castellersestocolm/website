@@ -4,15 +4,23 @@ import Box from "@mui/material/Box";
 import { Divider, Icon, Link, Typography } from "@mui/material";
 import styles from "./styles.module.css";
 import Grid from "@mui/material/Grid2";
-import { EVENT_TYPE_ICON, getEnumLabel, Weekday } from "../../enums";
+import {
+  EVENT_TYPE_ICON,
+  getEnumLabel,
+  RegistrationStatus,
+  Weekday,
+} from "../../enums";
 import { useCallback } from "react";
 import IconChevronLeft from "@mui/icons-material/ChevronLeft";
 import IconChevronRight from "@mui/icons-material/ChevronRight";
 import IconButton from "@mui/material/IconButton";
 import { apiEventCalendarList } from "../../api";
+import { useAppContext } from "../AppContext/AppContext";
 
-export default function EventCalendar({ compact }: any) {
+export default function EventCalendar({ compact, lastChanged }: any) {
   const [t, i18n] = useTranslation("common");
+
+  const { user } = useAppContext();
 
   const [month, setMonth] = React.useState(new Date().getMonth());
   const [year, setYear] = React.useState(new Date().getFullYear());
@@ -76,7 +84,7 @@ export default function EventCalendar({ compact }: any) {
         setEvents(response.data);
       }
     });
-  }, [setEvents, month, year]);
+  }, [setEvents, lastChanged, month, year]);
 
   return (
     <Box key={i18n.resolvedLanguage} sx={{ flexGrow: 1 }}>
@@ -151,8 +159,47 @@ export default function EventCalendar({ compact }: any) {
                             dateString,
                         )
                         .map((event: any) => {
+                          const isUserAttending =
+                            user &&
+                            event.registrations.filter(
+                              (registration: any) =>
+                                registration.user.id === user.id &&
+                                registration.status ===
+                                  RegistrationStatus.ACTIVE,
+                            ).length > 0;
+                          const isOtherFamilyAllAttending =
+                            user && user.family && user.family.members
+                              ? event.registrations.filter(
+                                  (registration: any) =>
+                                    registration.user.id !== user.id &&
+                                    registration.status ===
+                                      RegistrationStatus.ACTIVE,
+                                ).length ===
+                                user.family.members.length - 1
+                              : true;
+
                           return (
-                            <Box className={styles.calendarEvent}>
+                            <Box
+                              className={
+                                user && event.require_signup
+                                  ? [
+                                      styles.calendarEvent,
+                                      isUserAttending &&
+                                        isOtherFamilyAllAttending &&
+                                        styles.calendarEventAllAttending,
+                                      !isUserAttending &&
+                                        !isOtherFamilyAllAttending &&
+                                        styles.calendarEventNoneAttending,
+                                      isUserAttending &&
+                                        !isOtherFamilyAllAttending &&
+                                        styles.calendarEventSomeAttending,
+                                      !isUserAttending &&
+                                        isOtherFamilyAllAttending &&
+                                        styles.calendarEventSomeNotAttending,
+                                    ].join(" ")
+                                  : styles.calendarEvent
+                              }
+                            >
                               <Icon className={styles.calendarIcon}>
                                 {EVENT_TYPE_ICON[event.type]}
                               </Icon>

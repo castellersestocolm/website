@@ -41,7 +41,6 @@ class EventAPI(ComuniCatViewSet):
         query_serializer=ListEventSerializer,
         responses={200: EventSerializer(many=True)},
     )
-    @method_decorator(cache_page(10))
     def list(self, request):
         serializer = ListEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -80,7 +79,6 @@ class CalendarAPI(ComuniCatViewSet):
         query_serializer=ListEventCalendarSerializer,
         responses={200: EventSerializer(many=True)},
     )
-    @method_decorator(cache_page(60))
     def list(self, request):
         serializer = ListEventCalendarSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -94,6 +92,7 @@ class CalendarAPI(ComuniCatViewSet):
         date_to = datetime.date(year=year, month=month, day=day_last)
 
         event_objs = event.api.get_list(
+            request_user_id=request.user.id if request.user.is_authenticated else None,
             module=self.module,
             date_from=date_from,
             date_to=date_to,

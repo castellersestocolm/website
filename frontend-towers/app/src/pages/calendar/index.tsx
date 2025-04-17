@@ -73,6 +73,9 @@ function CalendarPage() {
   const [events, setEvents] = React.useState(undefined);
   const [family, setFamily] = React.useState(undefined);
 
+  const [lastChanged, setLastChanged] = React.useState(Date.now());
+  const [isFirstLoad, setIsFirstLoad] = React.useState(true);
+
   const [eventsRegistrationsOpen, setEventsRegistrationsOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
@@ -149,7 +152,7 @@ function CalendarPage() {
         setEvents(response.data);
       }
     });
-  }, [setEvents, eventPage, token]);
+  }, [setEvents, lastChanged, eventPage, token]);
 
   React.useEffect(() => {
     if (user && events && events.count > 0) {
@@ -180,10 +183,11 @@ function CalendarPage() {
   }, [user, setFamily, handleEventMapClick, token, events, eventId]);
 
   React.useEffect(() => {
-    if (events && events.results.length > 0) {
+    if (isFirstLoad && events && events.results.length > 0) {
+      setIsFirstLoad(false);
       handleEventMapClick(eventId ? eventId : events.results[0].id);
     }
-  }, [handleEventMapClick, events, eventId]);
+  }, [handleEventMapClick, events, eventId, isFirstLoad]);
 
   const content = (
     <>
@@ -479,6 +483,7 @@ function CalendarPage() {
                                 event={event}
                                 family={family}
                                 token={token}
+                                setLastChanged={setLastChanged}
                               />
                             </Box>
                           </Collapse>
@@ -572,8 +577,8 @@ function CalendarPage() {
                 </Typography>
               </Box>
               <Divider />
-              <Box className={styles.calendarBox}>
-                <EventCalendar compact={false} />
+              <Box>
+                <EventCalendar compact={false} lastChanged={lastChanged} />
               </Box>
             </Card>
           </Grid>
