@@ -33,10 +33,14 @@
   padding: 6px;
   text-align: center;
   border-left: 1px solid var(--mui-palette-divider);
-  color: var(--mui-palette-grey-400);
-}
 
-.calendarDayNumber {
+  .calendarDayNumber {
+    color: var(--mui-palette-grey-400);
+  }
+
+  .calendarEvent {
+    opacity: 0.5;
+  }
 }
 
 .calendarIcon {

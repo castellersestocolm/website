@@ -24,6 +24,8 @@ export default function EventCalendar({ compact, lastChanged }: any) {
 
   const [month, setMonth] = React.useState(new Date().getMonth() + 1);
   const [year, setYear] = React.useState(new Date().getFullYear());
+  const [dateFrom, setDateFrom] = React.useState(undefined);
+  const [dateTo, setDateTo] = React.useState(undefined);
   const [events, setEvents] = React.useState(undefined);
 
   const handlePreviousMonth = useCallback(() => {
@@ -51,12 +53,17 @@ export default function EventCalendar({ compact, lastChanged }: any) {
     return new Date(d.setDate(diff));
   }
 
-  const dateMonthFrom = new Date(year, month - 1, 1);
-  const dateFrom = getMonday(dateMonthFrom);
+  React.useEffect(() => {
+    const dateMonthFrom = new Date(year, month - 1, 1);
+    const dateFrom = getMonday(dateMonthFrom);
 
-  const dateMonthTo = new Date(year, month, 0);
-  const dateTo = getMonday(dateMonthTo);
-  dateTo.setDate(dateTo.getDate() + 6);
+    const dateMonthTo = new Date(year, month, 0);
+    const dateTo = getMonday(dateMonthTo);
+    dateTo.setDate(dateTo.getDate() + 6);
+
+    setDateFrom(dateFrom);
+    setDateTo(dateTo);
+  }, [setDateFrom, setDateTo, month, year]);
 
   const getDatesArray = function (start: Date, end: Date) {
     const arr = [];
@@ -79,12 +86,17 @@ export default function EventCalendar({ compact, lastChanged }: any) {
   const dateWeeks = getDatesArray(dateFrom, dateTo);
 
   React.useEffect(() => {
-    apiEventCalendarList(month, year).then((response) => {
-      if (response.status === 200) {
-        setEvents(response.data);
-      }
-    });
-  }, [setEvents, lastChanged, month, year]);
+    if (dateFrom && dateTo) {
+      apiEventCalendarList(
+        dateFrom.toISOString().slice(0, 10),
+        dateTo.toISOString().slice(0, 10),
+      ).then((response) => {
+        if (response.status === 200) {
+          setEvents(response.data);
+        }
+      });
+    }
+  }, [setEvents, lastChanged, dateFrom, dateTo]);
 
   return (
     <Box key={i18n.resolvedLanguage} sx={{ flexGrow: 1 }}>

@@ -364,10 +364,13 @@ export const apiEventList = async (
   }
 };
 
-export const apiEventCalendarList = async (month: number, year: number) => {
+export const apiEventCalendarList = async (
+  dateFrom: string,
+  dateTo: string,
+) => {
   try {
     return await instance.get("/event/calendar/", {
-      params: { month: month, year: year },
+      params: { date_from: dateFrom, date_to: dateTo },
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

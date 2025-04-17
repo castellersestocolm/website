@@ -83,13 +83,21 @@ class CalendarAPI(ComuniCatViewSet):
         serializer = ListEventCalendarSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        year = serializer.validated_data["year"]
-        month = serializer.validated_data["month"]
+        # TODO: Add clean validation on serializer
+        if (
+            "date_from" in serializer.validated_data
+            and "date_to" in serializer.validated_data
+        ):
+            date_from = serializer.validated_data["date_from"]
+            date_to = serializer.validated_data["date_to"]
+        else:
+            year = serializer.validated_data["year"]
+            month = serializer.validated_data["month"]
 
-        __, day_last = calendar.monthrange(year=year, month=month)
+            __, day_last = calendar.monthrange(year=year, month=month)
 
-        date_from = datetime.date(year=year, month=month, day=1)
-        date_to = datetime.date(year=year, month=month, day=day_last)
+            date_from = datetime.date(year=year, month=month, day=1)
+            date_to = datetime.date(year=year, month=month, day=day_last)
 
         event_objs = event.api.get_list(
             request_user_id=request.user.id if request.user.is_authenticated else None,
