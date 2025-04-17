@@ -59,7 +59,6 @@ import ImageHeroTrips2025Berlin from "../../assets/images/heros/trips-2025-berli
 function HomePage() {
   const [t, i18n] = useTranslation("common");
 
-  const [events, setEvents] = React.useState(undefined);
   const { user, messages, rehearsal, setRehearsal } = useAppContext();
 
   const theme = useTheme();
@@ -79,14 +78,6 @@ function HomePage() {
       }
     });
   }, [setRehearsal, i18n.resolvedLanguage]);
-
-  React.useEffect(() => {
-    apiEventList().then((response) => {
-      if (response.status === 200) {
-        setEvents(response.data.results);
-      }
-    });
-  }, [setEvents]);
 
   return (
     <>
@@ -363,7 +354,7 @@ function HomePage() {
               className={styles.calendarBox}
             >
               <Card variant="outlined" className={styles.calendarCard}>
-                <EventCalendar events={events} compact={true} />
+                <EventCalendar compact={true} />
               </Card>
             </Grid>
           </Grid>

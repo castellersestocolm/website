@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "-": "^0.0.1",
-    "@aldabil/react-scheduler": "^2.9.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/dm-sans": "^5.1.1",

@@ -1,12 +1,7 @@
 import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  apiEventCalendarList,
-  apiEventList,
-  apiTowersCastleList,
-  apiUserFamily,
-} from "../../api";
+import { apiEventList, apiTowersCastleList, apiUserFamily } from "../../api";
 import ImageHeroCalendar from "../../assets/images/heros/calendar.jpg";
 import Grid from "@mui/material/Grid2";
 import {
@@ -74,13 +69,6 @@ function CalendarPage() {
 
   const { user } = useAppContext();
 
-  const [calendarMonth, setCalendarMonth] = React.useState(
-    new Date().getMonth() + 1,
-  );
-  const [calendarYear, setCalendarYear] = React.useState(
-    new Date().getFullYear(),
-  );
-  const [calendarEvents, setCalendarEvents] = React.useState(undefined);
   const [eventPage, setEventPage] = React.useState(1);
   const [events, setEvents] = React.useState(undefined);
   const [family, setFamily] = React.useState(undefined);
@@ -154,14 +142,6 @@ function CalendarPage() {
     },
     [setEventsMapOpen, setEventsCastlesOpen, setEventsRegistrationsOpen],
   );
-
-  React.useEffect(() => {
-    apiEventCalendarList(calendarMonth, calendarYear).then((response) => {
-      if (response.status === 200) {
-        setCalendarEvents(response.data);
-      }
-    });
-  }, [setCalendarEvents, calendarMonth, calendarYear]);
 
   React.useEffect(() => {
     apiEventList(eventPage, token).then((response) => {
@@ -331,6 +311,7 @@ function CalendarPage() {
                                               variant="body2"
                                               color="textSecondary"
                                               className={styles.eventCastleBox}
+                                              key={i}
                                             >
                                               <span>{castle.name}</span>
                                               {castle.is_published && (
@@ -368,6 +349,7 @@ function CalendarPage() {
                                               ];
                                             return (
                                               <Box
+                                                key={member.id}
                                                 className={
                                                   styles.eventRegistrationBox
                                                 }
@@ -591,7 +573,7 @@ function CalendarPage() {
               </Box>
               <Divider />
               <Box className={styles.calendarBox}>
-                <EventCalendar events={calendarEvents} compact={false} />
+                <EventCalendar compact={false} />
               </Box>
             </Card>
           </Grid>
