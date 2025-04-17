@@ -22,7 +22,7 @@ export default function EventCalendar({ compact, lastChanged }: any) {
 
   const { user } = useAppContext();
 
-  const [month, setMonth] = React.useState(new Date().getMonth());
+  const [month, setMonth] = React.useState(new Date().getMonth() + 1);
   const [year, setYear] = React.useState(new Date().getFullYear());
   const [events, setEvents] = React.useState(undefined);
 
