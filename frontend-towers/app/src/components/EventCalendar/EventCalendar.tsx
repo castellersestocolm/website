@@ -166,9 +166,9 @@ export default function EventCalendar({ compact }: any) {
                                     underline="none"
                                     href={
                                       "http://google.com/maps/place/" +
-                                      event.location.coordinate_lon +
+                                      event.location.coordinate_lat +
                                       "," +
-                                      event.location.coordinate_lat
+                                      event.location.coordinate_lon
                                     }
                                     target="_blank"
                                   >
