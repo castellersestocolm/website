@@ -37,6 +37,7 @@ def get(user_id: UUID) -> User:
                 ).order_by("-role", "user__firstname", "user__lastname"),
             )
         )
+        .with_permission_level()
         .first()
     )
 
@@ -44,15 +45,17 @@ def get(user_id: UUID) -> User:
 def get_list(
     user_ids: list[UUID] | None = None, modules: list[Module] | None = None
 ) -> list[User]:
-    user_qs = User.objects.select_related(
-        "towers", "family_member", "family_member__family"
-    ).prefetch_related(
-        Prefetch(
-            "family_member__family__members",
-            FamilyMember.objects.filter(
-                status__in=(FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
-            ).order_by("-role", "user__firstname", "user__lastname"),
+    user_qs = (
+        User.objects.select_related("towers", "family_member", "family_member__family")
+        .prefetch_related(
+            Prefetch(
+                "family_member__family__members",
+                FamilyMember.objects.filter(
+                    status__in=(FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
+                ).order_by("-role", "user__firstname", "user__lastname"),
+            )
         )
+        .with_permission_level()
     )
 
     if user_ids:

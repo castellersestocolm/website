@@ -27,6 +27,7 @@ import AboutTeamPage from "./pages/about-team";
 import AboutBylawsPage from "./pages/about-bylaws";
 import Trips2025BerlinPage from "./pages/trips-2025-berlin";
 import AssociationPage from "./pages/association";
+import AdminPage from "./pages/admin";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -147,6 +148,7 @@ const App = () => {
                     path={ROUTES.association.path}
                     element={<AssociationPage />}
                   />
+                  <Route path={ROUTES.admin.path} element={<AdminPage />} />
                 </Routes>
               </Box>
               <Footer />

@@ -1,7 +1,10 @@
 import axios from "axios";
 import i18n from "i18next";
 import { getCookie } from "typescript-cookie";
-import { API_EVENTS_LIST_PAGE_SIZE } from "../consts";
+import {
+  API_EVENTS_LIST_PAGE_SIZE,
+  API_PAYMENTS_LIST_PAGE_SIZE,
+} from "../consts";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -335,9 +338,14 @@ export const apiUserFamilyMemberRequestAccept = async (id: string) => {
   }
 };
 
-export const apiPaymentList = async () => {
+export const apiPaymentList = async (page: number = undefined) => {
   try {
-    return await instance.get("/payment/");
+    return await instance.get("/payment/", {
+      params: {
+        page_size: API_PAYMENTS_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

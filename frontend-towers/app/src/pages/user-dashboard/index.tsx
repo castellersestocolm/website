@@ -61,6 +61,7 @@ import {
   PAYMENT_STATUS_ICON,
   PaymentStatus,
   PaymentType,
+  PermissionLevel,
 } from "../../enums";
 import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
@@ -68,6 +69,11 @@ import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import { capitalizeFirstLetter } from "../../utils/string";
 import IconAttachFile from "@mui/icons-material/AttachFile";
+import { Pagination } from "@mui/lab";
+import {
+  API_EVENTS_LIST_PAGE_SIZE,
+  API_PAYMENTS_LIST_PAGE_SIZE,
+} from "../../consts";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 
@@ -88,11 +94,15 @@ function UserDashboardPage() {
     setRehearsal,
   } = useAppContext();
 
-  function handleSubmit() {
+  function handleLogoutSubmit() {
     apiUserLogout().then((response) => {
       setUser(null);
       navigate(ROUTES.home.path, { replace: true });
     });
+  }
+
+  function handleAdminSubmit() {
+    navigate(ROUTES.admin.path, { replace: true });
   }
 
   if (user === null) {
@@ -114,6 +124,7 @@ function UserDashboardPage() {
   );
 
   // const [memberships, setMemberships] = React.useState(undefined);
+  const [paymentPage, setPaymentPage] = React.useState(1);
   const [payments, setPayments] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
@@ -148,11 +159,6 @@ function UserDashboardPage() {
           );
         }
       });
-      apiPaymentList().then((response) => {
-        if (response.status === 200) {
-          setPayments(response.data);
-        }
-      });
       apiUserFamilyMemberRequestList().then((response) => {
         if (response.status === 200) {
           setFamilyMemberRequests(
@@ -180,6 +186,16 @@ function UserDashboardPage() {
     setMembership,
     // setMemberships
   ]);
+
+  React.useEffect(() => {
+    if (user) {
+      apiPaymentList(paymentPage).then((response) => {
+        if (response.status === 200) {
+          setPayments(response.data);
+        }
+      });
+    }
+  }, [user, i18n.resolvedLanguage, setPayments, paymentPage]);
 
   React.useEffect(() => {
     apiEventList().then((response) => {
@@ -391,13 +407,30 @@ function UserDashboardPage() {
             </Box>
           </Collapse>
         </Box>
+        {user.permission_level >= PermissionLevel.ADMIN && (
+          <>
+            <Divider />
+            <Box className={styles.userLogoutBox}>
+              <Link
+                color="secondary"
+                underline="none"
+                component="button"
+                onClick={handleAdminSubmit}
+                className={styles.link}
+              >
+                {t("pages.user-dashboard.link-admin")}
+                <IconEast className={styles.iconEast} />
+              </Link>
+            </Box>
+          </>
+        )}
         <Divider />
         <Box className={styles.userLogoutBox}>
           <Link
             color="secondary"
             underline="none"
             component="button"
-            onClick={handleSubmit}
+            onClick={handleLogoutSubmit}
             className={styles.link}
           >
             {t("pages.user-dashboard.link-logout")}
@@ -721,139 +754,162 @@ function UserDashboardPage() {
         </Grid>
 
         <Grid>
-          <Card variant="outlined">
-            <Box className={styles.userTopBox}>
-              <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.user-dashboard.section.payments.title")}
-              </Typography>
-            </Box>
-            <Divider />
+          <Grid container spacing={2} direction="column">
+            <Card variant="outlined">
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.user-dashboard.section.payments.title")}
+                </Typography>
+              </Box>
+              <Divider />
 
-            <Box className={styles.userFamilyBox}>
-              {payments && payments.length > 0 ? (
-                <List className={styles.userFamilyList}>
-                  {payments.map((payment: any, i: number, row: any) => (
-                    <Box key={payment.id}>
-                      <ListItemButton
-                        onClick={() => handlePaymentClick(payment.id)}
-                        disableTouchRipple={
-                          !payment.lines || !(payment.lines.length > 1)
-                        }
-                        dense
-                      >
-                        <ListItemIcon>
-                          {PAYMENT_STATUS_ICON[payment.status]}
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={
-                            <>
-                              <Typography variant="body2" component="span">
-                                {payment.type === PaymentType.CREDIT &&
-                                  t("pages.user-payments.payment.refund") +
-                                    " — "}
-                                {payment.description}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="textSecondary"
-                                component="span"
-                              >
-                                {" — "}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color={
-                                  payment.status === PaymentStatus.PENDING
-                                    ? "error"
-                                    : payment.status ===
-                                        PaymentStatus.PROCESSING
-                                      ? "secondary"
-                                      : "success"
-                                }
-                                component="span"
-                              >
-                                {payment.amount.amount}{" "}
-                                {payment.amount.currency}
-                                {payment.type === PaymentType.CREDIT && (
-                                  <>
-                                    {" "}
-                                    <IconReplay
-                                      fontSize="inherit"
-                                      className={styles.paymentRefundIcon}
-                                    />
-                                  </>
+              <Box className={styles.userFamilyBox}>
+                {payments && payments.results.length > 0 ? (
+                  <List className={styles.userFamilyList}>
+                    {payments.results.map(
+                      (payment: any, i: number, row: any) => (
+                        <Box key={payment.id}>
+                          <ListItemButton
+                            onClick={() => handlePaymentClick(payment.id)}
+                            disableTouchRipple={
+                              !payment.lines || !(payment.lines.length > 1)
+                            }
+                            dense
+                          >
+                            <ListItemIcon>
+                              {PAYMENT_STATUS_ICON[payment.status]}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={
+                                <>
+                                  <Typography variant="body2" component="span">
+                                    {payment.type === PaymentType.CREDIT &&
+                                      t("pages.user-payments.payment.refund") +
+                                        " — "}
+                                    {payment.description}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    component="span"
+                                  >
+                                    {" — "}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color={
+                                      payment.status === PaymentStatus.PENDING
+                                        ? "error"
+                                        : payment.status ===
+                                            PaymentStatus.PROCESSING
+                                          ? "secondary"
+                                          : "success"
+                                    }
+                                    component="span"
+                                  >
+                                    {payment.amount.amount}{" "}
+                                    {payment.amount.currency}
+                                    {payment.type === PaymentType.CREDIT && (
+                                      <>
+                                        {" "}
+                                        <IconReplay
+                                          fontSize="inherit"
+                                          className={styles.paymentRefundIcon}
+                                        />
+                                      </>
+                                    )}
+                                  </Typography>
+                                </>
+                              }
+                              secondary={
+                                getEnumLabel(
+                                  t,
+                                  "payment-status",
+                                  payment.status,
+                                ) +
+                                " " +
+                                (payment.status >= PaymentStatus.COMPLETED
+                                  ? t("pages.user-payments.payment.date-done")
+                                  : t(
+                                      "pages.user-payments.payment.date-doing",
+                                    )) +
+                                " " +
+                                new Date(
+                                  payment.transaction
+                                    ? payment.transaction.date_accounting
+                                    : payment.logs && payment.logs.length > 0
+                                      ? payment.logs[0].created_at
+                                      : payment.created_at,
+                                )
+                                  .toISOString()
+                                  .slice(0, 10)
+                              }
+                            />
+                            {payment.lines &&
+                              payment.lines.length > 1 &&
+                              (paymentsOpen[payment.id] ? (
+                                <IconExpandLess />
+                              ) : (
+                                <IconExpandMore />
+                              ))}
+                          </ListItemButton>
+                          {payment.lines && payment.lines.length > 1 && (
+                            <Collapse
+                              in={paymentsOpen[payment.id]}
+                              timeout="auto"
+                              unmountOnExit
+                            >
+                              <List className={styles.userFamilyList}>
+                                {payment.lines.map(
+                                  (paymentLine: any, i: number, row: any) => (
+                                    <Box key={paymentLine.id}>
+                                      <ListItemButton disableTouchRipple dense>
+                                        <ListItemText
+                                          primary={paymentLine.description}
+                                        />
+                                        <Typography
+                                          variant="body2"
+                                          component="span"
+                                        >
+                                          {paymentLine.amount.amount}{" "}
+                                          {paymentLine.amount.currency}
+                                        </Typography>
+                                      </ListItemButton>
+                                    </Box>
+                                  ),
                                 )}
-                              </Typography>
-                            </>
-                          }
-                          secondary={
-                            getEnumLabel(t, "payment-status", payment.status) +
-                            " " +
-                            (payment.status >= PaymentStatus.COMPLETED
-                              ? t("pages.user-payments.payment.date-done")
-                              : t("pages.user-payments.payment.date-doing")) +
-                            " " +
-                            new Date(
-                              payment.transaction
-                                ? payment.transaction.date_accounting
-                                : payment.logs && payment.logs.length > 0
-                                  ? payment.logs[0].created_at
-                                  : payment.created_at,
-                            )
-                              .toISOString()
-                              .slice(0, 10)
-                          }
-                        />
-                        {payment.lines &&
-                          payment.lines.length > 1 &&
-                          (paymentsOpen[payment.id] ? (
-                            <IconExpandLess />
-                          ) : (
-                            <IconExpandMore />
-                          ))}
-                      </ListItemButton>
-                      {payment.lines && payment.lines.length > 1 && (
-                        <Collapse
-                          in={paymentsOpen[payment.id]}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          <List className={styles.userFamilyList}>
-                            {payment.lines.map(
-                              (paymentLine: any, i: number, row: any) => (
-                                <Box key={paymentLine.id}>
-                                  <ListItemButton disableTouchRipple dense>
-                                    <ListItemText
-                                      primary={paymentLine.description}
-                                    />
-                                    <Typography
-                                      variant="body2"
-                                      component="span"
-                                    >
-                                      {paymentLine.amount.amount}{" "}
-                                      {paymentLine.amount.currency}
-                                    </Typography>
-                                  </ListItemButton>
-                                </Box>
-                              ),
-                            )}
-                          </List>
-                        </Collapse>
-                      )}
+                              </List>
+                            </Collapse>
+                          )}
 
-                      {i + 1 < row.length && <Divider />}
-                    </Box>
-                  ))}
-                </List>
-              ) : (
-                <Box className={styles.userFamilyEmpty}>
-                  <Typography component="div">
-                    {t("pages.user-dashboard.section.payments.empty")}
-                  </Typography>
-                </Box>
+                          {i + 1 < row.length && <Divider />}
+                        </Box>
+                      ),
+                    )}
+                  </List>
+                ) : (
+                  <Box className={styles.userFamilyEmpty}>
+                    <Typography component="div">
+                      {t("pages.user-dashboard.section.payments.empty")}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </Card>
+            {payments &&
+              payments.results.length > 0 &&
+              (paymentPage !== 1 ||
+                payments.count > payments.results.length) && (
+                <Stack alignItems="center">
+                  <Pagination
+                    count={Math.ceil(
+                      payments.count / API_PAYMENTS_LIST_PAGE_SIZE,
+                    )}
+                    onChange={(e, value) => setPaymentPage(value)}
+                  />
+                </Stack>
               )}
-            </Box>
-          </Card>
+          </Grid>
         </Grid>
         <Grid>
           <Card variant="outlined">

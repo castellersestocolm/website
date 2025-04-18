@@ -44,6 +44,9 @@ export const ROUTES = {
   "trips-2025-berlin": {
     path: "/trips/2025/berlin",
   },
+  admin: {
+    path: "/admin",
+  },
   "external-form-equipment": {
     path: "https://docs.google.com/forms/d/e/1FAIpQLSc1ZoTANdTVTpeZ_jqxvGVm1KXpjNZQLBD4m6pkCtugkBAWqg/viewform",
   },

@@ -149,3 +149,10 @@ export enum Month {
   NOVEMBER = 11,
   DECEMBER = 12,
 }
+
+export enum PermissionLevel {
+  NONE = 10,
+  USER = 20,
+  ADMIN = 30,
+  SUPERADMIN = 40,
+}

@@ -1,21 +1,32 @@
 import datetime
-from typing import List
 
 from django.apps import apps
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import IntegrityError
-from django.db.models import Exists, Subquery, Q, OuterRef, QuerySet
+from django.db.models import (
+    Exists,
+    Subquery,
+    Q,
+    OuterRef,
+    QuerySet,
+    Case,
+    IntegerField,
+    Value,
+    When,
+)
+from django.utils import timezone
 
 from comunicat.enums import Module
 
 from django.conf import settings
 
+from legal.enums import TeamType, PermissionLevel
 from membership.enums import MembershipStatus
 
 
 class UserQuerySet(QuerySet):
-    def with_has_active_membership(self, modules: List[Module] | None = None):
+    def with_has_active_membership(self, modules: list[Module] | None = None):
         MembershipModule = apps.get_model("membership", "MembershipModule")
 
         module_filter = Q()
@@ -35,13 +46,63 @@ class UserQuerySet(QuerySet):
             )
         )
 
+    def with_permission_level(
+        self,
+        date: datetime.date | None = None,
+        team_types: list[TeamType] = settings.MODULE_ALL_ADMIN_TEAM_TYPES,
+        modules: list[Module] | None = None,
+    ):
+        Member = apps.get_model("legal", "Member")
+
+        date = date or timezone.localdate()
+
+        member_filter = (
+            Q(team__date_from__lte=date)
+            & (Q(team__date_to__isnull=True) | Q(team__date_to__gte=date))
+            & Q(team__type__in=team_types)
+        )
+
+        if modules is not None:
+            member_filter &= Q(team__module__in=modules)
+
+        return self.with_has_active_membership(modules=modules).annotate(
+            has_active_role=Exists(
+                Member.objects.filter(
+                    member_filter,
+                    user_id=OuterRef("id"),
+                )
+            ),
+            permission_level=Case(
+                When(
+                    Q(is_superuser=True),
+                    then=Value(PermissionLevel.SUPERADMIN),
+                ),
+                When(
+                    Q(has_active_role=True),
+                    then=Value(PermissionLevel.ADMIN),
+                ),
+                default=Value(PermissionLevel.USER),
+                output_field=IntegerField(),
+            ),
+        )
+
 
 class UserManager(BaseUserManager):
     def get_queryset(self):
         return UserQuerySet(model=self.model, using=self._db, hints=self._hints)
 
-    def with_has_active_membership(self, modules: List[Module] | None = None):
+    def with_has_active_membership(self, modules: list[Module] | None = None):
         return self.get_queryset().with_has_active_membership(modules=modules)
+
+    def with_permission_level(
+        self,
+        date: datetime.date | None = None,
+        team_types: list[TeamType] = settings.MODULE_ALL_ADMIN_TEAM_TYPES,
+        modules: list[Module] | None = None,
+    ):
+        return self.get_queryset().with_permission_level(
+            date=date, team_types=team_types, modules=modules
+        )
 
     def create_user(
         self,

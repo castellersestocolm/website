@@ -21,6 +21,7 @@ from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from comunicat.enums import Module
+from legal.enums import TeamType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -369,6 +370,13 @@ MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES = [
 MODULE_ALL_FAMILY_SHARE_PAYMENTS = (
     os.getenv("MODULE_ALL_FAMILY_SHARE_PAYMENTS", "true").lower() == "true"
 )
+MODULE_ALL_ADMIN_TEAM_TYPES = [
+    TeamType[team_type.upper()]
+    for team_type in filter(
+        None,
+        os.getenv("MODULE_ALL_ADMIN_TEAM_TYPES", "board,technical").split(","),
+    )
+]
 
 MODULE_ORG_NAME = os.getenv("MODULE_ORG_NAME")
 MODULE_ORG_SHORT_NAME = os.getenv("MODULE_ORG_SHORT_NAME", MODULE_ORG_NAME)

@@ -7,7 +7,8 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 
-from comunicat.rest.utils.fields import IntEnumField
+from comunicat.rest.utils.fields import IntEnumField, EnumField
+from legal.enums import PermissionLevel
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import User, TowersUser, Family, FamilyMember, FamilyMemberRequest
 from django.conf import settings
@@ -111,12 +112,21 @@ class UserSerializer(UserSlimSerializer):
         read_only=True, required=False, source="family_member.family"
     )
     registration_finished = s.SerializerMethodField(read_only=True)
+    permission_level = s.SerializerMethodField(read_only=True)
 
     @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
     def get_registration_finished(self, obj):
         if not "module" in self.context:
             return False
         return obj.registration_finished(module=self.context["module"])
+
+    @swagger_serializer_method(
+        serializer_or_field=EnumField(PermissionLevel, read_only=True)
+    )
+    def get_permission_level(self, obj):
+        if hasattr(obj, "permission_level"):
+            return obj.permission_level
+        return PermissionLevel.NONE
 
     class Meta:
         model = User
@@ -133,6 +143,7 @@ class UserSerializer(UserSlimSerializer):
             "towers",
             "family",
             "registration_finished",
+            "permission_level",
             "created_at",
         )
         read_only_fields = (
@@ -148,6 +159,7 @@ class UserSerializer(UserSlimSerializer):
             "towers",
             "family",
             "registration_finished",
+            "permission_level",
             "created_at",
         )
 
