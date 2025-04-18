@@ -425,3 +425,6 @@ msgstr "actiu"
 
 #~ msgid "to"
 #~ msgstr "fins el"
+
+msgid "(and more)"
+msgstr "(i més)"

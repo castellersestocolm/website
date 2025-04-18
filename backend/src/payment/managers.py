@@ -298,7 +298,7 @@ class ExpenseQuerySet(QuerySet):
                 When(
                     Q(receipt_text__isnull=False),
                     then=Concat(
-                        F("receipt_text"), Value(" "), Value(str(_("(and others)")))
+                        F("receipt_text"), Value(" "), Value(str(_("(and more)")))
                     ),
                 ),
                 default=Value(str(_("Expense"))),

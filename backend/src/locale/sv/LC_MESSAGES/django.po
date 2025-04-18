@@ -423,3 +423,6 @@ msgstr "aktiv"
 
 #~ msgid "to"
 #~ msgstr "till"
+
+msgid "(and more)"
+msgstr "(och mer)"

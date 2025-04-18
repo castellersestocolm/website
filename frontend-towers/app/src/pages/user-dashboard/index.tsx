@@ -57,6 +57,7 @@ import {
   EventType,
   EXPENSE_STATUS_ICON,
   ExpenseStatus,
+  EXTENSION_ICON,
   FamilyMemberRequestStatus,
   getEnumLabel,
   MEMBERSHIP_STATUS_ICON,
@@ -72,14 +73,16 @@ import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import { capitalizeFirstLetter } from "../../utils/string";
 import IconAttachFile from "@mui/icons-material/AttachFile";
+import IconDowload from "@mui/icons-material/Download";
 import { Pagination } from "@mui/lab";
 import {
-  API_EVENTS_LIST_PAGE_SIZE,
   API_EXPENSES_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
 } from "../../consts";
+import IconButton from "@mui/material/IconButton";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
@@ -224,7 +227,7 @@ function UserDashboardPage() {
         }
       });
     }
-  }, [user, setExpenses, expensePage]);
+  }, [user, i18n.resolvedLanguage, setExpenses, expensePage]);
 
   React.useEffect(() => {
     apiEventList().then((response) => {
@@ -955,115 +958,157 @@ function UserDashboardPage() {
                 {expenses && expenses.results.length > 0 ? (
                   <List className={styles.userFamilyList}>
                     {expenses.results.map(
-                      (expense: any, i: number, row: any) => (
-                        <Box key={expense.id}>
-                          <ListItemButton
-                            onClick={() => handleExpenseClick(expense.id)}
-                            disableTouchRipple={
-                              !expense.receipts ||
-                              !(expense.receipts.length > 1)
-                            }
-                            dense
-                          >
-                            <ListItemIcon>
-                              {EXPENSE_STATUS_ICON[expense.status]}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                <>
-                                  <Typography variant="body2" component="span">
-                                    {expense.description}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    color="textSecondary"
-                                    component="span"
-                                  >
-                                    {" — "}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    color={
-                                      expense.status === PaymentStatus.PENDING
-                                        ? "error"
-                                        : expense.status ===
-                                            PaymentStatus.PROCESSING
-                                          ? "secondary"
-                                          : "success"
-                                    }
-                                    component="span"
-                                  >
-                                    {expense.amount.amount}{" "}
-                                    {expense.amount.currency}
-                                  </Typography>
-                                </>
+                      (expense: any, i: number, row: any) => {
+                        return (
+                          <Box key={expense.id}>
+                            <ListItemButton
+                              onClick={() => handleExpenseClick(expense.id)}
+                              disableTouchRipple={
+                                !expense.receipts ||
+                                !(expense.receipts.length > 0)
                               }
-                              secondary={
-                                getEnumLabel(
-                                  t,
-                                  "expense-status",
-                                  expense.status,
-                                ) +
-                                " " +
-                                (expense.status >= ExpenseStatus.APPROVED
-                                  ? t("pages.user-payments.payment.date-done")
-                                  : t(
-                                      "pages.user-payments.payment.date-doing",
-                                    )) +
-                                " " +
-                                new Date(
-                                  expense.logs && expense.logs.length > 0
-                                    ? expense.logs[0].created_at
-                                    : expense.created_at,
-                                )
-                                  .toISOString()
-                                  .slice(0, 10)
-                              }
-                            />
-                            {expense.receipts &&
-                              expense.receipts.length > 1 &&
-                              (expensesOpen[expense.id] ? (
-                                <IconExpandLess />
-                              ) : (
-                                <IconExpandMore />
-                              ))}
-                          </ListItemButton>
-                          {expense.receipts && expense.receipts.length > 1 && (
-                            <Collapse
-                              in={expensesOpen[expense.id]}
-                              timeout="auto"
-                              unmountOnExit
+                              dense
                             >
-                              <List className={styles.userFamilyList}>
-                                {expense.receipts.map(
-                                  (
-                                    expenseReceipt: any,
-                                    i: number,
-                                    row: any,
-                                  ) => (
-                                    <Box key={expenseReceipt.id}>
-                                      <ListItemButton disableTouchRipple dense>
-                                        <ListItemText
-                                          primary={expenseReceipt.description}
-                                        />
-                                        <Typography
-                                          variant="body2"
-                                          component="span"
-                                        >
-                                          {expenseReceipt.amount.amount}{" "}
-                                          {expenseReceipt.amount.currency}
-                                        </Typography>
-                                      </ListItemButton>
-                                    </Box>
-                                  ),
+                              <ListItemIcon>
+                                {expense.file ? (
+                                  <IconButton
+                                    className={styles.expenseFileIcon}
+                                    href={
+                                      new URL(expense.file, BACKEND_BASE_URL)
+                                        .href
+                                    }
+                                    target="_blank"
+                                  >
+                                    <IconDowload />
+                                  </IconButton>
+                                ) : (
+                                  EXPENSE_STATUS_ICON[expense.status]
                                 )}
-                              </List>
-                            </Collapse>
-                          )}
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  <>
+                                    <Typography
+                                      variant="body2"
+                                      component="span"
+                                    >
+                                      {expense.description}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                      component="span"
+                                    >
+                                      {" — "}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      color={
+                                        expense.status === PaymentStatus.PENDING
+                                          ? "error"
+                                          : expense.status ===
+                                              PaymentStatus.PROCESSING
+                                            ? "secondary"
+                                            : "success"
+                                      }
+                                      component="span"
+                                    >
+                                      {expense.amount.amount}{" "}
+                                      {expense.amount.currency}
+                                    </Typography>
+                                  </>
+                                }
+                                secondary={
+                                  getEnumLabel(
+                                    t,
+                                    "expense-status",
+                                    expense.status,
+                                  ) +
+                                  " " +
+                                  (expense.status >= ExpenseStatus.APPROVED
+                                    ? t("pages.user-payments.payment.date-done")
+                                    : t(
+                                        "pages.user-payments.payment.date-doing",
+                                      )) +
+                                  " " +
+                                  new Date(
+                                    expense.logs && expense.logs.length > 0
+                                      ? expense.logs[0].created_at
+                                      : expense.created_at,
+                                  )
+                                    .toISOString()
+                                    .slice(0, 10)
+                                }
+                              />
+                              {expense.receipts &&
+                                expense.receipts.length > 0 &&
+                                (expensesOpen[expense.id] ? (
+                                  <IconExpandLess />
+                                ) : (
+                                  <IconExpandMore />
+                                ))}
+                            </ListItemButton>
+                            {expense.receipts &&
+                              expense.receipts.length > 0 && (
+                                <Collapse
+                                  in={expensesOpen[expense.id]}
+                                  timeout="auto"
+                                  unmountOnExit
+                                >
+                                  <List className={styles.userFamilyList}>
+                                    {expense.receipts.map(
+                                      (
+                                        expenseReceipt: any,
+                                        i: number,
+                                        row: any,
+                                      ) => {
+                                        return (
+                                          <Box key={expenseReceipt.id}>
+                                            <ListItemButton
+                                              disableTouchRipple
+                                              dense
+                                            >
+                                              <ListItemText
+                                                primary={
+                                                  expenseReceipt.description
+                                                }
+                                              />
+                                              <Typography
+                                                variant="body2"
+                                                component="span"
+                                              >
+                                                {expenseReceipt.amount.amount}{" "}
+                                                {expenseReceipt.amount.currency}
+                                              </Typography>
+                                              {expenseReceipt.file && (
+                                                <IconButton
+                                                  className={
+                                                    styles.receiptFileIcon
+                                                  }
+                                                  href={
+                                                    new URL(
+                                                      expenseReceipt.file,
+                                                      BACKEND_BASE_URL,
+                                                    ).href
+                                                  }
+                                                  target="_blank"
+                                                >
+                                                  <IconDowload />
+                                                </IconButton>
+                                              )}
+                                            </ListItemButton>
+                                          </Box>
+                                        );
+                                      },
+                                    )}
+                                  </List>
+                                </Collapse>
+                              )}
 
-                          {i + 1 < row.length && <Divider />}
-                        </Box>
-                      ),
+                            {i + 1 < row.length && <Divider />}
+                          </Box>
+                        );
+                      },
                     )}
                   </List>
                 ) : (

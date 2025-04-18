@@ -1,10 +1,19 @@
+import os
+
 from django.core.validators import FileExtensionValidator
 
 from comunicat.db.mixins import StandardModel, Timestamps
 from django.db import models
 
+from comunicat.storage import signed_storage
 from document.enums import DocumentType, DocumentStatus
 from notify.enums import EmailType
+
+
+def get_document_file_name(instance, filename):
+    return os.path.join(
+        "document/document/file/", instance.id + instance.file_extension
+    )
 
 
 class Document(StandardModel, Timestamps):
@@ -25,7 +34,8 @@ class Document(StandardModel, Timestamps):
     )
 
     file = models.FileField(
-        upload_to="document/document/file/",
+        upload_to=get_document_file_name,
+        storage=signed_storage,
         validators=[FileExtensionValidator(["pdf"])],
     )
 

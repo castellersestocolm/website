@@ -4,6 +4,7 @@ from django.urls import path, include, re_path
 from django.conf import settings
 
 from comunicat import views
+from comunicat.views import ServeSignedStorageView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -20,4 +21,8 @@ if "social_django" in settings.INSTALLED_APPS:
 # TODO: Temporary until they are served properly
 urlpatterns += [
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+]
+
+urlpatterns += [
+    re_path(r"^media-private/(?P<path>.*)$", ServeSignedStorageView.as_view()),
 ]

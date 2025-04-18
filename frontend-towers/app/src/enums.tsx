@@ -17,6 +17,9 @@ import IconWater from "./components/IconWater/IconWater.jsx";
 import IconCheckCircleOutlined from "@mui/icons-material/CheckCircleOutlined";
 import IconCancelOutlined from "@mui/icons-material/CancelOutlined";
 import IconHelpOutlined from "@mui/icons-material/HelpOutlined";
+import IconPDF from "@mui/icons-material/PictureAsPdf";
+import IconImage from "@mui/icons-material/Image";
+import IconFile from "@mui/icons-material/FilePresent";
 
 export enum Language {
   ENGLISH = "en",
@@ -171,4 +174,12 @@ export const EXPENSE_STATUS_ICON: any = {
   30: <IconCheckCircle />,
   40: <IconCancel />,
   50: <IconCancel />,
+};
+
+export const EXTENSION_ICON: any = {
+  pdf: <IconPDF />,
+  jpg: <IconImage />,
+  jpeg: <IconImage />,
+  png: <IconImage />,
+  undefined: <IconFile />,
 };

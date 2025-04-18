@@ -171,3 +171,4 @@ cython_debug/
 /docker-data/dms/mail-*/
 
 /backend/media/
+/backend/media-private/

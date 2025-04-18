@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -9,6 +11,7 @@ from comunicat.db.mixins import StandardModel, Timestamps
 from django.db import models
 
 from comunicat.enums import Module
+from comunicat.storage import signed_storage
 from payment.enums import (
     PaymentType,
     PaymentMethod,
@@ -117,6 +120,12 @@ class Entity(StandardModel, Timestamps):
         verbose_name_plural = "entities"
 
 
+def get_expense_file_name(instance, filename):
+    return os.path.join(
+        "payment/expense/file/", str(instance.id) + "." + filename.split(".")[-1]
+    )
+
+
 # TODO: Add "where to be paid" like bank account
 class Expense(StandardModel, Timestamps):
     entity = models.ForeignKey(
@@ -129,9 +138,10 @@ class Expense(StandardModel, Timestamps):
     )
 
     file = models.FileField(
-        upload_to="payment/expense/file/",
+        upload_to=get_expense_file_name,
         null=True,
         blank=True,
+        storage=signed_storage,
         validators=[FileExtensionValidator(["pdf", "png", "jpg", "jpeg"])],
     )
 
@@ -155,6 +165,12 @@ class ExpenseLog(StandardModel, Timestamps):
     )
     status = models.PositiveSmallIntegerField(
         choices=((es.value, es.name) for es in ExpenseStatus),
+    )
+
+
+def get_receipt_file_name(instance, filename):
+    return os.path.join(
+        "payment/receipt/file/", str(instance.id) + "." + filename.split(".")[-1]
     )
 
 
@@ -187,7 +203,8 @@ class Receipt(StandardModel, Timestamps):
     )
 
     file = models.FileField(
-        upload_to="payment/receipt/file/",
+        upload_to=get_receipt_file_name,
+        storage=signed_storage,
         validators=[FileExtensionValidator(["pdf", "png", "jpg", "jpeg"])],
     )
 
@@ -385,6 +402,13 @@ class Transaction(StandardModel, Timestamps):
         return f"{self.source} - {self.method} - {self.amount}{extra_str}"
 
 
+def get_transaction_import_file_name(instance, filename):
+    return os.path.join(
+        "payment/transactionimport/file/",
+        str(instance.id) + "." + filename.split(".")[-1],
+    )
+
+
 class TransactionImport(StandardModel, Timestamps):
     source = models.ForeignKey(
         "Source", related_name="transaction_imports", on_delete=models.CASCADE
@@ -399,9 +423,10 @@ class TransactionImport(StandardModel, Timestamps):
     )
 
     file = models.FileField(
-        upload_to="payment/transactionimport/file/",
+        upload_to=get_transaction_import_file_name,
         null=True,
         blank=True,
+        storage=signed_storage,
         validators=[FileExtensionValidator(["csv"])],
     )
     input = models.TextField(max_length=10000, null=True, blank=True)

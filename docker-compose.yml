@@ -14,6 +14,7 @@ services:
     volumes:
       - ./backend/src:/backend/src:cached
       - ./backend/media:/backend/media:cached
+      - ./backend/media-private:/backend/media-private:cached
       - internal-media:/backend/internal_media:cached
     ports:
       - target: 8000
@@ -102,6 +103,7 @@ services:
     volumes:
       - ./backend/src:/backend/src:cached
       - ./backend/media:/backend/media:cached
+      - ./backend/media-private:/backend/media-private:cached
       - internal-media:/backend/internal_media:cached
     networks:
       - comunicat
