@@ -270,3 +270,38 @@ class PaymentLineQuerySet(QuerySet):
                 output_field=CharField(),
             ),
         )
+
+
+class ExpenseQuerySet(QuerySet):
+    def with_amount(self):
+        return self.annotate(
+            amount=Coalesce(
+                Sum("receipts__amount"), Value(0), output_field=MoneyOutput()
+            )
+        )
+
+    def with_description(self):
+        Receipt = apps.get_model("payment", "Receipt")
+
+        return self.annotate(
+            receipt_text=Subquery(
+                Receipt.objects.filter(expense_id=OuterRef("id"))
+                .order_by("date")
+                .values("description")[:1]
+            ),
+            receipts_count=Count("receipts"),
+            description=Case(
+                When(
+                    Q(receipts_count=1, receipt_text__isnull=False),
+                    then=F("receipt_text"),
+                ),
+                When(
+                    Q(receipt_text__isnull=False),
+                    then=Concat(
+                        F("receipt_text"), Value(" "), Value(str(_("(and others)")))
+                    ),
+                ),
+                default=Value(str(_("Expense"))),
+                output_field=CharField(),
+            ),
+        )

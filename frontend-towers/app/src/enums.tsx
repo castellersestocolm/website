@@ -156,3 +156,19 @@ export enum PermissionLevel {
   ADMIN = 30,
   SUPERADMIN = 40,
 }
+
+export enum ExpenseStatus {
+  CREATED = 10,
+  PROCESSING = 20,
+  APPROVED = 30,
+  REJECTED = 40,
+  DELETED = 50,
+}
+
+export const EXPENSE_STATUS_ICON: any = {
+  10: <IconPending />,
+  20: <IconChangeCircle />,
+  30: <IconCheckCircle />,
+  40: <IconCancel />,
+  50: <IconCancel />,
+};

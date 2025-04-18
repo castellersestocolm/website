@@ -6,8 +6,10 @@ from payment.models import (
     Payment,
     PaymentLog,
     Transaction,
-    PaymentReceipt,
+    # PaymentReceipt,
     Receipt,
+    Expense,
+    ExpenseLog,
 )
 
 
@@ -27,41 +29,51 @@ class PaymentLogSerializer(s.ModelSerializer):
 
 
 class ReceiptSerializer(s.ModelSerializer):
+    amount = MoneyField(read_only=True)
+
     class Meta:
         model = Receipt
         fields = (
             "id",
-            "file",
+            "description",
+            "date",
             "type",
             "status",
+            "amount",
+            "vat",
+            "file",
             "created_at",
         )
         read_only_fields = (
             "id",
-            "file",
+            "description",
+            "date",
             "type",
             "status",
-            "created_at",
-        )
-
-
-class PaymentReceiptSerializer(s.ModelSerializer):
-    receipt = ReceiptSerializer(read_only=True)
-
-    class Meta:
-        model = PaymentReceipt
-        fields = (
-            "id",
-            "receipt",
             "amount",
+            "vat",
+            "file",
             "created_at",
         )
-        read_only_fields = (
-            "id",
-            "receipt",
-            "amount",
-            "created_at",
-        )
+
+
+# class PaymentReceiptSerializer(s.ModelSerializer):
+#     receipt = ReceiptSerializer(read_only=True)
+#
+#     class Meta:
+#         model = PaymentReceipt
+#         fields = (
+#             "id",
+#             "receipt",
+#             "amount",
+#             "created_at",
+#         )
+#         read_only_fields = (
+#             "id",
+#             "receipt",
+#             "amount",
+#             "created_at",
+#         )
 
 
 class PaymentLineSerializer(s.ModelSerializer):
@@ -104,7 +116,7 @@ class PaymentSerializer(s.ModelSerializer):
     description = s.CharField(read_only=True)
     transaction = TransactionSerializer(read_only=True, required=False)
     lines = PaymentLineSerializer(many=True, read_only=True)
-    receipts = PaymentReceiptSerializer(many=True, read_only=True)
+    # receipts = PaymentReceiptSerializer(many=True, read_only=True)
     logs = PaymentLogSerializer(many=True, read_only=True)
 
     class Meta:
@@ -118,7 +130,7 @@ class PaymentSerializer(s.ModelSerializer):
             "description",
             "transaction",
             "lines",
-            "receipts",
+            # "receipts",
             "logs",
             "created_at",
         )
@@ -131,6 +143,51 @@ class PaymentSerializer(s.ModelSerializer):
             "description",
             "transaction",
             "lines",
+            # "receipts",
+            "logs",
+            "created_at",
+        )
+
+
+class ExpenseLogSerializer(s.ModelSerializer):
+    class Meta:
+        model = ExpenseLog
+        fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+
+
+class ExpenseSerializer(s.ModelSerializer):
+    amount = MoneyField(read_only=True)
+    description = s.CharField(read_only=True)
+    receipts = ReceiptSerializer(many=True, read_only=True)
+    logs = ExpenseLogSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Expense
+        fields = (
+            "id",
+            "status",
+            "amount",
+            "description",
+            "file",
+            "receipts",
+            "logs",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "status",
+            "amount",
+            "description",
+            "file",
             "receipts",
             "logs",
             "created_at",

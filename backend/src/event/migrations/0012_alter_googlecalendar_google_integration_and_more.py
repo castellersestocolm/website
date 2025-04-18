@@ -7,17 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0011_event_status'),
-        ('integration', '0001_initial'),
+        ("event", "0011_event_status"),
+        ("integration", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='googlecalendar',
-            name='google_integration',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='google_calendars', to='integration.googleintegration'),
+            model_name="googlecalendar",
+            name="google_integration",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="google_calendars",
+                to="integration.googleintegration",
+            ),
         ),
         migrations.DeleteModel(
-            name='GoogleIntegration',
+            name="GoogleIntegration",
         ),
     ]

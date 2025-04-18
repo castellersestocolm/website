@@ -21,6 +21,7 @@ import { useAppContext } from "../../components/AppContext/AppContext";
 import {
   apiEventList,
   apiMembershipList,
+  apiPaymentExpenseList,
   apiPaymentList,
   apiTowersCastleList,
   apiUserFamilyMemberRequestAccept,
@@ -54,6 +55,8 @@ import PageBase from "../../components/PageBase/PageBase";
 import {
   EVENT_TYPE_ICON,
   EventType,
+  EXPENSE_STATUS_ICON,
+  ExpenseStatus,
   FamilyMemberRequestStatus,
   getEnumLabel,
   MEMBERSHIP_STATUS_ICON,
@@ -72,6 +75,7 @@ import IconAttachFile from "@mui/icons-material/AttachFile";
 import { Pagination } from "@mui/lab";
 import {
   API_EVENTS_LIST_PAGE_SIZE,
+  API_EXPENSES_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
 } from "../../consts";
 
@@ -117,6 +121,10 @@ function UserDashboardPage() {
     [key: string]: boolean;
   }>({});
 
+  const [expensesOpen, setExpensesOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [updateOpen, setUpdateOpen] = React.useState(false);
   const [attendanceOpen, setAttendanceOpen] = React.useState(false);
   const [lastChangedAttendance, setLastChangedAttendance] = React.useState(
@@ -126,6 +134,8 @@ function UserDashboardPage() {
   // const [memberships, setMemberships] = React.useState(undefined);
   const [paymentPage, setPaymentPage] = React.useState(1);
   const [payments, setPayments] = React.useState(undefined);
+  const [expensePage, setExpensePage] = React.useState(1);
+  const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
 
@@ -144,6 +154,15 @@ function UserDashboardPage() {
         Object.entries(paymentsOpen).map(([k, v], i) => [k, false]),
       ),
       [paymentId]: !paymentsOpen[paymentId],
+    });
+  };
+
+  const handleExpenseClick = (expenseId: string) => {
+    setExpensesOpen({
+      ...Object.fromEntries(
+        Object.entries(expensesOpen).map(([k, v], i) => [k, false]),
+      ),
+      [expenseId]: !expensesOpen[expenseId],
     });
   };
 
@@ -196,6 +215,16 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setPayments, paymentPage]);
+
+  React.useEffect(() => {
+    if (user) {
+      apiPaymentExpenseList(expensePage).then((response) => {
+        if (response.status === 200) {
+          setExpenses(response.data);
+        }
+      });
+    }
+  }, [user, setExpenses, expensePage]);
 
   React.useEffect(() => {
     apiEventList().then((response) => {
@@ -911,6 +940,157 @@ function UserDashboardPage() {
               )}
           </Grid>
         </Grid>
+
+        <Grid>
+          <Grid container spacing={2} direction="column">
+            <Card variant="outlined">
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.user-dashboard.section.expenses.title")}
+                </Typography>
+              </Box>
+              <Divider />
+
+              <Box className={styles.userFamilyBox}>
+                {expenses && expenses.results.length > 0 ? (
+                  <List className={styles.userFamilyList}>
+                    {expenses.results.map(
+                      (expense: any, i: number, row: any) => (
+                        <Box key={expense.id}>
+                          <ListItemButton
+                            onClick={() => handleExpenseClick(expense.id)}
+                            disableTouchRipple={
+                              !expense.receipts ||
+                              !(expense.receipts.length > 1)
+                            }
+                            dense
+                          >
+                            <ListItemIcon>
+                              {EXPENSE_STATUS_ICON[expense.status]}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={
+                                <>
+                                  <Typography variant="body2" component="span">
+                                    {expense.description}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    component="span"
+                                  >
+                                    {" — "}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color={
+                                      expense.status === PaymentStatus.PENDING
+                                        ? "error"
+                                        : expense.status ===
+                                            PaymentStatus.PROCESSING
+                                          ? "secondary"
+                                          : "success"
+                                    }
+                                    component="span"
+                                  >
+                                    {expense.amount.amount}{" "}
+                                    {expense.amount.currency}
+                                  </Typography>
+                                </>
+                              }
+                              secondary={
+                                getEnumLabel(
+                                  t,
+                                  "expense-status",
+                                  expense.status,
+                                ) +
+                                " " +
+                                (expense.status >= ExpenseStatus.APPROVED
+                                  ? t("pages.user-payments.payment.date-done")
+                                  : t(
+                                      "pages.user-payments.payment.date-doing",
+                                    )) +
+                                " " +
+                                new Date(
+                                  expense.logs && expense.logs.length > 0
+                                    ? expense.logs[0].created_at
+                                    : expense.created_at,
+                                )
+                                  .toISOString()
+                                  .slice(0, 10)
+                              }
+                            />
+                            {expense.receipts &&
+                              expense.receipts.length > 1 &&
+                              (expensesOpen[expense.id] ? (
+                                <IconExpandLess />
+                              ) : (
+                                <IconExpandMore />
+                              ))}
+                          </ListItemButton>
+                          {expense.receipts && expense.receipts.length > 1 && (
+                            <Collapse
+                              in={expensesOpen[expense.id]}
+                              timeout="auto"
+                              unmountOnExit
+                            >
+                              <List className={styles.userFamilyList}>
+                                {expense.receipts.map(
+                                  (
+                                    expenseReceipt: any,
+                                    i: number,
+                                    row: any,
+                                  ) => (
+                                    <Box key={expenseReceipt.id}>
+                                      <ListItemButton disableTouchRipple dense>
+                                        <ListItemText
+                                          primary={expenseReceipt.description}
+                                        />
+                                        <Typography
+                                          variant="body2"
+                                          component="span"
+                                        >
+                                          {expenseReceipt.amount.amount}{" "}
+                                          {expenseReceipt.amount.currency}
+                                        </Typography>
+                                      </ListItemButton>
+                                    </Box>
+                                  ),
+                                )}
+                              </List>
+                            </Collapse>
+                          )}
+
+                          {i + 1 < row.length && <Divider />}
+                        </Box>
+                      ),
+                    )}
+                  </List>
+                ) : (
+                  <Box className={styles.userFamilyEmpty}>
+                    <Typography component="div">
+                      {t("pages.user-dashboard.section.expenses.empty")}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </Card>
+            {expenses &&
+              expenses.results.length > 0 &&
+              (expensePage !== 1 ||
+                expenses.count > expenses.results.length) && (
+                <Stack alignItems="center">
+                  <Pagination
+                    count={Math.ceil(
+                      expenses.count / API_EXPENSES_LIST_PAGE_SIZE,
+                    )}
+                    onChange={(e, value) => setExpensePage(value)}
+                  />
+                </Stack>
+              )}
+          </Grid>
+        </Grid>
+
         <Grid>
           <Card variant="outlined">
             <Box className={styles.userTopBox}>

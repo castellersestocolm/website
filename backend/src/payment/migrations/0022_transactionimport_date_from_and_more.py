@@ -6,20 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0021_account_type'),
+        ("payment", "0021_account_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='transactionimport',
-            name='date_from',
-            field=models.DateField(default='2025-01-01'),
+            model_name="transactionimport",
+            name="date_from",
+            field=models.DateField(default="2025-01-01"),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='transactionimport',
-            name='date_to',
-            field=models.DateField(default='2025-01-31'),
+            model_name="transactionimport",
+            name="date_to",
+            field=models.DateField(default="2025-01-31"),
             preserve_default=False,
         ),
     ]

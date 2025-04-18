@@ -18,6 +18,7 @@ router.register(
 )
 router.register("membership", membership.MembershipAPI, "membership")
 router.register("payment", payment.PaymentAPI, "payment")
+router.register("payment/expense", payment.ExpenseAPI, "payment_expense")
 router.register("event", event.EventAPI, "event")
 router.register("event/registration", event.RegistrationAPI, "event_registration")
 router.register("event/calendar", event.CalendarAPI, "event_calendar")

@@ -13,7 +13,6 @@ from payment.models import (
     Source,
     Entity,
     TransactionImport,
-    PaymentReceipt,
     Receipt,
     Expense,
     ExpenseLog,
@@ -28,14 +27,7 @@ class PaymentLineForPaymentInline(admin.TabularInline):
     model = PaymentLine
     ordering = ("-created_at",)
     readonly_fields = ("debit_line",)
-    extra = 0
-
-
-class PaymentReceiptInline(admin.TabularInline):
-    model = PaymentReceipt
-    readonly_fields = ("created_at",)
-    ordering = ("-created_at",)
-    raw_id_fields = ("receipt", "payment")
+    raw_id_fields = ("receipt",)
     extra = 0
 
 
@@ -76,7 +68,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "entity",
         "transaction",
     )
-    inlines = (PaymentLineForPaymentInline, PaymentReceiptInline, PaymentLogInline)
+    inlines = (PaymentLineForPaymentInline, PaymentLogInline)
 
     def get_queryset(self, request):
         return (
@@ -312,7 +304,6 @@ class ReceiptAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
     raw_id_fields = ("expense",)
-    inlines = (PaymentReceiptInline,)
 
     def file_name(self, obj):
         return obj.file.name
@@ -345,10 +336,10 @@ class ExpenseLogInline(admin.TabularInline):
 
 @admin.register(Expense)
 class ExpenseAdmin(admin.ModelAdmin):
-    search_fields = ("id", "user__firstname", "user__lastname", "user__email")
-    list_display = ("id", "user", "status", "created_at")
+    search_fields = ("id", "entity__firstname", "entity__lastname", "entity__email")
+    list_display = ("id", "entity", "status", "created_at")
     list_filter = ("status",)
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
-    raw_id_fields = ("user",)
+    raw_id_fields = ("entity",)
     inlines = (ReceiptInline, ExpenseLogInline)

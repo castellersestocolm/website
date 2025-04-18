@@ -3,6 +3,7 @@ import i18n from "i18next";
 import { getCookie } from "typescript-cookie";
 import {
   API_EVENTS_LIST_PAGE_SIZE,
+  API_EXPENSES_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
 } from "../consts";
 
@@ -343,6 +344,21 @@ export const apiPaymentList = async (page: number = undefined) => {
     return await instance.get("/payment/", {
       params: {
         page_size: API_PAYMENTS_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiPaymentExpenseList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/payment/expense/", {
+      params: {
+        page_size: API_EXPENSES_LIST_PAGE_SIZE,
         page: page,
       },
     });
