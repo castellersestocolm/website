@@ -37,6 +37,7 @@ services:
       - comunicat
     volumes:
       - media-files:/backend/media
+      - media-private-files:/backend/media-private
       - internal-media:/backend/internal_media:cached
     ports:
       - target: 8000
@@ -145,6 +146,7 @@ services:
       - database
     volumes:
       - media-files:/backend/media
+      - media-private-files:/backend/media-private
       - internal-media:/backend/internal_media:cached
     networks:
       - comunicat
@@ -255,6 +257,7 @@ services:
 
 volumes:
   media-files:
+  media-private-files:
   internal-media:
   postgres-data:
   mysql-data:

@@ -6,7 +6,7 @@ from comunicat.utils.media import sign_url
 class SignedStorage(FileSystemStorage):
     def __init__(
         self,
-        minutes: int = 5,
+        minutes: int = 60,
         location: str | None = None,
         base_url: str | None = None,
         *args,
