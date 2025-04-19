@@ -56,6 +56,7 @@ def get_list(
             )
         )
         .with_permission_level()
+        .order_by("firstname", "lastname", "created_at")
     )
 
     if user_ids:

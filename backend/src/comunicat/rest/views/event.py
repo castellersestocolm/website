@@ -9,13 +9,14 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 import user.api.event
+from comunicat.consts import PERMISSIONS_BY_LEVEL
 from comunicat.rest.serializers.event import (
     EventSerializer,
     RegistrationSerializer,
     CreateRegistrationSerializer,
     ListEventSerializer,
     DestroyRegistrationSerializer,
-    ListEventCalendarSerializer,
+    ListEventCalendarSerializer, ListRegistrationSerializer, RegistrationSlimSerializer,
 )
 
 from comunicat.rest.viewsets import ComuniCatViewSet
@@ -185,3 +186,28 @@ class RegistrationAPI(ComuniCatViewSet):
             return Response(status=401)
 
         return Response(status=204)
+
+    @swagger_auto_schema(
+        query_serializer=ListRegistrationSerializer,
+        responses={200: RegistrationSlimSerializer(many=True), 400: Serializer()},
+    )
+    def list(self, request):
+        serializer = ListRegistrationSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        if not request.user.is_authenticated:
+            return Response(status=400)
+
+        for_admin = serializer.validated_data.get("for_admin", False) and request.user.permission_level >= PERMISSIONS_BY_LEVEL["event"]["registration"]["list"]
+
+        registration_objs = event.api.registration.get_list(
+            event_id=serializer.validated_data["event_id"],
+            module=self.module,
+            user_id=request.user.id,
+            for_admin=for_admin
+        )
+
+        serializer = RegistrationSlimSerializer(
+            registration_objs, context={"module": self.module}, many=True
+        )
+        return Response(serializer.data)

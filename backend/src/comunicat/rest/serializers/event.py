@@ -174,3 +174,8 @@ class ListEventSerializer(s.Serializer):
 
 class DestroyRegistrationSerializer(s.Serializer):
     token = s.CharField(required=False)
+
+
+class ListRegistrationSerializer(s.Serializer):
+    event_id = s.UUIDField(required=True)
+    for_admin = s.BooleanField(required=False)

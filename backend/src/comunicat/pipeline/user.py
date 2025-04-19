@@ -1,4 +1,5 @@
 from comunicat.enums import Module
+from comunicat.utils.request import get_module_from_request
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import Family, FamilyMember
 
@@ -9,17 +10,9 @@ from django.conf import settings
 
 def module_data(backend, response, details, user, *args, **kwargs):
     request = response.get("request")
+
     # TODO: Fix this, for now set it from TOWERS
-    origin_module = Module.TOWERS
-
-    if request:
-        host = request.headers.get("Host")
-
-        if host:
-            if settings.MODULE_ORG_DOMAIN in host:
-                origin_module = Module.ORG
-            else:
-                origin_module = Module.TOWERS
+    origin_module = get_module_from_request(request=request) or Module.TOWERS
 
     user.firstname = details.get("first_name", user.firstname) or user.firstname
     user.lastname = details.get("last_name", user.lastname) or user.lastname

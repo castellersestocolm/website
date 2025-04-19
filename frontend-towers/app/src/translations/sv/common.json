@@ -198,6 +198,8 @@
   "pages.trips-2025-berlin.patrons.silver.title": "Silver",
   "pages.trips-2025-berlin.patrons.gold.title": "Guld",
   "pages.admin.title": "Administratörssida",
+  "pages.admin.events-table.title": "Deltagare",
+  "pages.admin.events-table.user": "Medlem",
   "enums.module.10": "Les Quatre Barres",
   "enums.module.20": "Castellers d'Estocolm",
   "enums.membership-status.0": "Begärt",
@@ -241,5 +243,10 @@
   "enums.month-long.9": "September",
   "enums.month-long.10": "Oktober",
   "enums.month-long.11": "November",
-  "enums.month-long.12": "December"
+  "enums.month-long.12": "December",
+  "enums.registration-status.0": "Okänd",
+  "enums.registration-status.10": "Begärt",
+  "enums.registration-status.20": "Deltar",
+  "enums.registration-status.30": "Deltar inte",
+  "enums.registration-status.40": "Frivillig"
 }

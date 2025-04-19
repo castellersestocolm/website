@@ -251,6 +251,16 @@ export const apiUserPassword = async (
   }
 };
 
+export const apiUserList = async () => {
+  try {
+    return await instance.get("/user/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiUserRequestPassword = async (email: string) => {
   try {
     return await instance.post("/user/request-password/", { email: email });
@@ -430,6 +440,24 @@ export const apiEventRegistrationDelete = async (
       "/event/registration/" + registrationId + "/",
       { params: { token: token } },
     );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiEventRegistrationList = async (
+  eventId: string,
+  forAdmin: boolean = undefined,
+) => {
+  try {
+    return await instance.get("/event/registration/", {
+      params: {
+        event_id: eventId,
+        for_admin: forAdmin,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

@@ -8,6 +8,25 @@ from event.utils.event import get_registration_initial_status
 from user.models import FamilyMember
 
 
+def get_list(
+    event_id: UUID,
+    user_id: UUID,
+    module: Module,
+    for_admin: bool = False,
+) -> List[Registration]:
+    registration_qs = (
+        Registration.objects.filter(
+            event_id=event_id
+        )
+        .order_by("user__firstname", "user__lastname", "created_at")
+    )
+
+    if not for_admin:
+        registration_qs = registration_qs.filter(user_id=user_id)
+
+    return list(registration_qs)
+
+
 def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> bool:
     registration_obj = (
         Registration.objects.filter(id=registration_id).select_related("user").first()

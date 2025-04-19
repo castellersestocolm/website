@@ -3,6 +3,10 @@ import logging
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
 
+from comunicat.enums import Module
+from comunicat.utils.request import get_module_from_request
+from user.models import User
+
 
 class SessionMiddlewareDynamicDomain(MiddlewareMixin):
     def __init__(self, get_response):
@@ -45,3 +49,20 @@ class SessionMiddlewareDynamicDomain(MiddlewareMixin):
                 )
 
         return response
+
+
+class UserMiddlewarePermissionLevel:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        module = get_module_from_request(request=request)
+
+        if getattr(request, "user"):
+            request.user = (
+                User.objects.filter(id=request.user.id)
+                .with_permission_level(modules=[module] if module else None)
+                .first()
+            )
+
+        return self.get_response(request)

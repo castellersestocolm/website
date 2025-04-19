@@ -11,6 +11,7 @@ import user.api
 import user.api.family
 import user.api.family_member
 import user.api.family_member_request
+from comunicat.consts import PERMISSIONS_BY_LEVEL
 
 from comunicat.rest.serializers.user import (
     UserSerializer,
@@ -28,6 +29,7 @@ from comunicat.rest.serializers.user import (
     UserPasswordChangeApplySerializer,
     FamilySerializer,
     ListFamilySerializer,
+    UserExtraSlimSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from user.enums import FamilyMemberRole, FamilyMemberStatus
@@ -222,6 +224,25 @@ class UserAPI(ComuniCatViewSet):
             return Response(serializer.data)
 
         return Response(status=400)
+
+    @swagger_auto_schema(
+        responses={200: UserExtraSlimSerializer(many=True), 400: Serializer()},
+    )
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=400)
+
+        if not request.user.permission_level >= PERMISSIONS_BY_LEVEL["user"]["user"]["list"]:
+            return Response(status=400)
+
+        user_objs = user.api.get_list(
+            modules=[self.module],
+        )
+
+        serializer = UserExtraSlimSerializer(
+            user_objs, context={"module": self.module}, many=True
+        )
+        return Response(serializer.data)
 
 
 class UserFamilyAPI(ComuniCatViewSet):

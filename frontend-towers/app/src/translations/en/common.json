@@ -198,6 +198,8 @@
   "pages.trips-2025-berlin.patrons.silver.title": "Silver",
   "pages.trips-2025-berlin.patrons.gold.title": "Golden",
   "pages.admin.title": "Admin dashboard",
+  "pages.admin.events-table.title": "Attendance",
+  "pages.admin.events-table.user": "Member",
   "enums.module.10": "Les Quatre Barres",
   "enums.module.20": "Castellers d'Estocolm",
   "enums.membership-status.0": "Requested",
@@ -241,5 +243,10 @@
   "enums.month-long.9": "September",
   "enums.month-long.10": "October",
   "enums.month-long.11": "November",
-  "enums.month-long.12": "December"
+  "enums.month-long.12": "December",
+  "enums.registration-status.0": "Unknown",
+  "enums.registration-status.10": "Requested",
+  "enums.registration-status.20": "Attending",
+  "enums.registration-status.30": "Not attending",
+  "enums.registration-status.40": "Tentative"
 }

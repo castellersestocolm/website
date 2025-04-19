@@ -5,3 +5,31 @@
   justify-content: center;
   align-items: stretch;
 }
+
+.adminCard {
+  width: 100%;
+}
+
+.adminTopBox {
+  padding: 12px 16px;
+  background-color: var(--mui-palette-primary-main);
+}
+
+.adminTableRowLast {
+  th,
+  td {
+    border-bottom: none !important;
+  }
+}
+
+.adminTableCellUnknown {
+  background-color: var(--mui-palette-LinearProgress-primaryBg);
+}
+
+.adminTableCellAttending {
+  background-color: var(--mui-palette-LinearProgress-successBg);
+}
+
+.adminTableCellNotAttending {
+  background-color: var(--mui-palette-LinearProgress-errorBg);
+}
