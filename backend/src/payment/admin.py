@@ -351,7 +351,7 @@ class ExpenseAdmin(admin.ModelAdmin):
 def sync_statements_google_drive(modeladmin, request, queryset):
     for statement_obj in queryset:
         payment.tasks.sync_statement.delay(
-            statement_ud=statement_obj.id,
+            statement_id=statement_obj.id,
         )
 
 
