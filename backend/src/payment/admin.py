@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db.models import JSONField
 
 import payment.api.entity
+import payment.tasks
 
 from payment.models import (
     Payment,
@@ -346,6 +347,14 @@ class ExpenseAdmin(admin.ModelAdmin):
     inlines = (ReceiptInline, ExpenseLogInline)
 
 
+@admin.action(description="Sync statements to Google Drive")
+def sync_statements_google_drive(modeladmin, request, queryset):
+    for statement_obj in queryset:
+        payment.tasks.sync_statement.delay(
+            statement_ud=statement_obj.id,
+        )
+
+
 @admin.register(Statement)
 class StatementAdmin(admin.ModelAdmin):
     search_fields = ("id",)
@@ -360,3 +369,4 @@ class StatementAdmin(admin.ModelAdmin):
     list_filter = ("date_from", "date_to")
     readonly_fields = ("created_at",)
     ordering = ("-date_from", "-date_to")
+    actions = (sync_statements_google_drive,)

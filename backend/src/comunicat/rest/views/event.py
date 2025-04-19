@@ -16,7 +16,9 @@ from comunicat.rest.serializers.event import (
     CreateRegistrationSerializer,
     ListEventSerializer,
     DestroyRegistrationSerializer,
-    ListEventCalendarSerializer, ListRegistrationSerializer, RegistrationSlimSerializer,
+    ListEventCalendarSerializer,
+    ListRegistrationSerializer,
+    RegistrationSlimSerializer,
 )
 
 from comunicat.rest.viewsets import ComuniCatViewSet
@@ -198,13 +200,17 @@ class RegistrationAPI(ComuniCatViewSet):
         if not request.user.is_authenticated:
             return Response(status=400)
 
-        for_admin = serializer.validated_data.get("for_admin", False) and request.user.permission_level >= PERMISSIONS_BY_LEVEL["event"]["registration"]["list"]
+        for_admin = (
+            serializer.validated_data.get("for_admin", False)
+            and request.user.permission_level
+            >= PERMISSIONS_BY_LEVEL["event"]["registration"]["list"]
+        )
 
         registration_objs = event.api.registration.get_list(
             event_id=serializer.validated_data["event_id"],
             module=self.module,
             user_id=request.user.id,
-            for_admin=for_admin
+            for_admin=for_admin,
         )
 
         serializer = RegistrationSlimSerializer(

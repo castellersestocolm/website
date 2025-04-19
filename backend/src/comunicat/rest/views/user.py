@@ -232,7 +232,10 @@ class UserAPI(ComuniCatViewSet):
         if not request.user.is_authenticated:
             return Response(status=400)
 
-        if not request.user.permission_level >= PERMISSIONS_BY_LEVEL["user"]["user"]["list"]:
+        if (
+            not request.user.permission_level
+            >= PERMISSIONS_BY_LEVEL["user"]["user"]["list"]
+        ):
             return Response(status=400)
 
         user_objs = user.api.get_list(

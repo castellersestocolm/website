@@ -14,11 +14,8 @@ def get_list(
     module: Module,
     for_admin: bool = False,
 ) -> List[Registration]:
-    registration_qs = (
-        Registration.objects.filter(
-            event_id=event_id
-        )
-        .order_by("user__firstname", "user__lastname", "created_at")
+    registration_qs = Registration.objects.filter(event_id=event_id).order_by(
+        "user__firstname", "user__lastname", "created_at"
     )
 
     if not for_admin:

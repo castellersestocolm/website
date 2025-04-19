@@ -24,5 +24,5 @@ PERMISSIONS_BY_LEVEL = {
         "user": {
             "list": PermissionLevel.ADMIN,
         }
-    }
+    },
 }
