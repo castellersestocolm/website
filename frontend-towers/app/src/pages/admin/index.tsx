@@ -97,26 +97,28 @@ function AdminPage() {
                   </TableCell>
                   {events &&
                     events.results.length > 0 &&
-                    events.results.map((event: any) => {
-                      return (
-                        <TableCell>
-                          <Typography variant="body2" fontWeight={600}>
-                            {event.title}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            {capitalizeFirstLetter(
-                              new Date(event.time_from)
-                                .toISOString()
-                                .slice(0, 10),
-                            ) +
-                              " " +
-                              new Date(event.time_from)
-                                .toTimeString()
-                                .slice(0, 5)}
-                          </Typography>
-                        </TableCell>
-                      );
-                    })}
+                    events.results
+                      .filter((event: any) => event.require_signup)
+                      .map((event: any) => {
+                        return (
+                          <TableCell>
+                            <Typography variant="body2" fontWeight={600}>
+                              {event.title}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                              {capitalizeFirstLetter(
+                                new Date(event.time_from)
+                                  .toISOString()
+                                  .slice(0, 10),
+                              ) +
+                                " " +
+                                new Date(event.time_from)
+                                  .toTimeString()
+                                  .slice(0, 5)}
+                            </Typography>
+                          </TableCell>
+                        );
+                      })}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -136,35 +138,37 @@ function AdminPage() {
                         {events &&
                           events.results.length > 0 &&
                           registrations &&
-                          events.results.map((event: any) => {
-                            const registration =
-                              event.id in registrations &&
-                              user.id in registrations[event.id] &&
-                              registrations[event.id][user.id];
-                            return (
-                              <TableCell
-                                className={
-                                  registration
-                                    ? registration.status ===
-                                      RegistrationStatus.ACTIVE
-                                      ? styles.adminTableCellAttending
-                                      : registration.status ===
-                                          RegistrationStatus.CANCELLED
-                                        ? styles.adminTableCellNotAttending
-                                        : styles.adminTableCellUnknown
-                                    : styles.adminTableCellUnknown
-                                }
-                              >
-                                {getEnumLabel(
-                                  t,
-                                  "registration-status",
-                                  registration
-                                    ? registration.status
-                                    : RegistrationStatus.CANCELLED,
-                                )}
-                              </TableCell>
-                            );
-                          })}
+                          events.results
+                            .filter((event: any) => event.require_signup)
+                            .map((event: any) => {
+                              const registration =
+                                event.id in registrations &&
+                                user.id in registrations[event.id] &&
+                                registrations[event.id][user.id];
+                              return (
+                                <TableCell
+                                  className={
+                                    registration
+                                      ? registration.status ===
+                                        RegistrationStatus.ACTIVE
+                                        ? styles.adminTableCellAttending
+                                        : registration.status ===
+                                            RegistrationStatus.CANCELLED
+                                          ? styles.adminTableCellNotAttending
+                                          : styles.adminTableCellUnknown
+                                      : styles.adminTableCellUnknown
+                                  }
+                                >
+                                  {getEnumLabel(
+                                    t,
+                                    "registration-status",
+                                    registration
+                                      ? registration.status
+                                      : RegistrationStatus.CANCELLED,
+                                  )}
+                                </TableCell>
+                              );
+                            })}
                       </TableRow>
                     );
                   })}
