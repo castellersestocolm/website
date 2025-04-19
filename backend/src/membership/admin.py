@@ -27,6 +27,7 @@ class MembershipAdmin(admin.ModelAdmin):
         "family",
         "date_from",
         "date_to",
+        "date_end",
         "status",
         "module_list",
         "created_at",
