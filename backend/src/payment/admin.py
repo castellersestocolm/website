@@ -16,6 +16,7 @@ from payment.models import (
     Receipt,
     Expense,
     ExpenseLog,
+    Statement,
 )
 
 from jsoneditor.forms import JSONEditor
@@ -343,3 +344,19 @@ class ExpenseAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     raw_id_fields = ("entity",)
     inlines = (ReceiptInline, ExpenseLogInline)
+
+
+@admin.register(Statement)
+class StatementAdmin(admin.ModelAdmin):
+    search_fields = ("id",)
+    list_display = (
+        "id",
+        "date_from",
+        "date_to",
+        "amount_start",
+        "amount_end",
+        "created_at",
+    )
+    list_filter = ("date_from", "date_to")
+    readonly_fields = ("created_at",)
+    ordering = ("-date_from", "-date_to")

@@ -438,3 +438,36 @@ class TransactionImport(StandardModel, Timestamps):
             import payment.api.importer
 
             payment.api.importer.run(transaction_import_id=self.id)
+
+
+def get_statement_file_name(instance, filename):
+    return os.path.join(
+        "payment/statement/file/",
+        str(instance.id) + "." + filename.split(".")[-1],
+    )
+
+
+class Statement(StandardModel, Timestamps):
+    source = models.ForeignKey(
+        "Source", related_name="statements", on_delete=models.CASCADE
+    )
+
+    date_from = models.DateField()
+    date_to = models.DateField()
+
+    amount_start = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    amount_end = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+
+    file = models.FileField(
+        upload_to=get_statement_file_name,
+        storage=signed_storage,
+        validators=[FileExtensionValidator(["pdf"])],
+    )
