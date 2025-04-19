@@ -33,13 +33,19 @@ class UserQuerySet(QuerySet):
         if modules is not None:
             module_filter = Q(module__in=modules)
 
+        date_today = timezone.localdate()
+
         return self.annotate(
             has_active_membership=Exists(
                 Subquery(
                     MembershipModule.objects.filter(
                         module_filter,
+                        Q(membership__date_end__isnull=True)
+                        | Q(membership__date_end__gte=date_today),
                         status=MembershipStatus.ACTIVE,
                         membership__status=MembershipStatus.ACTIVE,
+                        membership__date_from__lte=date_today,
+                        membership__date_to__gte=date_today,
                         membership__membership_users__user_id=OuterRef("id"),
                     )
                 )

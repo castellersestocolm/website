@@ -24,6 +24,9 @@ class Membership(StandardModel, Timestamps):
     date_from = models.DateField()
     date_to = models.DateField()
 
+    # Used to end a membership earlier
+    date_end = models.DateField(blank=True, null=True)
+
     objects = MembershipQuerySet.as_manager()
 
     @cached_property
