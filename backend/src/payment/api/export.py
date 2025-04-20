@@ -40,6 +40,7 @@ def export_payments(
             for k in [
                 "Date",
                 "Description",
+                "Account",
                 "Total amount",
                 "Line amount",
                 "Entity",
@@ -51,16 +52,18 @@ def export_payments(
 
     ws.column_dimensions["A"].width = 15
     ws.column_dimensions["B"].width = 40
-    ws.column_dimensions["C"].width = 15
-    ws.column_dimensions["D"].width = 15
-    ws.column_dimensions["E"].width = 25
+    ws.column_dimensions["C"].width = 10
+    ws.column_dimensions["D"].width = 40
+    ws.column_dimensions["E"].width = 15
     ws.column_dimensions["F"].width = 15
-    ws.column_dimensions["G"].width = 15
+    ws.column_dimensions["G"].width = 25
+    ws.column_dimensions["H"].width = 15
+    ws.column_dimensions["I"].width = 15
 
     ws.column_dimensions["A"].number_format = numbers.FORMAT_DATE_YYYYMMDD2
-    ws.column_dimensions["C"].number_format = numbers.FORMAT_NUMBER_00
-    ws.column_dimensions["D"].number_format = numbers.FORMAT_NUMBER_00
-    ws.column_dimensions["G"].number_format = numbers.FORMAT_NUMBER_00
+    ws.column_dimensions["E"].number_format = numbers.FORMAT_NUMBER_00
+    ws.column_dimensions["F"].number_format = numbers.FORMAT_NUMBER_00
+    ws.column_dimensions["I"].number_format = numbers.FORMAT_NUMBER_00
 
     font_fold = Font(bold=True)
 
@@ -78,8 +81,35 @@ def export_payments(
             [
                 payment_obj.date_accounting.strftime("%Y-%m-%d"),
                 payment_obj.description,
-                payment_obj.amount.amount,
-                "" if len(payment_line_objs) > 1 else payment_obj.amount.amount,
+                (
+                    ""
+                    if len(payment_line_objs) > 1
+                    else (
+                        payment_line_objs[0].account.code
+                        if payment_line_objs[0].account
+                        else ""
+                    )
+                ),
+                (
+                    ""
+                    if len(payment_line_objs) > 1
+                    else (
+                        payment_line_objs[0].account.name
+                        if payment_line_objs[0].account
+                        else ""
+                    )
+                ),
+                sum(
+                    [
+                        payment_line_obj.amount.amount
+                        for payment_line_obj in payment_line_objs
+                    ]
+                ),
+                (
+                    ""
+                    if len(payment_line_objs) > 1
+                    else payment_line_objs[0].amount.amount
+                ),
                 (
                     f"{payment_obj.entity.firstname} {payment_obj.entity.lastname}"
                     if payment_obj.entity
@@ -95,6 +125,8 @@ def export_payments(
                     [
                         "",
                         payment_line_obj.description,
+                        payment_line_obj.account.code if payment_obj.account else "",
+                        payment_line_obj.account.name if payment_obj.account else "",
                         "",
                         payment_line_obj.amount.amount,
                         "",
