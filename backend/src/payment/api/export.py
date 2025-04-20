@@ -140,15 +140,15 @@ def export_payments(
                     [
                         "",
                         payment_line_obj.description,
-                        payment_line_obj.account.code if payment_obj.account else "",
+                        payment_line_obj.account.code if payment_line_obj.account else "",
                         (
                             payment_line_obj.account.full_name
-                            if payment_obj.account
+                            if payment_line_obj.account
                             else ""
                         ),
                         (
                             SHORT_NAME_BY_MODULE[payment_line_obj.account.module]
-                            if payment_obj.account and payment_line_obj.account.module
+                            if payment_line_obj.account and payment_line_obj.account.module
                             else ""
                         ),
                         "",
