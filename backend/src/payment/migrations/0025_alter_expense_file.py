@@ -7,13 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0024_alter_receipt_expense'),
+        ("payment", "0024_alter_receipt_expense"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='expense',
-            name='file',
-            field=models.FileField(blank=True, null=True, storage='private', upload_to='payment/expense/file/', validators=[django.core.validators.FileExtensionValidator(['pdf', 'png', 'jpg', 'jpeg'])]),
+            model_name="expense",
+            name="file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                storage="private",
+                upload_to="payment/expense/file/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        ["pdf", "png", "jpg", "jpeg"]
+                    )
+                ],
+            ),
         ),
     ]

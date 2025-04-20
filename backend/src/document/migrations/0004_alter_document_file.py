@@ -9,13 +9,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0003_alter_document_file_alter_emailattachment_type'),
+        ("document", "0003_alter_document_file_alter_emailattachment_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='file',
-            field=models.FileField(storage=comunicat.storage.SignedStorage(), upload_to=document.models.get_document_file_name, validators=[django.core.validators.FileExtensionValidator(['pdf'])]),
+            model_name="document",
+            name="file",
+            field=models.FileField(
+                storage=comunicat.storage.SignedStorage(),
+                upload_to=document.models.get_document_file_name,
+                validators=[django.core.validators.FileExtensionValidator(["pdf"])],
+            ),
         ),
     ]

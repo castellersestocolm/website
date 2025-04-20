@@ -8,18 +8,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0002_alter_emailattachment_type'),
+        ("document", "0002_alter_emailattachment_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='file',
-            field=models.FileField(storage=comunicat.storage.SignedStorage(), upload_to='document/document/file/', validators=[django.core.validators.FileExtensionValidator(['pdf'])]),
+            model_name="document",
+            name="file",
+            field=models.FileField(
+                storage=comunicat.storage.SignedStorage(),
+                upload_to="document/document/file/",
+                validators=[django.core.validators.FileExtensionValidator(["pdf"])],
+            ),
         ),
         migrations.AlterField(
-            model_name='emailattachment',
-            name='type',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'REGISTER'), (11, 'PASSWORD'), (12, 'WELCOME'), (13, 'IMPORTED'), (20, 'FAMILY_INVITE'), (30, 'EVENT_SIGNUP')]),
+            model_name="emailattachment",
+            name="type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "REGISTER"),
+                    (11, "PASSWORD"),
+                    (12, "WELCOME"),
+                    (13, "IMPORTED"),
+                    (20, "FAMILY_INVITE"),
+                    (30, "EVENT_SIGNUP"),
+                ]
+            ),
         ),
     ]

@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notify', '0005_alter_email_type'),
+        ("notify", "0005_alter_email_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='email',
-            name='type',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'REGISTER'), (11, 'PASSWORD'), (12, 'WELCOME'), (13, 'IMPORTED'), (20, 'FAMILY_INVITE'), (30, 'EVENT_SIGNUP')]),
+            model_name="email",
+            name="type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "REGISTER"),
+                    (11, "PASSWORD"),
+                    (12, "WELCOME"),
+                    (13, "IMPORTED"),
+                    (20, "FAMILY_INVITE"),
+                    (30, "EVENT_SIGNUP"),
+                ]
+            ),
         ),
     ]

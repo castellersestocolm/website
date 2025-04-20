@@ -8,23 +8,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0026_alter_receipt_file_alter_transactionimport_file'),
+        ("payment", "0026_alter_receipt_file_alter_transactionimport_file"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='expense',
-            name='file',
-            field=models.FileField(blank=True, null=True, storage=comunicat.storage.SignedStorage(), upload_to='payment/expense/file/', validators=[django.core.validators.FileExtensionValidator(['pdf', 'png', 'jpg', 'jpeg'])]),
+            model_name="expense",
+            name="file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                storage=comunicat.storage.SignedStorage(),
+                upload_to="payment/expense/file/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        ["pdf", "png", "jpg", "jpeg"]
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='receipt',
-            name='file',
-            field=models.FileField(storage=comunicat.storage.SignedStorage(), upload_to='payment/receipt/file/', validators=[django.core.validators.FileExtensionValidator(['pdf', 'png', 'jpg', 'jpeg'])]),
+            model_name="receipt",
+            name="file",
+            field=models.FileField(
+                storage=comunicat.storage.SignedStorage(),
+                upload_to="payment/receipt/file/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        ["pdf", "png", "jpg", "jpeg"]
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='transactionimport',
-            name='file',
-            field=models.FileField(blank=True, null=True, storage=comunicat.storage.SignedStorage(), upload_to='payment/transactionimport/file/', validators=[django.core.validators.FileExtensionValidator(['csv'])]),
+            model_name="transactionimport",
+            name="file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                storage=comunicat.storage.SignedStorage(),
+                upload_to="payment/transactionimport/file/",
+                validators=[django.core.validators.FileExtensionValidator(["csv"])],
+            ),
         ),
     ]

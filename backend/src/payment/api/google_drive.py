@@ -166,13 +166,14 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
         folder_id=folder_month_id,
     )
 
-    payment_xlsx = export_payments(
+    payments_file = export_payments(
         date_from=statement_obj.date_from, date_to=statement_obj.date_to, module=module
     )
+    payments_name = f"Payments_{statement_obj.date_from.strftime('%Y%m%d')}_{statement_obj.date_to.strftime('%Y%m%d')}.xlsx"
     upload_file(
         service=service,
-        file_bytes=payment_xlsx,
-        file_name="payments.xlsx",
+        file_bytes=payments_file,
+        file_name=payments_name,
         folder_id=folder_month_id,
         mime_type="application/vnd.google-apps.spreadsheet",
     )

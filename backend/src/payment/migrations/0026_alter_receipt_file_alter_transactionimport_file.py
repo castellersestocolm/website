@@ -7,18 +7,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0025_alter_expense_file'),
+        ("payment", "0025_alter_expense_file"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='receipt',
-            name='file',
-            field=models.FileField(storage='private', upload_to='payment/receipt/file/', validators=[django.core.validators.FileExtensionValidator(['pdf', 'png', 'jpg', 'jpeg'])]),
+            model_name="receipt",
+            name="file",
+            field=models.FileField(
+                storage="private",
+                upload_to="payment/receipt/file/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        ["pdf", "png", "jpg", "jpeg"]
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='transactionimport',
-            name='file',
-            field=models.FileField(blank=True, null=True, storage='private', upload_to='payment/transactionimport/file/', validators=[django.core.validators.FileExtensionValidator(['csv'])]),
+            model_name="transactionimport",
+            name="file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                storage="private",
+                upload_to="payment/transactionimport/file/",
+                validators=[django.core.validators.FileExtensionValidator(["csv"])],
+            ),
         ),
     ]
