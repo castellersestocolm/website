@@ -5,6 +5,7 @@ from django.db.models import Prefetch
 from openpyxl.workbook import Workbook
 from openpyxl.styles import numbers, Font
 
+from comunicat.consts import SHORT_NAME_BY_MODULE
 from comunicat.enums import Module
 
 from django.utils.translation import gettext_lazy as _
@@ -41,7 +42,9 @@ def export_payments(
                 "Date",
                 "Description",
                 "Account",
-                "Total amount",
+                "Account name",
+                "Module",
+                "Amount",
                 "Line amount",
                 "Entity",
                 "Method",
@@ -56,14 +59,15 @@ def export_payments(
     ws.column_dimensions["D"].width = 40
     ws.column_dimensions["E"].width = 15
     ws.column_dimensions["F"].width = 15
-    ws.column_dimensions["G"].width = 25
-    ws.column_dimensions["H"].width = 15
+    ws.column_dimensions["G"].width = 15
+    ws.column_dimensions["H"].width = 25
     ws.column_dimensions["I"].width = 15
+    ws.column_dimensions["J"].width = 15
 
     ws.column_dimensions["A"].number_format = numbers.FORMAT_DATE_YYYYMMDD2
-    ws.column_dimensions["E"].number_format = numbers.FORMAT_NUMBER_00
     ws.column_dimensions["F"].number_format = numbers.FORMAT_NUMBER_00
-    ws.column_dimensions["I"].number_format = numbers.FORMAT_NUMBER_00
+    ws.column_dimensions["G"].number_format = numbers.FORMAT_NUMBER_00
+    ws.column_dimensions["J"].number_format = numbers.FORMAT_NUMBER_00
 
     font_fold = Font(bold=True)
 
@@ -94,8 +98,18 @@ def export_payments(
                     ""
                     if len(payment_line_objs) > 1
                     else (
-                        payment_line_objs[0].account.name
+                        payment_line_objs[0].account.full_name
                         if payment_line_objs[0].account
+                        else ""
+                    )
+                ),
+                (
+                    ""
+                    if len(payment_line_objs) > 1
+                    else (
+                        SHORT_NAME_BY_MODULE[payment_line_objs[0].account.module]
+                        if payment_line_objs[0].account
+                        and payment_line_objs[0].account.module
                         else ""
                     )
                 ),
@@ -126,7 +140,16 @@ def export_payments(
                         "",
                         payment_line_obj.description,
                         payment_line_obj.account.code if payment_obj.account else "",
-                        payment_line_obj.account.name if payment_obj.account else "",
+                        (
+                            payment_line_obj.account.full_name
+                            if payment_obj.account
+                            else ""
+                        ),
+                        (
+                            SHORT_NAME_BY_MODULE[payment_line_obj.account.module]
+                            if payment_obj.account and payment_line_obj.account.module
+                            else ""
+                        ),
                         "",
                         payment_line_obj.amount.amount,
                         "",

@@ -311,13 +311,17 @@ class Account(StandardModel, Timestamps):
         super().__init__(*args, **kwargs)
         self.__type = self.type
 
+    @property
+    def full_name(self) -> str:
+        if self.parent:
+            return f"{self.parent.name} - {self.name}"
+        return self.name
+
     def __str__(self) -> str:
         extra_end = ""
         if self.module:
             extra_end = f" ({CODE_NAME_BY_MODULE[self.module]})"
-        if self.parent:
-            return f"{self.code} - {self.parent.name} - {self.name}{extra_end}"
-        return f"{self.code} - {self.name}{extra_end}"
+        return f"{self.code} - {self.full_name}{extra_end}"
 
     def clean(self):
         if self.parent and not self.category:
