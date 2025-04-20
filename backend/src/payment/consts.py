@@ -9,10 +9,10 @@ GOOGLE_DRIVE_SCOPES = [
     "https://www.googleapis.com/auth/drive.file",
 ]
 
-GOOGLE_DRIVE_ID = settings.MODULE_ALL_GOOGLE_DRIVE_ID
+GOOGLE_DRIVE_ID = "0ANefqEg5Czl3Uk9PVA"
 
 GOOGLE_DRIVE_FILES_LIST = {
-    "driveId": GOOGLE_DRIVE_ID,
+    "driveId": "0ANefqEg5Czl3Uk9PVA",
     "includeItemsFromAllDrives": True,
     "corpora": "drive",
     "supportsAllDrives": True,

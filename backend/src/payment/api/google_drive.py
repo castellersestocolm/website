@@ -1,3 +1,5 @@
+from ast import Bytes
+from io import BytesIO
 from uuid import UUID
 
 import mimetypes
@@ -6,11 +8,71 @@ from comunicat.enums import Module
 from integration.models import GoogleIntegration
 
 from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
+from googleapiclient.discovery import build, Resource
 from googleapiclient.http import MediaIoBaseUpload
 
+from payment.api.export import export_payments
 from payment.consts import GOOGLE_DRIVE_SCOPES, GOOGLE_DRIVE_FILES_LIST, GOOGLE_DRIVE_ID
 from payment.models import Statement
+
+
+def upload_file(
+    service,
+    file_bytes: BytesIO,
+    file_name: str,
+    folder_id: str,
+    mime_type: str | None = None,
+) -> str:
+    media = MediaIoBaseUpload(file_bytes, mimetype=mimetypes.guess_type(file_name)[0])
+
+    results = (
+        service.files()
+        .list(
+            pageSize=100,
+            fields="files(id, name)",
+            **GOOGLE_DRIVE_FILES_LIST,
+            q=f"name = '{file_name}' and '{folder_id}' in parents",
+        )
+        .execute()
+    )
+
+    file_id_by_name = {file["name"]: file["id"] for file in results.get("files", [])}
+
+    file_id = file_id_by_name.get(file_name)
+    if file_id:
+        metadata = {
+            "name": file_name,
+            **({"mimeType": mime_type} if mime_type is not None else {}),
+        }
+        file = (
+            service.files()
+            .update(
+                fileId=file_id,
+                body=metadata,
+                media_body=media,
+                fields="id",
+                supportsAllDrives=True,
+            )
+            .execute()
+        )
+    else:
+        metadata = {
+            "name": file_name,
+            "parents": [folder_id],
+            **({"mimeType": mime_type} if mime_type is not None else {}),
+        }
+        file = (
+            service.files()
+            .create(
+                body=metadata,
+                media_body=media,
+                fields="id",
+                supportsAllDrives=True,
+            )
+            .execute()
+        )
+
+    return file["id"]
 
 
 # TODO: Move functions out
@@ -96,51 +158,23 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
     file_extension = statement_obj.file.name.split(".")[-1]
     file_name = f"{statement_obj.source.name}_{statement_obj.date_from.strftime('%Y%m%d')}_{statement_obj.date_to.strftime('%Y%m%d')}.{file_extension}"
-    file_media = MediaIoBaseUpload(
-        statement_obj.file.file, mimetype=mimetypes.guess_type(file_name)[0]
+
+    upload_file(
+        service=service,
+        file_bytes=statement_obj.file.file,
+        file_name=file_name,
+        folder_id=folder_month_id,
     )
 
-    results = (
-        service.files()
-        .list(
-            pageSize=100,
-            fields="files(id, name)",
-            **GOOGLE_DRIVE_FILES_LIST,
-            q=f"name = '{file_name}' and '{folder_month_id}' in parents",
-        )
-        .execute()
+    payment_xlsx = export_payments(
+        date_from=statement_obj.date_from, date_to=statement_obj.date_to, module=module
     )
-
-    file_id_by_name = {file["name"]: file["id"] for file in results.get("files", [])}
-
-    file_id = file_id_by_name.get(file_name)
-    if file_id:
-        file_metadata = {"name": file_name}
-        file = (
-            service.files()
-            .update(
-                fileId=file_id,
-                body=file_metadata,
-                media_body=file_media,
-                fields="id",
-                supportsAllDrives=True,
-            )
-            .execute()
-        )
-    else:
-        file_metadata = {
-            "name": file_name,
-            "parents": [folder_month_id],
-        }
-        file = (
-            service.files()
-            .create(
-                body=file_metadata,
-                media_body=file_media,
-                fields="id",
-                supportsAllDrives=True,
-            )
-            .execute()
-        )
+    upload_file(
+        service=service,
+        file_bytes=payment_xlsx,
+        file_name="payments.xlsx",
+        folder_id=folder_month_id,
+        mime_type="application/vnd.google-apps.spreadsheet",
+    )
 
     return None
