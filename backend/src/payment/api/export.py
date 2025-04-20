@@ -18,18 +18,20 @@ def export_payments(
     date_from: datetime.date, date_to: datetime.date, module: Module
 ) -> BytesIO:
     payment_objs = list(
-        Payment.objects.with_balance()
-        .filter(date_accounting__gte=date_from, date_accounting__lte=date_to)
-        .with_amount()
-        .with_description()
-        .select_related("entity", "transaction")
-        .prefetch_related(
-            Prefetch(
-                "lines", PaymentLine.objects.with_description().order_by("amount")
-            ),
-        )
-        .order_by("-date_accounting", "-date_interest", "-created_at", "id")
-        .distinct("date_accounting", "date_interest", "created_at", "id")
+        {
+            payment_obj.id: payment_obj
+            for payment_obj in Payment.objects.with_balance()
+            .filter(date_accounting__gte=date_from, date_accounting__lte=date_to)
+            .with_amount()
+            .with_description()
+            .select_related("entity", "transaction")
+            .prefetch_related(
+                Prefetch(
+                    "lines", PaymentLine.objects.with_description().order_by("amount")
+                ),
+            )
+            .order_by("-date_accounting", "-date_interest", "-created_at", "id")
+        }.values()
     )
 
     wb = Workbook()
@@ -115,22 +117,20 @@ def export_payments(
                         else ""
                     )
                 ),
-                multiplier * sum(
+                multiplier
+                * sum(
                     [
                         payment_line_obj.amount.amount
                         for payment_line_obj in payment_line_objs
                     ]
                 ),
-                multiplier * (
+                multiplier
+                * (
                     ""
                     if len(payment_line_objs) > 1
                     else payment_line_objs[0].amount.amount
                 ),
-                (
-                    payment_obj.entity.full_name
-                    if payment_obj.entity
-                    else ""
-                ),
+                (payment_obj.entity.full_name if payment_obj.entity else ""),
                 PaymentMethod(payment_obj.method).name if payment_obj.method else "",
                 balance,
             ]
@@ -141,7 +141,11 @@ def export_payments(
                     [
                         "",
                         payment_line_obj.description,
-                        payment_line_obj.account.code if payment_line_obj.account else "",
+                        (
+                            payment_line_obj.account.code
+                            if payment_line_obj.account
+                            else ""
+                        ),
                         (
                             payment_line_obj.account.full_name
                             if payment_line_obj.account
@@ -149,7 +153,8 @@ def export_payments(
                         ),
                         (
                             SHORT_NAME_BY_MODULE[payment_line_obj.account.module]
-                            if payment_line_obj.account and payment_line_obj.account.module
+                            if payment_line_obj.account
+                            and payment_line_obj.account.module
                             else ""
                         ),
                         "",
