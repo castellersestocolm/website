@@ -105,6 +105,14 @@ class Entity(StandardModel, Timestamps):
         "user.User", null=True, blank=True, on_delete=models.CASCADE
     )
 
+    @property
+    def full_name(self) -> str:
+        if self.firstname:
+            if self.lastname:
+                return f"{self.firstname} {self.lastname}"
+            return self.firstname
+        return _("Unknown")
+
     def __str__(self) -> str:
         end_str = f"<{self.email}>" if self.email else ""
         if self.user:

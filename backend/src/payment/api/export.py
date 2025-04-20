@@ -28,7 +28,8 @@ def export_payments(
                 "lines", PaymentLine.objects.with_description().order_by("amount")
             ),
         )
-        .order_by("-date_accounting", "-date_interest", "-created_at")
+        .order_by("-date_accounting", "-date_interest", "-created_at", "id")
+        .distinct("-date_accounting", "-date_interest", "-created_at", "id")
     )
 
     wb = Workbook()
@@ -126,7 +127,7 @@ def export_payments(
                     else payment_line_objs[0].amount.amount
                 ),
                 (
-                    f"{payment_obj.entity.firstname} {payment_obj.entity.lastname}"
+                    payment_obj.entity.full_name
                     if payment_obj.entity
                     else ""
                 ),
