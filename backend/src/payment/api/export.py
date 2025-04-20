@@ -54,13 +54,13 @@ def export_payments(
     )
 
     ws.column_dimensions["A"].width = 15
-    ws.column_dimensions["B"].width = 40
+    ws.column_dimensions["B"].width = 50
     ws.column_dimensions["C"].width = 10
     ws.column_dimensions["D"].width = 40
-    ws.column_dimensions["E"].width = 15
+    ws.column_dimensions["E"].width = 20
     ws.column_dimensions["F"].width = 15
     ws.column_dimensions["G"].width = 15
-    ws.column_dimensions["H"].width = 25
+    ws.column_dimensions["H"].width = 30
     ws.column_dimensions["I"].width = 15
     ws.column_dimensions["J"].width = 15
 
