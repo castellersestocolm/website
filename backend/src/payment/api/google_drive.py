@@ -1,4 +1,4 @@
-from ast import Bytes
+from collections import defaultdict
 from io import BytesIO
 from uuid import UUID
 
@@ -13,6 +13,7 @@ from googleapiclient.http import MediaIoBaseUpload
 
 from payment.api.export import export_payments
 from payment.consts import GOOGLE_DRIVE_SCOPES, GOOGLE_DRIVE_FILES_LIST, GOOGLE_DRIVE_ID
+from payment.enums import ExpenseStatus
 from payment.models import Statement, Receipt, Payment
 
 from django.utils.translation import gettext_lazy as _
@@ -181,18 +182,46 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
         .values_list("id", flat=True)
     )
     receipt_objs = list(
-        Receipt.objects.filter(payment_lines__payment_id__in=payment_ids)
+        Receipt.objects.filter(
+            expense__status=ExpenseStatus.APPROVED,
+            payment_lines__payment_id__in=payment_ids,
+        ).select_related("expense")
     )
 
+    receipts_by_expense_id = defaultdict(list)
+    expense_by_id = {}
     for receipt_obj in receipt_objs:
-        receipt_extension = receipt_obj.file.name.split(".")[-1]
-        receipt_name = f"{str(_('Receipt'))}_{receipt_obj.date.strftime('%Y%m%d')}_{receipt_obj.id}.{receipt_extension}"
+        expense_by_id[receipt_obj.expense_id] = receipt_obj.expense
+        receipts_by_expense_id[receipt_obj.expense_id].append(receipt_obj)
 
-        upload_file(
+    for expense_obj in expense_by_id.values():
+        # Reuse the same folder for the same entity
+        folder_expense_id = create_folder(
             service=service,
-            file_bytes=receipt_obj.file.file,
-            file_name=receipt_name,
-            folder_id=folder_receipts_id,
+            folder_name=expense_obj.entity.full_name,
+            parent_id=folder_receipts_id,
         )
+
+        if expense_obj.file:
+            expense_extension = expense_obj.file.name.split(".")[-1]
+            expense_name = f"{str(_('Expense'))}_{expense_obj.id}.{expense_extension}"
+
+            upload_file(
+                service=service,
+                file_bytes=expense_obj.file.file,
+                file_name=expense_name,
+                folder_id=folder_expense_id,
+            )
+
+        for receipt_obj in receipts_by_expense_id[expense_obj.id]:
+            receipt_extension = receipt_obj.file.name.split(".")[-1]
+            receipt_name = f"{str(_('Receipt'))}_{receipt_obj.date.strftime('%Y%m%d')}_{receipt_obj.id}.{receipt_extension}"
+
+            upload_file(
+                service=service,
+                file_bytes=receipt_obj.file.file,
+                file_name=receipt_name,
+                folder_id=folder_expense_id,
+            )
 
     return None
