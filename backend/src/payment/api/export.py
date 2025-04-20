@@ -10,7 +10,7 @@ from comunicat.enums import Module
 
 from django.utils.translation import gettext_lazy as _
 
-from payment.enums import PaymentMethod
+from payment.enums import PaymentMethod, PaymentType
 from payment.models import Payment, PaymentLine
 
 
@@ -78,6 +78,7 @@ def export_payments(
     for payment_obj in payment_objs:
         balance = ""
         payment_line_objs = list(payment_obj.lines.all())
+        multiplier = 1 if payment_obj.type == PaymentType.DEBIT else -1
         if not current_date or payment_obj.date_accounting != current_date:
             balance = payment_obj.balance.amount
             current_date = payment_obj.date_accounting
@@ -113,13 +114,13 @@ def export_payments(
                         else ""
                     )
                 ),
-                sum(
+                multiplier * sum(
                     [
                         payment_line_obj.amount.amount
                         for payment_line_obj in payment_line_objs
                     ]
                 ),
-                (
+                multiplier * (
                     ""
                     if len(payment_line_objs) > 1
                     else payment_line_objs[0].amount.amount
@@ -151,7 +152,7 @@ def export_payments(
                             else ""
                         ),
                         "",
-                        payment_line_obj.amount.amount,
+                        multiplier * payment_line_obj.amount.amount,
                         "",
                         "",
                         "",
