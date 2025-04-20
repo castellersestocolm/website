@@ -29,7 +29,7 @@ def export_payments(
             ),
         )
         .order_by("-date_accounting", "-date_interest", "-created_at", "id")
-        .distinct("-date_accounting", "-date_interest", "-created_at", "id")
+        .distinct("date_accounting", "date_interest", "created_at", "id")
     )
 
     wb = Workbook()
