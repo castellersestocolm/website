@@ -4,6 +4,8 @@ from uuid import UUID
 
 import mimetypes
 
+from django.db.models import Q
+
 from comunicat.enums import Module
 from integration.models import GoogleIntegration
 
@@ -183,7 +185,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
     )
     receipt_objs = list(
         Receipt.objects.filter(
-            expense__status=ExpenseStatus.APPROVED,
+            Q(expense__status=ExpenseStatus.APPROVED) | Q(expense__isnull=True),
             payment_lines__payment_id__in=payment_ids,
         ).select_related("expense")
     )
@@ -191,8 +193,11 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
     receipts_by_expense_id = defaultdict(list)
     expense_by_id = {}
     for receipt_obj in receipt_objs:
-        expense_by_id[receipt_obj.expense_id] = receipt_obj.expense
-        receipts_by_expense_id[receipt_obj.expense_id if receipt_obj.expense else None].append(receipt_obj)
+        if receipt_obj.expense:
+            expense_by_id[receipt_obj.expense_id] = receipt_obj.expense
+            receipts_by_expense_id[receipt_obj.expense_id].append(receipt_obj)
+        else:
+            receipts_by_expense_id[None].append(receipt_obj)
 
     for expense_obj in expense_by_id.values():
         # Reuse the same folder for the same entity

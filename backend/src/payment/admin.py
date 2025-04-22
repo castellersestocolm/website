@@ -51,7 +51,13 @@ class PaymentLogInline(admin.TabularInline):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    search_fields = ("id", "text")
+    search_fields = (
+        "id",
+        "text",
+        "entity__firstname",
+        "entity__lastname",
+        "entity__email",
+    )
     list_display = (
         # "id",
         "date_accounting",
@@ -105,7 +111,14 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(PaymentLine)
 class PaymentLineAdmin(admin.ModelAdmin):
-    search_fields = ("id", "text", "payment__text")
+    search_fields = (
+        "id",
+        "text",
+        "payment__text",
+        "payment__entity__firstname",
+        "payment__entity__lastname",
+        "payment__entity__email",
+    )
     list_display = (
         # "id",
         "date_accounting",
