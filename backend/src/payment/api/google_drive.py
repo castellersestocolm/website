@@ -192,7 +192,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
     expense_by_id = {}
     for receipt_obj in receipt_objs:
         expense_by_id[receipt_obj.expense_id] = receipt_obj.expense
-        receipts_by_expense_id[receipt_obj.expense_id].append(receipt_obj)
+        receipts_by_expense_id[receipt_obj.expense_id if receipt_obj.expense else None].append(receipt_obj)
 
     for expense_obj in expense_by_id.values():
         # Reuse the same folder for the same entity
@@ -223,5 +223,17 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
                 file_name=receipt_name,
                 folder_id=folder_expense_id,
             )
+
+    # Receipts that don't have an associated expense
+    for receipt_obj in receipts_by_expense_id.get(None, []):
+        receipt_extension = receipt_obj.file.name.split(".")[-1]
+        receipt_name = f"{str(_('Receipt'))}_{receipt_obj.date.strftime('%Y%m%d')}_{receipt_obj.id}.{receipt_extension}"
+
+        upload_file(
+            service=service,
+            file_bytes=receipt_obj.file.file,
+            file_name=receipt_name,
+            folder_id=folder_receipts_id,
+        )
 
     return None
