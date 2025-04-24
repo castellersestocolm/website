@@ -112,21 +112,7 @@
       crossorigin=""
     ></script>
 
-    <script
-      src="https://www.paypal.com/sdk/js?client-id=BAAn6TQ1TM06kfyHjLnKaLksYFl2FQS1gLVO_JfKXpK1636nVfK_54etCCi8QG7Kj5lQzWR41cm71FM4uI&components=hosted-buttons&disable-funding=venmo&currency=EUR"
-      crossorigin="anonymous"
-      async
-    ></script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", (event) => {
-        paypal
-          .HostedButtons({
-            hostedButtonId: "SD22GGHQ5BAEC",
-          })
-          .render("#paypal-container-SD22GGHQ5BAEC");
-      });
-    </script>
+    <script src="https://www.paypal.com/sdk/js?client-id=BAAn6TQ1TM06kfyHjLnKaLksYFl2FQS1gLVO_JfKXpK1636nVfK_54etCCi8QG7Kj5lQzWR41cm71FM4uI&components=hosted-buttons&disable-funding=venmo&currency=EUR"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -142,4 +128,13 @@
       To create app production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <footer>
+    <script>
+      paypal
+        .HostedButtons({
+          hostedButtonId: "SD22GGHQ5BAEC",
+        })
+        .render("#paypal-container-SD22GGHQ5BAEC");
+    </script>
+  </footer>
 </html>
