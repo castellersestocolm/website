@@ -1,0 +1,9 @@
+.saleBandanaPayPal {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  > * {
+    width: 30.625rem;
+  }
+}
