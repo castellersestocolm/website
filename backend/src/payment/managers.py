@@ -266,6 +266,7 @@ class PaymentLineQuerySet(QuerySet):
                     ),
                 ),
                 When(Q(text__isnull=False), then=F("text")),
+                When(Q(receipt__isnull=False), then=F("receipt__description")),
                 default=Value(str(_("Unspecified"))),
                 output_field=CharField(),
             ),
