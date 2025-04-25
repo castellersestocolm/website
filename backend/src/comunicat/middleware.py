@@ -56,12 +56,14 @@ class UserMiddlewarePermissionLevel:
         self.get_response = get_response
 
     def __call__(self, request):
-        module = get_module_from_request(request=request)
+        # module = get_module_from_request(request=request)
 
         if getattr(request, "user"):
             request.user = (
                 User.objects.filter(id=request.user.id)
-                .with_permission_level(modules=[module] if module else None)
+                # TODO: Get the right module
+                .with_permission_level()
+                # .with_permission_level(modules=[module] if module else None)
                 .first()
             )
 
