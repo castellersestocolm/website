@@ -50,6 +50,9 @@ export const ROUTES = {
   "sale-bandana": {
     path: "/sale/bandana",
   },
+  "sale-tshirt": {
+    path: "/sale/tshirt",
+  },
   "external-form-equipment": {
     path: "https://docs.google.com/forms/d/e/1FAIpQLSc1ZoTANdTVTpeZ_jqxvGVm1KXpjNZQLBD4m6pkCtugkBAWqg/viewform",
   },
