@@ -5,7 +5,7 @@ import ImageHeroSaleTshirt from "../../assets/images/heros/sale-tshirt.jpg";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import Box from "@mui/material/Box";
 
-function SaleTshirtPage() {
+function SaleTshirtsPage() {
   const { t } = useTranslation("common");
 
   const content = (
@@ -17,11 +17,11 @@ function SaleTshirtPage() {
 
   return (
     <PageImageHero
-      title={t("pages.sale-tshirt.title")}
+      title={t("pages.sale-tshirts.title")}
       content={content}
       hero={ImageHeroSaleTshirt}
     />
   );
 }
 
-export default SaleTshirtPage;
+export default SaleTshirtsPage;
