@@ -1,0 +1,56 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.image {
+  height: 100%;
+  border-radius: 8px;
+  padding: 0 16px;
+  overflow: hidden;
+}
+
+.image:last-child {
+  padding-right: 16px !important;
+}
+
+.imageDense {
+  height: 100%;
+  border-radius: 8px;
+  padding: 0 12px;
+  overflow: hidden;
+}
+
+.imageDense:last-child {
+  padding-right: 12px !important;
+}
+
+.inner {
+  position: relative;
+  width: calc(100% + 48px);
+  height: 100%;
+  overflow: hidden;
+  margin-left: -24px;
+  margin-right: -24px;
+}
+
+.wrapper {
+  position: absolute;
+  display: flex;
+  height: 100%;
+}
+
+.section {
+  display: flex;
+  animation: swipe var(--speed) linear infinite backwards;
+}
+
+@keyframes swipe {
+  0% {
+    transform: translate(0);
+  }
+
+  100% {
+    transform: translate(-100%);
+  }
+}
