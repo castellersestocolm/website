@@ -234,7 +234,8 @@ function UserDashboardPage() {
       if (response.status === 200) {
         const event = response.data.results.find((event: any) => {
           return (
-            event.type === EventType.REHEARSAL &&
+            (event.type === EventType.REHEARSAL ||
+              event.type === EventType.PERFORMANCE) &&
             new Date(event.time_to) >= new Date()
           );
         });

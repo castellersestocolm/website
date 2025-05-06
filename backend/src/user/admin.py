@@ -233,21 +233,21 @@ class FamilyAdmin(admin.ModelAdmin):
     search_fields = ("id",)
     inlines = (FamilyMemberInlineForFamily,)
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
 
 
 @admin.register(FamilyMember)
 class FamilyMemberAdmin(admin.ModelAdmin):
     search_fields = ("id", "user", "family")
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
 
 
 @admin.register(FamilyMemberRequest)
 class FamilyMemberRequestAdmin(admin.ModelAdmin):
     search_fields = ("id", "user_sender", "email_receiver", "user_receiver", "family")
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+    # def has_delete_permission(self, request, obj=None):
+    #     return False

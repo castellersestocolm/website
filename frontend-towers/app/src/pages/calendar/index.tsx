@@ -16,6 +16,8 @@ import {
   Tab,
   Tabs,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import IconAttachFile from "@mui/icons-material/AttachFile";
@@ -188,6 +190,9 @@ function CalendarPage() {
       handleEventMapClick(eventId ? eventId : events.results[0].id);
     }
   }, [handleEventMapClick, events, eventId, isFirstLoad]);
+
+  const theme = useTheme();
+  const calendarMatchesSm = useMediaQuery(theme.breakpoints.up("sm"));
 
   const content = (
     <>
@@ -405,7 +410,7 @@ function CalendarPage() {
                                 castlesPublished &&
                                 castlesPublished.length > 0)) && (
                               <Stack
-                                direction="row"
+                                direction={calendarMatchesSm ? "row" : "column"}
                                 spacing={2}
                                 marginLeft={{ xs: "0", lg: "16px" }}
                                 marginTop={{ xs: "8px", lg: "0" }}
