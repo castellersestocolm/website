@@ -255,6 +255,10 @@ msgstr "Hi participo"
 msgid "Not attending"
 msgstr "No hi participo"
 
+#: comunicat/templates/email/towers/user/signup.html:24
+msgid "Unanswered"
+msgstr "Sense respondre"
+
 #: comunicat/templates/email/towers/user/signup.html:39
 msgid "Change attendance"
 msgstr "Canvia l'assistència"

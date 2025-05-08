@@ -253,6 +253,10 @@ msgstr "Deltar"
 msgid "Not attending"
 msgstr "Deltar ej"
 
+#: comunicat/templates/email/towers/user/signup.html:24
+msgid "Unanswered"
+msgstr "Obesvarad"
+
 #: comunicat/templates/email/towers/user/signup.html:39
 msgid "Change attendance"
 msgstr "Ändra närvaro"
