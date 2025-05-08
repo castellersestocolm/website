@@ -73,7 +73,6 @@ def send_user_email(
                 Registration.objects.filter(
                     event_id__in=context["event_ids"],
                     user_id__in=context["user_ids"],
-                    status=RegistrationStatus.ACTIVE,
                 )
             )
 
