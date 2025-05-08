@@ -249,7 +249,7 @@
   "enums.month-long.10": "October",
   "enums.month-long.11": "November",
   "enums.month-long.12": "December",
-  "enums.registration-status.0": "Unknown",
+  "enums.registration-status.0": "Unanswered",
   "enums.registration-status.10": "Requested",
   "enums.registration-status.20": "Attending",
   "enums.registration-status.30": "Not attending",

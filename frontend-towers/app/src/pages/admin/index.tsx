@@ -162,9 +162,7 @@ function AdminPage() {
                                   {getEnumLabel(
                                     t,
                                     "registration-status",
-                                    registration
-                                      ? registration.status
-                                      : RegistrationStatus.CANCELLED,
+                                    registration ? registration.status : 0,
                                   )}
                                 </TableCell>
                               );
