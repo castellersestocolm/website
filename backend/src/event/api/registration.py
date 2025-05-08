@@ -46,7 +46,11 @@ def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> bool
 
 
 def create(
-    user_id: UUID, request_user_id: UUID, event_id: UUID, module: Module
+    user_id: UUID,
+    request_user_id: UUID,
+    event_id: UUID,
+    module: Module,
+    status: RegistrationStatus | None = None,
 ) -> List[Registration]:
     event_obj = (
         Event.objects.filter(id=event_id).with_module_information(module=module).first()
@@ -68,9 +72,13 @@ def create(
         user_id=user_id, event_id=event_id
     ).first()
 
-    registration_status = get_registration_initial_status(
-        require_approve=event_obj.require_approve
-    )
+    # TODO: Change this, for now allow only creating with cancelled if specified
+    if status is not None and status == RegistrationStatus.CANCELLED:
+        registration_status = status
+    else:
+        registration_status = get_registration_initial_status(
+            require_approve=event_obj.require_approve
+        )
 
     if registration_obj:
         registration_obj.status = registration_status

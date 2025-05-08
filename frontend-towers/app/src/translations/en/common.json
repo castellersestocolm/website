@@ -190,6 +190,8 @@
   "pages.calendar.section.agenda.event.castles-hide": "Close pinyes",
   "pages.calendar.agenda.attendance": "Attendance",
   "pages.calendar.registration.form.success": "Attendance updated.",
+  "pages.calendar.registration.form.button-cancel": "Not attending",
+  "pages.calendar.registration.form.button-attend": "Attending",
   "pages.about-team.title": "Meet the team",
   "pages.about-bylaws.title": "Current by-laws",
   "pages.trips-2025-berlin.title": "International Diada in Berlin 2025",

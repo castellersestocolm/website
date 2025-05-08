@@ -190,6 +190,8 @@
   "pages.calendar.section.agenda.event.castles-hide": "Tanca pinyes",
   "pages.calendar.agenda.attendance": "Assistència",
   "pages.calendar.registration.form.success": "Assistència actualitzada.",
+  "pages.calendar.registration.form.button-cancel": "No assisteixo",
+  "pages.calendar.registration.form.button-attend": "Assisteixo",
   "pages.about-team.title": "Coneix l'equip",
   "pages.about-bylaws.title": "Estatuts vigents",
   "pages.trips-2025-berlin.title": "Diada internacional a Berlín 2025",

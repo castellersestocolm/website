@@ -66,6 +66,7 @@ import {
   PaymentStatus,
   PaymentType,
   PermissionLevel,
+  RegistrationStatus,
 } from "../../enums";
 import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
@@ -697,12 +698,20 @@ function UserDashboardPage() {
                       <ListItemText
                         primary={t("pages.user-rehearsal.rehearsal.attending")}
                         secondary={
-                          rehearsal.registrations.length > 0
+                          rehearsal.registrations.filter(
+                            (registration: any) =>
+                              registration.status === RegistrationStatus.ACTIVE,
+                          ).length > 0
                             ? t(
                                 "pages.user-rehearsal.rehearsal.attending-list",
                               ) +
                               ": " +
                               rehearsal.registrations
+                                .filter(
+                                  (registration: any) =>
+                                    registration.status ===
+                                    RegistrationStatus.ACTIVE,
+                                )
                                 .map((registration: any) =>
                                   registration.user.lastname
                                     ? registration.user.firstname +

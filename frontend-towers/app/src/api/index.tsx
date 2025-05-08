@@ -6,6 +6,7 @@ import {
   API_EXPENSES_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
 } from "../consts";
+import { RegistrationStatus } from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -417,12 +418,14 @@ export const apiEventRegistrationCreate = async (
   userId: string,
   eventId: string,
   token: string = undefined,
+  status: RegistrationStatus = undefined,
 ) => {
   try {
     return await instance.post("/event/registration/", {
       user_id: userId,
       event_id: eventId,
       token: token,
+      status: status,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

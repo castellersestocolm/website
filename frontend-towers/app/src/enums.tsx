@@ -16,7 +16,7 @@ import IconRail from "./components/IconRail/IconRail.jsx";
 import IconWater from "./components/IconWater/IconWater.jsx";
 import IconCheckCircleOutlined from "@mui/icons-material/CheckCircleOutlined";
 import IconCancelOutlined from "@mui/icons-material/CancelOutlined";
-import IconHelpOutlined from "@mui/icons-material/HelpOutlined";
+import IconHelpOutlineOutlined from "@mui/icons-material/HelpOutlineOutlined";
 import IconPDF from "@mui/icons-material/PictureAsPdf";
 import IconImage from "@mui/icons-material/Image";
 import IconFile from "@mui/icons-material/FilePresent";
@@ -122,7 +122,7 @@ export enum RegistrationStatus {
 }
 
 export const REGISTRATION_STATUS_ICON: any = {
-  10: <IconHelpOutlined />,
+  10: <IconHelpOutlineOutlined />,
   20: <IconCheckCircleOutlined />,
   30: <IconCancelOutlined />,
   40: <IconCheckCircleOutlined />,

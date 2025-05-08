@@ -120,7 +120,7 @@ function Trips2025BerlinPage() {
           );
         })}
       </Box>
-      <Box id="trip">
+      <Box id="gallery">
         <Typography
           variant="h4"
           fontWeight="700"

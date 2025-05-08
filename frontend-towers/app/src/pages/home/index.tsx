@@ -170,7 +170,7 @@ function HomePage() {
               <Stack direction="row" spacing={2} className={styles.joinButtons}>
                 <Button
                   variant="contained"
-                  href={ROUTES["trips-2025-berlin"].path}
+                  href={ROUTES["trips-2025-berlin"].path + "#gallery"}
                   disableElevation
                 >
                   {t("pages.home-berlin.button-page")}

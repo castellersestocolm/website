@@ -6,7 +6,7 @@ from django.db.models import Q, Prefetch
 from django.utils import timezone, translation
 
 from comunicat.enums import Module
-from event.enums import RegistrationStatus, EventStatus
+from event.enums import EventStatus
 from event.models import Event, Registration, AgendaItem, Connection
 from notify.enums import EmailType
 from user.enums import FamilyMemberStatus
@@ -49,10 +49,6 @@ def get_list(
                 "registrations",
                 (
                     Registration.objects.filter(
-                        status__in=(
-                            RegistrationStatus.REQUESTED,
-                            RegistrationStatus.ACTIVE,
-                        ),
                         user_id__in=family_user_ids,
                     )
                     if request_user_id

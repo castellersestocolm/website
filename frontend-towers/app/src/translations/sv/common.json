@@ -190,6 +190,8 @@
   "pages.calendar.section.agenda.event.castles-hide": "Dölj pinyes",
   "pages.calendar.agenda.attendance": "Deltagande",
   "pages.calendar.registration.form.success": "Närvaro uppdaterad.",
+  "pages.calendar.registration.form.button-cancel": "Deltar",
+  "pages.calendar.registration.form.button-attend": "Deltar inte",
   "pages.about-team.title": "Möt teamet",
   "pages.about-bylaws.title": "Gällande stadgar",
   "pages.trips-2025-berlin.title": "Internationell Diada i Berlin 2025",

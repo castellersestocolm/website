@@ -363,12 +363,12 @@ function CalendarPage() {
                                                   styles.eventRegistrationBox
                                                 }
                                                 style={{
-                                                  color:
-                                                    registration &&
-                                                    registration.status ===
+                                                  color: registration
+                                                    ? registration.status ===
                                                       RegistrationStatus.ACTIVE
                                                       ? "var(--mui-palette-success-main)"
-                                                      : "var(--mui-palette-error-main)",
+                                                      : "var(--mui-palette-error-main)"
+                                                    : "var(--mui-palette-secondary-main)",
                                                   whiteSpace: "nowrap",
                                                 }}
                                               >
@@ -376,7 +376,7 @@ function CalendarPage() {
                                                   REGISTRATION_STATUS_ICON[
                                                     registration
                                                       ? registration.status
-                                                      : RegistrationStatus.CANCELLED
+                                                      : RegistrationStatus.REQUESTED
                                                   ]
                                                 }
                                                 <Typography variant="body2">
@@ -481,7 +481,7 @@ function CalendarPage() {
                           >
                             <Divider />
                             <Box className={styles.calendarAttendanceUpdate}>
-                              <Typography fontWeight={600} marginBottom="4px">
+                              <Typography fontWeight={600}>
                                 {t("pages.calendar.agenda.attendance")}
                               </Typography>
                               <FormCalendarRegistrationCreate

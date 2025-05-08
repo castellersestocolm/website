@@ -18,15 +18,22 @@
                                         <div style="display: inline-block; padding-right: 16px;">
                                             <p style="margin-bottom: 0;"><strong>{{ user_obj.name }}</strong></p>
                                             {% registration_by_event_and_user registration_objs event_obj user_obj as registration_obj %}
-                                            {% if registration_obj and registration_obj.status == 20 %}
-                                                <div style="display: flex; flex-direction: row; justify-content: center; color: #2e7d32;">
-                                                    <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_check_circle.png" %}"/>
-                                                    <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #2e7d32;">{% trans "Attending" %}</p>
-                                                </div>
+                                            {% if registration_obj %}
+                                                {% if registration_obj.status == 20 %}
+                                                    <div style="display: flex; flex-direction: row; justify-content: center; color: #2e7d32;">
+                                                        <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_check_circle.png" %}"/>
+                                                        <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #2e7d32;">{% trans "Attending" %}</p>
+                                                    </div>
+                                                {% else %}
+                                                    <div style="display: flex; flex-direction: row; justify-content: center; color: #d32f2f;">
+                                                        <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_cancel.png" %}"/>
+                                                        <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #d32f2f;">{% trans "Not attending" %}</p>
+                                                    </div>
+                                                {% endif %}
                                             {% else %}
-                                                <div style="display: flex; flex-direction: row; justify-content: center; color: #d32f2f;">
-                                                    <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_cancel.png" %}"/>
-                                                    <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #d32f2f;">{% trans "Not attending" %}</p>
+                                                <div style="display: flex; flex-direction: row; justify-content: center; color: #b39b3e;">
+                                                    <img style="height: 16px; margin-right: 4px; margin-top: 2px; margin-left: 0;" src="{% full_static "towers/img/icon_help.png" %}"/>
+                                                    <p style="display: inline-block; margin-bottom: 0; font-size: 14px; color: #b39b3e;">{% trans "Unanswered" %}</p>
                                                 </div>
                                             {% endif %}
                                         </div>

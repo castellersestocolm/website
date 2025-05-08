@@ -151,6 +151,7 @@ class RegistrationAPI(ComuniCatViewSet):
             user_id=validated_data["user_id"],
             request_user_id=user_obj.id,
             module=self.module,
+            status=validated_data.get("status"),
         )
 
         serializer = self.serializer_class(

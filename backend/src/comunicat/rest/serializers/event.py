@@ -3,6 +3,8 @@ from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from comunicat.rest.serializers.user import UserExtraSlimSerializer
+from comunicat.rest.utils.fields import IntEnumField
+from event.enums import RegistrationStatus
 from event.models import Event, Location, Registration, AgendaItem, Connection
 
 
@@ -136,6 +138,7 @@ class EventSerializer(s.ModelSerializer):
 class CreateRegistrationSerializer(s.Serializer):
     user_id = s.UUIDField(required=True)
     event_id = s.UUIDField(required=True)
+    status = IntEnumField(RegistrationStatus, required=False)
     token = s.CharField(required=False)
 
 
