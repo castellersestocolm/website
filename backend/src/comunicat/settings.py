@@ -430,6 +430,13 @@ MODULE_ORG_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
         )
     ]
 )
+MODULE_ORG_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES = [
+    TeamType[team_type.upper()]
+    for team_type in filter(
+        None,
+        os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES", "").split(","),
+    )
+]
 
 MODULE_TOWERS_NAME = os.getenv("MODULE_TOWERS_NAME")
 MODULE_TOWERS_SHORT_NAME = os.getenv("MODULE_TOWERS_SHORT_NAME", MODULE_TOWERS_NAME)
@@ -477,6 +484,15 @@ MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
         ).split(",")
     ]
 )
+MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES = [
+    TeamType[team_type.upper()]
+    for team_type in filter(
+        None,
+        os.getenv(
+            "MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES", "musicians"
+        ).split(","),
+    )
+]
 
 # Django money
 

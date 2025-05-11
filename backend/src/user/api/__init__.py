@@ -10,7 +10,7 @@ from django.contrib.auth import (
 )
 from django.core import signing
 from django.db import IntegrityError, transaction
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Exists, OuterRef
 from django.http import HttpRequest
 from django.utils import translation, timezone
 from rest_framework.exceptions import AuthenticationFailed
@@ -18,6 +18,8 @@ from rest_framework.exceptions import AuthenticationFailed
 import membership.api
 import user.api.family_member_request
 from comunicat.enums import Module
+from legal.enums import TeamType
+from legal.models import Member
 from notify.enums import EmailType
 from notify.tasks import send_user_email
 from user.enums import FamilyMemberStatus, FamilyMemberRole
@@ -43,7 +45,9 @@ def get(user_id: UUID) -> User:
 
 
 def get_list(
-    user_ids: list[UUID] | None = None, modules: list[Module] | None = None
+    user_ids: list[UUID] | None = None,
+    exclude_team_types: list[TeamType] | None = None,
+    modules: list[Module] | None = None,
 ) -> list[User]:
     user_qs = (
         User.objects.select_related("towers", "family_member", "family_member__family")
@@ -66,6 +70,11 @@ def get_list(
         user_qs = user_qs.with_has_active_membership(modules=modules).filter(
             has_active_membership=True
         )
+
+    if exclude_team_types:
+        user_qs = user_qs.with_has_active_role(
+            team_types=exclude_team_types, modules=modules
+        ).filter(has_active_role=False)
 
     return list(user_qs)
 

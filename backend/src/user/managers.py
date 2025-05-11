@@ -52,7 +52,7 @@ class UserQuerySet(QuerySet):
             )
         )
 
-    def with_permission_level(
+    def with_has_active_role(
         self,
         date: datetime.date | None = None,
         team_types: list[TeamType] = settings.MODULE_ALL_ADMIN_TEAM_TYPES,
@@ -71,25 +71,38 @@ class UserQuerySet(QuerySet):
         if modules is not None:
             member_filter &= Q(team__module__in=modules)
 
-        return self.with_has_active_membership(modules=modules).annotate(
+        return self.annotate(
             has_active_role=Exists(
                 Member.objects.filter(
                     member_filter,
                     user_id=OuterRef("id"),
                 )
             ),
-            permission_level=Case(
-                When(
-                    Q(is_superuser=True),
-                    then=Value(PermissionLevel.SUPERADMIN),
+        )
+
+    def with_permission_level(
+        self,
+        date: datetime.date | None = None,
+        team_types: list[TeamType] = settings.MODULE_ALL_ADMIN_TEAM_TYPES,
+        modules: list[Module] | None = None,
+    ):
+        return (
+            self.with_has_active_membership(modules=modules)
+            .with_has_active_role(date=date, team_types=team_types, modules=modules)
+            .annotate(
+                permission_level=Case(
+                    When(
+                        Q(is_superuser=True),
+                        then=Value(PermissionLevel.SUPERADMIN),
+                    ),
+                    When(
+                        Q(has_active_role=True),
+                        then=Value(PermissionLevel.ADMIN),
+                    ),
+                    default=Value(PermissionLevel.USER),
+                    output_field=IntegerField(),
                 ),
-                When(
-                    Q(has_active_role=True),
-                    then=Value(PermissionLevel.ADMIN),
-                ),
-                default=Value(PermissionLevel.USER),
-                output_field=IntegerField(),
-            ),
+            )
         )
 
 
@@ -99,6 +112,16 @@ class UserManager(BaseUserManager):
 
     def with_has_active_membership(self, modules: list[Module] | None = None):
         return self.get_queryset().with_has_active_membership(modules=modules)
+
+    def with_has_active_role(
+        self,
+        date: datetime.date | None = None,
+        team_types: list[TeamType] = settings.MODULE_ALL_ADMIN_TEAM_TYPES,
+        modules: list[Module] | None = None,
+    ):
+        return self.get_queryset().with_has_active_role(
+            date=date, team_types=team_types, modules=modules
+        )
 
     def with_permission_level(
         self,

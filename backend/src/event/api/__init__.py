@@ -105,7 +105,12 @@ def send_events_signup(
         if not future_event_objs:
             continue
 
-        user_objs = user.api.get_list(user_ids=user_ids, modules=[m])
+        exclude_team_types = getattr(
+            settings, f"MODULE_{m.name}_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES"
+        )
+        user_objs = user.api.get_list(
+            user_ids=user_ids, modules=[m], exclude_team_types=exclude_team_types
+        )
 
         for user_obj in user_objs:
             token = user.api.event.get_events_signup_token(user_id=user_obj.id)
