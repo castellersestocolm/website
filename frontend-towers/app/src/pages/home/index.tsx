@@ -133,7 +133,6 @@ function HomePage() {
                     disableElevation
                   >
                     {t("pages.home-join.list.button-join")}
-                    <IconArrowOutward className={styles.externalIcon} />
                   </Button>
                 )}
               </Grid>
@@ -510,7 +509,6 @@ function HomePage() {
                         disableElevation
                       >
                         {t("pages.home-join.list.button-join")}
-                        <IconArrowOutward className={styles.externalIcon} />
                       </Button>
                     </Stack>
                   </Grid>
