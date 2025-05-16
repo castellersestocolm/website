@@ -58,7 +58,7 @@ class UserMiddlewarePermissionLevel:
     def __call__(self, request):
         # module = get_module_from_request(request=request)
 
-        if getattr(request, "user"):
+        if getattr(request, "user") and request.user.is_authenticated:
             request.user = (
                 User.objects.filter(id=request.user.id)
                 # TODO: Get the right module

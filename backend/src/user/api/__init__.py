@@ -353,6 +353,9 @@ def set_verify(token: str, module: Module, request: HttpRequest) -> User | None:
     if not user_obj:
         return None
 
+    user_obj.email_verified = True
+    user_obj.save(update_fields=("email_verified",))
+
     django_login(
         request=request,
         user=user_obj,
