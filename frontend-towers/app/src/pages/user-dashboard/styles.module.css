@@ -95,8 +95,38 @@
   flex: 1 1 auto;
 }
 
+.userPaymentBox {
+  padding: 12px 16px 16px 16px;
+  flex: 1 1 auto;
+}
+
 .userLogoutBox {
   padding: 16px 16px 12px 16px;
+}
+
+.userMembershipPaymentBox {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.userMembershipPaymentSwish {
+  min-width: 75%;
+  max-width: 200px;
+  margin: 16px 8px 4px 8px;
+}
+
+.userMembershipPaymentIconSwish {
+  z-index: 500;
+  position: absolute;
+  width: 15%;
+  aspect-ratio: 1 / 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--mui-palette-common-white);
+  padding: 8px;
+  border-radius: 50%;
 }
 
 .userMembershipInfoBox {

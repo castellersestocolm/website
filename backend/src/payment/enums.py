@@ -11,6 +11,8 @@ class PaymentStatus(IntEnum):
     PROCESSING = 20
     COMPLETED = 30
     CANCELED = 40
+    # TODO: Perhaps allow planned payments and display expected balances
+    # PLANNED = 50
 
 
 class PaymentMethod(IntEnum):

@@ -130,8 +130,8 @@ class PaymentQuerySet(QuerySet):
                         output_field=CharField(),
                     ),
                 ),
-                When(Q(text__isnull=False), then=F("text")),
                 When(Q(lines_count=1, line_text__isnull=False), then=F("line_text")),
+                When(Q(text__isnull=False), then=F("text")),
                 default=Value(str(_("Payment"))),
                 output_field=CharField(),
             ),
@@ -139,22 +139,28 @@ class PaymentQuerySet(QuerySet):
 
 
 class AccountQuerySet(QuerySet):
-    def with_amount(self):
+    def with_amount(self, year: int | None = None):
         PaymentLine = apps.get_model("payment", "PaymentLine")
+
+        if year is None:
+            year = timezone.localdate().year
+
+        annotate_dict = {f"amount_{year}": F("amount")}
 
         return self.annotate(
             amount=Coalesce(
                 Subquery(
                     PaymentLine.objects.filter(account_id=OuterRef("id"))
                     .with_dates()
-                    .filter(date_accounting__year=timezone.localdate().year)
+                    .filter(date_accounting__year=year)
                     .values("account_id")
                     .annotate(amount=Sum("amount"))
                     .values("amount")[:1]
                 ),
                 Value(0),
                 output_field=MoneyOutput(),
-            )
+            ),
+            **annotate_dict,
         )
 
 
@@ -265,8 +271,8 @@ class PaymentLineQuerySet(QuerySet):
                         output_field=CharField(),
                     ),
                 ),
-                When(Q(text__isnull=False), then=F("text")),
                 When(Q(receipt__isnull=False), then=F("receipt__description")),
+                When(Q(text__isnull=False), then=F("text")),
                 default=Value(str(_("Unspecified"))),
                 output_field=CharField(),
             ),
@@ -304,5 +310,48 @@ class ExpenseQuerySet(QuerySet):
                 ),
                 default=Value(str(_("Expense"))),
                 output_field=CharField(),
+            ),
+        )
+
+
+class SourceQuerySet(QuerySet):
+    def with_amount(self, year: int | None = None):
+        PaymentLine = apps.get_model("payment", "PaymentLine")
+
+        if year is None:
+            year = timezone.localdate().year
+
+        annotate_dict = {f"amount_{year}": F("amount")}
+
+        return self.annotate(
+            amount=Coalesce(
+                Subquery(
+                    PaymentLine.objects.filter(
+                        payment__transaction__source_id=OuterRef("id")
+                    )
+                    .with_dates()
+                    .filter(date_accounting__year=year)
+                    .values("account_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            **annotate_dict,
+        )
+
+    def with_last_import_date(self):
+        TransactionImport = apps.get_model("payment", "TransactionImport")
+
+        return self.annotate(
+            last_import_date=Coalesce(
+                Subquery(
+                    TransactionImport.objects.filter(source_id=OuterRef("id"))
+                    .order_by("-date_to")
+                    .values("date_to")[:1]
+                ),
+                Value(None),
+                output_field=DateField(),
             ),
         )

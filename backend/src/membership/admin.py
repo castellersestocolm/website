@@ -30,7 +30,6 @@ class MembershipAdmin(admin.ModelAdmin):
         "date_end",
         "status",
         "module_list",
-        "created_at",
     )
     list_filter = ("date_from", "date_to", "status")
     ordering = ("-created_at",)

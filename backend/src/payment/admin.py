@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db.models import JSONField
+from django.utils import timezone
 
 import payment.api.entity
 import payment.tasks
@@ -68,7 +69,6 @@ class PaymentAdmin(admin.ModelAdmin):
         "entity",
         "method",
         "balance",
-        "created_at",
     )
     list_filter = ("type", "status", "method")
     readonly_fields = ("debit_payment",)
@@ -129,7 +129,6 @@ class PaymentLineAdmin(admin.ModelAdmin):
         "amount",
         "vat",
         "balance",
-        "created_at",
     )
     list_editable = ("account",)
     list_filter = ("vat",)
@@ -203,10 +202,10 @@ class AccountAdmin(admin.ModelAdmin):
         "type",
         "category",
         "module",
-        "yearly_amount",
         "allow_transactions",
-        "parent",
-        "created_at",
+        "balance",
+        "balance_y1",
+        "balance_y2",
     )
     list_filter = ("allow_transactions", "type", "category", "module")
     ordering = ("code",)
@@ -217,14 +216,30 @@ class AccountAdmin(admin.ModelAdmin):
     )
 
     def get_queryset(self, request):
-        return super().get_queryset(request).with_amount()
+        year = timezone.localdate().year
+        return (
+            super()
+            .get_queryset(request)
+            .with_amount(year=year)
+            .with_amount(year=year - 1)
+            .with_amount(year=year - 2)
+        )
 
-    def yearly_amount(self, obj):
-        return obj.amount
+    def balance(self, obj):
+        return getattr(obj, f"amount_{timezone.localdate().year}")
+
+    def balance_y1(self, obj):
+        return getattr(obj, f"amount_{timezone.localdate().year - 1}")
+
+    def balance_y2(self, obj):
+        return getattr(obj, f"amount_{timezone.localdate().year - 2}")
 
     def account_name(self, obj):
         return str(obj)
 
+    balance.short_description = _("balance")
+    balance_y1.short_description = _("balance %s") % (timezone.localdate().year - 1,)
+    balance_y2.short_description = _("balance %s") % (timezone.localdate().year - 2,)
     account_name.short_description = _("name")
 
 
@@ -278,9 +293,44 @@ class TransactionAdmin(admin.ModelAdmin):
 @admin.register(Source)
 class SourceAdmin(admin.ModelAdmin):
     search_fields = ("id", "name")
-    list_display = ("name", "type")
+    list_display = (
+        "name",
+        "type",
+        "last_import_date",
+        "balance",
+        "balance_y1",
+        "balance_y2",
+    )
     list_filter = ("type",)
     ordering = ("name",)
+
+    def get_queryset(self, request):
+        year = timezone.localdate().year
+        return (
+            super()
+            .get_queryset(request)
+            .with_last_import_date()
+            .with_amount(year=year)
+            .with_amount(year=year - 1)
+            .with_amount(year=year - 2)
+        )
+
+    def last_import_date(self, obj):
+        return obj.last_import_date
+
+    def balance(self, obj):
+        return getattr(obj, f"amount_{timezone.localdate().year}")
+
+    def balance_y1(self, obj):
+        return getattr(obj, f"amount_{timezone.localdate().year - 1}")
+
+    def balance_y2(self, obj):
+        return getattr(obj, f"amount_{timezone.localdate().year - 2}")
+
+    last_import_date.short_description = _("last imported")
+    balance.short_description = _("balance")
+    balance_y1.short_description = _("balance %s") % (timezone.localdate().year - 1,)
+    balance_y2.short_description = _("balance %s") % (timezone.localdate().year - 2,)
 
 
 class TransactionInline(admin.TabularInline):
@@ -318,7 +368,10 @@ class ReceiptAdmin(admin.ModelAdmin):
     list_filter = ("date", "type", "status")
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
-    raw_id_fields = ("expense",)
+    raw_id_fields = (
+        "entity",
+        "expense",
+    )
 
     def file_name(self, obj):
         return obj.file.name

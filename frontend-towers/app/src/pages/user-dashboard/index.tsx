@@ -49,6 +49,7 @@ import IconPersonAdd from "@mui/icons-material/PersonAdd";
 import IconPersonSearch from "@mui/icons-material/PersonSearch";
 import IconLanguage from "@mui/icons-material/Language";
 import IconReplay from "@mui/icons-material/Replay";
+import IconChevronRight from "@mui/icons-material/KeyboardDoubleArrowRight";
 import FormMemberUpdate from "../../components/FormMemberUpdate/FormMemberUpdate";
 import FormMemberCreate from "../../components/FormMemberCreate/FormMemberCreate";
 import PageBase from "../../components/PageBase/PageBase";
@@ -57,7 +58,6 @@ import {
   EventType,
   EXPENSE_STATUS_ICON,
   ExpenseStatus,
-  EXTENSION_ICON,
   FamilyMemberRequestStatus,
   getEnumLabel,
   MEMBERSHIP_STATUS_ICON,
@@ -81,6 +81,10 @@ import {
   API_PAYMENTS_LIST_PAGE_SIZE,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
+import ImageIconSwish from "../../assets/images/icons/swish.png";
+
+// @ts-ignore
+import QRCode from "qrcode";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
@@ -142,6 +146,7 @@ function UserDashboardPage() {
   const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
+  const [paymentSvg, setPaymentSvg] = React.useState(undefined);
 
   const handleFamilyClick = (memberId: string) => {
     setFamilyMembersOpen({
@@ -175,11 +180,40 @@ function UserDashboardPage() {
       apiMembershipList().then((response) => {
         if (response.status === 200) {
           // setMemberships(response.data);
-          setMembership(
-            response.data.results.find((membership: any) => {
+          const currentMembership = response.data.results.find(
+            (membership: any) => {
               return membership.is_active;
-            }),
+            },
           );
+          setMembership(currentMembership);
+
+          const membershipText =
+            t("swish.payment.membership") +
+            " " +
+            currentMembership.date_from.slice(0, 4) +
+            " - " +
+            (user.lastname
+              ? user.firstname + " " + user.lastname
+              : user.firstname);
+
+          if (
+            currentMembership &&
+            (currentMembership.can_renew ||
+              currentMembership.status < MembershipStatus.PROCESSING)
+          ) {
+            QRCode.toDataURL(
+              "C1230688820;" +
+                currentMembership.amount.amount +
+                ";" +
+                membershipText +
+                ";0",
+              { width: 500, margin: 0 },
+            )
+              .then((url: string) => {
+                setPaymentSvg(url);
+              })
+              .catch((err: any) => {});
+          }
         }
       });
       apiUserFamilyMemberRequestList().then((response) => {
@@ -208,6 +242,7 @@ function UserDashboardPage() {
     setFamilyMemberRequestsReceived,
     setMembership,
     // setMemberships
+    t,
   ]);
 
   React.useEffect(() => {
@@ -555,6 +590,43 @@ function UserDashboardPage() {
               )}
             </List>
           </Box>
+          {(membership.can_renew ||
+            membership.status < MembershipStatus.ACTIVE) && (
+            <>
+              <Divider />
+              <Box className={styles.userPaymentBox}>
+                <Typography variant="body1" fontWeight={600}>
+                  {t("pages.user-dashboard.section.membership.payment-title")}
+                </Typography>
+                <List dense className={styles.userList}>
+                  {t("pages.user-dashboard.section.membership.payment-list")
+                    .split("\n")
+                    .map((paymentText: string, ix: number) => {
+                      return (
+                        <ListItem key={ix}>
+                          <ListItemIcon>
+                            <IconChevronRight />
+                          </ListItemIcon>
+                          <ListItemText primary={paymentText} />
+                        </ListItem>
+                      );
+                    })}
+                </List>
+                <Box className={styles.userMembershipPaymentBox}>
+                  <img
+                    src={ImageIconSwish}
+                    className={styles.userMembershipPaymentIconSwish}
+                    alt="Swish logo"
+                  />
+                  <img
+                    src={paymentSvg}
+                    alt="Swish QR"
+                    className={styles.userMembershipPaymentSwish}
+                  />
+                </Box>
+              </Box>
+            </>
+          )}
           <Divider />
           <Box className={styles.userMembershipInfoBox}>
             <Typography variant="body2" component="span">

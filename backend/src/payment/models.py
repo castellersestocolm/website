@@ -28,6 +28,7 @@ from payment.managers import (
     PaymentLineQuerySet,
     AccountQuerySet,
     ExpenseQuerySet,
+    SourceQuerySet,
 )
 
 from django.utils.translation import gettext_lazy as _
@@ -88,6 +89,12 @@ class Payment(StandardModel, Timestamps):
         if self.text:
             extra_str += f" - {self.text}"
         return f"{PaymentMethod(self.method).name if self.method else ''}{extra_str}"
+
+    def clean(self):
+        if self.status == PaymentStatus.COMPLETED and not self.transaction:
+            raise ValidationError(
+                {"transaction": _("Transaction must be set for completed payments.")}
+            )
 
     def save(self, *args, **kwargs):
         if self.pk and self.status != self.__status:
@@ -183,6 +190,12 @@ def get_receipt_file_name(instance, filename):
 
 
 class Receipt(StandardModel, Timestamps):
+    # In case of an expense this might differ from the entity in the expense,
+    # for example the receipt can be from a shop but the expense could be towards
+    # the entity who made the payment and submitted the receipt
+    entity = models.ForeignKey(
+        Entity, related_name="receipts", on_delete=models.CASCADE
+    )
     description = models.CharField(max_length=255)
     date = models.DateField()
 
@@ -360,6 +373,8 @@ class Source(StandardModel, Timestamps):
         default=SourceType.BANK,
     )
 
+    objects = SourceQuerySet.as_manager()
+
     def __str__(self) -> str:
         return self.name
 
@@ -367,8 +382,6 @@ class Source(StandardModel, Timestamps):
 class Transaction(StandardModel, Timestamps):
     source = models.ForeignKey(
         "Source",
-        null=True,
-        blank=True,
         related_name="transactions",
         on_delete=models.CASCADE,
     )
