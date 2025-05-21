@@ -364,7 +364,15 @@ class TransactionImportAdmin(admin.ModelAdmin):
 @admin.register(Receipt)
 class ReceiptAdmin(admin.ModelAdmin):
     search_fields = ("id", "description", "file")
-    list_display = ("description", "date", "file", "type", "status", "created_at")
+    list_display = (
+        "description",
+        "date",
+        "entity",
+        "file",
+        "type",
+        "status",
+        "created_at",
+    )
     list_filter = ("date", "type", "status")
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)

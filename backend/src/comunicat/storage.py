@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from comunicat.utils.media import sign_url
@@ -26,7 +28,7 @@ class SignedStorage(FileSystemStorage):
     def get_signed_url(self, name: str, minutes: int | None = None) -> str:
         url = super().url(name)
 
-        return sign_url(url, minutes=minutes or self.minutes)
+        return urljoin("/", sign_url(url, minutes=minutes or self.minutes))
 
 
 signed_storage = SignedStorage(allow_overwrite=True)

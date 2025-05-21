@@ -205,6 +205,7 @@
   "pages.admin.title": "Admin dashboard",
   "pages.admin.events-table.title": "Attendance",
   "pages.admin.events-table.user": "Member",
+  "pages.admin.events-table.attendance": "Attendance",
   "pages.sale-bandana.title": "Sale of bandanas",
   "pages.sale-tshirts.title": "Sale of t-shirts",
   "swish.payment.membership": "Membership",

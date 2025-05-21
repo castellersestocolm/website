@@ -591,7 +591,7 @@ function UserDashboardPage() {
             </List>
           </Box>
           {(membership.can_renew ||
-            membership.status < MembershipStatus.ACTIVE) && (
+            membership.status < MembershipStatus.PROCESSING) && (
             <>
               <Divider />
               <Box className={styles.userPaymentBox}>

@@ -66,7 +66,6 @@ function AdminPage() {
             }));
           }
         });
-        console.log(event);
       }
     }
   }, [events, setRegistrations]);
@@ -74,6 +73,40 @@ function AdminPage() {
   if (!user || user.permission_level < PermissionLevel.ADMIN) {
     navigate(ROUTES["user-login"].path, { replace: true });
   }
+
+  const eventsCounts =
+    events && events.results.length > 0 && registrations
+      ? Object.fromEntries(
+          events.results
+            .filter((event: any) => event.require_signup)
+            .map((event: any) => {
+              const registrationsActive = Object.values(
+                registrations[event.id],
+              ).filter(
+                (registration: any) =>
+                  registration.status === RegistrationStatus.ACTIVE,
+              ).length;
+              const registrationsCancelled = Object.values(
+                registrations[event.id],
+              ).filter(
+                (registration: any) =>
+                  registration.status === RegistrationStatus.CANCELLED,
+              ).length;
+              const registrationsUnknown =
+                Object.values(registrations[event.id]).length -
+                registrationsActive -
+                registrationsCancelled;
+              return [
+                event.id,
+                [
+                  registrationsActive,
+                  registrationsCancelled,
+                  registrationsUnknown,
+                ],
+              ];
+            }),
+        )
+      : undefined;
 
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
@@ -116,6 +149,13 @@ function AdminPage() {
                                   .toTimeString()
                                   .slice(0, 5)}
                             </Typography>
+                            {eventsCounts && eventsCounts[event.id] && (
+                              <Typography variant="body2" color="textSecondary">
+                                {t("pages.admin.events-table.attendance")}
+                                {": "}
+                                {eventsCounts[event.id].join("/")}
+                              </Typography>
+                            )}
                           </TableCell>
                         );
                       })}
