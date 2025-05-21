@@ -75,7 +75,7 @@ function AdminPage() {
   }
 
   const eventsCounts =
-    events && events.results.length > 0 && registrations
+    events && events.results.length > 0 && registrations && users
       ? Object.fromEntries(
           events.results
             .filter(
@@ -95,9 +95,7 @@ function AdminPage() {
                   registration.status === RegistrationStatus.CANCELLED,
               ).length;
               const registrationsUnknown =
-                Object.values(registrations[event.id]).length -
-                registrationsActive -
-                registrationsCancelled;
+                users.length - registrationsActive - registrationsCancelled;
               return [
                 event.id,
                 [
