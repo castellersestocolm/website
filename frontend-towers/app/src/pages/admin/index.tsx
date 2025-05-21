@@ -78,7 +78,9 @@ function AdminPage() {
     events && events.results.length > 0 && registrations
       ? Object.fromEntries(
           events.results
-            .filter((event: any) => event.require_signup)
+            .filter(
+              (event: any) => event.require_signup && event.id in registrations,
+            )
             .map((event: any) => {
               const registrationsActive = Object.values(
                 registrations[event.id],
