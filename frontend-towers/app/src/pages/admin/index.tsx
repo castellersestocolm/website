@@ -149,7 +149,7 @@ function AdminPage() {
                                   .toTimeString()
                                   .slice(0, 5)}
                             </Typography>
-                            {eventsCounts && eventsCounts[event.id] && (
+                            {eventsCounts && event.id in eventsCounts && (
                               <Typography variant="body2" color="textSecondary">
                                 {t("pages.admin.events-table.attendance")}
                                 {": "}
