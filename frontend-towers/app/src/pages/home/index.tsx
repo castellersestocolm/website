@@ -20,7 +20,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import IconLogoColour from "../../components/IconLogoColour/IconLogoColour.jsx";
 import IconTbana from "../../components/IconTbana/IconTbana.jsx";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import IconSchedule from "@mui/icons-material/Schedule";
 import IconPlace from "@mui/icons-material/Place";
 import IconGroups from "@mui/icons-material/Groups";

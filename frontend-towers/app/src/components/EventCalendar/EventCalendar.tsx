@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import { Divider, Icon, Link, Typography } from "@mui/material";
 import styles from "./styles.module.css";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import {
   EVENT_TYPE_ICON,
   getEnumLabel,

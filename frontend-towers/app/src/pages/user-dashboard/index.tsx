@@ -34,7 +34,7 @@ import {
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import IconCall from "@mui/icons-material/Call";
 import IconMail from "@mui/icons-material/Mail";
 import IconHeight from "@mui/icons-material/Height";
@@ -75,7 +75,7 @@ import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistr
 import { capitalizeFirstLetter } from "../../utils/string";
 import IconAttachFile from "@mui/icons-material/AttachFile";
 import IconDowload from "@mui/icons-material/Download";
-import { Pagination } from "@mui/lab";
+import Pagination from "@mui/material/Pagination";
 import {
   API_EXPENSES_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
@@ -1019,7 +1019,7 @@ function UserDashboardPage() {
                     count={Math.ceil(
                       payments.count / API_PAYMENTS_LIST_PAGE_SIZE,
                     )}
-                    onChange={(e, value) => setPaymentPage(value)}
+                    onChange={(e: any, value: number) => setPaymentPage(value)}
                   />
                 </Stack>
               )}
@@ -1211,7 +1211,7 @@ function UserDashboardPage() {
                     count={Math.ceil(
                       expenses.count / API_EXPENSES_LIST_PAGE_SIZE,
                     )}
-                    onChange={(e, value) => setExpensePage(value)}
+                    onChange={(e: any, value: number) => setExpensePage(value)}
                   />
                 </Stack>
               )}

@@ -4,7 +4,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import ImageHeroAboutTeam from "../../assets/images/heros/about-team.jpg";
 import { useTranslation } from "react-i18next";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import { apiLegalTeamList } from "../../api";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import FormLabel from "@mui/material/FormLabel";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";

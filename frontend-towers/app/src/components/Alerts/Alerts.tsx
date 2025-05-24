@@ -2,7 +2,7 @@ import * as React from "react";
 import IconCheck from "@mui/icons-material/Check";
 import { Collapse } from "@mui/material";
 import styles from "./styles.module.css";
-import { Alert } from "@mui/lab";
+import Alert from "@mui/material/Alert";
 import { useAppContext } from "../AppContext/AppContext";
 import { TransitionGroup } from "react-transition-group";
 import Box from "@mui/material/Box";

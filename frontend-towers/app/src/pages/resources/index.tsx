@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 import { Link } from "@mui/material";
 import * as React from "react";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
 import ImagePositions1 from "../../assets/images/resources/positions-1.png";
 import ImagePositions2 from "../../assets/images/resources/positions-2.png";

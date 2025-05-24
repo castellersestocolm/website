@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import { useAppContext } from "../AppContext/AppContext";
 import { useTranslation } from "react-i18next";
 import FormUpdate from "../FormUpdate/FormUpdate";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import Hero from "../Hero/Hero";
 
 export default function PageImageHero({

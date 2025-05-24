@@ -3,7 +3,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { apiEventList, apiTowersCastleList, apiUserFamily } from "../../api";
 import ImageHeroCalendar from "../../assets/images/heros/calendar.jpg";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import {
   Button,
   Card,
@@ -34,7 +34,7 @@ import { capitalizeFirstLetter } from "../../utils/string";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useCallback } from "react";
-import { Pagination } from "@mui/lab";
+import Pagination from "@mui/material/Pagination";
 import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
 import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
 import Map from "../../components/Map/Map";
@@ -558,7 +558,7 @@ function CalendarPage() {
               <Stack alignItems="center">
                 <Pagination
                   count={Math.ceil(events.count / API_EVENTS_LIST_PAGE_SIZE)}
-                  onChange={(e, value) => setEventPage(value)}
+                  onChange={(e: any, value: number) => setEventPage(value)}
                 />
               </Stack>
             </>

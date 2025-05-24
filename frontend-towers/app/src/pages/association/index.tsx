@@ -1,6 +1,6 @@
 import styles from "./styles.module.css";
 import * as React from "react";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
 import ImageHeroAssocation from "../../assets/images/heros/association.jpg";
 import ImageLogoAssociation from "../../assets/images/association/logo.png";

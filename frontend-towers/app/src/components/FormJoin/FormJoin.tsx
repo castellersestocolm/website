@@ -2,7 +2,7 @@ import * as React from "react";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
@@ -11,14 +11,11 @@ import styles from "./styles.module.css";
 import IconGoogle from "@mui/icons-material/Google";
 import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import IconEast from "@mui/icons-material/East";
-import IconInfoOutlined from "@mui/icons-material/InfoOutlined";
 import { ROUTES } from "../../routes";
 import { apiUserCreate } from "../../api";
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import PopupHeight from "../PopupHeight/PopupHeight";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -252,7 +249,6 @@ export default function FormJoin() {
             <FormGrid size={{ xs: 12, md: 3 }}>
               <FormLabel htmlFor="height_shoulders" required>
                 {t("pages.user-join.form.height-shoulders")}
-                <PopupHeight type="shoulders" />
               </FormLabel>
               <OutlinedInput
                 id="height_shoulders"
@@ -278,7 +274,6 @@ export default function FormJoin() {
             <FormGrid size={{ xs: 12, md: 3 }}>
               <FormLabel htmlFor="height_arms" required>
                 {t("pages.user-join.form.height-arms")}
-                <PopupHeight type="arms" />
               </FormLabel>
               <OutlinedInput
                 id="height_arms"

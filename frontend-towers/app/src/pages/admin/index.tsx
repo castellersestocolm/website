@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../components/AppContext/AppContext";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import PageBase from "../../components/PageBase/PageBase";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";

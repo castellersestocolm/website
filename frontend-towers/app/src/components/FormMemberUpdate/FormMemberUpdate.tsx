@@ -1,6 +1,6 @@
 import * as React from "react";
 import FormLabel from "@mui/material/FormLabel";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import IconCheck from "@mui/icons-material/Check";
 import { styled } from "@mui/material/styles";
@@ -13,7 +13,7 @@ import {
   apiUserMe,
 } from "../../api";
 import { useState } from "react";
-import { Alert } from "@mui/lab";
+import Alert from "@mui/material/Alert";
 import { useAppContext } from "../AppContext/AppContext";
 import { TransitionGroup } from "react-transition-group";
 import FormControlLabel from "@mui/material/FormControlLabel";

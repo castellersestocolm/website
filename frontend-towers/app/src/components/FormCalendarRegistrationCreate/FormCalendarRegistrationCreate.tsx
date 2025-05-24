@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import IconCheck from "@mui/icons-material/Check";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
@@ -17,7 +17,7 @@ import {
   apiEventRegistrationCreate,
   apiEventRegistrationDelete,
 } from "../../api";
-import { Alert } from "@mui/lab";
+import Alert from "@mui/material/Alert";
 import { TransitionGroup } from "react-transition-group";
 import { RegistrationStatus } from "../../enums";
 
