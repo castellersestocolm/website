@@ -47,12 +47,6 @@ export const ROUTES = {
   admin: {
     path: "/admin",
   },
-  "sale-bandana": {
-    path: "/sale/bandana",
-  },
-  "sale-tshirts": {
-    path: "/sale/tshirts",
-  },
   "external-form-equipment": {
     path: "https://docs.google.com/forms/d/e/1FAIpQLSc1ZoTANdTVTpeZ_jqxvGVm1KXpjNZQLBD4m6pkCtugkBAWqg/viewform",
   },
