@@ -712,7 +712,7 @@ function UserDashboardPage() {
                                   color="textSecondary"
                                 >
                                   {t("pages.calendar.section.agenda.castles")}
-                                  {":"}
+                                  {": "}
                                   {castles.map(
                                     (castle: any, i: number, row: any) => {
                                       return (
@@ -730,7 +730,7 @@ function UserDashboardPage() {
                                               {")"}
                                             </>
                                           )}
-                                          {i + 1 < row.length && ","}
+                                          {i + 1 < row.length && ", "}
                                         </Typography>
                                       );
                                     },

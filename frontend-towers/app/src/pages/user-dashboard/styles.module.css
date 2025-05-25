@@ -159,7 +159,7 @@
   flex-direction: row;
   align-items: center;
   width: max-content;
-  padding-left: 4px;
+  white-space: pre;
 
   svg {
     font-size: 0.875rem;
