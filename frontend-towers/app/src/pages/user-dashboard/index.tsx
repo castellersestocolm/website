@@ -712,29 +712,30 @@ function UserDashboardPage() {
                                   color="textSecondary"
                                 >
                                   {t("pages.calendar.section.agenda.castles")}
-                                  {": "}
+                                  {":"}
+                                  {castles.map(
+                                    (castle: any, i: number, row: any) => {
+                                      return (
+                                        <Typography
+                                          variant="body2"
+                                          color="textSecondary"
+                                          className={styles.eventCastleBox}
+                                          component="span"
+                                        >
+                                          <span>{castle.name}</span>
+                                          {castle.is_published && (
+                                            <>
+                                              {" ("}
+                                              <IconAttachFile />
+                                              {")"}
+                                            </>
+                                          )}
+                                          {i + 1 < row.length && ","}
+                                        </Typography>
+                                      );
+                                    },
+                                  )}
                                 </Typography>
-                                {castles.map(
-                                  (castle: any, i: number, row: any) => {
-                                    return (
-                                      <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        className={styles.eventCastleBox}
-                                      >
-                                        <span>{castle.name}</span>
-                                        {castle.is_published && (
-                                          <>
-                                            {" ("}
-                                            <IconAttachFile />
-                                            {")"}
-                                          </>
-                                        )}
-                                        {i + 1 < row.length && ", "}
-                                      </Typography>
-                                    );
-                                  },
-                                )}
                               </Box>
                             )}
                           </>
