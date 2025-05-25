@@ -722,7 +722,7 @@ function UserDashboardPage() {
                                           className={styles.eventCastleBox}
                                           component="span"
                                         >
-                                          <span>{castle.name}</span>
+                                          {castle.name}
                                           {castle.is_published && (
                                             <>
                                               {" ("}

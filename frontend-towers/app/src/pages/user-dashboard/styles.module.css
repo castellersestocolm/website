@@ -158,7 +158,7 @@
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  width: min-content;
+  width: max-content;
   padding-left: 4px;
 
   svg {
