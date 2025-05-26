@@ -22,7 +22,11 @@ async function main() {
             for (let m = 0; m < popups.length; m++) {
                 const popup = popups[m];
                 const closeButton = document.getElementsByClassName("ncc-modal__close")[0].getElementsByTagName("button")[0];
-                const externalId = popup.getElementsByClassName("ncc-modal__body")[0].getAttribute("aria-labelledby").replace("ncc-modal__title_", "");
+                const ariaLabel = popup.getElementsByClassName("ncc-modal__body")[0].getAttribute("aria-labelledby");
+                let externalId = "";
+                if (ariaLabel) {
+                    externalId = ariaLabel.replace("ncc-modal__title_", "");
+                }
                 let transactionTable = document.getElementById("transaction-details-section");
                 if(transactionTable == null){
                     await sleep(1000);
