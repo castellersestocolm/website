@@ -53,6 +53,11 @@ export default function EventCalendar({ compact, lastChanged }: any) {
     return new Date(d.setDate(diff));
   }
 
+  function getDateString(d: Date) {
+    const tzoffset = d.getTimezoneOffset() * 60000; //offset in milliseconds
+    return new Date(d.getTime() - tzoffset).toISOString().slice(0, -1);
+  }
+
   React.useEffect(() => {
     const dateMonthFrom = new Date(year, month - 1, 1);
     const dateFrom = getMonday(dateMonthFrom);
@@ -88,8 +93,8 @@ export default function EventCalendar({ compact, lastChanged }: any) {
   React.useEffect(() => {
     if (dateFrom && dateTo) {
       apiEventCalendarList(
-        dateFrom.toISOString().slice(0, 10),
-        dateTo.toISOString().slice(0, 10),
+        getDateString(dateFrom).slice(0, 10),
+        getDateString(dateTo).slice(0, 10),
       ).then((response) => {
         if (response.status === 200) {
           setEvents(response.data);
