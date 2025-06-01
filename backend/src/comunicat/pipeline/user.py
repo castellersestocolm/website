@@ -14,8 +14,8 @@ def module_data(backend, response, details, user, *args, **kwargs):
     # TODO: Fix this, for now set it from TOWERS
     origin_module = get_module_from_request(request=request) or Module.TOWERS
 
-    user.firstname = details.get("first_name", user.firstname) or user.firstname
-    user.lastname = details.get("last_name", user.lastname) or user.lastname
+    user.firstname = user.firstname or details.get("first_name", user.firstname)
+    user.lastname = user.lastname or details.get("last_name", user.lastname)
     user.origin_module = origin_module
 
     update_fields = ["firstname", "lastname", "origin_module"]
