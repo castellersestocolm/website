@@ -44,6 +44,9 @@ export const ROUTES = {
   "trips-2025-berlin": {
     path: "/trips/2025/berlin",
   },
+  "calendar-2025-06-14-anniversary-performance": {
+    path: "/calendar/2025/06/14/anniversary-performance",
+  },
   admin: {
     path: "/admin",
   },
@@ -65,5 +68,8 @@ export const ROUTES = {
   },
   "external-berlin-diada-2025": {
     path: "https://castellers.berlin/international-diada-castellera-berlin-2025/",
+  },
+  "external-calendar-2025-06-14-anniversary-performance": {
+    path: "https://maps.app.goo.gl/8RrBWaQUbPXiMb3v6",
   },
 };
