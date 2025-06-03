@@ -115,7 +115,8 @@ def create_or_update(
                 defaults={"family_id": family_id},
             )
 
-    # Create or update the payment
-    payment.api.membership.create_or_update_payment(membership_id=membership_obj.id)
+    # TODO: Perhaps no need to create the payment but do it only on importing transactions
+    # # Create or update the payment
+    # payment.api.membership.create_or_update_payment(membership_id=membership_obj.id)
 
     return membership_obj
