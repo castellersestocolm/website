@@ -28,7 +28,7 @@ def get_list(user_id: UUID, module: Module) -> List[Membership]:
         .prefetch_related(
             Prefetch("modules", MembershipModule.objects.all().order_by("module"))
         )
-        .order_by("date_from")
+        .order_by("-date_from")
     )
 
 
