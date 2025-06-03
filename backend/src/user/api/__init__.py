@@ -103,15 +103,29 @@ def logout(request: HttpRequest) -> None:
     return django_logout(request)
 
 
-def generate_alias(firstname: str, lastname: str) -> str:
-    existing_aliases = TowersUser.objects.values_list("alias", flat=True)
+def generate_alias(user_id: UUID, firstname: str, lastname: str) -> str:
+    existing_aliases = TowersUser.objects.exclude(user_id=user_id).values_list(
+        "alias", flat=True
+    )
+
+    current_alias = (
+        TowersUser.objects.filter(user_id=user_id)
+        .values_list("alias", flat=True)
+        .first()
+    )
+
+    if current_alias and current_alias not in existing_aliases:
+        return current_alias
 
     firstname = unicodedata.normalize("NFKD", firstname).replace(" ", "")
 
     if firstname not in existing_aliases:
         return firstname
 
-    lastname = unicodedata.normalize("NFKD", firstname).replace(" ", "")
+    lastname = unicodedata.normalize("NFKD", lastname).replace(" ", "")
+
+    if lastname not in existing_aliases:
+        return lastname
 
     alias = base_alias = firstname + lastname
 
@@ -152,7 +166,9 @@ def create(
     if towers:
         TowersUser.objects.create(
             user=user_obj,
-            alias=generate_alias(firstname=firstname, lastname=lastname),
+            alias=generate_alias(
+                user_id=user_obj.id, firstname=firstname, lastname=lastname
+            ),
             height_shoulders=towers.get("height_shoulders"),
             height_arms=towers.get("height_arms"),
         )
@@ -246,7 +262,9 @@ def update(
         TowersUser.objects.update_or_create(
             user=user_obj,
             defaults={
-                "alias": generate_alias(firstname=firstname, lastname=lastname),
+                "alias": generate_alias(
+                    user_id=user_obj.id, firstname=firstname, lastname=lastname
+                ),
                 "height_shoulders": towers.get("height_shoulders"),
                 "height_arms": towers.get("height_arms"),
             },
