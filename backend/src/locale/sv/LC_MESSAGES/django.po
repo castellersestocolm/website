@@ -138,7 +138,7 @@ msgstr ""
 
 #: comunicat/templates/email/towers/membership/renew.html:5
 msgid ""
-"Your membership will be expiring very on"
+"Your membership will be expiring on"
 msgstr ""
 "Ditt medlemskap löper ut den"
 
