@@ -55,6 +55,7 @@ import Map from "../../components/Map/Map";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import Hero from "../../components/Hero/Hero";
 import ImageHeroTrips2025Berlin from "../../assets/images/heros/trips-2025-berlin.jpg";
+import ImageHeroCalendar20250614AnniversaryPerformance from "../../assets/images/heros/calendar-2025-06-14-anniversary-performance.jpg";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -154,8 +155,8 @@ function HomePage() {
         </Box>
       </Box>
       <Hero
-        title={t("pages.trips-2025-berlin.title")}
-        hero={ImageHeroTrips2025Berlin}
+        title={t("pages.calendar-2025-06-14-anniversary-performance.title")}
+        hero={ImageHeroCalendar20250614AnniversaryPerformance}
         content={
           <Box>
             <Typography
@@ -163,31 +164,30 @@ function HomePage() {
               className={styles.heroSectionSubtitle}
               marginTop="12px"
             >
-              {t("pages.home-berlin.description")}
+              {t("pages.home-anniversary.description")}
             </Typography>
             <Grid size={12} marginTop="24px">
               <Stack direction="row" spacing={2} className={styles.joinButtons}>
                 <Button
                   variant="contained"
-                  href={ROUTES["trips-2025-berlin"].path + "#gallery"}
+                  href={
+                    ROUTES["calendar-2025-06-14-anniversary-performance"].path
+                  }
                   disableElevation
                 >
-                  {t("pages.home-berlin.button-page")}
+                  {t("pages.home-anniversary.button-page")}
                 </Button>
                 <Button
                   variant="contained"
-                  href={ROUTES["trips-2025-berlin"].path + "#donations"}
-                  disableElevation
-                >
-                  {t("pages.home-berlin.button-donations")}
-                </Button>
-                <Button
-                  variant="contained"
-                  href={ROUTES["external-berlin-diada-2025"].path}
+                  href={
+                    ROUTES[
+                      "external-calendar-2025-06-14-anniversary-performance"
+                    ].path
+                  }
                   target={"_blank"}
                   disableElevation
                 >
-                  {t("pages.home-berlin.button-diada")}
+                  {t("pages.home-anniversary.button-location")}
                   <IconArrowOutward className={styles.externalIcon} />
                 </Button>
               </Stack>
@@ -195,6 +195,54 @@ function HomePage() {
           </Box>
         }
       />
+      {false && (
+        <Hero
+          title={t("pages.trips-2025-berlin.title")}
+          hero={ImageHeroTrips2025Berlin}
+          content={
+            <Box>
+              <Typography
+                variant="h4"
+                className={styles.heroSectionSubtitle}
+                marginTop="12px"
+              >
+                {t("pages.home-berlin.description")}
+              </Typography>
+              <Grid size={12} marginTop="24px">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  className={styles.joinButtons}
+                >
+                  <Button
+                    variant="contained"
+                    href={ROUTES["trips-2025-berlin"].path + "#gallery"}
+                    disableElevation
+                  >
+                    {t("pages.home-berlin.button-page")}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    href={ROUTES["trips-2025-berlin"].path + "#donations"}
+                    disableElevation
+                  >
+                    {t("pages.home-berlin.button-donations")}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    href={ROUTES["external-berlin-diada-2025"].path}
+                    target={"_blank"}
+                    disableElevation
+                  >
+                    {t("pages.home-berlin.button-diada")}
+                    <IconArrowOutward className={styles.externalIcon} />
+                  </Button>
+                </Stack>
+              </Grid>
+            </Box>
+          }
+        />
+      )}
       <Box component="section" className={styles.rehearsals}>
         <Container maxWidth="lg">
           <Typography

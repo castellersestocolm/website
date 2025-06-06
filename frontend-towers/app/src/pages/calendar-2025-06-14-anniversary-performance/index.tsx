@@ -7,7 +7,6 @@ import styles from "./styles.module.css";
 import Grid from "@mui/material/Grid";
 import ImagePoster from "../../assets/images/calendar/2025/06/14/anniversary-performance/poster.jpg";
 import FilePoster from "../../assets/files/calendar/2025/06/14/anniversary-performance/poster.pdf";
-import Map from "../../components/Map/Map";
 
 function Calendar20250614AnniversaryPerformancePage() {
   const { t } = useTranslation("common");
