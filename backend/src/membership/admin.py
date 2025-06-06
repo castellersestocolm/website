@@ -47,12 +47,12 @@ class MembershipAdmin(admin.ModelAdmin):
             mark_safe(
                 "<br/>".join(
                     [
-                        f"<a href='{
+                        f'<a href="{
         reverse(
                 'admin:user_user_change', args=(member_user_obj.user_id,)
             )
         
-        }'>{str(member_user_obj.user)}</a>"
+        }">{str(member_user_obj.user)}</a>'
                         for member_user_obj in obj.membership_users.order_by(
                             "user__firstname", "user__lastname"
                         )
@@ -73,9 +73,9 @@ class MembershipAdmin(admin.ModelAdmin):
 
         if family_obj:
             return mark_safe(
-                f"<a href='{reverse(
+                f'<a href="{reverse(
                 "admin:user_family_change", args=(family_obj.id,)
-            )}'>{str(family_obj)}</a>"
+            )}">{str(family_obj)}</a>'
             )
 
         return "-"

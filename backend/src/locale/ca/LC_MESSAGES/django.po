@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-08 13:20+0200\n"
+"POT-Creation-Date: 2025-06-06 11:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,36 +26,36 @@ msgstr "create"
 msgid "updated"
 msgstr "actualitzat"
 
-#: comunicat/rest/serializers/user.py:196
+#: comunicat/rest/serializers/user.py:216
 #, python-format
 msgid "The minimum age to join is %s."
 msgstr "L'edat mínima per unir-se és %s."
 
-#: comunicat/rest/serializers/user.py:205
+#: comunicat/rest/serializers/user.py:225
 #, python-format
 msgid "Only the following languages are allowed: %s."
 msgstr "Només els següents idiomes estan permesos: %s."
 
-#: comunicat/rest/serializers/user.py:216
-#: comunicat/rest/serializers/user.py:275
-#: comunicat/rest/serializers/user.py:315
+#: comunicat/rest/serializers/user.py:236
+#: comunicat/rest/serializers/user.py:295
+#: comunicat/rest/serializers/user.py:335
 #, python-format
 msgid "Members over %s must consent in order to become members."
 msgstr ""
 "Membres majors de %s han de donar consentiment per tal d'esdevenir membres."
 
-#: comunicat/rest/serializers/user.py:235
-#: comunicat/rest/serializers/user.py:342
+#: comunicat/rest/serializers/user.py:255
+#: comunicat/rest/serializers/user.py:362
 msgid "The passwords do not match."
 msgstr "Les contrasenyes no són iguals."
 
-#: comunicat/rest/serializers/user.py:264
+#: comunicat/rest/serializers/user.py:284
 #, python-format
 msgid "The family member must be below %s to update."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo actualitzar."
 
-#: comunicat/rest/serializers/user.py:304
-#| msgid "The family member must be below %s to update."
+#: comunicat/rest/serializers/user.py:324
+#, python-format
 msgid "The family member must be below %s to create."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
@@ -106,6 +106,62 @@ msgstr "Enviat amb"
 #: comunicat/templates/email/towers/base.html:61
 msgid "by"
 msgstr "per"
+
+#: comunicat/templates/email/towers/membership/expired.html:5
+msgid ""
+"Your membership has expired and you can no longer enjoy all the benefits we "
+"provide as well as attend our events. But not all is lost! You can renew it "
+"at any time if you wish to do so."
+msgstr ""
+"La teva quota ha caducat i ja no pots gaudir de tots els avantatges que "
+"oferim ni tampoc assistir als nostres esdeveniments. Però no tot està "
+"perdut! Pots renovar-la en qualsevol moment si ho vols."
+
+#: comunicat/templates/email/towers/membership/expired.html:10
+#: comunicat/templates/email/towers/membership/renew.html:15
+msgid "Renew membership"
+msgstr "Renova la quota"
+
+#: comunicat/templates/email/towers/membership/expired.html:13
+msgid ""
+"Your data will be kept for a total of two (2) years since the day your "
+"membership expired. Afterwards, it will be deleted and recovery will not be "
+"possible. If you wish to delete your data sooner as regulated in Article 17 "
+"of the General Data Protection Regulation (Regulation (EU) 2016/679) please "
+"send us an email with your request."
+msgstr ""
+"Les teves dades es conservaran durant un total de dos (2) anys a partir del "
+"dia que va expirar la vostra quota. Posteriorment, s'eliminaran i no en serà "
+"possible la recuperació. Si voleu eliminar les vostres dades abans així com "
+"es regula a l'article 17 del Reglament General de Protecció de Dades "
+"(Control (UE) 2016/679), envieu-nos un correu electrònic amb la vostra "
+"sol·licitud."
+
+#: comunicat/templates/email/towers/membership/renew.html:5
+msgid ""
+"Your membership will be expiring very soon. In order to enjoy all the "
+"benefits we provide as well as attend our events you need to renew it before "
+"it expires."
+msgstr ""
+"La teva quota caducarà molt aviat. Per gaudir de tots els avantatges que "
+"oferim i assistir als nostres esdeveniments, has de renovar-la abans que "
+"caduqui."
+
+#: comunicat/templates/email/towers/membership/renew.html:7
+msgid "Amount"
+msgstr "Quantitat"
+
+#: comunicat/templates/email/towers/membership/renew.html:8
+msgid "Valid"
+msgstr "Validesa"
+
+#: comunicat/templates/email/towers/membership/renew.html:10
+msgid ""
+"In your dashboard you can find the payment information as well as the date "
+"your current membership expires."
+msgstr ""
+"Al teu perfil trobaràs la informació de pagament, així com la data en què "
+"caduca la teva quota actual."
 
 #: comunicat/templates/email/towers/user/imported.html:5
 msgid ""
@@ -240,26 +296,26 @@ msgid ""
 "We have some upcoming events, please make sure to update your attendance as "
 "soon as you can!"
 msgstr ""
-"Tenim alguns esdeveniments propers, assegura't d'actualitzar la teva assistència "
-"tan aviat com puguis!"
+"Tenim alguns esdeveniments propers, assegura't d'actualitzar la teva "
+"assistència tan aviat com puguis!"
 
 #: comunicat/templates/email/towers/user/signup.html:6
 msgid "Next events and rehearsals"
 msgstr "Propers esdeveniments i assajos"
 
-#: comunicat/templates/email/towers/user/signup.html:19
+#: comunicat/templates/email/towers/user/signup.html:25
 msgid "Attending"
 msgstr "Hi participo"
 
-#: comunicat/templates/email/towers/user/signup.html:24
+#: comunicat/templates/email/towers/user/signup.html:30
 msgid "Not attending"
 msgstr "No hi participo"
 
-#: comunicat/templates/email/towers/user/signup.html:24
+#: comunicat/templates/email/towers/user/signup.html:36
 msgid "Unanswered"
 msgstr "Sense respondre"
 
-#: comunicat/templates/email/towers/user/signup.html:39
+#: comunicat/templates/email/towers/user/signup.html:56
 msgid "Change attendance"
 msgstr "Canvia l'assistència"
 
@@ -298,7 +354,7 @@ msgstr "Uneix-te a la comunitat"
 msgid "End time must be greater than start time."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:221
+#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243
 msgid "name"
 msgstr "nom"
 
@@ -314,11 +370,11 @@ msgstr "família"
 msgid "modules"
 msgstr "mòduls"
 
-#: notify/consts.py:34 notify/consts.py:64
+#: notify/consts.py:34 notify/consts.py:72
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
 
-#: notify/consts.py:38 notify/consts.py:68
+#: notify/consts.py:38 notify/consts.py:76
 msgid "Reset your password to login"
 msgstr "Reinicia la teva contrasenya per entrar"
 
@@ -327,11 +383,10 @@ msgid "Welcome to Les Quatre Barres"
 msgstr "Benvingut a Les Quatre Barres"
 
 #: notify/consts.py:46
-#| msgid "Welcome to Castellers d'Estocolm new website"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
-#: notify/consts.py:50 notify/consts.py:80
+#: notify/consts.py:50 notify/consts.py:88
 msgid "You have been invited to join a family"
 msgstr "Has estat convidat a unir-te a una família"
 
@@ -339,44 +394,73 @@ msgstr "Has estat convidat a unir-te a una família"
 msgid "Sign-up for the upcoming events"
 msgstr "Confirma l'assistència als propers esdeveniments"
 
-#: notify/consts.py:72
+#: notify/consts.py:58 notify/consts.py:96
+msgid "Time to renew your membership"
+msgstr "La teva quota caduca aviat"
+
+#: notify/consts.py:62 notify/consts.py:100
+msgid "Your membership has expired"
+msgstr "La teva quota ha caducat"
+
+#: notify/consts.py:80
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Benvingut/da als Castellers d'Estocolm"
 
-#: notify/consts.py:76
+#: notify/consts.py:84
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 
-#: notify/consts.py:84
+#: notify/consts.py:92
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
-#: payment/admin.py:107 payment/admin.py:156
+#: payment/admin.py:107 payment/admin.py:162
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:108 payment/admin.py:158
-#| msgid "updated"
+#: payment/admin.py:108 payment/admin.py:164
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:109 payment/admin.py:159
+#: payment/admin.py:109 payment/admin.py:165 payment/admin.py:240
+#: payment/admin.py:331
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:157
+#: payment/admin.py:163
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:320
+#: payment/admin.py:241 payment/admin.py:242 payment/admin.py:332
+#: payment/admin.py:333
+#, fuzzy, python-format
+#| msgid "balance"
+msgid "balance %s"
+msgstr "saldo"
+
+#: payment/admin.py:330
+msgid "last imported"
+msgstr ""
+
+#: payment/admin.py:387
 msgid "file"
 msgstr "fitxer"
 
-#: payment/managers.py:120 payment/managers.py:262
+#: payment/api/export.py:39
+#, fuzzy
+#| msgid "Payment"
+msgid "Payments"
+msgstr "Pagament"
+
+#: payment/api/google_drive.py:175
+msgid "Receipts"
+msgstr ""
+
+#: payment/managers.py:120 payment/managers.py:268
 msgid "Membership update"
 msgstr "Actualització quota"
 
-#: payment/managers.py:126 payment/managers.py:264
+#: payment/managers.py:126 payment/managers.py:270
 msgid "Membership"
 msgstr "Quota"
 
@@ -384,15 +468,33 @@ msgstr "Quota"
 msgid "Payment"
 msgstr "Pagament"
 
-#: payment/managers.py:269
+#: payment/managers.py:276
 msgid "Unspecified"
 msgstr "Sense especificar"
 
-#: payment/models.py:217
+#: payment/managers.py:308
+msgid "(and more)"
+msgstr "(i més)"
+
+#: payment/managers.py:311
+msgid "Expense"
+msgstr ""
+
+#: payment/models.py:96
+#, fuzzy
+#| msgid "Category must be set for accounts with parent."
+msgid "Transaction must be set for completed payments."
+msgstr "La categoria és obligatòria per comptes amb matrius."
+
+#: payment/models.py:121
+msgid "Unknown"
+msgstr ""
+
+#: payment/models.py:350
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: user/admin.py:92
+#: user/admin.py:116
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 
@@ -429,6 +531,3 @@ msgstr "actiu"
 
 #~ msgid "to"
 #~ msgstr "fins el"
-
-msgid "(and more)"
-msgstr "(i més)"

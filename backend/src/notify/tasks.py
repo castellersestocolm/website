@@ -10,13 +10,15 @@ from django.utils import translation
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
-from event.enums import RegistrationStatus
 from event.models import EventModule
 from notify.api.email import send_email
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import NotificationType, EmailType
 from notify.models import Email
-from user.models import User
+from user.enums import FamilyMemberStatus
+from user.models import User, FamilyMember
+
+import membership.utils
 
 from django.conf import settings
 
@@ -75,6 +77,33 @@ def send_user_email(
                     user_id__in=context["user_ids"],
                 )
             )
+
+        if email_type in (EmailType.MEMBERSHIP_RENEW, EmailType.MEMBERSHIP_EXPIRED):
+            user_ids = list(
+                {user_id}
+                | {
+                    family_member_obj.user_id
+                    # TODO: Review this as it could be wrong
+                    for family_member_obj in FamilyMember.objects.filter(
+                        family__members__user_id=user_id,
+                        status=FamilyMemberStatus.ACTIVE,
+                    )
+                }
+            )
+
+            membership_amount = membership.utils.get_membership_amount(
+                member_count=len(user_ids), module=module
+            )
+            membership_length = membership.utils.get_membership_length(
+                member_count=len(user_ids)
+            )
+            membership_date_to = membership.utils.get_membership_date_to(
+                months=membership_length
+            )
+
+            context_full["membership_amount"] = membership_amount
+            context_full["membership_length"] = membership_length
+            context_full["membership_date_to"] = membership_date_to
 
         template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
             email_type

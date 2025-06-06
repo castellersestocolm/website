@@ -36,7 +36,9 @@ class Membership(StandardModel, Timestamps):
 
     @cached_property
     def date_renewal(self) -> datetime.date:
-        return self.date_to - timezone.timedelta(days=settings.MODULE_ALL_MEMBERSHIP_RENEW_DAYS)
+        return self.date_to - timezone.timedelta(
+            days=settings.MODULE_ALL_MEMBERSHIP_RENEW_DAYS
+        )
 
     @cached_property
     def can_renew(self) -> bool:

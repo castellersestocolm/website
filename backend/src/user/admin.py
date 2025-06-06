@@ -66,6 +66,32 @@ def send_imported_email(modeladmin, request, queryset):
         )
 
 
+@admin.action(description="Send membership renew email")
+def send_membership_renew_email(modeladmin, request, queryset):
+    for user_obj in queryset.with_has_active_membership().filter(
+        has_active_membership=True
+    ):
+        notify.tasks.send_user_email.delay(
+            user_id=user_obj.id,
+            email_type=EmailType.MEMBERSHIP_RENEW,
+            module=user_obj.origin_module,
+            locale=user_obj.preferred_language or translation.get_language(),
+        )
+
+
+@admin.action(description="Send membership expired email")
+def send_membership_expired_email(modeladmin, request, queryset):
+    for user_obj in queryset.with_has_active_membership().filter(
+        has_active_membership=False
+    ):
+        notify.tasks.send_user_email.delay(
+            user_id=user_obj.id,
+            email_type=EmailType.MEMBERSHIP_EXPIRED,
+            module=user_obj.origin_module,
+            locale=user_obj.preferred_language or translation.get_language(),
+        )
+
+
 class UserAdminForm(forms.ModelForm):
     alias = forms.CharField()
     height_shoulders = forms.IntegerField(min_value=0, max_value=200, required=False)
@@ -143,6 +169,8 @@ class UserAdmin(admin.ModelAdmin):
         send_welcome_email,
         send_imported_email,
         send_signup_email,
+        send_membership_renew_email,
+        send_membership_expired_email,
     )
     form = UserAdminForm
 

@@ -1,0 +1,14 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "Your membership has expired and you can no longer enjoy all the benefits we provide as well as attend our events. But not all is lost! You can renew it at any time if you wish to do so." %}</p>
+{% endblock %}
+
+{% block email_button_url %}{% full_towers_url "user/dashboard/" %}{% endblock %}
+
+{% block email_button_text %}{% trans "Renew membership" %}{% endblock %}
+
+{% block email_message_post %}
+    <p>{% trans "Your data will be kept for a total of two (2) years since the day your membership expired. Afterwards, it will be deleted and recovery will not be possible. If you wish to delete your data sooner as regulated in Article 17 of the General Data Protection Regulation (Regulation (EU) 2016/679) please send us an email with your request." %}</p>
+{% endblock %}

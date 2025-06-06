@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-08 13:20+0200\n"
+"POT-Creation-Date: 2025-06-06 11:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,35 +26,35 @@ msgstr "skapad"
 msgid "updated"
 msgstr "uppdaterad"
 
-#: comunicat/rest/serializers/user.py:196
+#: comunicat/rest/serializers/user.py:216
 #, python-format
 msgid "The minimum age to join is %s."
 msgstr "Minsta ålder för att gå med är %s."
 
-#: comunicat/rest/serializers/user.py:205
+#: comunicat/rest/serializers/user.py:225
 #, python-format
 msgid "Only the following languages are allowed: %s."
 msgstr "Endast följande språk är tillåtna: %s."
 
-#: comunicat/rest/serializers/user.py:216
-#: comunicat/rest/serializers/user.py:275
-#: comunicat/rest/serializers/user.py:315
+#: comunicat/rest/serializers/user.py:236
+#: comunicat/rest/serializers/user.py:295
+#: comunicat/rest/serializers/user.py:335
 #, python-format
 msgid "Members over %s must consent in order to become members."
 msgstr "Medlemmar över %s måste ge sitt samtycke för att kunna bli medlemmar."
 
-#: comunicat/rest/serializers/user.py:235
-#: comunicat/rest/serializers/user.py:342
+#: comunicat/rest/serializers/user.py:255
+#: comunicat/rest/serializers/user.py:362
 msgid "The passwords do not match."
 msgstr "Lösenorden stämmer inte överens."
 
-#: comunicat/rest/serializers/user.py:264
+#: comunicat/rest/serializers/user.py:284
 #, python-format
 msgid "The family member must be below %s to update."
 msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
 
-#: comunicat/rest/serializers/user.py:304
-#| msgid "The family member must be below %s to update."
+#: comunicat/rest/serializers/user.py:324
+#, python-format
 msgid "The family member must be below %s to create."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
@@ -105,6 +105,61 @@ msgstr "Skickat med"
 #: comunicat/templates/email/towers/base.html:61
 msgid "by"
 msgstr "av"
+
+#: comunicat/templates/email/towers/membership/expired.html:5
+msgid ""
+"Your membership has expired and you can no longer enjoy all the benefits we "
+"provide as well as attend our events. But not all is lost! You can renew it "
+"at any time if you wish to do so."
+msgstr ""
+"Ditt medlemskap har löpt ut och du kan inte längre ta del av alla förmåner "
+"vi erbjuder samt delta i våra evenemang. Men allt är inte förlorat! Du kan "
+"fortfarande förnya medlemskapet när som helst om du vill komma tillbaka."
+
+#: comunicat/templates/email/towers/membership/expired.html:10
+#: comunicat/templates/email/towers/membership/renew.html:15
+msgid "Renew membership"
+msgstr "Förnya medlemskapet"
+
+#: comunicat/templates/email/towers/membership/expired.html:13
+msgid ""
+"Your data will be kept for a total of two (2) years since the day your "
+"membership expired. Afterwards, it will be deleted and recovery will not be "
+"possible. If you wish to delete your data sooner as regulated in Article 17 "
+"of the General Data Protection Regulation (Regulation (EU) 2016/679) please "
+"send us an email with your request."
+msgstr ""
+"Dina uppgifter kommer att sparas i totalt två (2) år från den dag då ditt "
+"medlemskap löpte ut. Därefter kommer uppgifterna att raderas och det kommer "
+"inte att vara möjlig att återställa informationen. Om du vill radera dina "
+"uppgifter tidigare i enlighet med artikel 17 i den allmänna "
+"dataskyddsförordningen (Förordning (EU) 2016/679), vänligen skicka ett e-"
+"postmeddelande till oss med din begäran."
+
+#: comunicat/templates/email/towers/membership/renew.html:5
+msgid ""
+"Your membership will be expiring very soon. In order to enjoy all the "
+"benefits we provide as well as attend our events you need to renew it before "
+"it expires."
+msgstr ""
+"Ditt medlemskap löper ut snart. För att kunna ta del av alla förmåner vi "
+"erbjuder samt delta i våra evenemang måste du förnya det innan det löper ut."
+
+#: comunicat/templates/email/towers/membership/renew.html:7
+msgid "Amount"
+msgstr "Belopp"
+
+#: comunicat/templates/email/towers/membership/renew.html:8
+msgid "Valid"
+msgstr "Giltighet"
+
+#: comunicat/templates/email/towers/membership/renew.html:10
+msgid ""
+"In your dashboard you can find the payment information as well as the date "
+"your current membership expires."
+msgstr ""
+"På din profil hittar du betalningsinformationen samt datumet som ditt "
+"nuvarande medlemskap löper ut."
 
 #: comunicat/templates/email/towers/user/imported.html:5
 msgid ""
@@ -245,19 +300,19 @@ msgstr ""
 msgid "Next events and rehearsals"
 msgstr "Nästa evenemang och repetitioner"
 
-#: comunicat/templates/email/towers/user/signup.html:19
+#: comunicat/templates/email/towers/user/signup.html:25
 msgid "Attending"
 msgstr "Deltar"
 
-#: comunicat/templates/email/towers/user/signup.html:24
+#: comunicat/templates/email/towers/user/signup.html:30
 msgid "Not attending"
 msgstr "Deltar ej"
 
-#: comunicat/templates/email/towers/user/signup.html:24
+#: comunicat/templates/email/towers/user/signup.html:36
 msgid "Unanswered"
 msgstr "Obesvarad"
 
-#: comunicat/templates/email/towers/user/signup.html:39
+#: comunicat/templates/email/towers/user/signup.html:56
 msgid "Change attendance"
 msgstr "Ändra närvaro"
 
@@ -296,7 +351,7 @@ msgstr "Gå med i gemenskapen"
 msgid "End time must be greater than start time."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:221
+#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243
 msgid "name"
 msgstr "namn"
 
@@ -312,11 +367,11 @@ msgstr "familj"
 msgid "modules"
 msgstr "moduler"
 
-#: notify/consts.py:34 notify/consts.py:64
+#: notify/consts.py:34 notify/consts.py:72
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
 
-#: notify/consts.py:38 notify/consts.py:68
+#: notify/consts.py:38 notify/consts.py:76
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
@@ -325,11 +380,10 @@ msgid "Welcome to Les Quatre Barres"
 msgstr "Välkomen till Les Quatre Barres"
 
 #: notify/consts.py:46
-#| msgid "Welcome to Castellers d'Estocolm new website"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:50 notify/consts.py:80
+#: notify/consts.py:50 notify/consts.py:88
 msgid "You have been invited to join a family"
 msgstr "Du har blivit inbjuden att gå med i en familj"
 
@@ -337,44 +391,73 @@ msgstr "Du har blivit inbjuden att gå med i en familj"
 msgid "Sign-up for the upcoming events"
 msgstr "Registrera dig till kommande evenemang"
 
-#: notify/consts.py:72
+#: notify/consts.py:58 notify/consts.py:96
+msgid "Time to renew your membership"
+msgstr "Dags att förnya ditt medlemskap"
+
+#: notify/consts.py:62 notify/consts.py:100
+msgid "Your membership has expired"
+msgstr "Ditt medlemskap har löpt ut"
+
+#: notify/consts.py:80
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Välkommen till Castellers d'Estocolm"
 
-#: notify/consts.py:76
+#: notify/consts.py:84
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:84
+#: notify/consts.py:92
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Registrera dig till kommande evenemang och repetitioner"
 
-#: payment/admin.py:107 payment/admin.py:156
+#: payment/admin.py:107 payment/admin.py:162
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:108 payment/admin.py:158
-#| msgid "updated"
+#: payment/admin.py:108 payment/admin.py:164
 msgid "date"
 msgstr "datum"
 
-#: payment/admin.py:109 payment/admin.py:159
+#: payment/admin.py:109 payment/admin.py:165 payment/admin.py:240
+#: payment/admin.py:331
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:157
+#: payment/admin.py:163
 msgid "entity"
 msgstr "enhet"
 
-#: payment/admin.py:320
+#: payment/admin.py:241 payment/admin.py:242 payment/admin.py:332
+#: payment/admin.py:333
+#, fuzzy, python-format
+#| msgid "balance"
+msgid "balance %s"
+msgstr "saldo"
+
+#: payment/admin.py:330
+msgid "last imported"
+msgstr ""
+
+#: payment/admin.py:387
 msgid "file"
 msgstr "fil"
 
-#: payment/managers.py:120 payment/managers.py:262
+#: payment/api/export.py:39
+#, fuzzy
+#| msgid "Payment"
+msgid "Payments"
+msgstr "Betalning"
+
+#: payment/api/google_drive.py:175
+msgid "Receipts"
+msgstr ""
+
+#: payment/managers.py:120 payment/managers.py:268
 msgid "Membership update"
 msgstr "Medlemskapsuppdatering"
 
-#: payment/managers.py:126 payment/managers.py:264
+#: payment/managers.py:126 payment/managers.py:270
 msgid "Membership"
 msgstr "Medlemskap"
 
@@ -382,15 +465,33 @@ msgstr "Medlemskap"
 msgid "Payment"
 msgstr "Betalning"
 
-#: payment/managers.py:269
+#: payment/managers.py:276
 msgid "Unspecified"
 msgstr "Ospecificerad"
 
-#: payment/models.py:217
+#: payment/managers.py:308
+msgid "(and more)"
+msgstr "(och mer)"
+
+#: payment/managers.py:311
+msgid "Expense"
+msgstr ""
+
+#: payment/models.py:96
+#, fuzzy
+#| msgid "Category must be set for accounts with parent."
+msgid "Transaction must be set for completed payments."
+msgstr "Kategorin måste vara inställd för konto med förälder."
+
+#: payment/models.py:121
+msgid "Unknown"
+msgstr ""
+
+#: payment/models.py:350
 msgid "Category must be set for accounts with parent."
 msgstr "Kategorin måste vara inställd för konto med förälder."
 
-#: user/admin.py:92
+#: user/admin.py:116
 msgid "Another user already has the same alias."
 msgstr "En annan användare har redan samma alias."
 
@@ -427,6 +528,3 @@ msgstr "aktiv"
 
 #~ msgid "to"
 #~ msgstr "till"
-
-msgid "(and more)"
-msgstr "(och mer)"

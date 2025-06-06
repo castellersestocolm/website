@@ -54,6 +54,14 @@ TEMPLATE_BY_MODULE = {
                     "subject": _("Sign-up for the upcoming events"),
                     "html": "email/org/user/signup.html",
                 },
+                EmailType.MEMBERSHIP_RENEW: {
+                    "subject": _("Time to renew your membership"),
+                    "html": "email/org/membership/renew.html",
+                },
+                EmailType.MEMBERSHIP_EXPIRED: {
+                    "subject": _("Your membership has expired"),
+                    "html": "email/org/membership/expired.html",
+                },
             },
         }
     },
@@ -83,6 +91,14 @@ TEMPLATE_BY_MODULE = {
                 EmailType.EVENT_SIGNUP: {
                     "subject": _("Sign-up for the upcoming events and rehearsals"),
                     "html": "email/towers/user/signup.html",
+                },
+                EmailType.MEMBERSHIP_RENEW: {
+                    "subject": _("Time to renew your membership"),
+                    "html": "email/towers/membership/renew.html",
+                },
+                EmailType.MEMBERSHIP_EXPIRED: {
+                    "subject": _("Your membership has expired"),
+                    "html": "email/towers/membership/expired.html",
                 },
             },
         }

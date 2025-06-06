@@ -12,3 +12,5 @@ class EmailType(enum.IntEnum):
     IMPORTED = 13
     FAMILY_INVITE = 20
     EVENT_SIGNUP = 30
+    MEMBERSHIP_RENEW = 40
+    MEMBERSHIP_EXPIRED = 41

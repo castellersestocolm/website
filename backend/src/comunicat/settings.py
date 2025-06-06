@@ -363,7 +363,9 @@ MODULE_ALL_MEMBERSHIP_CONFIG = [
     config.split("-")
     for config in filter(None, os.getenv("MODULE_ALL_MEMBERSHIP_CONFIG", "").split(","))
 ]
-MODULE_ALL_MEMBERSHIP_RENEW_DAYS = int(os.getenv("MODULE_ALL_MEMBERSHIP_RENEW_DAYS", "28"))
+MODULE_ALL_MEMBERSHIP_RENEW_DAYS = int(
+    os.getenv("MODULE_ALL_MEMBERSHIP_RENEW_DAYS", "28")
+)
 MODULE_ALL_CURRENCY = os.getenv("MODULE_ALL_CURRENCY", "SEK")
 MODULE_ALL_CURRENCIES = list(
     filter(None, os.getenv("MODULE_ALL_CURRENCIES", MODULE_ALL_CURRENCY).split(","))
