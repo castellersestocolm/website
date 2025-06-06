@@ -139,13 +139,17 @@ msgstr ""
 
 #: comunicat/templates/email/towers/membership/renew.html:5
 msgid ""
-"Your membership will be expiring very soon. In order to enjoy all the "
-"benefits we provide as well as attend our events you need to renew it before "
-"it expires."
+"Your membership will be expiring on"
 msgstr ""
-"La teva quota caducarà molt aviat. Per gaudir de tots els avantatges que "
-"oferim i assistir als nostres esdeveniments, has de renovar-la abans que "
-"caduqui."
+"La teva quota caducarà el"
+
+#: comunicat/templates/email/towers/membership/renew.html:5
+msgid ""
+"In order to enjoy all the benefits we provide as well as attend our events "
+"you need to renew it before it expires."
+msgstr ""
+"Per continuar gaudint de tots els avantatges que oferim i assistir als "
+"nostres esdeveniments, has de renovar-la abans que caduqui."
 
 #: comunicat/templates/email/towers/membership/renew.html:7
 msgid "Amount"

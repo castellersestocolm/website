@@ -53,8 +53,13 @@ def settings_value(name):
 
 
 @register.filter
-def date_is_future(date: timezone.datetime.date):
+def date_is_future(date: timezone.datetime.date) -> bool:
     return date >= timezone.localdate()
+
+
+@register.filter
+def date_add_days(date: timezone.datetime.date, days: int) -> timezone.datetime.date:
+    return date + timezone.timedelta(days=days)
 
 
 @register.filter

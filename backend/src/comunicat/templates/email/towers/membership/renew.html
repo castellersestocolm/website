@@ -2,10 +2,10 @@
 {% load i18n comunicat_tags %}
 
 {% block email_message_pre %}
-    <p>{% trans "Your membership will be expiring very soon. In order to enjoy all the benefits we provide as well as attend our events you need to renew it before it expires." %}</p>
+    <p>{% trans "Your membership will be expiring on" %} <strong>{% if membership_obj %}{{ membership_obj.date_to|date:"Y-m-d" }}{% else %}{% now "Y-m-d" %}{% endif %}</strong>. {% trans "In order to enjoy all the benefits we provide as well as attend our events you need to renew it before it expires." %}</p>
     <ul>
         <li>{% trans "Amount" %}: <strong>{{ membership_amount }} SEK</strong></li>
-        <li>{% trans "Valid" %}: <strong>{% now "Y-m-d" %} → {{ membership_date_to|date:"Y-m-d" }}</strong></li>
+        <li>{% trans "Valid" %}: <strong>{{ membership_date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_date_to|date:"Y-m-d" }}</strong></li>
     </ul>
     <p>{% trans "In your dashboard you can find the payment information as well as the date your current membership expires." %}</p>
 {% endblock %}

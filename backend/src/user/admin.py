@@ -71,7 +71,7 @@ def send_membership_renew_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership().filter(
         has_active_membership=True
     ):
-        notify.tasks.send_user_email.delay(
+        notify.tasks.send_user_email(
             user_id=user_obj.id,
             email_type=EmailType.MEMBERSHIP_RENEW,
             module=user_obj.origin_module,

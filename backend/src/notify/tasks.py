@@ -5,12 +5,13 @@ from celery import shared_task
 from django.db.models import Prefetch
 
 from django.template.loader import render_to_string
-from django.utils import translation
+from django.utils import translation, timezone
 
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
 from event.models import EventModule
+from membership.models import Membership
 from notify.api.email import send_email
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import NotificationType, EmailType
@@ -91,9 +92,24 @@ def send_user_email(
                 }
             )
 
-            membership_amount = membership.utils.get_membership_amount(
-                member_count=len(user_ids), module=module
+            membership_obj = (
+                Membership.objects.filter(users__id=user_id)
+                .order_by("-date_to")
+                .prefetch_related("modules")
+                .first()
             )
+            modules = membership_obj.modules.values_list("module", flat=True)
+
+            modules = list(set(modules) | set(settings.MODULE_ALL_MEMBERSHIP_REQUIRED))
+            membership_amount = sum(
+                [
+                    membership.utils.get_membership_amount(
+                        member_count=len(user_ids), module=current_module
+                    )
+                    for current_module in modules
+                ]
+            )
+
             membership_length = membership.utils.get_membership_length(
                 member_count=len(user_ids)
             )
@@ -101,8 +117,12 @@ def send_user_email(
                 months=membership_length
             )
 
+            context_full["membership_obj"] = membership_obj
             context_full["membership_amount"] = membership_amount
             context_full["membership_length"] = membership_length
+            context_full["membership_date_from"] = (
+                membership_obj.date_to if membership_obj else timezone.localdate()
+            )
             context_full["membership_date_to"] = membership_date_to
 
         template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
