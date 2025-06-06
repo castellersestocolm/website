@@ -16,7 +16,6 @@ from membership.utils import (
 )
 from django.conf import settings
 
-import payment.api.membership
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 

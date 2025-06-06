@@ -1,0 +1,30 @@
+.eventGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.eventFileImage {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.mapCard {
+  display: flex;
+  flex: 1;
+  border: var(--mui-palette-divider) solid 1px;
+  border-radius: 4px;
+  padding: 0 !important;
+  margin-bottom: 0;
+  height: calc(100% - 4px);
+  min-height: 300px;
+  /* min-height: calc(100% - 4px);
+  height: min(100%, 600px); */
+
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+  }
+}

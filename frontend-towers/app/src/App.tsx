@@ -28,7 +28,7 @@ import AboutBylawsPage from "./pages/about-bylaws";
 import Trips2025BerlinPage from "./pages/trips-2025-berlin";
 import AssociationPage from "./pages/association";
 import AdminPage from "./pages/admin";
-import Redirect from "./components/Redirect/Redirect";
+import Calendar20250614AnniversaryPerformancePage from "./pages/calendar-2025-06-14-anniversary-performance";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -154,15 +154,7 @@ const App = () => {
                     path={
                       ROUTES["calendar-2025-06-14-anniversary-performance"].path
                     }
-                    element={
-                      <Redirect
-                        url={
-                          ROUTES[
-                            "external-calendar-2025-06-14-anniversary-performance"
-                          ].path
-                        }
-                      />
-                    }
+                    element={<Calendar20250614AnniversaryPerformancePage />}
                   />
                 </Routes>
               </Box>
