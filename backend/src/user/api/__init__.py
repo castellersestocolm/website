@@ -67,9 +67,9 @@ def get_list(
         user_qs = user_qs.filter(id__in=user_ids)
 
     if modules:
-        user_qs = user_qs.with_has_active_membership(modules=modules).filter(
-            has_active_membership=True
-        )
+        user_qs = user_qs.with_has_active_membership(
+            with_pending=True, modules=modules
+        ).filter(has_active_membership=True)
 
     if exclude_team_types:
         user_qs = user_qs.with_has_active_role(

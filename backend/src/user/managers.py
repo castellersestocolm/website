@@ -26,12 +26,24 @@ from membership.enums import MembershipStatus
 
 
 class UserQuerySet(QuerySet):
-    def with_has_active_membership(self, modules: list[Module] | None = None):
+    def with_has_active_membership(
+        self, with_pending: bool = False, modules: list[Module] | None = None
+    ):
         MembershipModule = apps.get_model("membership", "MembershipModule")
 
         module_filter = Q()
         if modules is not None:
             module_filter = Q(module__in=modules)
+
+        status = (
+            [
+                MembershipStatus.REQUESTED,
+                MembershipStatus.PROCESSING,
+                MembershipStatus.ACTIVE,
+            ]
+            if with_pending
+            else [MembershipStatus.ACTIVE]
+        )
 
         date_today = timezone.localdate()
 
@@ -42,8 +54,8 @@ class UserQuerySet(QuerySet):
                         module_filter,
                         Q(membership__date_end__isnull=True)
                         | Q(membership__date_end__gte=date_today),
-                        status=MembershipStatus.ACTIVE,
-                        membership__status=MembershipStatus.ACTIVE,
+                        status__in=status,
+                        membership__status__in=status,
                         membership__date_from__lte=date_today,
                         membership__date_to__gte=date_today,
                         membership__membership_users__user_id=OuterRef("id"),
