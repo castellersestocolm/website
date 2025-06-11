@@ -97,6 +97,7 @@ def import_events() -> None:
                 for event in events["items"]:
                     if "dateTime" in event["start"] and "dateTime" in event["end"]:
                         event_key = (google_calendar_obj.external_id, event["id"])
+                        updated_at = datetime.datetime.fromisoformat(event["updated"])
                         if event_key in google_event_by_key:
                             event_obj = google_event_by_key[event_key].event
 
@@ -129,6 +130,8 @@ def import_events() -> None:
                                             if (
                                                 registration_obj.status
                                                 != registration_status
+                                                and registration_obj.updated_at
+                                                < updated_at
                                             ):
                                                 registration_obj.status = (
                                                     registration_status
@@ -221,12 +224,11 @@ def import_events() -> None:
     if event_module_creates:
         EventModule.objects.bulk_create(event_module_creates)
 
-    # TODO: Temporarily disable this until checked properly
-    # if registration_creates:
-    #     Registration.objects.bulk_create(registration_creates)
-    #
-    # if registration_updates:
-    #     Registration.objects.bulk_update(registration_updates, fields=("status",))
+    if registration_creates:
+        Registration.objects.bulk_create(registration_creates)
+
+    if registration_updates:
+        Registration.objects.bulk_update(registration_updates, fields=("status",))
 
 
 def create_or_update_event(

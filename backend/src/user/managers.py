@@ -143,8 +143,12 @@ class UserManager(BaseUserManager):
     def get_queryset(self):
         return UserQuerySet(model=self.model, using=self._db, hints=self._hints)
 
-    def with_has_active_membership(self, modules: list[Module] | None = None):
-        return self.get_queryset().with_has_active_membership(modules=modules)
+    def with_has_active_membership(
+        self, with_pending: bool = False, modules: list[Module] | None = None
+    ):
+        return self.get_queryset().with_has_active_membership(
+            with_pending=with_pending, modules=modules
+        )
 
     def with_has_active_role(
         self,

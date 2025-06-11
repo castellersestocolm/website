@@ -9,9 +9,17 @@ REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS = {
     RegistrationStatus.REQUESTED: "needsAction",
     RegistrationStatus.ACTIVE: "accepted",
     RegistrationStatus.CANCELLED: "declined",
-    RegistrationStatus.TENTATIVE: "tentative",
+    RegistrationStatus.TENTATIVE: "declined",
+    # RegistrationStatus.TENTATIVE: "tentative",
 }
 
 GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS = {
-    v: k for k, v in REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS.items()
+    "needsAction": None,
+    "accepted": RegistrationStatus.ACTIVE,
+    "declined": RegistrationStatus.CANCELLED,
+    "tentative": RegistrationStatus.CANCELLED,
 }
+
+# GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS = {
+#     v: k for k, v in REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS.items()
+# }
