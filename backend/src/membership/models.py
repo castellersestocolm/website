@@ -28,6 +28,14 @@ class Membership(StandardModel, Timestamps):
     # Used to end a membership earlier
     date_end = models.DateField(blank=True, null=True)
 
+    previous = models.OneToOneField(
+        "Membership",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="new",
+    )
+
     objects = MembershipQuerySet.as_manager()
 
     @cached_property
@@ -49,6 +57,9 @@ class Membership(StandardModel, Timestamps):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__status = self.status
+
+    def __str__(self) -> str:
+        return f"{self.date_from.strftime('%Y-%m-%d')} - {self.date_to.strftime('%Y-%m-%d')} <{MembershipStatus(self.status).name}>"
 
     def save(self, *args, **kwargs):
         # TODO: Update Google event calendar invitations for membership and membership module

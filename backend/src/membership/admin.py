@@ -7,6 +7,8 @@ from membership.models import Membership, MembershipModule, MembershipUser
 
 from django.utils.translation import gettext_lazy as _
 
+import membership.api
+
 
 class MembershipModuleInline(admin.TabularInline):
     model = MembershipModule
@@ -16,6 +18,12 @@ class MembershipModuleInline(admin.TabularInline):
 class MembershipUserInline(admin.TabularInline):
     model = MembershipUser
     extra = 0
+
+
+@admin.action(description="Renew membership")
+def renew_membership(modeladmin, request, queryset):
+    for membership_obj in queryset:
+        membership.api.renew_membership(membership_id=membership_obj.id)
 
 
 @admin.register(Membership)
@@ -33,7 +41,9 @@ class MembershipAdmin(admin.ModelAdmin):
     )
     list_filter = ("date_from", "date_to", "status")
     ordering = ("-created_at",)
+    raw_id_fields = ("previous",)
     inlines = (MembershipModuleInline, MembershipUserInline)
+    actions = (renew_membership,)
 
     def get_queryset(self, request):
         return (

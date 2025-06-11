@@ -14,6 +14,9 @@ from django.db.models import (
     IntegerField,
     Value,
     When,
+    ExpressionWrapper,
+    BooleanField,
+    F,
 )
 from django.utils import timezone
 
@@ -29,6 +32,7 @@ class UserQuerySet(QuerySet):
     def with_has_active_membership(
         self, with_pending: bool = False, modules: list[Module] | None = None
     ):
+        Membership = apps.get_model("membership", "Membership")
         MembershipModule = apps.get_model("membership", "MembershipModule")
 
         module_filter = Q()
@@ -48,20 +52,37 @@ class UserQuerySet(QuerySet):
         date_today = timezone.localdate()
 
         return self.annotate(
-            has_active_membership=Exists(
-                Subquery(
-                    MembershipModule.objects.filter(
-                        module_filter,
-                        Q(membership__date_end__isnull=True)
-                        | Q(membership__date_end__gte=date_today),
-                        status__in=status,
-                        membership__status__in=status,
-                        membership__date_from__lte=date_today,
-                        membership__date_to__gte=date_today,
-                        membership__membership_users__user_id=OuterRef("id"),
-                    )
+            membership_id=Subquery(
+                MembershipModule.objects.filter(
+                    module_filter,
+                    Q(membership__date_end__isnull=True)
+                    | Q(membership__date_end__gte=date_today),
+                    status__in=status,
+                    membership__status__in=status,
+                    membership__date_from__lte=date_today,
+                    membership__date_to__gte=date_today,
+                    membership__membership_users__user_id=OuterRef("id"),
                 )
-            )
+                .order_by("-membership__date_to")
+                .values_list("membership_id", flat=True)[:1]
+            ),
+            membership_status=Subquery(
+                Membership.objects.filter(
+                    id=OuterRef("membership_id"),
+                ).values_list(
+                    "status", flat=True
+                )[:1]
+            ),
+            membership_date_to=Subquery(
+                Membership.objects.filter(
+                    id=OuterRef("membership_id"),
+                ).values_list(
+                    "date_to", flat=True
+                )[:1]
+            ),
+            has_active_membership=ExpressionWrapper(
+                Q(membership_id__isnull=False), output_field=BooleanField()
+            ),
         )
 
     def with_has_active_role(

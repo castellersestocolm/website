@@ -1,12 +1,12 @@
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from django.urls import reverse
 from django.utils import translation
 from django.utils.safestring import mark_safe
 
 import event.tasks
+from membership.enums import MembershipStatus
 from notify.enums import EmailType
 from user.models import User, FamilyMember, Family, FamilyMemberRequest, TowersUser
 from django.conf import settings
@@ -152,6 +152,8 @@ class UserAdmin(admin.ModelAdmin):
         "consent_pictures",
         "preferred_language",
         "origin_module",
+        "membership_status",
+        "membership_date_to",
     )
     list_filter = ("email_verified", "is_active", "consent_pictures")
     readonly_fields = (
@@ -217,7 +219,12 @@ class UserAdmin(admin.ModelAdmin):
     #     return False
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("towers")
+        return (
+            super()
+            .get_queryset(request)
+            .with_has_active_membership()
+            .select_related("towers")
+        )
 
     def get_fieldsets(self, request, obj=None):
         if hasattr(obj, "towers") and settings.MODULE_TOWERS_USER_FIELDS:
@@ -233,6 +240,16 @@ class UserAdmin(admin.ModelAdmin):
     def height_arms(self, obj):
         if hasattr(obj, "towers"):
             return obj.towers.height_arms
+        return "-"
+
+    def membership_status(self, obj):
+        if obj.membership_status is not None:
+            return MembershipStatus(obj.membership_status).name
+        return "-"
+
+    def membership_date_to(self, obj):
+        if obj.membership_status is not None:
+            return obj.membership_date_to
         return "-"
 
     def alias(self, obj):

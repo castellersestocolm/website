@@ -31,6 +31,61 @@ def get_list(user_id: UUID, module: Module) -> List[Membership]:
     )
 
 
+@transaction.atomic
+def renew_membership(membership_id: UUID) -> Membership | None:
+    membership_obj = (
+        Membership.objects.filter(id=membership_id)
+        .prefetch_related("modules", "membership_users")
+        .first()
+    )
+
+    if not membership_obj:
+        return None
+
+    if hasattr(membership_obj, "new"):
+        return membership_obj.new
+
+    user_ids = membership_obj.membership_users.values_list("user_id", flat=True)
+
+    membership_length = get_membership_length(member_count=len(user_ids))
+
+    if not membership_length:
+        return None
+
+    date_to = get_membership_date_to(months=membership_length)
+
+    if not date_to:
+        return None
+
+    new_membership_obj = Membership.objects.create(
+        date_from=timezone.localdate(),
+        date_to=date_to,
+        previous=membership_obj,
+    )
+
+    for membership_module_obj in membership_obj.modules.all():
+        membership_amount = get_membership_amount(
+            member_count=len(user_ids), module=membership_module_obj.module
+        )
+        new_amount = Money(
+            amount=membership_amount, currency=settings.MODULE_ALL_CURRENCY
+        )
+        MembershipModule.objects.create(
+            membership_id=new_membership_obj.id,
+            module=membership_module_obj.module,
+            amount=new_amount,
+        )
+
+    for membership_user_obj in membership_obj.membership_users.all():
+        MembershipUser.objects.get_or_create(
+            user_id=membership_user_obj.user_id,
+            membership_id=new_membership_obj.id,
+            family_id=membership_user_obj.family_id,
+        )
+
+    return new_membership_obj
+
+
 def create_or_update(
     user_id: UUID, modules: list[Module], family_id: UUID | None = None
 ) -> Membership | None:
