@@ -193,6 +193,7 @@ function CalendarPage() {
 
   const theme = useTheme();
   const calendarMatchesSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const calendarMatchesLg = useMediaQuery(theme.breakpoints.up("lg"));
 
   const content = (
     <>
@@ -220,7 +221,7 @@ function CalendarPage() {
         >
           {events && events.count > 0 && (
             <>
-              <Grid container spacing={2}>
+              <Grid container spacing={2} maxWidth="100%">
                 {events.results.map((event: any, i: number, row: any) => {
                   const castles = eventsCastles[event.id];
                   const castlesPublished = castles
@@ -410,7 +411,13 @@ function CalendarPage() {
                                 castlesPublished &&
                                 castlesPublished.length > 0)) && (
                               <Stack
-                                direction={calendarMatchesSm ? "row" : "column"}
+                                direction={
+                                  calendarMatchesSm
+                                    ? calendarMatchesLg
+                                      ? "column"
+                                      : "row"
+                                    : "column"
+                                }
                                 spacing={2}
                                 marginLeft={{ xs: "0", lg: "16px" }}
                                 marginTop={{ xs: "8px", lg: "0" }}
