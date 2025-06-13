@@ -145,6 +145,7 @@ function AdminPage() {
                 new Date(event.time_from).toTimeString().slice(0, 5),
               sortable: false,
               flex: 1,
+              minWidth: 200,
               headerClassName: styles.adminGridHeader,
               cellClassName: styles.adminGridCell,
               renderHeader: () => (
