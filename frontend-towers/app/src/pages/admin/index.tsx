@@ -365,7 +365,7 @@ function AdminPage() {
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 25,
+                  pageSize: 100,
                 },
               },
               columns: {
@@ -405,7 +405,7 @@ function AdminPage() {
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 50,
+                  pageSize: 25,
                 },
               },
               columns: {
