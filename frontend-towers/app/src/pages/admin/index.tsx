@@ -249,7 +249,7 @@ function AdminPage() {
               },
               density: "compact",
               sorting: {
-                sortModel: [{ field: "name", sort: "desc" }],
+                sortModel: [{ field: "name", sort: "asc" }],
               },
             }}
             disableRowSelectionOnClick
