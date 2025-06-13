@@ -3,22 +3,13 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Grid from "@mui/material/Grid";
+import { DataGrid, GridColDef, GridColumnHeaderParams } from "@mui/x-data-grid";
 import PageBase from "../../components/PageBase/PageBase";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { getEnumLabel, PermissionLevel, RegistrationStatus } from "../../enums";
 import { apiEventList, apiEventRegistrationList, apiUserList } from "../../api";
-import {
-  Card,
-  Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Card, Divider, Typography } from "@mui/material";
 import { capitalizeFirstLetter } from "../../utils/string";
 import Box from "@mui/material/Box";
 
@@ -108,6 +99,127 @@ function AdminPage() {
         )
       : undefined;
 
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "ID" },
+    {
+      field: "name",
+      headerName: t("pages.admin.events-table.user"),
+      width: 200,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin.events-table.user")}
+        </Typography>
+      ),
+    },
+    {
+      field: "heightShoulder",
+      headerName: t("pages.admin.events-table.height-shoulders"),
+      width: 100,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin.events-table.height-shoulders")}
+        </Typography>
+      ),
+    },
+    {
+      field: "heightArms",
+      headerName: t("pages.admin.events-table.height-arms"),
+      width: 100,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin.events-table.height-arms")}
+        </Typography>
+      ),
+    },
+    ...(events && events.results.length > 0
+      ? events.results
+          .filter((event: any) => event.require_signup)
+          .map((event: any) => {
+            return {
+              field: "event-" + event.id,
+              headerName:
+                capitalizeFirstLetter(
+                  new Date(event.time_from).toISOString().slice(0, 10),
+                ) +
+                " " +
+                new Date(event.time_from).toTimeString().slice(0, 5),
+              sortable: false,
+              flex: 1,
+              headerClassName: styles.adminGridHeader,
+              cellClassName: styles.adminGridCell,
+              renderHeader: () => (
+                <Box my={1}>
+                  <Typography variant="body2" fontWeight={600}>
+                    {event.title}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {capitalizeFirstLetter(
+                      new Date(event.time_from).toISOString().slice(0, 10),
+                    ) +
+                      " " +
+                      new Date(event.time_from).toTimeString().slice(0, 5)}
+                  </Typography>
+                  {eventsCounts && event.id in eventsCounts && (
+                    <Typography variant="body2" color="textSecondary">
+                      {t("pages.admin.events-table.attendance")}
+                      {": "}
+                      {eventsCounts[event.id].join("/")}
+                    </Typography>
+                  )}
+                </Box>
+              ),
+              renderCell: (params: any) => {
+                const registration = params.row["event-" + event.id];
+                return (
+                  <Box
+                    className={
+                      registration
+                        ? registration.status === RegistrationStatus.ACTIVE
+                          ? styles.adminTableCellAttending
+                          : registration.status === RegistrationStatus.CANCELLED
+                            ? styles.adminTableCellNotAttending
+                            : styles.adminTableCellUnknown
+                        : styles.adminTableCellUnknown
+                    }
+                  >
+                    {getEnumLabel(
+                      t,
+                      "registration-status",
+                      registration ? registration.status : 0,
+                    )}
+                  </Box>
+                );
+              },
+            };
+          })
+      : []),
+  ];
+
+  const rows =
+    users && users.length > 0
+      ? users.map((user: any, i: number, row: any) => {
+          return {
+            id: user.id,
+            name: user.firstname + " " + user.lastname,
+            heightShoulder: user.towers && user.towers.height_shoulders,
+            heightArms: user.towers && user.towers.height_arms,
+            ...(events && events.results.length > 0 && registrations
+              ? Object.fromEntries(
+                  events.results
+                    .filter((event: any) => event.require_signup)
+                    .map((event: any) => {
+                      const registration =
+                        event.id in registrations &&
+                        user.id in registrations[event.id] &&
+                        registrations[event.id][user.id];
+                      return ["event-" + event.id, registration];
+                    }),
+                )
+              : {}),
+          };
+        })
+      : [];
+
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
       <Card variant="outlined" className={styles.adminCard}>
@@ -119,100 +231,35 @@ function AdminPage() {
         <Divider />
 
         <Box>
-          <TableContainer>
-            <Table sx={{ minWidth: 700 }} size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight={600}>
-                      {t("pages.admin.events-table.user")}
-                    </Typography>
-                  </TableCell>
-                  {events &&
-                    events.results.length > 0 &&
-                    events.results
-                      .filter((event: any) => event.require_signup)
-                      .map((event: any) => {
-                        return (
-                          <TableCell>
-                            <Typography variant="body2" fontWeight={600}>
-                              {event.title}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              {capitalizeFirstLetter(
-                                new Date(event.time_from)
-                                  .toISOString()
-                                  .slice(0, 10),
-                              ) +
-                                " " +
-                                new Date(event.time_from)
-                                  .toTimeString()
-                                  .slice(0, 5)}
-                            </Typography>
-                            {eventsCounts && event.id in eventsCounts && (
-                              <Typography variant="body2" color="textSecondary">
-                                {t("pages.admin.events-table.attendance")}
-                                {": "}
-                                {eventsCounts[event.id].join("/")}
-                              </Typography>
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users &&
-                  users.length > 0 &&
-                  users.map((user: any, i: number, row: any) => {
-                    return (
-                      <TableRow
-                        key={user.id}
-                        className={
-                          i + 1 >= row.length && styles.adminTableRowLast
-                        }
-                      >
-                        <TableCell component="th" scope="row">
-                          {user.firstname} {user.lastname}
-                        </TableCell>
-                        {events &&
-                          events.results.length > 0 &&
-                          registrations &&
-                          events.results
-                            .filter((event: any) => event.require_signup)
-                            .map((event: any) => {
-                              const registration =
-                                event.id in registrations &&
-                                user.id in registrations[event.id] &&
-                                registrations[event.id][user.id];
-                              return (
-                                <TableCell
-                                  className={
-                                    registration
-                                      ? registration.status ===
-                                        RegistrationStatus.ACTIVE
-                                        ? styles.adminTableCellAttending
-                                        : registration.status ===
-                                            RegistrationStatus.CANCELLED
-                                          ? styles.adminTableCellNotAttending
-                                          : styles.adminTableCellUnknown
-                                      : styles.adminTableCellUnknown
-                                  }
-                                >
-                                  {getEnumLabel(
-                                    t,
-                                    "registration-status",
-                                    registration ? registration.status : 0,
-                                  )}
-                                </TableCell>
-                              );
-                            })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 50,
+                },
+              },
+              columns: {
+                ...columns,
+                columnVisibilityModel: {
+                  id: false,
+                },
+              },
+              density: "compact",
+              sorting: {
+                sortModel: [{ field: "name", sort: "desc" }],
+              },
+            }}
+            disableRowSelectionOnClick
+            pageSizeOptions={[10, 25, 50, 100]}
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-columnHeaders > div": {
+                height: "fit-content !important",
+              },
+            }}
+          />
         </Box>
       </Card>
     </Grid>

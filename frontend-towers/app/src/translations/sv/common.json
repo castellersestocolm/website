@@ -209,6 +209,8 @@
   "pages.admin.title": "Administratörssida",
   "pages.admin.events-table.title": "Deltagare",
   "pages.admin.events-table.user": "Medlem",
+  "pages.admin.events-table.height-shoulders": "Axlar",
+  "pages.admin.events-table.height-arms": "Armar",
   "pages.admin.events-table.attendance": "Deltagare",
   "pages.sale-bandana.title": "Försäljning av sjaletter",
   "pages.sale-tshirts.title": "Försäljning av t-shirts",

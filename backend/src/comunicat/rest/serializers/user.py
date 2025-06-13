@@ -26,6 +26,8 @@ class TowersUserSerializer(s.ModelSerializer):
 
 
 class UserExtraSlimSerializer(s.ModelSerializer):
+    towers = TowersUserSerializer(read_only=True)
+
     class Meta:
         model = User
         fields = (
@@ -33,18 +35,18 @@ class UserExtraSlimSerializer(s.ModelSerializer):
             "firstname",
             "lastname",
             "can_manage",
+            "towers",
         )
         read_only_fields = (
             "id",
             "firstname",
             "lastname",
             "can_manage",
+            "towers",
         )
 
 
 class UserSlimSerializer(UserExtraSlimSerializer):
-    towers = TowersUserSerializer(read_only=True)
-
     class Meta:
         model = User
         fields = (

@@ -33,3 +33,14 @@
 .adminTableCellNotAttending {
   background-color: var(--mui-palette-LinearProgress-errorBg);
 }
+
+.adminGridHeader {
+  height: fit-content;
+}
+
+.adminGridCell {
+  padding: 0 !important;
+  & > div {
+    padding: 0 10px;
+  }
+}

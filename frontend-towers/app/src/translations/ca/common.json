@@ -210,6 +210,8 @@
   "pages.admin.title": "Panell d'administrador",
   "pages.admin.events-table.title": "Assistència",
   "pages.admin.events-table.user": "Casteller",
+  "pages.admin.events-table.height-shoulders": "Espatlles",
+  "pages.admin.events-table.height-arms": "Braços",
   "pages.admin.events-table.attendance": "Assistència",
   "pages.sale-bandana.title": "Venda de mocadors",
   "pages.sale-tshirts.title": "Venda de samarretes",
