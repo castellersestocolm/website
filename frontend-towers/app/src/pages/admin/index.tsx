@@ -324,9 +324,13 @@ function AdminPage() {
           return {
             id: user.id,
             name: user.firstname + " " + user.lastname,
-            family: user.family.members
-              .map((member: any) => member.user.lastname)
-              .join("-"),
+            family: Array.from(
+              new Set(
+                user.family.members
+                  .filter((member: any) => member.user.can_manage)
+                  .map((member: any) => member.user.lastname.split(" ")[0]),
+              ),
+            ).join("-"),
             ...(events && events.results.length > 0 && registrations
               ? Object.fromEntries(
                   events.results
