@@ -46,6 +46,51 @@ class UserExtraSlimSerializer(s.ModelSerializer):
         )
 
 
+class FamilyMemberSlimSerializer(s.ModelSerializer):
+    user = UserExtraSlimSerializer(read_only=True)
+    role = IntEnumField(FamilyMemberRole, read_only=True)
+    status = IntEnumField(FamilyMemberStatus, read_only=True)
+
+    class Meta:
+        model = FamilyMember
+        fields = ("id", "user", "role", "status", "created_at")
+        read_only_fields = ("id", "user", "role", "status", "created_at")
+
+
+class FamilySlimSerializer(s.ModelSerializer):
+    members = FamilyMemberSlimSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Family
+        fields = ("id", "members", "created_at")
+        read_only_fields = ("id", "members", "created_at")
+
+
+class UserExtraSlimWithFamilySerializer(s.ModelSerializer):
+    family = FamilySlimSerializer(
+        read_only=True, required=False, source="family_member.family"
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "can_manage",
+            "family",
+            "towers",
+        )
+        read_only_fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "can_manage",
+            "family",
+            "towers",
+        )
+
+
 class UserSlimSerializer(UserExtraSlimSerializer):
     class Meta:
         model = User

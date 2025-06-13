@@ -65,6 +65,23 @@ function AdminPage() {
     navigate(ROUTES["user-login"].path, { replace: true });
   }
 
+  const userAdults =
+    users &&
+    users.filter(
+      (user: any) =>
+        !user.family ||
+        user.family.members.filter((member: any) => !member.user.can_manage)
+          .length <= 0,
+    );
+  const userFamilies: any[] =
+    users &&
+    users.filter(
+      (user: any) =>
+        user.family &&
+        user.family.members.filter((member: any) => !member.user.can_manage)
+          .length > 0,
+    );
+
   const eventsCounts =
     events && events.results.length > 0 && registrations && users
       ? Object.fromEntries(
@@ -99,7 +116,7 @@ function AdminPage() {
         )
       : undefined;
 
-  const columns: GridColDef[] = [
+  const columnsAdults: GridColDef[] = [
     { field: "id", headerName: "ID" },
     {
       field: "name",
@@ -196,7 +213,87 @@ function AdminPage() {
       : []),
   ];
 
-  const rows =
+  const columnsFamilies: GridColDef[] = [
+    { field: "id", headerName: "ID" },
+    {
+      field: "name",
+      headerName: t("pages.admin.events-table.user"),
+      width: 200,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin.events-table.user")}
+        </Typography>
+      ),
+    },
+    {
+      field: "family",
+      headerName: t("pages.admin.events-table.family"),
+      width: 200,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin.events-table.family")}
+        </Typography>
+      ),
+    },
+    ...(events && events.results.length > 0
+      ? events.results
+          .filter((event: any) => event.require_signup)
+          .map((event: any) => {
+            return {
+              field: "event-" + event.id,
+              headerName:
+                capitalizeFirstLetter(
+                  new Date(event.time_from).toISOString().slice(0, 10),
+                ) +
+                " " +
+                new Date(event.time_from).toTimeString().slice(0, 5),
+              sortable: false,
+              flex: 1,
+              minWidth: 200,
+              headerClassName: styles.adminGridHeader,
+              cellClassName: styles.adminGridCell,
+              renderHeader: () => (
+                <Box my={1}>
+                  <Typography variant="body2" fontWeight={600}>
+                    {event.title}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {capitalizeFirstLetter(
+                      new Date(event.time_from).toISOString().slice(0, 10),
+                    ) +
+                      " " +
+                      new Date(event.time_from).toTimeString().slice(0, 5)}
+                  </Typography>
+                </Box>
+              ),
+              renderCell: (params: any) => {
+                const registration = params.row["event-" + event.id];
+                return (
+                  <Box
+                    className={
+                      registration
+                        ? registration.status === RegistrationStatus.ACTIVE
+                          ? styles.adminTableCellAttending
+                          : registration.status === RegistrationStatus.CANCELLED
+                            ? styles.adminTableCellNotAttending
+                            : styles.adminTableCellUnknown
+                        : styles.adminTableCellUnknown
+                    }
+                  >
+                    {getEnumLabel(
+                      t,
+                      "registration-status",
+                      registration ? registration.status : 0,
+                    )}
+                  </Box>
+                );
+              },
+            };
+          })
+      : []),
+  ];
+
+  const rowsAdults =
     users && users.length > 0
       ? users.map((user: any, i: number, row: any) => {
           return {
@@ -221,28 +318,54 @@ function AdminPage() {
         })
       : [];
 
+  const rowsFamilies =
+    userFamilies && userFamilies.length > 0
+      ? userFamilies.map((user: any, i: number, row: any) => {
+          return {
+            id: user.id,
+            name: user.firstname + " " + user.lastname,
+            family: user.family.members
+              .map((member: any) => member.user.lastname)
+              .join("-"),
+            ...(events && events.results.length > 0 && registrations
+              ? Object.fromEntries(
+                  events.results
+                    .filter((event: any) => event.require_signup)
+                    .map((event: any) => {
+                      const registration =
+                        event.id in registrations &&
+                        user.id in registrations[event.id] &&
+                        registrations[event.id][user.id];
+                      return ["event-" + event.id, registration];
+                    }),
+                )
+              : {}),
+          };
+        })
+      : [];
+
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
       <Card variant="outlined" className={styles.adminCard}>
         <Box className={styles.adminTopBox}>
           <Typography variant="h6" fontWeight="600" component="div">
-            {t("pages.admin.events-table.title")}
+            {t("pages.admin.events-table.title-adults")}
           </Typography>
         </Box>
         <Divider />
 
         <Box>
           <DataGrid
-            rows={rows}
-            columns={columns}
+            rows={rowsAdults}
+            columns={columnsAdults}
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 50,
+                  pageSize: 25,
                 },
               },
               columns: {
-                ...columns,
+                ...columnsAdults,
                 columnVisibilityModel: {
                   id: false,
                 },
@@ -250,6 +373,49 @@ function AdminPage() {
               density: "compact",
               sorting: {
                 sortModel: [{ field: "name", sort: "asc" }],
+              },
+            }}
+            disableRowSelectionOnClick
+            pageSizeOptions={[10, 25, 50, 100]}
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-columnHeaders > div": {
+                height: "fit-content !important",
+              },
+            }}
+          />
+        </Box>
+      </Card>
+      <Card variant="outlined" className={styles.adminCard}>
+        <Box className={styles.adminTopBox}>
+          <Typography variant="h6" fontWeight="600" component="div">
+            {t("pages.admin.events-table.title-families")}
+          </Typography>
+        </Box>
+        <Divider />
+
+        <Box>
+          <DataGrid
+            rows={rowsFamilies}
+            columns={columnsFamilies}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 50,
+                },
+              },
+              columns: {
+                ...columnsFamilies,
+                columnVisibilityModel: {
+                  id: false,
+                },
+              },
+              density: "compact",
+              sorting: {
+                sortModel: [
+                  { field: "family", sort: "asc" },
+                  { field: "name", sort: "asc" },
+                ],
               },
             }}
             disableRowSelectionOnClick

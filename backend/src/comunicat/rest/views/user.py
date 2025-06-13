@@ -30,6 +30,7 @@ from comunicat.rest.serializers.user import (
     FamilySerializer,
     ListFamilySerializer,
     UserExtraSlimSerializer,
+    UserExtraSlimWithFamilySerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from user.enums import FamilyMemberRole, FamilyMemberStatus
@@ -242,7 +243,7 @@ class UserAPI(ComuniCatViewSet):
             modules=[self.module],
         )
 
-        serializer = UserExtraSlimSerializer(
+        serializer = UserExtraSlimWithFamilySerializer(
             user_objs, context={"module": self.module}, many=True
         )
         return Response(serializer.data)
