@@ -65,25 +65,14 @@ function AdminPage() {
     navigate(ROUTES["user-login"].path, { replace: true });
   }
 
-  const userAdults =
-    users &&
-    users.filter(
-      (user: any) =>
-        !user.family ||
-        user.family.members.filter((member: any) => !member.user.can_manage)
-          .length <= 0,
-    );
-  const userFamilies: any[] =
-    users &&
-    users.filter(
-      (user: any) =>
-        user.family &&
-        user.family.members.filter((member: any) => !member.user.can_manage)
-          .length > 0,
-    );
+  const userChildren: any[] =
+    users && users.filter((user: any) => !user.can_manage);
 
-  const eventsCounts =
-    events && events.results.length > 0 && registrations && users
+  const userAdults: any[] =
+    users && users.filter((user: any) => user.can_manage);
+
+  const eventsCountAdults =
+    events && events.results.length > 0 && registrations && userAdults
       ? Object.fromEntries(
           events.results
             .filter(
@@ -94,16 +83,58 @@ function AdminPage() {
                 registrations[event.id],
               ).filter(
                 (registration: any) =>
+                  registration.user.can_manage &&
                   registration.status === RegistrationStatus.ACTIVE,
               ).length;
               const registrationsCancelled = Object.values(
                 registrations[event.id],
               ).filter(
                 (registration: any) =>
+                  registration.user.can_manage &&
                   registration.status === RegistrationStatus.CANCELLED,
               ).length;
               const registrationsUnknown =
-                users.length - registrationsActive - registrationsCancelled;
+                userAdults.length -
+                registrationsActive -
+                registrationsCancelled;
+              return [
+                event.id,
+                [
+                  registrationsActive,
+                  registrationsCancelled,
+                  registrationsUnknown,
+                ],
+              ];
+            }),
+        )
+      : undefined;
+
+  const eventsCountChildren =
+    events && events.results.length > 0 && registrations && userChildren
+      ? Object.fromEntries(
+          events.results
+            .filter(
+              (event: any) => event.require_signup && event.id in registrations,
+            )
+            .map((event: any) => {
+              const registrationsActive = Object.values(
+                registrations[event.id],
+              ).filter(
+                (registration: any) =>
+                  !registration.user.can_manage &&
+                  registration.status === RegistrationStatus.ACTIVE,
+              ).length;
+              const registrationsCancelled = Object.values(
+                registrations[event.id],
+              ).filter(
+                (registration: any) =>
+                  !registration.user.can_manage &&
+                  registration.status === RegistrationStatus.CANCELLED,
+              ).length;
+              const registrationsUnknown =
+                userChildren.length -
+                registrationsActive -
+                registrationsCancelled;
               return [
                 event.id,
                 [
@@ -177,11 +208,11 @@ function AdminPage() {
                       " " +
                       new Date(event.time_from).toTimeString().slice(0, 5)}
                   </Typography>
-                  {eventsCounts && event.id in eventsCounts && (
+                  {eventsCountAdults && event.id in eventsCountAdults && (
                     <Typography variant="body2" color="textSecondary">
                       {t("pages.admin.events-table.attendance")}
                       {": "}
-                      {eventsCounts[event.id].join("/")}
+                      {eventsCountAdults[event.id].join("/")}
                     </Typography>
                   )}
                 </Box>
@@ -213,7 +244,7 @@ function AdminPage() {
       : []),
   ];
 
-  const columnsFamilies: GridColDef[] = [
+  const columnsChildren: GridColDef[] = [
     { field: "id", headerName: "ID" },
     {
       field: "name",
@@ -264,6 +295,13 @@ function AdminPage() {
                       " " +
                       new Date(event.time_from).toTimeString().slice(0, 5)}
                   </Typography>
+                  {eventsCountChildren && event.id in eventsCountChildren && (
+                    <Typography variant="body2" color="textSecondary">
+                      {t("pages.admin.events-table.attendance")}
+                      {": "}
+                      {eventsCountChildren[event.id].join("/")}
+                    </Typography>
+                  )}
                 </Box>
               ),
               renderCell: (params: any) => {
@@ -294,8 +332,8 @@ function AdminPage() {
   ];
 
   const rowsAdults =
-    users && users.length > 0
-      ? users.map((user: any, i: number, row: any) => {
+    userAdults && userAdults.length > 0
+      ? userAdults.map((user: any, i: number, row: any) => {
           return {
             id: user.id,
             name: user.firstname + " " + user.lastname,
@@ -318,9 +356,9 @@ function AdminPage() {
         })
       : [];
 
-  const rowsFamilies =
-    userFamilies && userFamilies.length > 0
-      ? userFamilies.map((user: any, i: number, row: any) => {
+  const rowsChildren =
+    userChildren && userChildren.length > 0
+      ? userChildren.map((user: any, i: number, row: any) => {
           return {
             id: user.id,
             name: user.firstname + " " + user.lastname,
@@ -400,8 +438,8 @@ function AdminPage() {
 
         <Box>
           <DataGrid
-            rows={rowsFamilies}
-            columns={columnsFamilies}
+            rows={rowsChildren}
+            columns={columnsChildren}
             initialState={{
               pagination: {
                 paginationModel: {
@@ -409,7 +447,7 @@ function AdminPage() {
                 },
               },
               columns: {
-                ...columnsFamilies,
+                ...columnsChildren,
                 columnVisibilityModel: {
                   id: false,
                 },
