@@ -70,6 +70,7 @@ class UserExtraSlimWithFamilySerializer(s.ModelSerializer):
     family = FamilySlimSerializer(
         read_only=True, required=False, source="family_member.family"
     )
+    towers = TowersUserSerializer(read_only=True)
 
     class Meta:
         model = User
