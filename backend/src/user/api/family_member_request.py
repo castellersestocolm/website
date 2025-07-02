@@ -216,7 +216,6 @@ def accept(id: UUID, user_id: UUID, module: Module) -> bool:
     membership.api.create_or_update(
         user_id=user_obj.id,
         modules=[module],
-        family_id=family_member_request_obj.family.id,
     )
 
     return True

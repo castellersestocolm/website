@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import ImageHero from "../../assets/images/hero.jpg";
-import ImageJoin from "../../assets/images/join.jpg";
+import ImageJoin from "../../assets/images/join2.jpg";
 import styles from "./styles.module.css";
 import {
   Button,

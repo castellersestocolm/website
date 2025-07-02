@@ -282,6 +282,28 @@ export const apiMembershipList = async () => {
   }
 };
 
+export const apiMembershipRenewList = async () => {
+  try {
+    return await instance.get("/membership/renew/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiMembershipRenewCreate = async (modules: number[]) => {
+  try {
+    return await instance.post("/membership/renew/", {
+      modules: modules,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiUserFamilyMemberRequestCreate = async (email: string) => {
   try {
     return await instance.post("/user/family/member/request/", {

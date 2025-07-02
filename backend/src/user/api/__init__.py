@@ -10,7 +10,7 @@ from django.contrib.auth import (
 )
 from django.core import signing
 from django.db import IntegrityError, transaction
-from django.db.models import Prefetch, Exists, OuterRef
+from django.db.models import Prefetch
 from django.http import HttpRequest
 from django.utils import translation, timezone
 from rest_framework.exceptions import AuthenticationFailed
@@ -19,7 +19,6 @@ import membership.api
 import user.api.family_member_request
 from comunicat.enums import Module
 from legal.enums import TeamType
-from legal.models import Member
 from notify.enums import EmailType
 from notify.tasks import send_user_email
 from user.enums import FamilyMemberStatus, FamilyMemberRole

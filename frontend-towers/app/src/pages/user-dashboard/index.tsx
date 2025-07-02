@@ -21,11 +21,14 @@ import { useAppContext } from "../../components/AppContext/AppContext";
 import {
   apiEventList,
   apiMembershipList,
+  apiMembershipRenewCreate,
+  apiMembershipRenewList,
   apiPaymentExpenseList,
   apiPaymentList,
   apiTowersCastleList,
   apiUserFamilyMemberRequestAccept,
   apiUserFamilyMemberRequestCancel,
+  apiUserFamilyMemberRequestCreate,
   apiUserFamilyMemberRequestList,
   apiUserFamilyMemberRequestReceivedList,
   apiUserFamilyMemberRequestReject,
@@ -145,6 +148,8 @@ function UserDashboardPage() {
   const [expensePage, setExpensePage] = React.useState(1);
   const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
+  const [membershipRenewOptions, setMembershipRenewOptions] =
+    React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
   const [paymentSvg, setPaymentSvg] = React.useState(undefined);
 
@@ -187,32 +192,38 @@ function UserDashboardPage() {
           );
           setMembership(currentMembership);
 
-          const membershipText =
-            t("swish.payment.membership") +
-            " " +
-            currentMembership.date_from.slice(0, 4) +
-            " - " +
-            (user.lastname
-              ? user.firstname + " " + user.lastname
-              : user.firstname);
+          if (currentMembership) {
+            const membershipText =
+              t("swish.payment.membership") +
+              " " +
+              currentMembership.date_from.slice(0, 4) +
+              " - " +
+              (user.lastname
+                ? user.firstname + " " + user.lastname
+                : user.firstname);
 
-          if (
-            currentMembership &&
-            (currentMembership.can_renew ||
-              currentMembership.status < MembershipStatus.PROCESSING)
-          ) {
-            QRCode.toDataURL(
-              "C1230688820;" +
-                currentMembership.amount.amount +
-                ";" +
-                membershipText +
-                ";0",
-              { width: 500, margin: 0 },
-            )
-              .then((url: string) => {
-                setPaymentSvg(url);
-              })
-              .catch((err: any) => {});
+            if (currentMembership.status < MembershipStatus.PROCESSING) {
+              QRCode.toDataURL(
+                "C1230688820;" +
+                  currentMembership.amount.amount +
+                  ";" +
+                  membershipText +
+                  ";0",
+                { width: 500, margin: 0 },
+              )
+                .then((url: string) => {
+                  setPaymentSvg(url);
+                })
+                .catch((err: any) => {});
+            }
+          }
+
+          if (!currentMembership || currentMembership.can_renew) {
+            apiMembershipRenewList().then((response) => {
+              if (response.status === 200) {
+                setMembershipRenewOptions(response.data);
+              }
+            });
           }
         }
       });
@@ -241,6 +252,7 @@ function UserDashboardPage() {
     setFamilyMemberRequests,
     setFamilyMemberRequestsReceived,
     setMembership,
+    setMembershipRenewOptions,
     // setMemberships
     t,
   ]);
@@ -385,6 +397,60 @@ function UserDashboardPage() {
     });
   }
 
+  function handleRenewSubmit(modules: number[]) {
+    apiMembershipRenewCreate(modules).then((response) => {
+      if (response.status === 200) {
+        const currentMembership = response.data;
+        setMembership(currentMembership);
+        setMembershipRenewOptions(undefined);
+
+        const membershipText =
+          t("swish.payment.membership") +
+          " " +
+          currentMembership.date_from.slice(0, 4) +
+          " - " +
+          (user.lastname
+            ? user.firstname + " " + user.lastname
+            : user.firstname);
+
+        if (currentMembership.status < MembershipStatus.PROCESSING) {
+          QRCode.toDataURL(
+            "C1230688820;" +
+              currentMembership.amount.amount +
+              ";" +
+              membershipText +
+              ";0",
+            { width: 500, margin: 0 },
+          )
+            .then((url: string) => {
+              setPaymentSvg(url);
+            })
+            .catch((err: any) => {});
+        }
+
+        setMessages([
+          {
+            message: t(
+              "pages.user-dashboard.section.membership-renew.renew.success",
+            ),
+            type: "success",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      } else {
+        setMessages([
+          {
+            message: t(
+              "pages.user-dashboard.section.membership-renew.renew.error",
+            ),
+            type: "error",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      }
+    });
+  }
+
   const contentSidebarProfile = user && (
     <Grid>
       <Card variant="outlined">
@@ -512,122 +578,214 @@ function UserDashboardPage() {
 
   const contentSidebarMembership = user && (
     <Grid>
-      {membership && (
+      {(membership || membershipRenewOptions) && (
         <Card variant="outlined">
           <Box className={styles.userTopBox}>
             <Typography variant="h6" fontWeight="600" component="div">
-              {t("pages.user-dashboard.section.membership.title")}
+              {membership
+                ? t("pages.user-dashboard.section.membership.title")
+                : t("pages.user-dashboard.section.membership-renew.title")}
             </Typography>
           </Box>
           <Divider />
-          <Box className={styles.userDetailsBox}>
-            <List dense={true} className={styles.userList}>
-              <ListItem>
-                <ListItemIcon>
-                  {MEMBERSHIP_STATUS_ICON[membership.status]}
-                </ListItemIcon>
-                <ListItemText
-                  primary={getEnumLabel(
-                    t,
-                    "membership-status",
-                    membership.status,
-                  )}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <IconPayment />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    membership.amount.amount + " " + membership.amount.currency
-                  }
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <IconWorkspaces />
-                </ListItemIcon>
-                <ListItemText
-                  primary={membership.modules.map((membershipModule: any) => {
-                    return (
-                      <span className={styles.dashboardMembershipModule}>
-                        {getEnumLabel(t, "module", membershipModule.module)}
-                      </span>
-                    );
-                  })}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <IconCalendarMonth />
-                </ListItemIcon>
-                <ListItemText
-                  primary={membership.date_from + " → " + membership.date_to}
-                />
-              </ListItem>
-              {membership.status >= MembershipStatus.ACTIVE && (
-                <ListItem>
-                  <ListItemIcon>
-                    <IconEventRepeat />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      membership.can_renew
-                        ? t(
-                            "pages.user-dashboard.section.membership.renew-now",
-                          ) +
-                          " " +
-                          membership.date_to
-                        : t(
-                            "pages.user-dashboard.section.membership.renew-date",
-                          ) +
-                          " " +
-                          membership.date_renewal
-                    }
-                  />
-                </ListItem>
-              )}
-            </List>
-          </Box>
-          {(membership.can_renew ||
-            membership.status < MembershipStatus.PROCESSING) && (
+          {membership && (
             <>
-              <Divider />
-              <Box className={styles.userPaymentBox}>
-                <Typography variant="body1" fontWeight={600}>
-                  {t("pages.user-dashboard.section.membership.payment-title")}
-                </Typography>
-                <List dense className={styles.userList}>
-                  {t("pages.user-dashboard.section.membership.payment-list")
-                    .split("\n")
-                    .map((paymentText: string, ix: number) => {
-                      return (
-                        <ListItem key={ix}>
-                          <ListItemIcon>
-                            <IconChevronRight />
-                          </ListItemIcon>
-                          <ListItemText primary={paymentText} />
-                        </ListItem>
-                      );
-                    })}
+              <Box className={styles.userDetailsBox}>
+                <List dense={true} className={styles.userList}>
+                  <ListItem>
+                    <ListItemIcon>
+                      {MEMBERSHIP_STATUS_ICON[membership.status]}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={getEnumLabel(
+                        t,
+                        "membership-status",
+                        membership.status,
+                      )}
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <IconPayment />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        membership.amount.amount +
+                        " " +
+                        membership.amount.currency
+                      }
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <IconWorkspaces />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={membership.modules.map(
+                        (membershipModule: any) => {
+                          return (
+                            <span className={styles.dashboardMembershipModule}>
+                              {getEnumLabel(
+                                t,
+                                "module",
+                                membershipModule.module,
+                              )}
+                            </span>
+                          );
+                        },
+                      )}
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <IconCalendarMonth />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        membership.date_from + " → " + membership.date_to
+                      }
+                    />
+                  </ListItem>
+                  {membership.status >= MembershipStatus.ACTIVE && (
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconEventRepeat />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          membership.can_renew
+                            ? t(
+                                "pages.user-dashboard.section.membership.renew-now",
+                              ) +
+                              " " +
+                              membership.date_to
+                            : t(
+                                "pages.user-dashboard.section.membership.renew-date",
+                              ) +
+                              " " +
+                              membership.date_renewal
+                        }
+                      />
+                    </ListItem>
+                  )}
                 </List>
-                <Box className={styles.userMembershipPaymentBox}>
-                  <img
-                    src={ImageIconSwish}
-                    className={styles.userMembershipPaymentIconSwish}
-                    alt="Swish logo"
-                  />
-                  <img
-                    src={paymentSvg}
-                    alt="Swish QR"
-                    className={styles.userMembershipPaymentSwish}
-                  />
-                </Box>
               </Box>
+              {membership.status < MembershipStatus.PROCESSING && (
+                <>
+                  <Divider />
+                  <Box className={styles.userPaymentBox}>
+                    <Typography variant="body1" fontWeight={600}>
+                      {t(
+                        "pages.user-dashboard.section.membership.payment-title",
+                      )}
+                    </Typography>
+                    <List dense className={styles.userList}>
+                      {t("pages.user-dashboard.section.membership.payment-list")
+                        .split("\n")
+                        .map((paymentText: string, ix: number) => {
+                          return (
+                            <ListItem key={ix}>
+                              <ListItemIcon>
+                                <IconChevronRight />
+                              </ListItemIcon>
+                              <ListItemText primary={paymentText} />
+                            </ListItem>
+                          );
+                        })}
+                    </List>
+                    <Box className={styles.userMembershipPaymentBox}>
+                      <img
+                        src={ImageIconSwish}
+                        className={styles.userMembershipPaymentIconSwish}
+                        alt="Swish logo"
+                      />
+                      <img
+                        src={paymentSvg}
+                        alt="Swish QR"
+                        className={styles.userMembershipPaymentSwish}
+                      />
+                    </Box>
+                  </Box>
+                </>
+              )}
+              <Divider />
             </>
           )}
-          <Divider />
+          {membershipRenewOptions && (
+            <>
+              <List className={styles.userFamilyList}>
+                {membershipRenewOptions.map(
+                  (option: any, i: number, row: any) => (
+                    <Box key={i}>
+                      <ListItemButton disableTouchRipple dense>
+                        <ListItemIcon>
+                          <IconWorkspaces />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={option.modules.map(
+                            (membershipModule: any) => {
+                              return (
+                                <span
+                                  className={styles.dashboardMembershipModule}
+                                >
+                                  {getEnumLabel(
+                                    t,
+                                    "module",
+                                    membershipModule.module,
+                                  )}
+                                </span>
+                              );
+                            },
+                          )}
+                          secondary={
+                            <>
+                              <Typography variant="body2" component="span">
+                                {option.date_to}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                component="span"
+                              >
+                                {" — "}
+                              </Typography>
+                              <Typography variant="body2" component="span">
+                                {option.amount.amount} {option.amount.currency}
+                              </Typography>
+                            </>
+                          }
+                        />
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          style={{ marginLeft: "16px" }}
+                        >
+                          <Button
+                            variant="contained"
+                            type="button"
+                            disableElevation
+                            onClick={() =>
+                              handleRenewSubmit(
+                                option.modules.map(
+                                  (moduleOption: any) => moduleOption.module,
+                                ),
+                              )
+                            }
+                          >
+                            {t(
+                              "pages.user-dashboard.section.membership-renew.renew",
+                            )}
+                          </Button>
+                        </Stack>
+                      </ListItemButton>
+                      {i + 1 < row.length && <Divider />}
+                    </Box>
+                  ),
+                )}
+              </List>
+              <Divider />
+            </>
+          )}
           <Box className={styles.userMembershipInfoBox}>
             <Typography variant="body2" component="span">
               {t("pages.user-dashboard.section.membership.description") + " "}

@@ -49,6 +49,4 @@ def module_data(backend, response, details, user, *args, **kwargs):
             status=FamilyMemberStatus.ACTIVE,
         )
 
-    membership.api.create_or_update(
-        user_id=user.id, family_id=family_id, modules=[origin_module]
-    )
+    membership.api.create_or_update(user_id=user.id, modules=[origin_module])

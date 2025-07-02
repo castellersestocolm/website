@@ -17,7 +17,7 @@ from membership.utils import (
 from django.conf import settings
 
 from user.enums import FamilyMemberStatus
-from user.models import FamilyMember
+from user.models import FamilyMember, User
 
 
 def get_list(user_id: UUID, module: Module) -> List[Membership]:
@@ -86,9 +86,12 @@ def renew_membership(membership_id: UUID) -> Membership | None:
     return new_membership_obj
 
 
-def create_or_update(
-    user_id: UUID, modules: list[Module], family_id: UUID | None = None
-) -> Membership | None:
+def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
+    user_obj = User.objects.filter(id=user_id).select_related("family_member").first()
+    family_id = (
+        user_obj.family_member.family_id if hasattr(user_obj, "family_member") else None
+    )
+
     if family_id is None:
         user_ids = [user_id]
     else:
@@ -117,7 +120,9 @@ def create_or_update(
 
     membership_user_objs = list(
         MembershipUser.objects.filter(
-            user_id__in=user_ids, membership__date_to__gte=timezone.localdate()
+            user_id__in=user_ids,
+            membership__date_to__gte=timezone.localdate()
+            + timezone.timedelta(days=settings.MODULE_ALL_MEMBERSHIP_RENEW_DAYS),
         )
         .with_family_role()
         .order_by("-family_role")
@@ -173,4 +178,11 @@ def create_or_update(
     # # Create or update the payment
     # payment.api.membership.create_or_update_payment(membership_id=membership_obj.id)
 
-    return membership_obj
+    return (
+        Membership.objects.filter(id=membership_obj.id)
+        .with_amount()
+        .prefetch_related(
+            Prefetch("modules", MembershipModule.objects.all().order_by("module"))
+        )
+        .order_by("-date_from")
+    ).first()

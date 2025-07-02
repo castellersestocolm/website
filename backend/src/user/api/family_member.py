@@ -66,9 +66,7 @@ def create(
     )
 
     # Add the user to the existing membership
-    membership.api.create_or_update(
-        user_id=new_user_obj.id, modules=[module], family_id=family_obj.id
-    )
+    membership.api.create_or_update(user_id=new_user_obj.id, modules=[module])
 
     return family_member_obj
 
