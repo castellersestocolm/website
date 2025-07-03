@@ -173,42 +173,52 @@ function AdminPage() {
                             marginBottom={{ xs: "8px", lg: "0" }}
                             whiteSpace="nowrap"
                           >
-                            <Box className={styles.eventCountBox}>
-                              <IcconPerson
-                                className={styles.eventCountIcon}
-                                color={
-                                  eventsCountAdults[event.id][0] >= 10 ||
-                                  eventsCountAdults[event.id][0] >=
-                                    userAdults.length / 2
-                                    ? "success"
-                                    : eventsCountAdults[event.id][2] >=
-                                        userAdults.length / 2
-                                      ? "secondary"
-                                      : "error"
-                                }
-                              />
-                              <Typography variant="body2" color="textSecondary">
-                                {eventsCountAdults[event.id].join("/")}
-                              </Typography>
-                            </Box>
-                            <Box className={styles.eventCountBox}>
-                              <IconEscalatorWarning
-                                className={styles.eventCountIcon}
-                                color={
-                                  eventsCountChildren[event.id][0] >= 2 ||
-                                  eventsCountChildren[event.id][0] >=
-                                    userChildren.length / 2
-                                    ? "success"
-                                    : eventsCountChildren[event.id][2] >=
-                                        userChildren.length / 2
-                                      ? "secondary"
-                                      : "error"
-                                }
-                              />
-                              <Typography variant="body2" color="textSecondary">
-                                {eventsCountChildren[event.id].join("/")}
-                              </Typography>
-                            </Box>
+                            {event.id in eventsCountAdults && (
+                              <Box className={styles.eventCountBox}>
+                                <IcconPerson
+                                  className={styles.eventCountIcon}
+                                  color={
+                                    eventsCountAdults[event.id][0] >= 10 ||
+                                    eventsCountAdults[event.id][0] >=
+                                      userAdults.length / 2
+                                      ? "success"
+                                      : eventsCountAdults[event.id][2] >=
+                                          userAdults.length / 2
+                                        ? "secondary"
+                                        : "error"
+                                  }
+                                />
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {eventsCountAdults[event.id].join("/")}
+                                </Typography>
+                              </Box>
+                            )}
+                            {event.id in eventsCountChildren && (
+                              <Box className={styles.eventCountBox}>
+                                <IconEscalatorWarning
+                                  className={styles.eventCountIcon}
+                                  color={
+                                    eventsCountChildren[event.id][0] >= 2 ||
+                                    eventsCountChildren[event.id][0] >=
+                                      userChildren.length / 2
+                                      ? "success"
+                                      : eventsCountChildren[event.id][2] >=
+                                          userChildren.length / 2
+                                        ? "secondary"
+                                        : "error"
+                                  }
+                                />
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {eventsCountChildren[event.id].join("/")}
+                                </Typography>
+                              </Box>
+                            )}
                           </Stack>
                         )}
                       </ListItemButton>
