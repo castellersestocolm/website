@@ -3,22 +3,35 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Grid from "@mui/material/Grid";
-import { DataGrid, GridColDef, GridColumnHeaderParams } from "@mui/x-data-grid";
-import PageBase from "../../components/PageBase/PageBase";
+import {
+  Button,
+  Card,
+  Divider,
+  Link,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
+import Box from "@mui/material/Box";
+import PageAdmin from "../../components/PageAdmin/PageAdmin";
+import { apiEventList, apiEventRegistrationList, apiUserList } from "../../api";
+import { getEventsCount } from "../../utils/admin";
+import { EVENT_TYPE_ICON, EventType } from "../../enums";
+import { capitalizeFirstLetter } from "../../utils/string";
+import IconEast from "@mui/icons-material/East";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
-import { getEnumLabel, PermissionLevel, RegistrationStatus } from "../../enums";
-import { apiEventList, apiEventRegistrationList, apiUserList } from "../../api";
-import { Card, Divider, Typography } from "@mui/material";
-import { capitalizeFirstLetter } from "../../utils/string";
-import Box from "@mui/material/Box";
+import IcconPerson from "@mui/icons-material/Person";
+import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
 
 function AdminPage() {
-  const { t } = useTranslation("common");
-
-  let navigate = useNavigate();
+  const [t, i18n] = useTranslation("common");
 
   const { user } = useAppContext();
+  let navigate = useNavigate();
 
   const [events, setEvents] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
@@ -61,421 +74,179 @@ function AdminPage() {
     }
   }, [events, setRegistrations]);
 
-  if (!user || user.permission_level < PermissionLevel.ADMIN) {
-    navigate(ROUTES["user-login"].path, { replace: true });
-  }
-
   const userChildren: any[] =
     users && users.filter((user: any) => !user.can_manage);
 
   const userAdults: any[] =
     users && users.filter((user: any) => user.can_manage);
 
-  const eventsCountAdults =
-    events && events.results.length > 0 && registrations && userAdults
-      ? Object.fromEntries(
-          events.results
-            .filter(
-              (event: any) => event.require_signup && event.id in registrations,
-            )
-            .map((event: any) => {
-              const registrationsActive = Object.values(
-                registrations[event.id],
-              ).filter(
-                (registration: any) =>
-                  registration.user.can_manage &&
-                  registration.status === RegistrationStatus.ACTIVE,
-              ).length;
-              const registrationsCancelled = Object.values(
-                registrations[event.id],
-              ).filter(
-                (registration: any) =>
-                  registration.user.can_manage &&
-                  registration.status === RegistrationStatus.CANCELLED,
-              ).length;
-              const registrationsUnknown =
-                userAdults.length -
-                registrationsActive -
-                registrationsCancelled;
-              return [
-                event.id,
-                [
-                  registrationsActive,
-                  registrationsCancelled,
-                  registrationsUnknown,
-                ],
-              ];
-            }),
-        )
-      : undefined;
+  const eventsCountAdults = getEventsCount(events, registrations, userAdults);
 
-  const eventsCountChildren =
-    events && events.results.length > 0 && registrations && userChildren
-      ? Object.fromEntries(
-          events.results
-            .filter(
-              (event: any) => event.require_signup && event.id in registrations,
-            )
-            .map((event: any) => {
-              const registrationsActive = Object.values(
-                registrations[event.id],
-              ).filter(
-                (registration: any) =>
-                  !registration.user.can_manage &&
-                  registration.status === RegistrationStatus.ACTIVE,
-              ).length;
-              const registrationsCancelled = Object.values(
-                registrations[event.id],
-              ).filter(
-                (registration: any) =>
-                  !registration.user.can_manage &&
-                  registration.status === RegistrationStatus.CANCELLED,
-              ).length;
-              const registrationsUnknown =
-                userChildren.length -
-                registrationsActive -
-                registrationsCancelled;
-              return [
-                event.id,
-                [
-                  registrationsActive,
-                  registrationsCancelled,
-                  registrationsUnknown,
-                ],
-              ];
-            }),
-        )
-      : undefined;
+  const eventsCountChildren = getEventsCount(
+    events,
+    registrations,
+    userChildren,
+  );
 
-  const columnsAdults: GridColDef[] = [
-    { field: "id", headerName: "ID" },
-    {
-      field: "name",
-      headerName: t("pages.admin.events-table.user"),
-      width: 200,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin.events-table.user")}
-        </Typography>
-      ),
-    },
-    {
-      field: "heightShoulder",
-      headerName: t("pages.admin.events-table.height-shoulders"),
-      width: 100,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin.events-table.height-shoulders")}
-        </Typography>
-      ),
-    },
-    {
-      field: "heightArms",
-      headerName: t("pages.admin.events-table.height-arms"),
-      width: 100,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin.events-table.height-arms")}
-        </Typography>
-      ),
-    },
-    ...(events && events.results.length > 0
-      ? events.results
-          .filter((event: any) => event.require_signup)
-          .map((event: any) => {
-            return {
-              field: "event-" + event.id,
-              headerName:
-                capitalizeFirstLetter(
-                  new Date(event.time_from).toISOString().slice(0, 10),
-                ) +
-                " " +
-                new Date(event.time_from).toTimeString().slice(0, 5),
-              sortable: false,
-              flex: 1,
-              minWidth: 200,
-              headerClassName: styles.adminGridHeader,
-              cellClassName: styles.adminGridCell,
-              renderHeader: () => (
-                <Box my={1}>
-                  <Typography variant="body2" fontWeight={600}>
-                    {event.title}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {capitalizeFirstLetter(
-                      new Date(event.time_from).toISOString().slice(0, 10),
-                    ) +
-                      " " +
-                      new Date(event.time_from).toTimeString().slice(0, 5)}
-                  </Typography>
-                  {eventsCountAdults && event.id in eventsCountAdults && (
-                    <Typography variant="body2" color="textSecondary">
-                      {t("pages.admin.events-table.attendance")}
-                      {": "}
-                      {eventsCountAdults[event.id].join("/")}
-                    </Typography>
-                  )}
-                </Box>
-              ),
-              renderCell: (params: any) => {
-                const registration = params.row["event-" + event.id];
-                return (
-                  <Box
-                    className={
-                      registration
-                        ? registration.status === RegistrationStatus.ACTIVE
-                          ? styles.adminTableCellAttending
-                          : registration.status === RegistrationStatus.CANCELLED
-                            ? styles.adminTableCellNotAttending
-                            : styles.adminTableCellUnknown
-                        : styles.adminTableCellUnknown
-                    }
-                  >
-                    {getEnumLabel(
-                      t,
-                      "registration-status",
-                      registration ? registration.status : 0,
-                    )}
-                  </Box>
-                );
-              },
-            };
-          })
-      : []),
-  ];
+  function handleAdminAttendanceSubmit() {
+    navigate(ROUTES["admin-attendance"].path, { replace: true });
+  }
 
-  const columnsChildren: GridColDef[] = [
-    { field: "id", headerName: "ID" },
-    {
-      field: "name",
-      headerName: t("pages.admin.events-table.user"),
-      width: 200,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin.events-table.user")}
-        </Typography>
-      ),
-    },
-    {
-      field: "family",
-      headerName: t("pages.admin.events-table.family"),
-      width: 200,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin.events-table.family")}
-        </Typography>
-      ),
-    },
-    ...(events && events.results.length > 0
-      ? events.results
-          .filter((event: any) => event.require_signup)
-          .map((event: any) => {
-            return {
-              field: "event-" + event.id,
-              headerName:
-                capitalizeFirstLetter(
-                  new Date(event.time_from).toISOString().slice(0, 10),
-                ) +
-                " " +
-                new Date(event.time_from).toTimeString().slice(0, 5),
-              sortable: false,
-              flex: 1,
-              minWidth: 200,
-              headerClassName: styles.adminGridHeader,
-              cellClassName: styles.adminGridCell,
-              renderHeader: () => (
-                <Box my={1}>
-                  <Typography variant="body2" fontWeight={600}>
-                    {event.title}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {capitalizeFirstLetter(
-                      new Date(event.time_from).toISOString().slice(0, 10),
-                    ) +
-                      " " +
-                      new Date(event.time_from).toTimeString().slice(0, 5)}
-                  </Typography>
-                  {eventsCountChildren && event.id in eventsCountChildren && (
-                    <Typography variant="body2" color="textSecondary">
-                      {t("pages.admin.events-table.attendance")}
-                      {": "}
-                      {eventsCountChildren[event.id].join("/")}
-                    </Typography>
-                  )}
-                </Box>
-              ),
-              renderCell: (params: any) => {
-                const registration = params.row["event-" + event.id];
-                return (
-                  <Box
-                    className={
-                      registration
-                        ? registration.status === RegistrationStatus.ACTIVE
-                          ? styles.adminTableCellAttending
-                          : registration.status === RegistrationStatus.CANCELLED
-                            ? styles.adminTableCellNotAttending
-                            : styles.adminTableCellUnknown
-                        : styles.adminTableCellUnknown
-                    }
-                  >
-                    {getEnumLabel(
-                      t,
-                      "registration-status",
-                      registration ? registration.status : 0,
-                    )}
-                  </Box>
-                );
-              },
-            };
-          })
-      : []),
-  ];
-
-  const rowsAdults =
-    userAdults && userAdults.length > 0
-      ? userAdults.map((user: any, i: number, row: any) => {
-          return {
-            id: user.id,
-            name: user.firstname + " " + user.lastname,
-            heightShoulder: user.towers && user.towers.height_shoulders,
-            heightArms: user.towers && user.towers.height_arms,
-            ...(events && events.results.length > 0 && registrations
-              ? Object.fromEntries(
-                  events.results
-                    .filter((event: any) => event.require_signup)
-                    .map((event: any) => {
-                      const registration =
-                        event.id in registrations &&
-                        user.id in registrations[event.id] &&
-                        registrations[event.id][user.id];
-                      return ["event-" + event.id, registration];
-                    }),
-                )
-              : {}),
-          };
-        })
-      : [];
-
-  const rowsChildren =
-    userChildren && userChildren.length > 0
-      ? userChildren.map((user: any, i: number, row: any) => {
-          return {
-            id: user.id,
-            name: user.firstname + " " + user.lastname,
-            family: Array.from(
-              new Set(
-                user.family.members
-                  .filter((member: any) => member.user.can_manage)
-                  .map((member: any) => member.user.lastname.split(" ")[0]),
-              ),
-            ).join("-"),
-            ...(events && events.results.length > 0 && registrations
-              ? Object.fromEntries(
-                  events.results
-                    .filter((event: any) => event.require_signup)
-                    .map((event: any) => {
-                      const registration =
-                        event.id in registrations &&
-                        user.id in registrations[event.id] &&
-                        registrations[event.id][user.id];
-                      return ["event-" + event.id, registration];
-                    }),
-                )
-              : {}),
-          };
-        })
-      : [];
+  console.log(registrations);
 
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
-      <Card variant="outlined" className={styles.adminCard}>
-        <Box className={styles.adminTopBox}>
-          <Typography variant="h6" fontWeight="600" component="div">
-            {t("pages.admin.events-table.title-adults")}
-          </Typography>
-        </Box>
-        <Divider />
-
-        <Box>
-          <DataGrid
-            rows={rowsAdults}
-            columns={columnsAdults}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 100,
-                },
-              },
-              columns: {
-                ...columnsAdults,
-                columnVisibilityModel: {
-                  id: false,
-                },
-              },
-              density: "compact",
-              sorting: {
-                sortModel: [{ field: "name", sort: "asc" }],
-              },
-            }}
-            disableRowSelectionOnClick
-            pageSizeOptions={[10, 25, 50, 100]}
-            sx={{
-              border: 0,
-              "& .MuiDataGrid-columnHeaders > div": {
-                height: "fit-content !important",
-              },
-            }}
-          />
-        </Box>
-      </Card>
-      <Card variant="outlined" className={styles.adminCard}>
-        <Box className={styles.adminTopBox}>
-          <Typography variant="h6" fontWeight="600" component="div">
-            {t("pages.admin.events-table.title-families")}
-          </Typography>
-        </Box>
-        <Divider />
-
-        <Box>
-          <DataGrid
-            rows={rowsChildren}
-            columns={columnsChildren}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 25,
-                },
-              },
-              columns: {
-                ...columnsChildren,
-                columnVisibilityModel: {
-                  id: false,
-                },
-              },
-              density: "compact",
-              sorting: {
-                sortModel: [
-                  { field: "family", sort: "asc" },
-                  { field: "name", sort: "asc" },
-                ],
-              },
-            }}
-            disableRowSelectionOnClick
-            pageSizeOptions={[10, 25, 50, 100]}
-            sx={{
-              border: 0,
-              "& .MuiDataGrid-columnHeaders > div": {
-                height: "fit-content !important",
-              },
-            }}
-          />
-        </Box>
-      </Card>
+      <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminCard}>
+          <Link
+            color="textPrimary"
+            underline="none"
+            component="button"
+            onClick={handleAdminAttendanceSubmit}
+            className={styles.adminTitleLink}
+          >
+            <Box className={styles.adminTopBoxLink}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.admin.events-table.title")}
+              </Typography>
+              <IconEast className={styles.adminTitleIcon} />
+            </Box>
+          </Link>
+          <Box>
+            <List className={styles.adminList}>
+              {events &&
+                events.results.length > 0 &&
+                events.results.map((event: any, i: number, row: any) => {
+                  return (
+                    <>
+                      <ListItemButton disableTouchRipple dense>
+                        <ListItemIcon className={styles.eventCardIcon}>
+                          {EVENT_TYPE_ICON[event.type]}
+                        </ListItemIcon>
+                        <Box
+                          className={styles.userFamilyListInner}
+                          flexDirection={{ xs: "column", lg: "row" }}
+                          alignItems={{ xs: "start", lg: "center" }}
+                        >
+                          <ListItemText
+                            className={styles.userFamilyListItem}
+                            disableTypography
+                            primary={
+                              <Typography variant="body2">
+                                {event.title +
+                                  (event.type === EventType.REHEARSAL &&
+                                  event.location !== null
+                                    ? " — " + event.location.name
+                                    : "")}
+                              </Typography>
+                            }
+                            secondary={
+                              <Typography variant="body2" color="textSecondary">
+                                {capitalizeFirstLetter(
+                                  new Date(event.time_from).toLocaleDateString(
+                                    i18n.resolvedLanguage,
+                                    {
+                                      day: "numeric",
+                                      month: "long",
+                                      year: "numeric",
+                                    },
+                                  ),
+                                ) +
+                                  " " +
+                                  new Date(event.time_from)
+                                    .toTimeString()
+                                    .slice(0, 5) +
+                                  " → " +
+                                  new Date(event.time_to)
+                                    .toTimeString()
+                                    .slice(0, 5)}
+                              </Typography>
+                            }
+                          ></ListItemText>
+                        </Box>
+                        {users && (
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            marginLeft={{ xs: "0", lg: "16px" }}
+                            marginTop={{ xs: "8px", lg: "0" }}
+                            marginBottom={{ xs: "8px", lg: "0" }}
+                            whiteSpace="nowrap"
+                          >
+                            <Box className={styles.eventCountBox}>
+                              <IcconPerson
+                                className={styles.eventCountIcon}
+                                color={
+                                  eventsCountAdults[event.id][0] >= 10 ||
+                                  eventsCountAdults[event.id][0] >=
+                                    userAdults.length / 2
+                                    ? "success"
+                                    : eventsCountAdults[event.id][2] >=
+                                        userAdults.length / 2
+                                      ? "secondary"
+                                      : "error"
+                                }
+                              />
+                              <Typography variant="body2" color="textSecondary">
+                                {eventsCountAdults[event.id].join("/")}
+                              </Typography>
+                            </Box>
+                            <Box className={styles.eventCountBox}>
+                              <IconEscalatorWarning
+                                className={styles.eventCountIcon}
+                                color={
+                                  eventsCountChildren[event.id][0] >= 2 ||
+                                  eventsCountChildren[event.id][0] >=
+                                    userChildren.length / 2
+                                    ? "success"
+                                    : eventsCountChildren[event.id][2] >=
+                                        userChildren.length / 2
+                                      ? "secondary"
+                                      : "error"
+                                }
+                              />
+                              <Typography variant="body2" color="textSecondary">
+                                {eventsCountChildren[event.id].join("/")}
+                              </Typography>
+                            </Box>
+                          </Stack>
+                        )}
+                      </ListItemButton>
+                      {i + 1 < row.length && <Divider />}
+                    </>
+                  );
+                })}
+            </List>
+          </Box>
+        </Card>
+      </Grid>
+      <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminCard}>
+          <Link
+            color="textPrimary"
+            underline="none"
+            component="button"
+            className={styles.adminTitleLink}
+          >
+            <Box className={styles.adminTopBoxLink}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.admin.users-table.title")}
+              </Typography>
+              <IconEast className={styles.adminTitleIcon} />
+            </Box>
+          </Link>
+          <Box className={styles.adminBox}>
+            <Typography variant="body2" component="div">
+              Coming soon...
+            </Typography>
+          </Box>
+        </Card>
+      </Grid>
     </Grid>
   );
 
   return (
-    <PageBase
+    <PageAdmin
       title={t("pages.admin.title")}
       content={content}
       finishedRegistration={true}

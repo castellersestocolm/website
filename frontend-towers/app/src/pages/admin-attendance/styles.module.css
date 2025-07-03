@@ -10,57 +10,9 @@
   width: 100%;
 }
 
-.adminList {
-  width: 100%;
-  padding: 0 !important;
-  display: flex;
-  flex-direction: column;
-  div:first-of-type {
-    min-width: 32px !important;
-  }
-}
-
-.adminTitleLink {
-  width: 100%;
-}
-
-.adminTopBoxLink {
+.adminTopBox {
   padding: 12px 16px;
   background-color: var(--mui-palette-primary-main);
-  display: flex;
-  align-content: center;
-  justify-content: space-between;
-}
-
-.adminTitleIcon {
-  margin-top: 2px;
-}
-
-.eventCardIcon {
-  min-width: 42px !important;
-}
-
-.eventCountBox {
-  display: flex;
-}
-
-.eventCountIcon {
-  width: 18px !important;
-  height: 18px !important;
-  margin-right: 4px;
-}
-
-.userFamilyListInner {
-  display: flex;
-  flex: 1;
-}
-
-.userFamilyListItem {
-  flex: 1;
-}
-
-.adminBox {
-  padding: 12px 16px;
 }
 
 .adminTableRowLast {

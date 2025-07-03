@@ -29,6 +29,7 @@ import Trips2025BerlinPage from "./pages/trips-2025-berlin";
 import AssociationPage from "./pages/association";
 import AdminPage from "./pages/admin";
 import Calendar20250614AnniversaryPerformancePage from "./pages/calendar-2025-06-14-anniversary-performance";
+import AdminAttendancePage from "./pages/admin-attendance";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -150,6 +151,10 @@ const App = () => {
                     element={<AssociationPage />}
                   />
                   <Route path={ROUTES.admin.path} element={<AdminPage />} />
+                  <Route
+                    path={ROUTES["admin-attendance"].path}
+                    element={<AdminAttendancePage />}
+                  />
                   <Route
                     path={
                       ROUTES["calendar-2025-06-14-anniversary-performance"].path

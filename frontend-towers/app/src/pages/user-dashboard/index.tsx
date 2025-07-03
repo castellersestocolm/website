@@ -28,7 +28,6 @@ import {
   apiTowersCastleList,
   apiUserFamilyMemberRequestAccept,
   apiUserFamilyMemberRequestCancel,
-  apiUserFamilyMemberRequestCreate,
   apiUserFamilyMemberRequestList,
   apiUserFamilyMemberRequestReceivedList,
   apiUserFamilyMemberRequestReject,

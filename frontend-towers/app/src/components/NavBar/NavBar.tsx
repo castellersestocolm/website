@@ -24,6 +24,7 @@ import { ROUTES } from "../../routes";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
+import { PermissionLevel } from "../../enums";
 
 /*
         <IconButton size="large" aria-label="show 2 new messages" color="inherit">
@@ -43,32 +44,38 @@ export default function NavBar() {
       name: t("components.navbar-menu.home"),
       path: ROUTES.home.path,
       target: "_self",
+      permission: undefined,
     },
     {
       name: t("components.navbar-menu.calendar"),
       path: ROUTES.calendar.path,
       target: "_self",
+      permission: undefined,
     },
     !user && {
       name: t("components.navbar-menu.membership"),
       path: ROUTES["user-join"].path,
       target: "_self",
+      permission: undefined,
     },
     // TODO: Temporary until we start accepting sign-ups
     // !user && {
     //   name: t("components.navbar-menu.membership"),
     //   path: ROUTES["user-join"].path,
     //   target: "_self",
+    //   permission: undefined,
     // },
     user && {
       name: t("components.navbar-menu.equipmment"),
       path: ROUTES["external-form-equipment"].path,
       target: "_blank",
+      permission: undefined,
     },
     {
       name: t("components.navbar-menu.resources"),
       path: ROUTES.resources.path,
       target: "_self",
+      permission: undefined,
     },
     {
       name: t("components.navbar-menu.trips"),
@@ -100,6 +107,12 @@ export default function NavBar() {
         },
       ],
     },
+    {
+      name: t("components.navbar-menu.admin"),
+      path: ROUTES.admin.path,
+      target: "_self",
+      permission: PermissionLevel.ADMIN,
+    },
   ];
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -108,40 +121,48 @@ export default function NavBar() {
     <AppBar className={styles.navBar} position="fixed" elevation={0}>
       <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         <List className={styles.drawer}>
-          {pages.map((page) => (
-            <>
-              {page &&
-                (page.children ? (
-                  page.children.map((childrenPage: any) => (
+          {pages
+            .filter(
+              (page: any) =>
+                page &&
+                (!page.permission ||
+                  page.permission === PermissionLevel.NONE ||
+                  (user && user.permission_level >= PermissionLevel.ADMIN)),
+            )
+            .map((page) => (
+              <>
+                {page &&
+                  (page.children ? (
+                    page.children.map((childrenPage: any) => (
+                      <ListItem
+                        key={childrenPage.name}
+                        component={Link}
+                        href={childrenPage.path}
+                        target={childrenPage.target}
+                        className={styles.drawerItem}
+                      >
+                        <Typography>{childrenPage.name}</Typography>
+                        {childrenPage.target === "_blank" && (
+                          <IconArrowOutward className={styles.externalIcon} />
+                        )}
+                      </ListItem>
+                    ))
+                  ) : (
                     <ListItem
-                      key={childrenPage.name}
+                      key={page.name}
                       component={Link}
-                      href={childrenPage.path}
-                      target={childrenPage.target}
+                      href={page.path}
+                      target={page.target}
                       className={styles.drawerItem}
                     >
-                      <Typography>{childrenPage.name}</Typography>
-                      {childrenPage.target === "_blank" && (
+                      <Typography>{page.name}</Typography>
+                      {page.target === "_blank" && (
                         <IconArrowOutward className={styles.externalIcon} />
                       )}
                     </ListItem>
-                  ))
-                ) : (
-                  <ListItem
-                    key={page.name}
-                    component={Link}
-                    href={page.path}
-                    target={page.target}
-                    className={styles.drawerItem}
-                  >
-                    <Typography>{page.name}</Typography>
-                    {page.target === "_blank" && (
-                      <IconArrowOutward className={styles.externalIcon} />
-                    )}
-                  </ListItem>
-                ))}
-            </>
-          ))}
+                  ))}
+              </>
+            ))}
         </List>
       </Drawer>
 
@@ -159,69 +180,77 @@ export default function NavBar() {
             >
               <IconMenu />
             </IconButton>
-            {pages.map((page) => (
-              <>
-                {page &&
-                  (page.children ? (
-                    <PopupState variant="popover" popupId="demo-popup-menu">
-                      {(popupState) => (
-                        <React.Fragment>
-                          <Button
-                            key={page.name}
-                            disableTouchRipple
-                            className={styles.navMenuItem}
-                            component={Link}
-                            sx={{ display: { xs: "none", md: "flex" } }}
-                            {...bindTrigger(popupState)}
-                          >
-                            <Typography fontWeight={600}>
-                              {page.name}
-                            </Typography>
-                          </Button>
-                          <Menu
-                            {...bindMenu(popupState)}
-                            className={styles.nestedNavMenu}
-                          >
-                            {page.children.map((childrenPage) => (
-                              <MenuItem
-                                key={childrenPage.name}
-                                className={styles.nestedNavButton}
-                                component={Link}
-                                href={childrenPage.path}
-                                target={childrenPage.target}
-                              >
-                                <Typography fontWeight={600}>
-                                  {childrenPage.name}
-                                </Typography>
-                                {childrenPage.target === "_blank" && (
-                                  <IconArrowOutward
-                                    className={styles.externalIcon}
-                                  />
-                                )}
-                              </MenuItem>
-                            ))}
-                          </Menu>
-                        </React.Fragment>
-                      )}
-                    </PopupState>
-                  ) : (
-                    <MenuItem
-                      key={page.name}
-                      disableTouchRipple
-                      className={styles.navMenuItem}
-                      component={Link}
-                      href={page.path}
-                      target={page.target}
-                      sx={{ display: { xs: "none", md: "flex" } }}
-                    >
-                      <Typography fontWeight={600}>{page.name}</Typography>
-                      {page.target === "_blank" && (
-                        <IconArrowOutward className={styles.externalIcon} />
-                      )}
-                    </MenuItem>
-                  ))}
-              </>
-            ))}
+            {pages
+              .filter(
+                (page: any) =>
+                  page &&
+                  (!page.permission ||
+                    page.permission === PermissionLevel.NONE ||
+                    (user && user.permission_level >= PermissionLevel.ADMIN)),
+              )
+              .map((page) => (
+                <>
+                  {page &&
+                    (page.children ? (
+                      <PopupState variant="popover" popupId="demo-popup-menu">
+                        {(popupState) => (
+                          <React.Fragment>
+                            <Button
+                              key={page.name}
+                              disableTouchRipple
+                              className={styles.navMenuItem}
+                              component={Link}
+                              sx={{ display: { xs: "none", md: "flex" } }}
+                              {...bindTrigger(popupState)}
+                            >
+                              <Typography fontWeight={600}>
+                                {page.name}
+                              </Typography>
+                            </Button>
+                            <Menu
+                              {...bindMenu(popupState)}
+                              className={styles.nestedNavMenu}
+                            >
+                              {page.children.map((childrenPage) => (
+                                <MenuItem
+                                  key={childrenPage.name}
+                                  className={styles.nestedNavButton}
+                                  component={Link}
+                                  href={childrenPage.path}
+                                  target={childrenPage.target}
+                                >
+                                  <Typography fontWeight={600}>
+                                    {childrenPage.name}
+                                  </Typography>
+                                  {childrenPage.target === "_blank" && (
+                                    <IconArrowOutward
+                                      className={styles.externalIcon}
+                                    />
+                                  )}
+                                </MenuItem>
+                              ))}
+                            </Menu>
+                          </React.Fragment>
+                        )}
+                      </PopupState>
+                    ) : (
+                      <MenuItem
+                        key={page.name}
+                        disableTouchRipple
+                        className={styles.navMenuItem}
+                        component={Link}
+                        href={page.path}
+                        target={page.target}
+                        sx={{ display: { xs: "none", md: "flex" } }}
+                      >
+                        <Typography fontWeight={600}>{page.name}</Typography>
+                        {page.target === "_blank" && (
+                          <IconArrowOutward className={styles.externalIcon} />
+                        )}
+                      </MenuItem>
+                    ))}
+                </>
+              ))}
           </Box>
           <Box sx={{ display: "flex", alignItems: "end", px: 0 }}>
             <Box sx={{ display: "flex" }}>

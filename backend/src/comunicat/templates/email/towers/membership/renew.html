@@ -7,7 +7,7 @@
         <li>{% trans "Amount" %}: <strong>{{ membership_amount }} SEK</strong></li>
         <li>{% trans "Valid" %}: <strong>{{ membership_date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_date_to|date:"Y-m-d" }}</strong></li>
     </ul>
-    <p>{% trans "In your dashboard you can find the payment information as well as the date your current membership expires." %}</p>
+    <p>{% trans "In your dashboard you can find instructions on how to renew your membership as well as the payment information." %}</p>
 {% endblock %}
 
 {% block email_button_url %}{% full_towers_url "user/dashboard/" %}{% endblock %}

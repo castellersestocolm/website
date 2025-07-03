@@ -1,0 +1,15 @@
+.page {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+}
+
+.pageTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+}
+
+.pageForm {
+  margin-top: 32px !important;
+}

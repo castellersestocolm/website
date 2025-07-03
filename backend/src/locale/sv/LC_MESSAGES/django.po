@@ -160,11 +160,11 @@ msgstr "Giltighet"
 
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
-"In your dashboard you can find the payment information as well as the date "
-"your current membership expires."
+"In your dashboard you can find instructions on how to renew your membership "
+"as well as the payment information."
 msgstr ""
-"På din profil hittar du betalningsinformationen samt datumet som ditt "
-"nuvarande medlemskap löper ut."
+"På din profil hittar du instruktioner om hur du kan förnya ditt medlemskap "
+"samt betalningsinformationen."
 
 #: comunicat/templates/email/towers/user/imported.html:5
 msgid ""
