@@ -75,4 +75,7 @@ export const ROUTES = {
   "external-calendar-2025-06-14-anniversary-performance": {
     path: "https://maps.app.goo.gl/8RrBWaQUbPXiMb3v6",
   },
+  "external-calendar-2025-07-17-kulturfestivalen-performance": {
+    path: "https://kulturfestivalen.stockholm.se/programpunkt/manskliga-torn-med-castellers-destocolm-xiquets-de-copenhagen/",
+  },
 };

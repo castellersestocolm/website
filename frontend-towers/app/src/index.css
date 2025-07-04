@@ -11,3 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+@font-face {
+  font-family: "Stockholm";
+  src:
+    local("Stockholm"),
+    url("./fonts/StockholmBold.woff2") format("woff2");
+  font-weight: 700;
+}

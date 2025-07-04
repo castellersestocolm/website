@@ -187,7 +187,7 @@ function AdminAttendancePage() {
       width: 200,
       renderHeader: () => (
         <Typography variant="body2" fontWeight={600}>
-          {t("pages.admi-attendancen.events-table.family")}
+          {t("pages.admin-attendance.events-table.family")}
         </Typography>
       ),
     },

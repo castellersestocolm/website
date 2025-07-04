@@ -55,7 +55,8 @@ import Map from "../../components/Map/Map";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import Hero from "../../components/Hero/Hero";
 import ImageHeroTrips2025Berlin from "../../assets/images/heros/trips-2025-berlin.jpg";
-import ImageHeroCalendar20250614AnniversaryPerformance from "../../assets/images/heros/calendar-2025-06-14-anniversary-performance.jpg";
+import ImageHeroCalendar20250715KulturfestivalenPerformance from "../../assets/images/heros/calendar-2025-07-15-kulturfestivalen-performance.jpg";
+import HeroKulturfestivalen from "../../components/HeroKulturfestivalen/HeroKulturfestivalen";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -154,9 +155,11 @@ function HomePage() {
           </Box>
         </Box>
       </Box>
-      <Hero
-        title={t("pages.calendar-2025-06-14-anniversary-performance.title")}
-        hero={ImageHeroCalendar20250614AnniversaryPerformance}
+      <HeroKulturfestivalen
+        title={t(
+          "pages.calendar-2025-07-15-kulturfestivalen-performance.title",
+        )}
+        hero={ImageHeroCalendar20250715KulturfestivalenPerformance}
         content={
           <Box>
             <Typography
@@ -164,30 +167,21 @@ function HomePage() {
               className={styles.heroSectionSubtitle}
               marginTop="12px"
             >
-              {t("pages.home-anniversary.description")}
+              {t("pages.home-kulturfestivalen.description")}
             </Typography>
             <Grid size={12} marginTop="24px">
               <Stack direction="row" spacing={2} className={styles.joinButtons}>
                 <Button
                   variant="contained"
                   href={
-                    ROUTES["calendar-2025-06-14-anniversary-performance"].path
-                  }
-                  disableElevation
-                >
-                  {t("pages.home-anniversary.button-page")}
-                </Button>
-                <Button
-                  variant="contained"
-                  href={
                     ROUTES[
-                      "external-calendar-2025-06-14-anniversary-performance"
+                      "external-calendar-2025-07-17-kulturfestivalen-performance"
                     ].path
                   }
                   target={"_blank"}
                   disableElevation
                 >
-                  {t("pages.home-anniversary.button-location")}
+                  {t("pages.home-kulturfestivalen.button-page")}
                   <IconArrowOutward className={styles.externalIcon} />
                 </Button>
               </Stack>
