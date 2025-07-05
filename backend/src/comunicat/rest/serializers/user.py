@@ -81,6 +81,7 @@ class UserExtraSlimWithFamilySerializer(s.ModelSerializer):
             "can_manage",
             "family",
             "towers",
+            "created_at",
         )
         read_only_fields = (
             "id",
@@ -89,6 +90,7 @@ class UserExtraSlimWithFamilySerializer(s.ModelSerializer):
             "can_manage",
             "family",
             "towers",
+            "created_at",
         )
 
 
@@ -106,6 +108,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "preferred_language",
             "can_manage",
             "towers",
+            "created_at",
         )
         read_only_fields = (
             "id",
@@ -118,6 +121,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "preferred_language",
             "can_manage",
             "towers",
+            "created_at",
         )
 
 
