@@ -90,5 +90,6 @@ class StockOrderAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("date_made", "date_available", "created_at")
+    raw_id_fields = ("receipt",)
     ordering = ("-created_at",)
     inlines = (StockProductInline,)
