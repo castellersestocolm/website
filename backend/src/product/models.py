@@ -94,6 +94,14 @@ class ProductPrice(StandardModel, Timestamps):
 
 
 class StockOrder(StandardModel, Timestamps):
+    entity = models.ForeignKey(
+        "payment.Entity",
+        null=True,
+        blank=True,
+        related_name="stock_orders",
+        on_delete=models.PROTECT,
+    )
+
     date_made = models.DateField(blank=True, null=True)
     date_available = models.DateField(blank=True, null=True)
 
