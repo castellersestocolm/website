@@ -53,9 +53,9 @@ function AdminPage() {
   React.useEffect(() => {
     apiEventList(
       1,
-      10,
+      50,
       undefined,
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
         .toISOString()
         .substring(0, 10),
     ).then((response) => {
@@ -371,6 +371,8 @@ function AdminPage() {
                       ),
                       valueFormatter: (date: string) =>
                         new Date(date).toISOString().substring(0, 10),
+                      min: new Date(statEvents.results[0].time_from),
+                      max: new Date(statEvents.results[statEvents.results.length - 1].time_from),
                     },
                   ]}
                   series={[
