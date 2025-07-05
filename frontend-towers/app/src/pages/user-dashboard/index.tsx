@@ -1227,7 +1227,7 @@ function UserDashboardPage() {
                 {orders && orders.results.length > 0 ? (
                   <List className={styles.userFamilyList}>
                     {orders.results
-                      .filter((order: any) => order.products.length > 0)
+                      .filter((order: any) => order.products && order.products.length > 0)
                       .map((order: any, i: number, row: any) => (
                         <Box key={order.id}>
                           <ListItemButton
