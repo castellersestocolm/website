@@ -384,7 +384,7 @@ function AdminPage() {
                       ),
                       area: true,
                       showMark: false,
-                      stack: "total",
+                      stack: "expand",
                       color: theme.palette.error.main,
                     },
                     {
@@ -397,7 +397,7 @@ function AdminPage() {
                       ),
                       area: true,
                       showMark: false,
-                      stack: "total",
+                      stack: "expand",
                       color: theme.palette.secondary.main,
                     },
                     {
@@ -410,7 +410,7 @@ function AdminPage() {
                       ),
                       area: true,
                       showMark: false,
-                      stack: "total",
+                      stack: "expand",
                       color: theme.palette.success.main,
                     },
                   ]}
