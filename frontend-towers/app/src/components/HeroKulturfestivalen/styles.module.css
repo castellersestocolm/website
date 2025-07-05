@@ -24,7 +24,7 @@
   justify-content: center;
 
   h4 {
-    font-family: "ui-sans-serif", "system-ui", "sans-serif",
+    font-family: sans-serif, "ui-sans-serif", "system-ui", "sans-serif",
       '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"',
       '"Noto Color Emoji"';
   }

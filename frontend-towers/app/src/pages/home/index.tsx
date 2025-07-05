@@ -55,7 +55,7 @@ import Map from "../../components/Map/Map";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import Hero from "../../components/Hero/Hero";
 import ImageHeroTrips2025Berlin from "../../assets/images/heros/trips-2025-berlin.jpg";
-import ImageHeroCalendar20250715KulturfestivalenPerformance from "../../assets/images/heros/calendar-2025-07-15-kulturfestivalen-performance.jpg";
+import ImageHeroCalendar20250715KulturfestivalenPerformance from "../../assets/images/heros/calendar-2025-08-15-kulturfestivalen-performance.jpg";
 import HeroKulturfestivalen from "../../components/HeroKulturfestivalen/HeroKulturfestivalen";
 
 function HomePage() {
@@ -157,7 +157,7 @@ function HomePage() {
       </Box>
       <HeroKulturfestivalen
         title={t(
-          "pages.calendar-2025-07-15-kulturfestivalen-performance.title",
+          "pages.calendar-2025-08-15-kulturfestivalen-performance.title",
         )}
         hero={ImageHeroCalendar20250715KulturfestivalenPerformance}
         content={
