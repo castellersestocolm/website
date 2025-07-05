@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('membership', '0010_membership_date_end'),
+        ("membership", "0010_membership_date_end"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='membership',
-            name='previous',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='new', to='membership.membership'),
+            model_name="membership",
+            name="previous",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="new",
+                to="membership.membership",
+            ),
         ),
     ]

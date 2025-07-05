@@ -82,6 +82,8 @@ INSTALLED_APPS = [
     "user",
     "integration",
     "payment",
+    "product",
+    "order",
     "membership",
     "event",
     "document",
