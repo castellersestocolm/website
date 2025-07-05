@@ -34,8 +34,10 @@ const FormGrid = styled(Grid)(() => ({
 
 interface FormElements extends HTMLFormControlsCollection {
   preferred_language: HTMLInputElement;
-  height_shoulders: HTMLInputElement;
-  height_arms: HTMLInputElement;
+  /*
+    height_shoulders: HTMLInputElement;
+    height_arms: HTMLInputElement;
+  */
 }
 interface CreateFormElement extends HTMLFormElement {
   readonly elements: FormElements;
@@ -58,8 +60,10 @@ export default function FormDashboardUpdate() {
       user.birthday,
       user.consent_pictures,
       event.currentTarget.elements.preferred_language.value,
-      parseInt(event.currentTarget.elements.height_shoulders.value),
-      parseInt(event.currentTarget.elements.height_arms.value),
+      /*
+        parseInt(event.currentTarget.elements.height_shoulders.value),
+        parseInt(event.currentTarget.elements.height_arms.value),
+      */
     ).then((response) => {
       if (response.status === 202) {
         setValidationErrors(undefined);
@@ -89,7 +93,7 @@ export default function FormDashboardUpdate() {
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
-        <FormGrid size={{ xs: 12 }}>
+        {/*<FormGrid size={{ xs: 12 }}>
           <FormLabel htmlFor="height_shoulders" required>
             {t("pages.user-join.form.height-shoulders")}
           </FormLabel>
@@ -140,7 +144,7 @@ export default function FormDashboardUpdate() {
               {validationErrors.height_arms[0].detail}
             </FormHelperText>
           )}
-        </FormGrid>
+        </FormGrid>*/}
         <FormGrid size={{ xs: 12 }}>
           <FormLabel htmlFor="preferred_language" required>
             {t("pages.user-join.form.language")}

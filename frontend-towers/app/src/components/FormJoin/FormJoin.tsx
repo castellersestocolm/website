@@ -32,8 +32,10 @@ interface FormElements extends HTMLFormControlsCollection {
   birthday: HTMLInputElement;
   consent_pictures: HTMLInputElement;
   preferred_language: HTMLInputElement;
-  height_shoulders: HTMLInputElement;
-  height_arms: HTMLInputElement;
+  /*
+    height_shoulders: HTMLInputElement;
+    height_arms: HTMLInputElement;
+  */
 }
 interface CreateFormElement extends HTMLFormElement {
   readonly elements: FormElements;
@@ -58,8 +60,10 @@ export default function FormJoin() {
       event.currentTarget.elements.birthday.value,
       event.currentTarget.elements.consent_pictures.checked,
       i18n.resolvedLanguage,
-      parseInt(event.currentTarget.elements.height_shoulders.value),
-      parseInt(event.currentTarget.elements.height_arms.value),
+      /*
+        parseInt(event.currentTarget.elements.height_shoulders.value),
+        parseInt(event.currentTarget.elements.height_arms.value),
+      */
     ).then((response) => {
       if (response.status === 201) {
         setValidationErrors(undefined);
@@ -153,7 +157,7 @@ export default function FormJoin() {
                 </FormHelperText>
               )}
             </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
+            <FormGrid size={{ xs: 12, md: 3 }}>
               <FormLabel htmlFor="phone" required>
                 {t("pages.user-join.form.phone")}
               </FormLabel>
@@ -174,6 +178,29 @@ export default function FormJoin() {
               {validationErrors && validationErrors.phone && (
                 <FormHelperText error>
                   {validationErrors.phone[0].detail}
+                </FormHelperText>
+              )}
+            </FormGrid>
+            <FormGrid size={{ xs: 12, md: 3 }}>
+              <FormLabel htmlFor="birthday" required>
+                {t("pages.user-join.form.birthday")}
+              </FormLabel>
+              <OutlinedInput
+                id="birthday"
+                name="birthday"
+                type="date"
+                autoComplete="birthday"
+                required
+                size="small"
+                error={
+                  validationErrors &&
+                  validationErrors.birthday &&
+                  validationErrors.birthday[0].detail
+                }
+              />
+              {validationErrors && validationErrors.birthday && (
+                <FormHelperText error>
+                  {validationErrors.birthday[0].detail}
                 </FormHelperText>
               )}
             </FormGrid>
@@ -223,30 +250,7 @@ export default function FormJoin() {
                 </FormHelperText>
               )}
             </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="birthday" required>
-                {t("pages.user-join.form.birthday")}
-              </FormLabel>
-              <OutlinedInput
-                id="birthday"
-                name="birthday"
-                type="date"
-                autoComplete="birthday"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.birthday &&
-                  validationErrors.birthday[0].detail
-                }
-              />
-              {validationErrors && validationErrors.birthday && (
-                <FormHelperText error>
-                  {validationErrors.birthday[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 3 }}>
+            {/*<FormGrid size={{ xs: 12, md: 3 }}>
               <FormLabel htmlFor="height_shoulders" required>
                 {t("pages.user-join.form.height-shoulders")}
               </FormLabel>
@@ -295,7 +299,7 @@ export default function FormJoin() {
                   {validationErrors.height_arms[0].detail}
                 </FormHelperText>
               )}
-            </FormGrid>
+            </FormGrid>*/}
             <FormGrid size={{ xs: 12 }}>
               <FormControlLabel
                 control={<Checkbox name="consent_pictures" value="yes" />}

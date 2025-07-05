@@ -42,8 +42,10 @@ interface FormElements extends HTMLFormControlsCollection {
   birthday: HTMLInputElement;
   consent_pictures: HTMLInputElement;
   preferred_language: HTMLInputElement;
-  height_shoulders: HTMLInputElement;
-  height_arms: HTMLInputElement;
+  /*
+    height_shoulders: HTMLInputElement;
+    height_arms: HTMLInputElement;
+  */
 }
 interface CreateFormElement extends HTMLFormElement {
   readonly elements: FormElements;
@@ -66,8 +68,10 @@ export default function FormUpdate() {
       event.currentTarget.elements.birthday.value,
       event.currentTarget.elements.consent_pictures.checked,
       i18n.resolvedLanguage,
-      parseInt(event.currentTarget.elements.height_shoulders.value),
-      parseInt(event.currentTarget.elements.height_arms.value),
+      /*
+        parseInt(event.currentTarget.elements.height_shoulders.value),
+        parseInt(event.currentTarget.elements.height_arms.value),
+      */
     ).then((response) => {
       if (response.status === 202) {
         setValidationErrors(undefined);
@@ -166,7 +170,7 @@ export default function FormUpdate() {
             </FormHelperText>
           )}
         </FormGrid>
-        <FormGrid size={{ xs: 12, md: 6 }}>
+        <FormGrid size={{ xs: 12, md: 3 }}>
           <FormLabel htmlFor="phone" required>
             {t("pages.user-join.form.phone")}
           </FormLabel>
@@ -191,7 +195,7 @@ export default function FormUpdate() {
             </FormHelperText>
           )}
         </FormGrid>
-        <FormGrid size={{ xs: 12, md: 6 }}>
+        <FormGrid size={{ xs: 12, md: 3 }}>
           <FormLabel htmlFor="birthday" required>
             {t("pages.user-join.form.birthday")}
           </FormLabel>
@@ -215,7 +219,7 @@ export default function FormUpdate() {
             </FormHelperText>
           )}
         </FormGrid>
-        <FormGrid size={{ xs: 12, md: 3 }}>
+        {/*<FormGrid size={{ xs: 12, md: 3 }}>
           <FormLabel htmlFor="height_shoulders" required>
             {t("pages.user-join.form.height-shoulders")}
           </FormLabel>
@@ -266,7 +270,7 @@ export default function FormUpdate() {
               {validationErrors.height_arms[0].detail}
             </FormHelperText>
           )}
-        </FormGrid>
+        </FormGrid>*/}
         <FormGrid size={{ xs: 12 }}>
           <FormControlLabel
             control={<Checkbox name="consent_pictures" value="yes" />}

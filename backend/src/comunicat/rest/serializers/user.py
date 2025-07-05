@@ -226,16 +226,17 @@ class CreateOrganisationSerializer(s.Serializer):
 
 
 class CreateTowersSerializer(s.Serializer):
-    height_shoulders = s.IntegerField(
-        required="height_shoulders" in settings.MODULE_TOWERS_USER_FIELDS,
-        min_value=50,
-        max_value=250,
-    )
-    height_arms = s.IntegerField(
-        required="height_arms" in settings.MODULE_TOWERS_USER_FIELDS,
-        min_value=50,
-        max_value=250,
-    )
+    pass
+    # height_shoulders = s.IntegerField(
+    #     required="height_shoulders" in settings.MODULE_TOWERS_USER_FIELDS,
+    #     min_value=50,
+    #     max_value=250,
+    # )
+    # height_arms = s.IntegerField(
+    #     required="height_arms" in settings.MODULE_TOWERS_USER_FIELDS,
+    #     min_value=50,
+    #     max_value=250,
+    # )
 
 
 class BaseSerializer(s.Serializer):

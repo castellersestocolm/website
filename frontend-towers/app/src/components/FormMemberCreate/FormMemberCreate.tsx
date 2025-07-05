@@ -24,8 +24,10 @@ interface FormElements extends HTMLFormControlsCollection {
   firstname: HTMLInputElement;
   lastname: HTMLInputElement;
   birthday: HTMLInputElement;
-  height_shoulders: HTMLInputElement;
-  height_arms: HTMLInputElement;
+  /*
+    height_shoulders: HTMLInputElement;
+    height_arms: HTMLInputElement;
+  */
   consent_pictures: HTMLInputElement;
 }
 interface CreateFormElement extends HTMLFormElement {
@@ -43,8 +45,10 @@ export default function FormMemberCreate() {
     firstname: "",
     lastname: "",
     birthday: "",
-    height_shoulders: "",
-    height_arms: "",
+    /*
+      height_shoulders: "",
+      height_arms: "",
+    */
     consent_pictures: false,
   });
 
@@ -64,8 +68,10 @@ export default function FormMemberCreate() {
       event.currentTarget.elements.firstname.value,
       event.currentTarget.elements.lastname.value,
       event.currentTarget.elements.birthday.value,
-      parseInt(event.currentTarget.elements.height_shoulders.value),
-      parseInt(event.currentTarget.elements.height_arms.value),
+      /*
+        parseInt(event.currentTarget.elements.height_shoulders.value),
+        parseInt(event.currentTarget.elements.height_arms.value),
+      */
       event.currentTarget.elements.consent_pictures.checked,
     ).then((response) => {
       if (response.status === 201) {
@@ -79,8 +85,10 @@ export default function FormMemberCreate() {
           firstname: "",
           lastname: "",
           birthday: "",
-          height_shoulders: "",
-          height_arms: "",
+          /*
+            height_shoulders: "",
+            height_arms: "",
+          */
           consent_pictures: false,
         });
         setSubmitted(true);
@@ -97,7 +105,7 @@ export default function FormMemberCreate() {
     <>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-          <FormGrid size={{ xs: 12, md: 6 }}>
+          <FormGrid size={{ xs: 12, md: 4 }}>
             <FormLabel htmlFor="firstname" required>
               {t("pages.user-join.form.first-name")}
             </FormLabel>
@@ -119,7 +127,7 @@ export default function FormMemberCreate() {
               </FormHelperText>
             )}
           </FormGrid>
-          <FormGrid size={{ xs: 12, md: 6 }}>
+          <FormGrid size={{ xs: 12, md: 4 }}>
             <FormLabel htmlFor="lastname" required>
               {t("pages.user-join.form.last-name")}
             </FormLabel>
@@ -145,7 +153,7 @@ export default function FormMemberCreate() {
               </FormHelperText>
             )}
           </FormGrid>
-          <FormGrid size={{ xs: 12, md: 6 }}>
+          <FormGrid size={{ xs: 12, md: 4 }}>
             <FormLabel htmlFor="birthday" required>
               {t("pages.user-join.form.birthday")}
             </FormLabel>
@@ -170,7 +178,7 @@ export default function FormMemberCreate() {
               </FormHelperText>
             )}
           </FormGrid>
-          <FormGrid size={{ xs: 12, md: 3 }}>
+          {/*<FormGrid size={{ xs: 12, md: 3 }}>
             <FormLabel htmlFor="height_shoulders" required>
               {t("pages.user-join.form.height-shoulders")}
             </FormLabel>
@@ -223,7 +231,7 @@ export default function FormMemberCreate() {
                 {validationErrors.height_arms[0].detail}
               </FormHelperText>
             )}
-          </FormGrid>
+          </FormGrid>*/}
           <FormGrid size={{ xs: 12 }}>
             <FormControlLabel
               control={<Checkbox name="consent_pictures" value="true" />}

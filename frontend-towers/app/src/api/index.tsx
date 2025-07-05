@@ -70,8 +70,10 @@ export const apiUserCreate = async (
   birthday: string,
   consent_pictures: boolean,
   preferred_language: string,
-  height_shoulders: number,
-  height_arms: number,
+  /*
+    height_shoulders: number,
+    height_arms: number,
+  */
 ) => {
   try {
     return await instance.post("/user/", {
@@ -85,8 +87,10 @@ export const apiUserCreate = async (
       consent_pictures: consent_pictures,
       preferred_language: preferred_language,
       towers: {
-        height_shoulders: height_shoulders,
-        height_arms: height_arms,
+        /*
+          height_shoulders: height_shoulders,
+          height_arms: height_arms,
+        */
       },
       organisation: {},
     });
@@ -105,8 +109,10 @@ export const apiUserUpdate = async (
   birthday: string,
   consent_pictures: boolean,
   preferred_language: string,
-  height_shoulders: number,
-  height_arms: number,
+  /*
+    height_shoulders: number,
+    height_arms: number,
+  */
 ) => {
   try {
     return await instance.patch("/user/" + id + "/", {
@@ -117,8 +123,10 @@ export const apiUserUpdate = async (
       consent_pictures: consent_pictures,
       preferred_language: preferred_language,
       towers: {
-        height_shoulders: height_shoulders,
-        height_arms: height_arms,
+        /*
+          height_shoulders: height_shoulders,
+          height_arms: height_arms,
+        */
       },
       organisation: {},
     });
@@ -153,8 +161,10 @@ export const apiUserFamilyMemberCreate = async (
   firstname: string,
   lastname: string,
   birthday: string,
-  height_shoulders: number,
-  height_arms: number,
+  /*
+    height_shoulders: number,
+    height_arms: number,
+  */
   consent_pictures: boolean,
 ) => {
   try {
@@ -164,8 +174,10 @@ export const apiUserFamilyMemberCreate = async (
       birthday: birthday,
       consent_pictures: consent_pictures,
       towers: {
-        height_shoulders: height_shoulders,
-        height_arms: height_arms,
+        /*
+          height_shoulders: height_shoulders,
+          height_arms: height_arms,
+        */
       },
       organisation: {},
     });
@@ -181,8 +193,10 @@ export const apiUserFamilyMemberUpdate = async (
   firstname: string,
   lastname: string,
   birthday: string,
-  height_shoulders: number,
-  height_arms: number,
+  /*
+    height_shoulders: number,
+    height_arms: number,
+  */
   consent_pictures: boolean,
 ) => {
   try {
@@ -192,8 +206,10 @@ export const apiUserFamilyMemberUpdate = async (
       birthday: birthday,
       consent_pictures: consent_pictures,
       towers: {
-        height_shoulders: height_shoulders,
-        height_arms: height_arms,
+        /*
+          height_shoulders: height_shoulders,
+          height_arms: height_arms,
+        */
       },
       organisation: {},
     });
