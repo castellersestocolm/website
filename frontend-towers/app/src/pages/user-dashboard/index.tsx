@@ -1282,11 +1282,7 @@ function UserDashboardPage() {
                                 </>
                               }
                               secondary={
-                                getEnumLabel(
-                                  t,
-                                  "order-status",
-                                  order.status,
-                                ) +
+                                getEnumLabel(t, "order-status", order.status) +
                                 " " +
                                 (order.status >= OrderStatus.COMPLETED
                                   ? t("pages.user-payments.payment.date-done")
@@ -1296,8 +1292,8 @@ function UserDashboardPage() {
                                 " " +
                                 new Date(
                                   order.logs && order.logs.length > 0
-                                      ? order.logs[0].created_at
-                                      : order.created_at,
+                                    ? order.logs[0].created_at
+                                    : order.created_at,
                                 )
                                   .toISOString()
                                   .slice(0, 10)

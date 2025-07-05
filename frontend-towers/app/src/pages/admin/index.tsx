@@ -12,20 +12,21 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
-  Typography, useTheme,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { apiEventList, apiEventRegistrationList, apiUserList } from "../../api";
 import { getEventsCount } from "../../utils/admin";
-import {EVENT_TYPE_ICON, EventType, RegistrationStatus} from "../../enums";
+import { EVENT_TYPE_ICON, EventType, RegistrationStatus } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
-import IconKeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import IconKeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import IcconPerson from "@mui/icons-material/Person";
 import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
-import {LineChart} from "@mui/x-charts";
+import { LineChart } from "@mui/x-charts";
 
 function AdminPage() {
   const theme = useTheme();
@@ -50,7 +51,14 @@ function AdminPage() {
   }, [setEvents]);
 
   React.useEffect(() => {
-    apiEventList(1, 10, undefined, (new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).toISOString().substring(0, 10)).then((response) => {
+    apiEventList(
+      1,
+      10,
+      undefined,
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .substring(0, 10),
+    ).then((response) => {
       if (response.status === 200) {
         setStatEvents(response.data);
       }
@@ -345,46 +353,71 @@ function AdminPage() {
             </Box>
           </Link>
           <Box className={styles.adminBox}>
-            {statEvents && statEvents.results.length > 0 && statEventsCount && <Box mt={1}>
-            <Typography variant="body1" fontWeight="600" component="div" textAlign="center">
-              {t("pages.admin.stats-table.attendance-title")}
-            </Typography>
-              <LineChart
-              xAxis={[{
-                data: statEvents.results.map((event: any) => new Date(event.time_from)),
-                valueFormatter: (date: string) => (new Date(date)).toISOString().substring(0, 10),
-              }]}
-              series={[
-                {
-                  id: RegistrationStatus.CANCELLED,
-                  label: t("enums.registration-status.30"),
-                  data: statEvents.results.map((event: any) => event.id in statEventsCount ? statEventsCount[event.id][1] : 0),
-                  area: true,
-                  showMark: false,
-                  stack: "total",
-                  color: theme.palette.error.main,
-                },
-                {
-                  id: 0,
-                  label: t("enums.registration-status.0"),
-                  data: statEvents.results.map((event: any) => event.id in statEventsCount ? statEventsCount[event.id][2] : 0),
-                  area: true,
-                  showMark: false,
-                  stack: "total",
-                  color: theme.palette.secondary.main,
-                },
-                {
-                  id: RegistrationStatus.ACTIVE,
-                  label: t("enums.registration-status.20"),
-                  data: statEvents.results.map((event: any) => event.id in statEventsCount ? statEventsCount[event.id][0] : 0),
-                  area: true,
-                  showMark: false,
-                  stack: "total",
-                  color: theme.palette.success.main,
-                },
-              ]}
-              height={300}
-            /></Box>}
+            {statEvents && statEvents.results.length > 0 && statEventsCount && (
+              <Box mt={1}>
+                <Typography
+                  variant="body1"
+                  fontWeight="600"
+                  component="div"
+                  textAlign="center"
+                >
+                  {t("pages.admin.stats-table.attendance-title")}
+                </Typography>
+                <LineChart
+                  xAxis={[
+                    {
+                      data: statEvents.results.map(
+                        (event: any) => new Date(event.time_from),
+                      ),
+                      valueFormatter: (date: string) =>
+                        new Date(date).toISOString().substring(0, 10),
+                    },
+                  ]}
+                  series={[
+                    {
+                      id: RegistrationStatus.CANCELLED,
+                      label: t("enums.registration-status.30"),
+                      data: statEvents.results.map((event: any) =>
+                        event.id in statEventsCount
+                          ? statEventsCount[event.id][1]
+                          : 0,
+                      ),
+                      area: true,
+                      showMark: false,
+                      stack: "total",
+                      color: theme.palette.error.main,
+                    },
+                    {
+                      id: 0,
+                      label: t("enums.registration-status.0"),
+                      data: statEvents.results.map((event: any) =>
+                        event.id in statEventsCount
+                          ? statEventsCount[event.id][2]
+                          : 0,
+                      ),
+                      area: true,
+                      showMark: false,
+                      stack: "total",
+                      color: theme.palette.secondary.main,
+                    },
+                    {
+                      id: RegistrationStatus.ACTIVE,
+                      label: t("enums.registration-status.20"),
+                      data: statEvents.results.map((event: any) =>
+                        event.id in statEventsCount
+                          ? statEventsCount[event.id][0]
+                          : 0,
+                      ),
+                      area: true,
+                      showMark: false,
+                      stack: "total",
+                      color: theme.palette.success.main,
+                    },
+                  ]}
+                  height={300}
+                />
+              </Box>
+            )}
           </Box>
         </Card>
       </Grid>

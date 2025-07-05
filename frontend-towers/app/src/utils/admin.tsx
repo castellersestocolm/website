@@ -24,7 +24,12 @@ export function getEventsCount(events: any, registrations: any, users: any) {
                 registration.status === RegistrationStatus.CANCELLED,
             ).length;
             const registrationsUnknown =
-              users.length - registrationsActive - registrationsCancelled;
+              users.filter(
+                (user: any) =>
+                  new Date(user.created_at) <= new Date(event.time_from),
+              ).length -
+              registrationsActive -
+              registrationsCancelled;
             return [
               event.id,
               [
