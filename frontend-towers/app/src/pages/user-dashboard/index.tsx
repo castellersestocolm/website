@@ -185,7 +185,7 @@ function UserDashboardPage() {
       ...Object.fromEntries(
         Object.entries(ordersOpen).map(([k, v], i) => [k, false]),
       ),
-      [orderId]: !ordersOpen[orders],
+      [orderId]: !ordersOpen[orderId],
     });
   };
 
@@ -1235,9 +1235,6 @@ function UserDashboardPage() {
                         <Box key={order.id}>
                           <ListItemButton
                             onClick={() => handleOrderClick(order.id)}
-                            disableTouchRipple={
-                              !order.products || !(order.products.length > 1)
-                            }
                             dense
                           >
                             <ListItemIcon>
