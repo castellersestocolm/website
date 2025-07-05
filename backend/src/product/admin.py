@@ -85,8 +85,10 @@ class StockProductInline(admin.TabularInline):
 class StockOrderAdmin(admin.ModelAdmin):
     search_fields = ("id",)
     list_display = (
+        "entity",
         "date_made",
         "date_available",
+        "receipt",
         "created_at",
     )
     list_filter = ("date_made", "date_available", "created_at")
@@ -94,5 +96,8 @@ class StockOrderAdmin(admin.ModelAdmin):
         "entity",
         "receipt",
     )
-    ordering = ("-created_at",)
+    ordering = (
+        "-date_made",
+        "-created_at",
+    )
     inlines = (StockProductInline,)

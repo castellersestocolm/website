@@ -27,6 +27,9 @@ class Product(StandardModel, Timestamps):
     def __str__(self) -> str:
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
+    class Meta:
+        ordering = ("type", "created_at")
+
 
 class ProductSize(StandardModel, Timestamps):
     product = models.ForeignKey(
@@ -45,6 +48,9 @@ class ProductSize(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         return f"{str(self.product)} - {self.size}"
+
+    class Meta:
+        ordering = ("product__type", "category", "size")
 
 
 class ProductImage(StandardModel, Timestamps):
@@ -92,6 +98,9 @@ class ProductPrice(StandardModel, Timestamps):
         if self.size and self.product != self.size.product:
             raise ValidationError({"size": _("Product size must match product.")})
 
+    class Meta:
+        ordering = ("product__type", "module")
+
 
 class StockOrder(StandardModel, Timestamps):
     entity = models.ForeignKey(
@@ -127,3 +136,6 @@ class StockProduct(StandardModel, Timestamps):
     )
 
     amount = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ("size__product__type", "size__category", "size__size")

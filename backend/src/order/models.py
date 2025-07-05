@@ -41,6 +41,10 @@ class OrderDelivery(StandardModel, Timestamps):
     def __str__(self) -> str:
         return f"{str(self.order)} - {OrderDeliveryType(self.type).name}"
 
+    class Meta:
+        verbose_name = "order delivery"
+        verbose_name_plural = "order deliveries"
+
 
 class OrderProduct(StandardModel, Timestamps):
     order = models.ForeignKey(

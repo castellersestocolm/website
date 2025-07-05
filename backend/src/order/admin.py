@@ -1,9 +1,4 @@
 from django.contrib import admin
-from django.db.models import JSONField
-from django.utils import translation
-from jsoneditor.forms import JSONEditor
-
-from django.utils.translation import gettext_lazy as _
 
 from order.models import OrderProduct, Order, OrderDelivery
 

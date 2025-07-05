@@ -23,6 +23,7 @@ class ProductQuerySet(QuerySet):
             stock_in=Coalesce(
                 Subquery(
                     StockProduct.objects.filter(size__product_id=OuterRef("id"))
+                    .values("size__product")
                     .annotate(sum=Sum("amount"))
                     .values_list("sum", flat=True)[:1],
                 ),
@@ -33,6 +34,7 @@ class ProductQuerySet(QuerySet):
                 Subquery(
                     OrderProduct.objects.filter(size__product_id=OuterRef("id"))
                     .exclude(order__status=OrderStatus.CANCELLED)
+                    .values("size__product")
                     .annotate(sum=Sum("quantity"))
                     .values_list("sum", flat=True)[:1],
                 ),
@@ -53,6 +55,7 @@ class ProductSizeQuerySet(QuerySet):
             stock_in=Coalesce(
                 Subquery(
                     StockProduct.objects.filter(size_id=OuterRef("id"))
+                    .values("size__product")
                     .annotate(sum=Sum("amount"))
                     .values_list("sum", flat=True)[:1],
                 ),
@@ -63,6 +66,7 @@ class ProductSizeQuerySet(QuerySet):
                 Subquery(
                     OrderProduct.objects.filter(size_id=OuterRef("id"))
                     .exclude(order__status=OrderStatus.CANCELLED)
+                    .values("size__product")
                     .annotate(sum=Sum("quantity"))
                     .values_list("sum", flat=True)[:1],
                 ),
