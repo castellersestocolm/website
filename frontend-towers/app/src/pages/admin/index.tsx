@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Grid from "@mui/material/Grid";
 import {
-  Button,
   Card,
   Divider,
   Link,
@@ -13,21 +12,24 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
-  Typography,
+  Typography, useTheme,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { apiEventList, apiEventRegistrationList, apiUserList } from "../../api";
 import { getEventsCount } from "../../utils/admin";
-import { EVENT_TYPE_ICON, EventType } from "../../enums";
+import {EVENT_TYPE_ICON, EventType, RegistrationStatus} from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
-import IconEast from "@mui/icons-material/East";
+import IconKeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import IcconPerson from "@mui/icons-material/Person";
 import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
+import {LineChart} from "@mui/x-charts";
 
 function AdminPage() {
+  const theme = useTheme();
+
   const [t, i18n] = useTranslation("common");
 
   const { user } = useAppContext();
@@ -36,14 +38,24 @@ function AdminPage() {
   const [events, setEvents] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
   const [registrations, setRegistrations] = React.useState(undefined);
+  const [statEvents, setStatEvents] = React.useState(undefined);
+  const [statRegistrations, setStatRegistrations] = React.useState(undefined);
 
   React.useEffect(() => {
-    apiEventList(1).then((response) => {
+    apiEventList().then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
       }
     });
   }, [setEvents]);
+
+  React.useEffect(() => {
+    apiEventList(1, 10, undefined, (new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).toISOString().substring(0, 10)).then((response) => {
+      if (response.status === 200) {
+        setStatEvents(response.data);
+      }
+    });
+  }, [setStatEvents]);
 
   React.useEffect(() => {
     apiUserList().then((response) => {
@@ -74,6 +86,27 @@ function AdminPage() {
     }
   }, [events, setRegistrations]);
 
+  React.useEffect(() => {
+    if (statEvents && statEvents.results.length > 0) {
+      for (let i = 0; i < statEvents.results.length; i++) {
+        const event = statEvents.results[i];
+        apiEventRegistrationList(event.id, true).then((response) => {
+          if (response.status === 200) {
+            setStatRegistrations((registrations: any) => ({
+              ...registrations,
+              [event.id]: Object.fromEntries(
+                response.data.map((registration: any) => [
+                  registration.user.id,
+                  registration,
+                ]),
+              ),
+            }));
+          }
+        });
+      }
+    }
+  }, [statEvents, setStatRegistrations]);
+
   const userChildren: any[] =
     users && users.filter((user: any) => !user.can_manage);
 
@@ -81,18 +114,16 @@ function AdminPage() {
     users && users.filter((user: any) => user.can_manage);
 
   const eventsCountAdults = getEventsCount(events, registrations, userAdults);
-
   const eventsCountChildren = getEventsCount(
     events,
     registrations,
     userChildren,
   );
+  const statEventsCount = getEventsCount(statEvents, statRegistrations, users);
 
   function handleAdminAttendanceSubmit() {
     navigate(ROUTES["admin-attendance"].path, { replace: true });
   }
-
-  console.log(registrations);
 
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
@@ -107,9 +138,9 @@ function AdminPage() {
           >
             <Box className={styles.adminTopBoxLink}>
               <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.admin.events-table.title")}
+                {t("pages.admin.attendance-table.title")}
               </Typography>
-              <IconEast className={styles.adminTitleIcon} />
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
           <Box>
@@ -242,15 +273,118 @@ function AdminPage() {
           >
             <Box className={styles.adminTopBoxLink}>
               <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.admin.users-table.title")}
+                {t("pages.admin.events-table.title")}
               </Typography>
-              <IconEast className={styles.adminTitleIcon} />
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
           <Box className={styles.adminBox}>
             <Typography variant="body2" component="div">
               Coming soon...
             </Typography>
+          </Box>
+        </Card>
+      </Grid>
+      <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminCard}>
+          <Link
+            color="textPrimary"
+            underline="none"
+            component="button"
+            className={styles.adminTitleLink}
+          >
+            <Box className={styles.adminTopBoxLink}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.admin.equipment-table.title")}
+              </Typography>
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
+            </Box>
+          </Link>
+          <Box className={styles.adminBox}>
+            <Typography variant="body2" component="div">
+              Coming soon...
+            </Typography>
+          </Box>
+        </Card>
+      </Grid>
+      <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminCard}>
+          <Link
+            color="textPrimary"
+            underline="none"
+            component="button"
+            className={styles.adminTitleLink}
+          >
+            <Box className={styles.adminTopBoxLink}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.admin.users-table.title")}
+              </Typography>
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
+            </Box>
+          </Link>
+          <Box className={styles.adminBox}>
+            <Typography variant="body2" component="div">
+              Coming soon...
+            </Typography>
+          </Box>
+        </Card>
+      </Grid>
+      <Grid container size={{ xs: 12, md: 12 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminCard}>
+          <Link
+            color="textPrimary"
+            underline="none"
+            component="button"
+            className={styles.adminTitleLink}
+          >
+            <Box className={styles.adminTopBoxLink}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.admin.stats-table.title")}
+              </Typography>
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
+            </Box>
+          </Link>
+          <Box className={styles.adminBox}>
+            {statEvents && statEvents.results.length > 0 && statEventsCount && <Box mt={1}>
+            <Typography variant="body1" fontWeight="600" component="div" textAlign="center">
+              {t("pages.admin.stats-table.attendance-title")}
+            </Typography>
+              <LineChart
+              xAxis={[{
+                data: statEvents.results.map((event: any) => new Date(event.time_from)),
+                valueFormatter: (date: string) => (new Date(date)).toISOString().substring(0, 10),
+              }]}
+              series={[
+                {
+                  id: RegistrationStatus.CANCELLED,
+                  label: t("enums.registration-status.30"),
+                  data: statEvents.results.map((event: any) => event.id in statEventsCount ? statEventsCount[event.id][1] : 0),
+                  area: true,
+                  showMark: false,
+                  stack: "total",
+                  color: theme.palette.error.main,
+                },
+                {
+                  id: 0,
+                  label: t("enums.registration-status.0"),
+                  data: statEvents.results.map((event: any) => event.id in statEventsCount ? statEventsCount[event.id][2] : 0),
+                  area: true,
+                  showMark: false,
+                  stack: "total",
+                  color: theme.palette.secondary.main,
+                },
+                {
+                  id: RegistrationStatus.ACTIVE,
+                  label: t("enums.registration-status.20"),
+                  data: statEvents.results.map((event: any) => event.id in statEventsCount ? statEventsCount[event.id][0] : 0),
+                  area: true,
+                  showMark: false,
+                  stack: "total",
+                  color: theme.palette.success.main,
+                },
+              ]}
+              height={300}
+            /></Box>}
           </Box>
         </Card>
       </Grid>

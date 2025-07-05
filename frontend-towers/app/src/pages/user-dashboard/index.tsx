@@ -1281,9 +1281,27 @@ function UserDashboardPage() {
                                   </Typography>
                                 </>
                               }
-                              secondary={new Date(order.created_at)
-                                .toISOString()
-                                .slice(0, 10)}
+                              secondary={
+                                getEnumLabel(
+                                  t,
+                                  "order-status",
+                                  order.status,
+                                ) +
+                                " " +
+                                (order.status >= OrderStatus.COMPLETED
+                                  ? t("pages.user-payments.payment.date-done")
+                                  : t(
+                                      "pages.user-payments.payment.date-doing",
+                                    )) +
+                                " " +
+                                new Date(
+                                  order.logs && order.logs.length > 0
+                                      ? order.logs[0].created_at
+                                      : order.created_at,
+                                )
+                                  .toISOString()
+                                  .slice(0, 10)
+                              }
                             />
                             {ordersOpen[order.id] ? (
                               <IconExpandLess />

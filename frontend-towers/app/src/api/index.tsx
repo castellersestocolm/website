@@ -436,14 +436,19 @@ export const apiPaymentExpenseList = async (page: number = undefined) => {
 
 export const apiEventList = async (
   page: number = undefined,
+  pageSize: number = undefined,
   token: string = undefined,
+  dateFrom: string = undefined,
+  dateTo: string = undefined,
 ) => {
   try {
     return await instance.get("/event/", {
       params: {
-        page_size: API_EVENTS_LIST_PAGE_SIZE,
-        page: page,
+        page_size: pageSize ? pageSize : API_EVENTS_LIST_PAGE_SIZE,
+        page: page ? page : 1,
         token: token,
+        date_from: dateFrom ? dateFrom : (new Date()).toISOString().substring(0, 10),
+        date_to: dateTo
       },
     });
   } catch (error) {

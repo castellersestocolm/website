@@ -172,6 +172,8 @@ class ListEventCalendarSerializer(s.Serializer):
 
 
 class ListEventSerializer(s.Serializer):
+    date_from = s.DateField(required=False)
+    date_to = s.DateField(required=False)
     token = s.CharField(required=False)
 
 

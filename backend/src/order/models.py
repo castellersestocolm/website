@@ -31,8 +31,30 @@ class Order(StandardModel, Timestamps):
 
     objects = OrderQuerySet.as_manager()
 
+    __status = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__status = self.status
+
     def __str__(self) -> str:
         return f"{str(self.entity)} - {timezone.localtime(self.created_at).strftime('%Y-%m-%d %H:%M')}"
+
+    def save(self, *args, **kwargs):
+        if self.pk and self.status != self.__status:
+            OrderLog.objects.create(order_id=self.id, status=self.status)
+        super().save(*args, **kwargs)
+
+
+class OrderLog(StandardModel, Timestamps):
+    order = models.ForeignKey(
+        "Order",
+        related_name="logs",
+        on_delete=models.CASCADE,
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((os.value, os.name) for os in OrderStatus),
+    )
 
 
 class OrderDelivery(StandardModel, Timestamps):

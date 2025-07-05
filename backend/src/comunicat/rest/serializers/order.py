@@ -4,7 +4,7 @@ from comunicat.rest.serializers.payment import PaymentLineSerializer
 from comunicat.rest.serializers.product import ProductSizeSerializer
 from comunicat.rest.utils.fields import MoneyField, IntEnumField
 from order.enums import OrderDeliveryType, OrderStatus
-from order.models import Order, OrderDelivery, OrderProduct
+from order.models import Order, OrderDelivery, OrderProduct, OrderLog
 
 
 class OrderDeliverySerializer(s.ModelSerializer):
@@ -50,11 +50,27 @@ class OrderProductSerializer(s.ModelSerializer):
         )
 
 
+class OrderLogSerializer(s.ModelSerializer):
+    class Meta:
+        model = OrderLog
+        fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+
+
 class OrderSerializer(s.ModelSerializer):
     status = IntEnumField(OrderStatus, read_only=True)
     delivery = OrderDeliverySerializer(read_only=True)
     amount = MoneyField(read_only=True)
     products = OrderProductSerializer(many=True, read_only=True)
+    logs = OrderLogSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
@@ -64,6 +80,7 @@ class OrderSerializer(s.ModelSerializer):
             "delivery",
             "amount",
             "products",
+            "logs",
             "created_at",
         )
         read_only_fields = (
@@ -72,5 +89,6 @@ class OrderSerializer(s.ModelSerializer):
             "delivery",
             "amount",
             "products",
+            "logs",
             "created_at",
         )

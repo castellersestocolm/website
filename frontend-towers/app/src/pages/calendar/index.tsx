@@ -149,7 +149,7 @@ function CalendarPage() {
   );
 
   React.useEffect(() => {
-    apiEventList(eventPage, token).then((response) => {
+    apiEventList(eventPage, undefined, token).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
       }

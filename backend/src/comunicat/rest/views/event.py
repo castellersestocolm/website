@@ -60,7 +60,8 @@ class EventAPI(ComuniCatViewSet):
         event_objs = event.api.get_list(
             request_user_id=user_obj.id if user_obj else None,
             module=self.module,
-            date_from=timezone.localdate(),
+            date_from=serializer.validated_data.get("date_from"),
+            date_to=serializer.validated_data.get("date_to"),
         )
 
         paginator = self.pagination_class()

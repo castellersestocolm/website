@@ -5,7 +5,7 @@ from django.db.models import Prefetch, Q, Exists, OuterRef
 
 from comunicat.enums import Module
 from order.enums import OrderStatus
-from order.models import Order, OrderProduct
+from order.models import Order, OrderProduct, OrderLog
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 
@@ -53,6 +53,7 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
                     "size__product__type", "size__category", "size__size"
                 ).select_related("size", "size__product", "line"),
             ),
+            Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )
         .with_amount()
         .order_by("-created_at")
