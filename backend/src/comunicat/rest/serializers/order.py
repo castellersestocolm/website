@@ -2,11 +2,14 @@ from rest_framework import serializers as s
 
 from comunicat.rest.serializers.payment import PaymentLineSerializer
 from comunicat.rest.serializers.product import ProductSizeSerializer
-from comunicat.rest.utils.fields import MoneyField
+from comunicat.rest.utils.fields import MoneyField, IntEnumField
+from order.enums import OrderDeliveryType, OrderStatus
 from order.models import Order, OrderDelivery, OrderProduct
 
 
 class OrderDeliverySerializer(s.ModelSerializer):
+    type = IntEnumField(OrderDeliveryType, read_only=True)
+
     class Meta:
         model = OrderDelivery
         fields = (
@@ -48,6 +51,7 @@ class OrderProductSerializer(s.ModelSerializer):
 
 
 class OrderSerializer(s.ModelSerializer):
+    status = IntEnumField(OrderStatus, read_only=True)
     delivery = OrderDeliverySerializer(read_only=True)
     amount = MoneyField(read_only=True)
     products = OrderProductSerializer(many=True, read_only=True)

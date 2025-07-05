@@ -2,10 +2,10 @@ from enum import IntEnum
 
 
 class OrderStatus(IntEnum):
-    CREATED = 0
-    PROCESSING = 1
-    COMPLETED = 2
-    CANCELLED = 3
+    CREATED = 10
+    PROCESSING = 20
+    COMPLETED = 30
+    CANCELLED = 40
 
 
 class OrderDeliveryType(IntEnum):

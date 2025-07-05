@@ -1227,7 +1227,10 @@ function UserDashboardPage() {
                 {orders && orders.results.length > 0 ? (
                   <List className={styles.userFamilyList}>
                     {orders.results
-                      .filter((order: any) => order.products && order.products.length > 0)
+                      .filter(
+                        (order: any) =>
+                          order.products && order.products.length > 0,
+                      )
                       .map((order: any, i: number, row: any) => (
                         <Box key={order.id}>
                           <ListItemButton
@@ -1285,48 +1288,44 @@ function UserDashboardPage() {
                                 .toISOString()
                                 .slice(0, 10)}
                             />
-                            {order.products &&
-                              order.products.length > 1 &&
-                              (ordersOpen[order.id] ? (
-                                <IconExpandLess />
-                              ) : (
-                                <IconExpandMore />
-                              ))}
+                            {ordersOpen[order.id] ? (
+                              <IconExpandLess />
+                            ) : (
+                              <IconExpandMore />
+                            )}
                           </ListItemButton>
-                          {order.products && order.products.length > 1 && (
-                            <Collapse
-                              in={ordersOpen[order.id]}
-                              timeout="auto"
-                              unmountOnExit
-                            >
-                              <List className={styles.userFamilyList}>
-                                {order.products.map(
-                                  (orderProduct: any, i: number, row: any) => (
-                                    <Box key={orderProduct.id}>
-                                      <ListItemButton disableTouchRipple dense>
-                                        <ListItemText
-                                          primary={
-                                            orderProduct.quantity +
-                                            " x " +
-                                            orderProduct.size.product.name +
-                                            " — " +
-                                            orderProduct.size.size
-                                          }
-                                        />
-                                        <Typography
-                                          variant="body2"
-                                          component="span"
-                                        >
-                                          {orderProduct.amount.amount}{" "}
-                                          {orderProduct.amount.currency}
-                                        </Typography>
-                                      </ListItemButton>
-                                    </Box>
-                                  ),
-                                )}
-                              </List>
-                            </Collapse>
-                          )}
+                          <Collapse
+                            in={ordersOpen[order.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <List className={styles.userFamilyList}>
+                              {order.products.map(
+                                (orderProduct: any, i: number, row: any) => (
+                                  <Box key={orderProduct.id}>
+                                    <ListItemButton disableTouchRipple dense>
+                                      <ListItemText
+                                        primary={
+                                          orderProduct.quantity +
+                                          " x " +
+                                          orderProduct.size.product.name +
+                                          " — " +
+                                          orderProduct.size.size
+                                        }
+                                      />
+                                      <Typography
+                                        variant="body2"
+                                        component="span"
+                                      >
+                                        {orderProduct.amount.amount}{" "}
+                                        {orderProduct.amount.currency}
+                                      </Typography>
+                                    </ListItemButton>
+                                  </Box>
+                                ),
+                              )}
+                            </List>
+                          </Collapse>
 
                           {i + 1 < row.length && <Divider />}
                         </Box>
