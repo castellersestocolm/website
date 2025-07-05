@@ -1,7 +1,7 @@
 from django.urls import include, path, re_path
 from drf_yasg.views import get_schema_view
 
-from comunicat.rest.views import user, membership, payment, event, legal, towers
+from comunicat.rest.views import user, membership, payment, event, legal, towers, order
 from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
 from rest_framework import permissions
@@ -25,6 +25,7 @@ router.register("event/calendar", event.CalendarAPI, "event_calendar")
 router.register("legal/team", legal.TeamAPI, "legal_team")
 router.register("legal/bylaws", legal.BylawsAPI, "legal_bylaws")
 router.register("towers/castle", towers.TowersCastleAPI, "towers_castle")
+router.register("order", order.OrderAPI, "order")
 
 
 api_patterns = [

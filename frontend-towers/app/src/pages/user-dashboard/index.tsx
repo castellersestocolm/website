@@ -24,6 +24,7 @@ import {
   apiMembershipRenewCreate,
   apiMembershipRenewList,
   apiPaymentExpenseList,
+  apiOrderList,
   apiPaymentList,
   apiTowersCastleList,
   apiUserFamilyMemberRequestAccept,
@@ -69,17 +70,20 @@ import {
   PaymentType,
   PermissionLevel,
   RegistrationStatus,
+  OrderStatus,
+  ORDER_STATUS_ICON,
 } from "../../enums";
 import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
 import markdown from "@wcj/markdown-to-html";
 import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
-import { capitalizeFirstLetter } from "../../utils/string";
+import { capitalizeFirstLetter, lowerFirstLetter } from "../../utils/string";
 import IconAttachFile from "@mui/icons-material/AttachFile";
 import IconDowload from "@mui/icons-material/Download";
 import Pagination from "@mui/material/Pagination";
 import {
   API_EXPENSES_LIST_PAGE_SIZE,
+  API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
@@ -131,6 +135,10 @@ function UserDashboardPage() {
     [key: string]: boolean;
   }>({});
 
+  const [ordersOpen, setOrdersOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [expensesOpen, setExpensesOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
@@ -144,6 +152,8 @@ function UserDashboardPage() {
   // const [memberships, setMemberships] = React.useState(undefined);
   const [paymentPage, setPaymentPage] = React.useState(1);
   const [payments, setPayments] = React.useState(undefined);
+  const [orderPage, setOrderPage] = React.useState(1);
+  const [orders, setOrders] = React.useState(undefined);
   const [expensePage, setExpensePage] = React.useState(1);
   const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
@@ -167,6 +177,15 @@ function UserDashboardPage() {
         Object.entries(paymentsOpen).map(([k, v], i) => [k, false]),
       ),
       [paymentId]: !paymentsOpen[paymentId],
+    });
+  };
+
+  const handleOrderClick = (orderId: string) => {
+    setOrdersOpen({
+      ...Object.fromEntries(
+        Object.entries(ordersOpen).map(([k, v], i) => [k, false]),
+      ),
+      [orderId]: !ordersOpen[orders],
     });
   };
 
@@ -265,6 +284,16 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setPayments, paymentPage]);
+
+  React.useEffect(() => {
+    if (user) {
+      apiOrderList(orderPage).then((response) => {
+        if (response.status === 200) {
+          setOrders(response.data);
+        }
+      });
+    }
+  }, [user, i18n.resolvedLanguage, setOrders, orderPage]);
 
   React.useEffect(() => {
     if (user) {
@@ -1178,6 +1207,147 @@ function UserDashboardPage() {
                       payments.count / API_PAYMENTS_LIST_PAGE_SIZE,
                     )}
                     onChange={(e: any, value: number) => setPaymentPage(value)}
+                  />
+                </Stack>
+              )}
+          </Grid>
+        </Grid>
+
+        <Grid>
+          <Grid container spacing={2} direction="column">
+            <Card variant="outlined">
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.user-dashboard.section.orders.title")}
+                </Typography>
+              </Box>
+              <Divider />
+
+              <Box className={styles.userFamilyBox}>
+                {orders && orders.results.length > 0 ? (
+                  <List className={styles.userFamilyList}>
+                    {orders.results
+                      .filter((order: any) => order.products.length > 0)
+                      .map((order: any, i: number, row: any) => (
+                        <Box key={order.id}>
+                          <ListItemButton
+                            onClick={() => handleOrderClick(order.id)}
+                            disableTouchRipple={
+                              !order.products || !(order.products.length > 1)
+                            }
+                            dense
+                          >
+                            <ListItemIcon>
+                              {ORDER_STATUS_ICON[order.status]}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={
+                                <>
+                                  <Typography variant="body2" component="span">
+                                    {capitalizeFirstLetter(
+                                      Array.from(
+                                        new Set(
+                                          order.products.map(
+                                            (orderProduct: any) =>
+                                              lowerFirstLetter(
+                                                orderProduct.size.product.name,
+                                              ),
+                                          ),
+                                        ),
+                                      ).join(", "),
+                                    )}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    component="span"
+                                  >
+                                    {" — "}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color={
+                                      order.status === OrderStatus.CREATED
+                                        ? "error"
+                                        : order.status ===
+                                            OrderStatus.PROCESSING
+                                          ? "secondary"
+                                          : "success"
+                                    }
+                                    component="span"
+                                  >
+                                    {order.amount.amount}{" "}
+                                    {order.amount.currency}
+                                  </Typography>
+                                </>
+                              }
+                              secondary={new Date(order.created_at)
+                                .toISOString()
+                                .slice(0, 10)}
+                            />
+                            {order.products &&
+                              order.products.length > 1 &&
+                              (ordersOpen[order.id] ? (
+                                <IconExpandLess />
+                              ) : (
+                                <IconExpandMore />
+                              ))}
+                          </ListItemButton>
+                          {order.products && order.products.length > 1 && (
+                            <Collapse
+                              in={ordersOpen[order.id]}
+                              timeout="auto"
+                              unmountOnExit
+                            >
+                              <List className={styles.userFamilyList}>
+                                {order.products.map(
+                                  (orderProduct: any, i: number, row: any) => (
+                                    <Box key={orderProduct.id}>
+                                      <ListItemButton disableTouchRipple dense>
+                                        <ListItemText
+                                          primary={
+                                            orderProduct.quantity +
+                                            " x " +
+                                            orderProduct.size.product.name +
+                                            " — " +
+                                            orderProduct.size.size
+                                          }
+                                        />
+                                        <Typography
+                                          variant="body2"
+                                          component="span"
+                                        >
+                                          {orderProduct.amount.amount}{" "}
+                                          {orderProduct.amount.currency}
+                                        </Typography>
+                                      </ListItemButton>
+                                    </Box>
+                                  ),
+                                )}
+                              </List>
+                            </Collapse>
+                          )}
+
+                          {i + 1 < row.length && <Divider />}
+                        </Box>
+                      ))}
+                  </List>
+                ) : (
+                  <Box className={styles.userFamilyEmpty}>
+                    <Typography component="div">
+                      {t("pages.user-dashboard.section.orders.empty")}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </Card>
+            {orders &&
+              orders.results.length > 0 &&
+              (orderPage !== 1 || orders.count > orders.results.length) && (
+                <Stack alignItems="center">
+                  <Pagination
+                    count={Math.ceil(orders.count / API_ORDERS_LIST_PAGE_SIZE)}
+                    onChange={(e: any, value: number) => setOrderPage(value)}
                   />
                 </Stack>
               )}

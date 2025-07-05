@@ -18,6 +18,7 @@ class OrderAdmin(admin.ModelAdmin):
         "status",
         "created_at",
     )
+    list_filter = ("status", "created_at")
     raw_id_fields = ("entity",)
     ordering = ("-created_at",)
     inlines = (OrderProductInline,)
@@ -36,4 +37,5 @@ class OrderDeliveryAdmin(admin.ModelAdmin):
         "type",
         "created_at",
     )
+    list_filter = ("type", "created_at")
     ordering = ("-created_at",)

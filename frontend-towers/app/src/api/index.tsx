@@ -5,6 +5,7 @@ import {
   API_EVENTS_LIST_PAGE_SIZE,
   API_EXPENSES_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
+  API_ORDERS_LIST_PAGE_SIZE,
 } from "../consts";
 import { RegistrationStatus } from "../enums";
 
@@ -381,6 +382,21 @@ export const apiUserFamilyMemberRequestAccept = async (id: string) => {
     return await instance.post(
       "/user/family/member/request/" + id + "/accept/",
     );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/order/", {
+      params: {
+        page_size: API_ORDERS_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

@@ -48,7 +48,10 @@ def get_list(user_id: UUID, module: Module) -> List[Payment]:
         .select_related("entity", "transaction")
         .prefetch_related(
             Prefetch(
-                "lines", PaymentLine.objects.with_description().order_by("amount")
+                "lines",
+                PaymentLine.objects.with_description()
+                .order_by("amount")
+                .select_related("receipt"),
             ),
             Prefetch("logs", PaymentLog.objects.all().order_by("-created_at")),
             # Prefetch(

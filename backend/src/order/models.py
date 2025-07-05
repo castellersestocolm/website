@@ -5,6 +5,7 @@ from comunicat.db.mixins import StandardModel, Timestamps
 from djmoney.models.fields import MoneyField
 
 from order.enums import OrderDeliveryType, OrderStatus
+from order.managers import OrderQuerySet
 
 
 class Order(StandardModel, Timestamps):
@@ -27,6 +28,8 @@ class Order(StandardModel, Timestamps):
     )
 
     notes = models.TextField(max_length=1000, blank=True, null=True)
+
+    objects = OrderQuerySet.as_manager()
 
     def __str__(self) -> str:
         return f"{str(self.entity)} - {timezone.localtime(self.created_at).strftime('%Y-%m-%d %H:%M')}"

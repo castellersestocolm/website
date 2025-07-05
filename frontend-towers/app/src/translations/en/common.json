@@ -134,6 +134,8 @@
   "pages.user-dashboard.section.family-requests.title": "Family requests",
   "pages.user-dashboard.section.payments.title": "Payments",
   "pages.user-dashboard.section.payments.empty": "You don't have any registered payment.",
+  "pages.user-dashboard.section.orders.title": "Orders",
+  "pages.user-dashboard.section.orders.empty": "You don't have any registered order.",
   "pages.user-dashboard.section.expenses.title": "Receipts and refunds",
   "pages.user-dashboard.section.expenses.empty": "You don't have any registered receipt.",
   "pages.user-dashboard.section.rehearsal.title": "Next rehearsal",

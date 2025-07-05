@@ -79,18 +79,21 @@ class ReceiptSerializer(s.ModelSerializer):
 class PaymentLineSerializer(s.ModelSerializer):
     amount = MoneyField(read_only=True)
     description = s.CharField(read_only=True)
+    receipt = ReceiptSerializer(read_only=True)
 
     class Meta:
         model = PaymentLine
         fields = (
             "id",
             "description",
+            "receipt",
             "amount",
             "vat",
         )
         read_only_fields = (
             "id",
             "description",
+            "receipt",
             "amount",
             "vat",
         )

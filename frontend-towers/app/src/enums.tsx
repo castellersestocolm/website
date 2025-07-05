@@ -72,6 +72,20 @@ export const PAYMENT_STATUS_ICON: any = {
   40: <IconCancel />,
 };
 
+export enum OrderStatus {
+  CREATED = 10,
+  PROCESSING = 20,
+  COMPLETED = 30,
+  CANCELED = 40,
+}
+
+export const ORDER_STATUS_ICON: any = {
+  10: <IconPending />,
+  20: <IconChangeCircle />,
+  30: <IconCheckCircle />,
+  40: <IconCancel />,
+};
+
 export enum EventType {
   GENERAL = 10,
   INTERNAL = 20,

@@ -132,6 +132,8 @@
   "pages.user-dashboard.section.profile.title": "El meu perfil",
   "pages.user-dashboard.section.payments.title": "Pagaments",
   "pages.user-dashboard.section.payments.empty": "No tens cap pagament enregistrat.",
+  "pages.user-dashboard.section.orders.title": "Comandes",
+  "pages.user-dashboard.section.orders.empty": "No tens cap comanda enregistrada.",
   "pages.user-dashboard.section.expenses.title": "Rebuts i devolucions",
   "pages.user-dashboard.section.expenses.empty": "No tens cap rebut enregistrat.",
   "pages.user-dashboard.section.rehearsal.title": "Proper assaig",

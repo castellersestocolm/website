@@ -132,6 +132,8 @@
   "pages.user-dashboard.section.profile.title": "Min profil",
   "pages.user-dashboard.section.payments.title": "Betalningar",
   "pages.user-dashboard.section.payments.empty": "Du har inga registrerade betalningar.",
+  "pages.user-dashboard.section.orders.title": "Beställningar",
+  "pages.user-dashboard.section.orders.empty": "Du har inga registrerade beställningar.",
   "pages.user-dashboard.section.expenses.title": "Kvitton och återbetalningar",
   "pages.user-dashboard.section.expenses.empty": "Du har inga registrerade kvitton.",
   "pages.user-dashboard.section.rehearsal.title": "Nästa repetition",
