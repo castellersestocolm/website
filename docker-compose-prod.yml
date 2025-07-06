@@ -47,25 +47,47 @@ services:
       - redis
     env_file:
       - ./envs/local.env
-#  frontend-org:
-#    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TAG:-dev}
-#    build: frontend-org
-#    stdin_open: true
-#    tty: true
-#    restart: on-failure
-#    entrypoint: ["npm"]
-#    command: ["start"]
-#    networks:
-#      - comunicat
-#    volumes:
-#      - ./frontend-org/app:/frontend-org/app:cached
-#    ports:
-#      - target: 3000
-#        published: 3100
-#        protocol: tcp
-#        mode: host
-#    env_file:
-#      - ./envs/local.env
+  frontend-org:
+    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TAG:-dev}
+    build:
+      context: frontend-org
+      dockerfile: Dockerfile-prod
+      args:
+        - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL:-http://localhost:8000/api/1.0}
+        - REACT_APP_ORG_BASE_URL=${REACT_APP_ORG_BASE_URL:-http://localhost:3200}
+        - REACT_APP_ORG_INFO_EMAIL=${REACT_APP_ORG_INFO_EMAIL:-info@lesquatrebarres.org}
+        - REACT_APP_TOWERS_BASE_URL=${REACT_APP_TOWERS_BASE_URL:-http://localhost:3100}
+        - REACT_APP_TOWERS_INFO_EMAIL=${REACT_APP_TOWERS_INFO_EMAIL:-info@castellersestocolm.se}
+        - REACT_APP_PINYATOR_BASE_URL=${REACT_APP_PINYATOR_BASE_URL:-http://localhost:8100}
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
+      interval: 60s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    networks:
+      - comunicat
+    ports:
+      - target: 80
+        protocol: tcp
   frontend-towers:
     image: ghcr.io/castellersestocolm/frontend-towers:${BUILD_TAG:-dev}
     build:

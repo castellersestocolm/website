@@ -12,7 +12,7 @@ class ComuniCatViewSet(ViewSet):
     def initial(self, request, *args, **kwargs):
         header_origin = request.headers.get("Origin")
 
-        if header_origin == settings.MODULE_ORG_DOMAIN:
+        if header_origin in settings.MODULE_ORG_DOMAIN:
             self.module = Module.ORG
         else:
             self.module = Module.TOWERS

@@ -26,25 +26,30 @@ services:
       - redis
     env_file:
       - ./envs/local.env
-#  frontend-org:
-#    image: frontend-org
-#    build: frontend-org
-#    stdin_open: true
-#    tty: true
-#    restart: on-failure
-#    entrypoint: ["npm"]
-#    command: ["start"]
-#    networks:
-#      - comunicat
-#    volumes:
-#      - ./frontend-org/app:/frontend-org:cached
-#    ports:
-#      - target: 3000
-#        published: 3100
-#        protocol: tcp
-#        mode: host
-#    env_file:
-#      - ./envs/local.env
+  frontend-org:
+    image: frontend-org
+    build: frontend-org
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    entrypoint: ["npm"]
+    command: ["start"]
+    networks:
+      - comunicat
+    volumes:
+      - ./frontend-org/app:/frontend-org:cached
+    ports:
+      - target: 3100
+        published: 3100
+        protocol: tcp
+        mode: host
+    env_file:
+      - ./envs/local.env
+    environment:
+      PORT: 3100
+      WDS_SOCKET_HOST: 127.0.0.1
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
   frontend-towers:
     image: frontend-towers
     build: frontend-towers

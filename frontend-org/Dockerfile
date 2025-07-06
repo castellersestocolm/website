@@ -1,13 +1,11 @@
-FROM node:18-alpine
+FROM node:23-alpine
 
 WORKDIR /frontend-org
 
-COPY . frontend-org
-
-WORKDIR /frontend-org/frontend-org/app
+COPY app .
 
 RUN npm install
 
-EXPOSE 3000
+EXPOSE 3200
 
 CMD ["npm", "start"]

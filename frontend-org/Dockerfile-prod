@@ -1,0 +1,43 @@
+# syntax=docker/dockerfile:experimental
+######################################
+# Builder step #######################
+######################################
+FROM node:23-alpine as build
+
+ARG REACT_APP_API_BASE_URL
+ARG REACT_APP_ORG_BASE_URL
+ARG REACT_APP_ORG_INFO_EMAIL
+ARG REACT_APP_TOWERS_BASE_URL
+ARG REACT_APP_TOWERS_INFO_EMAIL
+ARG REACT_APP_PINYATOR_BASE_URL
+
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+ENV REACT_APP_ORG_BASE_URL=$REACT_APP_ORG_BASE_URL
+ENV REACT_APP_ORG_INFO_EMAIL=$REACT_APP_ORG_INFO_EMAIL
+ENV REACT_APP_TOWERS_BASE_URL=$REACT_APP_TOWERS_BASE_URL
+ENV REACT_APP_TOWERS_INFO_EMAIL=$REACT_APP_TOWERS_INFO_EMAIL
+ENV REACT_APP_PINYATOR_BASE_URL=$REACT_APP_PINYATOR_BASE_URL
+
+WORKDIR /frontend-org
+
+# Copy the app directory
+COPY app .
+
+# Copy the nginx config file
+COPY ./nginx.conf ./
+
+RUN npm ci
+RUN npm run build
+
+######################################
+# Runtime step #######################
+######################################
+FROM nginx:1.17.8-alpine
+
+WORKDIR /frontend-org
+
+# Copy the build directory
+COPY --from=build --chown=www-data:www-data /frontend-org/build /usr/share/nginx/html
+
+# Copy the nginx config file
+COPY --from=build /frontend-org/nginx.conf /etc/nginx/conf.d/default.conf

@@ -26,24 +26,33 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         build_target: ${{ vars.BUILD_TARGET }}
 
-#  build-frontend-org:
-#    runs-on: ubuntu-latest
-#    name: Build frontend-org
-#
-#    steps:
-#    - uses: actions/checkout@v4
-#
-#    - uses: ./.github/actions/build-and-push
-#      name: Build frontend-org
-#      with:
-#        name: frontend-org
-#        github_token: ${{ secrets.GITHUB_TOKEN }}
+  build-frontend-org:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    name: Build frontend-org
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ./.github/actions/build-and-push
+      name: Build frontend-org
+      with:
+        name: frontend-org
+        dockerfile: Dockerfile-prod
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        build_target: ${{ vars.BUILD_TARGET }}
+        react_app_api_base_url: ${{ vars.REACT_APP_API_BASE_URL }}
+        react_app_org_base_url: ${{ vars.REACT_APP_ORG_BASE_URL }}
+        react_app_org_info_email: ${{ vars.REACT_APP_ORG_INFO_EMAIL }}
+        react_app_towers_base_url: ${{ vars.REACT_APP_TOWERS_BASE_URL }}
+        react_app_towers_info_email: ${{ vars.REACT_APP_TOWERS_INFO_EMAIL }}
+        react_app_pinyator_base_url: ${{ vars.REACT_APP_PINYATOR_BASE_URL }}
 
   build-frontend-towers:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     name: Build frontend-towers
-    
+
     steps:
     - uses: actions/checkout@v4
 
