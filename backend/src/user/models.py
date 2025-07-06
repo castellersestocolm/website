@@ -126,7 +126,9 @@ class Family(StandardModel, Timestamps):
             status=FamilyMemberStatus.ACTIVE, role=FamilyMemberRole.MANAGER
         ).order_by("user__lastname")
         if member_objs:
-            return "-".join([member_obj.user.lastname for member_obj in member_objs])
+            return "-".join(
+                [member_obj.user.lastname.split(" ")[0] for member_obj in member_objs]
+            )
         return str(self.id)
 
     class Meta:
