@@ -40,6 +40,22 @@ def send_user_email(
     else:
         return None
 
+    membership_obj = (
+        Membership.objects.filter(users__id=user_id)
+        .order_by("-date_to")
+        .prefetch_related("modules")
+        .first()
+    )
+
+    modules = list(
+        set(membership_obj.modules.values_list("module", flat=True))
+        | set(settings.MODULE_ALL_MEMBERSHIP_REQUIRED)
+    )
+
+    if modules:
+        # This works for now as we want to get the "specific" module for email branding
+        module = sorted(modules)[-1]
+
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
         context_full = {**context, "user_obj": user_obj}
@@ -92,15 +108,6 @@ def send_user_email(
                 }
             )
 
-            membership_obj = (
-                Membership.objects.filter(users__id=user_id)
-                .order_by("-date_to")
-                .prefetch_related("modules")
-                .first()
-            )
-            modules = membership_obj.modules.values_list("module", flat=True)
-
-            modules = list(set(modules) | set(settings.MODULE_ALL_MEMBERSHIP_REQUIRED))
             membership_amount = sum(
                 [
                     membership.utils.get_membership_amount(

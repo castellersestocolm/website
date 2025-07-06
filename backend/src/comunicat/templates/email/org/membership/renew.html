@@ -1,0 +1,15 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_body %}
+    <p>{% trans "Your membership will be expiring on" %} <strong>{% if membership_obj %}{{ membership_obj.date_to|date:"Y-m-d" }}{% else %}{% now "Y-m-d" %}{% endif %}</strong>. {% trans "In order to enjoy all the benefits we provide as well as attend our events you need to renew it before it expires." %}</p>
+    <ul>
+        <li>{% trans "Amount" %}: <strong>{{ membership_amount }} SEK</strong></li>
+        <li>{% trans "Valid" %}: <strong>{{ membership_date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_date_to|date:"Y-m-d" }}</strong></li>
+    </ul>
+    <ul>
+        <li>Swish: 123 068 88 20</li>
+        <li>PlusGirot: 97 09 16-3</li>
+        <li>IBAN: SE84 9500 0099 6042 0970 9163</li>
+    </ul>
+{% endblock %}
