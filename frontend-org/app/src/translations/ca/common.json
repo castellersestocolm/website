@@ -1,0 +1,21 @@
+{
+  "pages.home.title": "Casal català Les Quatre Barres",
+  "pages.home.subtitle": "Formulari d'inscripció o renovació",
+  "pages.user-join.form.first-name": "Nom",
+  "pages.user-join.form.last-name": "Cognom",
+  "pages.user-join.form.email": "Correu electrònic",
+  "pages.user-join.form.phone": "Telèfon mòbil",
+  "pages.user-join.form.birthday": "Data de naixement",
+  "pages.user-join.form.language": "Preferència d'idioma",
+  "pages.user-join.form.partner.title": "Segon membre",
+  "pages.user-join.form.children.title": "Canalla",
+  "pages.user-join.form.children.row": "Nen/a",
+  "pages.user-join.form.checkbox-processing": "Dono el meu consentiment a Katalanska Kulturföreningen Les Quatre Barres per processar les dades personals que he proporcionat en aquest formulari. Així doncs, dono conestiment a Les Quatre Barres per enviar-me correus i altra informació relativa a l'associació. Amb el meu consentiment, aquesta informació serà desada mentre continuï sent soci/a. Accepto doncs la política de privadesa de Les Quatre Barres.",
+  "pages.user-join.form.checkbox-processing-link.title": "Política de privadesa",
+  "pages.user-join.form.checkbox-processing-link.href": "http://www.lesquatrebarres.org/politica-de-privadesa",
+  "pages.user-join.form.button-children.add": "Afegeix nen/a",
+  "pages.user-join.form.button-children.remove": "Esborra",
+  "pages.user-join.form.button-join": "Uneix-te",
+  "language.selector.ca": "En català",
+  "language.selector.sv": "På svenska"
+}

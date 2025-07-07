@@ -1,0 +1,21 @@
+{
+  "pages.home.title": "Katanakska kulturföreningen Les Quatre Barres",
+  "pages.home.subtitle": "Registrerings- eller förnyelseblankett",
+  "pages.user-join.form.first-name": "Förnamn",
+  "pages.user-join.form.last-name": "Efternamn",
+  "pages.user-join.form.email": "Epost",
+  "pages.user-join.form.phone": "Mobiltelefon",
+  "pages.user-join.form.birthday": "Födelsedatum",
+  "pages.user-join.form.language": "Kommunikationsspråk",
+  "pages.user-join.form.partner.title": "Andra medlem",
+  "pages.user-join.form.children.title": "Barn",
+  "pages.user-join.form.children.row": "Barn",
+  "pages.user-join.form.checkbox-processing": "Jag ger mitt samtycke till Katalanska kulturföreningen Les Quatre Barres för att behandla de personuppgifter som jag har lämnat i detta formulär. Dessutom ger jag mitt samtycke till att Les Quatre Barres skickar mig e-postmeddelanden och annan information i relation till föreningen. Med mitt samtycke kommer denna information att lagras så länge jag är medlem. Därför accepterar jag integritetspolicyn från Les Quatre Barres.",
+  "pages.user-join.form.checkbox-processing-link.title": "Integritetspolicy",
+  "pages.user-join.form.checkbox-processing-link.href": "http://www.lesquatrebarres.org/integritetspolicy",
+  "pages.user-join.form.button-children.add": "Lägg till barn",
+  "pages.user-join.form.button-children.remove": "Ta bort",
+  "pages.user-join.form.button-join": "Gå med",
+  "language.selector.ca": "En català",
+  "language.selector.sv": "På svenska"
+}

@@ -266,6 +266,10 @@ services:
         published: 8080
         protocol: tcp
         mode: host
+      - target: 3200
+        published: 3200
+        protocol: tcp
+        mode: host
       - target: 3210
         published: 3210
         protocol: tcp
