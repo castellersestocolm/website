@@ -13,7 +13,7 @@ import HomePage from "./pages/home";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
-  fallbackLng: "en",
+  fallbackLng: "ca",
   load: "languageOnly",
   resources: {
     sv: {
