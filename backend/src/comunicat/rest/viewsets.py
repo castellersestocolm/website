@@ -1,4 +1,5 @@
-from django.utils import translation
+from urllib.parse import urlparse
+
 from rest_framework.viewsets import ViewSet
 
 from comunicat.enums import Module
@@ -12,9 +13,14 @@ class ComuniCatViewSet(ViewSet):
     def initial(self, request, *args, **kwargs):
         header_origin = request.headers.get("Origin")
 
-        if header_origin in settings.MODULE_ORG_DOMAIN:
-            self.module = Module.ORG
+        if header_origin:
+            domain = urlparse(header_origin).netloc
+
+            if domain in settings.MODULE_ORG_DOMAIN:
+                self.module = Module.ORG
+            else:
+                self.module = Module.TOWERS
         else:
-            self.module = Module.TOWERS
+            self.module = Module.ORG
 
         return super().initial(request=request, *args, **kwargs)

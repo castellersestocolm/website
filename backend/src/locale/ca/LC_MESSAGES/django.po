@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:40+0200\n"
+"POT-Creation-Date: 2025-07-08 18:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,35 +26,35 @@ msgstr "create"
 msgid "updated"
 msgstr "actualitzat"
 
-#: comunicat/rest/serializers/user.py:216
+#: comunicat/rest/serializers/user.py:269
 #, python-format
 msgid "The minimum age to join is %s."
 msgstr "L'edat mínima per unir-se és %s."
 
-#: comunicat/rest/serializers/user.py:225
+#: comunicat/rest/serializers/user.py:278
 #, python-format
 msgid "Only the following languages are allowed: %s."
 msgstr "Només els següents idiomes estan permesos: %s."
 
-#: comunicat/rest/serializers/user.py:236
-#: comunicat/rest/serializers/user.py:295
-#: comunicat/rest/serializers/user.py:335
+#: comunicat/rest/serializers/user.py:289
+#: comunicat/rest/serializers/user.py:348
+#: comunicat/rest/serializers/user.py:388
 #, python-format
 msgid "Members over %s must consent in order to become members."
 msgstr ""
 "Membres majors de %s han de donar consentiment per tal d'esdevenir membres."
 
-#: comunicat/rest/serializers/user.py:255
-#: comunicat/rest/serializers/user.py:362
+#: comunicat/rest/serializers/user.py:308
+#: comunicat/rest/serializers/user.py:415
 msgid "The passwords do not match."
 msgstr "Les contrasenyes no són iguals."
 
-#: comunicat/rest/serializers/user.py:284
+#: comunicat/rest/serializers/user.py:337
 #, python-format
 msgid "The family member must be below %s to update."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo actualitzar."
 
-#: comunicat/rest/serializers/user.py:324
+#: comunicat/rest/serializers/user.py:377
 #, python-format
 msgid "The family member must be below %s to create."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
@@ -76,11 +76,18 @@ msgstr "No són diners."
 msgid "Missing amount or currency."
 msgstr "Manca la quantitat o la divisa."
 
+#: comunicat/rest/views/org.py:67
+msgid "The amount of children you entered is incorrect."
+msgstr "El nombre de nens que has introduït és incorrecte."
+
+#: comunicat/templates/email/org/base.html:28
+#: comunicat/templates/email/org/base.html:30
 #: comunicat/templates/email/towers/base.html:28
 #: comunicat/templates/email/towers/base.html:30
 msgid "Hello"
 msgstr "Hola"
 
+#: comunicat/templates/email/org/base.html:35
 #: comunicat/templates/email/towers/base.html:35
 msgid ""
 "Looks like there's been a problem, this email doesn't have content! Please, "
@@ -91,22 +98,27 @@ msgstr ""
 "plau, fes-nos saber si això ha estat al resultat de registrar-se, "
 "subscriure's o qualsevol altre acció que creguis que pugui haver causat això."
 
+#: comunicat/templates/email/org/base.html:42
 #: comunicat/templates/email/towers/base.html:42
 msgid "Contact us"
 msgstr "Contacta'ns"
 
+#: comunicat/templates/email/org/base.html:52
 #: comunicat/templates/email/towers/base.html:52
 msgid "Best"
 msgstr "Records"
 
+#: comunicat/templates/email/org/base.html:61
 #: comunicat/templates/email/towers/base.html:61
 msgid "Sent with"
 msgstr "Enviat amb"
 
+#: comunicat/templates/email/org/base.html:61
 #: comunicat/templates/email/towers/base.html:61
 msgid "by"
 msgstr "per"
 
+#: comunicat/templates/email/org/membership/expired.html:5
 #: comunicat/templates/email/towers/membership/expired.html:5
 msgid ""
 "Your membership has expired and you can no longer enjoy all the benefits we "
@@ -117,11 +129,7 @@ msgstr ""
 "oferim ni tampoc assistir als nostres esdeveniments. Però no tot està "
 "perdut! Pots renovar-la en qualsevol moment si ho vols."
 
-#: comunicat/templates/email/towers/membership/expired.html:10
-#: comunicat/templates/email/towers/membership/renew.html:15
-msgid "Renew membership"
-msgstr "Renova la quota"
-
+#: comunicat/templates/email/org/membership/expired.html:6
 #: comunicat/templates/email/towers/membership/expired.html:13
 msgid ""
 "Your data will be kept for a total of two (2) years since the day your "
@@ -137,12 +145,12 @@ msgstr ""
 "(Control (UE) 2016/679), envieu-nos un correu electrònic amb la vostra "
 "sol·licitud."
 
+#: comunicat/templates/email/org/membership/renew.html:5
 #: comunicat/templates/email/towers/membership/renew.html:5
-msgid ""
-"Your membership will be expiring on"
-msgstr ""
-"La teva quota caducarà el"
+msgid "Your membership will be expiring on"
+msgstr "La teva quota caducarà el"
 
+#: comunicat/templates/email/org/membership/renew.html:5
 #: comunicat/templates/email/towers/membership/renew.html:5
 msgid ""
 "In order to enjoy all the benefits we provide as well as attend our events "
@@ -151,13 +159,20 @@ msgstr ""
 "Per continuar gaudint de tots els avantatges que oferim i assistir als "
 "nostres esdeveniments, has de renovar-la abans que caduqui."
 
+#: comunicat/templates/email/org/membership/renew.html:7
 #: comunicat/templates/email/towers/membership/renew.html:7
 msgid "Amount"
 msgstr "Quantitat"
 
+#: comunicat/templates/email/org/membership/renew.html:8
 #: comunicat/templates/email/towers/membership/renew.html:8
 msgid "Valid"
 msgstr "Validesa"
+
+#: comunicat/templates/email/towers/membership/expired.html:10
+#: comunicat/templates/email/towers/membership/renew.html:15
+msgid "Renew membership"
+msgstr "Renova la quota"
 
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -358,19 +373,19 @@ msgstr "Uneix-te a la comunitat"
 msgid "End time must be greater than start time."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243
+#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243 product/admin.py:75
 msgid "name"
 msgstr "nom"
 
-#: membership/admin.py:96
+#: membership/admin.py:106
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:97
+#: membership/admin.py:107
 msgid "family"
 msgstr "família"
 
-#: membership/admin.py:98
+#: membership/admin.py:108
 msgid "modules"
 msgstr "mòduls"
 
@@ -498,7 +513,15 @@ msgstr ""
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: user/admin.py:116
+#: product/admin.py:30 product/admin.py:76
+msgid "stock"
+msgstr ""
+
+#: product/models.py:99
+msgid "Product size must match product."
+msgstr ""
+
+#: user/admin.py:120
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 

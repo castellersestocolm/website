@@ -140,7 +140,7 @@ def create(
     email: str,
     phone: str | None,
     password: str | None,
-    birthday: datetime.date,
+    birthday: datetime.date | None,
     consent_pictures: bool,
     module: Module,
     towers: dict | None,
@@ -148,7 +148,9 @@ def create(
     preferred_language: str | None = None,
     with_family: bool = True,
 ) -> User:
-    consent_pictures |= get_default_consent_pictures(birthday=birthday)
+    consent_pictures |= birthday is not None and get_default_consent_pictures(
+        birthday=birthday
+    )
     user_obj = User.objects.create_user(
         firstname=firstname,
         lastname=lastname,
@@ -172,7 +174,7 @@ def create(
             height_arms=towers.get("height_arms"),
         )
 
-    if with_family:
+    if with_family and not hasattr(user_obj, "family_member"):
         family_obj = Family.objects.create()
         FamilyMember.objects.create(
             user=user_obj,
@@ -192,13 +194,15 @@ def register(
     lastname: str,
     email: str,
     phone: str | None,
-    password: str,
-    birthday: datetime.date,
+    birthday: datetime.date | None,
+    password: str | None,
     consent_pictures: bool,
     preferred_language: str,
     module: Module,
     towers: dict | None,
     organisation: dict | None,
+    with_family: bool = True,
+    with_membership: bool = True,
 ) -> User | None:
     try:
         user_obj = create(
@@ -213,16 +217,18 @@ def register(
             module=module,
             towers=towers,
             organisation=organisation,
+            with_family=with_family,
         )
 
         request_verify(email=user_obj.email, module=module)
 
-        membership.api.create_or_update(user_id=user_obj.id, modules=[module])
+        if with_membership:
+            membership.api.create_or_update(user_id=user_obj.id, modules=[module])
 
         return user_obj
     except IntegrityError:
         # TODO: Maybe send an email here
-        return None
+        return User.objects.filter(email=email).first()
 
 
 def update(

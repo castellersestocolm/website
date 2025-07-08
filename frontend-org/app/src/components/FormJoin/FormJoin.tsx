@@ -23,6 +23,7 @@ import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import IconEast from "@mui/icons-material/East";
 import IconArrowDownward from "@mui/icons-material/ArrowDownward";
+import { apiOrgCreate } from "../../api";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -34,15 +35,10 @@ interface FormElements extends HTMLFormControlsCollection {
   lastname: HTMLInputElement;
   email: HTMLInputElement;
   phone: HTMLInputElement;
-  password: HTMLInputElement;
-  password2: HTMLInputElement;
-  birthday: HTMLInputElement;
-  consent_pictures: HTMLInputElement;
-  preferred_language: HTMLInputElement;
-  /*
-    height_shoulders: HTMLInputElement;
-    height_arms: HTMLInputElement;
-  */
+  firstname2: HTMLInputElement;
+  lastname2: HTMLInputElement;
+  email2: HTMLInputElement;
+  phone2: HTMLInputElement;
 }
 interface CreateFormElement extends HTMLFormElement {
   readonly elements: FormElements;
@@ -53,7 +49,6 @@ export default function FormJoin() {
 
   const [validationErrors, setValidationErrors] = useState(undefined);
   const [submitted, setSubmitted] = useState(false);
-  let navigate = useNavigate();
 
   const [children, setChildren] = useState([[undefined, undefined, undefined]]);
 
@@ -72,31 +67,57 @@ export default function FormJoin() {
 
   function handleSubmit(event: React.FormEvent<CreateFormElement>) {
     event.preventDefault();
-    // apiUserCreate(
-    //   event.currentTarget.elements.firstname.value,
-    //   event.currentTarget.elements.lastname.value,
-    //   event.currentTarget.elements.email.value,
-    //   event.currentTarget.elements.phone.value,
-    //   event.currentTarget.elements.password.value,
-    //   event.currentTarget.elements.password2.value,
-    //   event.currentTarget.elements.birthday.value,
-    //   event.currentTarget.elements.consent_pictures.checked,
-    //   i18n.resolvedLanguage,
-    //   /*
-    //     parseInt(event.currentTarget.elements.height_shoulders.value),
-    //     parseInt(event.currentTarget.elements.height_arms.value),
-    //   */
-    // ).then((response) => {
-    //   if (response.status === 201) {
-    //     setValidationErrors(undefined);
-    //     setSubmitted(true);
-    //     setTimeout(() => navigate(ROUTES.home.path, { replace: true }), 30000);
-    //   } else if (response.status === 429) {
-    //     setValidationErrors({ throttle: response.data.detail });
-    //   } else {
-    //     setValidationErrors(response.data);
-    //   }
-    // });
+    const subAdults = [
+      {
+        firstname: event.currentTarget.elements.firstname.value,
+        lastname: event.currentTarget.elements.lastname.value,
+        email: event.currentTarget.elements.email.value,
+        phone: event.currentTarget.elements.phone.value,
+      },
+      ...(event.currentTarget.elements.firstname2.value ||
+      event.currentTarget.elements.lastname2.value ||
+      event.currentTarget.elements.email2.value ||
+      event.currentTarget.elements.phone2.value
+        ? [
+            {
+              firstname: event.currentTarget.elements.firstname2.value,
+              lastname: event.currentTarget.elements.lastname2.value,
+              email: event.currentTarget.elements.email2.value,
+              phone: event.currentTarget.elements.phone2.value,
+            },
+          ]
+        : []),
+    ];
+    const subChildren =
+      children.length >= 1 &&
+      // @ts-ignore
+      (event.currentTarget.elements["firstname-c0"].value ||
+        // @ts-ignore
+        event.currentTarget.elements["lastname-c0"].value ||
+        // @ts-ignore
+        event.currentTarget.elements["birthday-c0"].value)
+        ? children.map((child: any, ix: number) => ({
+            firstname:
+              // @ts-ignore
+              event.currentTarget.elements["firstname-c" + ix.toString()].value,
+            lastname:
+              // @ts-ignore
+              event.currentTarget.elements["lastname-c" + ix.toString()].value,
+            birthday:
+              // @ts-ignore
+              event.currentTarget.elements["birthday-c" + ix.toString()].value,
+          }))
+        : [];
+    apiOrgCreate(subAdults, subChildren).then((response) => {
+      if (response.status === 201) {
+        setValidationErrors(undefined);
+        setSubmitted(true);
+      } else if (response.status === 429) {
+        setValidationErrors({ throttle: response.data.detail });
+      } else {
+        setValidationErrors(response.data);
+      }
+    });
   }
 
   return (
@@ -123,13 +144,21 @@ export default function FormJoin() {
                 autoComplete="first name"
                 required
                 size="small"
-                error={validationErrors && validationErrors.firstname}
+                error={
+                  validationErrors &&
+                  validationErrors.adults &&
+                  validationErrors.adults.length >= 1 &&
+                  validationErrors.adults[0].firstname
+                }
               />
-              {validationErrors && validationErrors.firstname && (
-                <FormHelperText error>
-                  {validationErrors.firstname[0].detail}
-                </FormHelperText>
-              )}
+              {validationErrors &&
+                validationErrors.adults &&
+                validationErrors.adults.length >= 1 &&
+                validationErrors.adults[0].firstname && (
+                  <FormHelperText error>
+                    {validationErrors.adults[0].firstname[0].detail}
+                  </FormHelperText>
+                )}
             </FormGrid>
             <FormGrid size={{ xs: 12, md: 6 }}>
               <FormLabel htmlFor="lastname" required>
@@ -145,15 +174,19 @@ export default function FormJoin() {
                 size="small"
                 error={
                   validationErrors &&
-                  validationErrors.lastname &&
-                  validationErrors.lastname[0].detail
+                  validationErrors.adults &&
+                  validationErrors.adults.length >= 1 &&
+                  validationErrors.adults[0].lastname
                 }
               />
-              {validationErrors && validationErrors.lastname && (
-                <FormHelperText error>
-                  {validationErrors.lastname[0].detail}
-                </FormHelperText>
-              )}
+              {validationErrors &&
+                validationErrors.adults &&
+                validationErrors.adults.length >= 1 &&
+                validationErrors.adults[0].lastname && (
+                  <FormHelperText error>
+                    {validationErrors.adults[0].lastname[0].detail}
+                  </FormHelperText>
+                )}
             </FormGrid>
             <FormGrid size={{ xs: 12, md: 6 }}>
               <FormLabel htmlFor="email" required>
@@ -169,15 +202,19 @@ export default function FormJoin() {
                 size="small"
                 error={
                   validationErrors &&
-                  validationErrors.email &&
-                  validationErrors.email[0].detail
+                  validationErrors.adults &&
+                  validationErrors.adults.length >= 1 &&
+                  validationErrors.adults[0].email
                 }
               />
-              {validationErrors && validationErrors.email && (
-                <FormHelperText error>
-                  {validationErrors.email[0].detail}
-                </FormHelperText>
-              )}
+              {validationErrors &&
+                validationErrors.adults &&
+                validationErrors.adults.length >= 1 &&
+                validationErrors.adults[0].email && (
+                  <FormHelperText error>
+                    {validationErrors.adults[0].email[0].detail}
+                  </FormHelperText>
+                )}
             </FormGrid>
             <FormGrid size={{ xs: 12, md: 6 }}>
               <FormLabel htmlFor="phone" required>
@@ -193,15 +230,19 @@ export default function FormJoin() {
                 size="small"
                 error={
                   validationErrors &&
-                  validationErrors.phone &&
-                  validationErrors.phone[0].detail
+                  validationErrors.adults &&
+                  validationErrors.adults.length >= 1 &&
+                  validationErrors.adults[0].phone
                 }
               />
-              {validationErrors && validationErrors.phone && (
-                <FormHelperText error>
-                  {validationErrors.phone[0].detail}
-                </FormHelperText>
-              )}
+              {validationErrors &&
+                validationErrors.adults &&
+                validationErrors.adults.length >= 1 &&
+                validationErrors.adults[0].phone && (
+                  <FormHelperText error>
+                    {validationErrors.adults[0].email[0].phone}
+                  </FormHelperText>
+                )}
             </FormGrid>
             <FormGrid size={12}>
               <Accordion elevation={0} className={styles.accordion}>
@@ -226,15 +267,22 @@ export default function FormJoin() {
                         type="text"
                         placeholder="Namn"
                         autoComplete="first name 2"
-                        required
                         size="small"
-                        error={validationErrors && validationErrors.firstname2}
+                        error={
+                          validationErrors &&
+                          validationErrors.adults &&
+                          validationErrors.adults.length >= 2 &&
+                          validationErrors.adults[1].firstname
+                        }
                       />
-                      {validationErrors && validationErrors.firstname2 && (
-                        <FormHelperText error>
-                          {validationErrors.firstname2[0].detail}
-                        </FormHelperText>
-                      )}
+                      {validationErrors &&
+                        validationErrors.adults &&
+                        validationErrors.adults.length >= 1 &&
+                        validationErrors.adults[1].firstname && (
+                          <FormHelperText error>
+                            {validationErrors.adults[1].firstname[0].detail}
+                          </FormHelperText>
+                        )}
                     </FormGrid>
                     <FormGrid size={{ xs: 12, md: 6 }}>
                       <FormLabel htmlFor="lastname2" required>
@@ -246,19 +294,22 @@ export default function FormJoin() {
                         type="text"
                         placeholder="Namnsson"
                         autoComplete="last name 2"
-                        required
                         size="small"
                         error={
                           validationErrors &&
-                          validationErrors.lastname2 &&
-                          validationErrors.lastname2[0].detail
+                          validationErrors.adults &&
+                          validationErrors.adults.length >= 2 &&
+                          validationErrors.adults[1].lastname
                         }
                       />
-                      {validationErrors && validationErrors.lastname2 && (
-                        <FormHelperText error>
-                          {validationErrors.lastname2[0].detail}
-                        </FormHelperText>
-                      )}
+                      {validationErrors &&
+                        validationErrors.adults &&
+                        validationErrors.adults.length >= 1 &&
+                        validationErrors.adults[1].lastname && (
+                          <FormHelperText error>
+                            {validationErrors.adults[1].lastname[0].detail}
+                          </FormHelperText>
+                        )}
                     </FormGrid>
                     <FormGrid size={{ xs: 12, md: 6 }}>
                       <FormLabel htmlFor="email2" required>
@@ -270,19 +321,22 @@ export default function FormJoin() {
                         type="email"
                         placeholder="namn@namnsson.se"
                         autoComplete="email 2"
-                        required
                         size="small"
                         error={
                           validationErrors &&
-                          validationErrors.email2 &&
-                          validationErrors.email2[0].detail
+                          validationErrors.adults &&
+                          validationErrors.adults.length >= 2 &&
+                          validationErrors.adults[1].email
                         }
                       />
-                      {validationErrors && validationErrors.email2 && (
-                        <FormHelperText error>
-                          {validationErrors.email2[0].detail}
-                        </FormHelperText>
-                      )}
+                      {validationErrors &&
+                        validationErrors.adults &&
+                        validationErrors.adults.length >= 1 &&
+                        validationErrors.adults[1].email && (
+                          <FormHelperText error>
+                            {validationErrors.adults[1].email[0].detail}
+                          </FormHelperText>
+                        )}
                     </FormGrid>
                     <FormGrid size={{ xs: 12, md: 6 }}>
                       <FormLabel htmlFor="phone2" required>
@@ -294,19 +348,22 @@ export default function FormJoin() {
                         type="phone"
                         placeholder="+4687461000"
                         autoComplete="phone 2"
-                        required
                         size="small"
                         error={
                           validationErrors &&
-                          validationErrors.phone2 &&
-                          validationErrors.phone2[0].detail
+                          validationErrors.adults &&
+                          validationErrors.adults.length >= 2 &&
+                          validationErrors.adults[1].phone
                         }
                       />
-                      {validationErrors && validationErrors.phone2 && (
-                        <FormHelperText error>
-                          {validationErrors.phone2[0].detail}
-                        </FormHelperText>
-                      )}
+                      {validationErrors &&
+                        validationErrors.adults &&
+                        validationErrors.adults.length >= 1 &&
+                        validationErrors.adults[1].phone && (
+                          <FormHelperText error>
+                            {validationErrors.adults[1].phone[0].detail}
+                          </FormHelperText>
+                        )}
                     </FormGrid>
                   </Grid>
                 </AccordionDetails>
@@ -358,18 +415,21 @@ export default function FormJoin() {
                               type="text"
                               placeholder="Namn"
                               autoComplete={"first name child " + ix}
-                              required
                               size="small"
                               error={
                                 validationErrors &&
-                                validationErrors["firstname-c" + ix]
+                                validationErrors.children &&
+                                validationErrors.children.length >= ix + 1 &&
+                                validationErrors.children[ix].firstname
                               }
                             />
                             {validationErrors &&
-                              validationErrors["firstname-c" + ix] && (
+                              validationErrors.children &&
+                              validationErrors.children.length >= ix + 1 &&
+                              validationErrors.children[ix].firstname && (
                                 <FormHelperText error>
                                   {
-                                    validationErrors["firstname-c" + ix][0]
+                                    validationErrors.children[ix].firstname[0]
                                       .detail
                                   }
                                 </FormHelperText>
@@ -385,18 +445,21 @@ export default function FormJoin() {
                               type="text"
                               placeholder="Namnsson"
                               autoComplete="last name 2"
-                              required
                               size="small"
                               error={
                                 validationErrors &&
-                                validationErrors["lastname-c" + ix]
+                                validationErrors.children &&
+                                validationErrors.children.length >= ix + 1 &&
+                                validationErrors.children[ix].lastname
                               }
                             />
                             {validationErrors &&
-                              validationErrors["lastname-c" + ix] && (
+                              validationErrors.children &&
+                              validationErrors.children.length >= ix + 1 &&
+                              validationErrors.children[ix].lastname && (
                                 <FormHelperText error>
                                   {
-                                    validationErrors["lastname-c" + ix][0]
+                                    validationErrors.children[ix].lastname[0]
                                       .detail
                                   }
                                 </FormHelperText>
@@ -411,19 +474,21 @@ export default function FormJoin() {
                               name={"birthday-c" + ix}
                               type="date"
                               autoComplete={"birthday child " + ix}
-                              required
                               size="small"
                               error={
                                 validationErrors &&
-                                validationErrors["birthday-c" + ix] &&
-                                validationErrors["birthday-c" + ix][0].detail
+                                validationErrors.children &&
+                                validationErrors.children.length >= ix + 1 &&
+                                validationErrors.children[ix].birthday
                               }
                             />
                             {validationErrors &&
-                              validationErrors["birthday-c" + ix] && (
+                              validationErrors.children &&
+                              validationErrors.children.length >= ix + 1 &&
+                              validationErrors.children[ix].birthday && (
                                 <FormHelperText error>
                                   {
-                                    validationErrors["birthday-c" + ix][0]
+                                    validationErrors.children[ix].birthday[0]
                                       .detail
                                   }
                                 </FormHelperText>
@@ -469,12 +534,7 @@ export default function FormJoin() {
             </FormGrid>
             <FormGrid size={{ xs: 12 }}>
               <Stack direction="row" spacing={2} className={styles.buttons}>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  name="join-backend"
-                  disableElevation
-                >
+                <Button variant="contained" type="submit" disableElevation>
                   {t("pages.user-join.form.button-join")}
                 </Button>
               </Stack>
@@ -483,6 +543,13 @@ export default function FormJoin() {
               <FormGrid size={{ xs: 12 }}>
                 <FormHelperText error className={styles.error}>
                   {validationErrors.throttle}
+                </FormHelperText>
+              </FormGrid>
+            )}
+            {validationErrors && validationErrors.general && (
+              <FormGrid size={{ xs: 12 }}>
+                <FormHelperText error className={styles.error}>
+                  {validationErrors.general.detail}
                 </FormHelperText>
               </FormGrid>
             )}

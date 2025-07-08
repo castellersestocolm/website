@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-06 11:40+0200\n"
+"POT-Creation-Date: 2025-07-08 18:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,34 +26,34 @@ msgstr "skapad"
 msgid "updated"
 msgstr "uppdaterad"
 
-#: comunicat/rest/serializers/user.py:216
+#: comunicat/rest/serializers/user.py:269
 #, python-format
 msgid "The minimum age to join is %s."
 msgstr "Minsta ålder för att gå med är %s."
 
-#: comunicat/rest/serializers/user.py:225
+#: comunicat/rest/serializers/user.py:278
 #, python-format
 msgid "Only the following languages are allowed: %s."
 msgstr "Endast följande språk är tillåtna: %s."
 
-#: comunicat/rest/serializers/user.py:236
-#: comunicat/rest/serializers/user.py:295
-#: comunicat/rest/serializers/user.py:335
+#: comunicat/rest/serializers/user.py:289
+#: comunicat/rest/serializers/user.py:348
+#: comunicat/rest/serializers/user.py:388
 #, python-format
 msgid "Members over %s must consent in order to become members."
 msgstr "Medlemmar över %s måste ge sitt samtycke för att kunna bli medlemmar."
 
-#: comunicat/rest/serializers/user.py:255
-#: comunicat/rest/serializers/user.py:362
+#: comunicat/rest/serializers/user.py:308
+#: comunicat/rest/serializers/user.py:415
 msgid "The passwords do not match."
 msgstr "Lösenorden stämmer inte överens."
 
-#: comunicat/rest/serializers/user.py:284
+#: comunicat/rest/serializers/user.py:337
 #, python-format
 msgid "The family member must be below %s to update."
 msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
 
-#: comunicat/rest/serializers/user.py:324
+#: comunicat/rest/serializers/user.py:377
 #, python-format
 msgid "The family member must be below %s to create."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
@@ -75,11 +75,18 @@ msgstr "Inte ett betalningsmedel."
 msgid "Missing amount or currency."
 msgstr "Det saknas mängd eller valuta."
 
+#: comunicat/rest/views/org.py:67
+msgid "The amount of children you entered is incorrect."
+msgstr "Antalet barn du angav är felaktigt."
+
+#: comunicat/templates/email/org/base.html:28
+#: comunicat/templates/email/org/base.html:30
 #: comunicat/templates/email/towers/base.html:28
 #: comunicat/templates/email/towers/base.html:30
 msgid "Hello"
 msgstr "Hej"
 
+#: comunicat/templates/email/org/base.html:35
 #: comunicat/templates/email/towers/base.html:35
 msgid ""
 "Looks like there's been a problem, this email doesn't have content! Please, "
@@ -90,22 +97,27 @@ msgstr ""
 "god och låt oss veta om det beror på registreringen, prenumerationen eller "
 "något annat."
 
+#: comunicat/templates/email/org/base.html:42
 #: comunicat/templates/email/towers/base.html:42
 msgid "Contact us"
 msgstr "Kontakta oss"
 
+#: comunicat/templates/email/org/base.html:52
 #: comunicat/templates/email/towers/base.html:52
 msgid "Best"
 msgstr "Hälsningar"
 
+#: comunicat/templates/email/org/base.html:61
 #: comunicat/templates/email/towers/base.html:61
 msgid "Sent with"
 msgstr "Skickat med"
 
+#: comunicat/templates/email/org/base.html:61
 #: comunicat/templates/email/towers/base.html:61
 msgid "by"
 msgstr "av"
 
+#: comunicat/templates/email/org/membership/expired.html:5
 #: comunicat/templates/email/towers/membership/expired.html:5
 msgid ""
 "Your membership has expired and you can no longer enjoy all the benefits we "
@@ -116,11 +128,7 @@ msgstr ""
 "vi erbjuder samt delta i våra evenemang. Men allt är inte förlorat! Du kan "
 "fortfarande förnya medlemskapet när som helst om du vill komma tillbaka."
 
-#: comunicat/templates/email/towers/membership/expired.html:10
-#: comunicat/templates/email/towers/membership/renew.html:15
-msgid "Renew membership"
-msgstr "Förnya medlemskapet"
-
+#: comunicat/templates/email/org/membership/expired.html:6
 #: comunicat/templates/email/towers/membership/expired.html:13
 msgid ""
 "Your data will be kept for a total of two (2) years since the day your "
@@ -136,27 +144,34 @@ msgstr ""
 "dataskyddsförordningen (Förordning (EU) 2016/679), vänligen skicka ett e-"
 "postmeddelande till oss med din begäran."
 
+#: comunicat/templates/email/org/membership/renew.html:5
 #: comunicat/templates/email/towers/membership/renew.html:5
-msgid ""
-"Your membership will be expiring on"
-msgstr ""
-"Ditt medlemskap löper ut den"
+msgid "Your membership will be expiring on"
+msgstr "Ditt medlemskap löper ut den"
 
+#: comunicat/templates/email/org/membership/renew.html:5
 #: comunicat/templates/email/towers/membership/renew.html:5
 msgid ""
 "In order to enjoy all the benefits we provide as well as attend our events "
 "you need to renew it before it expires."
 msgstr ""
-"För att kunna ta del av alla förmåner vi erbjuder samt delta i våra evenemang "
-"måste du förnya det innan det löper ut."
+"För att kunna ta del av alla förmåner vi erbjuder samt delta i våra "
+"evenemang måste du förnya det innan det löper ut."
 
+#: comunicat/templates/email/org/membership/renew.html:7
 #: comunicat/templates/email/towers/membership/renew.html:7
 msgid "Amount"
 msgstr "Belopp"
 
+#: comunicat/templates/email/org/membership/renew.html:8
 #: comunicat/templates/email/towers/membership/renew.html:8
 msgid "Valid"
 msgstr "Giltighet"
+
+#: comunicat/templates/email/towers/membership/expired.html:10
+#: comunicat/templates/email/towers/membership/renew.html:15
+msgid "Renew membership"
+msgstr "Förnya medlemskapet"
 
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -356,19 +371,19 @@ msgstr "Gå med i gemenskapen"
 msgid "End time must be greater than start time."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243
+#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243 product/admin.py:75
 msgid "name"
 msgstr "namn"
 
-#: membership/admin.py:96
+#: membership/admin.py:106
 msgid "users"
 msgstr "användare"
 
-#: membership/admin.py:97
+#: membership/admin.py:107
 msgid "family"
 msgstr "familj"
 
-#: membership/admin.py:98
+#: membership/admin.py:108
 msgid "modules"
 msgstr "moduler"
 
@@ -496,7 +511,15 @@ msgstr ""
 msgid "Category must be set for accounts with parent."
 msgstr "Kategorin måste vara inställd för konto med förälder."
 
-#: user/admin.py:116
+#: product/admin.py:30 product/admin.py:76
+msgid "stock"
+msgstr ""
+
+#: product/models.py:99
+msgid "Product size must match product."
+msgstr ""
+
+#: user/admin.py:120
 msgid "Another user already has the same alias."
 msgstr "En annan användare har redan samma alias."
 

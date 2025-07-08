@@ -30,7 +30,19 @@ def get_for_user(user_id: UUID) -> Family | None:
 def create_for_user(user_id: UUID) -> Family | None:
     user_obj = user.api.get(user_id=user_id)
 
-    if not user_obj or not user_obj.can_manage:
+    if not user_obj:
+        return None
+
+    family_member_obj = (
+        FamilyMember.objects.filter(user=user_obj, status=FamilyMemberStatus.ACTIVE)
+        .select_related("family")
+        .first()
+    )
+
+    if family_member_obj:
+        return family_member_obj.family
+
+    if not user_obj.can_manage:
         return None
 
     family_obj = Family.objects.create()
