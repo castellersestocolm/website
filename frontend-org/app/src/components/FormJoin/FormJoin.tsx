@@ -20,7 +20,7 @@ import styles from "./styles.module.css";
 import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import IconEast from "@mui/icons-material/East";
 import IconArrowDownward from "@mui/icons-material/ArrowDownward";
 import { apiOrgCreate } from "../../api";
@@ -244,7 +244,7 @@ export default function FormJoin() {
                 validationErrors.adults.length >= 1 &&
                 validationErrors.adults[0].phone && (
                   <FormHelperText error>
-                    {validationErrors.adults[0].email[0].phone}
+                    {validationErrors.adults[0].phone[0].detail}
                   </FormHelperText>
                 )}
             </FormGrid>

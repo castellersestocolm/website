@@ -16,7 +16,7 @@ class ComuniCatViewSet(ViewSet):
         if header_origin:
             domain = urlparse(header_origin).netloc
 
-            if domain in settings.MODULE_ORG_DOMAIN:
+            if settings.MODULE_ORG_DOMAIN in domain:
                 self.module = Module.ORG
             else:
                 self.module = Module.TOWERS
