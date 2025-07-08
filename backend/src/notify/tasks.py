@@ -47,14 +47,15 @@ def send_user_email(
         .first()
     )
 
-    modules = list(
-        set(membership_obj.modules.values_list("module", flat=True))
-        | set(settings.MODULE_ALL_MEMBERSHIP_REQUIRED)
-    )
+    if membership_obj:
+        modules = list(
+            set(membership_obj.modules.values_list("module", flat=True))
+            | set(settings.MODULE_ALL_MEMBERSHIP_REQUIRED)
+        )
 
-    if modules:
-        # This works for now as we want to get the "specific" module for email branding
-        module = sorted(modules)[-1]
+        if modules:
+            # This works for now as we want to get the "specific" module for email branding
+            module = sorted(modules)[-1]
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
