@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-08 18:08+0200\n"
+"POT-Creation-Date: 2025-07-08 19:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,7 +75,7 @@ msgstr "Inte ett betalningsmedel."
 msgid "Missing amount or currency."
 msgstr "Det saknas mängd eller valuta."
 
-#: comunicat/rest/views/org.py:67
+#: comunicat/rest/views/org.py:107
 msgid "The amount of children you entered is incorrect."
 msgstr "Antalet barn du angav är felaktigt."
 
@@ -168,6 +168,11 @@ msgstr "Belopp"
 msgid "Valid"
 msgstr "Giltighet"
 
+#: comunicat/templates/email/org/membership/renew.html:10
+msgid "You can find the form to renew your membership in the following page."
+msgstr "Du hittar formuläret för att förnya ditt medlemskap på följande sida."
+
+#: comunicat/templates/email/org/membership/renew.html:15
 #: comunicat/templates/email/towers/membership/expired.html:10
 #: comunicat/templates/email/towers/membership/renew.html:15
 msgid "Renew membership"

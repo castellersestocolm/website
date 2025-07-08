@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-08 18:08+0200\n"
+"POT-Creation-Date: 2025-07-08 19:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,7 +76,7 @@ msgstr "No són diners."
 msgid "Missing amount or currency."
 msgstr "Manca la quantitat o la divisa."
 
-#: comunicat/rest/views/org.py:67
+#: comunicat/rest/views/org.py:107
 msgid "The amount of children you entered is incorrect."
 msgstr "El nombre de nens que has introduït és incorrecte."
 
@@ -169,6 +169,11 @@ msgstr "Quantitat"
 msgid "Valid"
 msgstr "Validesa"
 
+#: comunicat/templates/email/org/membership/renew.html:10
+msgid "You can find the form to renew your membership in the following page."
+msgstr "Podeu trobar el formulari per renovar la vostra quota a la pàgina següent."
+
+#: comunicat/templates/email/org/membership/renew.html:15
 #: comunicat/templates/email/towers/membership/expired.html:10
 #: comunicat/templates/email/towers/membership/renew.html:15
 msgid "Renew membership"
