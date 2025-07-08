@@ -17,13 +17,16 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "./styles.module.css";
-import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import IconEast from "@mui/icons-material/East";
 import IconArrowDownward from "@mui/icons-material/ArrowDownward";
 import { apiOrgCreate } from "../../api";
+import ImageIconSwish from "../../assets/images/icons/swish.png";
+
+// @ts-ignore
+import QRCode from "qrcode";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -54,6 +57,10 @@ export default function FormJoin() {
   const [submitted, setSubmitted] = useState(false);
 
   const [children, setChildren] = useState([[undefined, undefined, undefined]]);
+
+  const [paymentSvg, setPaymentSvg] = React.useState(undefined);
+  const [paymentAmount, setPaymentAmount] = React.useState(undefined);
+  const [paymentText, setPaymentText] = React.useState(undefined);
 
   function handleButtonChildrenRemove(childIndex: number) {
     setChildren([
@@ -114,6 +121,32 @@ export default function FormJoin() {
     apiOrgCreate(subAdults, subChildren).then((response) => {
       if (response.status === 201) {
         setValidationErrors(undefined);
+        setPaymentAmount(
+          subAdults.length === 1 && subChildren.length === 0 ? "150" : "250",
+        );
+        const membershipText =
+          t("swish.payment.membership") +
+          " " +
+          new Date().toISOString().slice(0, 4) +
+          " - " +
+          subAdults[0].firstname +
+          " " +
+          subAdults[0].lastname;
+        setPaymentText(membershipText);
+        QRCode.toDataURL(
+          "C1230688820;" +
+            (subAdults.length === 1 && subChildren.length === 0
+              ? "150"
+              : "250") +
+            ";" +
+            membershipText +
+            ";0",
+          { width: 500, margin: 0 },
+        )
+          .then((url: string) => {
+            setPaymentSvg(url);
+          })
+          .catch((err: any) => {});
         setSubmitted(true);
       } else if (response.status === 429) {
         setValidationErrors({ throttle: response.data.detail });
@@ -127,7 +160,32 @@ export default function FormJoin() {
     <>
       {submitted ? (
         <Box className={styles.success}>
-          <IconMarkEmailReadOutlined className={styles.joinIcon} />
+          <Box className={styles.userMembershipPaymentBox}>
+            <img
+              src={ImageIconSwish}
+              className={styles.userMembershipPaymentIconSwish}
+              alt="Swish logo"
+            />
+            <img
+              src={paymentSvg}
+              alt="Swish QR"
+              className={styles.userMembershipPaymentSwish}
+            />
+          </Box>
+          <Typography variant="h3" className={styles.amountSubtitle}>
+            {paymentAmount}
+            {" SEK"}
+          </Typography>
+          <Typography variant="h4" className={styles.textSubtitle}>
+            {paymentText}
+          </Typography>
+          {t("pages.home-join.payment-list")
+            .split("\n")
+            .map((text: string) => (
+              <Typography variant="body1" className={styles.paymentSubtitle}>
+                {text}
+              </Typography>
+            ))}
           <Typography variant="h5" className={styles.joinSubtitle}>
             {t("pages.home-join.success")}
           </Typography>

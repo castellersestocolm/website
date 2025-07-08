@@ -16,7 +16,9 @@
   "pages.user-join.form.button-children.add": "Lägg till barn",
   "pages.user-join.form.button-children.remove": "Ta bort",
   "pages.user-join.form.button-join": "Gå med",
-  "pages.home-join.success": "Din förfrågan har skickats!",
+  "pages.home-join.success": "Slutför betalningen för att slutföra registreringen/förnyelsen.",
   "language.selector.ca": "En català",
-  "language.selector.sv": "På svenska"
+  "language.selector.sv": "På svenska",
+  "pages.home-join.payment-list": "Swish: 123 068 88 20\nPlusGirot: 97 09 16-3\nIBAN: SE84 9500 0099 6042 0970 9163",
+  "swish.payment.membership": "Medlemskap"
 }
