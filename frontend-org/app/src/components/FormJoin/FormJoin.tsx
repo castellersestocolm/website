@@ -20,7 +20,7 @@ import styles from "./styles.module.css";
 import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import IconEast from "@mui/icons-material/East";
 import IconArrowDownward from "@mui/icons-material/ArrowDownward";
 import { apiOrgCreate } from "../../api";
@@ -46,6 +46,9 @@ interface CreateFormElement extends HTMLFormElement {
 
 export default function FormJoin() {
   const { t } = useTranslation("common");
+
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email");
 
   const [validationErrors, setValidationErrors] = useState(undefined);
   const [submitted, setSubmitted] = useState(false);
@@ -206,6 +209,7 @@ export default function FormJoin() {
                   validationErrors.adults.length >= 1 &&
                   validationErrors.adults[0].email
                 }
+                defaultValue={email}
               />
               {validationErrors &&
                 validationErrors.adults &&

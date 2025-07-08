@@ -203,6 +203,7 @@ def register(
     organisation: dict | None,
     with_family: bool = True,
     with_membership: bool = True,
+    with_notify: bool = True,
 ) -> User | None:
     try:
         user_obj = create(
@@ -220,7 +221,8 @@ def register(
             with_family=with_family,
         )
 
-        request_verify(email=user_obj.email, module=module)
+        if with_notify:
+            request_verify(email=user_obj.email, module=module)
 
         if with_membership:
             membership.api.create_or_update(user_id=user_obj.id, modules=[module])

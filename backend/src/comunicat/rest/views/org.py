@@ -55,6 +55,7 @@ class OrgAPI(ComuniCatViewSet):
             towers=None,
             organisation=None,
             with_membership=False,
+            with_notify=False,
             module=self.module,
         )
 
@@ -70,12 +71,7 @@ class OrgAPI(ComuniCatViewSet):
                 .first()
             )
             adult_2 = validated_data["adults"][1]
-            if family_member_obj:
-                user_2_obj = family_member_obj.user
-                for k, v in adult_2.items():
-                    setattr(user_2_obj, k, v)
-                user_2_obj.save(update_fields=tuple(adult_2.keys()))
-            else:
+            if not family_member_obj:
                 user_2_obj = user.api.register(
                     **adult_2,
                     birthday=None,
@@ -86,6 +82,7 @@ class OrgAPI(ComuniCatViewSet):
                     organisation=None,
                     with_membership=False,
                     with_family=False,
+                    with_notify=False,
                     module=self.module,
                 )
                 if not hasattr(user_2_obj, "family_member"):
