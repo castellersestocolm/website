@@ -107,7 +107,7 @@ def send_membership_expired_email(modeladmin, request, queryset):
 
 
 class UserAdminForm(forms.ModelForm):
-    alias = forms.CharField()
+    alias = forms.CharField(required=False)
     height_shoulders = forms.IntegerField(min_value=0, max_value=200, required=False)
     height_arms = forms.IntegerField(min_value=0, max_value=250, required=False)
 
@@ -245,7 +245,7 @@ class UserAdmin(admin.ModelAdmin):
         )
 
     def get_fieldsets(self, request, obj=None):
-        if hasattr(obj, "towers") and settings.MODULE_TOWERS_USER_FIELDS:
+        if obj and hasattr(obj, "towers") and settings.MODULE_TOWERS_USER_FIELDS:
             return self.fieldset_base + self.fieldset_towers
 
         return self.fieldset_base
