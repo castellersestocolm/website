@@ -204,6 +204,9 @@ class GoogleGroup(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
 
+    def __str__(self) -> str:
+        return f"{self.name} <{self.external_id}>"
+
 
 class GoogleGroupModule(StandardModel, Timestamps):
     group = models.ForeignKey(

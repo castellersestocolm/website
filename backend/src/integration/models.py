@@ -10,3 +10,6 @@ class GoogleIntegration(StandardModel, Timestamps):
         unique=True,
     )
     authorized_user_info = JSONField(default=dict)
+
+    def __str__(self) -> str:
+        return Module(self.module).name
