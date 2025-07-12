@@ -16,6 +16,7 @@ from user.models import (
     TowersUser,
     GoogleGroup,
     GoogleGroupModule,
+    UserEmail,
 )
 from django.conf import settings
 
@@ -34,6 +35,11 @@ class FamilyMemberRequestSentInline(admin.TabularInline):
 class FamilyMemberRequestReceivedInline(admin.TabularInline):
     model = FamilyMemberRequest
     fk_name = "user_receiver"
+    extra = 0
+
+
+class UserEmailInline(admin.TabularInline):
+    model = UserEmail
     extra = 0
 
 
@@ -173,7 +179,11 @@ class UserAdmin(admin.ModelAdmin):
     exclude = ("password", "user_permissions")
     ordering = ("-created_at",)
     filter_horizontal = ("groups", "user_permissions")
-    inlines = (FamilyMemberRequestSentInline, FamilyMemberRequestReceivedInline)
+    inlines = (
+        FamilyMemberRequestSentInline,
+        FamilyMemberRequestReceivedInline,
+        UserEmailInline,
+    )
     actions = (
         send_verification_email,
         send_welcome_email,

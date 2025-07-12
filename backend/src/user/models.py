@@ -120,6 +120,12 @@ class TowersUser(StandardModel, Timestamps):
     height_arms = models.PositiveIntegerField(null=True, blank=True)
 
 
+class UserEmail(StandardModel, Timestamps):
+    user = models.ForeignKey("User", related_name="emails", on_delete=models.CASCADE)
+
+    email = models.EmailField(unique=True)
+
+
 class Family(StandardModel, Timestamps):
     def __str__(self) -> str:
         member_objs = self.members.filter(
@@ -223,4 +229,5 @@ class GoogleGroupModule(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
 
+    require_module_domain = models.BooleanField(default=False)
     require_membership = models.BooleanField(default=True)

@@ -22,7 +22,7 @@ from legal.enums import TeamType
 from notify.enums import EmailType
 from notify.tasks import send_user_email
 from user.enums import FamilyMemberStatus, FamilyMemberRole
-from user.models import User, TowersUser, FamilyMember, Family
+from user.models import User, TowersUser, FamilyMember, Family, UserEmail
 from user.utils import get_default_consent_pictures
 
 
@@ -59,7 +59,11 @@ def get_list(
                 FamilyMember.objects.filter(
                     status__in=(FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
                 ).order_by("-role", "user__firstname", "user__lastname"),
-            )
+            ),
+            Prefetch(
+                "emails",
+                UserEmail.objects.filter().order_by("email"),
+            ),
         )
         .with_permission_level()
         .order_by("firstname", "lastname", "created_at")

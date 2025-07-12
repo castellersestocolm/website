@@ -14,6 +14,11 @@ SHORT_NAME_BY_MODULE = {
     Module.TOWERS: settings.MODULE_TOWERS_SHORT_NAME,
 }
 
+DOMAIN_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_DOMAIN,
+    Module.TOWERS: settings.MODULE_TOWERS_DOMAIN,
+}
+
 PERMISSIONS_BY_LEVEL = {
     "event": {
         "registration": {

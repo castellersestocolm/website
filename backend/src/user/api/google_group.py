@@ -2,6 +2,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from comunicat.consts import DOMAIN_BY_MODULE
 from user.consts import GOOGLE_GROUP_SCOPES
 from user.models import GoogleGroup
 
@@ -37,9 +38,33 @@ def sync_users() -> None:
                 modules=[google_group_module_obj.module],
                 with_pending_membership=not google_group_module_obj.require_membership,
             )
-            user_emails = [
-                user_obj.email for user_obj in user_objs if user_obj.can_manage
-            ]
+
+            if google_group_module_obj.require_module_domain:
+                email_domain = f"@{DOMAIN_BY_MODULE[google_group_module_obj.module]}"
+                user_emails = list(
+                    {
+                        email
+                        for user_obj in user_objs
+                        if user_obj.can_manage
+                        for email in [
+                            tmp_email
+                            for tmp_email in [user_obj.email]
+                            + (
+                                [
+                                    user_email_obj.email
+                                    for user_email_obj in user_obj.emails.all()
+                                ]
+                                if hasattr(user_obj, "emails")
+                                else []
+                            )
+                            if tmp_email.endswith(email_domain)
+                        ][:1]
+                    }
+                )
+            else:
+                user_emails = [
+                    user_obj.email for user_obj in user_objs if user_obj.can_manage
+                ]
 
             existing_members = (
                 service.members().list(groupKey=google_group_obj.external_id).execute()
