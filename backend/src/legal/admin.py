@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 class MemberInline(admin.TabularInline):
     model = Member
+    raw_id_fields = ("user",)
     extra = 0
 
 

@@ -324,4 +324,5 @@ class GoogleGroupModuleInline(admin.TabularInline):
 @admin.register(GoogleGroup)
 class GoogleGroupAdmin(admin.ModelAdmin):
     search_fields = ("name", "external_id")
+    ordering = ("google_integration__module", "name", "external_id")
     inlines = (GoogleGroupModuleInline,)

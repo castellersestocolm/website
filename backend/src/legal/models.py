@@ -24,7 +24,7 @@ class Team(StandardModel, Timestamps):
     date_to = models.DateField(null=True, blank=True)
 
     def __str__(self) -> str:
-        return self.name.get(translation.get_language()) or list(self.name.values())[0]
+        return f"{Module(self.module).name} - {self.name.get(translation.get_language()) or list(self.name.values())[0]}"
 
 
 class Role(StandardModel, Timestamps):
