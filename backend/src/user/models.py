@@ -77,7 +77,7 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
 
     @cached_property
     def is_adult(self) -> bool:
-        return self.birthday is not None and is_over_minimum_age(date=self.birthday)
+        return self.birthday is None or is_over_minimum_age(date=self.birthday)
 
     @cached_property
     def can_manage(self) -> bool:
