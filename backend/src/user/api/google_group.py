@@ -27,8 +27,7 @@ def sync_users() -> None:
         )
         service = build("admin", "directory_v1", credentials=creds)
 
-        delete_emails = set()
-        create_emails = set()
+        user_emails = set()
 
         for google_group_module_obj in google_group_obj.modules.all():
             team_ids = (
@@ -44,7 +43,7 @@ def sync_users() -> None:
 
             if google_group_module_obj.require_module_domain:
                 email_domain = f"@{DOMAIN_BY_MODULE[google_group_module_obj.module]}"
-                user_emails = list(
+                user_emails = user_emails.union(
                     {
                         email
                         for user_obj in user_objs
@@ -65,34 +64,45 @@ def sync_users() -> None:
                     }
                 )
             else:
-                user_emails = [
-                    user_obj.email for user_obj in user_objs if user_obj.can_manage
-                ]
+                user_emails = user_emails.union(
+                    {user_obj.email for user_obj in user_objs if user_obj.can_manage}
+                )
 
+        existing_members = (
+            service.members().list(groupKey=google_group_obj.external_id).execute()
+        )
+        existing_emails = [
+            member.get("email")
+            for member in existing_members.get("members", [])
+            if "email" in member
+        ]
+        while "nextPageToken" in existing_members:
             existing_members = (
-                service.members().list(groupKey=google_group_obj.external_id).execute()
+                service.members()
+                .list(
+                    groupKey=google_group_obj.external_id,
+                    pageToken=existing_members["nextPageToken"],
+                )
+                .execute()
             )
-            existing_emails = [
+            existing_emails += [
                 member.get("email")
                 for member in existing_members.get("members", [])
                 if "email" in member
             ]
 
-            if google_group_module_obj.delete_on_expire:
-                delete_emails = delete_emails.union(set(existing_emails) - set(user_emails))
+        if google_group_obj.delete_on_expire:
+            delete_emails = set(existing_emails) - set(user_emails)
 
-            create_emails = create_emails.union(set(user_emails) - set(existing_emails))
+            for delete_email in delete_emails:
+                try:
+                    service.members().delete(
+                        groupKey=google_group_obj.external_id, memberKey=delete_email
+                    ).execute()
+                except HttpError as e:
+                    _log.exception(e)
 
-        delete_emails = list(delete_emails)
-        create_emails = list(create_emails)
-
-        for delete_email in delete_emails:
-            try:
-                service.members().delete(
-                    groupKey=google_group_obj.external_id, memberKey=delete_email
-                ).execute()
-            except HttpError as e:
-                _log.exception(e)
+        create_emails = set(user_emails) - set(existing_emails)
 
         for create_email in create_emails:
             try:

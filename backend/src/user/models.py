@@ -210,6 +210,8 @@ class GoogleGroup(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
 
+    delete_on_expire = models.BooleanField(default=True)
+
     def __str__(self) -> str:
         return f"{self.name} <{self.external_id}>"
 
@@ -231,5 +233,3 @@ class GoogleGroupModule(StandardModel, Timestamps):
 
     require_module_domain = models.BooleanField(default=False)
     require_membership = models.BooleanField(default=True)
-
-    delete_on_expire = models.BooleanField(default=True)
