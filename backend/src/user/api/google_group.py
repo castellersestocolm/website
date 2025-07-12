@@ -27,6 +27,9 @@ def sync_users() -> None:
         )
         service = build("admin", "directory_v1", credentials=creds)
 
+        delete_emails = set()
+        create_emails = set()
+
         for google_group_module_obj in google_group_obj.modules.all():
             team_ids = (
                 [google_group_module_obj.team.id]
@@ -75,22 +78,25 @@ def sync_users() -> None:
                 if "email" in member
             ]
 
-            delete_emails = list(set(existing_emails) - set(user_emails))
-            create_emails = list(set(user_emails) - set(existing_emails))
+            delete_emails += set(existing_emails) - set(user_emails)
+            create_emails += set(user_emails) - set(existing_emails)
 
-            for delete_email in delete_emails:
-                try:
-                    service.members().delete(
-                        groupKey=google_group_obj.external_id, memberKey=delete_email
-                    ).execute()
-                except HttpError as e:
-                    _log.exception(e)
+        delete_emails = list(delete_emails)
+        create_emails = list(create_emails)
 
-            for create_email in create_emails:
-                try:
-                    service.members().insert(
-                        groupKey=google_group_obj.external_id,
-                        body={"email": create_email},
-                    ).execute()
-                except HttpError as e:
-                    _log.exception(e)
+        for delete_email in delete_emails:
+            try:
+                service.members().delete(
+                    groupKey=google_group_obj.external_id, memberKey=delete_email
+                ).execute()
+            except HttpError as e:
+                _log.exception(e)
+
+        for create_email in create_emails:
+            try:
+                service.members().insert(
+                    groupKey=google_group_obj.external_id,
+                    body={"email": create_email},
+                ).execute()
+            except HttpError as e:
+                _log.exception(e)
