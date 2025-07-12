@@ -78,7 +78,9 @@ def sync_users() -> None:
                 if "email" in member
             ]
 
-            delete_emails += set(existing_emails) - set(user_emails)
+            if google_group_module_obj.delete_on_expire:
+                delete_emails += set(existing_emails) - set(user_emails)
+
             create_emails += set(user_emails) - set(existing_emails)
 
         delete_emails = list(delete_emails)

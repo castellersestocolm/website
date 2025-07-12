@@ -231,3 +231,5 @@ class GoogleGroupModule(StandardModel, Timestamps):
 
     require_module_domain = models.BooleanField(default=False)
     require_membership = models.BooleanField(default=True)
+
+    delete_on_expire = models.BooleanField(default=True)
