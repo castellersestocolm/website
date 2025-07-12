@@ -1,4 +1,5 @@
 import datetime
+import re
 from uuid import UUID
 
 from django.db.models import Q, Prefetch
@@ -21,6 +22,7 @@ from event.models import (
     EventModule,
     AgendaItem,
     Registration,
+    Location,
 )
 
 from django.conf import settings
@@ -41,6 +43,8 @@ def import_events() -> None:
             event__time_to__gte=time_now
         ).select_related("google_calendar")
     }
+
+    location_objs = list(Location.objects.all())
 
     event_creates = []
     event_updates = []
@@ -150,8 +154,26 @@ def import_events() -> None:
                                                 )
                                             )
                         else:
+                            title = event["summary"]
+                            location_obj = None
+                            for current_location_obj in location_objs:
+                                if current_location_obj.name.lower() in title.lower():
+                                    location_obj = current_location_obj
+                                    title = (
+                                        re.sub(
+                                            current_location_obj.name,
+                                            "",
+                                            title,
+                                            flags=re.IGNORECASE,
+                                        )
+                                        .strip()
+                                        .strip("-")
+                                        .strip()
+                                    )
+                                    break
+
                             event_obj = Event(
-                                title=event["summary"],
+                                title=title,
                                 time_from=datetime.datetime.fromisoformat(
                                     event["start"]["dateTime"]
                                 ),
@@ -159,6 +181,7 @@ def import_events() -> None:
                                     event["end"]["dateTime"]
                                 ),
                                 type=get_event_type_by_title(title=event["summary"]),
+                                location=location_obj,
                                 module=google_integration_obj.module,
                             )
                             event_creates.append(event_obj)
