@@ -27,11 +27,15 @@ from django.conf import settings
 
 from legal.enums import TeamType, PermissionLevel
 from membership.enums import MembershipStatus
+from user.utils import is_over_minimum_age
 
 
 class UserQuerySet(QuerySet):
     def with_has_active_membership(
-        self, with_pending: bool = False, modules: list[Module] | None = None
+        self,
+        with_pending: bool = False,
+        date: datetime.date | None = None,
+        modules: list[Module] | None = None,
     ):
         Membership = apps.get_model("membership", "Membership")
         MembershipModule = apps.get_model("membership", "MembershipModule")
@@ -50,18 +54,18 @@ class UserQuerySet(QuerySet):
             else [MembershipStatus.ACTIVE]
         )
 
-        date_today = timezone.localdate()
+        date = date or timezone.localdate()
 
         return self.annotate(
             membership_id=Subquery(
                 MembershipModule.objects.filter(
                     module_filter,
                     Q(membership__date_end__isnull=True)
-                    | Q(membership__date_end__gte=date_today),
+                    | Q(membership__date_end__gte=date),
                     status__in=status,
                     membership__status__in=status,
-                    membership__date_from__lte=date_today,
-                    membership__date_to__gte=date_today,
+                    membership__date_from__lte=date,
+                    membership__date_to__gte=date,
                     membership__membership_users__user_id=OuterRef("id"),
                 )
                 .order_by("-membership__date_to")
@@ -167,16 +171,37 @@ class UserQuerySet(QuerySet):
             )
         )
 
+    def with_is_adult(self):
+        date_today = timezone.localdate()
+        return self.annotate(
+            is_adult=Case(
+                When(birthday__isnull=True, then=Value(True)),
+                When(
+                    birthday__lte=datetime.date(
+                        date_today.year - settings.MODULE_ALL_USER_MINIMUM_AGE,
+                        date_today.month,
+                        date_today.day,
+                    ),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            ),
+        )
+
 
 class UserManager(BaseUserManager):
     def get_queryset(self):
         return UserQuerySet(model=self.model, using=self._db, hints=self._hints)
 
     def with_has_active_membership(
-        self, with_pending: bool = False, modules: list[Module] | None = None
+        self,
+        with_pending: bool = False,
+        date: datetime.date | None = None,
+        modules: list[Module] | None = None,
     ):
         return self.get_queryset().with_has_active_membership(
-            with_pending=with_pending, modules=modules
+            with_pending=with_pending, date=date, modules=modules
         )
 
     def with_has_active_role(
@@ -208,6 +233,9 @@ class UserManager(BaseUserManager):
         return self.get_queryset().with_permission_level(
             date=date, team_types=team_types, modules=modules
         )
+
+    def with_is_adult(self):
+        return self.get_queryset().with_is_adult()
 
     def create_user(
         self,

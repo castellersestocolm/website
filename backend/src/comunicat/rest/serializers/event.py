@@ -135,6 +135,77 @@ class EventSerializer(s.ModelSerializer):
         )
 
 
+class RegistrationItemCountsSerializer(s.Serializer):
+    total = s.IntegerField(read_only=True)
+    active = s.IntegerField(read_only=True)
+    cancelled = s.IntegerField(read_only=True)
+
+
+class RegistrationCountsSerializer(s.Serializer):
+    adults = RegistrationItemCountsSerializer(read_only=True)
+    children = RegistrationItemCountsSerializer(read_only=True)
+
+
+class EventWithCountsSerializer(EventSerializer):
+    registration_counts = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "title",
+            "time_from",
+            "time_to",
+            "location",
+            "type",
+            "module",
+            "require_signup",
+            "require_approve",
+            "registrations",
+            "registration_counts",
+            "agenda_items",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "time_from",
+            "time_to",
+            "type",
+            "module",
+            "require_signup",
+            "require_approve",
+            "registrations",
+            "registration_counts",
+            "agenda_items",
+            "created_at",
+        )
+
+    @swagger_serializer_method(
+        serializer_or_field=RegistrationCountsSerializer(read_only=True)
+    )
+    def get_registration_counts(self, obj):
+        return {
+            "adults": {
+                "total": max(
+                    obj.registration_count_total,
+                    obj.registration_count_active + obj.registration_count_cancelled,
+                ),
+                "active": obj.registration_count_active,
+                "cancelled": obj.registration_count_cancelled,
+            },
+            "children": {
+                "total": max(
+                    obj.registration_count_children_total,
+                    obj.registration_count_children_active
+                    + obj.registration_count_children_cancelled,
+                ),
+                "active": obj.registration_count_children_active,
+                "cancelled": obj.registration_count_children_cancelled,
+            },
+        }
+
+
 class CreateRegistrationSerializer(s.Serializer):
     user_id = s.UUIDField(required=True)
     event_id = s.UUIDField(required=True)
@@ -174,6 +245,7 @@ class ListEventCalendarSerializer(s.Serializer):
 class ListEventSerializer(s.Serializer):
     date_from = s.DateField(required=False)
     date_to = s.DateField(required=False)
+    with_counts = s.BooleanField(required=False)
     token = s.CharField(required=False)
 
 

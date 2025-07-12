@@ -2,15 +2,27 @@ import datetime
 from typing import List
 from uuid import UUID
 
-from django.db.models import Q, Prefetch
+from django.db.models import (
+    Q,
+    Prefetch,
+    Subquery,
+    OuterRef,
+    Count,
+    Value,
+    IntegerField,
+    F,
+    Case,
+    When,
+)
+from django.db.models.functions import Coalesce
 from django.utils import timezone, translation
 
 from comunicat.enums import Module
-from event.enums import EventStatus
+from event.enums import EventStatus, RegistrationStatus
 from event.models import Event, Registration, AgendaItem, Connection
 from notify.enums import EmailType
 from user.enums import FamilyMemberStatus
-from user.models import FamilyMember
+from user.models import FamilyMember, User
 
 import user.api
 import user.api.event
@@ -24,6 +36,7 @@ def get_list(
     request_user_id: UUID | None = None,
     date_from: datetime.date | None = None,
     date_to: datetime.date | None = None,
+    with_counts: bool = False,
 ) -> List[Event]:
     if request_user_id:
         family_user_ids = [
@@ -76,6 +89,109 @@ def get_list(
     # TODO: This can lead to timezone issues close to midnight
     if date_to is not None:
         event_qs = event_qs.filter(time_from__date__lte=date_to)
+
+    if with_counts:
+        # Unfortunately this will run the query
+        user_count_by_event_id = {}
+
+        for event_obj in event_qs.all():
+            user_objs = list(
+                User.objects.with_has_active_membership(
+                    with_pending=True,
+                    date=timezone.localdate(event_obj.time_from),
+                    modules=[
+                        event_module_obj.module
+                        for event_module_obj in event_obj.modules.all()
+                    ],
+                )
+                .filter(
+                    has_active_membership=True,
+                )
+                .with_is_adult()
+            )
+            user_count_by_event_id[event_obj.id] = (
+                len([user_obj for user_obj in user_objs if user_obj.is_adult]),
+                len([user_obj for user_obj in user_objs if not user_obj.is_adult]),
+            )
+
+        event_qs = event_qs.annotate(
+            registration_count_total=Case(
+                *[
+                    When(id=event_id, then=Value(user_count))
+                    for event_id, (user_count, __) in user_count_by_event_id.items()
+                ],
+                default=Value(0),
+                output_field=IntegerField(),
+            ),
+            registration_count_children_total=Case(
+                *[
+                    When(id=event_id, then=Value(children_count))
+                    for event_id, (__, children_count) in user_count_by_event_id.items()
+                ],
+                default=Value(0),
+                output_field=IntegerField(),
+            ),
+            registration_count_active=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        event_id=OuterRef("id"),
+                        status=RegistrationStatus.ACTIVE,
+                    )
+                    .with_is_user_adult()
+                    .filter(is_user_adult=True)
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1]
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            registration_count_children_active=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        event_id=OuterRef("id"),
+                        status=RegistrationStatus.ACTIVE,
+                    )
+                    .with_is_user_adult()
+                    .filter(is_user_adult=False)
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1]
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            registration_count_cancelled=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        event_id=OuterRef("id"),
+                        status=RegistrationStatus.CANCELLED,
+                    )
+                    .with_is_user_adult()
+                    .filter(is_user_adult=True)
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1]
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            registration_count_children_cancelled=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        event_id=OuterRef("id"),
+                        status=RegistrationStatus.CANCELLED,
+                    )
+                    .with_is_user_adult()
+                    .filter(is_user_adult=False)
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1]
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+        )
 
     return list(event_qs)
 

@@ -19,6 +19,7 @@ from comunicat.rest.serializers.event import (
     ListEventCalendarSerializer,
     ListRegistrationSerializer,
     RegistrationSlimSerializer,
+    EventWithCountsSerializer,
 )
 
 from comunicat.rest.viewsets import ComuniCatViewSet
@@ -57,16 +58,23 @@ class EventAPI(ComuniCatViewSet):
             )
         )
 
+        with_counts = serializer.validated_data.get("with_counts", False)
+
         event_objs = event.api.get_list(
             request_user_id=user_obj.id if user_obj else None,
             module=self.module,
             date_from=serializer.validated_data.get("date_from"),
             date_to=serializer.validated_data.get("date_to"),
+            with_counts=with_counts,
+        )
+
+        serializer_class = (
+            EventWithCountsSerializer if with_counts else self.serializer_class
         )
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(event_objs, request)
-        serializer = self.serializer_class(
+        serializer = serializer_class(
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)

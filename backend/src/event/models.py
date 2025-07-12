@@ -19,7 +19,7 @@ from event.enums import (
 
 from django.utils.translation import gettext_lazy as _
 
-from event.managers import EventQuerySet
+from event.managers import EventQuerySet, RegistrationQuerySet
 
 
 # TODO: Split address into fields, add coordinates
@@ -168,6 +168,8 @@ class Registration(StandardModel, Timestamps):
     )
 
     __status = None
+
+    objects = RegistrationQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

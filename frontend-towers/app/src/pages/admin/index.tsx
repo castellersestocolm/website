@@ -38,12 +38,17 @@ function AdminPage() {
 
   const [events, setEvents] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
-  const [registrations, setRegistrations] = React.useState(undefined);
   const [statEvents, setStatEvents] = React.useState(undefined);
-  const [statRegistrations, setStatRegistrations] = React.useState(undefined);
 
   React.useEffect(() => {
-    apiEventList().then((response) => {
+    apiEventList(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    ).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
       }
@@ -58,6 +63,8 @@ function AdminPage() {
       new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
         .toISOString()
         .substring(0, 10),
+      undefined,
+      true,
     ).then((response) => {
       if (response.status === 200) {
         setStatEvents(response.data);
@@ -73,61 +80,11 @@ function AdminPage() {
     });
   }, [setUsers]);
 
-  React.useEffect(() => {
-    if (events && events.results.length > 0) {
-      for (let i = 0; i < events.results.length; i++) {
-        const event = events.results[i];
-        apiEventRegistrationList(event.id, true).then((response) => {
-          if (response.status === 200) {
-            setRegistrations((registrations: any) => ({
-              ...registrations,
-              [event.id]: Object.fromEntries(
-                response.data.map((registration: any) => [
-                  registration.user.id,
-                  registration,
-                ]),
-              ),
-            }));
-          }
-        });
-      }
-    }
-  }, [events, setRegistrations]);
-
-  React.useEffect(() => {
-    if (statEvents && statEvents.results.length > 0) {
-      for (let i = 0; i < statEvents.results.length; i++) {
-        const event = statEvents.results[i];
-        apiEventRegistrationList(event.id, true).then((response) => {
-          if (response.status === 200) {
-            setStatRegistrations((registrations: any) => ({
-              ...registrations,
-              [event.id]: Object.fromEntries(
-                response.data.map((registration: any) => [
-                  registration.user.id,
-                  registration,
-                ]),
-              ),
-            }));
-          }
-        });
-      }
-    }
-  }, [statEvents, setStatRegistrations]);
-
   const userChildren: any[] =
     users && users.filter((user: any) => !user.can_manage);
 
   const userAdults: any[] =
     users && users.filter((user: any) => user.can_manage);
-
-  const eventsCountAdults = getEventsCount(events, registrations, userAdults);
-  const eventsCountChildren = getEventsCount(
-    events,
-    registrations,
-    userChildren,
-  );
-  const statEventsCount = getEventsCount(statEvents, statRegistrations, users);
 
   function handleAdminAttendanceSubmit() {
     navigate(ROUTES["admin-attendance"].path, { replace: true });
@@ -212,54 +169,65 @@ function AdminPage() {
                             marginBottom={{ xs: "8px", lg: "0" }}
                             whiteSpace="nowrap"
                           >
-                            {eventsCountAdults &&
-                              event.id in eventsCountAdults && (
-                                <Box className={styles.eventCountBox}>
-                                  <IcconPerson
-                                    className={styles.eventCountIcon}
-                                    color={
-                                      eventsCountAdults[event.id][0] >= 10 ||
-                                      eventsCountAdults[event.id][0] >=
+                            <Box className={styles.eventCountBox}>
+                              <IcconPerson
+                                className={styles.eventCountIcon}
+                                color={
+                                  event.registration_counts.adults.active >=
+                                    10 ||
+                                  event.registration_counts.children.active >=
+                                    userAdults.length / 2
+                                    ? "success"
+                                    : event.registration_counts.adults.total -
+                                          event.registration_counts.adults
+                                            .active -
+                                          event.registration_counts.adults
+                                            .cancelled >=
                                         userAdults.length / 2
-                                        ? "success"
-                                        : eventsCountAdults[event.id][2] >=
-                                            userAdults.length / 2
-                                          ? "secondary"
-                                          : "error"
-                                    }
-                                  />
-                                  <Typography
-                                    variant="body2"
-                                    color="textSecondary"
-                                  >
-                                    {eventsCountAdults[event.id].join("/")}
-                                  </Typography>
-                                </Box>
-                              )}
-                            {eventsCountChildren &&
-                              event.id in eventsCountChildren && (
-                                <Box className={styles.eventCountBox}>
-                                  <IconEscalatorWarning
-                                    className={styles.eventCountIcon}
-                                    color={
-                                      eventsCountChildren[event.id][0] >= 2 ||
-                                      eventsCountChildren[event.id][0] >=
+                                      ? "secondary"
+                                      : "error"
+                                }
+                              />
+                              <Typography variant="body2" color="textSecondary">
+                                {[
+                                  event.registration_counts.adults.active,
+                                  event.registration_counts.adults.cancelled,
+                                  event.registration_counts.adults.total -
+                                    event.registration_counts.adults.active -
+                                    event.registration_counts.adults.cancelled,
+                                ].join("/")}
+                              </Typography>
+                            </Box>
+                            <Box className={styles.eventCountBox}>
+                              <IconEscalatorWarning
+                                className={styles.eventCountIcon}
+                                color={
+                                  event.registration_counts.children.active >=
+                                    2 ||
+                                  event.registration_counts.children.active >=
+                                    userChildren.length / 2
+                                    ? "success"
+                                    : event.registration_counts.children.total -
+                                          event.registration_counts.children
+                                            .active -
+                                          event.registration_counts.children
+                                            .cancelled >=
                                         userChildren.length / 2
-                                        ? "success"
-                                        : eventsCountChildren[event.id][2] >=
-                                            userChildren.length / 2
-                                          ? "secondary"
-                                          : "error"
-                                    }
-                                  />
-                                  <Typography
-                                    variant="body2"
-                                    color="textSecondary"
-                                  >
-                                    {eventsCountChildren[event.id].join("/")}
-                                  </Typography>
-                                </Box>
-                              )}
+                                      ? "secondary"
+                                      : "error"
+                                }
+                              />
+                              <Typography variant="body2" color="textSecondary">
+                                {[
+                                  event.registration_counts.children.active,
+                                  event.registration_counts.children.cancelled,
+                                  event.registration_counts.children.total -
+                                    event.registration_counts.children.active -
+                                    event.registration_counts.children
+                                      .cancelled,
+                                ].join("/")}
+                              </Typography>
+                            </Box>
                           </Stack>
                         )}
                       </ListItemButton>
@@ -353,7 +321,7 @@ function AdminPage() {
             </Box>
           </Link>
           <Box className={styles.adminBox}>
-            {statEvents && statEvents.results.length > 0 && statEventsCount && (
+            {statEvents && statEvents.results.length > 0 && (
               <Box mt={1}>
                 <Typography
                   variant="body1"
@@ -372,17 +340,21 @@ function AdminPage() {
                       valueFormatter: (date: string) =>
                         new Date(date).toISOString().substring(0, 10),
                       min: new Date(statEvents.results[0].time_from),
-                      max: new Date(statEvents.results[statEvents.results.length - 1].time_from),
+                      max: new Date(
+                        statEvents.results[
+                          statEvents.results.length - 1
+                        ].time_from,
+                      ),
                     },
                   ]}
                   series={[
                     {
                       id: RegistrationStatus.CANCELLED,
                       label: t("enums.registration-status.30"),
-                      data: statEvents.results.map((event: any) =>
-                        event.id in statEventsCount
-                          ? statEventsCount[event.id][1]
-                          : 0,
+                      data: statEvents.results.map(
+                        (event: any) =>
+                          event.registration_counts.adults.cancelled +
+                          event.registration_counts.children.cancelled,
                       ),
                       area: true,
                       showMark: false,
@@ -392,10 +364,14 @@ function AdminPage() {
                     {
                       id: 0,
                       label: t("enums.registration-status.0"),
-                      data: statEvents.results.map((event: any) =>
-                        event.id in statEventsCount
-                          ? statEventsCount[event.id][2]
-                          : 0,
+                      data: statEvents.results.map(
+                        (event: any) =>
+                          event.registration_counts.adults.total +
+                          event.registration_counts.children.total -
+                          event.registration_counts.adults.active -
+                          event.registration_counts.children.active -
+                          event.registration_counts.adults.cancelled -
+                          event.registration_counts.children.cancelled,
                       ),
                       area: true,
                       showMark: false,
@@ -405,10 +381,10 @@ function AdminPage() {
                     {
                       id: RegistrationStatus.ACTIVE,
                       label: t("enums.registration-status.20"),
-                      data: statEvents.results.map((event: any) =>
-                        event.id in statEventsCount
-                          ? statEventsCount[event.id][0]
-                          : 0,
+                      data: statEvents.results.map(
+                        (event: any) =>
+                          event.registration_counts.adults.active +
+                          event.registration_counts.children.active,
                       ),
                       area: true,
                       showMark: false,
