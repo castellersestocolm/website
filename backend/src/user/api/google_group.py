@@ -1,0 +1,71 @@
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+from user.consts import GOOGLE_GROUP_SCOPES
+from user.models import GoogleGroup
+
+import user.api
+
+import logging
+
+_log = logging.getLogger(__name__)
+
+
+def sync_users() -> None:
+    google_group_objs = list(
+        GoogleGroup.objects.select_related("google_integration").prefetch_related(
+            "modules"
+        )
+    )
+
+    for google_group_obj in google_group_objs:
+        creds = Credentials.from_authorized_user_info(
+            info=google_group_obj.google_integration.authorized_user_info,
+            scopes=GOOGLE_GROUP_SCOPES,
+        )
+        service = build("admin", "directory_v1", credentials=creds)
+
+        for google_group_module_obj in google_group_obj.modules.all():
+            team_ids = (
+                [google_group_module_obj.team.id]
+                if google_group_module_obj.team
+                else []
+            )
+            user_objs = user.api.get_list(
+                team_ids=team_ids,
+                modules=[google_group_module_obj.module],
+                with_pending_membership=not google_group_module_obj.require_membership,
+            )
+            user_emails = [
+                user_obj.email for user_obj in user_objs if user_obj.can_manage
+            ]
+
+            existing_members = (
+                service.members().list(groupKey=google_group_obj.external_id).execute()
+            )
+            existing_emails = [
+                member.get("email")
+                for member in existing_members.get("members", [])
+                if "email" in member
+            ]
+
+            delete_emails = list(set(existing_emails) - set(user_emails))
+            create_emails = list(set(user_emails) - set(existing_emails))
+
+            for delete_email in delete_emails:
+                try:
+                    service.members().delete(
+                        groupKey=google_group_obj.external_id, memberKey=delete_email
+                    ).execute()
+                except HttpError as e:
+                    _log.exception(e)
+
+            for create_email in create_emails:
+                try:
+                    service.members().insert(
+                        groupKey=google_group_obj.external_id,
+                        body={"email": create_email},
+                    ).execute()
+                except HttpError as e:
+                    _log.exception(e)

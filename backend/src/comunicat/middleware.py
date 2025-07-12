@@ -3,8 +3,6 @@ import logging
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
 
-from comunicat.enums import Module
-from comunicat.utils.request import get_module_from_request
 from user.models import User
 
 

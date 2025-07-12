@@ -8,7 +8,15 @@ from django.utils.safestring import mark_safe
 import event.tasks
 from membership.enums import MembershipStatus
 from notify.enums import EmailType
-from user.models import User, FamilyMember, Family, FamilyMemberRequest, TowersUser
+from user.models import (
+    User,
+    FamilyMember,
+    Family,
+    FamilyMemberRequest,
+    TowersUser,
+    GoogleGroup,
+    GoogleGroupModule,
+)
 from django.conf import settings
 
 import user.api
@@ -296,3 +304,14 @@ class FamilyMemberRequestAdmin(admin.ModelAdmin):
 
     # def has_delete_permission(self, request, obj=None):
     #     return False
+
+
+class GoogleGroupModuleInline(admin.TabularInline):
+    model = GoogleGroupModule
+    extra = 0
+
+
+@admin.register(GoogleGroup)
+class GoogleGroupAdmin(admin.ModelAdmin):
+    search_fields = ("name", "external_id")
+    inlines = (GoogleGroupModuleInline,)

@@ -1,4 +1,5 @@
 import datetime
+from uuid import UUID
 
 from django.apps import apps
 
@@ -113,6 +114,34 @@ class UserQuerySet(QuerySet):
             ),
         )
 
+    def with_has_active_team(
+        self,
+        date: datetime.date | None = None,
+        team_ids: list[UUID] | None = None,
+        modules: list[Module] | None = None,
+    ):
+        Member = apps.get_model("legal", "Member")
+
+        date = date or timezone.localdate()
+
+        member_filter = (
+            Q(team__date_from__lte=date)
+            & (Q(team__date_to__isnull=True) | Q(team__date_to__gte=date))
+            & Q(team_id__in=team_ids)
+        )
+
+        if modules is not None:
+            member_filter &= Q(team__module__in=modules)
+
+        return self.annotate(
+            has_active_team=Exists(
+                Member.objects.filter(
+                    member_filter,
+                    user_id=OuterRef("id"),
+                )
+            ),
+        )
+
     def with_permission_level(
         self,
         date: datetime.date | None = None,
@@ -158,6 +187,16 @@ class UserManager(BaseUserManager):
     ):
         return self.get_queryset().with_has_active_role(
             date=date, team_types=team_types, modules=modules
+        )
+
+    def with_has_active_team(
+        self,
+        date: datetime.date | None = None,
+        team_ids: list[UUID] | None = None,
+        modules: list[Module] | None = None,
+    ):
+        return self.get_queryset().with_has_active_team(
+            date=date, team_ids=team_ids, modules=modules
         )
 
     def with_permission_level(

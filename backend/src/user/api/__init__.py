@@ -45,7 +45,10 @@ def get(user_id: UUID) -> User:
 
 def get_list(
     user_ids: list[UUID] | None = None,
+    team_ids: list[UUID] | None = None,
+    team_types: list[TeamType] | None = None,
     exclude_team_types: list[TeamType] | None = None,
+    with_pending_membership: bool = True,
     modules: list[Module] | None = None,
 ) -> list[User]:
     user_qs = (
@@ -67,8 +70,18 @@ def get_list(
 
     if modules:
         user_qs = user_qs.with_has_active_membership(
-            with_pending=True, modules=modules
+            with_pending=with_pending_membership, modules=modules
         ).filter(has_active_membership=True)
+
+    if team_ids:
+        user_qs = user_qs.with_has_active_team(
+            team_ids=team_ids, modules=modules
+        ).filter(has_active_team=True)
+
+    if team_types:
+        user_qs = user_qs.with_has_active_role(
+            team_types=team_types, modules=modules
+        ).filter(has_active_role=True)
 
     if exclude_team_types:
         user_qs = user_qs.with_has_active_role(

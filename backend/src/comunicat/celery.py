@@ -15,10 +15,15 @@ app.autodiscover_tasks()
 app.conf.timezone = settings.TIME_ZONE
 
 app.conf.beat_schedule = {
-    # Run every day
+    # Run every 5 minutes
     "event.import_events": {
         "task": "event.tasks.import_events",
         "schedule": crontab(minute="*/5"),
+    },
+    # Run every 2 hours
+    "user.sync_users": {
+        "task": "user.tasks.sync_users",
+        "schedule": crontab(hour="*/2", minute="0"),
     },
 }
 

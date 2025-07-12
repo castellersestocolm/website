@@ -190,3 +190,34 @@ class GoogleUser(User):
         self.clean()
         self.email_verified = True
         return super().save(*args, **kwargs)
+
+
+class GoogleGroup(StandardModel, Timestamps):
+    name = models.CharField(max_length=255)
+    external_id = models.CharField(max_length=255, unique=True)
+
+    is_primary = models.BooleanField(default=False)
+
+    google_integration = models.ForeignKey(
+        "integration.GoogleIntegration",
+        related_name="google_groups",
+        on_delete=models.CASCADE,
+    )
+
+
+class GoogleGroupModule(StandardModel, Timestamps):
+    group = models.ForeignKey(
+        GoogleGroup, related_name="modules", on_delete=models.CASCADE
+    )
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+    )
+    team = models.ForeignKey(
+        "legal.Team",
+        blank=True,
+        null=True,
+        related_name="google_group_models",
+        on_delete=models.CASCADE,
+    )
+
+    require_membership = models.BooleanField(default=True)
