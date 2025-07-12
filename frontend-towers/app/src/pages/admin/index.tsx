@@ -58,7 +58,7 @@ function AdminPage() {
   React.useEffect(() => {
     apiEventList(
       1,
-      20,
+      50,
       undefined,
       new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
         .toISOString()

@@ -91,46 +91,23 @@ def get_list(
         event_qs = event_qs.filter(time_from__date__lte=date_to)
 
     if with_counts:
-        # Unfortunately this will run the query
-        user_count_by_event_id = {}
-
-        for event_obj in event_qs.all():
-            user_objs = list(
-                User.objects.with_has_active_membership(
-                    with_pending=True,
-                    date=timezone.localdate(event_obj.time_from),
-                    modules=[
-                        event_module_obj.module
-                        for event_module_obj in event_obj.modules.all()
-                    ],
-                )
-                .filter(
-                    has_active_membership=True,
-                )
-                .with_is_adult()
+        # Unfortunately getting the count for every event date is too heavy
+        user_objs = list(
+            User.objects.with_has_active_membership(
+                with_pending=True,
+                modules=[module],
             )
-            user_count_by_event_id[event_obj.id] = (
-                len([user_obj for user_obj in user_objs if user_obj.is_adult]),
-                len([user_obj for user_obj in user_objs if not user_obj.is_adult]),
+            .filter(
+                has_active_membership=True,
             )
+            .with_is_adult()
+        )
+        user_count = len([user_obj for user_obj in user_objs if user_obj.is_adult])
+        child_count = len([user_obj for user_obj in user_objs if not user_obj.is_adult])
 
         event_qs = event_qs.annotate(
-            registration_count_total=Case(
-                *[
-                    When(id=event_id, then=Value(user_count))
-                    for event_id, (user_count, __) in user_count_by_event_id.items()
-                ],
-                default=Value(0),
-                output_field=IntegerField(),
-            ),
-            registration_count_children_total=Case(
-                *[
-                    When(id=event_id, then=Value(children_count))
-                    for event_id, (__, children_count) in user_count_by_event_id.items()
-                ],
-                default=Value(0),
-                output_field=IntegerField(),
-            ),
+            registration_count_total=Value(user_count),
+            registration_count_children_total=Value(child_count),
             registration_count_active=Coalesce(
                 Subquery(
                     Registration.objects.filter(
