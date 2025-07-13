@@ -184,15 +184,15 @@ function AdminPage() {
                               className={styles.eventCountIcon}
                               color={
                                 event.registration_counts.adults.active >= 10 ||
-                                event.registration_counts.children.active >=
-                                  userAdults.length / 2
+                                event.registration_counts.adults.active >=
+                                  event.registration_counts.adults.total / 2
                                   ? "success"
                                   : event.registration_counts.adults.total -
                                         event.registration_counts.adults
                                           .active -
                                         event.registration_counts.adults
                                           .cancelled >=
-                                      userAdults.length / 2
+                                      event.registration_counts.adults.total / 2
                                     ? "secondary"
                                     : "error"
                               }
@@ -214,14 +214,14 @@ function AdminPage() {
                                 event.registration_counts.children.active >=
                                   2 ||
                                 event.registration_counts.children.active >=
-                                  userChildren.length / 2
+                                  event.registration_counts.children.total / 2
                                   ? "success"
                                   : event.registration_counts.children.total -
                                         event.registration_counts.children
                                           .active -
                                         event.registration_counts.children
                                           .cancelled >=
-                                      userChildren.length / 2
+                                      event.registration_counts.children.total / 2
                                     ? "secondary"
                                     : "error"
                               }
