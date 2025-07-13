@@ -188,3 +188,12 @@
     height: 1.25rem;
   }
 }
+
+.eventCardIcon {
+  min-width: 42px !important;
+}
+
+.eventCardImage {
+  width: 1.5em;
+  max-height: 1.5em;
+}

@@ -1315,6 +1315,25 @@ function UserDashboardPage() {
                                 (orderProduct: any, i: number, row: any) => (
                                   <Box key={orderProduct.id}>
                                     <ListItemButton disableTouchRipple dense>
+                                      <ListItemIcon
+                                        className={styles.eventCardIcon}
+                                      >
+                                        {orderProduct.size.product.images &&
+                                          orderProduct.size.product.images
+                                            .length > 0 && (
+                                            <img
+                                              src={
+                                                BACKEND_BASE_URL +
+                                                orderProduct.size.product
+                                                  .images[0].picture
+                                              }
+                                              alt={
+                                                orderProduct.size.product.name
+                                              }
+                                              className={styles.eventCardImage}
+                                            />
+                                          )}
+                                      </ListItemIcon>
                                       <ListItemText
                                         primary={
                                           orderProduct.quantity +

@@ -50,8 +50,10 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
             Prefetch(
                 "products",
                 OrderProduct.objects.order_by(
-                    "size__product__type", "size__category", "size__size"
-                ).select_related("size", "size__product", "line"),
+                    "size__product__type", "size__order", "size__category", "size__size"
+                )
+                .select_related("size", "size__product", "line")
+                .prefetch_related("size__product__images"),
             ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )
