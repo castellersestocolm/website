@@ -73,6 +73,10 @@
   padding: 12px 16px;
 }
 
+.adminBoxCharts {
+  padding: 12px 24px 16px 24px;
+}
+
 .adminTableRowLast {
   th,
   td {

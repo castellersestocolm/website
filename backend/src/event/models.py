@@ -114,6 +114,9 @@ class Event(StandardModel, Timestamps):
             transaction.on_commit(
                 lambda: event.tasks.create_or_update_event.delay(event_id=self.id)
             )
+            transaction.on_commit(
+                lambda: event.tasks.create_or_update_album.delay(event_id=self.id)
+            )
         elif hasattr(self, "google_event"):
             transaction.on_commit(lambda: self.google_event.delete())
 
@@ -264,3 +267,22 @@ def event_on_delete(sender, instance, using, **kwargs):
     import event.api.google_calendar
 
     event.api.google_calendar.delete_google_event(google_event_id=instance.id)
+
+
+class GoogleAlbum(StandardModel, Timestamps):
+    event = models.OneToOneField(
+        Event, related_name="google_album", on_delete=models.CASCADE
+    )
+    google_integration = models.ForeignKey(
+        "integration.GoogleIntegration",
+        related_name="google_albums",
+        on_delete=models.CASCADE,
+    )
+    external_id = models.CharField(max_length=255, unique=True)
+
+
+@receiver(pre_delete, sender=GoogleAlbum)
+def album_on_delete(sender, instance, using, **kwargs):
+    import event.api.google_album
+
+    event.api.google_album.delete_google_album(google_album_id=instance.id)

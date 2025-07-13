@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
-import { apiEventList, apiProductList } from "../../api";
+import { apiEventList, apiProductList, apiUserList } from "../../api";
 import { EVENT_TYPE_ICON, EventType, RegistrationStatus } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import IconKeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -25,7 +25,7 @@ import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import IcconPerson from "@mui/icons-material/Person";
 import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
-import { LineChart } from "@mui/x-charts";
+import {axisClasses, LineChart} from "@mui/x-charts";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -40,6 +40,7 @@ function AdminPage() {
   const [events, setEvents] = React.useState(undefined);
   const [statEvents, setStatEvents] = React.useState(undefined);
   const [products, setProducts] = React.useState(undefined);
+  const [users, setUsers] = React.useState(undefined);
 
   React.useEffect(() => {
     apiEventList(
@@ -80,6 +81,14 @@ function AdminPage() {
       }
     });
   }, [setProducts, i18n.resolvedLanguage]);
+
+  React.useEffect(() => {
+    apiUserList().then((response) => {
+      if (response.status === 200) {
+        setUsers(response.data);
+      }
+    });
+  }, [setUsers]);
 
   function handleAdminAttendanceSubmit() {
     navigate(ROUTES["admin-attendance"].path, { replace: true });
@@ -365,7 +374,7 @@ function AdminPage() {
               {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
             </Box>
           </Link>
-          <Box className={styles.adminBox}>
+          <Box className={styles.adminBoxCharts}>
             {statEvents && statEvents.results.length > 0 && (
               <Box mt={1}>
                 <Typography
@@ -377,6 +386,12 @@ function AdminPage() {
                   {t("pages.admin.stats-table.attendance-title")}
                 </Typography>
                 <LineChart
+                  margin={{
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: -48
+                  }}
                   xAxis={[
                     {
                       data: statEvents.results.map(
@@ -436,6 +451,11 @@ function AdminPage() {
                       stack: "expand",
                       color: theme.palette.success.main,
                     },
+                  ]}
+                  yAxis={[
+                      {
+                          label: "adasd",
+                      },
                   ]}
                   height={300}
                 />

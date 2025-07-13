@@ -14,6 +14,7 @@ from event.models import (
     GoogleCalendarDefault,
     GoogleEvent,
     Connection,
+    GoogleAlbum,
 )
 
 
@@ -126,4 +127,11 @@ class GoogleCalendarAdmin(admin.ModelAdmin):
 class GoogleEventAdmin(admin.ModelAdmin):
     search_fields = ("id", "external_id")
     list_display = ("event", "google_calendar", "external_id")
+    ordering = ("-event__time_from",)
+
+
+@admin.register(GoogleAlbum)
+class GoogleEventAdmin(admin.ModelAdmin):
+    search_fields = ("id", "external_id")
+    list_display = ("event", "google_integration", "external_id")
     ordering = ("-event__time_from",)
