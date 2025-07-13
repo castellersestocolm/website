@@ -102,20 +102,19 @@ def get_list(
             )
             .with_is_adult()
         )
-        user_count = len([user_obj for user_obj in user_objs if user_obj.is_adult])
-        child_count = len([user_obj for user_obj in user_objs if not user_obj.is_adult])
+        user_ids = [user_obj.id for user_obj in user_objs if user_obj.is_adult]
+        child_ids = [user_obj.id for user_obj in user_objs if not user_obj.is_adult]
 
         event_qs = event_qs.annotate(
-            registration_count_total=Value(user_count),
-            registration_count_children_total=Value(child_count),
+            registration_count_total=Value(len(user_ids)),
+            registration_count_children_total=Value(len(child_ids)),
             registration_count_active=Coalesce(
                 Subquery(
                     Registration.objects.filter(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.ACTIVE,
                     )
-                    .with_is_user_adult()
-                    .filter(is_user_adult=True)
+                    .filter(user_id__in=user_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]
@@ -129,8 +128,7 @@ def get_list(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.ACTIVE,
                     )
-                    .with_is_user_adult()
-                    .filter(is_user_adult=False)
+                    .filter(user_id__in=child_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]
@@ -144,8 +142,7 @@ def get_list(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.CANCELLED,
                     )
-                    .with_is_user_adult()
-                    .filter(is_user_adult=True)
+                    .filter(user_id__in=user_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]
@@ -159,8 +156,7 @@ def get_list(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.CANCELLED,
                     )
-                    .with_is_user_adult()
-                    .filter(is_user_adult=False)
+                    .filter(user_id__in=child_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]
