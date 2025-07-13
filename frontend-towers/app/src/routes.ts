@@ -47,6 +47,9 @@ export const ROUTES = {
   "calendar-2025-06-14-anniversary-performance": {
     path: "/calendar/2025/06/14/anniversary-performance",
   },
+  order: {
+    path: "/order",
+  },
   admin: {
     path: "/admin",
   },

@@ -25,7 +25,7 @@ import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import IcconPerson from "@mui/icons-material/Person";
 import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
-import {axisClasses, LineChart} from "@mui/x-charts";
+import { LineChart } from "@mui/x-charts";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -390,7 +390,7 @@ function AdminPage() {
                     top: 0,
                     right: 0,
                     bottom: 0,
-                    left: -32
+                    left: -32,
                   }}
                   xAxis={[
                     {
@@ -453,9 +453,9 @@ function AdminPage() {
                     },
                   ]}
                   yAxis={[
-                      {
-                          label: "adasd",
-                      },
+                    {
+                      label: "adasd",
+                    },
                   ]}
                   height={300}
                 />

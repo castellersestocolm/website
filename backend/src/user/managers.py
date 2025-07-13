@@ -88,6 +88,23 @@ class UserQuerySet(QuerySet):
             has_active_membership=ExpressionWrapper(
                 Q(membership_id__isnull=False), output_field=BooleanField()
             ),
+            **{
+                f"membership_{module}": Exists(
+                    MembershipModule.objects.filter(
+                        Q(membership__date_end__isnull=True)
+                        | Q(membership__date_end__gte=date),
+                        module=module,
+                        status__in=status,
+                        membership__status__in=status,
+                        membership__date_from__lte=date,
+                        membership__date_to__gte=date,
+                        membership__membership_users__user_id=OuterRef("id"),
+                    )
+                    .order_by("-membership__date_to")
+                    .values_list("membership_id", flat=True)[:1]
+                )
+                for module in Module
+            },
         )
 
     def with_has_active_role(

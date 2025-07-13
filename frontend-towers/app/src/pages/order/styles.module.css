@@ -1,0 +1,27 @@
+.productsGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.productCard {
+  height: 100%;
+}
+
+.productCardMediaBox {
+}
+
+.productCardMedia {
+  padding: 16px;
+  background-color: var(--mui-palette-grey-100);
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+.productCardMediaImage {
+  width: 100%;
+}
+
+.productCardContent {
+  padding-bottom: 18px !important;
+}

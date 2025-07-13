@@ -7,9 +7,12 @@ from django.db.models import (
     Value,
     IntegerField,
     F,
+    Q,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Cast
 
+from comunicat.enums import Module
+from comunicat.utils.managers import MoneyOutput
 from order.enums import OrderStatus
 
 
@@ -43,6 +46,33 @@ class ProductQuerySet(QuerySet):
             stock=F("stock_in") - F("stock_out"),
         )
 
+    def with_price(self, modules: list[Module] | None = None):
+        ProductSize = apps.get_model("product", "ProductSize")
+
+        return self.annotate(
+            price_min=Coalesce(
+                Subquery(
+                    ProductSize.objects.filter(product_id=OuterRef("id"))
+                    .with_price(modules=modules)
+                    .order_by("price")
+                    .values_list("price", flat=True)[:1],
+                ),
+                Value(None),
+                output_field=MoneyOutput(),
+            ),
+            price_max=Coalesce(
+                Subquery(
+                    ProductSize.objects.filter(product_id=OuterRef("id"))
+                    .with_price(modules=modules)
+                    .order_by("-price")
+                    .values_list("price", flat=True)[:1],
+                ),
+                Value(None),
+                output_field=MoneyOutput(),
+            ),
+            price=F("price_min"),
+        )
+
 
 class ProductSizeQuerySet(QuerySet):
     def with_stock(self):
@@ -72,4 +102,28 @@ class ProductSizeQuerySet(QuerySet):
                 output_field=IntegerField(),
             ),
             stock=F("stock_in") - F("stock_out"),
+        )
+
+    def with_price(self, modules: list[Module] | None = None):
+        ProductPrice = apps.get_model("product", "ProductPrice")
+
+        product_price_filter = (Q(size__isnull=True) | Q(size_id=OuterRef("id"))) & Q(
+            product_id=OuterRef("product_id")
+        )
+
+        if modules:
+            product_price_filter &= Q(module__isnull=True) | Q(module__in=modules)
+        else:
+            product_price_filter &= Q(module__isnull=True)
+
+        return self.annotate(
+            price=Coalesce(
+                Subquery(
+                    ProductPrice.objects.filter(product_price_filter)
+                    .order_by("amount")
+                    .values_list("amount", flat=True)[:1],
+                ),
+                Value(None),
+                output_field=MoneyOutput(),
+            ),
         )

@@ -31,6 +31,7 @@ import AdminPage from "./pages/admin";
 import Calendar20250614AnniversaryPerformancePage from "./pages/calendar-2025-06-14-anniversary-performance";
 import AdminAttendancePage from "./pages/admin-attendance";
 import AdminEquipmentPage from "./pages/admin-equipment";
+import OrderPage from "./pages/order";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -151,6 +152,7 @@ const App = () => {
                     path={ROUTES.association.path}
                     element={<AssociationPage />}
                   />
+                  <Route path={ROUTES.order.path} element={<OrderPage />} />
                   <Route path={ROUTES.admin.path} element={<AdminPage />} />
                   <Route
                     path={ROUTES["admin-attendance"].path}

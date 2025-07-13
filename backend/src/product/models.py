@@ -18,6 +18,7 @@ from product.managers import ProductQuerySet, ProductSizeQuerySet
 
 class Product(StandardModel, Timestamps):
     name = JSONField(default=language_field_default)
+    description = JSONField(default=language_field_default)
     type = models.PositiveSmallIntegerField(
         choices=((at.value, at.name) for at in ArticleType),
     )

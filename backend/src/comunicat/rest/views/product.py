@@ -9,7 +9,10 @@ from rest_framework.response import Response
 import product.api
 
 from comunicat.consts import PERMISSIONS_BY_LEVEL
-from comunicat.rest.serializers.product import ProductWithStockSerializer
+from comunicat.rest.serializers.product import (
+    ProductWithStockSerializer,
+    ProductSerializer,
+)
 
 from comunicat.rest.viewsets import ComuniCatViewSet
 
@@ -21,30 +24,32 @@ class ProductResultsSetPagination(PageNumberPagination):
 
 
 class ProductAPI(ComuniCatViewSet):
-    serializer_class = ProductWithStockSerializer
+    serializer_class = ProductSerializer
     permission_classes = (permissions.AllowAny,)
     pagination_class = ProductResultsSetPagination
     lookup_field = "id"
 
     @swagger_auto_schema(
-        responses={200: ProductWithStockSerializer(many=True), 400: Serializer()},
+        responses={200: ProductSerializer(many=True), 400: Serializer()},
     )
-    @method_decorator(cache_page(60))
+    # @method_decorator(cache_page(60))
     def list(self, request):
-        if not request.user.is_authenticated:
-            return Response(status=400)
+        product_objs = product.api.get_list(
+            user_id=request.user.id if request.user.is_authenticated else None,
+            module=self.module,
+        )
 
-        if (
-            not request.user.permission_level
+        serializer_class = (
+            ProductWithStockSerializer
+            if request.user.is_authenticated
+            and request.user.permission_level
             >= PERMISSIONS_BY_LEVEL["product"]["product"]["list"]
-        ):
-            return Response(status=400)
-
-        product_objs = product.api.get_list(module=self.module)
+            else self.serializer_class
+        )
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(product_objs, request)
-        serializer = self.serializer_class(
+        serializer = serializer_class(
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
