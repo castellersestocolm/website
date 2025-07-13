@@ -8,6 +8,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.enums import Module
 from event.consts import (
     GOOGLE_CALENDAR_SCOPES,
@@ -56,6 +57,10 @@ def import_events() -> None:
     for google_integration_obj in GoogleIntegration.objects.prefetch_related(
         "google_calendars"
     ):
+
+        if not GOOGLE_ENABLED_BY_MODULE[google_integration_obj.module]["calendar"]:
+            continue
+
         if (
             google_integration_obj.module
             in settings.MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES
@@ -274,6 +279,9 @@ def create_or_update_event(
     if not event_obj or not event_obj.module:
         return None
 
+    if not GOOGLE_ENABLED_BY_MODULE[event_obj.module]["calendar"]:
+        return None
+
     google_integration_obj = GoogleIntegration.objects.filter(
         module=event_obj.module
     ).first()
@@ -480,6 +488,11 @@ def delete_google_event(google_event_id: UUID) -> bool:
     )
 
     if not google_event_obj:
+        return False
+
+    if not GOOGLE_ENABLED_BY_MODULE[
+        google_event_obj.google_calendar.google_integration.module
+    ]["calendar"]:
         return False
 
     try:

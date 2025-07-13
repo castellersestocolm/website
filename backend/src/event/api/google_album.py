@@ -4,6 +4,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from event.consts import (
     GOOGLE_PHOTOS_SCOPES,
 )
@@ -27,6 +28,9 @@ def create_or_update_album(event_id: UUID) -> GoogleAlbum | None:
     )
 
     if not event_obj:
+        return None
+
+    if not GOOGLE_ENABLED_BY_MODULE[event_obj.module]["photos"]:
         return None
 
     google_integration_obj = GoogleIntegration.objects.filter(
@@ -80,6 +84,9 @@ def delete_google_album(google_album_id: UUID) -> bool:
     #
     # if not google_album_obj:
     #     return False
+    #
+    # if not GOOGLE_ENABLED_BY_MODULE[google_album_obj.google_integration.module]["photos"]:
+    #     return None
     #
     # try:
     #     creds = Credentials.from_authorized_user_info(

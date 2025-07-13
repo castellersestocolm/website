@@ -19,6 +19,17 @@ DOMAIN_BY_MODULE = {
     Module.TOWERS: settings.MODULE_TOWERS_DOMAIN,
 }
 
+GOOGLE_ENABLED_BY_MODULE = {
+    Module.ORG: {
+        "calendar": settings.MODULE_ORG_GOOGLE_CALENDAR_ENABLED,
+        "photos": settings.MODULE_ORG_GOOGLE_PHOTOS_ENABLED,
+    },
+    Module.TOWERS: {
+        "calendar": settings.MODULE_TOWERS_GOOGLE_CALENDAR_ENABLED,
+        "photos": settings.MODULE_TOWERS_GOOGLE_PHOTOS_ENABLED,
+    },
+}
+
 PERMISSIONS_BY_LEVEL = {
     "event": {
         "registration": {

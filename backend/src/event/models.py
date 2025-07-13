@@ -4,6 +4,7 @@ from django.db.models import JSONField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
+from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
 from django.db import models, transaction
 
@@ -111,12 +112,15 @@ class Event(StandardModel, Timestamps):
         if self.status == EventStatus.PUBLISHED:
             import event.tasks
 
-            transaction.on_commit(
-                lambda: event.tasks.create_or_update_event.delay(event_id=self.id)
-            )
-            transaction.on_commit(
-                lambda: event.tasks.create_or_update_album.delay(event_id=self.id)
-            )
+            if GOOGLE_ENABLED_BY_MODULE[self.module]["calendar"]:
+                transaction.on_commit(
+                    lambda: event.tasks.create_or_update_event.delay(event_id=self.id)
+                )
+
+            if GOOGLE_ENABLED_BY_MODULE[self.module]["photos"]:
+                transaction.on_commit(
+                    lambda: event.tasks.create_or_update_album.delay(event_id=self.id)
+                )
         elif hasattr(self, "google_event"):
             transaction.on_commit(lambda: self.google_event.delete())
 
@@ -185,11 +189,12 @@ class Registration(StandardModel, Timestamps):
         if not self.pk or self.status != self.__status:
             import event.tasks
 
-            transaction.on_commit(
-                lambda: event.tasks.create_or_update_event.delay(
-                    event_id=self.event_id, registration_id=self.id
+            if GOOGLE_ENABLED_BY_MODULE[self.event.module]["calendar"]:
+                transaction.on_commit(
+                    lambda: event.tasks.create_or_update_event.delay(
+                        event_id=self.event_id, registration_id=self.id
+                    )
                 )
-            )
 
         import pinyator.tasks
 
