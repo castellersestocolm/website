@@ -53,6 +53,9 @@ export const ROUTES = {
   "admin-attendance": {
     path: "/admin/attendance",
   },
+  "admin-equipment": {
+    path: "/admin/equipment",
+  },
   "external-form-equipment": {
     path: "https://docs.google.com/forms/d/e/1FAIpQLSc1ZoTANdTVTpeZ_jqxvGVm1KXpjNZQLBD4m6pkCtugkBAWqg/viewform",
   },

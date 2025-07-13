@@ -231,6 +231,11 @@
   "pages.admin-attendance.events-table.height-arms": "Arms",
   "pages.admin-attendance.events-table.family": "Family",
   "pages.admin-attendance.events-table.attendance": "Attendance",
+  "pages.admin-equipment.title": "Equipment stock",
+  "pages.admin-equipment.equipment-table.title": "Equipment",
+  "pages.admin-equipment.equipment-table.category": "Category",
+  "pages.admin-equipment.equipment-table.size": "Size",
+  "pages.admin-equipment.equipment-table.stock": "Stock",
   "pages.sale-bandana.title": "Sale of bandanas",
   "pages.sale-tshirts.title": "Sale of t-shirts",
   "swish.payment.membership": "Membership",
@@ -286,5 +291,8 @@
   "enums.registration-status.10": "Requested",
   "enums.registration-status.20": "Attending",
   "enums.registration-status.30": "Not attending",
-  "enums.registration-status.40": "Tentative"
+  "enums.registration-status.40": "Tentative",
+  "enums.product-size-category.0": "Everyone",
+  "enums.product-size-category.10": "Children",
+  "enums.product-size-category.20": "Adults"
 }

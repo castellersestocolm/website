@@ -43,6 +43,7 @@ class ProductSize(StandardModel, Timestamps):
         blank=True,
     )
     size = models.CharField(max_length=32)
+    order = models.PositiveSmallIntegerField(default=0)
 
     objects = ProductSizeQuerySet.as_manager()
 
@@ -50,7 +51,7 @@ class ProductSize(StandardModel, Timestamps):
         return f"{str(self.product)} - {self.size}"
 
     class Meta:
-        ordering = ("product__type", "category", "size")
+        ordering = ("product__type", "order", "category", "size")
 
 
 class ProductImage(StandardModel, Timestamps):

@@ -18,7 +18,7 @@ from product.models import (
 class ProductSizeInline(admin.TabularInline):
     model = ProductSize
     extra = 0
-    fields = ("category", "size", "stock")
+    fields = ("category", "size", "order", "stock")
     readonly_fields = ("stock",)
 
     def get_queryset(self, request):

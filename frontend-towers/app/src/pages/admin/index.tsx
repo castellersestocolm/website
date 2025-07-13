@@ -101,6 +101,10 @@ function AdminPage() {
     navigate(ROUTES["admin-attendance"].path, { replace: true });
   }
 
+  function handleAdminEquipmentSubmit() {
+    navigate(ROUTES["admin-equipment"].path, { replace: true });
+  }
+
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
       <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
@@ -221,7 +225,8 @@ function AdminPage() {
                                           .active -
                                         event.registration_counts.children
                                           .cancelled >=
-                                      event.registration_counts.children.total / 2
+                                      event.registration_counts.children.total /
+                                        2
                                     ? "secondary"
                                     : "error"
                               }
@@ -275,12 +280,13 @@ function AdminPage() {
             underline="none"
             component="button"
             className={styles.adminTitleLink}
+            onClick={handleAdminEquipmentSubmit}
           >
             <Box className={styles.adminTopBoxLink}>
               <Typography variant="h6" fontWeight="600" component="div">
                 {t("pages.admin.equipment-table.title")}
               </Typography>
-              {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
           <Box>

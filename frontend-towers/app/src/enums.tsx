@@ -112,6 +112,11 @@ export enum ProductType {
   TSHIRT = 3240,
 }
 
+export enum ProductSizeCategory {
+  CHILDREN = 10,
+  ADULTS = 20,
+}
+
 export enum TransportMode {
   BUS = 10,
   TROLLEYBUS = 20,

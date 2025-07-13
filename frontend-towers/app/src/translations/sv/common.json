@@ -231,6 +231,11 @@
   "pages.admin-attendance.events-table.height-arms": "Armar",
   "pages.admin-attendance.events-table.family": "Familj",
   "pages.admin-attendance.events-table.attendance": "Deltagare",
+  "pages.admin-equipment.title": "Utrustningslager",
+  "pages.admin-equipment.equipment-table.title": "Utrustning",
+  "pages.admin-equipment.equipment-table.category": "Kategori",
+  "pages.admin-equipment.equipment-table.size": "Storlek",
+  "pages.admin-equipment.equipment-table.stock": "Lager",
   "pages.sale-bandana.title": "Försäljning av sjaletter",
   "pages.sale-tshirts.title": "Försäljning av t-shirts",
   "swish.payment.membership": "Medlemskap",
@@ -286,5 +291,8 @@
   "enums.registration-status.10": "Begärt",
   "enums.registration-status.20": "Deltar",
   "enums.registration-status.30": "Deltar inte",
-  "enums.registration-status.40": "Frivillig"
+  "enums.registration-status.40": "Frivillig",
+  "enums.product-size-category.0": "Alla",
+  "enums.product-size-category.10": "Barn",
+  "enums.product-size-category.20": "Vuxna"
 }
