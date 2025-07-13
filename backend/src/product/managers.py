@@ -14,7 +14,6 @@ from order.enums import OrderStatus
 
 
 class ProductQuerySet(QuerySet):
-    # TODO: Discount stock given
     def with_stock(self):
         StockProduct = apps.get_model("product", "StockProduct")
         OrderProduct = apps.get_model("order", "OrderProduct")
@@ -46,7 +45,6 @@ class ProductQuerySet(QuerySet):
 
 
 class ProductSizeQuerySet(QuerySet):
-    # TODO: Discount stock given
     def with_stock(self):
         StockProduct = apps.get_model("product", "StockProduct")
         OrderProduct = apps.get_model("order", "OrderProduct")

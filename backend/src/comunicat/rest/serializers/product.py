@@ -39,8 +39,28 @@ class ProductImageSerializer(s.ModelSerializer):
         )
 
 
+class ProductSizeWithStockSerializer(s.ModelSerializer):
+    stock = s.IntegerField(read_only=True)
+
+    class Meta:
+        model = ProductSize
+        fields = (
+            "id",
+            "category",
+            "size",
+            "stock",
+        )
+        read_only_fields = (
+            "id",
+            "category",
+            "size",
+            "stock",
+        )
+
+
 class ProductWithStockSerializer(ProductSerializer):
     stock = s.IntegerField(read_only=True)
+    sizes = ProductSizeWithStockSerializer(many=True, read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
 
     class Meta:
@@ -50,6 +70,7 @@ class ProductWithStockSerializer(ProductSerializer):
             "name",
             "type",
             "stock",
+            "sizes",
             "images",
         )
         read_only_fields = (
@@ -57,6 +78,7 @@ class ProductWithStockSerializer(ProductSerializer):
             "name",
             "type",
             "stock",
+            "sizes",
             "images",
         )
 
