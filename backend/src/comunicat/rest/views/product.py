@@ -32,7 +32,7 @@ class ProductAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: ProductSerializer(many=True), 400: Serializer()},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def list(self, request):
         product_objs = product.api.get_list(
             user_id=request.user.id if request.user.is_authenticated else None,

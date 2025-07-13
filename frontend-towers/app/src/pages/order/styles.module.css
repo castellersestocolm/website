@@ -15,7 +15,6 @@
 .productCardMedia {
   padding: 16px;
   background-color: var(--mui-palette-grey-100);
-  border-bottom: 1px solid var(--mui-palette-divider);
 }
 
 .productCardMediaImage {
@@ -24,4 +23,40 @@
 
 .productCardContent {
   padding-bottom: 18px !important;
+  border-top: 1px solid var(--mui-palette-divider);
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+.productsList {
+  padding: 0 !important;
+}
+
+.productSizeCartInner {
+  display: flex;
+  flex: 1;
+  justify-content: end;
+  align-items: center;
+}
+
+.productListInner {
+  display: flex;
+  flex: 1;
+}
+
+.productListItem {
+  flex: 1;
+}
+
+.productListItemButton {
+  padding-right: 8px !important;
+}
+
+.productSizeCartCount {
+  border-radius: 100%;
+  margin: 0 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
