@@ -6,6 +6,7 @@ import {
   API_EXPENSES_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
   API_ORDERS_LIST_PAGE_SIZE,
+  API_PRODUCTS_LIST_PAGE_SIZE,
 } from "../consts";
 import { RegistrationStatus } from "../enums";
 
@@ -555,6 +556,21 @@ export const apiTowersCastleList = async (eventId: string) => {
   try {
     return await instance.get("/towers/castle/", {
       params: { event_id: eventId },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiProductList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/product/", {
+      params: {
+        page_size: API_PRODUCTS_LIST_PAGE_SIZE,
+        page: page,
+      },
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

@@ -104,6 +104,14 @@ export const EVENT_TYPE_ICON: any = {
   60: <IconLocalActivity />,
 };
 
+export enum ProductType {
+  SHIPPING = 10,
+  SHIRT = 3210,
+  FAIXA = 3220,
+  BANDANA = 3230,
+  TSHIRT = 3240,
+}
+
 export enum TransportMode {
   BUS = 10,
   TROLLEYBUS = 20,

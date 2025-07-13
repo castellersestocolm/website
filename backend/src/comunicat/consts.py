@@ -30,4 +30,9 @@ PERMISSIONS_BY_LEVEL = {
             "list": PermissionLevel.ADMIN,
         }
     },
+    "product": {
+        "product": {
+            "list": PermissionLevel.ADMIN,
+        }
+    },
 }

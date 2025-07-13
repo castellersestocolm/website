@@ -40,8 +40,18 @@
   min-width: 42px !important;
 }
 
+.eventCardImage {
+  width: 1.5em;
+  max-height: 1.5em;
+}
+
 .eventCountBox {
   display: flex;
+}
+
+.eventCountNoTextBox {
+  display: flex;
+  justify-content: end;
 }
 
 .eventCountIcon {
