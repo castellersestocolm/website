@@ -23,6 +23,8 @@ class Product(StandardModel, Timestamps):
         choices=((at.value, at.name) for at in ArticleType),
     )
 
+    ignore_stock = models.BooleanField(default=False)
+
     objects = ProductQuerySet.as_manager()
 
     def __str__(self) -> str:

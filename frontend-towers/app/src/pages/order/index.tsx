@@ -89,7 +89,9 @@ function OrderPage() {
         [productSizeId]: [
           Math.min(
             (cart && productSizeId in cart ? cart[productSizeId][0] : 0) + 1,
-            100,
+            productSizeById[productSizeId][0].ignore_stock
+              ? 100
+              : productSizeById[productSizeId][1].stock,
           ),
           productSizeById[productSizeId],
         ],
@@ -239,7 +241,22 @@ function OrderPage() {
                                 .filter((productSize: any) => productSize.price)
                                 .map((productSize: any, i: number) => {
                                   return (
-                                    <MenuItem key={i} value={productSize.id}>
+                                    <MenuItem
+                                      key={i}
+                                      value={productSize.id}
+                                      disabled={
+                                        !(
+                                          product.ignore_stock ||
+                                          productSize.stock > 0
+                                        ) ||
+                                        (cart &&
+                                          productSize.id in cart &&
+                                          cart[productSize.id][0] >=
+                                            (product.ignore_stock
+                                              ? 100
+                                              : productSize.stock))
+                                      }
+                                    >
                                       {productSize.size}
                                       {priceAmountCommon === undefined ||
                                       productSize.price.amount !==
@@ -363,8 +380,15 @@ function OrderPage() {
                                                 )
                                               }
                                               disabled={
-                                                productSize.id in cart &&
-                                                cart[productSize.id][0] >= 100
+                                                !(
+                                                  product.ignore_stock ||
+                                                  productSize.stock > 0
+                                                ) ||
+                                                (productSize.id in cart &&
+                                                  cart[productSize.id][0] >=
+                                                    (product.ignore_stock
+                                                      ? 100
+                                                      : productSize.stock))
                                               }
                                             >
                                               <IconAdd />

@@ -4,6 +4,7 @@ from uuid import UUID
 from django.db import transaction
 from django.db.models import Prefetch, Q, Exists, OuterRef
 from django.utils import translation
+from rest_framework.exceptions import ValidationError
 
 from comunicat.enums import Module
 from notify.enums import EmailType
@@ -17,6 +18,8 @@ from user.models import FamilyMember, User
 import notify.tasks
 
 from django.conf import settings
+
+from django.utils.translation import gettext_lazy as _
 
 
 def get_list(user_id: UUID, module: Module) -> List[Order]:
@@ -100,10 +103,20 @@ def create(
         )
         .select_related("product")
         .with_price(modules=modules)
+        .with_stock()
     }
 
     for size in sizes:
         product_size_obj = product_size_obj_by_id[size["id"]]
+
+        if (
+            size["quantity"] > product_size_obj.stock
+            and not product_size_obj.product.ignore_stock
+        ):
+            raise ValidationError(
+                {"size": _("The amount of some products exceed the available stock.")}
+            )
+
         OrderProduct.objects.create(
             order=order_obj,
             size=product_size_obj,
