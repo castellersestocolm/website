@@ -1,6 +1,10 @@
 from django.contrib import admin
+from django.utils import translation
 
+from notify.enums import EmailType
 from order.models import OrderProduct, Order, OrderDelivery, OrderLog
+
+import notify.tasks
 
 
 class OrderProductInline(admin.TabularInline):
@@ -25,6 +29,17 @@ class OrderLogInline(admin.TabularInline):
         return False
 
 
+@admin.action(description="Send created email")
+def send_created_email(modeladmin, request, queryset):
+    for order_obj in queryset:
+        notify.tasks.send_order_email(
+            order_id=order_obj.id,
+            email_type=EmailType.ORDER_CREATED,
+            module=order_obj.origin_module,
+            locale=order_obj.origin_language,
+        )
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     search_fields = ("id", "entity__email", "entity__firstname", "entity__lastname")
@@ -38,6 +53,7 @@ class OrderAdmin(admin.ModelAdmin):
     raw_id_fields = ("entity",)
     ordering = ("-created_at",)
     inlines = (OrderProductInline, OrderLogInline)
+    actions = (send_created_email,)
 
 
 @admin.register(OrderDelivery)

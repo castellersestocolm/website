@@ -94,6 +94,7 @@ def create(
     order_obj = Order.objects.create(
         entity=entity_obj,
         delivery=order_delivery_obj,
+        origin_module=module,
     )
 
     product_size_obj_by_id = {
@@ -127,8 +128,8 @@ def create(
         )
 
     if with_notify:
-        notify.tasks.send_user_email.delay(
-            user_id=user_id,
+        notify.tasks.send_order_email.delay(
+            order_id=order_obj.id,
             email_type=EmailType.ORDER_CREATED,
             module=module,
             locale=translation.get_language(),

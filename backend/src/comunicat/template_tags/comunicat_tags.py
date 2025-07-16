@@ -3,9 +3,11 @@ from urllib.parse import urljoin
 
 from django.conf import settings
 from django.template.defaulttags import register
-from django.utils import timezone
+from django.utils import timezone, translation
+from djmoney.money import Money
 
 from event.models import Registration, Event
+from order.models import Order
 from user.models import User
 
 
@@ -47,6 +49,29 @@ def full_towers_static(path):
     )
 
 
+@register.simple_tag
+def full_media(path):
+    return urljoin(
+        f"{settings.HTTP_PROTOCOL}://{settings.DOMAIN}{settings.MEDIA_URL}/", path
+    )
+
+
+@register.simple_tag
+def full_org_media(path):
+    return urljoin(
+        f"{settings.HTTP_PROTOCOL}://{settings.MODULE_ORG_DOMAIN}{settings.MEDIA_URL}/",
+        path,
+    )
+
+
+@register.simple_tag
+def full_towers_media(path):
+    return urljoin(
+        f"{settings.HTTP_PROTOCOL}://{settings.MODULE_TOWERS_DOMAIN}{settings.MEDIA_URL}/",
+        path,
+    )
+
+
 @register.filter
 def settings_value(name):
     return getattr(settings, name, "")
@@ -79,3 +104,21 @@ def registration_by_event_and_user(
         ]
         + [None]
     )[0]
+
+
+@register.filter
+def localise(text: dict[str]) -> str:
+    locale = translation.get_language()
+    return text.get(locale)
+
+
+@register.filter
+def order_amount(order_obj: Order) -> Money:
+    return sum(
+        [order_product_obj.amount for order_product_obj in order_obj.products.all()]
+    )
+
+
+@register.filter
+def format_money(amount: Money) -> str:
+    return f"{'{:,}'.format(int(amount.amount)).replace(',', ' ')} {amount.currency}"

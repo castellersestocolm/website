@@ -16,6 +16,7 @@ from notify.api.email import send_email
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import NotificationType, EmailType
 from notify.models import Email
+from order.models import Order, OrderProduct, OrderLog
 from user.enums import FamilyMemberStatus
 from user.models import User, FamilyMember
 
@@ -175,5 +176,66 @@ def send_user_email(
         to=email or user_obj.email,
         reply_to=from_email,
         attachments=attachments,
+        module=module,
+    )
+
+
+@shared_task
+def send_order_email(
+    order_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: Optional[dict] = None,
+    locale: Optional[str] = settings.LANGUAGE_CODE,
+) -> None:
+    order_obj = (
+        Order.objects.filter(id=order_id)
+        .select_related("entity", "delivery")
+        .prefetch_related(
+            Prefetch(
+                "products",
+                OrderProduct.objects.order_by(
+                    "size__product__type", "size__order", "size__category", "size__size"
+                )
+                .select_related("size", "size__product", "line")
+                .prefetch_related("size__product__images"),
+            ),
+            Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
+        )
+        .with_amount()
+        .first()
+    )
+
+    user_obj = order_obj.entity.user
+
+    with translation.override(locale):
+        context = {**SETTINGS_BY_MODULE[module], **(context or {})}
+        context_full = {**context, "order_obj": order_obj}
+
+        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
+            email_type
+        ]
+        from_email = EMAIL_BY_MODULE[module]
+        body = render_to_string(template["html"], context_full)
+        subject = str(template["subject"])
+
+    Email.objects.create(
+        user=user_obj,
+        email=email or user_obj.email,
+        type=email_type,
+        subject=subject,
+        context=context,
+        module=module,
+        locale=locale,
+    )
+
+    send_email(
+        subject=subject,
+        body=body,
+        from_email=from_email,
+        to=email or user_obj.email,
+        reply_to=from_email,
+        attachments=[],
         module=module,
     )

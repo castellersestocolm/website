@@ -4,6 +4,7 @@ from django.utils import timezone
 from comunicat.db.mixins import StandardModel, Timestamps
 from djmoney.models.fields import MoneyField
 
+from comunicat.enums import Module
 from order.enums import OrderDeliveryType, OrderStatus
 from order.managers import OrderQuerySet
 
@@ -28,6 +29,12 @@ class Order(StandardModel, Timestamps):
     )
 
     notes = models.TextField(max_length=1000, blank=True, null=True)
+
+    # Tracks where the order was created
+    origin_module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+    )
+    origin_language = models.CharField(max_length=255, null=True, blank=True)
 
     objects = OrderQuerySet.as_manager()
 
