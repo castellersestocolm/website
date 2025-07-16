@@ -27,6 +27,7 @@ import FormControl from "@mui/material/FormControl";
 import IconAddShoppingCart from "@mui/icons-material/AddShoppingCart";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import { ROUTES } from "../../routes";
+import { getEnumLabel } from "../../enums";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -257,6 +258,13 @@ function OrderPage() {
                                               : productSize.stock))
                                       }
                                     >
+                                      {productSize.category
+                                        ? getEnumLabel(
+                                            t,
+                                            "product-size-category",
+                                            productSize.category,
+                                          ) + " — "
+                                        : undefined}
                                       {productSize.size}
                                       {priceAmountCommon === undefined ||
                                       productSize.price.amount !==
