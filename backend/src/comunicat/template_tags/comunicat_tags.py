@@ -56,22 +56,6 @@ def full_media(path):
     )
 
 
-@register.simple_tag
-def full_org_media(path):
-    return urljoin(
-        f"{settings.HTTP_PROTOCOL}://{settings.MODULE_ORG_DOMAIN}{settings.MEDIA_URL}/",
-        path,
-    )
-
-
-@register.simple_tag
-def full_towers_media(path):
-    return urljoin(
-        f"{settings.HTTP_PROTOCOL}://{settings.MODULE_TOWERS_DOMAIN}{settings.MEDIA_URL}/",
-        path,
-    )
-
-
 @register.filter
 def settings_value(name):
     return getattr(settings, name, "")

@@ -32,7 +32,7 @@ class OrderLogInline(admin.TabularInline):
 @admin.action(description="Send created email")
 def send_created_email(modeladmin, request, queryset):
     for order_obj in queryset:
-        notify.tasks.send_order_email(
+        notify.tasks.send_order_email.delay(
             order_id=order_obj.id,
             email_type=EmailType.ORDER_CREATED,
             module=order_obj.origin_module,
