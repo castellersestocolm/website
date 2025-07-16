@@ -578,3 +578,15 @@ export const apiProductList = async (page: number = undefined) => {
     throw error;
   }
 };
+
+export const apiOrderCreate = async (sizes: any[]) => {
+  try {
+    return await instance.post("/order/", {
+      sizes: sizes,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

@@ -1,13 +1,16 @@
 from typing import List
 from uuid import UUID
 
+from django.db import transaction
 from django.db.models import Prefetch, Q, Exists, OuterRef
 
 from comunicat.enums import Module
-from order.enums import OrderStatus
-from order.models import Order, OrderProduct, OrderLog
+from order.enums import OrderStatus, OrderDeliveryType
+from order.models import Order, OrderProduct, OrderLog, OrderDelivery
+from payment.models import Entity
+from product.models import ProductSize
 from user.enums import FamilyMemberStatus
-from user.models import FamilyMember
+from user.models import FamilyMember, User
 
 from django.conf import settings
 
@@ -60,3 +63,48 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
         .with_amount()
         .order_by("-created_at")
     )
+
+
+@transaction.atomic
+def create(sizes: list[dict], user_id: UUID, module: Module) -> Order | None:
+    if user_id:
+        user_obj = User.objects.filter(id=user_id).with_has_active_membership().first()
+        modules = [
+            module
+            for module in Module
+            if getattr(user_obj, f"membership_{module}", False)
+        ]
+    else:
+        modules = []
+
+    order_delivery_obj = OrderDelivery.objects.create(type=OrderDeliveryType.PICK_UP)
+
+    # TODO: Fix this
+    entity_obj = Entity.objects.get(user__isnull=False, user_id=user_id)
+
+    order_obj = Order.objects.create(
+        entity=entity_obj,
+        delivery=order_delivery_obj,
+    )
+
+    product_size_obj_by_id = {
+        product_size_obj.id: product_size_obj
+        for product_size_obj in ProductSize.objects.filter(
+            id__in=[size["id"] for size in sizes]
+        )
+        .select_related("product")
+        .with_price(modules=modules)
+    }
+
+    for size in sizes:
+        product_size_obj = product_size_obj_by_id[size["id"]]
+        OrderProduct.objects.create(
+            order=order_obj,
+            size=product_size_obj,
+            quantity=size["quantity"],
+            amount_unit=product_size_obj.price,
+            amount=size["quantity"] * product_size_obj.price,
+            vat=product_size_obj.vat,
+        )
+
+    return order_obj

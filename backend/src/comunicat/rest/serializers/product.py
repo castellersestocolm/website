@@ -23,6 +23,7 @@ class ProductImageSerializer(s.ModelSerializer):
 class ProductSizeWithStockSerializer(s.ModelSerializer):
     stock = s.IntegerField(read_only=True)
     price = MoneyField(required=False, read_only=True)
+    price_vat = MoneyField(required=False, read_only=True)
 
     class Meta:
         model = ProductSize
@@ -32,6 +33,7 @@ class ProductSizeWithStockSerializer(s.ModelSerializer):
             "size",
             "stock",
             "price",
+            "price_vat",
         )
         read_only_fields = (
             "id",
@@ -39,6 +41,7 @@ class ProductSizeWithStockSerializer(s.ModelSerializer):
             "size",
             "stock",
             "price",
+            "price_vat",
         )
 
 

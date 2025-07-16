@@ -32,6 +32,7 @@ import Calendar20250614AnniversaryPerformancePage from "./pages/calendar-2025-06
 import AdminAttendancePage from "./pages/admin-attendance";
 import AdminEquipmentPage from "./pages/admin-equipment";
 import OrderPage from "./pages/order";
+import OrderCartPage from "./pages/order-cart";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -58,6 +59,9 @@ const App = () => {
   const [familyMemberRequestsReceived, setFamilyMemberRequestsReceived] =
     React.useState(undefined);
   const [rehearsal, setRehearsal] = useState(undefined);
+  const [cart, setCart] = React.useState<{
+    [key: string]: [number, object];
+  }>({});
 
   React.useEffect(() => {
     apiUserMe().then((response) => {
@@ -82,6 +86,8 @@ const App = () => {
         setFamilyMemberRequestsReceived,
         rehearsal,
         setRehearsal,
+        cart,
+        setCart,
       }}
     >
       <ThemeProvider theme={appTheme}>
@@ -153,6 +159,10 @@ const App = () => {
                     element={<AssociationPage />}
                   />
                   <Route path={ROUTES.order.path} element={<OrderPage />} />
+                  <Route
+                    path={ROUTES["order-cart"].path}
+                    element={<OrderCartPage />}
+                  />
                   <Route path={ROUTES.admin.path} element={<AdminPage />} />
                   <Route
                     path={ROUTES["admin-attendance"].path}

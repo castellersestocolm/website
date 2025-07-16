@@ -12,6 +12,7 @@ import {
   Menu,
   MenuItem,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "../LanguageSelector/LanguageSelector";
@@ -25,6 +26,9 @@ import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
 import { PermissionLevel } from "../../enums";
+import IconShoppingCart from "@mui/icons-material/ShoppingCartOutlined";
+import { styled } from "@mui/material/styles";
+import Badge, { badgeClasses } from "@mui/material/Badge";
 
 /*
         <IconButton size="large" aria-label="show 2 new messages" color="inherit">
@@ -37,7 +41,16 @@ import { PermissionLevel } from "../../enums";
 export default function NavBar() {
   const { t } = useTranslation("common");
 
-  const { user } = useAppContext();
+  const theme = useTheme();
+
+  const { user, cart, setCart } = useAppContext();
+
+  React.useEffect(() => {
+    const tmpCartString = localStorage.getItem("cart");
+    if (tmpCartString) {
+      setCart(JSON.parse(tmpCartString));
+    }
+  }, [setCart]);
 
   const pages = [
     {
@@ -65,10 +78,12 @@ export default function NavBar() {
     //   target: "_self",
     //   permission: undefined,
     // },
-    user && {
-      name: t("components.navbar-menu.equipmment"),
-      path: ROUTES["external-form-equipment"].path,
-      target: "_blank",
+    {
+      name: user
+        ? t("components.navbar-menu.equipmment")
+        : t("components.navbar-menu.merch"),
+      path: ROUTES.order.path,
+      target: "_self",
       permission: undefined,
     },
     {
@@ -114,6 +129,25 @@ export default function NavBar() {
       permission: PermissionLevel.ADMIN,
     },
   ];
+
+  const CartBadge = styled(Badge)`
+    & .${badgeClasses.badge} {
+      top: -12px;
+      right: -6px;
+      background-color: ${theme.palette.secondary.main};
+      color: ${theme.palette.text.secondary};
+    }
+  `;
+
+  const cartCount =
+    cart &&
+    parseInt(
+      // @ts-ignore
+      Object.values(cart).reduce(
+        (partialSum: number, cartItem: any) => partialSum + cartItem[0],
+        0,
+      ),
+    );
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -256,6 +290,21 @@ export default function NavBar() {
             <Box sx={{ display: "flex" }}>
               <>
                 <LanguageSelector />
+                {cartCount && cartCount > 0 ? (
+                  <IconButton
+                    href={ROUTES["order-cart"].path}
+                    rel="nofollow"
+                    aria-label="account"
+                    className={styles.navMenuAccount}
+                  >
+                    <IconShoppingCart fontSize="small" />
+                    <CartBadge
+                      badgeContent={cartCount}
+                      color="primary"
+                      overlap="circular"
+                    />
+                  </IconButton>
+                ) : undefined}
                 {user ? (
                   <IconButton
                     href={ROUTES["user-dashboard"].path}

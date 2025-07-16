@@ -298,6 +298,7 @@ REST_FRAMEWORK = {
         "event-registration.create": os.getenv(
             "EVENT_REGISTRATION_CREATE_THROTTLE_RATE", "5/second"
         ),
+        "order.create": os.getenv("ORDER_CREATE_THROTTLE_RATE", "5/minute"),
     },
     "EXCEPTION_HANDLER": "comunicat.utils.exceptions.full_details_exception_handler",
 }

@@ -1,3 +1,11 @@
+.orderGrid {
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
 .productsGrid {
   width: 100%;
   display: flex;
@@ -29,6 +37,7 @@
 
 .productsList {
   padding: 0 !important;
+  border-top: 1px solid var(--mui-palette-divider);
 }
 
 .productSizeCartInner {
@@ -59,4 +68,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.productSelect {
+  width: 100%;
+}
+
+.buttons {
+  justify-content: center;
 }

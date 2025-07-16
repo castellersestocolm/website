@@ -50,6 +50,9 @@ export const ROUTES = {
   order: {
     path: "/order",
   },
+  "order-cart": {
+    path: "/order/cart",
+  },
   admin: {
     path: "/admin",
   },

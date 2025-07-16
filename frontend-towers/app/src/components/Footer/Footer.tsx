@@ -41,10 +41,12 @@ export default function Footer() {
     //   path: ROUTES["user-join"].path,
     //   target: "_self",
     // },
-    user && {
-      name: t("components.navbar-menu.equipmment"),
-      path: ROUTES["external-form-equipment"].path,
-      target: "_blank",
+    {
+      name: user
+        ? t("components.navbar-menu.equipmment")
+        : t("components.navbar-menu.merch"),
+      path: ROUTES.order.path,
+      target: "_self",
     },
     {
       name: t("components.navbar-menu.resources"),

@@ -11,6 +11,8 @@ const AppContext = React.createContext({
   setFamilyMemberRequestsReceived: (requests: any) => {},
   rehearsal: undefined,
   setRehearsal: (rehearsal: any) => {},
+  cart: undefined,
+  setCart: (cart: any) => {},
 } as any);
 
 export const useAppContext = () => React.useContext(AppContext);

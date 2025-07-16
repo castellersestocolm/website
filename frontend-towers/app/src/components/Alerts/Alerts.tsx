@@ -1,5 +1,6 @@
 import * as React from "react";
 import IconCheck from "@mui/icons-material/Check";
+import IconPriorityHigh from "@mui/icons-material/PriorityHigh";
 import { Collapse } from "@mui/material";
 import styles from "./styles.module.css";
 import Alert from "@mui/material/Alert";
@@ -24,7 +25,13 @@ export default function Alerts() {
           messages.map((message: any) => (
             <Collapse className={styles.alert}>
               <Alert
-                icon={<IconCheck fontSize="inherit" />}
+                icon={
+                  message.type === "success" ? (
+                    <IconCheck fontSize="inherit" />
+                  ) : (
+                    <IconPriorityHigh fontSize="inherit" />
+                  )
+                }
                 severity={message.type}
               >
                 {message.message}

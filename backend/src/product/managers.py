@@ -8,6 +8,8 @@ from django.db.models import (
     IntegerField,
     F,
     Q,
+    Case,
+    When,
 )
 from django.db.models.functions import Coalesce, Cast
 
@@ -124,6 +126,22 @@ class ProductSizeQuerySet(QuerySet):
                     .values_list("amount", flat=True)[:1],
                 ),
                 Value(None),
+                output_field=MoneyOutput(),
+            ),
+            vat=Coalesce(
+                Subquery(
+                    ProductPrice.objects.filter(product_price_filter)
+                    .order_by("amount")
+                    .values_list("vat", flat=True)[:1],
+                ),
+                Value(None),
+                output_field=IntegerField(),
+            ),
+            price_vat=Case(
+                When(
+                    price__isnull=False, vat__isnull=False, then=F("vat") * F("price")
+                ),
+                default=Value(None),
                 output_field=MoneyOutput(),
             ),
         )

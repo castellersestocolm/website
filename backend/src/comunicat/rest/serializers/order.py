@@ -92,3 +92,14 @@ class OrderSerializer(s.ModelSerializer):
             "logs",
             "created_at",
         )
+
+
+class CreateOrderSizeSerializer(s.Serializer):
+    id = s.UUIDField()
+    quantity = s.IntegerField(min_value=1, max_value=100)
+
+
+class CreateOrderSerializer(s.Serializer):
+    sizes = s.ListSerializer(
+        child=CreateOrderSizeSerializer(), min_length=1, max_length=100
+    )

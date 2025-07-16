@@ -7,72 +7,154 @@ import {
   IconButton,
   ListItemText,
   Typography,
+  Stack,
+  Button,
 } from "@mui/material";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
-import ImageHeroOrder from "../../assets/images/heros/order.jpg";
-import PageImageHero from "../../components/PageImageHero/PageImageHero";
+import PageBase from "../../components/PageBase/PageBase";
 import { apiProductList } from "../../api";
 import Box from "@mui/material/Box";
 import { useCallback } from "react";
 import IconAdd from "@mui/icons-material/Add";
 import IconRemove from "@mui/icons-material/Remove";
+import Select from "@mui/material/Select";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import IconAddShoppingCart from "@mui/icons-material/AddShoppingCart";
+import { useAppContext } from "../../components/AppContext/AppContext";
+import { ROUTES } from "../../routes";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
 function OrderPage() {
   const [t, i18n] = useTranslation("common");
 
+  const { cart, setCart } = useAppContext();
+
   const [products, setProducts] = React.useState(undefined);
-  const [productSizesCart, setProductSizesCart] = React.useState<{
-    [key: string]: number;
+  const [productSizeById, setProductSizeById] = React.useState(undefined);
+  const [selectedSize, setSelectedSize] = React.useState<{
+    [key: string]: string;
   }>({});
+
+  React.useEffect(() => {
+    const tmpCartString = localStorage.getItem("cart");
+    if (tmpCartString) {
+      setCart(JSON.parse(tmpCartString));
+    }
+  }, [setCart]);
+
+  React.useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart ? cart : ""));
+  }, [cart]);
 
   React.useEffect(() => {
     apiProductList().then((response) => {
       if (response.status === 200) {
         setProducts(response.data);
+        setProductSizeById({
+          ...Object.fromEntries(
+            response.data.results
+              .map((product: any) =>
+                product.sizes.map((productSize: any) => [
+                  productSize.id,
+                  [product, productSize],
+                ]),
+              )
+              .flat(),
+          ),
+        });
+        setSelectedSize({
+          ...Object.fromEntries(
+            response.data.results.map((product: any) => [
+              product.id,
+              product.sizes && product.sizes.length > 0 && product.sizes[0].id,
+            ]),
+          ),
+        });
       }
     });
-  }, [setProducts, i18n.resolvedLanguage]);
+  }, [setProducts, setProductSizeById, setSelectedSize, i18n.resolvedLanguage]);
 
   const handleProductSizeCartAdd = useCallback(
     (productSizeId: string) => {
-      setProductSizesCart((productSizesCart) => ({
+      setCart((cart: any) => ({
         ...Object.fromEntries(
-          Object.entries(productSizesCart).map(([k, v], i) => [k, v]),
+          Object.entries(cart || {}).map(([k, v], i) => [k, v]),
         ),
-        [productSizeId]: Math.min(
-          (productSizeId in productSizesCart
-            ? productSizesCart[productSizeId]
-            : 0) + 1,
-          100,
-        ),
+        [productSizeId]: [
+          Math.min(
+            (cart && productSizeId in cart ? cart[productSizeId][0] : 0) + 1,
+            100,
+          ),
+          productSizeById[productSizeId],
+        ],
       }));
     },
-    [setProductSizesCart],
+    [setCart, productSizeById],
   );
 
   const handleProductSizeCartRemove = useCallback(
     (productSizeId: string) => {
-      setProductSizesCart((productSizesCart) => ({
+      setCart((cart: any) => ({
         ...Object.fromEntries(
-          Object.entries(productSizesCart).map(([k, v], i) => [k, v]),
+          Object.entries(cart || {}).map(([k, v], i) => [k, v]),
         ),
-        [productSizeId]: Math.max(
-          (productSizeId in productSizesCart
-            ? productSizesCart[productSizeId]
-            : 0) - 1,
-          0,
-        ),
+        [productSizeId]: [
+          Math.max(
+            (cart && productSizeId in cart ? cart[productSizeId][0] : 0) - 1,
+            0,
+          ),
+          productSizeById[productSizeId],
+        ],
       }));
     },
-    [setProductSizesCart],
+    [setCart, productSizeById],
   );
 
+  const handleSelectSize = useCallback(
+    (productId: string, productSizeId: string) => {
+      setSelectedSize((selectedSize) => ({
+        ...Object.fromEntries(
+          Object.entries(selectedSize).map(([k, v], i) => [k, v]),
+        ),
+        [productId]: productSizeId,
+      }));
+    },
+    [setSelectedSize],
+  );
+
+  function handleEmptyCart() {
+    setCart(undefined);
+  }
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
+  const cartCount =
+    cart &&
+    parseInt(
+      // @ts-ignore
+      Object.values(cart).reduce(
+        (partialSum: number, cartItem: any) => partialSum + cartItem[0],
+        0,
+      ),
+    );
+
   const content = (
-    <>
+    <Grid container spacing={4} className={styles.orderGrid}>
       <Grid container spacing={4} className={styles.productsGrid}>
         {products &&
           products.results.length > 0 &&
@@ -126,133 +208,209 @@ function OrderPage() {
                         </Typography>
                       )}
                     </CardContent>
-                    <List className={styles.productsList}>
-                      {product.sizes &&
-                        product.sizes.length > 0 &&
-                        product.sizes
-                          .filter((productSize: any) => productSize.price)
-                          .map((productSize: any, i: number, row: any) => {
-                            console.log(priceAmountCommon, productSize.price);
-                            return (
-                              <>
-                                <ListItemButton
-                                  disableTouchRipple
-                                  dense
-                                  className={styles.productListItemButton}
-                                >
-                                  <Box
-                                    className={styles.productListInner}
-                                    flexDirection={{ xs: "column", lg: "row" }}
-                                    alignItems={{ xs: "start", lg: "center" }}
+                    <CardContent>
+                      <Stack direction="row" spacing={2}>
+                        <FormControl className={styles.productSelect}>
+                          <InputLabel id="demo-multiple-name-label">
+                            {t("pages.order.product-card.size")}
+                          </InputLabel>
+                          <Select
+                            labelId="demo-multiple-name-label"
+                            id="demo-multiple-name"
+                            defaultValue={
+                              product.sizes &&
+                              product.sizes.length > 0 &&
+                              product.sizes[0].id
+                            }
+                            onChange={(event) =>
+                              handleSelectSize(product.id, event.target.value)
+                            }
+                            input={
+                              <OutlinedInput
+                                label={t("pages.order.product-card.size")}
+                              />
+                            }
+                            MenuProps={MenuProps}
+                            variant="standard"
+                          >
+                            {product.sizes &&
+                              product.sizes.length > 0 &&
+                              product.sizes
+                                .filter((productSize: any) => productSize.price)
+                                .map((productSize: any, i: number) => {
+                                  return (
+                                    <MenuItem key={i} value={productSize.id}>
+                                      {productSize.size}
+                                      {priceAmountCommon === undefined ||
+                                      productSize.price.amount !==
+                                        priceAmountCommon
+                                        ? " — " +
+                                          productSize.price.amount +
+                                          " " +
+                                          productSize.price.currency
+                                        : ""}
+                                    </MenuItem>
+                                  );
+                                })}
+                          </Select>
+                        </FormControl>
+                        <Button
+                          variant="contained"
+                          disableElevation
+                          aria-label="add"
+                          size="small"
+                          onClick={() =>
+                            handleProductSizeCartAdd(selectedSize[product.id])
+                          }
+                        >
+                          <IconAddShoppingCart />
+                        </Button>
+                      </Stack>
+                    </CardContent>
+                    {product.sizes &&
+                      product.sizes.length > 0 &&
+                      product.sizes.filter(
+                        (productSize: any) =>
+                          cart &&
+                          productSize.id in cart &&
+                          cart[productSize.id][0] > 0,
+                      ).length > 0 && (
+                        <List className={styles.productsList}>
+                          {product.sizes
+                            .filter(
+                              (productSize: any) =>
+                                productSize.price &&
+                                productSize.id in cart &&
+                                cart[productSize.id][0] > 0,
+                            )
+                            .map((productSize: any, i: number, row: any) => {
+                              return (
+                                <>
+                                  <ListItemButton
+                                    disableTouchRipple
+                                    dense
+                                    className={styles.productListItemButton}
                                   >
-                                    <ListItemText
-                                      className={styles.productListItem}
-                                      disableTypography
-                                      primary={
-                                        <Typography variant="body2">
-                                          {productSize.size}
-                                          {priceAmountCommon === undefined ||
-                                          productSize.price.amount !==
-                                            priceAmountCommon
-                                            ? " — " +
-                                              productSize.price.amount +
-                                              " " +
-                                              productSize.price.currency
-                                            : ""}
-                                        </Typography>
-                                      }
-                                    />
-                                    <ListItemText
-                                      className={styles.productListItem}
-                                      disableTypography
-                                      primary={
-                                        <Box
-                                          className={
-                                            styles.productSizeCartInner
-                                          }
-                                        >
-                                          <IconButton
-                                            aria-label="remove"
-                                            size="small"
-                                            onClick={() =>
-                                              handleProductSizeCartRemove(
-                                                productSize.id,
-                                              )
-                                            }
-                                            disabled={
-                                              !(
-                                                productSize.id in
-                                                productSizesCart
-                                              ) ||
-                                              productSizesCart[
-                                                productSize.id
-                                              ] === 0
-                                            }
-                                          >
-                                            <IconRemove />
-                                          </IconButton>
-                                          <Typography
-                                            variant="body2"
-                                            className={
-                                              styles.productSizeCartCount
-                                            }
-                                            style={{
-                                              backgroundColor:
-                                                productSize.id in
-                                                  productSizesCart &&
-                                                productSizesCart[
-                                                  productSize.id
-                                                ] > 0
-                                                  ? "var(--mui-palette-primary-main)"
-                                                  : "unset",
-                                            }}
-                                          >
-                                            {productSize.id in productSizesCart
-                                              ? productSizesCart[productSize.id]
-                                              : 0}
+                                    <Box
+                                      className={styles.productListInner}
+                                      flexDirection="row"
+                                      alignItems="center"
+                                    >
+                                      <ListItemText
+                                        className={styles.productListItem}
+                                        disableTypography
+                                        primary={
+                                          <Typography variant="body2">
+                                            {productSize.size}
+                                            {priceAmountCommon === undefined ||
+                                            productSize.price.amount !==
+                                              priceAmountCommon
+                                              ? " — " +
+                                                productSize.price.amount +
+                                                " " +
+                                                productSize.price.currency
+                                              : ""}
                                           </Typography>
-                                          <IconButton
-                                            aria-label="add"
-                                            size="small"
-                                            onClick={() =>
-                                              handleProductSizeCartAdd(
-                                                productSize.id,
-                                              )
-                                            }
-                                            disabled={
-                                              productSize.id in
-                                                productSizesCart &&
-                                              productSizesCart[
-                                                productSize.id
-                                              ] >= 100
+                                        }
+                                      />
+                                      <ListItemText
+                                        className={styles.productListItem}
+                                        disableTypography
+                                        primary={
+                                          <Box
+                                            className={
+                                              styles.productSizeCartInner
                                             }
                                           >
-                                            <IconAdd />
-                                          </IconButton>
-                                        </Box>
-                                      }
-                                    />
-                                  </Box>
-                                </ListItemButton>
-                              </>
-                            );
-                          })}
-                    </List>
+                                            <IconButton
+                                              aria-label="remove"
+                                              size="small"
+                                              onClick={() =>
+                                                handleProductSizeCartRemove(
+                                                  productSize.id,
+                                                )
+                                              }
+                                              disabled={
+                                                !(productSize.id in cart) ||
+                                                cart[productSize.id][0] === 0
+                                              }
+                                            >
+                                              <IconRemove />
+                                            </IconButton>
+                                            <Typography
+                                              variant="body2"
+                                              className={
+                                                styles.productSizeCartCount
+                                              }
+                                              style={{
+                                                backgroundColor:
+                                                  productSize.id in cart &&
+                                                  cart[productSize.id][0] > 0
+                                                    ? "var(--mui-palette-primary-main)"
+                                                    : "unset",
+                                              }}
+                                            >
+                                              {productSize.id in cart
+                                                ? cart[productSize.id][0]
+                                                : 0}
+                                            </Typography>
+                                            <IconButton
+                                              aria-label="add"
+                                              size="small"
+                                              onClick={() =>
+                                                handleProductSizeCartAdd(
+                                                  productSize.id,
+                                                )
+                                              }
+                                              disabled={
+                                                productSize.id in cart &&
+                                                cart[productSize.id][0] >= 100
+                                              }
+                                            >
+                                              <IconAdd />
+                                            </IconButton>
+                                          </Box>
+                                        }
+                                      />
+                                    </Box>
+                                  </ListItemButton>
+                                </>
+                              );
+                            })}
+                        </List>
+                      )}
                   </Card>
                 </Grid>
               );
             })}
       </Grid>
-    </>
+      {cartCount && cartCount > 0 ? (
+        <Stack direction="row" spacing={2} className={styles.buttons}>
+          <Button
+            variant="contained"
+            type="button"
+            name="delete"
+            color="error"
+            disableElevation
+            onClick={handleEmptyCart}
+          >
+            {t("pages.order.product-card.empty")}
+          </Button>
+          <Button
+            variant="contained"
+            type="button"
+            color="primary"
+            disableElevation
+            href={ROUTES["order-cart"].path}
+          >
+            {t("pages.order.product-card.order")}
+          </Button>
+        </Stack>
+      ) : undefined}
+    </Grid>
   );
 
-  return (
-    <PageImageHero
-      title={t("pages.order.title")}
-      content={content}
-      hero={ImageHeroOrder}
-    />
-  );
+  return <PageBase title={t("pages.order.title")} content={content} />;
 }
 
 export default OrderPage;
