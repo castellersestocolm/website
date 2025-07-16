@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-08 19:38+0200\n"
+"POT-Creation-Date: 2025-07-16 18:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,13 +171,23 @@ msgstr "Validesa"
 
 #: comunicat/templates/email/org/membership/renew.html:10
 msgid "You can find the form to renew your membership in the following page."
-msgstr "Podeu trobar el formulari per renovar la vostra quota a la pàgina següent."
+msgstr ""
+"Podeu trobar el formulari per renovar la vostra quota a la pàgina següent."
 
 #: comunicat/templates/email/org/membership/renew.html:15
 #: comunicat/templates/email/towers/membership/expired.html:10
 #: comunicat/templates/email/towers/membership/renew.html:15
 msgid "Renew membership"
 msgstr "Renova la quota"
+
+#: comunicat/templates/email/org/order/created.html:5
+#: comunicat/templates/email/towers/order/created.html:5
+msgid ""
+"Thank you for your order! You will find a summary of the products you have "
+"purchased along with payment information right below."
+msgstr ""
+"Gràcies per la teva comanda! Trobaràs un resum dels productes que has comprat "
+"a continuació així com la informació de pagament."
 
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -374,11 +384,11 @@ msgstr ""
 msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
-#: event/models.py:104
+#: event/models.py:105
 msgid "End time must be greater than start time."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243 product/admin.py:75
+#: legal/admin.py:38 legal/admin.py:59 payment/admin.py:243 product/admin.py:75
 msgid "name"
 msgstr "nom"
 
@@ -394,11 +404,11 @@ msgstr "família"
 msgid "modules"
 msgstr "mòduls"
 
-#: notify/consts.py:34 notify/consts.py:72
+#: notify/consts.py:34 notify/consts.py:76
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
 
-#: notify/consts.py:38 notify/consts.py:76
+#: notify/consts.py:38 notify/consts.py:80
 msgid "Reset your password to login"
 msgstr "Reinicia la teva contrasenya per entrar"
 
@@ -410,7 +420,7 @@ msgstr "Benvingut a Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
-#: notify/consts.py:50 notify/consts.py:88
+#: notify/consts.py:50 notify/consts.py:92
 msgid "You have been invited to join a family"
 msgstr "Has estat convidat a unir-te a una família"
 
@@ -418,23 +428,27 @@ msgstr "Has estat convidat a unir-te a una família"
 msgid "Sign-up for the upcoming events"
 msgstr "Confirma l'assistència als propers esdeveniments"
 
-#: notify/consts.py:58 notify/consts.py:96
+#: notify/consts.py:58 notify/consts.py:100
 msgid "Time to renew your membership"
 msgstr "La teva quota caduca aviat"
 
-#: notify/consts.py:62 notify/consts.py:100
+#: notify/consts.py:62 notify/consts.py:104
 msgid "Your membership has expired"
 msgstr "La teva quota ha caducat"
 
-#: notify/consts.py:80
+#: notify/consts.py:66 notify/consts.py:108
+msgid "Thank you for your order"
+msgstr "Gràcies per la teva comanda"
+
+#: notify/consts.py:84
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Benvingut/da als Castellers d'Estocolm"
 
-#: notify/consts.py:84
+#: notify/consts.py:88
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 
-#: notify/consts.py:92
+#: notify/consts.py:96
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
@@ -522,11 +536,11 @@ msgstr "La categoria és obligatòria per comptes amb matrius."
 msgid "stock"
 msgstr ""
 
-#: product/models.py:99
+#: product/models.py:101
 msgid "Product size must match product."
 msgstr ""
 
-#: user/admin.py:120
+#: user/admin.py:134
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 

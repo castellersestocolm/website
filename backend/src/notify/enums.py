@@ -14,3 +14,4 @@ class EmailType(enum.IntEnum):
     EVENT_SIGNUP = 30
     MEMBERSHIP_RENEW = 40
     MEMBERSHIP_EXPIRED = 41
+    ORDER_CREATED = 50

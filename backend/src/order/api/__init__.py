@@ -3,14 +3,18 @@ from uuid import UUID
 
 from django.db import transaction
 from django.db.models import Prefetch, Q, Exists, OuterRef
+from django.utils import translation
 
 from comunicat.enums import Module
+from notify.enums import EmailType
 from order.enums import OrderStatus, OrderDeliveryType
 from order.models import Order, OrderProduct, OrderLog, OrderDelivery
 from payment.models import Entity
 from product.models import ProductSize
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
+
+import notify.tasks
 
 from django.conf import settings
 
@@ -66,7 +70,9 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
 
 
 @transaction.atomic
-def create(sizes: list[dict], user_id: UUID, module: Module) -> Order | None:
+def create(
+    sizes: list[dict], user_id: UUID, module: Module, with_notify: bool = True
+) -> Order | None:
     if user_id:
         user_obj = User.objects.filter(id=user_id).with_has_active_membership().first()
         modules = [
@@ -105,6 +111,14 @@ def create(sizes: list[dict], user_id: UUID, module: Module) -> Order | None:
             amount_unit=product_size_obj.price,
             amount=size["quantity"] * product_size_obj.price,
             vat=product_size_obj.vat,
+        )
+
+    if with_notify:
+        notify.tasks.send_user_email.delay(
+            user_id=user_id,
+            email_type=EmailType.ORDER_CREATED,
+            module=module,
+            locale=translation.get_language(),
         )
 
     return order_obj

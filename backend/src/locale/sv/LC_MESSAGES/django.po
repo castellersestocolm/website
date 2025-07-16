@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-08 19:38+0200\n"
+"POT-Creation-Date: 2025-07-16 18:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,6 +177,15 @@ msgstr "Du hittar formuläret för att förnya ditt medlemskap på följande sid
 #: comunicat/templates/email/towers/membership/renew.html:15
 msgid "Renew membership"
 msgstr "Förnya medlemskapet"
+
+#: comunicat/templates/email/org/order/created.html:5
+#: comunicat/templates/email/towers/order/created.html:5
+msgid ""
+"Thank you for your order! You will find a summary of the products you have "
+"purchased along with payment information right below."
+msgstr ""
+"Tack för din beställning! Du hittar en sammanfattning av produkterna du har "
+"köpt tillsammans med betalningsinformation nedan."
 
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -372,11 +381,11 @@ msgstr ""
 msgid "Join the community"
 msgstr "Gå med i gemenskapen"
 
-#: event/models.py:104
+#: event/models.py:105
 msgid "End time must be greater than start time."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: legal/admin.py:37 legal/admin.py:58 payment/admin.py:243 product/admin.py:75
+#: legal/admin.py:38 legal/admin.py:59 payment/admin.py:243 product/admin.py:75
 msgid "name"
 msgstr "namn"
 
@@ -392,11 +401,11 @@ msgstr "familj"
 msgid "modules"
 msgstr "moduler"
 
-#: notify/consts.py:34 notify/consts.py:72
+#: notify/consts.py:34 notify/consts.py:76
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
 
-#: notify/consts.py:38 notify/consts.py:76
+#: notify/consts.py:38 notify/consts.py:80
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
@@ -408,7 +417,7 @@ msgstr "Välkomen till Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:50 notify/consts.py:88
+#: notify/consts.py:50 notify/consts.py:92
 msgid "You have been invited to join a family"
 msgstr "Du har blivit inbjuden att gå med i en familj"
 
@@ -416,23 +425,27 @@ msgstr "Du har blivit inbjuden att gå med i en familj"
 msgid "Sign-up for the upcoming events"
 msgstr "Registrera dig till kommande evenemang"
 
-#: notify/consts.py:58 notify/consts.py:96
+#: notify/consts.py:58 notify/consts.py:100
 msgid "Time to renew your membership"
 msgstr "Dags att förnya ditt medlemskap"
 
-#: notify/consts.py:62 notify/consts.py:100
+#: notify/consts.py:62 notify/consts.py:104
 msgid "Your membership has expired"
 msgstr "Ditt medlemskap har löpt ut"
 
-#: notify/consts.py:80
+#: notify/consts.py:66 notify/consts.py:108
+msgid "Thank you for your order"
+msgstr "Tack för din beställning"
+
+#: notify/consts.py:84
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Välkommen till Castellers d'Estocolm"
 
-#: notify/consts.py:84
+#: notify/consts.py:88
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:92
+#: notify/consts.py:96
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Registrera dig till kommande evenemang och repetitioner"
 
@@ -520,11 +533,11 @@ msgstr "Kategorin måste vara inställd för konto med förälder."
 msgid "stock"
 msgstr ""
 
-#: product/models.py:99
+#: product/models.py:101
 msgid "Product size must match product."
 msgstr ""
 
-#: user/admin.py:120
+#: user/admin.py:134
 msgid "Another user already has the same alias."
 msgstr "En annan användare har redan samma alias."
 
