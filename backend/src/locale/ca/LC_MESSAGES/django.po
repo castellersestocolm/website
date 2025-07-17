@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-16 19:02+0200\n"
+"POT-Creation-Date: 2025-07-17 09:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -188,6 +188,21 @@ msgid ""
 msgstr ""
 "Gràcies per la teva comanda! Trobaràs un resum dels productes que has "
 "comprat a continuació així com la informació de pagament."
+
+#: comunicat/templates/email/org/order/created.html:14
+#: comunicat/templates/email/towers/order/created.html:14
+msgid "Summary"
+msgstr "Resum"
+
+#: comunicat/templates/email/org/order/created.html:25
+#: comunicat/templates/email/towers/order/created.html:25
+msgid "Total"
+msgstr "Total"
+
+#: comunicat/templates/email/org/order/created.html:29
+#: comunicat/templates/email/towers/order/created.html:29
+msgid "Payment options"
+msgstr "Com pagar"
 
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -452,7 +467,7 @@ msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
-#: order/api/__init__.py:117
+#: order/api/__init__.py:118
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
