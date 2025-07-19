@@ -27,18 +27,115 @@ from django.utils.translation import gettext_lazy as _
 from user.models import User
 
 
-class OrderDeliverySerializer(s.ModelSerializer):
+class DeliveryPriceSerializer(s.ModelSerializer):
+    country = CountrySerializer(allow_null=True, read_only=True)
+    region = RegionSerializer(allow_null=True, read_only=True)
+    max_grams = s.IntegerField(read_only=True)
+    price = MoneyField(required=False, read_only=True)
+    price_vat = MoneyField(required=False, read_only=True)
+
+    class Meta:
+        model = DeliveryPrice
+        fields = (
+            "id",
+            "country",
+            "region",
+            "max_grams",
+            "price",
+            "price_vat",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "country",
+            "region",
+            "max_grams",
+            "price",
+            "price_vat",
+            "created_at",
+        )
+
+
+class DeliveryProviderSlimSerializer(s.ModelSerializer):
+    name = s.SerializerMethodField(read_only=True)
+    description = s.SerializerMethodField(read_only=True)
+    picture = VersatileImageFieldSerializer(
+        allow_null=True,
+        sizes=[
+            ("large", "url"),
+            # TODO: Fix this
+            ("medium", "url"),
+            ("small", "url"),
+            # ("medium", "thumbnail__500x500"),
+            # ("small", "thumbnail__100x100")
+        ],
+        read_only=True,
+    )
     type = IntEnumField(OrderDeliveryType, read_only=True)
+
+    class Meta:
+        model = DeliveryProvider
+        fields = (
+            "id",
+            "name",
+            "description",
+            "picture",
+            "type",
+        )
+        read_only_fields = (
+            "id",
+            "name",
+            "description",
+            "picture",
+            "type",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_name(self, obj):
+        return obj.name.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
+
+
+class DeliveryProviderSerializer(DeliveryProviderSlimSerializer):
+    prices = DeliveryPriceSerializer(many=True, required=False, read_only=True)
+
+    class Meta:
+        model = DeliveryProvider
+        fields = (
+            "id",
+            "name",
+            "description",
+            "picture",
+            "type",
+            "is_enabled",
+            "prices",
+        )
+        read_only_fields = (
+            "id",
+            "name",
+            "description",
+            "picture",
+            "type",
+            "is_enabled",
+            "prices",
+        )
+
+
+class OrderDeliverySerializer(s.ModelSerializer):
+    provider = DeliveryProviderSlimSerializer()
 
     class Meta:
         model = OrderDelivery
         fields = (
             "id",
-            "type",
+            "provider",
         )
         read_only_fields = (
             "id",
-            "type",
+            "provider",
         )
 
 
@@ -188,80 +285,3 @@ class CreateOrderSerializer(s.Serializer):
             kwargs["data"].pop("user")
 
         super().__init__(*args, **kwargs)
-
-
-class DeliveryPriceSerializer(s.ModelSerializer):
-    country = CountrySerializer(allow_null=True, read_only=True)
-    region = RegionSerializer(allow_null=True, read_only=True)
-    max_grams = s.IntegerField(read_only=True)
-    price = MoneyField(required=False, read_only=True)
-    price_vat = MoneyField(required=False, read_only=True)
-
-    class Meta:
-        model = DeliveryPrice
-        fields = (
-            "id",
-            "country",
-            "region",
-            "max_grams",
-            "price",
-            "price_vat",
-            "created_at",
-        )
-        read_only_fields = (
-            "id",
-            "country",
-            "region",
-            "max_grams",
-            "price",
-            "price_vat",
-            "created_at",
-        )
-
-
-class DeliveryProviderSerializer(s.ModelSerializer):
-    name = s.SerializerMethodField(read_only=True)
-    description = s.SerializerMethodField(read_only=True)
-    picture = VersatileImageFieldSerializer(
-        allow_null=True,
-        sizes=[
-            ("large", "url"),
-            # TODO: Fix this
-            ("medium", "url"),
-            ("small", "url"),
-            # ("medium", "thumbnail__500x500"),
-            # ("small", "thumbnail__100x100")
-        ],
-        read_only=True,
-    )
-    type = IntEnumField(OrderDeliveryType, read_only=True)
-    prices = DeliveryPriceSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = DeliveryProvider
-        fields = (
-            "id",
-            "name",
-            "description",
-            "picture",
-            "type",
-            "is_enabled",
-            "prices",
-        )
-        read_only_fields = (
-            "id",
-            "name",
-            "description",
-            "picture",
-            "type",
-            "is_enabled",
-            "prices",
-        )
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_name(self, obj):
-        return obj.name.get(translation.get_language())
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_description(self, obj):
-        return obj.description.get(translation.get_language())

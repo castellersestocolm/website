@@ -63,7 +63,14 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
         #         default=F("created_at__date"),
         #     )
         # )
-        .select_related("entity", "delivery")
+        .select_related(
+            "entity",
+            "delivery",
+            "delivery__provider",
+            "delivery__address",
+            "delivery__address__country",
+            "delivery__address__region",
+        )
         .prefetch_related(
             Prefetch(
                 "products",
@@ -151,7 +158,6 @@ def create(
         event_id = None
 
     order_delivery_obj = OrderDelivery.objects.create(
-        type=delivery_provider_obj.type,
         provider=delivery_provider_obj,
         address=order_delivery_address_obj,
         event_id=event_id,

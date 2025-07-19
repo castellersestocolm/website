@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import JSONField
-from django.utils import timezone
+from django.utils import timezone, translation
 from versatileimagefield.fields import VersatileImageField
 
 from comunicat.db.mixins import StandardModel, Timestamps
@@ -90,21 +90,18 @@ class OrderDeliveryAddress(StandardModel, Timestamps):
         on_delete=models.PROTECT,
     )
 
+    def __str__(self) -> str:
+        return f"{self.address}{' ' + self.apartment if self.apartment else ''} - {self.postcode} {self.city} - {self.country.name.get(translation.get_language()) or list(self.country.name.values())[0]}"
+
     class Meta:
         verbose_name = "address"
         verbose_name_plural = "addresses"
 
 
 class OrderDelivery(StandardModel, Timestamps):
-    type = models.PositiveSmallIntegerField(
-        choices=((odt.value, odt.name) for odt in OrderDeliveryType),
-        default=OrderDeliveryType.PICK_UP,
-    )
     provider = models.ForeignKey(
         "DeliveryProvider",
         related_name="deliveries",
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
     )
     address = models.OneToOneField(
@@ -181,6 +178,9 @@ class DeliveryProvider(StandardModel, Timestamps):
     )
 
     is_enabled = models.BooleanField(default=True)
+
+    def __str__(self) -> str:
+        return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
 
 class DeliveryPrice(StandardModel, Timestamps):

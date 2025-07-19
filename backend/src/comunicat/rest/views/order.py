@@ -79,7 +79,7 @@ class OrderAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: OrderSerializer(many=True), 400: Serializer()},
     )
-    @method_decorator(cache_page(60))
+    # @method_decorator(cache_page(60))
     def list(self, request):
         if not request.user.is_authenticated:
             return Response(status=400)
