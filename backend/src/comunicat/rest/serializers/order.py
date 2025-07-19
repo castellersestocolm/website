@@ -137,9 +137,14 @@ class CreateAddressSerializer(s.Serializer):
     region = s.CharField(allow_null=True, allow_blank=True, required=False)
 
 
+class CreateDeliveryProviderSerializer(s.Serializer):
+    id = s.UUIDField()
+    type = IntEnumField(OrderDeliveryType)
+
+
 class CreateDeliverySerializer(s.Serializer):
     address = CreateAddressSerializer(required=False)
-    type = IntEnumField(OrderDeliveryType)
+    provider = CreateDeliveryProviderSerializer()
 
 
 class CreatePickupSerializer(s.Serializer):
@@ -164,7 +169,7 @@ class CreateOrderSerializer(s.Serializer):
     pickup = CreatePickupSerializer(required=False)
 
     def __init__(self, user: User | None = None, *args, **kwargs):
-        delivery_type = kwargs["data"]["delivery"]["type"]
+        delivery_type = kwargs["data"]["delivery"]["provider"]["type"]
         if delivery_type == OrderDeliveryType.DELIVERY:
             kwargs["data"].pop("pickup")
             if not "address" in kwargs["data"]["delivery"]:

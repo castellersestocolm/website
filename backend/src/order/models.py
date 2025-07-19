@@ -100,6 +100,13 @@ class OrderDelivery(StandardModel, Timestamps):
         choices=((odt.value, odt.name) for odt in OrderDeliveryType),
         default=OrderDeliveryType.PICK_UP,
     )
+    provider = models.ForeignKey(
+        "DeliveryProvider",
+        related_name="deliveries",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     address = models.OneToOneField(
         "OrderDeliveryAddress",
         related_name="delivery",

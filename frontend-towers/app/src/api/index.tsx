@@ -582,14 +582,17 @@ export const apiProductList = async (page: number = undefined) => {
 export const apiOrderCreate = async (
   sizes: any[],
   delivery: any,
-  deliveryType: string,
+  deliveryProvider: any,
   userData: any,
   formPickupData: any,
 ) => {
   try {
     return await instance.post("/order/", {
       cart: { sizes: sizes },
-      delivery: { address: delivery, type: deliveryType },
+      delivery: {
+        address: delivery,
+        provider: { id: deliveryProvider.id, type: deliveryProvider.type },
+      },
       user: userData,
       pickup: { event_id: formPickupData.event },
     });

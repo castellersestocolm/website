@@ -16,6 +16,7 @@ from order.models import (
     OrderLog,
     OrderDelivery,
     OrderDeliveryAddress,
+    DeliveryProvider,
 )
 from payment.models import Entity
 from product.models import ProductSize
@@ -128,7 +129,9 @@ def create(
                 phone=user["phone"],
             )
 
-    if delivery["type"] == OrderDeliveryType.DELIVERY:
+    delivery_provider_obj = DeliveryProvider.objects.get(id=delivery["provider"]["id"])
+
+    if delivery_provider_obj.type == OrderDeliveryType.DELIVERY:
         country_obj = Country.objects.get(code=delivery["address"].pop("country"))
         if "region" in delivery["address"]:
             region_obj = Region.objects.get(
@@ -142,13 +145,16 @@ def create(
     else:
         order_delivery_address_obj = None
 
-    if delivery["type"] == OrderDeliveryType.PICK_UP:
+    if delivery_provider_obj.type == OrderDeliveryType.PICK_UP:
         event_id = pickup["event_id"]
     else:
         event_id = None
 
     order_delivery_obj = OrderDelivery.objects.create(
-        type=delivery["type"], address=order_delivery_address_obj, event_id=event_id
+        type=delivery_provider_obj.type,
+        provider=delivery_provider_obj,
+        address=order_delivery_address_obj,
+        event_id=event_id,
     )
 
     # TODO: Fix this

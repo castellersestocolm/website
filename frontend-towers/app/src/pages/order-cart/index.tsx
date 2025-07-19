@@ -351,13 +351,12 @@ function OrderCartPage() {
         id: productSize.id,
         quantity: quantity,
       }));
-    const deliveryType =
-      formDeliveryProviderId &&
-      deliveryProviderById[formDeliveryProviderId].type;
+    const deliveryProvider =
+      formDeliveryProviderId && deliveryProviderById[formDeliveryProviderId];
     apiOrderCreate(
       sizes,
       formDeliveryData,
-      deliveryType,
+      deliveryProvider,
       formUserData,
       formPickupData,
     ).then((response) => {
