@@ -207,7 +207,9 @@ def send_order_email(
         .first()
     )
 
-    user_obj = order_obj.entity.user
+    entity = order_obj.entity
+    user_obj = entity.user
+    email = email or (user_obj.email if user_obj else entity.email)
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
@@ -222,7 +224,7 @@ def send_order_email(
 
     Email.objects.create(
         user=user_obj,
-        email=email or user_obj.email,
+        email=email,
         type=email_type,
         subject=subject,
         context=context,
@@ -234,7 +236,7 @@ def send_order_email(
         subject=subject,
         body=body,
         from_email=from_email,
-        to=email or user_obj.email,
+        to=email,
         reply_to=from_email,
         attachments=[],
         module=module,
