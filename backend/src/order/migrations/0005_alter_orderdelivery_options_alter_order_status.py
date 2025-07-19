@@ -7,17 +7,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0004_order_notes'),
+        ("order", "0004_order_notes"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='orderdelivery',
-            options={'verbose_name': 'order delivery', 'verbose_name_plural': 'order deliveries'},
+            name="orderdelivery",
+            options={
+                "verbose_name": "order delivery",
+                "verbose_name_plural": "order deliveries",
+            },
         ),
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'CREATED'), (20, 'PROCESSING'), (30, 'COMPLETED'), (40, 'CANCELLED')], default=order.enums.OrderStatus['CREATED']),
+            model_name="order",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "CREATED"),
+                    (20, "PROCESSING"),
+                    (30, "COMPLETED"),
+                    (40, "CANCELLED"),
+                ],
+                default=order.enums.OrderStatus["CREATED"],
+            ),
         ),
     ]

@@ -7,6 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from rest_framework import serializers
 
+from djmoney.contrib.exchange.models import convert_money
+
 from django.conf import settings
 
 
@@ -92,6 +94,10 @@ class MoneyField(serializers.DictField):
             obj = Money(amount=obj, currency=settings.MODULE_ALL_CURRENCY)
         if not isinstance(obj, Money):
             self.fail("not_money")
+
+        if obj.currency != settings.MODULE_ALL_CURRENCY:
+            obj = convert_money(obj, settings.MODULE_ALL_CURRENCY)
+
         rounded_money = Money(
             obj.amount.to_integral(rounding=decimal.ROUND_UP), obj.currency
         )

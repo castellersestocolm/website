@@ -23,6 +23,8 @@ class Product(StandardModel, Timestamps):
         choices=((at.value, at.name) for at in ArticleType),
     )
 
+    weight_grams = models.PositiveSmallIntegerField(default=0)
+
     ignore_stock = models.BooleanField(default=False)
 
     objects = ProductQuerySet.as_manager()
@@ -103,7 +105,7 @@ class ProductPrice(StandardModel, Timestamps):
             raise ValidationError({"size": _("Product size must match product.")})
 
     class Meta:
-        ordering = ("product__type", "module")
+        ordering = ("product__type", "module", "amount")
 
 
 class StockOrder(StandardModel, Timestamps):

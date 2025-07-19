@@ -117,6 +117,12 @@ export enum ProductSizeCategory {
   ADULTS = 20,
 }
 
+export enum OrderDeliveryType {
+  PICK_UP = 10,
+  IN_PERSON = 20,
+  DELIVERY = 30,
+}
+
 export enum TransportMode {
   BUS = 10,
   TROLLEYBUS = 20,

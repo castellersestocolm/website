@@ -27,7 +27,7 @@ google-auth-oauthlib ~= 1.2.0
 social-auth-app-django ~= 5.4.0
 
 # Money
-django-money ~= 3.5.3
+django-money[exchange] ~= 3.5.4
 
 # Pinyator
 mysqlclient ~= 2.2.7

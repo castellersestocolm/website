@@ -12,54 +12,165 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('payment', '0031_receipt_entity_part_2'),
-        ('product', '0005_alter_product_type'),
+        ("payment", "0031_receipt_entity_part_2"),
+        ("product", "0005_alter_product_type"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='OrderDelivery',
+            name="OrderDelivery",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('type', models.PositiveSmallIntegerField(choices=[(10, 'PICK_UP'), (20, 'IN_PERSON'), (30, 'POST')], default=order.enums.OrderDeliveryType['PICK_UP'])),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "type",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "PICK_UP"), (20, "IN_PERSON"), (30, "POST")],
+                        default=order.enums.OrderDeliveryType["PICK_UP"],
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('entity', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='orders', to='payment.entity')),
-                ('delivery', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, related_name='order', to='order.orderdelivery')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "entity",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="orders",
+                        to="payment.entity",
+                    ),
+                ),
+                (
+                    "delivery",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="order",
+                        to="order.orderdelivery",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='OrderProduct',
+            name="OrderProduct",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('quantity', models.PositiveSmallIntegerField()),
-                ('amount_unit_currency', djmoney.models.fields.CurrencyField(choices=[('SEK', 'Swedish Krona')], default='SEK', editable=False, max_length=3)),
-                ('amount_unit', djmoney.models.fields.MoneyField(decimal_places=2, default_currency='SEK', max_digits=7)),
-                ('amount_currency', djmoney.models.fields.CurrencyField(choices=[('SEK', 'Swedish Krona')], default='SEK', editable=False, max_length=3)),
-                ('amount', djmoney.models.fields.MoneyField(decimal_places=2, default_currency='SEK', max_digits=7)),
-                ('vat', models.PositiveSmallIntegerField(default=0)),
-                ('line', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, related_name='product', to='payment.paymentline')),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='products', to='order.order')),
-                ('size', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='order_products', to='product.productsize')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("quantity", models.PositiveSmallIntegerField()),
+                (
+                    "amount_unit_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[("SEK", "Swedish Krona")],
+                        default="SEK",
+                        editable=False,
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "amount_unit",
+                    djmoney.models.fields.MoneyField(
+                        decimal_places=2, default_currency="SEK", max_digits=7
+                    ),
+                ),
+                (
+                    "amount_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[("SEK", "Swedish Krona")],
+                        default="SEK",
+                        editable=False,
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "amount",
+                    djmoney.models.fields.MoneyField(
+                        decimal_places=2, default_currency="SEK", max_digits=7
+                    ),
+                ),
+                ("vat", models.PositiveSmallIntegerField(default=0)),
+                (
+                    "line",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="product",
+                        to="payment.paymentline",
+                    ),
+                ),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="products",
+                        to="order.order",
+                    ),
+                ),
+                (
+                    "size",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="order_products",
+                        to="product.productsize",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

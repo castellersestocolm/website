@@ -9,26 +9,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0015_googlegroup_googlegroupmodule'),
+        ("user", "0015_googlegroup_googlegroupmodule"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='googlegroupmodule',
-            name='require_module_domain',
+            model_name="googlegroupmodule",
+            name="require_module_domain",
             field=models.BooleanField(default=False),
         ),
         migrations.CreateModel(
-            name='UserEmail',
+            name="UserEmail",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='emails', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="emails",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

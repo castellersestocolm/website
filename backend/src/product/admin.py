@@ -46,10 +46,11 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = (
         "name_locale",
         "type",
+        "weight_grams",
         "stock",
         "created_at",
     )
-    list_filter = ("type", "created_at")
+    list_filter = ("type", "weight_grams", "created_at")
     readonly_fields = ("stock",)
     ordering = ("type", "created_at")
     inlines = (ProductSizeInline, ProductPriceInline, ProductImageInline)

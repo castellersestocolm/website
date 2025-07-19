@@ -3,7 +3,6 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
 import PageBase from "../../components/PageBase/PageBase";
-import { useCallback } from "react";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Box from "@mui/material/Box";
 import {
@@ -16,19 +15,236 @@ import {
   ListItemIcon,
   Stack,
   Button,
+  Link,
+  SelectChangeEvent,
+  Collapse,
 } from "@mui/material";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
-import { apiEventRegistrationCreate, apiOrderCreate } from "../../api";
+import {
+  apiDataLocationCountryList,
+  apiEventList,
+  apiOrderCreate,
+  apiOrderDeliveryProviderList,
+} from "../../api";
+import FormLabel from "@mui/material/FormLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import { styled } from "@mui/material/styles";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import { ChangeEvent, useCallback } from "react";
+import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
+import MuiAccordionSummary, {
+  AccordionSummaryProps,
+  accordionSummaryClasses,
+} from "@mui/material/AccordionSummary";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import IconArrowForwardIosSharp from "@mui/icons-material/ArrowForwardIosSharp";
+import { EventType, OrderDeliveryType } from "../../enums";
+import { TransitionGroup } from "react-transition-group";
+import { capitalizeFirstLetter } from "../../utils/string";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
-function OrderCartPage() {
-  const { t } = useTranslation("common");
+const FormGrid = styled(Grid)(() => ({
+  display: "flex",
+  flexDirection: "column",
+}));
 
-  const { cart, setCart, setMessages } = useAppContext();
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const Accordion = styled((props: AccordionProps) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+  border: `1px solid ${theme.palette.divider}`,
+  "&:not(:last-child)": {
+    borderBottom: 0,
+  },
+  "&::before": {
+    display: "none",
+  },
+}));
+
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+  <MuiAccordionSummary
+    expandIcon={<IconArrowForwardIosSharp sx={{ fontSize: "0.9rem" }} />}
+    {...props}
+  />
+))(({ theme }) => ({
+  backgroundColor: "rgba(0, 0, 0, .03)",
+  flexDirection: "row-reverse",
+  [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
+    {
+      transform: "rotate(90deg)",
+    },
+  [`& .${accordionSummaryClasses.content}`]: {
+    marginLeft: theme.spacing(1),
+  },
+  ...theme.applyStyles("dark", {
+    backgroundColor: "rgba(255, 255, 255, .05)",
+  }),
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderTop: "1px solid rgba(0, 0, 0, .125)",
+}));
+
+function OrderCartPage() {
+  const [t, i18n] = useTranslation("common");
+
+  const { user, cart, setCart, setMessages } = useAppContext();
+
+  const [events, setEvents] = React.useState(undefined);
+  const [allowedCountryCodes, setAllowedCountryCodes] =
+    React.useState(undefined);
+  const [countries, setCountries] = React.useState(undefined);
+  const [regionsByCountryCode, setRegionsByCountryCode] =
+    React.useState(undefined);
+  const [formDeliveryData, setFormDeliveryData] = React.useState({
+    address: undefined,
+    apartment: undefined,
+    address2: undefined,
+    postcode: undefined,
+    city: undefined,
+    country: "SWE",
+    region: undefined,
+  });
+  const [formPickupData, setFormPickupData] = React.useState({
+    event: undefined,
+  });
+  const [formUserData, setFormUserData] = React.useState({
+    firstname: undefined,
+    lastname: undefined,
+    email: undefined,
+    phone: undefined,
+  });
+  const [deliveryProviderById, setDeliveryProviderById] =
+    React.useState(undefined);
+  const [formDeliveryProviderId, setFormDeliveryProviderId] =
+    React.useState(undefined);
+  const [deliveryPriceById, setDeliveryPriceById] = React.useState(undefined);
+  const [deliveryPrice, setDeliveryPrice] = React.useState(undefined);
 
   let navigate = useNavigate();
+
+  React.useEffect(() => {
+    apiEventList().then((response) => {
+      if (response.status === 200) {
+        setEvents(response.data);
+      }
+    });
+  }, [setEvents]);
+
+  const handleFormDeliveryData = useCallback(
+    (field: string, value: string) => {
+      setFormDeliveryData((formDeliveryData: any) => ({
+        ...Object.fromEntries(
+          Object.entries(formDeliveryData).map(([k, v]: any, i) => [k, v]),
+        ),
+        [field]: value,
+      }));
+    },
+    [setFormDeliveryData],
+  );
+
+  const handleFormPickupData = useCallback(
+    (field: string, value: string) => {
+      setFormPickupData((formPickupData: any) => ({
+        ...Object.fromEntries(
+          Object.entries(formPickupData).map(([k, v]: any, i) => [k, v]),
+        ),
+        [field]: value,
+      }));
+    },
+    [setFormPickupData],
+  );
+
+  const handleFormUserData = useCallback(
+    (field: string, value: string) => {
+      setFormUserData((formUserData: any) => ({
+        ...Object.fromEntries(
+          Object.entries(formUserData).map(([k, v]: any, i) => [k, v]),
+        ),
+        [field]: value,
+      }));
+    },
+    [setFormUserData],
+  );
+
+  React.useEffect(() => {
+    if (!deliveryPriceById || !cart) {
+      setDeliveryPrice(undefined);
+    } else {
+      const weightGrams = Object.values(cart)
+        .filter(
+          ([quantity, [product, productSize]]: any[]) =>
+            product && quantity > 0,
+        )
+        .map(
+          ([quantity, [product, productSize]]: any[]) =>
+            quantity * product.weight_grams,
+        )
+        .reduce((partialSum: number, weight: any) => partialSum + weight, 0);
+
+      const countryCode = formDeliveryData.country
+        ? formDeliveryData.country
+        : undefined;
+      const regionCode = formDeliveryData.region
+        ? formDeliveryData.region
+        : undefined;
+
+      const deliveryPrices = Object.entries(deliveryPriceById)
+        .filter(
+          ([deliveryIds, deliveryPrice]: any) =>
+            formDeliveryProviderId === deliveryIds.split(",")[0] &&
+            weightGrams <= deliveryPrice.max_grams &&
+            (!deliveryPrice.country ||
+              deliveryPrice.country.code === countryCode) &&
+            (!deliveryPrice.region || deliveryPrice.region.code === regionCode),
+        )
+        .map(([deliveryIds, deliveryPrice]: any) => deliveryPrice)
+        .sort((dp1: any, dp2: any) => dp2.amount - dp1.amount);
+      setDeliveryPrice(deliveryPrices ? deliveryPrices[0] : undefined);
+    }
+  }, [
+    setDeliveryPrice,
+    formDeliveryData.country,
+    formDeliveryData.region,
+    formDeliveryProviderId,
+  ]);
+
+  React.useEffect(() => {
+    if (
+      formDeliveryProviderId &&
+      formDeliveryProviderId &&
+      deliveryProviderById[formDeliveryProviderId]
+    ) {
+      const allowedCountries = Object.fromEntries(
+        deliveryProviderById[formDeliveryProviderId].prices.map(
+          (deliveryPrice: any) => [
+            deliveryPrice.country && deliveryPrice.country.code,
+            undefined,
+          ],
+        ),
+      );
+      setAllowedCountryCodes(allowedCountries);
+    }
+  }, [
+    countries,
+    formDeliveryProviderId,
+    deliveryProviderById,
+    setAllowedCountryCodes,
+  ]);
 
   React.useEffect(() => {
     const tmpCartString = localStorage.getItem("cart");
@@ -41,6 +257,81 @@ function OrderCartPage() {
   React.useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart ? cart : ""));
   }, [cart]);
+
+  React.useEffect(() => {
+    apiDataLocationCountryList().then((response) => {
+      if (response.status === 200) {
+        const countries = response.data;
+        setCountries(countries);
+        setRegionsByCountryCode(
+          Object.fromEntries(
+            countries
+              .filter(
+                (countryData: any) =>
+                  countryData.regions && countryData.regions.length > 0,
+              )
+              .map((countryData: any) => [
+                countryData.code,
+                countryData.regions,
+              ]),
+          ),
+        );
+      }
+    });
+  }, [
+    apiDataLocationCountryList,
+    setCountries,
+    setRegionsByCountryCode,
+    i18n.resolvedLanguage,
+  ]);
+
+  React.useEffect(() => {
+    apiOrderDeliveryProviderList().then((response) => {
+      if (response.status === 200) {
+        const deliveryProviders = response.data;
+        setDeliveryProviderById(
+          Object.fromEntries(
+            deliveryProviders.map((deliveryProvider: any) => [
+              deliveryProvider.id,
+              deliveryProvider,
+            ]),
+          ),
+        );
+        setDeliveryPriceById({
+          ...Object.fromEntries(
+            deliveryProviders
+              .map((deliveryProvider: any) =>
+                deliveryProvider.prices.map((deliveryPrice: any) => [
+                  [deliveryProvider.id, deliveryPrice.id],
+                  deliveryPrice,
+                ]),
+              )
+              .flat(),
+          ),
+        });
+        if (
+          !formDeliveryProviderId &&
+          deliveryProviders &&
+          deliveryProviders.length > 0
+        ) {
+          setFormDeliveryProviderId(deliveryProviders[0].id);
+        }
+      }
+    });
+  }, [
+    apiOrderDeliveryProviderList,
+    setDeliveryProviderById,
+    setFormDeliveryProviderId,
+    setDeliveryPriceById,
+    i18n.resolvedLanguage,
+  ]);
+
+  function handleFormDeliveryProvider(deliveryProviderId: string) {
+    const deliveryProvider = deliveryProviderById[deliveryProviderId];
+    if (deliveryProvider.is_enabled) {
+      setFormDeliveryProviderId(deliveryProviderId);
+    }
+  }
 
   function handleEmptyCart() {
     setCart(undefined);
@@ -88,7 +379,7 @@ function OrderCartPage() {
     0;
 
   const cartVatAmount =
-    (cart &&
+    ((cart &&
       parseInt(
         // @ts-ignore
         Object.values(cart).reduce(
@@ -97,80 +388,694 @@ function OrderCartPage() {
           0,
         ),
       )) ||
-    0;
+      0) +
+    ((deliveryPrice &&
+      // @ts-ignore
+      deliveryPrice.price_vat &&
+      // @ts-ignore
+      deliveryPrice.price_vat.amount) ||
+      0);
+
+  // @ts-ignore
+  const cartTotalAmount =
+    cartAmount + (deliveryPrice ? deliveryPrice.price.amount : 0);
 
   const cartCurrency =
     (cart &&
       Object.values(cart).length > 0 &&
       // @ts-ignore
       Object.values(cart)[0][1][1].price.currency) ||
+    (deliveryPrice &&
+      // @ts-ignore
+      deliveryPrice.price_vat &&
+      // @ts-ignore
+      deliveryPrice.price_vat.currency) ||
     "SEK";
+
+  const countriesAllowed =
+    countries &&
+    countries.filter(
+      (country: any) =>
+        allowedCountryCodes === undefined ||
+        country.code in allowedCountryCodes,
+    );
+
+  const hasRegions =
+    regionsByCountryCode &&
+    "country" in formDeliveryData &&
+    formDeliveryData.country in regionsByCountryCode;
+
+  const displayFormAddress =
+    formDeliveryProviderId &&
+    deliveryProviderById &&
+    formDeliveryProviderId in deliveryProviderById &&
+    deliveryProviderById[formDeliveryProviderId].type ===
+      OrderDeliveryType.DELIVERY;
+
+  const displayFormPickup =
+    formDeliveryProviderId &&
+    deliveryProviderById &&
+    formDeliveryProviderId in deliveryProviderById &&
+    deliveryProviderById[formDeliveryProviderId].type ===
+      OrderDeliveryType.PICK_UP;
+
+  const hasValidDelivery =
+    (deliveryPrice && deliveryPrice.price) ||
+    (formDeliveryProviderId &&
+      deliveryProviderById[formDeliveryProviderId].type !==
+        OrderDeliveryType.DELIVERY);
+  const hasValidUser =
+    user != null ||
+    (formUserData.firstname &&
+      formUserData.lastname &&
+      formUserData.email &&
+      formUserData.phone);
+  const hasValidAddress =
+    (formDeliveryProviderId &&
+      deliveryProviderById[formDeliveryProviderId].type !==
+        OrderDeliveryType.DELIVERY) ||
+    (formDeliveryData.address &&
+      formDeliveryData.postcode &&
+      formDeliveryData.city &&
+      formDeliveryData.country &&
+      (!hasRegions || formDeliveryData.region));
+  const hasValidPickup =
+    (formDeliveryProviderId &&
+      deliveryProviderById[formDeliveryProviderId].type !==
+        OrderDeliveryType.PICK_UP) ||
+    formPickupData.event;
+
+  const canSubmit =
+    cart &&
+    Object.keys(cart).length > 0 &&
+    hasValidDelivery &&
+    hasValidUser &&
+    hasValidAddress &&
+    hasValidPickup;
 
   const content = (
     <Grid container spacing={4} className={styles.orderGrid}>
       <Grid container spacing={4} className={styles.productsGrid}>
-        <Grid size={{ xs: 12, md: cart ? 8 : 12 }}>
-          <Card variant="outlined">
-            <Box className={styles.userTopBox}>
-              <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.order-cart.products-card.title")}
-              </Typography>
-            </Box>
-            <Divider />
+        <Grid
+          size={{ xs: 12, md: cart && Object.keys(cart).length > 0 ? 8 : 12 }}
+        >
+          <Grid container spacing={4} direction="column">
+            <Card variant="outlined">
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.order-cart.products-card.title")}
+                </Typography>
+              </Box>
+              <Divider />
 
-            {cart ? (
-              <List className={styles.productsList}>
-                {Object.values(cart)
-                  .filter(
-                    ([quantity, [product, productSize]]: any[]) => quantity > 0,
-                  )
-                  .map(
-                    (
-                      [quantity, [product, productSize]]: any[],
-                      i: number,
-                      row: any,
-                    ) => {
-                      console.log(productSize);
-                      return (
-                        <Box key={productSize.id}>
-                          <ListItemButton disableTouchRipple dense>
-                            <ListItemIcon className={styles.eventCardIcon}>
-                              {product.images && product.images.length > 0 && (
-                                <img
-                                  src={
-                                    BACKEND_BASE_URL + product.images[0].picture
-                                  }
-                                  alt={product.name}
-                                  className={styles.eventCardImage}
-                                />
-                              )}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                quantity +
-                                " x " +
-                                product.name +
-                                " — " +
-                                productSize.size
-                              }
-                            />
-                            <Typography variant="body2" component="span">
-                              {quantity * productSize.price.amount}{" "}
-                              {productSize.price.currency}
-                            </Typography>
-                          </ListItemButton>
-                        </Box>
-                      );
-                    },
+              {cart && Object.keys(cart).length > 0 ? (
+                <List className={styles.productsList}>
+                  {Object.values(cart)
+                    .filter(
+                      ([quantity, [product, productSize]]: any[]) =>
+                        quantity > 0,
+                    )
+                    .map(
+                      (
+                        [quantity, [product, productSize]]: any[],
+                        i: number,
+                        row: any,
+                      ) => {
+                        return (
+                          <Box key={productSize.id}>
+                            <ListItemButton disableTouchRipple dense>
+                              <ListItemIcon className={styles.eventCardIcon}>
+                                {product.images &&
+                                  product.images.length > 0 && (
+                                    <img
+                                      src={
+                                        BACKEND_BASE_URL +
+                                        product.images[0].picture
+                                      }
+                                      alt={product.name}
+                                      className={styles.eventCardImage}
+                                    />
+                                  )}
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  quantity +
+                                  " x " +
+                                  product.name +
+                                  " — " +
+                                  productSize.size
+                                }
+                              />
+                              <Typography variant="body2" component="span">
+                                {quantity * productSize.price.amount}{" "}
+                                {productSize.price.currency}
+                              </Typography>
+                            </ListItemButton>
+                          </Box>
+                        );
+                      },
+                    )}
+                </List>
+              ) : (
+                <Box className={styles.userDetailsBox}>
+                  <Typography variant="body2" component="span">
+                    {t("pages.order-cart.products-card.empty")}
+                  </Typography>
+                </Box>
+              )}
+            </Card>
+
+            {cart && Object.keys(cart).length > 0 && (
+              <Card variant="outlined">
+                <Box className={styles.userTopBox}>
+                  <Typography variant="h6" fontWeight="600" component="div">
+                    {t("pages.order-cart.entity-card.title")}
+                  </Typography>
+                </Box>
+                <Divider />
+                <Box className={styles.dataDetailsBox}>
+                  <Typography
+                    variant="body1"
+                    fontWeight={700}
+                    mb={2}
+                    width="100%"
+                  >
+                    {t("pages.order-cart.entity-card.contact-info.title")}
+                  </Typography>
+                  {user != null ? (
+                    <>
+                      <Typography variant="body1" width="100%">
+                        {user.firstname} {user.lastname}
+                      </Typography>
+                      <Typography variant="body1" width="100%">
+                        <Link
+                          color="textPrimary"
+                          href={"mailto:" + user.email}
+                          underline="none"
+                        >
+                          {user.email}
+                        </Link>
+                      </Typography>
+                      <Typography variant="body1" width="100%">
+                        {user.phone}
+                      </Typography>
+                    </>
+                  ) : (
+                    <Grid container spacing={3}>
+                      <FormGrid size={{ xs: 12, md: 6 }}>
+                        <FormLabel htmlFor="firstname" required>
+                          {t("pages.user-join.form.first-name")}
+                        </FormLabel>
+                        <OutlinedInput
+                          id="firstname"
+                          name="firstname"
+                          type="text"
+                          placeholder="Namn"
+                          autoComplete="first name"
+                          required
+                          defaultValue={user && user.firstname}
+                          disabled={user != null && user.firstname}
+                          onChange={(event: ChangeEvent) =>
+                            handleFormUserData(
+                              "firstname",
+                              (event.target as HTMLTextAreaElement).value,
+                            )
+                          }
+                          size="small"
+                        />
+                      </FormGrid>
+                      <FormGrid size={{ xs: 12, md: 6 }}>
+                        <FormLabel htmlFor="lastname" required>
+                          {t("pages.user-join.form.last-name")}
+                        </FormLabel>
+                        <OutlinedInput
+                          id="lastname"
+                          name="lastname"
+                          type="text"
+                          placeholder="Namnsson"
+                          autoComplete="last name"
+                          required
+                          defaultValue={user && user.lastname}
+                          disabled={user != null && user.lastname}
+                          onChange={(event: ChangeEvent) =>
+                            handleFormUserData(
+                              "lastname",
+                              (event.target as HTMLTextAreaElement).value,
+                            )
+                          }
+                          size="small"
+                        />
+                      </FormGrid>
+                      <FormGrid size={{ xs: 12, md: 6 }}>
+                        <FormLabel htmlFor="email" required>
+                          {t("pages.user-join.form.email")}
+                        </FormLabel>
+                        <OutlinedInput
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder="namn@namnsson.se"
+                          autoComplete="email"
+                          required
+                          defaultValue={user && user.email}
+                          disabled={user != null && user.email}
+                          onChange={(event: ChangeEvent) =>
+                            handleFormUserData(
+                              "email",
+                              (event.target as HTMLTextAreaElement).value,
+                            )
+                          }
+                          size="small"
+                        />
+                      </FormGrid>
+                      <FormGrid size={{ xs: 12, md: 6 }}>
+                        <FormLabel htmlFor="phone" required>
+                          {t("pages.user-join.form.phone")}
+                        </FormLabel>
+                        <OutlinedInput
+                          id="phone"
+                          name="phone"
+                          type="phone"
+                          placeholder="+4687461000"
+                          autoComplete="phone"
+                          required
+                          defaultValue={user && user.phone}
+                          disabled={user != null && user.phone}
+                          onChange={(event: ChangeEvent) =>
+                            handleFormUserData(
+                              "phone",
+                              (event.target as HTMLTextAreaElement).value,
+                            )
+                          }
+                          size="small"
+                        />
+                      </FormGrid>
+                    </Grid>
                   )}
-              </List>
-            ) : (
-              <Box className={styles.userDetailsBox}>asdasd</Box>
+                </Box>
+                <Divider />
+                <Box className={styles.dataDetailsBox}>
+                  <Typography
+                    variant="body1"
+                    fontWeight={700}
+                    mb={2}
+                    width="100%"
+                  >
+                    {t("pages.order-cart.entity-card.delivery-info.title")}
+                  </Typography>
+                  {deliveryProviderById &&
+                    Object.values(deliveryProviderById).map(
+                      (deliveryProvider: any) => {
+                        return (
+                          <Accordion
+                            elevation={0}
+                            expanded={
+                              formDeliveryProviderId === deliveryProvider.id
+                            }
+                            onChange={() =>
+                              handleFormDeliveryProvider(deliveryProvider.id)
+                            }
+                          >
+                            <AccordionSummary
+                              aria-controls="panel1d-content"
+                              id="panel1d-header"
+                              disabled={!deliveryProvider.is_enabled}
+                            >
+                              <Typography
+                                variant="body2"
+                                fontWeight={700}
+                                component="span"
+                              >
+                                {deliveryProvider.name}
+                              </Typography>
+                            </AccordionSummary>
+                            {deliveryProvider.is_enabled && (
+                              <AccordionDetails>
+                                <Grid
+                                  container
+                                  spacing={{ xs: 2, md: 4 }}
+                                  className={styles.deliveryGrid}
+                                >
+                                  {deliveryProvider.picture &&
+                                    deliveryProvider.picture.medium && (
+                                      <Grid size={{ xs: 8, md: 3 }}>
+                                        <img
+                                          src={
+                                            BACKEND_BASE_URL +
+                                            deliveryProvider.picture.medium
+                                          }
+                                          alt={deliveryProvider.name}
+                                          className={styles.deliveryCardImage}
+                                        />
+                                      </Grid>
+                                    )}
+                                  {deliveryProvider.description && (
+                                    <Grid
+                                      size={{
+                                        xs: 12,
+                                        md:
+                                          deliveryProvider.picture &&
+                                          deliveryProvider.picture.medium
+                                            ? 9
+                                            : 12,
+                                      }}
+                                    >
+                                      {" "}
+                                      <Typography
+                                        variant="body2"
+                                        component="span"
+                                      >
+                                        <div
+                                          dangerouslySetInnerHTML={{
+                                            __html:
+                                              deliveryProvider.description,
+                                          }}
+                                        />
+                                        {countriesAllowed &&
+                                          countriesAllowed.length > 0 && (
+                                            <>
+                                              <br />
+                                              <span>
+                                                {t(
+                                                  "pages.order-cart.entity-card.delivery-info.countries-list",
+                                                )}
+                                                {": "}
+                                                {countriesAllowed
+                                                  .map(
+                                                    (country: any) =>
+                                                      country.name,
+                                                  )
+                                                  .join(", ")}
+                                                {"."}
+                                              </span>
+                                              <br />
+                                              <span>
+                                                {t(
+                                                  "pages.order-cart.entity-card.delivery-info.countries-reason",
+                                                )}
+                                              </span>
+                                            </>
+                                          )}
+                                      </Typography>
+                                    </Grid>
+                                  )}
+                                </Grid>
+                              </AccordionDetails>
+                            )}
+                          </Accordion>
+                        );
+                      },
+                    )}
+                </Box>
+                <TransitionGroup>
+                  {cart &&
+                    Object.keys(cart).length > 0 &&
+                    displayFormAddress && (
+                      <Collapse in={displayFormAddress}>
+                        <Divider />
+                        <Box className={styles.dataDetailsBox}>
+                          <Typography
+                            variant="body1"
+                            fontWeight={700}
+                            mb={2}
+                            width="100%"
+                          >
+                            {t(
+                              "pages.order-cart.entity-card.address-info.title",
+                            )}
+                          </Typography>
+                          <Grid container spacing={3}>
+                            <FormGrid size={8}>
+                              <FormLabel htmlFor="address" required>
+                                {t("pages.order-cart.form.street")}
+                              </FormLabel>
+                              <OutlinedInput
+                                id="address"
+                                name="address"
+                                type="text"
+                                placeholder="Drottninggatan 1"
+                                autoComplete="address"
+                                required
+                                size="small"
+                                onChange={(event: ChangeEvent) =>
+                                  handleFormDeliveryData(
+                                    "address",
+                                    (event.target as HTMLTextAreaElement).value,
+                                  )
+                                }
+                              />
+                            </FormGrid>
+                            <FormGrid size={4}>
+                              <FormLabel htmlFor="apartment">
+                                {t("pages.order-cart.form.apartment")}
+                              </FormLabel>
+                              <OutlinedInput
+                                id="apartment"
+                                name="apartment"
+                                type="text"
+                                placeholder="1001"
+                                autoComplete="apartment"
+                                size="small"
+                                onChange={(event: ChangeEvent) =>
+                                  handleFormDeliveryData(
+                                    "apartment",
+                                    (event.target as HTMLTextAreaElement).value,
+                                  )
+                                }
+                              />
+                            </FormGrid>
+                            <FormGrid size={12}>
+                              <FormLabel htmlFor="address2">
+                                {t("pages.order-cart.form.street2")}
+                              </FormLabel>
+                              <OutlinedInput
+                                id="address2"
+                                name="address2"
+                                type="text"
+                                autoComplete="address2"
+                                size="small"
+                                onChange={(event: ChangeEvent) =>
+                                  handleFormDeliveryData(
+                                    "address2",
+                                    (event.target as HTMLTextAreaElement).value,
+                                  )
+                                }
+                              />
+                            </FormGrid>
+                            <FormGrid size={{ xs: 12, md: 4 }}>
+                              <FormLabel htmlFor="postcode" required>
+                                {t("pages.order-cart.form.postcode")}
+                              </FormLabel>
+                              <OutlinedInput
+                                id="postcode"
+                                name="postcode"
+                                type="text"
+                                placeholder="123 45"
+                                autoComplete="postcode"
+                                required
+                                onChange={(event: ChangeEvent) =>
+                                  handleFormDeliveryData(
+                                    "postcode",
+                                    (event.target as HTMLTextAreaElement).value,
+                                  )
+                                }
+                                size="small"
+                              />
+                            </FormGrid>
+                            <FormGrid size={{ xs: 12, md: 8 }}>
+                              <FormLabel htmlFor="city" required>
+                                {t("pages.order-cart.form.city")}
+                              </FormLabel>
+                              <OutlinedInput
+                                id="city"
+                                name="city"
+                                type="text"
+                                placeholder="Stockholm"
+                                autoComplete="city"
+                                required
+                                onChange={(event: ChangeEvent) =>
+                                  handleFormDeliveryData(
+                                    "city",
+                                    (event.target as HTMLTextAreaElement).value,
+                                  )
+                                }
+                                size="small"
+                              />
+                            </FormGrid>
+
+                            <FormGrid
+                              size={hasRegions ? { xs: 12, md: 6 } : 12}
+                            >
+                              <FormLabel
+                                id="label-country"
+                                htmlFor="country"
+                                required
+                              >
+                                {t("pages.order-cart.form.country")}
+                              </FormLabel>
+                              <Select
+                                size="small"
+                                labelId="label-country"
+                                id="country"
+                                input={
+                                  <OutlinedInput
+                                    label={t("pages.order-cart.form.country")}
+                                  />
+                                }
+                                onChange={(event: SelectChangeEvent) =>
+                                  handleFormDeliveryData(
+                                    "country",
+                                    event.target.value,
+                                  )
+                                }
+                                defaultValue={formDeliveryData.country}
+                                MenuProps={MenuProps}
+                                variant="standard"
+                              >
+                                {countriesAllowed &&
+                                  countriesAllowed.length > 0 &&
+                                  countriesAllowed.map(
+                                    (country: any, i: number) => {
+                                      return (
+                                        <MenuItem key={i} value={country.code}>
+                                          {country.name}
+                                        </MenuItem>
+                                      );
+                                    },
+                                  )}
+                              </Select>
+                            </FormGrid>
+                            {hasRegions && (
+                              <FormGrid size={{ xs: 12, md: 6 }}>
+                                <FormLabel
+                                  id="label-region"
+                                  htmlFor="region"
+                                  required
+                                >
+                                  {t("pages.order-cart.form.region")}
+                                </FormLabel>
+                                <Select
+                                  size="small"
+                                  labelId="label-region"
+                                  id="region"
+                                  input={
+                                    <OutlinedInput
+                                      label={t("pages.order-cart.form.region")}
+                                    />
+                                  }
+                                  onChange={(event: SelectChangeEvent) =>
+                                    handleFormDeliveryData(
+                                      "region",
+                                      event.target.value,
+                                    )
+                                  }
+                                  defaultValue={formDeliveryData.region}
+                                  MenuProps={MenuProps}
+                                  variant="standard"
+                                >
+                                  {hasRegions &&
+                                    regionsByCountryCode[
+                                      formDeliveryData.country
+                                    ].map((region: any, i: number) => {
+                                      return (
+                                        <MenuItem key={i} value={region.code}>
+                                          {region.name}
+                                        </MenuItem>
+                                      );
+                                    })}
+                                </Select>
+                              </FormGrid>
+                            )}
+                          </Grid>
+                        </Box>
+                      </Collapse>
+                    )}
+                </TransitionGroup>
+                <TransitionGroup>
+                  {cart &&
+                    Object.keys(cart).length > 0 &&
+                    displayFormPickup && (
+                      <Collapse in={displayFormPickup}>
+                        <Divider />
+                        <Box className={styles.dataDetailsBox}>
+                          <Typography
+                            variant="body1"
+                            fontWeight={700}
+                            mb={2}
+                            width="100%"
+                          >
+                            {t(
+                              "pages.order-cart.entity-card.pickup-info.title",
+                            )}
+                          </Typography>
+                          <Grid container spacing={3}>
+                            <FormGrid size={12}>
+                              <FormLabel
+                                id="label-event"
+                                htmlFor="event"
+                                required
+                              >
+                                {t("pages.order-cart.form.event")}
+                              </FormLabel>
+                              <Select
+                                size="small"
+                                labelId="label-date"
+                                id="event"
+                                input={
+                                  <OutlinedInput
+                                    label={t("pages.order-cart.form.event")}
+                                  />
+                                }
+                                onChange={(event: SelectChangeEvent) =>
+                                  handleFormPickupData(
+                                    "event",
+                                    event.target.value,
+                                  )
+                                }
+                                defaultValue={formPickupData.event}
+                                MenuProps={MenuProps}
+                                variant="standard"
+                              >
+                                {events &&
+                                  events.results &&
+                                  events.results.length > 0 &&
+                                  events.results.map(
+                                    (event: any, i: number) => {
+                                      return (
+                                        <MenuItem key={i} value={event.id}>
+                                          {event.title +
+                                            (event.type ===
+                                              EventType.REHEARSAL &&
+                                            event.location !== null
+                                              ? " — " + event.location.name
+                                              : "") +
+                                            " — " +
+                                            capitalizeFirstLetter(
+                                              new Date(event.time_from)
+                                                .toISOString()
+                                                .slice(0, 10),
+                                            ) +
+                                            " " +
+                                            new Date(event.time_from)
+                                              .toTimeString()
+                                              .slice(0, 5)}
+                                        </MenuItem>
+                                      );
+                                    },
+                                  )}
+                              </Select>
+                            </FormGrid>
+                          </Grid>
+                        </Box>
+                      </Collapse>
+                    )}
+                </TransitionGroup>
+              </Card>
             )}
-          </Card>
+          </Grid>
         </Grid>
 
-        {cart ? (
+        {cart && Object.keys(cart).length > 0 ? (
           <Grid size={{ xs: 12, md: 4 }}>
             <Card variant="outlined">
               <Box className={styles.userTopBox}>
@@ -207,17 +1112,32 @@ function OrderCartPage() {
                   <ListItemButton disableTouchRipple dense>
                     <ListItemText
                       primary={t("pages.order-cart.summary-card.shipping")}
-                      secondary={t(
-                        "pages.order-cart.summary-card.shipping.pickup-only",
-                      )}
+                      secondary={
+                        !hasValidDelivery &&
+                        t("pages.order-cart.summary-card.shipping.invalid")
+                      }
                     />
                     <Typography
                       variant="body2"
                       component="span"
                       className={styles.productAmount}
                     >
-                      {"0 "}
-                      {cartCurrency}
+                      {
+                        // @ts-ignore
+                        deliveryPrice && deliveryPrice.price
+                          ? // @ts-ignore
+                            deliveryPrice.price.amount +
+                            " " +
+                            // @ts-ignore
+                            deliveryPrice.price.currency
+                          : (formDeliveryProviderId &&
+                            deliveryProviderById[formDeliveryProviderId]
+                              .type === OrderDeliveryType.DELIVERY
+                              ? "—"
+                              : "0") +
+                            " " +
+                            cartCurrency
+                      }
                     </Typography>
                   </ListItemButton>
                 </Box>
@@ -227,7 +1147,7 @@ function OrderCartPage() {
                       primary={t("pages.order-cart.summary-card.taxes")}
                     />
                     <Typography variant="body2" component="span">
-                      {cartVatAmount} {cartCurrency}
+                      {hasValidDelivery ? cartVatAmount : "— "} {cartCurrency}
                     </Typography>
                   </ListItemButton>
                 </Box>
@@ -250,7 +1170,7 @@ function OrderCartPage() {
                       fontWeight={700}
                       component="span"
                     >
-                      {cartAmount} {cartCurrency}
+                      {hasValidDelivery ? cartTotalAmount : "— "} {cartCurrency}
                     </Typography>
                   </ListItemButton>
                 </Box>
@@ -269,6 +1189,7 @@ function OrderCartPage() {
                     disableElevation
                     className={styles.productAmount}
                     onClick={handleCreateOrder}
+                    disabled={!canSubmit}
                   >
                     {t("pages.order.product-card.order")}
                   </Button>
@@ -293,6 +1214,7 @@ function OrderCartPage() {
                       color="error"
                       disableElevation
                       onClick={handleEmptyCart}
+                      disabled={!cart || Object.keys(cart).length === 0}
                     >
                       {t("pages.order.product-card.empty")}
                     </Button>

@@ -6,29 +6,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0006_stockorder_entity'),
+        ("product", "0006_stockorder_entity"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='product',
-            options={'ordering': ('type', 'created_at')},
+            name="product",
+            options={"ordering": ("type", "created_at")},
         ),
         migrations.AlterModelOptions(
-            name='productprice',
-            options={'ordering': ('product__type', 'module')},
+            name="productprice",
+            options={"ordering": ("product__type", "module")},
         ),
         migrations.AlterModelOptions(
-            name='productsize',
-            options={'ordering': ('product__type', 'category', 'size')},
+            name="productsize",
+            options={"ordering": ("product__type", "category", "size")},
         ),
         migrations.AlterModelOptions(
-            name='stockproduct',
-            options={'ordering': ('size__product__type', 'size__category', 'size__size')},
+            name="stockproduct",
+            options={
+                "ordering": ("size__product__type", "size__category", "size__size")
+            },
         ),
         migrations.AddField(
-            model_name='productsize',
-            name='order',
+            model_name="productsize",
+            name="order",
             field=models.PositiveSmallIntegerField(default=0),
         ),
     ]

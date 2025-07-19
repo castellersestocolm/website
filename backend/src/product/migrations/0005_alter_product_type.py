@@ -6,13 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0004_alter_stockorder_receipt_alter_stockproduct_order_and_more'),
+        ("product", "0004_alter_stockorder_receipt_alter_stockproduct_order_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='product',
-            name='type',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'SHIPPING'), (3210, 'SHIRT'), (3220, 'FAIXA'), (3230, 'BANDANA'), (3240, 'TSHIRT')]),
+            model_name="product",
+            name="type",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (10, "SHIPPING"),
+                    (3210, "SHIRT"),
+                    (3220, "FAIXA"),
+                    (3230, "BANDANA"),
+                    (3240, "TSHIRT"),
+                ]
+            ),
         ),
     ]

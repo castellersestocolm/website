@@ -11,4 +11,4 @@ class OrderStatus(IntEnum):
 class OrderDeliveryType(IntEnum):
     PICK_UP = 10
     IN_PERSON = 20
-    POST = 30
+    DELIVERY = 30

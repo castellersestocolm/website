@@ -1,12 +1,18 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import JSONField
 from django.utils import timezone
+from versatileimagefield.fields import VersatileImageField
 
 from comunicat.db.mixins import StandardModel, Timestamps
 from djmoney.models.fields import MoneyField
 
 from comunicat.enums import Module
+from comunicat.utils.models import language_field_default
 from order.enums import OrderDeliveryType, OrderStatus
-from order.managers import OrderQuerySet
+from order.managers import OrderQuerySet, DeliveryPriceQuerySet
+
+from django.utils.translation import gettext_lazy as _
 
 
 class Order(StandardModel, Timestamps):
@@ -114,3 +120,57 @@ class OrderProduct(StandardModel, Timestamps):
         default_currency="SEK",
     )
     vat = models.PositiveSmallIntegerField(default=0)
+
+
+class DeliveryProvider(StandardModel, Timestamps):
+    name = JSONField(default=language_field_default)
+    description = JSONField(default=language_field_default)
+
+    picture = VersatileImageField(
+        "Image", blank=True, null=True, upload_to="order/deliver-provider/picture/"
+    )
+
+    type = models.PositiveSmallIntegerField(
+        choices=((odt.value, odt.name) for odt in OrderDeliveryType),
+    )
+
+    is_enabled = models.BooleanField(default=True)
+
+
+class DeliveryPrice(StandardModel, Timestamps):
+    provider = models.ForeignKey(
+        DeliveryProvider, related_name="prices", on_delete=models.CASCADE
+    )
+
+    country = models.ForeignKey(
+        "data.Country",
+        related_name="delivery_prices",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    region = models.ForeignKey(
+        "data.Region",
+        related_name="delivery_prices",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+
+    max_grams = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    price = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    objects = DeliveryPriceQuerySet.as_manager()
+
+    def clean(self):
+        if self.country and self.region and self.country != self.region.country:
+            raise ValidationError({"size": _("Region's country must match country.")})
+
+    class Meta:
+        ordering = ("price", "max_grams")

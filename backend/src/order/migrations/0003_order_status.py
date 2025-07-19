@@ -7,13 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0002_alter_orderproduct_line'),
+        ("order", "0002_alter_orderproduct_line"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='status',
-            field=models.PositiveSmallIntegerField(choices=[(0, 'CREATED'), (1, 'PROCESSING'), (2, 'COMPLETED'), (3, 'CANCELLED')], default=order.enums.OrderStatus['CREATED']),
+            model_name="order",
+            name="status",
+            field=models.PositiveSmallIntegerField(
+                choices=[
+                    (0, "CREATED"),
+                    (1, "PROCESSING"),
+                    (2, "COMPLETED"),
+                    (3, "CANCELLED"),
+                ],
+                default=order.enums.OrderStatus["CREATED"],
+            ),
         ),
     ]

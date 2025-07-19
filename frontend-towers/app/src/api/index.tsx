@@ -582,8 +582,28 @@ export const apiProductList = async (page: number = undefined) => {
 export const apiOrderCreate = async (sizes: any[]) => {
   try {
     return await instance.post("/order/", {
-      sizes: sizes,
+      cart: { sizes: sizes },
     });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiDataLocationCountryList = async () => {
+  try {
+    return await instance.get("/data/location/country/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderDeliveryProviderList = async () => {
+  try {
+    return await instance.get("/order/delivery/provider/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

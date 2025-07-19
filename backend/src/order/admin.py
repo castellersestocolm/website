@@ -1,10 +1,21 @@
 from django.contrib import admin
+from django.db.models import JSONField
 from django.utils import translation
+from jsoneditor.forms import JSONEditor
 
 from notify.enums import EmailType
-from order.models import OrderProduct, Order, OrderDelivery, OrderLog
+from order.models import (
+    OrderProduct,
+    Order,
+    OrderDelivery,
+    OrderLog,
+    DeliveryProvider,
+    DeliveryPrice,
+)
 
 import notify.tasks
+
+from django.utils.translation import gettext_lazy as _
 
 
 class OrderProductInline(admin.TabularInline):
@@ -71,3 +82,30 @@ class OrderDeliveryAdmin(admin.ModelAdmin):
     )
     list_filter = ("type", "created_at")
     ordering = ("-created_at",)
+
+
+class DeliveryPriceInline(admin.TabularInline):
+    model = DeliveryPrice
+    extra = 0
+    raw_id_fields = ("country", "region")
+
+
+@admin.register(DeliveryProvider)
+class DeliveryProviderAdmin(admin.ModelAdmin):
+    search_fields = ("name",)
+    list_display = ("name_locale",)
+    list_filter = ("type", "created_at")
+    ordering = (
+        "type",
+        "-created_at",
+    )
+    inlines = (DeliveryPriceInline,)
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def name_locale(self, obj):
+        return obj.name.get(translation.get_language()) or list(obj.name.values())[0]
+
+    name_locale.short_description = _("name")

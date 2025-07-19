@@ -8,21 +8,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0005_alter_orderdelivery_options_alter_order_status'),
+        ("order", "0005_alter_orderdelivery_options_alter_order_status"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='OrderLog',
+            name="OrderLog",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('status', models.PositiveSmallIntegerField(choices=[(10, 'CREATED'), (20, 'PROCESSING'), (30, 'COMPLETED'), (40, 'CANCELLED')])),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='logs', to='order.order')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "status",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (10, "CREATED"),
+                            (20, "PROCESSING"),
+                            (30, "COMPLETED"),
+                            (40, "CANCELLED"),
+                        ]
+                    ),
+                ),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="logs",
+                        to="order.order",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

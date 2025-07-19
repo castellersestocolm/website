@@ -11,6 +11,7 @@ from comunicat.rest.views import (
     order,
     org,
     product,
+    data,
 )
 from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
@@ -36,8 +37,13 @@ router.register("legal/team", legal.TeamAPI, "legal_team")
 router.register("legal/bylaws", legal.BylawsAPI, "legal_bylaws")
 router.register("towers/castle", towers.TowersCastleAPI, "towers_castle")
 router.register("order", order.OrderAPI, "order")
+router.register(
+    "order/delivery/provider", order.DeliveryProviderAPI, "order_delivery_provider"
+)
+router.register("order/delivery/price", order.DeliveryPriceAPI, "order_delivery_price")
 router.register("product", product.ProductAPI, "product")
 router.register("org", org.OrgAPI, "org")
+router.register("data/location", data.LocationAPI, "data_location")
 
 
 api_patterns = [

@@ -6,14 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0006_orderlog'),
+        ("order", "0006_orderlog"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='origin_module',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')], default=20),
+            model_name="order",
+            name="origin_module",
+            field=models.PositiveSmallIntegerField(
+                choices=[(10, "ORG"), (20, "TOWERS")], default=20
+            ),
             preserve_default=False,
         ),
     ]

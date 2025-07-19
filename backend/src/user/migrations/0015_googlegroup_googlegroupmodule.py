@@ -8,40 +8,96 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('integration', '0001_initial'),
-        ('legal', '0004_role_name_plural'),
-        ('user', '0014_towersuser_height_arms'),
+        ("integration", "0001_initial"),
+        ("legal", "0004_role_name_plural"),
+        ("user", "0014_towersuser_height_arms"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GoogleGroup',
+            name="GoogleGroup",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.CharField(max_length=255)),
-                ('external_id', models.CharField(max_length=255, unique=True)),
-                ('is_primary', models.BooleanField(default=False)),
-                ('google_integration', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='google_groups', to='integration.googleintegration')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("external_id", models.CharField(max_length=255, unique=True)),
+                ("is_primary", models.BooleanField(default=False)),
+                (
+                    "google_integration",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="google_groups",
+                        to="integration.googleintegration",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='GoogleGroupModule',
+            name="GoogleGroupModule",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')])),
-                ('require_membership', models.BooleanField(default=True)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modules', to='user.googlegroup')),
-                ('team', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='google_group_models', to='legal.team')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")]
+                    ),
+                ),
+                ("require_membership", models.BooleanField(default=True)),
+                (
+                    "group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="modules",
+                        to="user.googlegroup",
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="google_group_models",
+                        to="legal.team",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

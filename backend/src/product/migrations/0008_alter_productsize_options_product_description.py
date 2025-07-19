@@ -7,17 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0007_alter_product_options_alter_productprice_options_and_more'),
+        ("product", "0007_alter_product_options_alter_productprice_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='productsize',
-            options={'ordering': ('product__type', 'order', 'category', 'size')},
+            name="productsize",
+            options={"ordering": ("product__type", "order", "category", "size")},
         ),
         migrations.AddField(
-            model_name='product',
-            name='description',
-            field=models.JSONField(default=comunicat.utils.models.language_field_default),
+            model_name="product",
+            name="description",
+            field=models.JSONField(
+                default=comunicat.utils.models.language_field_default
+            ),
         ),
     ]

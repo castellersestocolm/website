@@ -6,6 +6,13 @@
   align-items: stretch;
 }
 
+.deliveryGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .productsGrid {
   width: 100%;
   display: flex;
@@ -27,6 +34,10 @@
   padding: 8px 16px 8px 0;
 }
 
+.deliveryCardImage {
+  width: 100%;
+}
+
 .userTopBox {
   padding: 12px 16px;
   background-color: var(--mui-palette-primary-main);
@@ -34,6 +45,11 @@
 
 .userDetailsBox {
   padding: 8px 16px;
+  flex: 1 1 auto;
+}
+
+.dataDetailsBox {
+  padding: 16px 16px 20px 16px;
   flex: 1 1 auto;
 }
 

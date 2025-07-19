@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0018_googlegroupmodule_delete_on_expire'),
+        ("user", "0018_googlegroupmodule_delete_on_expire"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='googlegroupmodule',
-            name='delete_on_expire',
+            model_name="googlegroupmodule",
+            name="delete_on_expire",
         ),
         migrations.AddField(
-            model_name='googlegroup',
-            name='delete_on_expire',
+            model_name="googlegroup",
+            name="delete_on_expire",
             field=models.BooleanField(default=True),
         ),
     ]

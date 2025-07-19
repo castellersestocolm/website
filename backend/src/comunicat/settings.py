@@ -78,7 +78,9 @@ INSTALLED_APPS = [
     "drf_yasg",
     "jsoneditor",
     "djmoney",
+    "djmoney.contrib.exchange",
     "comunicat",
+    "data",
     "user",
     "integration",
     "payment",
@@ -515,6 +517,9 @@ MODULE_TOWERS_GOOGLE_PHOTOS_ENABLED = (
 # Django money
 
 CURRENCIES = MODULE_ALL_CURRENCIES
+# Free plan offers 100 calls/month
+EXCHANGE_BACKEND = "djmoney.contrib.exchange.backends.FixerBackend"
+FIXER_ACCESS_KEY = os.getenv("FIXER_ACCESS_KEY", "902acae40806d5ec2d280f919d3265ed")
 # MONEY_FORMAT = {"locale": MODULE_ALL_CURRENCY_LOCALE}
 
 # SMTP settings

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0017_alter_useremail_user'),
+        ("user", "0017_alter_useremail_user"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='googlegroupmodule',
-            name='delete_on_expire',
+            model_name="googlegroupmodule",
+            name="delete_on_expire",
             field=models.BooleanField(default=True),
         ),
     ]

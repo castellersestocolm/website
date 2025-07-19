@@ -9,8 +9,15 @@ from rest_framework.serializers import Serializer
 from rest_framework.response import Response
 
 import order.api
+import order.api.delivery_provider
+import order.api.delivery_price
 
-from comunicat.rest.serializers.order import OrderSerializer, CreateOrderSerializer
+from comunicat.rest.serializers.order import (
+    OrderSerializer,
+    CreateOrderSerializer,
+    DeliveryProviderSerializer,
+    DeliveryPriceSerializer,
+)
 
 from comunicat.rest.viewsets import ComuniCatViewSet
 
@@ -48,7 +55,7 @@ class OrderAPI(ComuniCatViewSet):
 
         try:
             order_obj = order.api.create(
-                sizes=validated_data["sizes"],
+                sizes=validated_data["cart"]["sizes"],
                 user_id=request.user.id,
                 module=self.module,
             )
@@ -78,3 +85,41 @@ class OrderAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+
+class DeliveryProviderAPI(ComuniCatViewSet):
+    serializer_class = DeliveryProviderSerializer
+    permission_classes = (permissions.AllowAny,)
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: DeliveryProviderSerializer(many=True), 400: Serializer()},
+    )
+    @method_decorator(cache_page(60))
+    def list(self, request):
+        delivery_provider_objs = order.api.delivery_provider.get_list(
+            module=self.module
+        )
+
+        serializer = self.serializer_class(
+            delivery_provider_objs, context={"module": self.module}, many=True
+        )
+        return Response(serializer.data)
+
+
+class DeliveryPriceAPI(ComuniCatViewSet):
+    serializer_class = DeliveryPriceSerializer
+    permission_classes = (permissions.AllowAny,)
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: DeliveryPriceSerializer(many=True), 400: Serializer()},
+    )
+    @method_decorator(cache_page(60))
+    def list(self, request):
+        delivery_price_objs = order.api.delivery_price.get_list(module=self.module)
+
+        serializer = self.serializer_class(
+            delivery_price_objs, context={"module": self.module}, many=True
+        )
+        return Response(serializer.data)

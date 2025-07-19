@@ -7,14 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0001_initial'),
-        ('payment', '0031_receipt_entity_part_2'),
+        ("order", "0001_initial"),
+        ("payment", "0031_receipt_entity_part_2"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='orderproduct',
-            name='line',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='product', to='payment.paymentline'),
+            model_name="orderproduct",
+            name="line",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="product",
+                to="payment.paymentline",
+            ),
         ),
     ]

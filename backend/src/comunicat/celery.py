@@ -25,6 +25,11 @@ app.conf.beat_schedule = {
         "task": "user.tasks.sync_users",
         "schedule": crontab(hour="*/2", minute="0"),
     },
+    # Run once a day
+    "comunicat.update_rates": {
+        "task": "comunicat.tasks.update_rates",
+        "schedule": crontab(hour="4", minute="0"),
+    },
 }
 
 if settings.MODULE_ORG_NOTIFY_EVENT_SIGNUP_TIME:

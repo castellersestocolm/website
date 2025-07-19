@@ -139,7 +139,9 @@ class ProductSizeQuerySet(QuerySet):
             ),
             price_vat=Case(
                 When(
-                    price__isnull=False, vat__isnull=False, then=F("vat") * F("price")
+                    price__isnull=False,
+                    vat__isnull=False,
+                    then=F("vat") * F("price") / 100,
                 ),
                 default=Value(None),
                 output_field=MoneyOutput(),

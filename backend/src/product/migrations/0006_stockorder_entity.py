@@ -7,14 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0031_receipt_entity_part_2'),
-        ('product', '0005_alter_product_type'),
+        ("payment", "0031_receipt_entity_part_2"),
+        ("product", "0005_alter_product_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='stockorder',
-            name='entity',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='stock_orders', to='payment.entity'),
+            model_name="stockorder",
+            name="entity",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="stock_orders",
+                to="payment.entity",
+            ),
         ),
     ]

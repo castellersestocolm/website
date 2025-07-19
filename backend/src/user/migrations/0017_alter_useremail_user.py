@@ -8,13 +8,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0016_googlegroupmodule_require_module_domain_useremail'),
+        ("user", "0016_googlegroupmodule_require_module_domain_useremail"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='useremail',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='emails', to=settings.AUTH_USER_MODEL),
+            model_name="useremail",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="emails",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
