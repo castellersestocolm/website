@@ -133,7 +133,7 @@ class OrderProduct(StandardModel, Timestamps):
     order = models.ForeignKey(
         "Order",
         related_name="products",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
     )
 
     size = models.ForeignKey(
