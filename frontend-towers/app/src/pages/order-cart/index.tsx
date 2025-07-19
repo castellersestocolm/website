@@ -1292,7 +1292,7 @@ function OrderCartPage() {
                       primary={t("pages.order-cart.summary-card.taxes")}
                     />
                     <Typography variant="body2" component="span">
-                      {hasValidDelivery ? cartVatAmount : "— "} {cartCurrency}
+                      {hasValidDelivery ? cartVatAmount : "—"} {cartCurrency}
                     </Typography>
                   </ListItemButton>
                 </Box>
@@ -1315,7 +1315,7 @@ function OrderCartPage() {
                       fontWeight={700}
                       component="span"
                     >
-                      {hasValidDelivery ? cartTotalAmount : "— "} {cartCurrency}
+                      {hasValidDelivery ? cartTotalAmount : "—"} {cartCurrency}
                     </Typography>
                   </ListItemButton>
                 </Box>
