@@ -183,6 +183,15 @@ class DeliveryProvider(StandardModel, Timestamps):
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
 
+class DeliveryDate(StandardModel, Timestamps):
+    date = models.DateField()
+    provider = models.ForeignKey(
+        "DeliveryProvider",
+        related_name="dates",
+        on_delete=models.CASCADE,
+    )
+
+
 class DeliveryPrice(StandardModel, Timestamps):
     provider = models.ForeignKey(
         DeliveryProvider, related_name="prices", on_delete=models.CASCADE

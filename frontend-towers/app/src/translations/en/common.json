@@ -250,6 +250,7 @@
   "pages.order-cart.entity-card.title": "Your details",
   "pages.order-cart.entity-card.contact-info.title": "Contact information",
   "pages.order-cart.entity-card.delivery-info.title": "Delivery information",
+  "pages.order-cart.entity-card.delivery-info.date": "Next shipping date",
   "pages.order-cart.entity-card.delivery-info.countries-list": "Available countries",
   "pages.order-cart.entity-card.delivery-info.countries-reason": "Possible shipping to other countries, contact us for more information.",
   "pages.order-cart.entity-card.address-info.title": "Delivery address",

@@ -250,6 +250,7 @@
   "pages.order-cart.entity-card.title": "Dina uppgifter",
   "pages.order-cart.entity-card.contact-info.title": "Kontaktuppgifter",
   "pages.order-cart.entity-card.delivery-info.title": "Leveransuppgifter",
+  "pages.order-cart.entity-card.delivery-info.date": "Nästa leveransdatum",
   "pages.order-cart.entity-card.delivery-info.countries-list": "Tillgängliga länder",
   "pages.order-cart.entity-card.delivery-info.countries-reason": "Frakt möjligt till andra länder, kontakta oss för mer information.",
   "pages.order-cart.entity-card.address-info.title": "Leveransaddress",

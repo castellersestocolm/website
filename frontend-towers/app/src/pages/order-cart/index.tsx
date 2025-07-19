@@ -816,9 +816,37 @@ function OrderCartPage() {
                                               deliveryProvider.description,
                                           }}
                                         />
+                                        {deliveryProvider.dates &&
+                                          deliveryProvider.dates.length > 0 && (
+                                            <>
+                                              <br />
+                                              <strong>
+                                                {t(
+                                                  "pages.order-cart.entity-card.delivery-info.date",
+                                                )}
+                                                {": "}
+                                                {capitalizeFirstLetter(
+                                                  new Date(
+                                                    deliveryProvider.dates[0].date,
+                                                  ).toLocaleDateString(
+                                                    i18n.resolvedLanguage,
+                                                    {
+                                                      day: "numeric",
+                                                      month: "long",
+                                                      year: "numeric",
+                                                    },
+                                                  ),
+                                                )}
+                                                {"."}
+                                              </strong>
+                                            </>
+                                          )}
                                         {countriesAllowed &&
                                           countriesAllowed.length > 0 && (
                                             <>
+                                              {deliveryProvider.dates &&
+                                                deliveryProvider.dates.length >
+                                                  0 && <br />}
                                               <br />
                                               <span>
                                                 {t(

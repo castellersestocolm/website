@@ -12,6 +12,7 @@ from order.models import (
     DeliveryProvider,
     DeliveryPrice,
     OrderDeliveryAddress,
+    DeliveryDate,
 )
 
 import notify.tasks
@@ -120,6 +121,12 @@ class DeliveryPriceInline(admin.TabularInline):
     raw_id_fields = ("country", "region")
 
 
+class DeliveryDateInline(admin.TabularInline):
+    model = DeliveryDate
+    extra = 0
+    ordering = ("-date",)
+
+
 @admin.register(DeliveryProvider)
 class DeliveryProviderAdmin(admin.ModelAdmin):
     search_fields = ("name",)
@@ -129,7 +136,7 @@ class DeliveryProviderAdmin(admin.ModelAdmin):
         "type",
         "-created_at",
     )
-    inlines = (DeliveryPriceInline,)
+    inlines = (DeliveryPriceInline, DeliveryDateInline)
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},

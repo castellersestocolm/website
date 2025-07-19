@@ -252,6 +252,7 @@
   "pages.order-cart.entity-card.title": "Les teves dades",
   "pages.order-cart.entity-card.contact-info.title": "Informació de contacte",
   "pages.order-cart.entity-card.delivery-info.title": "Informació d'enviament",
+  "pages.order-cart.entity-card.delivery-info.date": "Propera data d'enviament",
   "pages.order-cart.entity-card.delivery-info.countries-list": "Països disponibles",
   "pages.order-cart.entity-card.delivery-info.countries-reason": "Possibilitat d'enviament a altres països, contacta'ns per més informació.",
   "pages.order-cart.entity-card.address-info.title": "Adreça d'enviament",

@@ -20,6 +20,7 @@ from order.models import (
     OrderLog,
     DeliveryProvider,
     DeliveryPrice,
+    DeliveryDate,
 )
 
 from django.utils.translation import gettext_lazy as _
@@ -53,6 +54,21 @@ class DeliveryPriceSerializer(s.ModelSerializer):
             "price",
             "price_vat",
             "created_at",
+        )
+
+
+class DeliveryDateSerializer(s.ModelSerializer):
+    date = s.DateField(read_only=True)
+
+    class Meta:
+        model = DeliveryDate
+        fields = (
+            "id",
+            "date",
+        )
+        read_only_fields = (
+            "id",
+            "date",
         )
 
 
@@ -101,6 +117,7 @@ class DeliveryProviderSlimSerializer(s.ModelSerializer):
 
 class DeliveryProviderSerializer(DeliveryProviderSlimSerializer):
     prices = DeliveryPriceSerializer(many=True, required=False, read_only=True)
+    dates = DeliveryDateSerializer(many=True, required=False, read_only=True)
 
     class Meta:
         model = DeliveryProvider
@@ -112,6 +129,7 @@ class DeliveryProviderSerializer(DeliveryProviderSlimSerializer):
             "type",
             "is_enabled",
             "prices",
+            "dates",
         )
         read_only_fields = (
             "id",
@@ -121,6 +139,7 @@ class DeliveryProviderSerializer(DeliveryProviderSlimSerializer):
             "type",
             "is_enabled",
             "prices",
+            "dates",
         )
 
 
@@ -266,22 +285,23 @@ class CreateOrderSerializer(s.Serializer):
     pickup = CreatePickupSerializer(required=False)
 
     def __init__(self, user: User | None = None, *args, **kwargs):
-        delivery_type = kwargs["data"]["delivery"]["provider"]["type"]
-        if delivery_type == OrderDeliveryType.DELIVERY:
-            kwargs["data"].pop("pickup")
-            if not "address" in kwargs["data"]["delivery"]:
-                raise s.ValidationError(
-                    {"delivery": {"address": _("This field is required.")}}
-                )
-        elif delivery_type == OrderDeliveryType.PICK_UP:
-            kwargs["data"]["delivery"].pop("address")
-            if not "pickup" in kwargs["data"]:
-                raise s.ValidationError({"pickup": _("This field is required.")})
-        else:
-            kwargs["data"]["delivery"].pop("address")
-            kwargs["data"].pop("pickup")
+        if "data" in kwargs:
+            delivery_type = kwargs["data"]["delivery"]["provider"]["type"]
+            if delivery_type == OrderDeliveryType.DELIVERY:
+                kwargs["data"].pop("pickup")
+                if not "address" in kwargs["data"]["delivery"]:
+                    raise s.ValidationError(
+                        {"delivery": {"address": _("This field is required.")}}
+                    )
+            elif delivery_type == OrderDeliveryType.PICK_UP:
+                kwargs["data"]["delivery"].pop("address")
+                if not "pickup" in kwargs["data"]:
+                    raise s.ValidationError({"pickup": _("This field is required.")})
+            else:
+                kwargs["data"]["delivery"].pop("address")
+                kwargs["data"].pop("pickup")
 
-        if user:
-            kwargs["data"].pop("user")
+            if user:
+                kwargs["data"].pop("user")
 
         super().__init__(*args, **kwargs)
