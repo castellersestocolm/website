@@ -121,8 +121,8 @@ class OrderDelivery(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         if hasattr(self, "order"):
-            return f"{str(self.order)} - {OrderDeliveryType(self.type).name}"
-        return OrderDeliveryType(self.type).name
+            return f"{str(self.order)} - {self.provider}"
+        return str(self.provider)
 
     class Meta:
         verbose_name = "order delivery"
