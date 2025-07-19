@@ -1,5 +1,5 @@
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, cache_control
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
@@ -30,6 +30,7 @@ class ProductAPI(ComuniCatViewSet):
         responses={200: ProductWithStockSerializer(many=True), 400: Serializer()},
     )
     @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         product_objs = product.api.get_list(
             user_id=request.user.id if request.user.is_authenticated else None,

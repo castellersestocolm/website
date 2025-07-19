@@ -1,7 +1,7 @@
 import logging
 
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, cache_control
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
@@ -80,6 +80,7 @@ class OrderAPI(ComuniCatViewSet):
         responses={200: OrderSerializer(many=True), 400: Serializer()},
     )
     @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         if not request.user.is_authenticated:
             return Response(status=400)
