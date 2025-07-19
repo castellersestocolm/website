@@ -72,3 +72,7 @@
 .productAmount {
   white-space: nowrap;
 }
+
+.error {
+  text-align: center !important;
+}

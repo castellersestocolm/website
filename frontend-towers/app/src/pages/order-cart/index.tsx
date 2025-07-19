@@ -18,6 +18,7 @@ import {
   Link,
   SelectChangeEvent,
   Collapse,
+  FormHelperText,
 } from "@mui/material";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +41,7 @@ import MuiAccordionSummary, {
 } from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import IconArrowForwardIosSharp from "@mui/icons-material/ArrowForwardIosSharp";
-import { EventType, OrderDeliveryType } from "../../enums";
+import { OrderDeliveryType } from "../../enums";
 import { TransitionGroup } from "react-transition-group";
 import { capitalizeFirstLetter } from "../../utils/string";
 
@@ -134,6 +135,7 @@ function OrderCartPage() {
     React.useState(undefined);
   const [deliveryPriceById, setDeliveryPriceById] = React.useState(undefined);
   const [deliveryPrice, setDeliveryPrice] = React.useState(undefined);
+  const [validationErrors, setValidationErrors] = React.useState(undefined);
 
   let navigate = useNavigate();
 
@@ -349,15 +351,31 @@ function OrderCartPage() {
         id: productSize.id,
         quantity: quantity,
       }));
-    apiOrderCreate(sizes).then((response) => {
+    const deliveryType =
+      formDeliveryProviderId &&
+      deliveryProviderById[formDeliveryProviderId].type;
+    apiOrderCreate(
+      sizes,
+      formDeliveryData,
+      deliveryType,
+      formUserData,
+      formPickupData,
+    ).then((response) => {
       if (response.status === 201) {
+        setValidationErrors(undefined);
         setMessages([
           { message: t("pages.order-cart.order.success"), type: "success" },
         ]);
         setTimeout(() => setMessages(undefined), 10000);
         setCart(undefined);
-        navigate(ROUTES["user-dashboard"].path, { replace: true });
+        navigate(user ? ROUTES["user-dashboard"].path : ROUTES.order.path, {
+          replace: true,
+        });
+      } else if (response.status === 429) {
+        setValidationErrors({ throttle: response.data.detail });
       } else if (response.status === 400) {
+        setValidationErrors(response.data);
+      } else {
         setMessages([
           { message: t("pages.order-cart.order.error"), type: "error" },
         ]);
@@ -602,7 +620,19 @@ function OrderCartPage() {
                             )
                           }
                           size="small"
+                          error={
+                            validationErrors &&
+                            validationErrors.user &&
+                            validationErrors.user.firstname
+                          }
                         />
+                        {validationErrors &&
+                          validationErrors.user &&
+                          validationErrors.user.firstname && (
+                            <FormHelperText error>
+                              {validationErrors.user.firstname[0].detail}
+                            </FormHelperText>
+                          )}
                       </FormGrid>
                       <FormGrid size={{ xs: 12, md: 6 }}>
                         <FormLabel htmlFor="lastname" required>
@@ -624,7 +654,19 @@ function OrderCartPage() {
                             )
                           }
                           size="small"
+                          error={
+                            validationErrors &&
+                            validationErrors.user &&
+                            validationErrors.user.lastname
+                          }
                         />
+                        {validationErrors &&
+                          validationErrors.user &&
+                          validationErrors.user.lastname && (
+                            <FormHelperText error>
+                              {validationErrors.user.lastname[0].detail}
+                            </FormHelperText>
+                          )}
                       </FormGrid>
                       <FormGrid size={{ xs: 12, md: 6 }}>
                         <FormLabel htmlFor="email" required>
@@ -646,7 +688,19 @@ function OrderCartPage() {
                             )
                           }
                           size="small"
+                          error={
+                            validationErrors &&
+                            validationErrors.user &&
+                            validationErrors.user.email
+                          }
                         />
+                        {validationErrors &&
+                          validationErrors.user &&
+                          validationErrors.user.email && (
+                            <FormHelperText error>
+                              {validationErrors.user.email[0].detail}
+                            </FormHelperText>
+                          )}
                       </FormGrid>
                       <FormGrid size={{ xs: 12, md: 6 }}>
                         <FormLabel htmlFor="phone" required>
@@ -668,7 +722,19 @@ function OrderCartPage() {
                             )
                           }
                           size="small"
+                          error={
+                            validationErrors &&
+                            validationErrors.user &&
+                            validationErrors.user.phone
+                          }
                         />
+                        {validationErrors &&
+                          validationErrors.user &&
+                          validationErrors.user.phone && (
+                            <FormHelperText error>
+                              {validationErrors.user.phone[0].detail}
+                            </FormHelperText>
+                          )}
                       </FormGrid>
                     </Grid>
                   )}
@@ -823,7 +889,24 @@ function OrderCartPage() {
                                     (event.target as HTMLTextAreaElement).value,
                                   )
                                 }
+                                error={
+                                  validationErrors &&
+                                  validationErrors.delivery &&
+                                  validationErrors.delivery.address &&
+                                  validationErrors.delivery.address.address
+                                }
                               />
+                              {validationErrors &&
+                                validationErrors.delivery &&
+                                validationErrors.delivery.address &&
+                                validationErrors.delivery.address.address && (
+                                  <FormHelperText error>
+                                    {
+                                      validationErrors.delivery.address
+                                        .address[0].detail
+                                    }
+                                  </FormHelperText>
+                                )}
                             </FormGrid>
                             <FormGrid size={4}>
                               <FormLabel htmlFor="apartment">
@@ -842,7 +925,24 @@ function OrderCartPage() {
                                     (event.target as HTMLTextAreaElement).value,
                                   )
                                 }
+                                error={
+                                  validationErrors &&
+                                  validationErrors.delivery &&
+                                  validationErrors.delivery.address &&
+                                  validationErrors.delivery.address.apartment
+                                }
                               />
+                              {validationErrors &&
+                                validationErrors.delivery &&
+                                validationErrors.delivery.address &&
+                                validationErrors.delivery.address.apartment && (
+                                  <FormHelperText error>
+                                    {
+                                      validationErrors.delivery.address
+                                        .apartment[0].detail
+                                    }
+                                  </FormHelperText>
+                                )}
                             </FormGrid>
                             <FormGrid size={12}>
                               <FormLabel htmlFor="address2">
@@ -860,7 +960,24 @@ function OrderCartPage() {
                                     (event.target as HTMLTextAreaElement).value,
                                   )
                                 }
+                                error={
+                                  validationErrors &&
+                                  validationErrors.delivery &&
+                                  validationErrors.delivery.address &&
+                                  validationErrors.delivery.address.address2
+                                }
                               />
+                              {validationErrors &&
+                                validationErrors.delivery &&
+                                validationErrors.delivery.address &&
+                                validationErrors.delivery.address.address2 && (
+                                  <FormHelperText error>
+                                    {
+                                      validationErrors.delivery.address
+                                        .address2[0].detail
+                                    }
+                                  </FormHelperText>
+                                )}
                             </FormGrid>
                             <FormGrid size={{ xs: 12, md: 4 }}>
                               <FormLabel htmlFor="postcode" required>
@@ -880,7 +997,24 @@ function OrderCartPage() {
                                   )
                                 }
                                 size="small"
+                                error={
+                                  validationErrors &&
+                                  validationErrors.delivery &&
+                                  validationErrors.delivery.address &&
+                                  validationErrors.delivery.address.postcode
+                                }
                               />
+                              {validationErrors &&
+                                validationErrors.delivery &&
+                                validationErrors.delivery.address &&
+                                validationErrors.delivery.address.postcode && (
+                                  <FormHelperText error>
+                                    {
+                                      validationErrors.delivery.address
+                                        .postcode[0].detail
+                                    }
+                                  </FormHelperText>
+                                )}
                             </FormGrid>
                             <FormGrid size={{ xs: 12, md: 8 }}>
                               <FormLabel htmlFor="city" required>
@@ -900,7 +1034,24 @@ function OrderCartPage() {
                                   )
                                 }
                                 size="small"
+                                error={
+                                  validationErrors &&
+                                  validationErrors.delivery &&
+                                  validationErrors.delivery.address &&
+                                  validationErrors.delivery.address.city
+                                }
                               />
+                              {validationErrors &&
+                                validationErrors.delivery &&
+                                validationErrors.delivery.address &&
+                                validationErrors.delivery.address.city && (
+                                  <FormHelperText error>
+                                    {
+                                      validationErrors.delivery.address.city[0]
+                                        .detail
+                                    }
+                                  </FormHelperText>
+                                )}
                             </FormGrid>
 
                             <FormGrid
@@ -1044,11 +1195,6 @@ function OrderCartPage() {
                                       return (
                                         <MenuItem key={i} value={event.id}>
                                           {event.title +
-                                            (event.type ===
-                                              EventType.REHEARSAL &&
-                                            event.location !== null
-                                              ? " — " + event.location.name
-                                              : "") +
                                             " — " +
                                             capitalizeFirstLetter(
                                               new Date(event.time_from)
@@ -1219,6 +1365,13 @@ function OrderCartPage() {
                       {t("pages.order.product-card.empty")}
                     </Button>
                   </Stack>
+                  {validationErrors && validationErrors.throttle && (
+                    <FormGrid size={{ xs: 12 }}>
+                      <FormHelperText error className={styles.error}>
+                        {validationErrors.throttle}
+                      </FormHelperText>
+                    </FormGrid>
+                  )}
                 </Stack>
               </Box>
             </Card>

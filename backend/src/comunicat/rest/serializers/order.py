@@ -1,5 +1,10 @@
+import re
+
+from django.conf import settings
+from django.contrib.auth.base_user import BaseUserManager
 from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
@@ -16,6 +21,10 @@ from order.models import (
     DeliveryProvider,
     DeliveryPrice,
 )
+
+from django.utils.translation import gettext_lazy as _
+
+from user.models import User
 
 
 class OrderDeliverySerializer(s.ModelSerializer):
@@ -117,21 +126,63 @@ class CreateCartSerializer(s.Serializer):
 
 
 class CreateAddressSerializer(s.Serializer):
-    street = s.CharField()
-    street2 = s.CharField(required=False)
-    postcode = s.CharField()
-    city = s.CharField()
-    country = s.CharField()
-    region = s.CharField(required=False)
+    address = s.CharField(max_length=255)
+    apartment = s.CharField(
+        max_length=10, allow_null=True, allow_blank=True, required=False
+    )
+    address2 = s.CharField(allow_null=True, allow_blank=True, required=False)
+    postcode = s.CharField(min_length=1, max_length=10)
+    city = s.CharField(max_length=255)
+    country = s.CharField(max_length=10)
+    region = s.CharField(allow_null=True, allow_blank=True, required=False)
 
 
 class CreateDeliverySerializer(s.Serializer):
-    address = CreateAddressSerializer()
+    address = CreateAddressSerializer(required=False)
+    type = IntEnumField(OrderDeliveryType)
+
+
+class CreatePickupSerializer(s.Serializer):
+    event_id = s.UUIDField()
+
+
+class CreateUserDataSerializer(s.Serializer):
+    firstname = s.CharField(required=True)
+    lastname = s.CharField(required=True)
+    email = s.EmailField(required=True)
+    phone = PhoneNumberField(required="phone" in settings.MODULE_ALL_USER_FIELDS)
+
+    def validate_email(self, value: str):
+        email = BaseUserManager.normalize_email(value)
+        return re.sub(r"^([^+]*)(\+.*)?(@.*)$", r"\1\3", email)
 
 
 class CreateOrderSerializer(s.Serializer):
     cart = CreateCartSerializer()
-    # delivery = CreateDeliverySerializer()
+    user = CreateUserDataSerializer(required=False)
+    delivery = CreateDeliverySerializer()
+    pickup = CreatePickupSerializer(required=False)
+
+    def __init__(self, user: User | None = None, *args, **kwargs):
+        delivery_type = kwargs["data"]["delivery"]["type"]
+        if delivery_type == OrderDeliveryType.DELIVERY:
+            kwargs["data"].pop("pickup")
+            if not "address" in kwargs["data"]["delivery"]:
+                raise s.ValidationError(
+                    {"delivery": {"address": _("This field is required.")}}
+                )
+        elif delivery_type == OrderDeliveryType.PICK_UP:
+            kwargs["data"]["delivery"].pop("address")
+            if not "pickup" in kwargs["data"]:
+                raise s.ValidationError({"pickup": _("This field is required.")})
+        else:
+            kwargs["data"]["delivery"].pop("address")
+            kwargs["data"].pop("pickup")
+
+        if user:
+            kwargs["data"].pop("user")
+
+        super().__init__(*args, **kwargs)
 
 
 class DeliveryPriceSerializer(s.ModelSerializer):

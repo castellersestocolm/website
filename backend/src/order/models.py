@@ -70,10 +70,49 @@ class OrderLog(StandardModel, Timestamps):
     )
 
 
+class OrderDeliveryAddress(StandardModel, Timestamps):
+    address = models.CharField(max_length=255)
+    apartment = models.CharField(max_length=10, null=True, blank=True)
+    address2 = models.CharField(max_length=255, null=True, blank=True)
+
+    postcode = models.CharField(max_length=10)
+    city = models.CharField(max_length=255)
+
+    country = models.ForeignKey(
+        "data.Country",
+        related_name="delivery_addresses",
+        on_delete=models.PROTECT,
+    )
+
+    region = models.ForeignKey(
+        "data.Region",
+        related_name="delivery_addresses",
+        on_delete=models.PROTECT,
+    )
+
+    class Meta:
+        verbose_name = "address"
+        verbose_name_plural = "addresses"
+
+
 class OrderDelivery(StandardModel, Timestamps):
     type = models.PositiveSmallIntegerField(
         choices=((odt.value, odt.name) for odt in OrderDeliveryType),
         default=OrderDeliveryType.PICK_UP,
+    )
+    address = models.OneToOneField(
+        "OrderDeliveryAddress",
+        related_name="delivery",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+    event = models.ForeignKey(
+        "event.Event",
+        related_name="deliveries",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
     )
 
     def __str__(self) -> str:

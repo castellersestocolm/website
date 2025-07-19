@@ -46,22 +46,29 @@ class OrderAPI(ComuniCatViewSet):
         responses={
             201: OrderSerializer,
             400: Serializer(),
+            412: Serializer(),
         },
     )
     def create(self, request):
-        serializer = CreateOrderSerializer(data=request.data)
+        serializer = CreateOrderSerializer(
+            data=request.data,
+            user=request.user if request.user.is_authenticated else None,
+        )
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
         try:
             order_obj = order.api.create(
                 sizes=validated_data["cart"]["sizes"],
-                user_id=request.user.id,
+                delivery=validated_data["delivery"],
+                user=validated_data.get("user"),
+                pickup=validated_data.get("pickup"),
+                user_id=request.user.id if request.user.is_authenticated else None,
                 module=self.module,
             )
         except Exception as e:
             _log.exception(e)
-            return Response(status=400)
+            return Response(status=412)
 
         if not order_obj:
             return Response(status=400)

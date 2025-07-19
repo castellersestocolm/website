@@ -11,6 +11,7 @@ from order.models import (
     OrderLog,
     DeliveryProvider,
     DeliveryPrice,
+    OrderDeliveryAddress,
 )
 
 import notify.tasks
@@ -81,6 +82,35 @@ class OrderDeliveryAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("type", "created_at")
+    raw_id_fields = ("address", "event")
+    ordering = ("-created_at",)
+
+
+@admin.register(OrderDeliveryAddress)
+class OrderDeliveryAddressAdmin(admin.ModelAdmin):
+    search_fields = (
+        "id",
+        "address",
+        "apartment",
+        "address2",
+        "postcode",
+        "city",
+        "country__name",
+        "region__name",
+    )
+    list_display = (
+        "address",
+        "apartment",
+        "postcode",
+        "city",
+        "country",
+        "region",
+    )
+    list_filter = (
+        "country",
+        "region",
+        "created_at",
+    )
     ordering = ("-created_at",)
 
 

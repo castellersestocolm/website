@@ -7,9 +7,16 @@ from django.utils import translation
 from rest_framework.exceptions import ValidationError
 
 from comunicat.enums import Module
+from data.models import Country, Region
 from notify.enums import EmailType
 from order.enums import OrderStatus, OrderDeliveryType
-from order.models import Order, OrderProduct, OrderLog, OrderDelivery
+from order.models import (
+    Order,
+    OrderProduct,
+    OrderLog,
+    OrderDelivery,
+    OrderDeliveryAddress,
+)
 from payment.models import Entity
 from product.models import ProductSize
 from user.enums import FamilyMemberStatus
@@ -74,7 +81,13 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
 
 @transaction.atomic
 def create(
-    sizes: list[dict], user_id: UUID, module: Module, with_notify: bool = True
+    sizes: list[dict],
+    delivery: dict,
+    module: Module,
+    user_id: UUID | None = None,
+    user: dict | None = None,
+    pickup: dict | None = None,
+    with_notify: bool = True,
 ) -> Order | None:
     if user_id:
         user_obj = User.objects.filter(id=user_id).with_has_active_membership().first()
@@ -83,13 +96,62 @@ def create(
             for module in Module
             if getattr(user_obj, f"membership_{module}", False)
         ]
+        entity_obj = Entity.objects.filter(user_id=user_id).first()
+        if not entity_obj:
+            entity_obj, __ = Entity.objects.update_or_create(
+                email=user_obj.email,
+                defaults={
+                    "firstname": user_obj.firstname,
+                    "lastname": user_obj.lastname,
+                    "phone": user_obj.phone,
+                    "user_id": user_obj.user_id,
+                },
+            )
     else:
         modules = []
+        entity_obj = Entity.objects.filter(
+            Q(email=user["email"]) | Q(phone=user["phone"])
+        ).first()
+        if entity_obj:
+            entity_obj.firstname = user["firstname"]
+            entity_obj.lastname = user["lastname"]
+            entity_obj.email = user["email"]
+            entity_obj.phone = user["phone"]
+            # This could fail if/when the email field is unique
+            entity_obj.save(update_fields=("firstname", "lastname", "email", "phone"))
+        else:
+            # Maybe link the user if the entity exists?
+            entity_obj = Entity.objects.create(
+                firstname=user["firstname"],
+                lastname=user["lastname"],
+                email=user["email"],
+                phone=user["phone"],
+            )
 
-    order_delivery_obj = OrderDelivery.objects.create(type=OrderDeliveryType.PICK_UP)
+    if delivery["type"] == OrderDeliveryType.DELIVERY:
+        country_obj = Country.objects.get(code=delivery["address"].pop("country"))
+        if "region" in delivery["address"]:
+            region_obj = Region.objects.get(
+                country_id=country_obj.id, code=delivery["address"].pop("region")
+            )
+        else:
+            region_obj = None
+        order_delivery_address_obj = OrderDeliveryAddress.objects.create(
+            **delivery["address"], country=country_obj, region=region_obj
+        )
+    else:
+        order_delivery_address_obj = None
+
+    if delivery["type"] == OrderDeliveryType.PICK_UP:
+        event_id = pickup["event_id"]
+    else:
+        event_id = None
+
+    order_delivery_obj = OrderDelivery.objects.create(
+        type=delivery["type"], address=order_delivery_address_obj, event_id=event_id
+    )
 
     # TODO: Fix this
-    entity_obj = Entity.objects.get(user__isnull=False, user_id=user_id)
 
     order_obj = Order.objects.create(
         entity=entity_obj,
