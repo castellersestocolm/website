@@ -56,7 +56,14 @@ def get_list(
         )
         .select_related("location")
         .prefetch_related(
-            "modules",
+            Prefetch(
+                "modules",
+                (
+                    EventModule.objects.select_related("team").order_by(
+                        "module", "team__type"
+                    )
+                ),
+            ),
             Prefetch(
                 "registrations",
                 (

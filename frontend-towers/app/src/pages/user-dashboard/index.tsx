@@ -91,6 +91,7 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 
 // @ts-ignore
 import QRCode from "qrcode";
+import { get_event_icon } from "../../utils/event";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
@@ -851,7 +852,7 @@ function UserDashboardPage() {
                 <List className={styles.userFamilyList}>
                   <ListItemButton disableTouchRipple dense>
                     <ListItemIcon>
-                      {EVENT_TYPE_ICON[rehearsal.type]}
+                      {get_event_icon(rehearsal.type, rehearsal.modules)}
                     </ListItemIcon>
                     <Box
                       className={styles.userFamilyListInner}

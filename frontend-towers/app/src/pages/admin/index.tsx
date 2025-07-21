@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import IcconPerson from "@mui/icons-material/Person";
 import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
 import { LineChart } from "@mui/x-charts";
+import { get_event_icon } from "../../utils/event";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -125,7 +126,7 @@ function AdminPage() {
                     <>
                       <ListItemButton disableTouchRipple dense>
                         <ListItemIcon className={styles.eventCardIcon}>
-                          {EVENT_TYPE_ICON[event.type]}
+                          {get_event_icon(event.type, event.modules)}
                         </ListItemIcon>
                         <Box
                           className={styles.userFamilyListInner}

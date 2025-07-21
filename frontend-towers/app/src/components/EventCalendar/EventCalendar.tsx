@@ -16,6 +16,7 @@ import IconChevronRight from "@mui/icons-material/ChevronRight";
 import IconButton from "@mui/material/IconButton";
 import { apiEventCalendarList } from "../../api";
 import { useAppContext } from "../AppContext/AppContext";
+import { get_event_icon } from "../../utils/event";
 
 export default function EventCalendar({ compact, lastChanged }: any) {
   const [t, i18n] = useTranslation("common");
@@ -218,7 +219,7 @@ export default function EventCalendar({ compact, lastChanged }: any) {
                               }
                             >
                               <Icon className={styles.calendarIcon}>
-                                {EVENT_TYPE_ICON[event.type]}
+                                {get_event_icon(event.type, event.modules)}
                               </Icon>
                               <Typography variant="caption" fontWeight={600}>
                                 {event.title}

@@ -216,3 +216,10 @@ export const EXTENSION_ICON: any = {
   png: <IconImage />,
   undefined: <IconFile />,
 };
+
+export enum TeamType {
+  BOARD = 10,
+  TECHNICAL = 20,
+  MUSICIANS = 30,
+  COMMISSION = 40,
+}

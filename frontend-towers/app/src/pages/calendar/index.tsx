@@ -38,6 +38,7 @@ import Pagination from "@mui/material/Pagination";
 import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
 import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
 import Map from "../../components/Map/Map";
+import { get_event_icon } from "../../utils/event";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -256,7 +257,7 @@ function CalendarPage() {
                           dense
                         >
                           <ListItemIcon className={styles.eventCardIcon}>
-                            {EVENT_TYPE_ICON[event.type]}
+                            {get_event_icon(event.type, event.modules)}
                           </ListItemIcon>
                           <Box
                             className={styles.eventCardInner}

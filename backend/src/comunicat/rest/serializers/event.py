@@ -2,10 +2,18 @@ from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
+from comunicat.rest.serializers.legal import TeamSerializer
 from comunicat.rest.serializers.user import UserExtraSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField
 from event.enums import RegistrationStatus
-from event.models import Event, Location, Registration, AgendaItem, Connection
+from event.models import (
+    Event,
+    Location,
+    Registration,
+    AgendaItem,
+    Connection,
+    EventModule,
+)
 
 
 class ConnectionSerializer(s.ModelSerializer):
@@ -97,11 +105,33 @@ class AgendaItemSerializer(s.ModelSerializer):
         )
 
 
+class EventModuleSerializer(s.ModelSerializer):
+    team = TeamSerializer(read_only=True)
+
+    class Meta:
+        model = EventModule
+        fields = (
+            "id",
+            "module",
+            "team",
+            "require_signup",
+            "require_approve",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+            "team",
+            "require_signup",
+            "require_approve",
+        )
+
+
 class EventSerializer(s.ModelSerializer):
     location = LocationSerializer(read_only=True)
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
     registrations = RegistrationSlimSerializer(many=True, read_only=True)
+    modules = EventModuleSerializer(many=True, read_only=True)
     agenda_items = AgendaItemSerializer(many=True, read_only=True)
 
     class Meta:
@@ -117,6 +147,7 @@ class EventSerializer(s.ModelSerializer):
             "require_signup",
             "require_approve",
             "registrations",
+            "modules",
             "agenda_items",
             "created_at",
         )
@@ -130,6 +161,7 @@ class EventSerializer(s.ModelSerializer):
             "require_signup",
             "require_approve",
             "registrations",
+            "modules",
             "agenda_items",
             "created_at",
         )
@@ -162,6 +194,7 @@ class EventWithCountsSerializer(EventSerializer):
             "require_signup",
             "require_approve",
             "registrations",
+            "modules",
             "registration_counts",
             "agenda_items",
             "created_at",
@@ -176,6 +209,7 @@ class EventWithCountsSerializer(EventSerializer):
             "require_signup",
             "require_approve",
             "registrations",
+            "modules",
             "registration_counts",
             "agenda_items",
             "created_at",
