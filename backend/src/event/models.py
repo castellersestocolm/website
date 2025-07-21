@@ -1,3 +1,4 @@
+from celery.beat import event_t
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db.models import JSONField
@@ -21,6 +22,7 @@ from event.enums import (
 from django.utils.translation import gettext_lazy as _
 
 from event.managers import EventQuerySet, RegistrationQuerySet
+from event.utils.event import get_event_name
 
 
 # TODO: Split address into fields, add coordinates
@@ -141,9 +143,40 @@ class EventModule(StandardModel, Timestamps):
         # TODO: For registrations by externals
         # null=True, blank=True,
     )
+    team = models.ForeignKey(
+        "legal.Team",
+        related_name="event_modules",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
 
     require_signup = models.BooleanField(default=True)
     require_approve = models.BooleanField(default=False)
+
+    def clean(self):
+        if self.team and self.module != self.team.module:
+            raise ValidationError({"size": _("Team's module must match module.")})
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        event_modules = [
+            (
+                event_module_obj.module,
+                event_module_obj.team and event_module_obj.team.type,
+            )
+            for event_module_obj in self.event.modules.all()
+        ]
+        self.event.title = get_event_name(
+            event_title=self.event.title,
+            event_type=self.event.type,
+            modules=event_modules,
+        )
+        self.event.save(update_fields=("title",))
+
+    class Meta:
+        unique_together = ("event", "module", "team")
 
 
 # TODO: Multilanguage support

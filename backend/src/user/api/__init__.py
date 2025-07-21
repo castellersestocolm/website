@@ -47,7 +47,6 @@ def get_list(
     user_ids: list[UUID] | None = None,
     team_ids: list[UUID] | None = None,
     team_types: list[TeamType] | None = None,
-    exclude_team_types: list[TeamType] | None = None,
     with_pending_membership: bool = True,
     modules: list[Module] | None = None,
 ) -> list[User]:
@@ -66,7 +65,7 @@ def get_list(
             ),
         )
         .with_permission_level()
-        .order_by("firstname", "lastname", "created_at")
+        .order_by("firstname", "lastname", "email", "created_at")
     )
 
     if user_ids:
@@ -86,11 +85,6 @@ def get_list(
         user_qs = user_qs.with_has_active_role(
             team_types=team_types, modules=modules
         ).filter(has_active_role=True)
-
-    if exclude_team_types:
-        user_qs = user_qs.with_has_active_role(
-            team_types=exclude_team_types, modules=modules
-        ).filter(has_active_role=False)
 
     return list(user_qs)
 

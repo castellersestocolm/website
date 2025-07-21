@@ -21,6 +21,7 @@ from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from comunicat.enums import Module
+from event.enums import EventType
 from legal.enums import TeamType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -439,8 +440,8 @@ MODULE_ORG_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
     ]
 )
 MODULE_ORG_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES = [
-    TeamType[team_type.upper()]
-    for team_type in filter(
+    (EventType(config.split("-")[0].upper()), TeamType[config.split("-")[1].upper()])
+    for config in filter(
         None,
         os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES", "").split(","),
     )
@@ -499,11 +500,11 @@ MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_RANGE_DAYS = tuple(
     ]
 )
 MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES = [
-    TeamType[team_type.upper()]
-    for team_type in filter(
+    (EventType[config.split("-")[0].upper()], TeamType[config.split("-")[1].upper()])
+    for config in filter(
         None,
         os.getenv(
-            "MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES", "musicians"
+            "MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES", "rehearsal-musicians"
         ).split(","),
     )
 ]

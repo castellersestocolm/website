@@ -1,4 +1,5 @@
 import datetime
+from collections import defaultdict
 from typing import List
 from uuid import UUID
 
@@ -10,16 +11,14 @@ from django.db.models import (
     Count,
     Value,
     IntegerField,
-    F,
-    Case,
-    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone, translation
 
+import legal.api.team
 from comunicat.enums import Module
 from event.enums import EventStatus, RegistrationStatus
-from event.models import Event, Registration, AgendaItem, Connection
+from event.models import Event, Registration, AgendaItem, Connection, EventModule
 from notify.enums import EmailType
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
@@ -188,21 +187,67 @@ def send_events_signup(
                 time_from__lte=time_to,
                 modules__module=m,
                 status=EventStatus.PUBLISHED,
-            ).order_by("time_from")[:5]
+            )
+            .prefetch_related(
+                Prefetch("modules", EventModule.objects.select_related("team"))
+            )
+            .order_by("time_from")[:5]
         )
 
         if not future_event_objs:
             continue
 
-        exclude_team_types = getattr(
+        exclude_event_team_types = getattr(
             settings, f"MODULE_{m.name}_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES"
         )
-        user_objs = user.api.get_list(
-            user_ids=user_ids, modules=[m], exclude_team_types=exclude_team_types
-        )
+        user_objs = user.api.get_list(user_ids=user_ids, modules=[m])
+
+        team_objs = legal.api.team.get_list(module=m)
+
+        user_ids_by_team_id = defaultdict(list)
+        user_ids_by_team_type = defaultdict(list)
+
+        # Can't be a simpler inline because team type could be repeated
+        for team_obj in team_objs:
+            for member_obj in team_obj.members.all():
+                user_ids_by_team_id[team_obj.id].append(member_obj.user_id)
+                user_ids_by_team_type[team_obj.type].append(member_obj.user_id)
 
         for user_obj in user_objs:
             token = user.api.event.get_events_signup_token(user_id=user_obj.id)
+
+            user_event_objs = [
+                future_event_obj
+                for future_event_obj in future_event_objs
+                if any(
+                    [
+                        event_module_obj.module == m
+                        and (
+                            (
+                                not event_module_obj.team
+                                and all(
+                                    [
+                                        user_obj.id
+                                        not in user_ids_by_team_type.get(
+                                            exclude_team_type, []
+                                        )
+                                        for event_type, exclude_team_type in exclude_event_team_types
+                                        if future_event_obj.type == event_type
+                                    ]
+                                )
+                            )
+                            or (
+                                user_obj.id
+                                in user_ids_by_team_id[event_module_obj.team_id]
+                            )
+                        )
+                        for event_module_obj in future_event_obj.modules.all()
+                    ]
+                )
+            ]
+
+            if not user_event_objs:
+                continue
 
             notify.tasks.send_user_email.delay(
                 user_id=user_obj.id,
@@ -210,8 +255,7 @@ def send_events_signup(
                 module=m,
                 context={
                     "event_ids": [
-                        str(future_event_obj.id)
-                        for future_event_obj in future_event_objs
+                        str(user_event_obj.id) for user_event_obj in user_event_objs
                     ],
                     "user_ids": (
                         [
