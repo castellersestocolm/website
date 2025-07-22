@@ -44,6 +44,7 @@ import IconArrowForwardIosSharp from "@mui/icons-material/ArrowForwardIosSharp";
 import { OrderDeliveryType } from "../../enums";
 import { TransitionGroup } from "react-transition-group";
 import { capitalizeFirstLetter } from "../../utils/string";
+import { amountToString } from "../../utils/money";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -544,7 +545,9 @@ function OrderCartPage() {
                                 }
                               />
                               <Typography variant="body2" component="span">
-                                {quantity * productSize.price.amount}{" "}
+                                {amountToString(
+                                  quantity * productSize.price.amount,
+                                )}{" "}
                                 {productSize.price.currency}
                               </Typography>
                             </ListItemButton>
@@ -1277,7 +1280,7 @@ function OrderCartPage() {
                       component="span"
                       className={styles.productAmount}
                     >
-                      {cartAmount} {cartCurrency}
+                      {amountToString(cartAmount)} {cartCurrency}
                     </Typography>
                   </ListItemButton>
                 </Box>
@@ -1299,7 +1302,7 @@ function OrderCartPage() {
                         // @ts-ignore
                         deliveryPrice && deliveryPrice.price
                           ? // @ts-ignore
-                            deliveryPrice.price.amount +
+                            amountToString(deliveryPrice.price.amount) +
                             " " +
                             // @ts-ignore
                             deliveryPrice.price.currency
@@ -1320,7 +1323,8 @@ function OrderCartPage() {
                       primary={t("pages.order-cart.summary-card.taxes")}
                     />
                     <Typography variant="body2" component="span">
-                      {hasValidDelivery ? cartVatAmount : "—"} {cartCurrency}
+                      {hasValidDelivery ? amountToString(cartVatAmount) : "—"}{" "}
+                      {cartCurrency}
                     </Typography>
                   </ListItemButton>
                 </Box>
@@ -1343,7 +1347,8 @@ function OrderCartPage() {
                       fontWeight={700}
                       component="span"
                     >
-                      {hasValidDelivery ? cartTotalAmount : "—"} {cartCurrency}
+                      {hasValidDelivery ? amountToString(cartTotalAmount) : "—"}{" "}
+                      {cartCurrency}
                     </Typography>
                   </ListItemButton>
                 </Box>
