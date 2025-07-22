@@ -299,7 +299,8 @@ function OrderCartPage() {
                 ),
             )
             .flat()
-            .filter((countryCode: any) => countryCode),
+            .filter((name: any) => name)
+            .sort(),
         ),
       );
       setAllowedCountryNames(allowedCountryNames);
