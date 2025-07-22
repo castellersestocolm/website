@@ -112,6 +112,11 @@ function OrderCartPage() {
   const [countries, setCountries] = React.useState(undefined);
   const [regionsByCountryCode, setRegionsByCountryCode] =
     React.useState(undefined);
+  const [zoneByCountryCode, setZoneByCountryCode] = React.useState(undefined);
+  const [countryByRegionCode, setCountryByRegionCode] =
+    React.useState(undefined);
+  const [countriesByZoneCode, setCountriesByZoneCode] =
+    React.useState(undefined);
   const [formDeliveryData, setFormDeliveryData] = React.useState({
     address: undefined,
     apartment: undefined,
@@ -205,21 +210,35 @@ function OrderCartPage() {
       const regionCode = formDeliveryData.region
         ? formDeliveryData.region
         : undefined;
+      const zoneCode =
+        countryCode && countryCode in zoneByCountryCode
+          ? zoneByCountryCode[countryCode].code
+          : undefined;
 
       const deliveryPrices = Object.entries(deliveryPriceById)
         .filter(
           ([deliveryIds, deliveryPrice]: any) =>
             formDeliveryProviderId === deliveryIds.split(",")[0] &&
             weightGrams <= deliveryPrice.max_grams &&
+            (!deliveryPrice.zone || deliveryPrice.zone.code === zoneCode) &&
             (!deliveryPrice.country ||
               deliveryPrice.country.code === countryCode) &&
             (!deliveryPrice.region || deliveryPrice.region.code === regionCode),
         )
         .map(([deliveryIds, deliveryPrice]: any) => deliveryPrice)
-        .sort((dp1: any, dp2: any) => dp2.amount - dp1.amount);
+        .sort(
+          (dp1: any, dp2: any) =>
+            (dp1.region === regionCode ? 1 : 0) ||
+            (dp1.country === countryCode ? 1 : 0) ||
+            (dp1.zone === zoneCode ? 1 : 0) ||
+            dp2.amount - dp1.amount,
+        );
       setDeliveryPrice(deliveryPrices ? deliveryPrices[0] : undefined);
     }
   }, [
+    cart,
+    deliveryPriceById,
+    zoneByCountryCode,
     setDeliveryPrice,
     formDeliveryData.country,
     formDeliveryData.region,
@@ -232,18 +251,37 @@ function OrderCartPage() {
       formDeliveryProviderId &&
       deliveryProviderById[formDeliveryProviderId]
     ) {
-      const allowedCountries = Object.fromEntries(
-        deliveryProviderById[formDeliveryProviderId].prices.map(
-          (deliveryPrice: any) => [
-            deliveryPrice.country && deliveryPrice.country.code,
-            undefined,
-          ],
+      const allowedCountries = Array.from(
+        new Set(
+          deliveryProviderById[formDeliveryProviderId].prices
+            .map((deliveryPrice: any) =>
+              (deliveryPrice.zone &&
+              deliveryPrice.zone.code in countriesByZoneCode
+                ? countriesByZoneCode[deliveryPrice.zone.code].map(
+                    (countryData: any) => countryData.code,
+                  )
+                : []
+              )
+                .concat(
+                  deliveryPrice.country ? [deliveryPrice.country.code] : [],
+                )
+                .concat(
+                  deliveryPrice.region &&
+                    deliveryPrice.region.code in countryByRegionCode
+                    ? [countryByRegionCode[deliveryPrice.region.code].code]
+                    : [],
+                ),
+            )
+            .flat()
+            .filter((countryCode: any) => countryCode),
         ),
       );
       setAllowedCountryCodes(allowedCountries);
     }
   }, [
     countries,
+    countriesByZoneCode,
+    countryByRegionCode,
     formDeliveryProviderId,
     deliveryProviderById,
     setAllowedCountryCodes,
@@ -279,12 +317,58 @@ function OrderCartPage() {
               ]),
           ),
         );
+        setCountryByRegionCode({
+          ...Object.fromEntries(
+            countries
+              .map((countryData: any) =>
+                countryData.regions.map((regionData: any) => [
+                  regionData.code,
+                  countryData,
+                ]),
+              )
+              .flat(),
+          ),
+        });
+        setZoneByCountryCode(
+          Object.fromEntries(
+            countries
+              .filter((countryData: any) => countryData.zone)
+              .map((countryData: any) => [countryData.code, countryData.zone]),
+          ),
+        );
+        const zoneCodes = Array.from(
+          new Set(
+            countries
+              .filter((countryData: any) => countryData.zone)
+              .map((countryData: any) => countryData.zone.code),
+          ),
+        );
+        setCountriesByZoneCode(
+          Object.fromEntries(
+            zoneCodes.map((zoneCode: string) => [
+              zoneCode,
+              Array.from(
+                new Set(
+                  countries
+                    .filter(
+                      (countryData: any) =>
+                        countryData.zone && countryData.zone.code === zoneCode,
+                    )
+                    .map((countryData: any) => countryData),
+                ),
+              ),
+            ]),
+          ),
+        );
       }
     });
   }, [
     apiDataLocationCountryList,
     setCountries,
     setRegionsByCountryCode,
+    setCountryByRegionCode,
+    setZoneByCountryCode,
+    setCountriesByZoneCode,
     i18n.resolvedLanguage,
   ]);
 
@@ -435,7 +519,7 @@ function OrderCartPage() {
     countries.filter(
       (country: any) =>
         allowedCountryCodes === undefined ||
-        country.code in allowedCountryCodes,
+        allowedCountryCodes.includes(country.code),
     );
 
   const hasRegions =

@@ -103,7 +103,7 @@ class DeliveryProviderAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: DeliveryProviderSerializer(many=True), 400: Serializer()},
     )
-    @method_decorator(cache_page(60))
+    # @method_decorator(cache_page(60))
     def list(self, request):
         delivery_provider_objs = order.api.delivery_provider.get_list(
             module=self.module

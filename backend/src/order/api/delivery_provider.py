@@ -13,7 +13,7 @@ def get_list(module: Module) -> List[DeliveryProvider]:
             Prefetch(
                 "prices",
                 DeliveryPrice.objects.with_price()
-                .select_related("country", "region")
+                .select_related("country", "region", "zone")
                 .order_by("provider", "country", "region", "max_grams", "price"),
             ),
             Prefetch(

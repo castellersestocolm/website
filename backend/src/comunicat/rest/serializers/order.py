@@ -8,7 +8,11 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
-from comunicat.rest.serializers.data import CountrySerializer, RegionSerializer
+from comunicat.rest.serializers.data import (
+    CountrySerializer,
+    RegionSerializer,
+    ZoneSerializer,
+)
 from comunicat.rest.serializers.payment import PaymentLineSerializer
 from comunicat.rest.serializers.product import ProductSizeSerializer
 from comunicat.rest.utils.fields import MoneyField, IntEnumField
@@ -29,6 +33,7 @@ from user.models import User
 
 
 class DeliveryPriceSerializer(s.ModelSerializer):
+    zone = ZoneSerializer(allow_null=True, read_only=True)
     country = CountrySerializer(allow_null=True, read_only=True)
     region = RegionSerializer(allow_null=True, read_only=True)
     max_grams = s.IntegerField(read_only=True)
@@ -39,6 +44,7 @@ class DeliveryPriceSerializer(s.ModelSerializer):
         model = DeliveryPrice
         fields = (
             "id",
+            "zone",
             "country",
             "region",
             "max_grams",
@@ -48,6 +54,7 @@ class DeliveryPriceSerializer(s.ModelSerializer):
         )
         read_only_fields = (
             "id",
+            "zone",
             "country",
             "region",
             "max_grams",

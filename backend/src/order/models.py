@@ -197,6 +197,13 @@ class DeliveryPrice(StandardModel, Timestamps):
         DeliveryProvider, related_name="prices", on_delete=models.CASCADE
     )
 
+    zone = models.ForeignKey(
+        "data.Zone",
+        related_name="delivery_prices",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     country = models.ForeignKey(
         "data.Country",
         related_name="delivery_prices",
