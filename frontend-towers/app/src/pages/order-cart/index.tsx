@@ -109,6 +109,8 @@ function OrderCartPage() {
   const [events, setEvents] = React.useState(undefined);
   const [allowedCountryCodes, setAllowedCountryCodes] =
     React.useState(undefined);
+  const [allowedCountryNames, setAllowedCountryNames] =
+    React.useState(undefined);
   const [countries, setCountries] = React.useState(undefined);
   const [regionsByCountryCode, setRegionsByCountryCode] =
     React.useState(undefined);
@@ -277,6 +279,30 @@ function OrderCartPage() {
         ),
       );
       setAllowedCountryCodes(allowedCountries);
+      const allowedCountryNames = Array.from(
+        new Set(
+          deliveryProviderById[formDeliveryProviderId].prices
+            .map((deliveryPrice: any) =>
+              (deliveryPrice.zone &&
+              deliveryPrice.zone.code in countriesByZoneCode
+                ? [deliveryPrice.zone.name]
+                : []
+              )
+                .concat(
+                  deliveryPrice.country ? [deliveryPrice.country.name] : [],
+                )
+                .concat(
+                  deliveryPrice.region &&
+                    deliveryPrice.region.code in countryByRegionCode
+                    ? [countryByRegionCode[deliveryPrice.region.code].name]
+                    : [],
+                ),
+            )
+            .flat()
+            .filter((countryCode: any) => countryCode),
+        ),
+      );
+      setAllowedCountryNames(allowedCountryNames);
     }
   }, [
     countries,
@@ -285,6 +311,7 @@ function OrderCartPage() {
     formDeliveryProviderId,
     deliveryProviderById,
     setAllowedCountryCodes,
+    setAllowedCountryNames,
   ]);
 
   React.useEffect(() => {
@@ -928,8 +955,8 @@ function OrderCartPage() {
                                               </strong>
                                             </>
                                           )}
-                                        {countriesAllowed &&
-                                          countriesAllowed.length > 0 && (
+                                        {allowedCountryNames &&
+                                          allowedCountryNames.length > 0 && (
                                             <>
                                               {deliveryProvider.dates &&
                                                 deliveryProvider.dates.length >
@@ -940,16 +967,8 @@ function OrderCartPage() {
                                                   "pages.order-cart.entity-card.delivery-info.countries-list",
                                                 )}
                                                 {": "}
-                                                {countriesAllowed
-                                                  .map(
-                                                    (country: any) =>
-                                                      country.name,
-                                                  )
-                                                  .join(", ")}
-                                                {"."}
-                                              </span>
-                                              <br />
-                                              <span>
+                                                {allowedCountryNames.join(", ")}
+                                                {". "}
                                                 {t(
                                                   "pages.order-cart.entity-card.delivery-info.countries-reason",
                                                 )}
