@@ -118,7 +118,12 @@ function OrderPaymentPage() {
         }
       }
     });
-  }, [setPaymentProviderById, setFormPaymentProviderId, formPaymentProviderId]);
+  }, [
+    setPaymentProviderById,
+    setFormPaymentProviderId,
+    formPaymentProviderId,
+    i18n.resolvedLanguage,
+  ]);
 
   React.useEffect(() => {
     if (order && order.payment_order) {
@@ -186,16 +191,6 @@ function OrderPaymentPage() {
       }
     });
   }
-
-  const cartAmount = (order && order.amount.amount) || 0;
-
-  const deliveryAmount = 0;
-
-  const cartVatAmount = (order && order.amount_vat.amount) || 0;
-
-  const cartTotalAmount = cartAmount + deliveryAmount;
-
-  const cartCurrency = (order && order.amount.currency) || "SEK";
 
   const payText =
     order &&

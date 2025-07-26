@@ -306,22 +306,20 @@ def update_provider(
     if not order_obj:
         return None
 
+    if order_obj.payment_order:
+        payment_order_obj = order_obj.payment_order
+    else:
+        payment_order_obj = PaymentOrder.objects.create(provider_id=provider_id)
+        order_obj.payment_order = payment_order_obj
+        order_obj.save(update_fields=("payment_order",))
+
     payment_classes_by_id = payment.api.payment_provider.get_classes(module=module)
     payment_class = payment_classes_by_id[provider_id](order_id=order_id)
     external_id = payment_class.create()
 
-    # TODO: Keep logs on changes
-    if order_obj.payment_order:
-        payment_order_obj = order_obj.payment_order
-        payment_order_obj.provider_id = provider_id
-        payment_order_obj.external_id = external_id
-        payment_order_obj.save(update_fields=("provider_id", "external_id"))
-    else:
-        payment_order_obj = PaymentOrder.objects.create(
-            provider_id=provider_id, external_id=external_id
-        )
-        order_obj.payment_order = payment_order_obj
-        order_obj.save(update_fields=("payment_order",))
+    payment_order_obj.provider_id = provider_id
+    payment_order_obj.external_id = external_id
+    payment_order_obj.save(update_fields=("provider_id", "external_id"))
 
     return get(order_id=order_id, user_id=user_id, module=module)
 
