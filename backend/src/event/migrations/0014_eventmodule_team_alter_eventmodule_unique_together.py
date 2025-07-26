@@ -7,18 +7,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0013_googlealbum'),
-        ('legal', '0004_role_name_plural'),
+        ("event", "0013_googlealbum"),
+        ("legal", "0004_role_name_plural"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='eventmodule',
-            name='team',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='event_modules', to='legal.team'),
+            model_name="eventmodule",
+            name="team",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="event_modules",
+                to="legal.team",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='eventmodule',
-            unique_together={('event', 'module', 'team')},
+            name="eventmodule",
+            unique_together={("event", "module", "team")},
         ),
     ]

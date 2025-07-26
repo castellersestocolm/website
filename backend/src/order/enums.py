@@ -6,6 +6,7 @@ class OrderStatus(IntEnum):
     PROCESSING = 20
     COMPLETED = 30
     CANCELLED = 40
+    ABANDONED = 50
 
 
 class OrderDeliveryType(IntEnum):

@@ -53,6 +53,15 @@ export const ROUTES = {
   "order-cart": {
     path: "/order/cart",
   },
+  "order-payment": {
+    path: "/order/payment/:id",
+  },
+  "order-complete": {
+    path: "/order/complete/:id",
+  },
+  "order-receipt": {
+    path: "/order/receipt/:id",
+  },
   admin: {
     path: "/admin",
   },

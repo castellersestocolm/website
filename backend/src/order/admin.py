@@ -4,6 +4,7 @@ from django.utils import translation
 from jsoneditor.forms import JSONEditor
 
 from notify.enums import EmailType
+from order.enums import OrderDeliveryType
 from order.models import (
     OrderProduct,
     Order,
@@ -18,6 +19,8 @@ from order.models import (
 import notify.tasks
 
 from django.utils.translation import gettext_lazy as _
+
+from payment.enums import PaymentType
 
 
 class OrderProductInline(admin.TabularInline):
@@ -55,10 +58,18 @@ def send_created_email(modeladmin, request, queryset):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    search_fields = ("id", "entity__email", "entity__firstname", "entity__lastname")
+    search_fields = (
+        "id",
+        "reference",
+        "entity__email",
+        "entity__firstname",
+        "entity__lastname",
+    )
     list_display = (
+        "reference",
         "entity",
-        "delivery",
+        "delivery_type",
+        "payment_type",
         "status",
         "created_at",
     )
@@ -67,6 +78,24 @@ class OrderAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     inlines = (OrderProductInline, OrderLogInline)
     actions = (send_created_email,)
+
+    def delivery_type(self, obj):
+        return (
+            OrderDeliveryType(obj.delivery.provider.type).name if obj.delivery else "-"
+        )
+
+    def payment_type(self, obj):
+        if not obj.payment_order:
+            return "-"
+
+        payment_provider_obj = obj.payment_order.provider
+        return (
+            payment_provider_obj.name.get(translation.get_language())
+            or list(payment_provider_obj.name.values())[0]
+        )
+
+    delivery_type.short_description = _("delivery")
+    payment_type.short_description = _("payment")
 
 
 @admin.register(OrderDelivery)

@@ -6,11 +6,16 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import Serializer
 from rest_framework.response import Response
 
-from comunicat.rest.serializers.payment import PaymentSerializer, ExpenseSerializer
+from comunicat.rest.serializers.payment import (
+    PaymentSerializer,
+    ExpenseSerializer,
+    PaymentProviderSerializer,
+)
 
 from comunicat.rest.viewsets import ComuniCatViewSet
 import payment.api
 import payment.api.expense
+import payment.api.payment_provider
 
 
 class PaymentResultsSetPagination(PageNumberPagination):
@@ -69,3 +74,23 @@ class ExpenseAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+
+class PaymentProviderAPI(ComuniCatViewSet):
+    serializer_class = PaymentProviderSerializer
+    permission_classes = (permissions.AllowAny,)
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: PaymentProviderSerializer(many=True), 400: Serializer()},
+    )
+    @method_decorator(cache_page(60))
+    def list(self, request):
+        payment_provider_objs = payment.api.payment_provider.get_list(
+            module=self.module
+        )
+
+        serializer = self.serializer_class(
+            payment_provider_objs, context={"module": self.module}, many=True
+        )
+        return Response(serializer.data)

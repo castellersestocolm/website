@@ -44,8 +44,8 @@ COPY src src
 # Install dependencies
 COPY "requirements/$BUILD_TARGET/requirements.txt" .
 RUN set -x && \
-    pip install pip==$PIP_PIP_VERSION setuptools==$PIP_PIP_VERSION && \
-    pip install --pre --require-hashes -r "requirements.txt" && \
+    pip install pip==$PIP_PIP_VERSION setuptools==$PIP_SETUPTOOLS_VERSION && \
+    pip install --pre --require-hashes --no-deps -r "requirements.txt" && \
     pip check
 
 ######################################

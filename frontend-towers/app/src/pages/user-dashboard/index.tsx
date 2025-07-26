@@ -116,16 +116,16 @@ function UserDashboardPage() {
   function handleLogoutSubmit() {
     apiUserLogout().then((response) => {
       setUser(null);
-      navigate(ROUTES.home.path, { replace: true });
+      navigate(ROUTES.home.path);
     });
   }
 
   function handleAdminSubmit() {
-    navigate(ROUTES.admin.path, { replace: true });
+    navigate(ROUTES.admin.path);
   }
 
   if (user === null) {
-    navigate(ROUTES["user-login"].path, { replace: true });
+    navigate(ROUTES["user-login"].path);
   }
 
   const [familyMembersOpen, setFamilyMembersOpen] = React.useState<{

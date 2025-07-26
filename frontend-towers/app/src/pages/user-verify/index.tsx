@@ -20,13 +20,13 @@ function UserVerifyPage() {
           { message: t("pages.user-verify.alert.success"), type: "success" },
         ]);
         setTimeout(() => setMessages(undefined), 5000);
-        navigate(ROUTES["user-dashboard"].path, { replace: true });
+        navigate(ROUTES["user-dashboard"].path);
       } else {
         setMessages([
           { message: t("pages.user-verify.alert.error"), type: "error" },
         ]);
         setTimeout(() => setMessages(undefined), 5000);
-        navigate(ROUTES["user-login"].path, { replace: true });
+        navigate(ROUTES["user-login"].path);
       }
     });
   }, []);

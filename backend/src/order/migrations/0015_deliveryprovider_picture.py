@@ -7,13 +7,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0014_alter_deliveryprice_options_and_more'),
+        ("order", "0014_alter_deliveryprice_options_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deliveryprovider',
-            name='picture',
-            field=versatileimagefield.fields.VersatileImageField(blank=True, null=True, upload_to='order/deliver-provider/picture/', verbose_name='Image'),
+            model_name="deliveryprovider",
+            name="picture",
+            field=versatileimagefield.fields.VersatileImageField(
+                blank=True,
+                null=True,
+                upload_to="order/deliver-provider/picture/",
+                verbose_name="Image",
+            ),
         ),
     ]

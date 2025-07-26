@@ -8,9 +8,10 @@ from comunicat.db.mixins import StandardModel, Timestamps
 from djmoney.models.fields import MoneyField
 
 from comunicat.enums import Module
+from comunicat.rest.utils.helpers import generate_reference
 from comunicat.utils.models import language_field_default
 from order.enums import OrderDeliveryType, OrderStatus
-from order.managers import OrderQuerySet, DeliveryPriceQuerySet
+from order.managers import OrderQuerySet, DeliveryPriceQuerySet, OrderProductQuerySet
 
 from django.utils.translation import gettext_lazy as _
 
@@ -28,6 +29,15 @@ class Order(StandardModel, Timestamps):
         related_name="order",
         on_delete=models.PROTECT,
     )
+    payment_order = models.OneToOneField(
+        "payment.PaymentOrder",
+        related_name="order",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    reference = models.CharField(unique=True, max_length=8, default=generate_reference)
 
     status = models.PositiveSmallIntegerField(
         choices=((os.value, os.name) for os in OrderStatus),
@@ -54,7 +64,11 @@ class Order(StandardModel, Timestamps):
         return f"{str(self.entity)} - {timezone.localtime(self.created_at).strftime('%Y-%m-%d %H:%M')}"
 
     def save(self, *args, **kwargs):
-        if self.pk and self.status != self.__status:
+        if (
+            self.pk
+            and self.status != self.__status
+            or not OrderLog.objects.filter(order_id=self.id).exists()
+        ):
             OrderLog.objects.create(order_id=self.id, status=self.status)
         super().save(*args, **kwargs)
 
@@ -86,6 +100,8 @@ class OrderDeliveryAddress(StandardModel, Timestamps):
 
     region = models.ForeignKey(
         "data.Region",
+        blank=True,
+        null=True,
         related_name="delivery_addresses",
         on_delete=models.PROTECT,
     )
@@ -118,6 +134,13 @@ class OrderDelivery(StandardModel, Timestamps):
         null=True,
         on_delete=models.CASCADE,
     )
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self) -> str:
         if hasattr(self, "order"):
@@ -163,6 +186,8 @@ class OrderProduct(StandardModel, Timestamps):
         default_currency="SEK",
     )
     vat = models.PositiveSmallIntegerField(default=0)
+
+    objects = OrderProductQuerySet.as_manager()
 
 
 class DeliveryProvider(StandardModel, Timestamps):

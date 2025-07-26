@@ -33,6 +33,9 @@ import AdminAttendancePage from "./pages/admin-attendance";
 import AdminEquipmentPage from "./pages/admin-equipment";
 import OrderPage from "./pages/order";
 import OrderCartPage from "./pages/order-cart";
+import OrderPaymentPage from "./pages/order-payment";
+import OrderReceiptPage from "./pages/order-receipt";
+import OrderCompletePage from "./pages/order-complete";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -62,6 +65,7 @@ const App = () => {
   const [cart, setCart] = React.useState<{
     [key: string]: [number, object];
   }>({});
+  const [order, setOrder] = useState(undefined);
 
   React.useEffect(() => {
     apiUserMe().then((response) => {
@@ -88,6 +92,8 @@ const App = () => {
         setRehearsal,
         cart,
         setCart,
+        order,
+        setOrder,
       }}
     >
       <ThemeProvider theme={appTheme}>
@@ -162,6 +168,18 @@ const App = () => {
                   <Route
                     path={ROUTES["order-cart"].path}
                     element={<OrderCartPage />}
+                  />
+                  <Route
+                    path={ROUTES["order-payment"].path}
+                    element={<OrderPaymentPage />}
+                  />
+                  <Route
+                    path={ROUTES["order-complete"].path}
+                    element={<OrderCompletePage />}
+                  />
+                  <Route
+                    path={ROUTES["order-receipt"].path}
+                    element={<OrderReceiptPage />}
                   />
                   <Route path={ROUTES.admin.path} element={<AdminPage />} />
                   <Route

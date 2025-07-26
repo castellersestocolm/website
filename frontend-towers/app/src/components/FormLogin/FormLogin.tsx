@@ -45,7 +45,7 @@ export default function FormLogin() {
         if (response.data.preferred_language) {
           i18n.changeLanguage(response.data.preferred_language);
         }
-        navigate(ROUTES["user-dashboard"].path, { replace: true });
+        navigate(ROUTES["user-dashboard"].path);
       } else if (response.status === 429) {
         setValidationErrors({ throttle: response.data.detail });
       } else {

@@ -405,6 +405,26 @@ export const apiOrderList = async (page: number = undefined) => {
   }
 };
 
+export const apiOrderRetrieve = async (id: string) => {
+  try {
+    return await instance.get("/order/" + id);
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiPaymentProviderList = async () => {
+  try {
+    return await instance.get("/payment/provider/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiPaymentList = async (page: number = undefined) => {
   try {
     return await instance.get("/payment/", {
@@ -596,6 +616,41 @@ export const apiOrderCreate = async (
       user: userData,
       pickup: { event_id: formPickupData.event },
     });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderDelete = async (orderId: string) => {
+  try {
+    return await instance.delete("/order/" + orderId + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderProviderUpdate = async (
+  orderId: string,
+  providerId: string,
+) => {
+  try {
+    return await instance.patch("/order/" + orderId + "/provider/", {
+      provider_id: providerId,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderComplete = async (orderId: string) => {
+  try {
+    return await instance.post("/order/" + orderId + "/complete/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

@@ -26,6 +26,7 @@ import {
   apiDataLocationCountryList,
   apiEventList,
   apiOrderCreate,
+  apiOrderDelete,
   apiOrderDeliveryProviderList,
 } from "../../api";
 import FormLabel from "@mui/material/FormLabel";
@@ -104,7 +105,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 function OrderCartPage() {
   const [t, i18n] = useTranslation("common");
 
-  const { user, cart, setCart, setMessages } = useAppContext();
+  const { user, cart, setCart, order, setOrder, setMessages } = useAppContext();
 
   const [events, setEvents] = React.useState(undefined);
   const [allowedCountryCodes, setAllowedCountryCodes] =
@@ -213,7 +214,7 @@ function OrderCartPage() {
         ? formDeliveryData.region
         : undefined;
       const zoneCode =
-        countryCode && countryCode in zoneByCountryCode
+        countryCode && zoneByCountryCode && countryCode in zoneByCountryCode
           ? zoneByCountryCode[countryCode].code
           : undefined;
 
@@ -450,14 +451,39 @@ function OrderCartPage() {
 
   function handleEmptyCart() {
     setCart(undefined);
+    localStorage.removeItem("cart");
+    localStorage.removeItem("orderId");
+    localStorage.removeItem("order");
     setMessages([
       { message: t("pages.order-cart.cancel.success"), type: "success" },
     ]);
     setTimeout(() => setMessages(undefined), 5000);
-    navigate(ROUTES.order.path, { replace: true });
+    navigate(ROUTES.order.path);
   }
 
-  function handleCreateOrder() {
+  React.useEffect(() => {
+    const deliveryProvider =
+      formDeliveryProviderId && deliveryProviderById[formDeliveryProviderId];
+    localStorage.setItem(
+      "order",
+      JSON.stringify({
+        delivery: { provider: deliveryProvider, price: deliveryPrice },
+        form: {
+          user: formUserData,
+          delivery: formDeliveryData,
+          pickup: formPickupData,
+        },
+      }),
+    );
+  }, [
+    formDeliveryProviderId,
+    deliveryProviderById,
+    formUserData,
+    formDeliveryData,
+    formPickupData,
+  ]);
+
+  function handleProceedPayment() {
     const sizes = Object.values(cart)
       .filter(([quantity, [product, productSize]]: any[]) => quantity > 0)
       .map(([quantity, [product, productSize]]: any[]) => ({
@@ -466,6 +492,14 @@ function OrderCartPage() {
       }));
     const deliveryProvider =
       formDeliveryProviderId && deliveryProviderById[formDeliveryProviderId];
+
+    const oldOrderId = localStorage.getItem("orderId");
+    if (oldOrderId) {
+      apiOrderDelete(oldOrderId);
+      localStorage.removeItem("orderId");
+      localStorage.removeItem("order");
+    }
+
     apiOrderCreate(
       sizes,
       formDeliveryData,
@@ -475,14 +509,10 @@ function OrderCartPage() {
     ).then((response) => {
       if (response.status === 201) {
         setValidationErrors(undefined);
-        setMessages([
-          { message: t("pages.order-cart.order.success"), type: "success" },
-        ]);
-        setTimeout(() => setMessages(undefined), 10000);
-        setCart(undefined);
-        navigate(user ? ROUTES["user-dashboard"].path : ROUTES.order.path, {
-          replace: true,
-        });
+        setOrder(response.data);
+        localStorage.setItem("orderId", response.data.id);
+        localStorage.removeItem("cart");
+        navigate(ROUTES["order-payment"].path.replace(":id", response.data.id));
       } else if (response.status === 429) {
         setValidationErrors({ throttle: response.data.detail });
       } else if (response.status === 400) {
@@ -1470,10 +1500,10 @@ function OrderCartPage() {
                     color="primary"
                     disableElevation
                     className={styles.productAmount}
-                    onClick={handleCreateOrder}
+                    onClick={handleProceedPayment}
                     disabled={!canSubmit}
                   >
-                    {t("pages.order.product-card.order")}
+                    {t("pages.order-cart.summary-card.order")}
                   </Button>
                   <Stack
                     direction="row"

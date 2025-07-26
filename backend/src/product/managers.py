@@ -12,6 +12,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce, Cast
+from django.utils import translation
 
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
@@ -73,6 +74,13 @@ class ProductQuerySet(QuerySet):
                 output_field=MoneyOutput(),
             ),
             price=F("price_min"),
+        )
+
+    def with_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            name_locale=F(f"name__{locale}"),
         )
 
 

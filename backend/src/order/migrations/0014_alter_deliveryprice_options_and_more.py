@@ -6,22 +6,22 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0013_deliveryprice_max_grams'),
+        ("order", "0013_deliveryprice_max_grams"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='deliveryprice',
-            options={'ordering': ('price', 'max_grams')},
+            name="deliveryprice",
+            options={"ordering": ("price", "max_grams")},
         ),
         migrations.RenameField(
-            model_name='deliveryprice',
-            old_name='amount',
-            new_name='price',
+            model_name="deliveryprice",
+            old_name="amount",
+            new_name="price",
         ),
         migrations.RenameField(
-            model_name='deliveryprice',
-            old_name='amount_currency',
-            new_name='price_currency',
+            model_name="deliveryprice",
+            old_name="amount_currency",
+            new_name="price_currency",
         ),
     ]

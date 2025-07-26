@@ -40,10 +40,7 @@ export default function FormPassword() {
         if (response.status === 200) {
           setValidationErrors(undefined);
           setSubmitted(true);
-          setTimeout(
-            () => navigate(ROUTES["user-login"].path, { replace: true }),
-            30000,
-          );
+          setTimeout(() => navigate(ROUTES["user-login"].path), 30000);
         } else if (response.status === 429) {
           setValidationErrors({ throttle: response.data.detail });
         } else {

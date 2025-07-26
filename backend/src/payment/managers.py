@@ -16,7 +16,7 @@ from django.db.models import (
     Func,
 )
 from django.db.models.functions import Coalesce, Cast, Concat, Substr
-from django.utils import timezone
+from django.utils import timezone, translation
 
 from comunicat.enums import Module
 
@@ -354,4 +354,13 @@ class SourceQuerySet(QuerySet):
                 Value(None),
                 output_field=DateField(),
             ),
+        )
+
+
+class PaymentProviderQuerySet(QuerySet):
+    def with_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            name_locale=F(f"name__{locale}"),
         )

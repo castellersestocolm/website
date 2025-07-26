@@ -1,10 +1,15 @@
 import os
+from functools import cached_property
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+from django.db.models import JSONField
+from django.utils import translation
 from djmoney.models.fields import MoneyField
+from phonenumber_field.phonenumber import PhoneNumber
+from versatileimagefield.fields import VersatileImageField
 
 from comunicat.consts import CODE_NAME_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
@@ -12,6 +17,7 @@ from django.db import models
 
 from comunicat.enums import Module
 from comunicat.storage import signed_storage
+from comunicat.utils.models import language_field_default
 from payment.enums import (
     PaymentType,
     PaymentMethod,
@@ -29,6 +35,7 @@ from payment.managers import (
     AccountQuerySet,
     ExpenseQuerySet,
     SourceQuerySet,
+    PaymentProviderQuerySet,
 )
 
 from django.utils.translation import gettext_lazy as _
@@ -112,13 +119,25 @@ class Entity(StandardModel, Timestamps):
         "user.User", null=True, blank=True, on_delete=models.CASCADE
     )
 
-    @property
+    @cached_property
     def full_name(self) -> str:
         if self.firstname:
             if self.lastname:
                 return f"{self.firstname} {self.lastname}"
             return self.firstname
         return _("Unknown")
+
+    @cached_property
+    def phone_country_code(self) -> str | None:
+        return self.phone and str(
+            PhoneNumber.from_string(phone_number=self.phone).country_code
+        )
+
+    @cached_property
+    def phone_national_number(self) -> str | None:
+        return self.phone and str(
+            PhoneNumber.from_string(phone_number=self.phone).national_number
+        )
 
     def __str__(self) -> str:
         end_str = f"<{self.email}>" if self.email else ""
@@ -495,4 +514,66 @@ class Statement(StandardModel, Timestamps):
         upload_to=get_statement_file_name,
         storage=signed_storage,
         validators=[FileExtensionValidator(["pdf"])],
+    )
+
+
+class PaymentProvider(StandardModel, Timestamps):
+    name = JSONField(default=language_field_default)
+    code = models.CharField(max_length=255)
+
+    picture = VersatileImageField(
+        "Image", blank=True, null=True, upload_to="payment/payment-provider/picture/"
+    )
+
+    method = models.PositiveIntegerField(
+        choices=((pm.value, pm.name) for pm in PaymentMethod),
+    )
+
+    order = models.PositiveSmallIntegerField(default=0)
+
+    is_enabled = models.BooleanField(default=True)
+
+    objects = PaymentProviderQuerySet.as_manager()
+
+    def __str__(self) -> str:
+        return self.name.get(translation.get_language()) or list(self.name.values())[0]
+
+
+class PaymentOrder(StandardModel, Timestamps):
+    provider = models.ForeignKey(
+        PaymentProvider,
+        related_name="orders",
+        on_delete=models.PROTECT,
+    )
+
+    status = models.PositiveIntegerField(
+        choices=((ps.value, ps.name) for ps in PaymentStatus),
+        default=PaymentStatus.PENDING,
+    )
+
+    external_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
+
+    __provider_id = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__provider_id = self.provider.id
+
+    def __str__(self) -> str:
+        return f"{self.provider.name.get(translation.get_language()) or list(self.provider.name.values())[0]}{' - ' + self.external_id if self.external_id else ''}"
+
+    def save(self, *args, **kwargs):
+        if self.pk and self.provider.id != self.__provider_id:
+            PaymentOrderProviderLog.objects.create(
+                payment_order_id=self.id, provider=self.provider
+            )
+        super().save(*args, **kwargs)
+
+
+class PaymentOrderProviderLog(StandardModel, Timestamps):
+    payment_order = models.ForeignKey(
+        "PaymentOrder", related_name="logs", on_delete=models.CASCADE
+    )
+    provider = models.ForeignKey(
+        PaymentProvider, related_name="logs", on_delete=models.CASCADE
     )

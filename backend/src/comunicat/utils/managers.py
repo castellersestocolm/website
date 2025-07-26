@@ -13,6 +13,8 @@ class MoneyOutput(CharField):
             if ";" in value:
                 value, currency = value.split(";")
             value = Decimal(value)
+        elif isinstance(value, int):
+            value = Decimal(value)
         if value is None:
             return None
         return Money(value, currency)

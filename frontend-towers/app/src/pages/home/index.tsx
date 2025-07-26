@@ -582,7 +582,7 @@ function HomePage() {
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineConnector />
-                  <TimelineDot color="primary">
+                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
                     <IconGroups className={styles.timelineIcon} />
                   </TimelineDot>
                   <TimelineConnector />
@@ -606,7 +606,7 @@ function HomePage() {
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineConnector />
-                  <TimelineDot color="primary">
+                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
                     <IconVisibility className={styles.timelineIcon} />
                   </TimelineDot>
                   <TimelineConnector />
@@ -631,7 +631,7 @@ function HomePage() {
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineConnector />
-                  <TimelineDot color="primary">
+                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
                     <IconNaturePeople className={styles.timelineIcon} />
                   </TimelineDot>
                   <TimelineConnector />
@@ -655,7 +655,7 @@ function HomePage() {
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineConnector />
-                  <TimelineDot color="primary">
+                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
                     <IconFitnessCenter className={styles.timelineIcon} />
                   </TimelineDot>
                   <TimelineConnector />
@@ -680,7 +680,7 @@ function HomePage() {
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineConnector />
-                  <TimelineDot color="primary">
+                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
                     <IconLocalActivity className={styles.timelineIcon} />
                   </TimelineDot>
                   <TimelineConnector />
@@ -704,7 +704,7 @@ function HomePage() {
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineConnector />
-                  <TimelineDot color="primary">
+                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
                     <IconAcUnit className={styles.timelineIcon} />
                   </TimelineDot>
                   <TimelineConnector />
@@ -729,7 +729,7 @@ function HomePage() {
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineConnector />
-                  <TimelineDot color="primary">
+                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
                     <IconMic className={styles.timelineIcon} />
                   </TimelineDot>
                   <TimelineConnector />

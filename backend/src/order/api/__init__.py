@@ -1,9 +1,12 @@
+import decimal
 from typing import List
 from uuid import UUID
 
 from django.db import transaction
 from django.db.models import Prefetch, Q, Exists, OuterRef
-from django.utils import translation
+from django.utils import timezone, translation
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
 from comunicat.enums import Module
@@ -18,10 +21,14 @@ from order.models import (
     OrderDeliveryAddress,
     DeliveryProvider,
 )
-from payment.models import Entity
+from order.utils.delivery import get_delivery_price
+from payment.enums import PaymentStatus
+from payment.models import Entity, PaymentOrder
 from product.models import ProductSize
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
+
+import payment.api.payment_provider
 
 import notify.tasks
 
@@ -30,10 +37,18 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 
-def get_list(user_id: UUID, module: Module) -> List[Order]:
-    return list(
-        Order.objects.annotate(
-            is_user_related=(
+def get_list(
+    module: Module, user_id: UUID | None = None, order_id: UUID | None = None
+) -> List[Order]:
+    order_filter = Q()
+    order_annotate = {}
+
+    if order_id:
+        order_filter = Q(id=order_id)
+
+    if user_id:
+        order_annotate = {
+            "is_user_related": (
                 Exists(
                     FamilyMember.objects.filter(
                         status=FamilyMemberStatus.ACTIVE,
@@ -52,9 +67,16 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
                     )
                 )
             )
-        )
-        .filter(Q(entity__user_id=user_id) | Q(is_user_related=True))
-        .exclude(status=OrderStatus.CANCELLED)
+        }
+        order_filter &= Q(entity__user_id=user_id) | Q(is_user_related=True)
+    else:
+        if not order_id:
+            return []
+
+    return list(
+        Order.objects.annotate(**order_annotate)
+        .filter(order_filter)
+        .exclude(status__in=(OrderStatus.CANCELLED, OrderStatus.ABANDONED))
         # .annotate(
         #     date=Case(
         #         When(transaction__isnull=False, then=F("transaction__date_accounting")),
@@ -70,6 +92,8 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
             "delivery__address",
             "delivery__address__country",
             "delivery__address__region",
+            "payment_order",
+            "payment_order__provider",
         )
         .prefetch_related(
             Prefetch(
@@ -87,6 +111,15 @@ def get_list(user_id: UUID, module: Module) -> List[Order]:
     )
 
 
+def get(order_id: UUID, user_id: UUID, module: Module) -> Order | None:
+    order_objs = get_list(order_id=order_id, user_id=user_id, module=module)
+
+    if not order_objs:
+        return None
+
+    return order_objs[0]
+
+
 @transaction.atomic
 def create(
     sizes: list[dict],
@@ -95,7 +128,6 @@ def create(
     user_id: UUID | None = None,
     user: dict | None = None,
     pickup: dict | None = None,
-    with_notify: bool = True,
 ) -> Order | None:
     if user_id:
         user_obj = User.objects.filter(id=user_id).with_has_active_membership().first()
@@ -157,20 +189,6 @@ def create(
     else:
         event_id = None
 
-    order_delivery_obj = OrderDelivery.objects.create(
-        provider=delivery_provider_obj,
-        address=order_delivery_address_obj,
-        event_id=event_id,
-    )
-
-    # TODO: Fix this
-
-    order_obj = Order.objects.create(
-        entity=entity_obj,
-        delivery=order_delivery_obj,
-        origin_module=module,
-    )
-
     product_size_obj_by_id = {
         product_size_obj.id: product_size_obj
         for product_size_obj in ProductSize.objects.filter(
@@ -180,6 +198,64 @@ def create(
         .with_price(modules=modules)
         .with_stock()
     }
+
+    if delivery_provider_obj.type == OrderDeliveryType.DELIVERY:
+        weight = sum(
+            [
+                size["quantity"]
+                * product_size_obj_by_id[size["id"]].product.weight_grams
+                for size in sizes
+            ]
+        )
+
+        delivery_price_obj = get_delivery_price(
+            provider_id=delivery_provider_obj.id,
+            weight=weight,
+            country_id=order_delivery_address_obj.country_id,
+            region_id=order_delivery_address_obj.region_id,
+        )
+
+        if not delivery_price_obj:
+            return None
+
+        delivery_amount = delivery_price_obj.price
+        delivery_vat = delivery_price_obj.vat
+
+        if delivery_amount.currency != settings.MODULE_ALL_CURRENCY:
+            delivery_amount = Money(
+                convert_money(
+                    delivery_amount, settings.MODULE_ALL_CURRENCY
+                ).amount.to_integral(rounding=decimal.ROUND_UP),
+                settings.MODULE_ALL_CURRENCY,
+            )
+    else:
+        delivery_amount = Money("0", settings.MODULE_ALL_CURRENCY)
+        delivery_vat = 0
+
+    order_delivery_obj = OrderDelivery.objects.create(
+        provider=delivery_provider_obj,
+        address=order_delivery_address_obj,
+        event_id=event_id,
+        amount=delivery_amount,
+        vat=delivery_vat,
+    )
+
+    provider_objs = payment.api.payment_provider.get_list(module=module)
+    if provider_objs:
+        payment_order_obj = PaymentOrder.objects.create(
+            provider=provider_objs[0],
+        )
+    else:
+        payment_order_obj = None
+
+    # TODO: Fix this
+
+    order_obj = Order.objects.create(
+        entity=entity_obj,
+        delivery=order_delivery_obj,
+        payment_order=payment_order_obj,
+        origin_module=module,
+    )
 
     for size in sizes:
         product_size_obj = product_size_obj_by_id[size["id"]]
@@ -201,12 +277,93 @@ def create(
             vat=product_size_obj.vat,
         )
 
-    if with_notify:
-        notify.tasks.send_order_email.delay(
-            order_id=order_obj.id,
-            email_type=EmailType.ORDER_CREATED,
-            module=module,
-            locale=translation.get_language(),
-        )
-
     return order_obj
+
+
+def delete(order_id: UUID, module: Module) -> bool:
+    order_obj = (
+        Order.objects.filter(id=order_id, status=OrderStatus.CREATED)
+        .select_related("entity", "entity__user")
+        .first()
+    )
+
+    if not order_obj:
+        return False
+
+    # TODO: Update status on payment order
+    order_obj.status = OrderStatus.ABANDONED
+    order_obj.save(update_fields=("status",))
+
+    return True
+
+
+@transaction.atomic
+def update_provider(
+    order_id: UUID, provider_id: UUID, module: Module, user_id: UUID | None = None
+) -> Order | None:
+    order_obj = Order.objects.filter(id=order_id, status=OrderStatus.CREATED).first()
+
+    if not order_obj:
+        return None
+
+    payment_classes_by_id = payment.api.payment_provider.get_classes(module=module)
+    payment_class = payment_classes_by_id[provider_id](order_id=order_id)
+    external_id = payment_class.create()
+
+    # TODO: Keep logs on changes
+    if order_obj.payment_order:
+        payment_order_obj = order_obj.payment_order
+        payment_order_obj.provider_id = provider_id
+        payment_order_obj.external_id = external_id
+        payment_order_obj.save(update_fields=("provider_id", "external_id"))
+    else:
+        payment_order_obj = PaymentOrder.objects.create(
+            provider_id=provider_id, external_id=external_id
+        )
+        order_obj.payment_order = payment_order_obj
+        order_obj.save(update_fields=("payment_order",))
+
+    return get(order_id=order_id, user_id=user_id, module=module)
+
+
+def clean_pending_orders() -> None:
+    # TODO: Move delta to a setting perhaps
+    # TODO: Update status on payment order
+    Order.objects.filter(
+        status=OrderStatus.CREATED,
+        created_at__lte=timezone.now() - timezone.timedelta(hours=1),
+    ).update(status=OrderStatus.ABANDONED)
+
+
+@transaction.atomic
+def complete(
+    order_id: UUID,
+    module: Module,
+    user_id: UUID | None = None,
+    with_notify: bool = True,
+) -> Order | None:
+    order_obj = Order.objects.filter(id=order_id, status=OrderStatus.CREATED).first()
+
+    if not order_obj.payment_order:
+        return None
+
+    payment_order_obj = order_obj.payment_order
+
+    if payment_order_obj.provider.code in ("SWISH", "TRANSFER"):
+        payment_order_obj.status = PaymentStatus.PROCESSING
+        payment_order_obj.save(update_fields=("status",))
+
+        order_obj.status = OrderStatus.PROCESSING
+        order_obj.save(update_fields=("status",))
+
+        if with_notify:
+            notify.tasks.send_order_email.delay(
+                order_id=order_obj.id,
+                email_type=EmailType.ORDER_CREATED,
+                module=module,
+                locale=translation.get_language(),
+            )
+
+        return get(order_id=order_id, user_id=user_id, module=module)
+
+    return None

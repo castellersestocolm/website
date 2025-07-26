@@ -16,7 +16,7 @@ function UserJoinPage() {
 
   React.useEffect(() => {
     if (user) {
-      navigate(ROUTES["user-dashboard"].path, { replace: true });
+      navigate(ROUTES["user-dashboard"].path);
     }
   }, [user]);
 

@@ -20,6 +20,7 @@ import IconHelpOutlineOutlined from "@mui/icons-material/HelpOutlineOutlined";
 import IconPDF from "@mui/icons-material/PictureAsPdf";
 import IconImage from "@mui/icons-material/Image";
 import IconFile from "@mui/icons-material/FilePresent";
+import IconDeleteForeverRounded from "@mui/icons-material/DeleteForeverRounded";
 
 export enum Language {
   ENGLISH = "en",
@@ -77,6 +78,7 @@ export enum OrderStatus {
   PROCESSING = 20,
   COMPLETED = 30,
   CANCELED = 40,
+  ABANDONED = 50,
 }
 
 export const ORDER_STATUS_ICON: any = {
@@ -84,6 +86,7 @@ export const ORDER_STATUS_ICON: any = {
   20: <IconChangeCircle />,
   30: <IconCheckCircle />,
   40: <IconCancel />,
+  50: <IconDeleteForeverRounded />,
 };
 
 export enum EventType {

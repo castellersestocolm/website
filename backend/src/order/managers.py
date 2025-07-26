@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.db.models import (
     QuerySet,
     Sum,
@@ -6,18 +7,67 @@ from django.db.models import (
     When,
     F,
     CharField,
+    Subquery,
+    OuterRef,
 )
 from django.db.models.functions import Coalesce, Concat, Cast
+from django.utils import translation
 
 from comunicat.utils.managers import MoneyOutput
 
 
 class OrderQuerySet(QuerySet):
     def with_amount(self):
+        OrderProduct = apps.get_model("order", "OrderProduct")
         return self.annotate(
-            amount=Coalesce(
+            amount_products=Coalesce(
                 Sum("products__amount"), Value(0), output_field=MoneyOutput()
-            )
+            ),
+            amount_products_vat=Coalesce(
+                Subquery(
+                    OrderProduct.objects.filter(order_id=OuterRef("id"))
+                    .with_amount()
+                    .values("order_id")
+                    .annotate(amount_vat=Sum("amount_vat"))
+                    .values("amount_vat")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            amount_delivery=Coalesce(
+                F("delivery__amount"), Value(0), output_field=MoneyOutput()
+            ),
+            amount_delivery_vat=Coalesce(
+                F("delivery__vat") * F("delivery__amount") / 100,
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            amount=Cast(
+                F("amount_products") + F("amount_delivery"), output_field=MoneyOutput()
+            ),
+            amount_vat=Cast(
+                F("amount_products_vat") + F("amount_delivery_vat"),
+                output_field=MoneyOutput(),
+            ),
+        )
+
+
+class OrderProductQuerySet(QuerySet):
+    def with_amount(self):
+        return self.annotate(amount_vat=F("vat") * F("amount") / 100)
+
+    def with_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            name_locale=F(f"size__product__name__{locale}"),
+        )
+
+    def with_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            description_locale=F(f"size__product__description__{locale}"),
         )
 
 

@@ -20,6 +20,11 @@ app.conf.beat_schedule = {
         "task": "event.tasks.import_events",
         "schedule": crontab(minute="*/5"),
     },
+    # Run every 10 minutes
+    "order.clean_pending_orders": {
+        "task": "order.tasks.clean_pending_orders",
+        "schedule": crontab(minute="*/10"),
+    },
     # Run every 2 hours
     "user.sync_users": {
         "task": "user.tasks.sync_users",

@@ -1,0 +1,10 @@
+.loaderBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  height: 8px;
+}

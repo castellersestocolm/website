@@ -7,14 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0013_googlealbum'),
-        ('order', '0016_alter_deliveryprice_price_currency_and_more'),
+        ("event", "0013_googlealbum"),
+        ("order", "0016_alter_deliveryprice_price_currency_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='orderdelivery',
-            name='event',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='deliveries', to='event.event'),
+            model_name="orderdelivery",
+            name="event",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="deliveries",
+                to="event.event",
+            ),
         ),
     ]

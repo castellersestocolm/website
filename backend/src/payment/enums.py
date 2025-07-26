@@ -20,6 +20,8 @@ class PaymentMethod(IntEnum):
     TRANSFER = 20
     CARD = 30
 
+    PAYPAL = 110
+
     # https://www.iso.org/obp/ui/#iso:code:3166:SE
     SE_SWISH = 75201
     SE_PLUSGIRO = 75202

@@ -13,7 +13,10 @@ from comunicat.rest.serializers.data import (
     RegionSerializer,
     ZoneSerializer,
 )
-from comunicat.rest.serializers.payment import PaymentLineSerializer
+from comunicat.rest.serializers.payment import (
+    PaymentLineSerializer,
+    PaymentOrderSerializer,
+)
 from comunicat.rest.serializers.product import ProductSizeSerializer
 from comunicat.rest.utils.fields import MoneyField, IntEnumField
 from order.enums import OrderDeliveryType, OrderStatus
@@ -152,16 +155,21 @@ class DeliveryProviderSerializer(DeliveryProviderSlimSerializer):
 
 class OrderDeliverySerializer(s.ModelSerializer):
     provider = DeliveryProviderSlimSerializer()
+    amount = MoneyField(read_only=True)
 
     class Meta:
         model = OrderDelivery
         fields = (
             "id",
             "provider",
+            "amount",
+            "vat",
         )
         read_only_fields = (
             "id",
             "provider",
+            "amount",
+            "vat",
         )
 
 
@@ -211,7 +219,9 @@ class OrderLogSerializer(s.ModelSerializer):
 class OrderSerializer(s.ModelSerializer):
     status = IntEnumField(OrderStatus, read_only=True)
     delivery = OrderDeliverySerializer(read_only=True)
+    payment_order = PaymentOrderSerializer(read_only=True)
     amount = MoneyField(read_only=True)
+    amount_vat = MoneyField(read_only=True)
     products = OrderProductSerializer(many=True, read_only=True)
     logs = OrderLogSerializer(many=True, read_only=True)
 
@@ -219,18 +229,24 @@ class OrderSerializer(s.ModelSerializer):
         model = Order
         fields = (
             "id",
+            "reference",
             "status",
             "delivery",
+            "payment_order",
             "amount",
+            "amount_vat",
             "products",
             "logs",
             "created_at",
         )
         read_only_fields = (
             "id",
+            "reference",
             "status",
             "delivery",
+            "payment_order",
             "amount",
+            "amount_vat",
             "products",
             "logs",
             "created_at",
@@ -312,3 +328,7 @@ class CreateOrderSerializer(s.Serializer):
                 kwargs["data"].pop("user")
 
         super().__init__(*args, **kwargs)
+
+
+class UpdateOrderProviderSerializer(s.Serializer):
+    provider_id = s.UUIDField()

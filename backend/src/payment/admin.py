@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.db.models import JSONField
-from django.utils import timezone
+from django.utils import timezone, translation
 
 import payment.api.entity
 import payment.tasks
@@ -19,6 +19,9 @@ from payment.models import (
     Expense,
     ExpenseLog,
     Statement,
+    PaymentProvider,
+    PaymentOrder,
+    PaymentOrderProviderLog,
 )
 
 from jsoneditor.forms import JSONEditor
@@ -444,3 +447,67 @@ class StatementAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     ordering = ("-date_from", "-date_to")
     actions = (sync_statements_google_drive,)
+
+
+@admin.register(PaymentProvider)
+class PaymentProviderAdmin(admin.ModelAdmin):
+    search_fields = ("id", "name", "code")
+    list_display = (
+        "id",
+        "name_locale",
+        "code",
+        "method",
+        "order",
+        "is_enabled",
+    )
+    list_filter = ("is_enabled", "method")
+    readonly_fields = ("created_at",)
+    ordering = ("order", "code")
+    actions = (sync_statements_google_drive,)
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def name_locale(self, obj):
+        return obj.name.get(translation.get_language()) or list(obj.name.values())[0]
+
+    name_locale.short_description = _("name")
+
+
+class PaymentOrderProviderLogInline(admin.TabularInline):
+    model = PaymentOrderProviderLog
+    readonly_fields = ("provider", "created_at")
+    ordering = ("-created_at",)
+    extra = 0
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(PaymentOrder)
+class PaymentOrderAdmin(admin.ModelAdmin):
+    search_fields = (
+        "id",
+        "external_id",
+        "order__id",
+        "order__entity__email",
+        "order__entity__firstname",
+        "order__entity__lastname",
+    )
+    list_display = (
+        "id",
+        "provider",
+        "status",
+        "external_id",
+    )
+    list_filter = ("provider", "status")
+    readonly_fields = ("created_at",)
+    ordering = ("-created_at",)
+    inlines = (PaymentOrderProviderLogInline,)

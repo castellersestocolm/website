@@ -43,7 +43,7 @@ export default function FormSetPassword({ token }: any) {
       if (response.status === 200) {
         setUser(response.data);
         setValidationErrors(undefined);
-        navigate(ROUTES["user-dashboard"].path, { replace: true });
+        navigate(ROUTES["user-dashboard"].path);
       } else if (response.status === 429) {
         setValidationErrors({ throttle: response.data.detail });
       } else {

@@ -13,6 +13,8 @@ const AppContext = React.createContext({
   setRehearsal: (rehearsal: any) => {},
   cart: undefined,
   setCart: (cart: any) => {},
+  order: undefined,
+  setOrder: (order: any) => {},
 } as any);
 
 export const useAppContext = () => React.useContext(AppContext);

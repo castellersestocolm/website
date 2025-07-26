@@ -68,7 +68,7 @@ export default function FormJoin() {
       if (response.status === 201) {
         setValidationErrors(undefined);
         setSubmitted(true);
-        setTimeout(() => navigate(ROUTES.home.path, { replace: true }), 30000);
+        setTimeout(() => navigate(ROUTES.home.path), 30000);
       } else if (response.status === 429) {
         setValidationErrors({ throttle: response.data.detail });
       } else {

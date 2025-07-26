@@ -9,26 +9,78 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0002_alter_country_options_region'),
-        ('order', '0011_deliveryprovider_is_enabled'),
+        ("data", "0002_alter_country_options_region"),
+        ("order", "0011_deliveryprovider_is_enabled"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DeliveryPrice',
+            name="DeliveryPrice",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('amount_currency', djmoney.models.fields.CurrencyField(choices=[('SEK', 'Swedish Krona')], default='SEK', editable=False, max_length=3)),
-                ('amount', djmoney.models.fields.MoneyField(decimal_places=2, default_currency='SEK', max_digits=7)),
-                ('vat', models.PositiveSmallIntegerField(default=0)),
-                ('country', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='delivery_prices', to='data.country')),
-                ('provider', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='prices', to='order.deliveryprovider')),
-                ('region', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='delivery_prices', to='data.region')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "amount_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[("SEK", "Swedish Krona")],
+                        default="SEK",
+                        editable=False,
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "amount",
+                    djmoney.models.fields.MoneyField(
+                        decimal_places=2, default_currency="SEK", max_digits=7
+                    ),
+                ),
+                ("vat", models.PositiveSmallIntegerField(default=0)),
+                (
+                    "country",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="delivery_prices",
+                        to="data.country",
+                    ),
+                ),
+                (
+                    "provider",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="prices",
+                        to="order.deliveryprovider",
+                    ),
+                ),
+                (
+                    "region",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="delivery_prices",
+                        to="data.region",
+                    ),
+                ),
             ],
             options={
-                'ordering': ('amount',),
+                "ordering": ("amount",),
             },
         ),
     ]

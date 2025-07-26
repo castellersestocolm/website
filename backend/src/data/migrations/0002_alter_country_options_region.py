@@ -9,26 +9,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0001_initial'),
+        ("data", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='country',
-            options={'verbose_name': 'country', 'verbose_name_plural': 'countries'},
+            name="country",
+            options={"verbose_name": "country", "verbose_name_plural": "countries"},
         ),
         migrations.CreateModel(
-            name='Region',
+            name="Region",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('name', models.JSONField(default=comunicat.utils.models.language_field_default)),
-                ('code', models.CharField(max_length=255)),
-                ('country', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='regions', to='data.country')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "name",
+                    models.JSONField(
+                        default=comunicat.utils.models.language_field_default
+                    ),
+                ),
+                ("code", models.CharField(max_length=255)),
+                (
+                    "country",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="regions",
+                        to="data.country",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('country', 'code')},
+                "unique_together": {("country", "code")},
             },
         ),
     ]

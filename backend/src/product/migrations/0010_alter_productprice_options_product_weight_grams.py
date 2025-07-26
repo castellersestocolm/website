@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0009_product_ignore_stock'),
+        ("product", "0009_product_ignore_stock"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='productprice',
-            options={'ordering': ('product__type', 'module', 'amount')},
+            name="productprice",
+            options={"ordering": ("product__type", "module", "amount")},
         ),
         migrations.AddField(
-            model_name='product',
-            name='weight_grams',
+            model_name="product",
+            name="weight_grams",
             field=models.PositiveSmallIntegerField(default=0),
         ),
     ]

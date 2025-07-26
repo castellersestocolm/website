@@ -25,8 +25,9 @@ import { ROUTES } from "../../routes";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import PopupState, { bindMenu, bindTrigger } from "material-ui-popup-state";
-import { PermissionLevel } from "../../enums";
+import { OrderStatus, PermissionLevel } from "../../enums";
 import IconShoppingCart from "@mui/icons-material/ShoppingCartOutlined";
+import IconShoppingCartCheckout from "@mui/icons-material/ShoppingCartCheckout";
 import { styled } from "@mui/material/styles";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 
@@ -43,14 +44,15 @@ export default function NavBar() {
 
   const theme = useTheme();
 
-  const { user, cart, setCart } = useAppContext();
+  const { user, cart, setCart, order, setOrder } = useAppContext();
 
   React.useEffect(() => {
+    const tmpOrderString = localStorage.getItem("order");
+    setOrder(tmpOrderString ? JSON.parse(tmpOrderString) : undefined);
+
     const tmpCartString = localStorage.getItem("cart");
-    if (tmpCartString) {
-      setCart(JSON.parse(tmpCartString));
-    }
-  }, [setCart]);
+    setCart(tmpCartString ? JSON.parse(tmpCartString) : undefined);
+  }, [setOrder, setCart]);
 
   const pages = [
     {
@@ -290,7 +292,16 @@ export default function NavBar() {
             <Box sx={{ display: "flex" }}>
               <>
                 <LanguageSelector />
-                {cartCount && cartCount > 0 ? (
+                {order && order.status === OrderStatus.CREATED ? (
+                  <IconButton
+                    href={ROUTES["order-payment"].path.replace(":id", order.id)}
+                    rel="nofollow"
+                    aria-label="account"
+                    className={styles.navMenuAccount}
+                  >
+                    <IconShoppingCartCheckout fontSize="small" />
+                  </IconButton>
+                ) : cartCount && cartCount > 0 ? (
                   <IconButton
                     href={ROUTES["order-cart"].path}
                     rel="nofollow"

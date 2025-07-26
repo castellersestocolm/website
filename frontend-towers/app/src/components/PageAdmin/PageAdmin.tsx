@@ -18,7 +18,7 @@ export default function PageAdmin({
     user === null ||
     (user && user.permission_level < PermissionLevel.ADMIN)
   ) {
-    navigate(ROUTES["user-login"].path, { replace: true });
+    navigate(ROUTES["user-login"].path);
   }
 
   return (

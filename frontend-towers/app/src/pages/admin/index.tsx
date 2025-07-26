@@ -92,11 +92,11 @@ function AdminPage() {
   }, [setUsers]);
 
   function handleAdminAttendanceSubmit() {
-    navigate(ROUTES["admin-attendance"].path, { replace: true });
+    navigate(ROUTES["admin-attendance"].path);
   }
 
   function handleAdminEquipmentSubmit() {
-    navigate(ROUTES["admin-equipment"].path, { replace: true });
+    navigate(ROUTES["admin-equipment"].path);
   }
 
   const content = user && (

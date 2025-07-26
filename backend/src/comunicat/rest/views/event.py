@@ -169,7 +169,7 @@ class RegistrationAPI(ComuniCatViewSet):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        query_serializer=DestroyRegistrationSerializer,
+        query_serializer=DestroyRegistrationSerializer(),
         responses={204: Serializer(), 401: Serializer()},
     )
     def destroy(self, request, id):
