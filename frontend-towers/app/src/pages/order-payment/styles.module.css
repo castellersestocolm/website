@@ -199,6 +199,18 @@
   text-align: center;
 }
 
+.providerSwishPhone {
+  padding-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg {
+    margin-right: 4px;
+    width: 16px;
+  }
+}
+
 .providerSwishButton {
   margin-top: 12px !important;
 }

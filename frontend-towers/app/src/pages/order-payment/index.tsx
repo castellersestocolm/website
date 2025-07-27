@@ -31,7 +31,10 @@ import QRCode from "qrcode";
 import IconAccountBalance from "@mui/icons-material/AccountBalance";
 import IconMessage from "@mui/icons-material/Message";
 import IconMoney from "@mui/icons-material/Money";
+import IconPhone from "@mui/icons-material/Phone";
 import {
+  PAYMENT_SWISH_NUMBER,
+  PAYMENT_SWISH_OWNER,
   PAYMENT_TRANSFER_BIC,
   PAYMENT_TRANSFER_IBAN,
   PAYMENT_TRANSFER_OWNER,
@@ -130,7 +133,13 @@ function OrderPaymentPage() {
       if (order.payment_order.provider.code === "SWISH") {
         const textOrder = t("swish.payment.order") + " #" + order.reference;
         QRCode.toDataURL(
-          "C1230688820;" + order.amount.amount + ";" + textOrder + ";0",
+          "C" +
+            PAYMENT_SWISH_NUMBER.replaceAll(" ", "") +
+            ";" +
+            order.amount.amount +
+            ";" +
+            textOrder +
+            ";0",
           { width: 500, margin: 0 },
         )
           .then((url: string) => {
@@ -253,6 +262,21 @@ function OrderPaymentPage() {
           {t("swish.payment.order")}
           {" #"}
           {order.reference}
+        </Typography>
+        <Typography
+          variant="body2"
+          component="span"
+          className={styles.providerSwishText}
+        >
+          {PAYMENT_SWISH_OWNER}
+        </Typography>
+        <Typography
+          variant="body1"
+          component="span"
+          className={styles.providerSwishPhone}
+        >
+          <IconPhone />
+          {PAYMENT_SWISH_NUMBER}
         </Typography>
         <Button
           variant="contained"

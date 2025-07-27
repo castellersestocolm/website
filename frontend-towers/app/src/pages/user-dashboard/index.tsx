@@ -85,6 +85,7 @@ import {
   API_EXPENSES_LIST_PAGE_SIZE,
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
+  PAYMENT_SWISH_NUMBER,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
 import ImageIconSwish from "../../assets/images/icons/swish.png";
@@ -223,7 +224,9 @@ function UserDashboardPage() {
 
             if (currentMembership.status < MembershipStatus.PROCESSING) {
               QRCode.toDataURL(
-                "C1230688820;" +
+                "C" +
+                  PAYMENT_SWISH_NUMBER.replaceAll(" ", "") +
+                  ";" +
                   currentMembership.amount.amount +
                   ";" +
                   membershipText +
@@ -444,7 +447,9 @@ function UserDashboardPage() {
 
         if (currentMembership.status < MembershipStatus.PROCESSING) {
           QRCode.toDataURL(
-            "C1230688820;" +
+            "C" +
+              PAYMENT_SWISH_NUMBER.replaceAll(" ", "") +
+              ";" +
               currentMembership.amount.amount +
               ";" +
               membershipText +

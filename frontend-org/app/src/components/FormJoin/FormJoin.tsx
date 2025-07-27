@@ -134,7 +134,7 @@ export default function FormJoin() {
           subAdults[0].lastname;
         setPaymentText(membershipText);
         QRCode.toDataURL(
-          "C1230688820;" +
+          "C" + PAYMENT_SWISH_NUMBER.replaceAll(" ", "") + ";" +
             (subAdults.length === 1 && subChildren.length === 0
               ? "150"
               : "250") +
