@@ -173,11 +173,11 @@ class UserAPI(ComuniCatViewSet):
     @method_decorator(ensure_csrf_cookie)
     def me(self, request):
         if request.user.is_authenticated:
-            user_obj = user.api.get(user_id=request.user.id)
+            user_obj = user.api.get(user_id=request.user.id, module=self.module)
 
             if not hasattr(user_obj, "family_member"):
-                user.api.family.create_for_user(user_id=user_obj.id)
-                user_obj = user.api.get(user_id=request.user.id)
+                user.api.family.create_for_user(user_id=user_obj.id, module=self.module)
+                user_obj = user.api.get(user_id=request.user.id, module=self.module)
 
             serializer = self.serializer_class(
                 user_obj, context={"module": self.module}
@@ -279,7 +279,9 @@ class UserFamilyAPI(ComuniCatViewSet):
         if not user_obj:
             return Response(status=401)
 
-        family_obj = user.api.family.get_for_user(user_id=user_obj.id)
+        family_obj = user.api.family.get_for_user(
+            user_id=user_obj.id, module=self.module
+        )
 
         serializer = self.serializer_class(
             family_obj, context={"module": self.module, "user": request.user}

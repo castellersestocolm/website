@@ -3,11 +3,12 @@ from uuid import UUID
 from django.db.models import Prefetch
 
 import user.api
+from comunicat.enums import Module
 from user.enums import FamilyMemberStatus, FamilyMemberRole
 from user.models import FamilyMember, Family
 
 
-def get_for_user(user_id: UUID) -> Family | None:
+def get_for_user(user_id: UUID, module: Module | None = None) -> Family | None:
     family_obj = (
         Family.objects.filter(members__user_id=user_id)
         .prefetch_related(
@@ -22,13 +23,13 @@ def get_for_user(user_id: UUID) -> Family | None:
     )
 
     if not family_obj:
-        family_obj = create_for_user(user_id=user_id)
+        family_obj = create_for_user(user_id=user_id, module=module)
 
     return family_obj
 
 
-def create_for_user(user_id: UUID) -> Family | None:
-    user_obj = user.api.get(user_id=user_id)
+def create_for_user(user_id: UUID, module: Module | None = None) -> Family | None:
+    user_obj = user.api.get(user_id=user_id, module=module)
 
     if not user_obj:
         return None

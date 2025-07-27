@@ -26,7 +26,7 @@ from user.models import User, TowersUser, FamilyMember, Family, UserEmail
 from user.utils import get_default_consent_pictures
 
 
-def get(user_id: UUID) -> User:
+def get(user_id: UUID, module: Module | None = None) -> User:
     return (
         User.objects.filter(id=user_id)
         .select_related("towers", "family_member", "family_member__family")
@@ -38,7 +38,7 @@ def get(user_id: UUID) -> User:
                 ).order_by("-role", "user__firstname", "user__lastname"),
             )
         )
-        .with_permission_level()
+        .with_permission_level(modules=[module])
         .first()
     )
 
@@ -64,7 +64,7 @@ def get_list(
                 UserEmail.objects.filter().order_by("email"),
             ),
         )
-        .with_permission_level()
+        .with_permission_level(modules=modules)
         .order_by("firstname", "lastname", "email", "created_at")
     )
 
