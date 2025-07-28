@@ -687,7 +687,7 @@ function OrderCartPage() {
                                         " — " +
                                         productSize.size}
                                     </Typography>
-                                    {quantity > product.stock && (
+                                    {quantity > productSize.stock && (
                                       <Typography
                                         variant="body2"
                                         component="span"
