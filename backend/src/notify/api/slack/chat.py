@@ -107,30 +107,33 @@ def send_order_message(order_id: UUID) -> None:
         {"type": "divider"},
         *(
             [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"*{order_product_obj.quantity} x {order_product_obj.name_locale} — {order_product_obj.size.size}*\nAmount: {int(order_product_obj.amount.amount)} {order_product_obj.amount.currency}\nCurrent stock: {product_size_obj_by_id[order_product_obj.size_id].stock + order_product_obj.quantity} → {product_size_obj_by_id[order_product_obj.size_id].stock}",
-                    },
-                    **(
-                        {
-                            "accessory": {
-                                "type": "image",
-                                "image_url": full_media(
-                                    path=order_product_obj.size.product.images.first().picture.url
-                                ),
-                                "alt_text": order_product_obj.name_locale,
-                            }
-                        }
-                        if order_product_obj.size.product.images.exists()
-                        else {}
-                    ),
-                }
+                section
                 for order_product_obj in order_obj.products.all()
+                for section in [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": f"*{order_product_obj.quantity} x {order_product_obj.name_locale} — {order_product_obj.size.size}*\nAmount: {int(order_product_obj.amount.amount)} {order_product_obj.amount.currency}\nCurrent stock: {product_size_obj_by_id[order_product_obj.size_id].stock + order_product_obj.quantity} → {product_size_obj_by_id[order_product_obj.size_id].stock}",
+                        },
+                        **(
+                            {
+                                "accessory": {
+                                    "type": "image",
+                                    "image_url": full_media(
+                                        path=order_product_obj.size.product.images.first().picture.url
+                                    ),
+                                    "alt_text": order_product_obj.name_locale,
+                                }
+                            }
+                            if order_product_obj.size.product.images.exists()
+                            else {}
+                        ),
+                    },
+                    {"type": "divider"},
+                ]
             ]
         ),
-        {"type": "divider"},
         {
             "type": "actions",
             "elements": [
