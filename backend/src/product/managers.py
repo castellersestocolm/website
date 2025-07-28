@@ -38,7 +38,9 @@ class ProductQuerySet(QuerySet):
             stock_out=Coalesce(
                 Subquery(
                     OrderProduct.objects.filter(size__product_id=OuterRef("id"))
-                    .exclude(order__status=OrderStatus.CANCELLED)
+                    .exclude(
+                        order__status__in=(OrderStatus.CANCELLED, OrderStatus.ABANDONED)
+                    )
                     .values("size__product")
                     .annotate(sum=Sum("quantity"))
                     .values_list("sum", flat=True)[:1],
@@ -103,7 +105,9 @@ class ProductSizeQuerySet(QuerySet):
             stock_out=Coalesce(
                 Subquery(
                     OrderProduct.objects.filter(size_id=OuterRef("id"))
-                    .exclude(order__status=OrderStatus.CANCELLED)
+                    .exclude(
+                        order__status__in=(OrderStatus.CANCELLED, OrderStatus.ABANDONED)
+                    )
                     .values("size__product")
                     .annotate(sum=Sum("quantity"))
                     .values_list("sum", flat=True)[:1],

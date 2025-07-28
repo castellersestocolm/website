@@ -38,7 +38,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 def get_list(
-    module: Module, user_id: UUID | None = None, order_id: UUID | None = None
+    module: Module | None = None,
+    user_id: UUID | None = None,
+    order_id: UUID | None = None,
 ) -> List[Order]:
     order_filter = Q()
     order_annotate = {}
@@ -102,7 +104,8 @@ def get_list(
                     "size__product__type", "size__order", "size__category", "size__size"
                 )
                 .select_related("size", "size__product", "line")
-                .prefetch_related("size__product__images"),
+                .prefetch_related("size__product__images")
+                .with_name(),
             ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )
@@ -111,7 +114,9 @@ def get_list(
     )
 
 
-def get(order_id: UUID, user_id: UUID, module: Module) -> Order | None:
+def get(
+    order_id: UUID, user_id: UUID | None = None, module: Module | None = None
+) -> Order | None:
     order_objs = get_list(order_id=order_id, user_id=user_id, module=module)
 
     if not order_objs:
@@ -360,6 +365,10 @@ def complete(
                 email_type=EmailType.ORDER_CREATED,
                 module=module,
                 locale=translation.get_language(),
+            )
+
+            notify.tasks.send_order_message_slack.delay(
+                order_id=order_obj.id,
             )
 
         return get(order_id=order_id, user_id=user_id, module=module)

@@ -13,6 +13,7 @@ from document.models import EmailAttachment
 from event.models import EventModule
 from membership.models import Membership
 from notify.api.email import send_email
+from notify.api.slack.chat import send_order_message
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import NotificationType, EmailType
 from notify.models import Email
@@ -241,3 +242,10 @@ def send_order_email(
         attachments=[],
         module=module,
     )
+
+
+@shared_task
+def send_order_message_slack(
+    order_id: UUID,
+) -> None:
+    send_order_message(order_id=order_id)
