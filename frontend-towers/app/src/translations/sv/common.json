@@ -246,6 +246,7 @@
   "pages.order.product-card.order": "Fortsätta med din beställning",
   "pages.order-cart.title": "Slutför din beställning",
   "pages.order-cart.products-card.title": "Produkter",
+  "pages.order-cart.products-card.stock-none": "Produkten finns inte i lager just nu, det kan ta några veckor innan den levereras.",
   "pages.order-cart.products-card.empty": "Du har inga produkter i din varukorg just nu.",
   "pages.order-cart.entity-card.title": "Dina uppgifter",
   "pages.order-cart.entity-card.contact-info.title": "Kontaktuppgifter",

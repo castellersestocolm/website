@@ -679,14 +679,34 @@ function OrderCartPage() {
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  quantity +
-                                  " x " +
-                                  product.name +
-                                  " — " +
-                                  productSize.size
+                                  <>
+                                    <Typography variant="body2">
+                                      {quantity +
+                                        " x " +
+                                        product.name +
+                                        " — " +
+                                        productSize.size}
+                                    </Typography>
+                                    {quantity > product.stock && (
+                                      <Typography
+                                        variant="body2"
+                                        component="span"
+                                        color="error"
+                                      >
+                                        {t(
+                                          "pages.order-cart.products-card.stock-none",
+                                        )}
+                                      </Typography>
+                                    )}
+                                  </>
                                 }
                               />
-                              <Typography variant="body2" component="span">
+                              <Typography
+                                variant="body2"
+                                component="span"
+                                pl={1}
+                                style={{ whiteSpace: "nowrap" }}
+                              >
                                 {amountToString(
                                   quantity * productSize.price.amount,
                                 )}{" "}

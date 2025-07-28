@@ -248,6 +248,7 @@
   "pages.order.product-card.order": "Continua amb la comanda",
   "pages.order-cart.title": "Finalitza la comanda",
   "pages.order-cart.products-card.title": "Productes",
+  "pages.order-cart.products-card.stock-none": "Aquest producte no és en estoc en aquests moments, és per això que l'entrega pot trigar unes setmanes.",
   "pages.order-cart.products-card.empty": "Ara mateix no tens cap producte a la cistella de la compra.",
   "pages.order-cart.entity-card.title": "Les teves dades",
   "pages.order-cart.entity-card.contact-info.title": "Informació de contacte",

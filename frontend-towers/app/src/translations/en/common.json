@@ -246,6 +246,7 @@
   "pages.order.product-card.order": "Proceed with your order",
   "pages.order-cart.title": "Complete your order",
   "pages.order-cart.products-card.title": "Products",
+  "pages.order-cart.products-card.stock-none": "We don't currently have this product in stock, it can take a few weeks for it to be delivered.",
   "pages.order-cart.products-card.empty": "You don't have any products in your cart right now.",
   "pages.order-cart.entity-card.title": "Your details",
   "pages.order-cart.entity-card.contact-info.title": "Contact information",
