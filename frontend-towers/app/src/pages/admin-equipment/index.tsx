@@ -3,7 +3,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Grid from "@mui/material/Grid";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { getEnumLabel } from "../../enums";
 import { apiProductList } from "../../api";
 import { Card, Divider, Typography } from "@mui/material";
@@ -61,6 +61,15 @@ function AdminEquipmentPage() {
               renderHeader: () => (
                 <Typography variant="body2" fontWeight={600}>
                   {t("pages.admin-equipment.equipment-table.stock")}
+                </Typography>
+              ),
+              renderCell: (params: GridRenderCellParams<any, string>) => (
+                <Typography
+                  variant="body2"
+                  component="span"
+                  className={styles.adminMono}
+                >
+                  {params.value}
                 </Typography>
               ),
             },

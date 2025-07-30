@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import "@fontsource/dm-sans";
 import "@fontsource/dm-sans/600.css";
 import "@fontsource/dm-sans/700.css";
+import "@fontsource/dm-mono";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);

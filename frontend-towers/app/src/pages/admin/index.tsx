@@ -326,7 +326,7 @@ function AdminPage() {
                           whiteSpace="nowrap"
                         >
                           {product.stock_out_pending ? (
-                            <Box className={styles.eventCountNoTextBox}>
+                            <Box className={styles.stockCountBox}>
                               <IconShoppingCart
                                 className={styles.stockCountIcon}
                               />
@@ -335,7 +335,7 @@ function AdminPage() {
                               </Typography>
                             </Box>
                           ) : undefined}
-                          <Box className={styles.eventCountNoTextBox}>
+                          <Box className={styles.stockCountBox}>
                             <IconInventory className={styles.stockCountIcon} />
                             <Typography variant="body2" color="textSecondary">
                               {product.stock}

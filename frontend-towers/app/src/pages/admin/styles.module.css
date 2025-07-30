@@ -47,6 +47,12 @@
 
 .eventCountBox {
   display: flex;
+  min-width: 64px;
+
+  p {
+    font-family: "DM Mono", "monospace" !important;
+    text-align: right;
+  }
 }
 
 .eventCountNoTextBox {
@@ -58,13 +64,6 @@
   width: 18px !important;
   height: 18px !important;
   margin-right: 4px;
-}
-
-.stockCountIcon {
-  width: 18px !important;
-  height: 18px !important;
-  margin-right: 4px;
-  color: var(--mui-palette-text-secondary);
 }
 
 .userFamilyListInner {
@@ -112,4 +111,22 @@
   & > div {
     padding: 0 10px;
   }
+}
+
+.stockCountBox {
+  display: flex;
+  justify-content: end;
+  min-width: 48px;
+
+  p {
+    font-family: "DM Mono", "monospace" !important;
+    text-align: right;
+  }
+}
+
+.stockCountIcon {
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 4px;
+  color: var(--mui-palette-text-secondary);
 }

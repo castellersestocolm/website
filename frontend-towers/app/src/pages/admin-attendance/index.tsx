@@ -3,7 +3,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Grid from "@mui/material/Grid";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { getEnumLabel, RegistrationStatus } from "../../enums";
 import { apiEventList, apiEventRegistrationList, apiUserList } from "../../api";
 import { Card, Divider, Typography } from "@mui/material";
@@ -93,6 +93,15 @@ function AdminAttendancePage() {
           {t("pages.admin-attendance.events-table.height-shoulders")}
         </Typography>
       ),
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <Typography
+          variant="body2"
+          component="span"
+          className={styles.adminMono}
+        >
+          {params.value}
+        </Typography>
+      ),
     },
     {
       field: "heightArms",
@@ -101,6 +110,15 @@ function AdminAttendancePage() {
       renderHeader: () => (
         <Typography variant="body2" fontWeight={600}>
           {t("pages.admin-attendance.events-table.height-arms")}
+        </Typography>
+      ),
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <Typography
+          variant="body2"
+          component="span"
+          className={styles.adminMono}
+        >
+          {params.value}
         </Typography>
       ),
     },
@@ -137,7 +155,15 @@ function AdminAttendancePage() {
                     <Typography variant="body2" color="textSecondary">
                       {t("pages.admin-attendance.events-table.attendance")}
                       {": "}
-                      {eventsCountAdults[event.id].join("/")}
+                      {
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          className={styles.adminMono}
+                        >
+                          {eventsCountAdults[event.id].join("/")}
+                        </Typography>
+                      }
                     </Typography>
                   )}
                 </Box>
@@ -224,7 +250,15 @@ function AdminAttendancePage() {
                     <Typography variant="body2" color="textSecondary">
                       {t("pages.admin-attendance.events-table.attendance")}
                       {": "}
-                      {eventsCountChildren[event.id].join("/")}
+                      {
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          className={styles.adminMono}
+                        >
+                          {eventsCountChildren[event.id].join("/")}
+                        </Typography>
+                      }
                     </Typography>
                   )}
                 </Box>

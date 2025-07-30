@@ -44,3 +44,7 @@
     padding: 0 10px;
   }
 }
+
+.adminMono {
+  font-family: "DM Mono", "monospace" !important;
+}
