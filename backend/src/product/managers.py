@@ -48,6 +48,19 @@ class ProductQuerySet(QuerySet):
                 Value(0),
                 output_field=IntegerField(),
             ),
+            stock_out_pending=Coalesce(
+                Subquery(
+                    OrderProduct.objects.filter(
+                        size__product_id=OuterRef("id"),
+                        order__status__in=(OrderStatus.CREATED, OrderStatus.PROCESSING),
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("quantity"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
             stock=F("stock_in") - F("stock_out"),
         )
 
@@ -107,6 +120,19 @@ class ProductSizeQuerySet(QuerySet):
                     OrderProduct.objects.filter(size_id=OuterRef("id"))
                     .exclude(
                         order__status__in=(OrderStatus.CANCELLED, OrderStatus.ABANDONED)
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("quantity"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            stock_out_pending=Coalesce(
+                Subquery(
+                    OrderProduct.objects.filter(
+                        size_id=OuterRef("id"),
+                        order__status__in=(OrderStatus.CREATED, OrderStatus.PROCESSING),
                     )
                     .values("size__product")
                     .annotate(sum=Sum("quantity"))

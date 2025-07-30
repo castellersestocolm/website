@@ -21,6 +21,7 @@ class ProductImageSerializer(s.ModelSerializer):
 
 class ProductSizeWithStockSerializer(s.ModelSerializer):
     stock = s.IntegerField(read_only=True)
+    stock_out_pending = s.IntegerField(read_only=True)
     price = MoneyField(required=False, read_only=True)
     price_vat = MoneyField(required=False, read_only=True)
 
@@ -31,6 +32,7 @@ class ProductSizeWithStockSerializer(s.ModelSerializer):
             "category",
             "size",
             "stock",
+            "stock_out_pending",
             "price",
             "price_vat",
         )
@@ -39,6 +41,7 @@ class ProductSizeWithStockSerializer(s.ModelSerializer):
             "category",
             "size",
             "stock",
+            "stock_out_pending",
             "price",
             "price_vat",
         )
@@ -112,6 +115,7 @@ class ProductSerializer(s.ModelSerializer):
 
 class ProductWithStockSerializer(ProductSerializer):
     stock = s.IntegerField(read_only=True)
+    stock_out_pending = s.IntegerField(read_only=True)
 
     class Meta:
         model = Product
@@ -123,6 +127,7 @@ class ProductWithStockSerializer(ProductSerializer):
             "weight_grams",
             "ignore_stock",
             "stock",
+            "stock_out_pending",
             "price",
             "sizes",
             "images",
@@ -135,6 +140,7 @@ class ProductWithStockSerializer(ProductSerializer):
             "weight_grams",
             "ignore_stock",
             "stock",
+            "stock_out_pending",
             "price",
             "sizes",
             "images",

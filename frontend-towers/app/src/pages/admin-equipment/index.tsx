@@ -77,7 +77,11 @@ function AdminEquipmentPage() {
                       productSize.category ? productSize.category : 0,
                     ),
                     size: productSize.size,
-                    stock: productSize.stock,
+                    stock:
+                      productSize.stock +
+                      (productSize.stock_out_pending
+                        ? " (" + productSize.stock_out_pending + ")"
+                        : ""),
                   };
                 })
               : [];

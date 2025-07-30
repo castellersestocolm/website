@@ -18,7 +18,7 @@ import {
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { apiEventList, apiProductList, apiUserList } from "../../api";
-import { EVENT_TYPE_ICON, EventType, RegistrationStatus } from "../../enums";
+import { EventType, RegistrationStatus } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import IconKeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { ROUTES } from "../../routes";
@@ -27,6 +27,8 @@ import IcconPerson from "@mui/icons-material/Person";
 import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
 import { LineChart } from "@mui/x-charts";
 import { get_event_icon } from "../../utils/event";
+import IconShoppingCart from "@mui/icons-material/ShoppingCart";
+import IconInventory from "@mui/icons-material/Inventory";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -323,7 +325,18 @@ function AdminPage() {
                           marginBottom={{ xs: "8px", lg: "0" }}
                           whiteSpace="nowrap"
                         >
+                          {product.stock_out_pending ? (
+                            <Box className={styles.eventCountNoTextBox}>
+                              <IconShoppingCart
+                                className={styles.stockCountIcon}
+                              />
+                              <Typography variant="body2" color="textSecondary">
+                                {product.stock_out_pending}
+                              </Typography>
+                            </Box>
+                          ) : undefined}
                           <Box className={styles.eventCountNoTextBox}>
+                            <IconInventory className={styles.stockCountIcon} />
                             <Typography variant="body2" color="textSecondary">
                               {product.stock}
                             </Typography>

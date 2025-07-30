@@ -60,6 +60,13 @@
   margin-right: 4px;
 }
 
+.stockCountIcon {
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 4px;
+  color: var(--mui-palette-text-secondary);
+}
+
 .userFamilyListInner {
   display: flex;
   flex: 1;

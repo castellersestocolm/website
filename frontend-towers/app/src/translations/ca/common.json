@@ -276,7 +276,7 @@
   "pages.order-cart.order.success": "La comanda s'ha creat correctament, rebràs un correu amb els detalls per fer el pagament.",
   "pages.order-cart.order.error": "Hi ha hagut un problema finalitzant la comanda, contacta amb nosaltres i et donarem un cop de mà!",
   "pages.order-cart.cancel.success": "S'ha cancel·lat la comanda que hi havia pendent.",
-  "pages.order-payment.providers-card.title": "Mètodes de pagament",
+  "pages.order-payment.providers-card.title": "Pagament",
   "pages.order-payment.providers-card.empty": "Ara mateix no hi ha cap mètode de pagament disponible.",
   "pages.order-payment.providers-card.select": "Selecciona un mètode de pagament per finalitzar la comanda.",
   "pages.order-payment.providers-card.paypal.window-1": "S'obrirà una nova finestra, si us plau, introdueix la informació de pagament allà. Quan hagis acabat aquesta pàgina s'actualitzarà automàticament.",

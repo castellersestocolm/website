@@ -274,7 +274,7 @@
   "pages.order-cart.order.success": "Beställningen har skapats, du kommer att få ett e-postmeddelande med betalningsinstruktioner.",
   "pages.order-cart.order.error": "Det uppstod ett fel med beställningen, kontakta oss så hjälper vi dig!",
   "pages.order-cart.cancel.success": "Den pågående beställningen har avbrutits.",
-  "pages.order-payment.providers-card.title": "Betalningsalternativ",
+  "pages.order-payment.providers-card.title": "Betalning",
   "pages.order-payment.providers-card.empty": "Det finns inga möjliga betalningsalternativ just nu.",
   "pages.order-payment.providers-card.select": "Välja betalningsalternativ för att slutföra beställningen.",
   "pages.order-payment.providers-card.paypal.window-1": "Ett nytt fönster öppnas, vänligen ange dina betalningsuppgifter där. När du är klar laddas sidan om automatiskt.",

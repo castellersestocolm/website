@@ -274,7 +274,7 @@
   "pages.order-cart.order.success": "The order has been created, you will receive an email with payment instructions.",
   "pages.order-cart.order.error": "There was an error while completing the order, please contact us and we'll give you a hand!",
   "pages.order-cart.cancel.success": "The pending order was cancelled successfully.",
-  "pages.order-payment.providers-card.title": "Payment methods",
+  "pages.order-payment.providers-card.title": "Payment",
   "pages.order-payment.providers-card.empty": "There are no available payment providers right now.",
   "pages.order-payment.providers-card.select": "Select a payment method to complete the order.",
   "pages.order-payment.providers-card.paypal.window-1": "A new window will open, please enter your payment details there. Once you have finished this page will reload automatically.",
