@@ -199,28 +199,10 @@ class PaymentProviderPaypal(PaymentProviderBase):
                         ],
                     )
                 ],
-                payment_source=PaymentSource(
-                    paypal=PaypalWallet(
-                        experience_context=PaypalWalletExperienceContext(
-                            shipping_preference=(
-                                ShippingPreference.SET_PROVIDED_ADDRESS
-                                if self.order_delivery_obj.provider.type
-                                == OrderDeliveryType.DELIVERY
-                                else ShippingPreference.NO_SHIPPING
-                            ),
-                            return_url="https://example.com/returnUrl",
-                            cancel_url="https://example.com/cancelUrl",
-                            landing_page=PaypalExperienceLandingPage.LOGIN,
-                            user_action=PaypalExperienceUserAction.PAY_NOW,
-                            payment_method_preference=PayeePaymentMethodPreference.IMMEDIATE_PAYMENT_REQUIRED,
-                        )
-                    )
-                ),
             )
         }
         try:
             result = orders_controller.create_order(collect)
-            print(result)
 
             if result.status_code not in (200, 201):
                 return None
@@ -248,7 +230,6 @@ class PaymentProviderPaypal(PaymentProviderBase):
         try:
             collect = {"id": self.payment_order_obj.external_id}
             result = orders_controller.capture_order(collect)
-            print(result)
 
             if result.status_code not in (200, 201):
                 return False
