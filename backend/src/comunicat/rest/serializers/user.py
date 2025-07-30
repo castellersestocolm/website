@@ -7,6 +7,7 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 
+from comunicat.rest.serializers.legal import MemberWithTeamSerializer
 from comunicat.rest.utils.fields import IntEnumField, EnumField
 from legal.enums import PermissionLevel
 from user.enums import FamilyMemberRole, FamilyMemberStatus
@@ -27,6 +28,7 @@ class TowersUserSerializer(s.ModelSerializer):
 
 class UserExtraSlimSerializer(s.ModelSerializer):
     towers = TowersUserSerializer(read_only=True)
+    members = MemberWithTeamSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -35,6 +37,7 @@ class UserExtraSlimSerializer(s.ModelSerializer):
             "firstname",
             "lastname",
             "can_manage",
+            "members",
             "towers",
         )
         read_only_fields = (
@@ -42,6 +45,7 @@ class UserExtraSlimSerializer(s.ModelSerializer):
             "firstname",
             "lastname",
             "can_manage",
+            "members",
             "towers",
         )
 
@@ -107,6 +111,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "consent_pictures",
             "preferred_language",
             "can_manage",
+            "members",
             "towers",
             "created_at",
         )
@@ -120,6 +125,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "consent_pictures",
             "preferred_language",
             "can_manage",
+            "members",
             "towers",
             "created_at",
         )
@@ -194,6 +200,7 @@ class UserSerializer(UserSlimSerializer):
             "can_manage",
             "towers",
             "family",
+            "members",
             "registration_finished",
             "permission_level",
             "created_at",
@@ -210,6 +217,7 @@ class UserSerializer(UserSlimSerializer):
             "can_manage",
             "towers",
             "family",
+            "members",
             "registration_finished",
             "permission_level",
             "created_at",

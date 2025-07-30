@@ -73,8 +73,30 @@ class MemberSerializer(s.ModelSerializer):
         )
 
 
-class TeamSerializer(s.ModelSerializer):
+class TeamSlimSerializer(s.ModelSerializer):
     name = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Team
+        fields = (
+            "id",
+            "name",
+            "type",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "name",
+            "type",
+            "created_at",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_name(self, obj):
+        return obj.name.get(translation.get_language())
+
+
+class TeamSerializer(TeamSlimSerializer):
     members = MemberSerializer(many=True, read_only=True)
 
     class Meta:
@@ -101,6 +123,29 @@ class TeamSerializer(s.ModelSerializer):
     @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
     def get_name(self, obj):
         return obj.name.get(translation.get_language())
+
+
+class MemberWithTeamSerializer(MemberSerializer):
+    team = TeamSlimSerializer(read_only=True)
+
+    class Meta:
+        model = Member
+        fields = (
+            "id",
+            "user",
+            "team",
+            "role",
+            "picture",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "user",
+            "team",
+            "role",
+            "picture",
+            "created_at",
+        )
 
 
 class BylawsSerializer(s.ModelSerializer):

@@ -36,7 +36,7 @@ interface CreateFormElement extends HTMLFormElement {
 
 export default function FormCalendarRegistrationCreate({
   event: scheduledEvent,
-  family: userFamily,
+  users: eventUsers,
   token: eventToken,
   setLastChanged: setEventLastChanged,
 }: any) {
@@ -141,21 +141,20 @@ export default function FormCalendarRegistrationCreate({
     <>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={0}>
-          {userFamily &&
-            userFamily.members &&
-            userFamily.members.length > 0 &&
-            userFamily.members.map((member: any) => (
+          {eventUsers &&
+            eventUsers.length > 0 &&
+            eventUsers.map((eventUser: any) => (
               <FormGrid size={{ xs: 12 }} marginTop={1} marginBottom={1}>
                 <Typography fontWeight={600} variant="body2">
-                  {member.user.lastname
-                    ? member.user.firstname + " " + member.user.lastname
-                    : member.user.firstname}
+                  {eventUser.lastname
+                    ? eventUser.firstname + " " + eventUser.lastname
+                    : eventUser.firstname}
                 </Typography>
                 <Stack direction="row" spacing={2} marginTop={1}>
                   <Button
                     variant={
-                      member.user.id in formRegistration &&
-                      formRegistration[member.user.id] !==
+                      eventUser.id in formRegistration &&
+                      formRegistration[eventUser.id] !==
                         RegistrationStatus.ACTIVE
                         ? "contained"
                         : "outlined"
@@ -163,14 +162,14 @@ export default function FormCalendarRegistrationCreate({
                     type="submit"
                     color="error"
                     disableElevation
-                    onClick={() => handleButtonCancel(member.user.id)}
+                    onClick={() => handleButtonCancel(eventUser.id)}
                   >
                     {t("pages.calendar.registration.form.button-cancel")}
                   </Button>
                   <Button
                     variant={
-                      member.user.id in formRegistration &&
-                      formRegistration[member.user.id] ===
+                      eventUser.id in formRegistration &&
+                      formRegistration[eventUser.id] ===
                         RegistrationStatus.ACTIVE
                         ? "contained"
                         : "outlined"
@@ -178,7 +177,7 @@ export default function FormCalendarRegistrationCreate({
                     type="submit"
                     color="success"
                     disableElevation
-                    onClick={() => handleButtonAttend(member.user.id)}
+                    onClick={() => handleButtonAttend(eventUser.id)}
                   >
                     {t("pages.calendar.registration.form.button-attend")}
                   </Button>

@@ -92,7 +92,7 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 
 // @ts-ignore
 import QRCode from "qrcode";
-import { get_event_icon } from "../../utils/event";
+import { get_event_icon, getEventUsers } from "../../utils/event";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
@@ -313,10 +313,19 @@ function UserDashboardPage() {
     apiEventList().then((response) => {
       if (response.status === 200) {
         const event = response.data.results.find((event: any) => {
+          const eventUsers =
+            user &&
+            user.family &&
+            getEventUsers(
+              event,
+              user.family.members.map((familyMember: any) => familyMember.user),
+            );
           return (
             (event.type === EventType.REHEARSAL ||
               event.type === EventType.PERFORMANCE) &&
-            new Date(event.time_to) >= new Date()
+            new Date(event.time_to) >= new Date() &&
+            eventUsers &&
+            eventUsers.length > 0
           );
         });
         setRehearsal(event);
@@ -329,7 +338,7 @@ function UserDashboardPage() {
         }
       }
     });
-  }, [setRehearsal, setCastles, lastChangedAttendance]);
+  }, [setRehearsal, setCastles, lastChangedAttendance, user]);
 
   function handleRequestCancelSubmit(id: string) {
     apiUserFamilyMemberRequestCancel(id).then((response) => {
@@ -834,6 +843,15 @@ function UserDashboardPage() {
     </Grid>
   );
 
+  const rehearsalUsers =
+    user &&
+    user.family &&
+    rehearsal &&
+    getEventUsers(
+      rehearsal,
+      user.family.members.map((familyMember: any) => familyMember.user),
+    );
+
   const content = user && (
     <Grid container spacing={4} className={styles.dashboardGrid}>
       <Grid
@@ -975,7 +993,13 @@ function UserDashboardPage() {
                                 .filter(
                                   (registration: any) =>
                                     registration.status ===
-                                    RegistrationStatus.ACTIVE,
+                                      RegistrationStatus.ACTIVE &&
+                                    rehearsalUsers &&
+                                    rehearsalUsers.filter(
+                                      (rehearsalUser: any) =>
+                                        rehearsalUser.id ===
+                                        registration.user.id,
+                                    ).length > 0,
                                 )
                                 .map((registration: any) =>
                                   registration.user.lastname
@@ -996,7 +1020,7 @@ function UserDashboardPage() {
                       <Box className={styles.userAttendanceUpdate}>
                         <FormCalendarRegistrationCreate
                           event={rehearsal}
-                          family={user.family}
+                          users={rehearsalUsers}
                           setLastChanged={setLastChangedAttendance}
                         />
                       </Box>

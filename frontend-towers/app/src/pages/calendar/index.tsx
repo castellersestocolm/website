@@ -38,7 +38,7 @@ import Pagination from "@mui/material/Pagination";
 import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
 import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
 import Map from "../../components/Map/Map";
-import { get_event_icon } from "../../utils/event";
+import { get_event_icon, getEventUsers } from "../../utils/event";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -236,6 +236,13 @@ function CalendarPage() {
                     ]),
                   );
 
+                  const eventUsers =
+                    family &&
+                    getEventUsers(
+                      event,
+                      family.members.map((member: any) => member.user),
+                    );
+
                   return (
                     <Grid
                       key={event.id}
@@ -339,9 +346,8 @@ function CalendarPage() {
                                       )}
                                     </Box>
                                   )}
-                                  {family &&
-                                    family.members &&
-                                    family.members.length > 0 &&
+                                  {eventUsers &&
+                                    eventUsers.length > 0 &&
                                     event.require_signup && (
                                       <Collapse
                                         in={!eventsRegistrationsOpen[event.id]}
@@ -353,14 +359,14 @@ function CalendarPage() {
                                             styles.eventRegistrationsBox
                                           }
                                         >
-                                          {family.members.map((member: any) => {
+                                          {eventUsers.map((eventUser: any) => {
                                             const registration =
                                               registrationByUserId[
-                                                member.user.id
+                                                eventUser.id
                                               ];
                                             return (
                                               <Box
-                                                key={member.id}
+                                                key={eventUser.id}
                                                 className={
                                                   styles.eventRegistrationBox
                                                 }
@@ -383,11 +389,11 @@ function CalendarPage() {
                                                 }
                                                 <Typography variant="body2">
                                                   {family.members.length > 1
-                                                    ? member.user.lastname
-                                                      ? member.user.firstname +
+                                                    ? eventUser.lastname
+                                                      ? eventUser.firstname +
                                                         " " +
-                                                        member.user.lastname
-                                                      : member.user.firstname
+                                                        eventUser.lastname
+                                                      : eventUser.firstname
                                                     : registration &&
                                                         registration.status ===
                                                           RegistrationStatus.ACTIVE
@@ -421,36 +427,40 @@ function CalendarPage() {
                                 }
                                 spacing={2}
                                 marginLeft={{ xs: "0", lg: "16px" }}
-                                marginTop={{ xs: "8px", lg: "0" }}
-                                marginBottom={{ xs: "8px", lg: "0" }}
+                                marginTop="8px"
+                                marginBottom="8px"
                                 whiteSpace="nowrap"
                               >
-                                {family && event.require_signup && (
-                                  <Button
-                                    variant="contained"
-                                    type="submit"
-                                    style={{ width: "auto" }}
-                                    color={
-                                      eventsRegistrationsOpen[event.id]
-                                        ? "secondary"
-                                        : "primary"
-                                    }
-                                    disableElevation
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEventRegistrationsClick(event.id);
-                                    }}
-                                  >
-                                    {eventsRegistrationsOpen[event.id]
-                                      ? t(
-                                          "pages.calendar.section.agenda.event.attendance-hide",
-                                        )
-                                      : t(
-                                          "pages.calendar.section.agenda.event.attendance-show",
-                                        )}
-                                  </Button>
-                                )}
-                                {user &&
+                                {eventUsers &&
+                                  eventUsers.length > 0 &&
+                                  event.require_signup && (
+                                    <Button
+                                      variant="contained"
+                                      type="submit"
+                                      style={{ width: "auto" }}
+                                      color={
+                                        eventsRegistrationsOpen[event.id]
+                                          ? "secondary"
+                                          : "primary"
+                                      }
+                                      disableElevation
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEventRegistrationsClick(event.id);
+                                      }}
+                                    >
+                                      {eventsRegistrationsOpen[event.id]
+                                        ? t(
+                                            "pages.calendar.section.agenda.event.attendance-hide",
+                                          )
+                                        : t(
+                                            "pages.calendar.section.agenda.event.attendance-show",
+                                          )}
+                                    </Button>
+                                  )}
+                                {eventUsers &&
+                                  eventUsers.length > 0 &&
+                                  user &&
                                   castlesPublished &&
                                   castlesPublished.length > 0 && (
                                     <Button
@@ -481,64 +491,71 @@ function CalendarPage() {
                             )}
                           </Box>
                         </ListItemButton>
-                        {family && event.require_signup && (
-                          <Collapse
-                            in={eventsRegistrationsOpen[event.id]}
-                            timeout="auto"
-                            unmountOnExit
-                          >
-                            <Divider />
-                            <Box className={styles.calendarAttendanceUpdate}>
-                              <Typography fontWeight={600}>
-                                {t("pages.calendar.agenda.attendance")}
-                              </Typography>
-                              <FormCalendarRegistrationCreate
-                                event={event}
-                                family={family}
-                                token={token}
-                                setLastChanged={setLastChanged}
-                              />
-                            </Box>
-                          </Collapse>
-                        )}
-                        {castles && castles.length > 0 && (
-                          <Collapse
-                            in={eventsCastlesOpen[event.id]}
-                            timeout="auto"
-                            unmountOnExit
-                          >
-                            <Divider />
-                            <Tabs
-                              value={castlePinya}
-                              onChange={handleCastlePinyaChange}
-                              variant="scrollable"
-                              scrollButtons={false}
-                              allowScrollButtonsMobile
-                              indicatorColor="primary"
-                              TabIndicatorProps={{
-                                style: { display: "none" },
-                              }}
-                              sx={{
-                                ".Mui-selected": {
-                                  backgroundColor:
-                                    "var(--mui-palette-primary-main)",
-                                  color:
-                                    "var(--mui-palette-primary-contrastText) !important",
-                                },
-                              }}
+                        {eventUsers &&
+                          eventUsers.length > 0 &&
+                          event.require_signup && (
+                            <Collapse
+                              in={eventsRegistrationsOpen[event.id]}
+                              timeout="auto"
+                              unmountOnExit
                             >
-                              {castlesPublished.map((castle: any) => (
-                                <Tab label={castle.name} />
-                              ))}
-                            </Tabs>
-                            <Divider />
-                            {castlesPublished.map((castle: any, ix: number) => (
-                              <TabPanel value={castlePinya} index={ix}>
-                                <PinyatorIframe castle={castle} />
-                              </TabPanel>
-                            ))}
-                          </Collapse>
-                        )}
+                              <Divider />
+                              <Box className={styles.calendarAttendanceUpdate}>
+                                <Typography fontWeight={600}>
+                                  {t("pages.calendar.agenda.attendance")}
+                                </Typography>
+                                <FormCalendarRegistrationCreate
+                                  event={event}
+                                  users={eventUsers}
+                                  token={token}
+                                  setLastChanged={setLastChanged}
+                                />
+                              </Box>
+                            </Collapse>
+                          )}
+                        {eventUsers &&
+                          eventUsers.length > 0 &&
+                          castles &&
+                          castles.length > 0 && (
+                            <Collapse
+                              in={eventsCastlesOpen[event.id]}
+                              timeout="auto"
+                              unmountOnExit
+                            >
+                              <Divider />
+                              <Tabs
+                                value={castlePinya}
+                                onChange={handleCastlePinyaChange}
+                                variant="scrollable"
+                                scrollButtons={false}
+                                allowScrollButtonsMobile
+                                indicatorColor="primary"
+                                TabIndicatorProps={{
+                                  style: { display: "none" },
+                                }}
+                                sx={{
+                                  ".Mui-selected": {
+                                    backgroundColor:
+                                      "var(--mui-palette-primary-main)",
+                                    color:
+                                      "var(--mui-palette-primary-contrastText) !important",
+                                  },
+                                }}
+                              >
+                                {castlesPublished.map((castle: any) => (
+                                  <Tab label={castle.name} />
+                                ))}
+                              </Tabs>
+                              <Divider />
+                              {castlesPublished.map(
+                                (castle: any, ix: number) => (
+                                  <TabPanel value={castlePinya} index={ix}>
+                                    <PinyatorIframe castle={castle} />
+                                  </TabPanel>
+                                ),
+                              )}
+                            </Collapse>
+                          )}
                         {event.location !== null && (
                           <Collapse
                             in={eventsMapOpen[event.id]}

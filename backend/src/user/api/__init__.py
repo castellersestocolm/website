@@ -10,7 +10,7 @@ from django.contrib.auth import (
 )
 from django.core import signing
 from django.db import IntegrityError, transaction
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import HttpRequest
 from django.utils import translation, timezone
 from rest_framework.exceptions import AuthenticationFailed
@@ -19,6 +19,7 @@ import membership.api
 import user.api.family_member_request
 from comunicat.enums import Module
 from legal.enums import TeamType
+from legal.models import Member
 from notify.enums import EmailType
 from notify.tasks import send_user_email
 from user.enums import FamilyMemberStatus, FamilyMemberRole
@@ -35,8 +36,32 @@ def get(user_id: UUID, module: Module | None = None) -> User:
                 "family_member__family__members",
                 FamilyMember.objects.filter(
                     status__in=(FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
-                ).order_by("-role", "user__firstname", "user__lastname"),
-            )
+                )
+                .select_related("user")
+                .prefetch_related(
+                    Prefetch(
+                        "user__members",
+                        Member.objects.filter(
+                            Q(team__date_to__isnull=True)
+                            | Q(team__date_to__gte=timezone.localdate()),
+                            team__date_from__lte=timezone.localdate(),
+                        )
+                        .select_related("team")
+                        .order_by("-role"),
+                    )
+                )
+                .order_by("-role", "user__firstname", "user__lastname"),
+            ),
+            Prefetch(
+                "members",
+                Member.objects.filter(
+                    Q(team__date_to__isnull=True)
+                    | Q(team__date_to__gte=timezone.localdate()),
+                    team__date_from__lte=timezone.localdate(),
+                )
+                .select_related("team")
+                .order_by("-role"),
+            ),
         )
         .with_permission_level(modules=[module])
         .first()

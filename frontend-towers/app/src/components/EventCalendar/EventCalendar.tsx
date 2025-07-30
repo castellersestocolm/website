@@ -16,7 +16,7 @@ import IconChevronRight from "@mui/icons-material/ChevronRight";
 import IconButton from "@mui/material/IconButton";
 import { apiEventCalendarList } from "../../api";
 import { useAppContext } from "../AppContext/AppContext";
-import { get_event_icon } from "../../utils/event";
+import { get_event_icon, getEventUsers } from "../../utils/event";
 
 export default function EventCalendar({ compact, lastChanged }: any) {
   const [t, i18n] = useTranslation("common");
@@ -177,6 +177,15 @@ export default function EventCalendar({ compact, lastChanged }: any) {
                             dateString,
                         )
                         .map((event: any) => {
+                          const eventUsers =
+                            user &&
+                            user.family &&
+                            getEventUsers(
+                              event,
+                              user.family.members.map(
+                                (member: any) => member.user,
+                              ),
+                            );
                           const isUserAttending =
                             user &&
                             event.registrations.filter(
@@ -186,20 +195,23 @@ export default function EventCalendar({ compact, lastChanged }: any) {
                                   RegistrationStatus.ACTIVE,
                             ).length > 0;
                           const isOtherFamilyAllAttending =
-                            user && user.family && user.family.members
+                            eventUsers && eventUsers.length > 0
                               ? event.registrations.filter(
                                   (registration: any) =>
                                     registration.user.id !== user.id &&
                                     registration.status ===
                                       RegistrationStatus.ACTIVE,
-                                ).length ===
-                                user.family.members.length - 1
+                                ).length >=
+                                eventUsers.length - 1
                               : true;
 
                           return (
                             <Box
                               className={
-                                user && event.require_signup
+                                eventUsers &&
+                                eventUsers.length > 0 &&
+                                user &&
+                                event.require_signup
                                   ? [
                                       styles.calendarEvent,
                                       isUserAttending &&
