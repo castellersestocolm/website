@@ -41,8 +41,8 @@ def sync_users() -> None:
                 with_pending_membership=not google_group_module_obj.require_membership,
             )
 
+            email_domain = f"@{DOMAIN_BY_MODULE[google_group_module_obj.module]}"
             if google_group_module_obj.require_module_domain:
-                email_domain = f"@{DOMAIN_BY_MODULE[google_group_module_obj.module]}"
                 user_emails = user_emails.union(
                     {
                         email
@@ -65,7 +65,20 @@ def sync_users() -> None:
                 )
             else:
                 user_emails = user_emails.union(
-                    {user_obj.email for user_obj in user_objs if user_obj.can_manage}
+                    {
+                        email
+                        for user_obj in user_objs
+                        if user_obj.can_manage
+                        for email in [user_obj.email]
+                        + (
+                            [
+                                user_email_obj.email
+                                for user_email_obj in user_obj.emails.all()
+                            ]
+                            if hasattr(user_obj, "emails")
+                            else []
+                        )
+                    }
                 )
 
         existing_members = (
