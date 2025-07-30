@@ -33,6 +33,9 @@ inputs:
   react_app_pinyator_base_url:
     description: The base URL for the pinyator site
     required: false
+  react_app_payment_provider_paypal_client_id:
+    description: The client ID for the PayPal payment provider
+    required: false
 
 runs:
   using: "composite"
@@ -55,6 +58,7 @@ runs:
         --build-arg REACT_APP_TOWERS_BASE_URL=${{ inputs.react_app_towers_base_url }} \
         --build-arg REACT_APP_PINYATOR_BASE_URL=${{ inputs.react_app_pinyator_base_url }} \
         --build-arg REACT_APP_TOWERS_INFO_EMAIL=${{ inputs.react_app_towers_info_email }} \
+        --build-arg REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID=${{ inputs.react_app_payment_provider_paypal_client_id }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:latest

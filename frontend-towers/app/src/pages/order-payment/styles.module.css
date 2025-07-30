@@ -219,13 +219,8 @@
   padding-top: 16px;
 }
 
-.providerPayPalBox {
-}
-
-.providerPayPalIframe {
-  border: 0;
-  width: 100%;
-  height: 750px;
+.providerPayPal {
+  padding: 16px;
 }
 
 .providerTransfer {

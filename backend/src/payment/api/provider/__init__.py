@@ -56,3 +56,6 @@ class PaymentProviderBase:
 
     def create(self) -> str | None:
         return None
+
+    def capture(self) -> bool:
+        return False

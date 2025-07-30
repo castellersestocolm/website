@@ -3,6 +3,7 @@ import logging
 from uuid import UUID
 
 from django.conf import settings
+from django.utils import timezone
 from paypalserversdk.models.address import Address
 from paypalserversdk.models.fulfillment_type import FulfillmentType
 
@@ -59,8 +60,11 @@ _log = logging.getLogger(__name__)
 
 
 DELIVERY_TYPE_TO_PAYPAL_FULFILLMENT_TYPE = {
-    OrderDeliveryType.PICK_UP: FulfillmentType.PICKUP_IN_STORE,
-    OrderDeliveryType.IN_PERSON: FulfillmentType.PICKUP_IN_STORE,
+    # OrderDeliveryType.PICK_UP: FulfillmentType.PICKUP_IN_STORE,
+    # OrderDeliveryType.IN_PERSON: FulfillmentType.PICKUP_IN_STORE,
+    # TODO: PayPal seems to complain with INVALID_PICKUP_ADDRESS even if the shipping name starts with S2S
+    OrderDeliveryType.PICK_UP: FulfillmentType.SHIPPING,
+    OrderDeliveryType.IN_PERSON: FulfillmentType.SHIPPING,
     OrderDeliveryType.DELIVERY: FulfillmentType.SHIPPING,
 }
 
@@ -88,7 +92,7 @@ class PaymentProviderPaypal(PaymentProviderBase):
         assert self.order_obj.status == OrderStatus.CREATED
 
         if (
-            self.payment_order_obj.status == PaymentStatus.PROCESSING
+            self.payment_order_obj.status > PaymentStatus.PENDING
             and self.payment_order_obj.external_id
         ):
             return None
@@ -112,7 +116,12 @@ class PaymentProviderPaypal(PaymentProviderBase):
                                     ),
                                 ),
                                 shipping=PayPalMoney(
-                                    currency_code="SEK", value="{0:.2f}".format(0)
+                                    currency_code=str(
+                                        self.order_delivery_obj.amount.currency
+                                    ),
+                                    value="{0:.2f}".format(
+                                        self.order_delivery_obj.amount.amount
+                                    ),
                                 ),
                             ),
                         ),
@@ -141,8 +150,12 @@ class PaymentProviderPaypal(PaymentProviderBase):
                                         address_line_1=self.order_delivery_obj.address.address,
                                         address_line_2=self.order_delivery_obj.address.address2,
                                         postal_code=self.order_delivery_obj.address.postcode,
-                                        # TODO: Fix Catalan mapping
-                                        country_code=self.order_delivery_obj.address.country.code,
+                                        admin_area_2=self.order_delivery_obj.address.city,
+                                        country_code=(
+                                            self.order_delivery_obj.address.region.country_code_2
+                                            if self.order_delivery_obj.address.region
+                                            else self.order_delivery_obj.address.country.code_2
+                                        ),
                                     )
                                 }
                                 if self.order_delivery_obj.provider.type
@@ -207,6 +220,7 @@ class PaymentProviderPaypal(PaymentProviderBase):
         }
         try:
             result = orders_controller.create_order(collect)
+            print(result)
 
             if result.status_code not in (200, 201):
                 return None
@@ -219,3 +233,30 @@ class PaymentProviderPaypal(PaymentProviderBase):
             _log.exception(e)
 
         return None
+
+    def capture(self) -> bool:
+        assert self.order_obj.status == OrderStatus.CREATED
+
+        if (
+            self.payment_order_obj.status > PaymentStatus.PENDING
+            or not self.payment_order_obj.external_id
+        ):
+            return False
+
+        orders_controller = self.client.orders
+
+        try:
+            collect = {"id": self.payment_order_obj.external_id}
+            result = orders_controller.capture_order(collect)
+            print(result)
+
+            if result.status_code not in (200, 201):
+                return False
+
+            return True
+        except ErrorException as e:
+            _log.exception(e)
+        except ApiException as e:
+            _log.exception(e)
+
+        return False

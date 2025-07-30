@@ -13,6 +13,7 @@ html2text ~= 2024.2.26
 celery ~= 5.4.0
 redis ~= 5.2.1
 django-extensions ~= 3.2.3
+iso3166 ~= 2.1.1
 
 # Admin
 django-jsoneditor ~= 0.2.4

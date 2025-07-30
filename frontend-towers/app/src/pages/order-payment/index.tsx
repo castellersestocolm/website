@@ -40,8 +40,15 @@ import {
   PAYMENT_TRANSFER_OWNER,
   PAYMENT_TRANSFER_PLUSGIRO,
 } from "../../consts";
+import {
+  PayPalScriptProvider,
+  PayPalButtons,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const PAYMENT_PROVIDER_PAYPAL_CLIENT_ID =
+  process.env.REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID;
 
 function OrderPaymentPage() {
   const [t, i18n] = useTranslation("common");
@@ -57,6 +64,8 @@ function OrderPaymentPage() {
   const [formPaymentProviderId, setFormPaymentProviderId] =
     React.useState(undefined);
   const [paymentSwishSvg, setPaymentSwishSvg] = React.useState(undefined);
+  const [paymentPayPalOrderId, setPaymentPayPalOrderId] =
+    React.useState(undefined);
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {
@@ -146,41 +155,48 @@ function OrderPaymentPage() {
             setPaymentSwishSvg(url);
           })
           .catch((err: any) => {});
+      } else {
+        setPaymentSwishSvg(undefined);
       }
+
+      if (order.payment_order.provider.code === "PAYPAL") {
+        setPaymentPayPalOrderId(order.payment_order.external_id);
+      } else {
+        setPaymentPayPalOrderId(undefined);
+      }
+    } else {
+      setPaymentSwishSvg(undefined);
+      setPaymentPayPalOrderId(undefined);
     }
-  }, [order, i18n.resolvedLanguage, setPaymentSwishSvg, t]);
+  }, [
+    order,
+    i18n.resolvedLanguage,
+    setPaymentSwishSvg,
+    setPaymentPayPalOrderId,
+    t,
+  ]);
 
   function handleSelectProvider(paymentProviderId: string) {
-    setPaymentProvider(paymentProviderById[paymentProviderId]);
-    apiOrderProviderUpdate(id, paymentProviderId).then((response) => {
-      if (response.status === 200) {
-        const orderData = response.data;
-        setOrder(orderData);
-        localStorage.setItem("order", JSON.stringify(orderData));
-        if (
-          orderData.payment_order &&
-          orderData.payment_order.status === PaymentStatus.PENDING
-        ) {
-          if (orderData.payment_order.provider.code === "PAYPAL") {
-            if (
-              "fulfillment" in orderData.payment_order &&
-              "url" in orderData.payment_order.fulfillment
-            ) {
-              window.open(orderData.payment_order.fulfillment.url, "_self");
-            }
-          }
+    const paymentProvider = paymentProviderById[paymentProviderId];
+    if (paymentProvider.is_enabled) {
+      setPaymentProvider(paymentProvider);
+      apiOrderProviderUpdate(id, paymentProviderId).then((response) => {
+        if (response.status === 200) {
+          const orderData = response.data;
+          setOrder(orderData);
+          localStorage.setItem("order", JSON.stringify(orderData));
+        } else {
+          setMessages([
+            { message: t("pages.order-cart.order.error"), type: "error" },
+          ]);
+          setTimeout(() => setMessages(undefined), 10000);
         }
-      } else {
-        setMessages([
-          { message: t("pages.order-cart.order.error"), type: "error" },
-        ]);
-        setTimeout(() => setMessages(undefined), 10000);
-      }
-    });
+      });
+    }
   }
 
   function handleCompleteOrder() {
-    apiOrderComplete(id).then((response) => {
+    return apiOrderComplete(id).then((response) => {
       if (response.status === 200) {
         const orderData = response.data;
 
@@ -201,6 +217,24 @@ function OrderPaymentPage() {
     });
   }
 
+  const ButtonWrapper = ({ showSpinner }: any) => {
+    const [{ isPending }] = usePayPalScriptReducer();
+
+    return (
+      <>
+        {showSpinner && isPending && <div className="spinner" />}
+        <PayPalButtons
+          // style={style}
+          disabled={false}
+          // forceReRender={[style]}
+          fundingSource={undefined}
+          createOrder={() => paymentPayPalOrderId}
+          onApprove={(data: any) => handleCompleteOrder()}
+        />
+      </>
+    );
+  };
+
   const payText =
     order &&
     paymentProvider &&
@@ -212,26 +246,6 @@ function OrderPaymentPage() {
       <>
         <Typography variant="body2" component="div" mt={1}>
           {t("pages.order-payment.providers-card.paypal.window-1")}
-          {order &&
-            order.payment_order &&
-            order.payment_order.status === PaymentStatus.PENDING &&
-            "fulfillment" in order.payment_order &&
-            "url" in order.payment_order.fulfillment && (
-              <>
-                {" "}
-                {t("pages.order-payment.providers-card.paypal.window-2")}{" "}
-                {
-                  <Link
-                    color="secondary"
-                    underline="none"
-                    href={order.payment_order.fulfillment.url}
-                  >
-                    {t("pages.order-payment.providers-card.paypal.window-3")}
-                  </Link>
-                }
-                {"."}
-              </>
-            )}
         </Typography>
       </>
     ) : paymentProvider.code === "TRANSFER" ? (
@@ -288,6 +302,18 @@ function OrderPaymentPage() {
         >
           {t("pages.order-payment.providers-card.complete")}
         </Button>
+      </Box>
+    ) : paymentProvider.code === "PAYPAL" && paymentPayPalOrderId ? (
+      <Box className={styles.providerPayPal}>
+        <PayPalScriptProvider
+          options={{
+            clientId: PAYMENT_PROVIDER_PAYPAL_CLIENT_ID,
+            components: "buttons",
+            currency: order.amount.currency,
+          }}
+        >
+          <ButtonWrapper showSpinner={false} />
+        </PayPalScriptProvider>
       </Box>
     ) : paymentProvider.code === "TRANSFER" ? (
       <Box className={styles.providerTransfer}>

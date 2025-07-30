@@ -59,6 +59,7 @@ services:
         - REACT_APP_TOWERS_BASE_URL=${REACT_APP_TOWERS_BASE_URL:-http://localhost:3100}
         - REACT_APP_TOWERS_INFO_EMAIL=${REACT_APP_TOWERS_INFO_EMAIL:-info@castellersestocolm.se}
         - REACT_APP_PINYATOR_BASE_URL=${REACT_APP_PINYATOR_BASE_URL:-http://localhost:8100}
+        - REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID=${REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID}
     deploy:
       replicas: 2
       update_config:

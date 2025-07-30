@@ -14,6 +14,7 @@
     "@mui/x-charts": "^8.7.0",
     "@mui/x-data-grid": "^8.5.2",
     "@mui/x-date-pickers": "^8.4.0",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@types/leaflet": "^1.9.16",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",

@@ -352,8 +352,22 @@ def complete(
 
     payment_order_obj = order_obj.payment_order
 
+    is_captured = False
+    is_completed = False
+
     if payment_order_obj.provider.code in ("SWISH", "TRANSFER"):
-        payment_order_obj.status = PaymentStatus.PROCESSING
+        is_captured = True
+    elif payment_order_obj.provider.code == "PAYPAL":
+        payment_class = payment.api.payment_provider.get_class(
+            provider_id=payment_order_obj.provider_id
+        )(order_id=order_id)
+        is_captured = payment_class.capture()
+        is_completed = is_captured
+
+    if is_captured:
+        payment_order_obj.status = (
+            PaymentStatus.COMPLETED if is_completed else PaymentStatus.PROCESSING
+        )
         payment_order_obj.save(update_fields=("status",))
 
         order_obj.status = OrderStatus.PROCESSING

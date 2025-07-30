@@ -26,3 +26,19 @@ def get_classes(module: Module) -> dict[UUID, PaymentProviderBase.__class__]:
         for payment_provider_obj in payment_provider_objs
         if payment_provider_obj.is_enabled
     }
+
+
+def get_class(provider_id: UUID) -> PaymentProviderBase.__class__ | None:
+    payment_provider_obj = PaymentProvider.objects.filter(
+        id=provider_id, is_enabled=True
+    ).first()
+
+    if not payment_provider_obj:
+        return None
+
+    return getattr(
+        importlib.import_module(
+            f"payment.api.provider.{payment_provider_obj.code.lower()}"
+        ),
+        f"PaymentProvider{payment_provider_obj.code.capitalize()}",
+    )

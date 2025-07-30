@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from django.utils import timezone
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -49,7 +50,7 @@ def create_or_update_album(event_id: UUID) -> GoogleAlbum | None:
             "photoslibrary", "v1", credentials=creds, static_discovery=False
         )
 
-        event_title = f"{event_obj.time_from.strftime('%Y-%m-%d')} - {event_obj.title}"
+        event_title = f"{timezone.localdate(event_obj.time_from).strftime('%Y-%m-%d')} - {event_obj.title}"
 
         if hasattr(event_obj, "google_album"):
             service.albums().patch(

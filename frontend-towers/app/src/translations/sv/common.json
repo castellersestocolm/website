@@ -278,8 +278,6 @@
   "pages.order-payment.providers-card.empty": "Det finns inga möjliga betalningsalternativ just nu.",
   "pages.order-payment.providers-card.select": "Välja betalningsalternativ för att slutföra beställningen.",
   "pages.order-payment.providers-card.paypal.window-1": "Ett nytt fönster öppnas, vänligen ange dina betalningsuppgifter där. När du är klar laddas sidan om automatiskt.",
-  "pages.order-payment.providers-card.paypal.window-2": "Om fönstret inte öppnades kan du öppna det genom att",
-  "pages.order-payment.providers-card.paypal.window-3": "klicka här",
   "pages.order-payment.providers-card.swish.qr-1": "Öppna Swish-appen och skanna QR-koden, du kan trycka på knappen nedan för att bekräfta betalningen. Observera att det kan ta några dagar innan betalningen registreras eftersom den måste verifieras från vår bank.",
   "pages.order-payment.providers-card.transfer.message": "Meddelande",
   "pages.order-payment.providers-card.transfer.amount": "Summa",

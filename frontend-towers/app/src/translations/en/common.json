@@ -278,8 +278,6 @@
   "pages.order-payment.providers-card.empty": "There are no available payment providers right now.",
   "pages.order-payment.providers-card.select": "Select a payment method to complete the order.",
   "pages.order-payment.providers-card.paypal.window-1": "A new window will open, please enter your payment details there. Once you have finished this page will reload automatically.",
-  "pages.order-payment.providers-card.paypal.window-2": "If the window didn't open you can open it by",
-  "pages.order-payment.providers-card.paypal.window-3": "clicking here",
   "pages.order-payment.providers-card.swish.qr-1": "Open the Swish app and scan the QR code, you can press on the button below to confirm the payment. Please note it can take a few days for the payment to be registered as it needs to be verified from our bank.",
   "pages.order-payment.providers-card.transfer.message": "Message",
   "pages.order-payment.providers-card.transfer.amount": "Amount",

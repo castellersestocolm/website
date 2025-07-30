@@ -280,8 +280,6 @@
   "pages.order-payment.providers-card.empty": "Ara mateix no hi ha cap mètode de pagament disponible.",
   "pages.order-payment.providers-card.select": "Selecciona un mètode de pagament per finalitzar la comanda.",
   "pages.order-payment.providers-card.paypal.window-1": "S'obrirà una nova finestra, si us plau, introdueix la informació de pagament allà. Quan hagis acabat aquesta pàgina s'actualitzarà automàticament.",
-  "pages.order-payment.providers-card.paypal.window-2": "Si la finestra no s'ha obert pots obrir-la fent",
-  "pages.order-payment.providers-card.paypal.window-3": "clic aquí",
   "pages.order-payment.providers-card.swish.qr-1": "Obre l'aplicació Swish i escaneja el codi QR, pots fer clic al botó inferior per confirmar el pagament. Tingues en compte però que pot trigar uns quants dies a registrar-se perquè ha de ser verificat amb el nostre banc.",
   "pages.order-payment.providers-card.transfer.message": "Concepte",
   "pages.order-payment.providers-card.transfer.amount": "Quantitat",
