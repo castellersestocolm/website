@@ -69,7 +69,8 @@ jobs:
         react_app_towers_base_url: ${{ vars.REACT_APP_TOWERS_BASE_URL }}
         react_app_towers_info_email: ${{ vars.REACT_APP_TOWERS_INFO_EMAIL }}
         react_app_pinyator_base_url: ${{ vars.REACT_APP_PINYATOR_BASE_URL }}
-      
+        react_app_payment_provider_paypal_client_id: ${{ vars.REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID }}
+
   build-pinyator:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
