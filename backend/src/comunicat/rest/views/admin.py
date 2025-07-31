@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import Serializer
@@ -30,6 +32,7 @@ class AdminUserAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: AdminUserSerializer(many=True), 403: Serializer()},
     )
+    @method_decorator(cache_page(60))
     def list(self, request):
         ordering = request.query_params.get("ordering")
         if ordering:

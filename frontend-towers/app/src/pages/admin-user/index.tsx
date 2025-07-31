@@ -111,16 +111,14 @@ function AdminUserPage() {
         return (
           <Box
             className={
-              membershipStatus
-                ? membershipStatus === MembershipStatus.ACTIVE
-                  ? styles.adminTableCellActive
-                  : [
-                        MembershipStatus.REQUESTED,
-                        MembershipStatus.PROCESSING,
-                      ].includes(membershipStatus)
-                    ? styles.adminTableCellProcessing
-                    : styles.adminTableCellExpired
-                : styles.adminTableCellExpired
+              membershipStatus === MembershipStatus.ACTIVE
+                ? styles.adminTableCellActive
+                : [
+                      MembershipStatus.REQUESTED,
+                      MembershipStatus.PROCESSING,
+                    ].includes(membershipStatus)
+                  ? styles.adminTableCellProcessing
+                  : styles.adminTableCellExpired
             }
           >
             {getEnumLabel(t, "membership-status", membershipStatus)}
