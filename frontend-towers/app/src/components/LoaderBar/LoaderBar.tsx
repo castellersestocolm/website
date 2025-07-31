@@ -4,7 +4,7 @@ import styles from "./styles.module.css";
 import { useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 
-export const Loader = (props: any) => {
+export const LoaderBar = (props: any) => {
   const theme = useTheme();
 
   return (

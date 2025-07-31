@@ -35,8 +35,7 @@ import { LineChart } from "@mui/x-charts";
 import { get_event_icon } from "../../utils/event";
 import IconShoppingCart from "@mui/icons-material/ShoppingCart";
 import IconInventory from "@mui/icons-material/Inventory";
-import IconHeight from "@mui/icons-material/Height";
-import IconAddCircle from "@mui/icons-material/AddCircle";
+import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -131,11 +130,10 @@ function AdminPage() {
               <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
-          <Box>
-            <List className={styles.adminList}>
-              {events &&
-                events.results.length > 0 &&
-                events.results.map((event: any, i: number, row: any) => {
+          {events && events.results.length > 0 ? (
+            <Box>
+              <List className={styles.adminList}>
+                {events.results.map((event: any, i: number, row: any) => {
                   return (
                     <>
                       <ListItemButton disableTouchRipple dense>
@@ -255,8 +253,13 @@ function AdminPage() {
                     </>
                   );
                 })}
-            </List>
-          </Box>
+              </List>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
         </Card>
       </Grid>
       <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
@@ -297,11 +300,10 @@ function AdminPage() {
               <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
-          <Box>
-            <List className={styles.adminList}>
-              {products &&
-                products.results.length > 0 &&
-                products.results.map((product: any, i: number, row: any) => {
+          {products && products.results.length > 0 ? (
+            <Box>
+              <List className={styles.adminList}>
+                {products.results.map((product: any, i: number, row: any) => {
                   return (
                     <>
                       <ListItemButton disableTouchRipple dense>
@@ -359,8 +361,13 @@ function AdminPage() {
                     </>
                   );
                 })}
-            </List>
-          </Box>
+              </List>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
         </Card>
       </Grid>
       <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
@@ -379,11 +386,10 @@ function AdminPage() {
               <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
-          <Box>
-            <List className={styles.adminList}>
-              {users &&
-                users.results.length > 0 &&
-                users.results.map((user: any, i: number, row: any) => {
+          {users && users.results.length > 0 ? (
+            <Box>
+              <List className={styles.adminList}>
+                {users.results.map((user: any, i: number, row: any) => {
                   return (
                     <>
                       <ListItemButton disableTouchRipple dense>
@@ -448,8 +454,13 @@ function AdminPage() {
                     </>
                   );
                 })}
-            </List>
-          </Box>
+              </List>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
         </Card>
       </Grid>
       <Grid container size={{ xs: 12, md: 12 }} spacing={4} direction="row">
@@ -467,8 +478,8 @@ function AdminPage() {
               {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
             </Box>
           </Link>
-          <Box className={styles.adminBoxCharts}>
-            {statEvents && statEvents.results.length > 0 && (
+          {statEvents && statEvents.results.length > 0 ? (
+            <Box className={styles.adminBoxCharts}>
               <Box mt={1}>
                 <Typography
                   variant="body1"
@@ -553,8 +564,12 @@ function AdminPage() {
                   height={300}
                 />
               </Box>
-            )}
-          </Box>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
         </Card>
       </Grid>
     </Grid>

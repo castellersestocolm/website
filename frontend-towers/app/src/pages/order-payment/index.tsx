@@ -26,7 +26,7 @@ import {
 } from "../../api";
 import { PaymentStatus, OrderStatus } from "../../enums";
 import { amountToString } from "../../utils/money";
-import { Loader } from "../../components/Loader/Loader";
+import { LoaderBar } from "../../components/LoaderBar/LoaderBar";
 import QRCode from "qrcode";
 import IconAccountBalance from "@mui/icons-material/AccountBalance";
 import IconMessage from "@mui/icons-material/Message";
@@ -423,7 +423,7 @@ function OrderPaymentPage() {
                     {payText}
                     {!payContent && (
                       <Box className={styles.providerLoader}>
-                        <Loader />
+                        <LoaderBar />
                       </Box>
                     )}
                   </Box>
