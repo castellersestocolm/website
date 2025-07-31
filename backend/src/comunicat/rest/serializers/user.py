@@ -22,8 +22,8 @@ from user.utils import is_over_minimum_age
 class TowersUserSerializer(s.ModelSerializer):
     class Meta:
         model = TowersUser
-        fields = ("id", "height_shoulders", "height_arms")
-        read_only_fields = ("id", "height_shoulders", "height_arms")
+        fields = ("id", "alias", "height_shoulders", "height_arms")
+        read_only_fields = ("id", "alias", "height_shoulders", "height_arms")
 
 
 class UserExtraSlimSerializer(s.ModelSerializer):

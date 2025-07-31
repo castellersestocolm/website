@@ -84,9 +84,7 @@ class UserAPI(ComuniCatViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        # TODO: Only allow language and height unless registration not completed
-
-        user.api.update(id=id, **validated_data, module=self.module)
+        user.api.update(user_id=id, **validated_data, module=self.module)
 
         return Response(status=202)
 

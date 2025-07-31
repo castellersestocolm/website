@@ -6,7 +6,7 @@ from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField
 from membership.enums import MembershipStatus
-from user.models import User
+from user.models import User, TowersUser
 
 
 class AdminMembershipSerializer(s.Serializer):
@@ -64,3 +64,21 @@ class AdminUserSerializer(UserExtraSlimWithFamilySerializer):
             if obj.membership_id
             else None
         )
+
+
+class AdminTowersUserRequestSerializer(s.ModelSerializer):
+    alias = s.CharField(required=False)
+    height_shoulders = s.IntegerField(min_value=0, max_value=200, required=False)
+    height_arms = s.IntegerField(min_value=0, max_value=250, required=False)
+
+    class Meta:
+        model = TowersUser
+        fields = ("alias", "height_shoulders", "height_arms")
+
+
+class AdminUserRequestSerializer(s.ModelSerializer):
+    towers = AdminTowersUserRequestSerializer(required=False)
+
+    class Meta:
+        model = User
+        fields = ("towers",)

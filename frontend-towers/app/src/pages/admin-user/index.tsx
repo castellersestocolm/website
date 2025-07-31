@@ -2,25 +2,38 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import Grid from "@mui/material/Grid";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { apiAdminUserList } from "../../api";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridEventListener,
+  GridRenderCellParams,
+  GridRowEditStopReasons,
+  GridRowId,
+  GridRowModel,
+  GridRowModes,
+  GridRowModesModel,
+} from "@mui/x-data-grid";
+import { apiAdminUserList, apiAdminUserUpdate } from "../../api";
 import { Card, Divider, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
-import {
-  getEnumLabel,
-  MembershipStatus,
-  RegistrationStatus,
-} from "../../enums";
+import { getEnumLabel, MembershipStatus } from "../../enums";
+import IconEdit from "@mui/icons-material/Edit";
+import IconSave from "@mui/icons-material/Save";
+import IconCancel from "@mui/icons-material/Close";
 
 function AdminUserPage() {
-  const [t, i18n] = useTranslation("common");
+  const { t } = useTranslation("common");
 
   const [users, setUsers] = React.useState(undefined);
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: 100,
     page: 0,
   });
+  const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
+    {},
+  );
 
   React.useEffect(() => {
     apiAdminUserList(
@@ -34,7 +47,69 @@ function AdminUserPage() {
     });
   }, [setUsers, paginationModel.page, paginationModel.pageSize]);
 
-  const columns: GridColDef[] = [
+  const handleEditClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (id: GridRowId) => () => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleCancelClick = (id: GridRowId) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+  };
+
+  const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+
+  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
+    params,
+    event,
+  ) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+  const processRowUpdate = (newUser: GridRowModel) => {
+    if (users && users.results.length > 0) {
+      const oldUser = users.results.find((user: any) => user.id === newUser.id);
+      const newFixedUser = {
+        ...oldUser,
+        towers: {
+          ...oldUser.towers,
+          height_shoulders: newUser.heightShoulder,
+          height_arms: newUser.heightArms,
+          alias: newUser.alias,
+        },
+      };
+      const newUsers = {
+        ...users,
+        results: users.results.map((user: any) =>
+          user.id === newUser.id ? newFixedUser : user,
+        ),
+      };
+
+      apiAdminUserUpdate(
+        newUser.id,
+        newUser.alias,
+        newUser.heightShoulder,
+        newUser.heightArms,
+      ).then((response) => {
+        if (response.status === 202) {
+          setUsers(newUsers);
+        }
+      });
+
+      return newFixedUser;
+    }
+  };
+
+  const gridColumns: GridColDef[] = [
     { field: "id", headerName: "ID" },
     {
       field: "firstname",
@@ -58,8 +133,10 @@ function AdminUserPage() {
     },
     {
       field: "heightShoulder",
+      type: "number",
       headerName: t("pages.admin-user.users-table.height-shoulders"),
       width: 100,
+      editable: true,
       renderHeader: () => (
         <Typography variant="body2" fontWeight={600}>
           {t("pages.admin-user.users-table.height-shoulders")}
@@ -77,9 +154,10 @@ function AdminUserPage() {
     },
     {
       field: "heightArms",
+      type: "number",
       headerName: t("pages.admin-user.users-table.height-arms"),
       width: 100,
-      flex: 1,
+      editable: true,
       renderHeader: () => (
         <Typography variant="body2" fontWeight={600}>
           {t("pages.admin-user.users-table.height-arms")}
@@ -96,13 +174,30 @@ function AdminUserPage() {
       ),
     },
     {
+      field: "alias",
+      type: "string",
+      headerName: t("pages.admin-user.users-table.alias"),
+      minWidth: 100,
+      flex: 1,
+      editable: true,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin-user.users-table.alias")}
+        </Typography>
+      ),
+    },
+    {
       field: "membershipStatus",
       headerName: t("pages.admin-user.users-table.membership-status"),
       width: 125,
       sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "right",
       cellClassName: styles.adminGridCell,
+      headerClassName: styles.adminGridHeaderRight,
       renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
+        <Typography variant="body2" fontWeight={600} textAlign="right">
           {t("pages.admin-user.users-table.membership-status")}
         </Typography>
       ),
@@ -131,8 +226,12 @@ function AdminUserPage() {
       headerName: t("pages.admin-user.users-table.membership-date-to"),
       width: 125,
       sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      align: "right",
+      headerClassName: styles.adminGridHeaderRight,
       renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
+        <Typography variant="body2" fontWeight={600} textAlign="right">
           {t("pages.admin-user.users-table.membership-date-to")}
         </Typography>
       ),
@@ -146,9 +245,55 @@ function AdminUserPage() {
         </Typography>
       ),
     },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: t("pages.admin-user.users-table.actions"),
+      width: 100,
+      align: "right",
+      cellClassName: "actions",
+      headerClassName: styles.adminGridHeaderRight,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600} textAlign="right">
+          {t("pages.admin-user.users-table.actions")}
+        </Typography>
+      ),
+      getActions: ({ id }) => {
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<IconSave />}
+              label="Save"
+              className="textPrimary"
+              onClick={handleSaveClick(id)}
+              color="inherit"
+            />,
+            <GridActionsCellItem
+              icon={<IconCancel />}
+              label="Cancel"
+              className="textPrimary"
+              onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            icon={<IconEdit />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
+          />,
+        ];
+      },
+    },
   ];
 
-  const rows =
+  const gridRows =
     users && users.results.length > 0
       ? users.results.map((user: any, i: number, row: any) => {
           return {
@@ -157,6 +302,7 @@ function AdminUserPage() {
             lastname: user.lastname,
             heightShoulder: user.towers && user.towers.height_shoulders,
             heightArms: user.towers && user.towers.height_arms,
+            alias: user.towers && user.towers.alias,
             membershipStatus: user.membership && user.membership.status,
             membershipDateTo:
               user.membership &&
@@ -177,8 +323,13 @@ function AdminUserPage() {
 
         <Box>
           <DataGrid
-            rows={rows}
-            columns={columns}
+            rows={gridRows}
+            columns={gridColumns}
+            editMode="row"
+            rowModesModel={rowModesModel}
+            onRowModesModelChange={handleRowModesModelChange}
+            onRowEditStop={handleRowEditStop}
+            processRowUpdate={processRowUpdate}
             rowCount={users && users.count}
             pageSizeOptions={[10, 25, 50, 100]}
             paginationModel={paginationModel}
@@ -191,7 +342,7 @@ function AdminUserPage() {
                 },
               },
               columns: {
-                ...columns,
+                ...gridColumns,
                 columnVisibilityModel: {
                   id: false,
                 },

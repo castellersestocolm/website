@@ -38,6 +38,14 @@
   height: fit-content;
 }
 
+.adminGridHeaderRight {
+  text-align: right !important;
+
+  div > div {
+    justify-content: end !important;
+  }
+}
+
 .adminGridCell {
   padding: 0 !important;
   & > div {

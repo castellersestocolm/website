@@ -277,25 +277,27 @@ def register(
 
 
 def update(
-    id: UUID,
-    firstname: str,
-    lastname: str,
-    phone: str | None,
-    birthday: datetime.date,
-    consent_pictures: bool,
-    preferred_language: str,
+    user_id: UUID,
     module: Module,
-    towers: dict | None,
-    organisation: dict | None,
+    firstname: str | None = None,
+    lastname: str | None = None,
+    phone: str | None = None,
+    birthday: datetime.date | None = None,
+    consent_pictures: bool | None = None,
+    preferred_language: str | None = None,
+    towers: dict | None = None,
+    organisation: dict | None = None,
 ) -> User:
-    user_obj = User.objects.get(id=id)
+    user_obj = User.objects.filter(id=user_id).select_related("towers").first()
 
     had_registration_finished = user_obj.registration_finished(module=module)
 
-    user_obj.firstname = firstname
-    user_obj.lastname = lastname
-    user_obj.phone = phone
-    user_obj.birthday = birthday
+    if not had_registration_finished:
+        user_obj.firstname = firstname
+        user_obj.lastname = lastname
+        user_obj.phone = phone
+        user_obj.birthday = birthday
+
     user_obj.preferred_language = preferred_language
 
     user_obj.save(
@@ -312,8 +314,15 @@ def update(
         TowersUser.objects.update_or_create(
             user=user_obj,
             defaults={
-                "alias": generate_alias(
-                    user_id=user_obj.id, firstname=firstname, lastname=lastname
+                "alias": towers.get(
+                    "alias",
+                    (
+                        user_obj.towers.alias
+                        if hasattr(user_obj, "towers") and user_obj.towers.alias
+                        else generate_alias(
+                            user_id=user_obj.id, firstname=firstname, lastname=lastname
+                        )
+                    ),
                 ),
                 "height_shoulders": towers.get("height_shoulders"),
                 "height_arms": towers.get("height_arms"),

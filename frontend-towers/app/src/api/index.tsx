@@ -698,3 +698,24 @@ export const apiAdminUserList = async (
     throw error;
   }
 };
+
+export const apiAdminUserUpdate = async (
+  userId: string,
+  alias: string = undefined,
+  heightShoulders: string = undefined,
+  heightArms: string = undefined,
+) => {
+  try {
+    return await instance.patch("/admin/user/" + userId + "/", {
+      towers: {
+        alias: alias,
+        height_shoulders: heightShoulders,
+        height_arms: heightArms,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
