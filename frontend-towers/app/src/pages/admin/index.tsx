@@ -17,8 +17,14 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
-import { apiEventList, apiProductList, apiUserList } from "../../api";
-import { EventType, RegistrationStatus } from "../../enums";
+import { apiEventList, apiProductList, apiAdminUserList } from "../../api";
+import {
+  EventType,
+  getEnumLabel,
+  MEMBERSHIP_STATUS_ICON,
+  MembershipStatus,
+  RegistrationStatus,
+} from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import IconKeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { ROUTES } from "../../routes";
@@ -29,6 +35,8 @@ import { LineChart } from "@mui/x-charts";
 import { get_event_icon } from "../../utils/event";
 import IconShoppingCart from "@mui/icons-material/ShoppingCart";
 import IconInventory from "@mui/icons-material/Inventory";
+import IconHeight from "@mui/icons-material/Height";
+import IconAddCircle from "@mui/icons-material/AddCircle";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -86,7 +94,7 @@ function AdminPage() {
   }, [setProducts, i18n.resolvedLanguage]);
 
   React.useEffect(() => {
-    apiUserList().then((response) => {
+    apiAdminUserList(undefined, undefined, "-created_at").then((response) => {
       if (response.status === 200) {
         setUsers(response.data);
       }
@@ -99,6 +107,10 @@ function AdminPage() {
 
   function handleAdminEquipmentSubmit() {
     navigate(ROUTES["admin-equipment"].path);
+  }
+
+  function handleAdminUserSubmit() {
+    navigate(ROUTES["admin-user"].path);
   }
 
   const content = user && (
@@ -358,18 +370,85 @@ function AdminPage() {
             underline="none"
             component="button"
             className={styles.adminTitleLink}
+            onClick={handleAdminUserSubmit}
           >
             <Box className={styles.adminTopBoxLink}>
               <Typography variant="h6" fontWeight="600" component="div">
                 {t("pages.admin.users-table.title")}
               </Typography>
-              {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
-          <Box className={styles.adminBox}>
-            <Typography variant="body2" component="div">
-              Coming soon...
-            </Typography>
+          <Box>
+            <List className={styles.adminList}>
+              {users &&
+                users.results.length > 0 &&
+                users.results.map((user: any, i: number, row: any) => {
+                  return (
+                    <>
+                      <ListItemButton disableTouchRipple dense>
+                        <Box
+                          className={styles.userFamilyListInner}
+                          flexDirection={{ xs: "column", lg: "row" }}
+                          alignItems={{ xs: "start", lg: "center" }}
+                        >
+                          <ListItemText
+                            className={styles.userFamilyListItem}
+                            disableTypography
+                            primary={
+                              <Typography variant="body2">
+                                {user.lastname
+                                  ? user.firstname + " " + user.lastname
+                                  : user.firstname}
+                              </Typography>
+                            }
+                          ></ListItemText>
+                        </Box>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          marginLeft={{ xs: "0", lg: "16px" }}
+                          marginTop={{ xs: "8px", lg: "0" }}
+                          marginBottom={{ xs: "8px", lg: "0" }}
+                          whiteSpace="nowrap"
+                        >
+                          {user.membership && (
+                            <Box className={styles.userListBox}>
+                              <Box
+                                component="span"
+                                className={styles.userListIcon}
+                                color={
+                                  user.membership
+                                    ? user.membership.status ===
+                                      MembershipStatus.ACTIVE
+                                      ? "var(--mui-palette-success-main) !important"
+                                      : [
+                                            MembershipStatus.REQUESTED,
+                                            MembershipStatus.PROCESSING,
+                                          ].includes(user.membership.status)
+                                        ? "var(--mui-palette-secondary-main) !important"
+                                        : "var(--mui-palette-error-main) !important"
+                                    : "var(--mui-palette-error-main) !important"
+                                }
+                              >
+                                {MEMBERSHIP_STATUS_ICON[user.membership.status]}
+                              </Box>
+                              <Typography variant="body2" color="textSecondary">
+                                {getEnumLabel(
+                                  t,
+                                  "membership-status",
+                                  user.membership.status,
+                                )}
+                              </Typography>
+                            </Box>
+                          )}
+                        </Stack>
+                      </ListItemButton>
+                      {i + 1 < row.length && <Divider />}
+                    </>
+                  );
+                })}
+            </List>
           </Box>
         </Card>
       </Grid>
@@ -468,7 +547,7 @@ function AdminPage() {
                   ]}
                   yAxis={[
                     {
-                      label: "adasd",
+                      label: "Users",
                     },
                   ]}
                   height={300}

@@ -291,6 +291,7 @@ django==5.1.11 \
     #   -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
     #   django-cors-headers
     #   django-extensions
+    #   django-filter
     #   django-money
     #   django-phonenumber-field
     #   django-redis
@@ -307,6 +308,10 @@ django-cors-headers==4.6.0 \
 django-extensions==3.2.3 \
     --hash=sha256:44d27919d04e23b3f40231c4ab7af4e61ce832ef46d610cc650d53e68328410a \
     --hash=sha256:9600b7562f79a92cbf1fde6403c04fee314608fefbb595502e34383ae8203401
+    # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
+django-filter==25.1 \
+    --hash=sha256:1ec9eef48fa8da1c0ac9b411744b16c3f4c31176c867886e4c48da369c407153 \
+    --hash=sha256:4fa48677cf5857b9b1347fed23e355ea792464e0fe07244d1fdfb8a806215b80
     # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
 django-jsoneditor==0.2.4 \
     --hash=sha256:1d3dfca28f047feefa6ebc6f9541179eb815fb459b006faf3fb8d0fb2197d2df \

@@ -36,6 +36,7 @@ import OrderCartPage from "./pages/order-cart";
 import OrderPaymentPage from "./pages/order-payment";
 import OrderReceiptPage from "./pages/order-receipt";
 import OrderCompletePage from "./pages/order-complete";
+import AdminUserPage from "./pages/admin-user";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -189,6 +190,10 @@ const App = () => {
                   <Route
                     path={ROUTES["admin-equipment"].path}
                     element={<AdminEquipmentPage />}
+                  />
+                  <Route
+                    path={ROUTES["admin-user"].path}
+                    element={<AdminUserPage />}
                   />
                   <Route
                     path={

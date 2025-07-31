@@ -12,6 +12,7 @@ from comunicat.rest.views import (
     org,
     product,
     data,
+    admin,
 )
 from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
@@ -45,6 +46,8 @@ router.register("order/delivery/price", order.DeliveryPriceAPI, "order_delivery_
 router.register("product", product.ProductAPI, "product")
 router.register("org", org.OrgAPI, "org")
 router.register("data/location", data.LocationAPI, "data_location")
+
+router.register("admin/user", admin.AdminUserAPI, "admin_user")
 
 
 api_patterns = [

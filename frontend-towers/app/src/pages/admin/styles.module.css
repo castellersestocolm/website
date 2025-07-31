@@ -130,3 +130,25 @@
   margin-right: 4px;
   color: var(--mui-palette-text-secondary);
 }
+
+.userListBox {
+  display: flex;
+  justify-content: end;
+
+  p {
+    text-align: right;
+  }
+}
+
+.userListIcon {
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 4px;
+  color: var(--mui-palette-text-secondary);
+
+  svg {
+    width: 18px !important;
+    height: 18px !important;
+    margin-right: 4px;
+  }
+}

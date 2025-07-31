@@ -74,6 +74,7 @@ def get_list(
     team_types: list[TeamType] | None = None,
     with_pending_membership: bool = True,
     modules: list[Module] | None = None,
+    ordering: list[str] | None = None,
 ) -> list[User]:
     user_qs = (
         User.objects.select_related("towers", "family_member", "family_member__family")
@@ -90,7 +91,13 @@ def get_list(
             ),
         )
         .with_permission_level(modules=modules)
-        .order_by("firstname", "lastname", "email", "created_at")
+        .order_by(
+            *(
+                ordering
+                if ordering
+                else ("firstname", "lastname", "email", "created_at")
+            )
+        )
     )
 
     if user_ids:
