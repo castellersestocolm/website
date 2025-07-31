@@ -6,7 +6,6 @@ import user.api
 import user.api.family
 import user.api.family_member
 import user.api.family_member_request
-from comunicat.rest.filters import TestFilter
 from comunicat.rest.permissions import AllowLevelAdmin
 
 from comunicat.rest.serializers.admin import (
