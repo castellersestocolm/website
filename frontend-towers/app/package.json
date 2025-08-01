@@ -19,6 +19,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@wcj/markdown-to-html": "^3.0.4",
+    "mdast-util-gfm-autolink-literal": "2.0.0",
     "axios": "1.8.2",
     "cra-template": "1.2.0",
     "date-fns": "^3.6.0",
