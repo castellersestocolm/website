@@ -345,7 +345,7 @@ function AdminAttendancePage() {
         })
       : [];
 
-  const content = user && (
+  const content = (
     <Grid container spacing={4} className={styles.adminGrid}>
       <Card variant="outlined" className={styles.adminCard}>
         <Box className={styles.adminTopBox}>
@@ -452,7 +452,6 @@ function AdminAttendancePage() {
       title={t("pages.admin-attendance.title")}
       content={content}
       finishedRegistration={true}
-      loading={!users}
     />
   );
 }

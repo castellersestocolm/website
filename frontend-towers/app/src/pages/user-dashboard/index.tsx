@@ -57,7 +57,6 @@ import FormMemberUpdate from "../../components/FormMemberUpdate/FormMemberUpdate
 import FormMemberCreate from "../../components/FormMemberCreate/FormMemberCreate";
 import PageBase from "../../components/PageBase/PageBase";
 import {
-  EVENT_TYPE_ICON,
   EventType,
   EXPENSE_STATUS_ICON,
   ExpenseStatus,
@@ -93,6 +92,7 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 // @ts-ignore
 import QRCode from "qrcode";
 import { get_event_icon, getEventUsers } from "../../utils/event";
+import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
@@ -1094,138 +1094,151 @@ function UserDashboardPage() {
               </Box>
               <Divider />
 
-              <Box className={styles.userFamilyBox}>
-                {payments && payments.results.length > 0 ? (
-                  <List className={styles.userFamilyList}>
-                    {payments.results.map(
-                      (payment: any, i: number, row: any) => (
-                        <Box key={payment.id}>
-                          <ListItemButton
-                            onClick={() => handlePaymentClick(payment.id)}
-                            disableTouchRipple={
-                              !payment.lines || !(payment.lines.length > 1)
-                            }
-                            dense
-                          >
-                            <ListItemIcon>
-                              {PAYMENT_STATUS_ICON[payment.status]}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                <>
-                                  <Typography variant="body2" component="span">
-                                    {payment.type === PaymentType.CREDIT &&
-                                      t("pages.user-payments.payment.refund") +
-                                        " — "}
-                                    {payment.description}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    color="textSecondary"
-                                    component="span"
-                                  >
-                                    {" — "}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    color={
-                                      payment.status === PaymentStatus.PENDING
-                                        ? "error"
-                                        : payment.status ===
-                                            PaymentStatus.PROCESSING
-                                          ? "secondary"
-                                          : "success"
-                                    }
-                                    component="span"
-                                  >
-                                    {payment.amount.amount}{" "}
-                                    {payment.amount.currency}
-                                    {payment.type === PaymentType.CREDIT && (
-                                      <>
-                                        {" "}
-                                        <IconReplay
-                                          fontSize="inherit"
-                                          className={styles.paymentRefundIcon}
-                                        />
-                                      </>
-                                    )}
-                                  </Typography>
-                                </>
+              {payments ? (
+                <Box className={styles.userFamilyBox}>
+                  {payments.results.length > 0 ? (
+                    <List className={styles.userFamilyList}>
+                      {payments.results.map(
+                        (payment: any, i: number, row: any) => (
+                          <Box key={payment.id}>
+                            <ListItemButton
+                              onClick={() => handlePaymentClick(payment.id)}
+                              disableTouchRipple={
+                                !payment.lines || !(payment.lines.length > 1)
                               }
-                              secondary={
-                                getEnumLabel(
-                                  t,
-                                  "payment-status",
-                                  payment.status,
-                                ) +
-                                " " +
-                                (payment.status >= PaymentStatus.COMPLETED
-                                  ? t("pages.user-payments.payment.date-done")
-                                  : t(
-                                      "pages.user-payments.payment.date-doing",
-                                    )) +
-                                " " +
-                                new Date(
-                                  payment.transaction
-                                    ? payment.transaction.date_accounting
-                                    : payment.logs && payment.logs.length > 0
-                                      ? payment.logs[0].created_at
-                                      : payment.created_at,
-                                )
-                                  .toISOString()
-                                  .slice(0, 10)
-                              }
-                            />
-                            {payment.lines &&
-                              payment.lines.length > 1 &&
-                              (paymentsOpen[payment.id] ? (
-                                <IconExpandLess />
-                              ) : (
-                                <IconExpandMore />
-                              ))}
-                          </ListItemButton>
-                          {payment.lines && payment.lines.length > 1 && (
-                            <Collapse
-                              in={paymentsOpen[payment.id]}
-                              timeout="auto"
-                              unmountOnExit
+                              dense
                             >
-                              <List className={styles.userFamilyList}>
-                                {payment.lines.map(
-                                  (paymentLine: any, i: number, row: any) => (
-                                    <Box key={paymentLine.id}>
-                                      <ListItemButton disableTouchRipple dense>
-                                        <ListItemText
-                                          primary={paymentLine.description}
-                                        />
-                                        <Typography
-                                          variant="body2"
-                                          component="span"
+                              <ListItemIcon>
+                                {PAYMENT_STATUS_ICON[payment.status]}
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  <>
+                                    <Typography
+                                      variant="body2"
+                                      component="span"
+                                    >
+                                      {payment.type === PaymentType.CREDIT &&
+                                        t(
+                                          "pages.user-payments.payment.refund",
+                                        ) + " — "}
+                                      {payment.description}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                      component="span"
+                                    >
+                                      {" — "}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      color={
+                                        payment.status === PaymentStatus.PENDING
+                                          ? "error"
+                                          : payment.status ===
+                                              PaymentStatus.PROCESSING
+                                            ? "secondary"
+                                            : "success"
+                                      }
+                                      component="span"
+                                    >
+                                      {payment.amount.amount}{" "}
+                                      {payment.amount.currency}
+                                      {payment.type === PaymentType.CREDIT && (
+                                        <>
+                                          {" "}
+                                          <IconReplay
+                                            fontSize="inherit"
+                                            className={styles.paymentRefundIcon}
+                                          />
+                                        </>
+                                      )}
+                                    </Typography>
+                                  </>
+                                }
+                                secondary={
+                                  getEnumLabel(
+                                    t,
+                                    "payment-status",
+                                    payment.status,
+                                  ) +
+                                  " " +
+                                  (payment.status >= PaymentStatus.COMPLETED
+                                    ? t("pages.user-payments.payment.date-done")
+                                    : t(
+                                        "pages.user-payments.payment.date-doing",
+                                      )) +
+                                  " " +
+                                  new Date(
+                                    payment.transaction
+                                      ? payment.transaction.date_accounting
+                                      : payment.logs && payment.logs.length > 0
+                                        ? payment.logs[0].created_at
+                                        : payment.created_at,
+                                  )
+                                    .toISOString()
+                                    .slice(0, 10)
+                                }
+                              />
+                              {payment.lines &&
+                                payment.lines.length > 1 &&
+                                (paymentsOpen[payment.id] ? (
+                                  <IconExpandLess />
+                                ) : (
+                                  <IconExpandMore />
+                                ))}
+                            </ListItemButton>
+                            {payment.lines && payment.lines.length > 1 && (
+                              <Collapse
+                                in={paymentsOpen[payment.id]}
+                                timeout="auto"
+                                unmountOnExit
+                              >
+                                <List className={styles.userFamilyList}>
+                                  {payment.lines.map(
+                                    (paymentLine: any, i: number, row: any) => (
+                                      <Box key={paymentLine.id}>
+                                        <ListItemButton
+                                          disableTouchRipple
+                                          dense
                                         >
-                                          {paymentLine.amount.amount}{" "}
-                                          {paymentLine.amount.currency}
-                                        </Typography>
-                                      </ListItemButton>
-                                    </Box>
-                                  ),
-                                )}
-                              </List>
-                            </Collapse>
-                          )}
+                                          <ListItemText
+                                            primary={paymentLine.description}
+                                          />
+                                          <Typography
+                                            variant="body2"
+                                            component="span"
+                                          >
+                                            {paymentLine.amount.amount}{" "}
+                                            {paymentLine.amount.currency}
+                                          </Typography>
+                                        </ListItemButton>
+                                      </Box>
+                                    ),
+                                  )}
+                                </List>
+                              </Collapse>
+                            )}
 
-                          {i + 1 < row.length && <Divider />}
-                        </Box>
-                      ),
-                    )}
-                  </List>
-                ) : (
-                  <Box className={styles.userFamilyEmpty}>
-                    <Typography component="div">
-                      {t("pages.user-dashboard.section.payments.empty")}
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
+                            {i + 1 < row.length && <Divider />}
+                          </Box>
+                        ),
+                      )}
+                    </List>
+                  ) : (
+                    <Box className={styles.userFamilyEmpty}>
+                      <Typography component="div">
+                        {t("pages.user-dashboard.section.payments.empty")}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Box className={styles.loader}>
+                  <LoaderClip />
+                </Box>
+              )}
             </Card>
             {payments &&
               payments.results.length > 0 &&
@@ -1253,152 +1266,168 @@ function UserDashboardPage() {
               </Box>
               <Divider />
 
-              <Box className={styles.userFamilyBox}>
-                {orders && orders.results.length > 0 ? (
-                  <List className={styles.userFamilyList}>
-                    {orders.results
-                      .filter(
-                        (order: any) =>
-                          order.products && order.products.length > 0,
-                      )
-                      .map((order: any, i: number, row: any) => (
-                        <Box key={order.id}>
-                          <ListItemButton
-                            onClick={() => handleOrderClick(order.id)}
-                            dense
-                          >
-                            <ListItemIcon>
-                              {ORDER_STATUS_ICON[order.status]}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                <>
-                                  <Typography variant="body2" component="span">
-                                    {capitalizeFirstLetter(
-                                      Array.from(
-                                        new Set(
-                                          order.products.map(
-                                            (orderProduct: any) =>
-                                              lowerFirstLetter(
-                                                orderProduct.size.product.name,
-                                              ),
+              {orders ? (
+                <Box className={styles.userFamilyBox}>
+                  {orders.results.length > 0 ? (
+                    <List className={styles.userFamilyList}>
+                      {orders.results
+                        .filter(
+                          (order: any) =>
+                            order.products && order.products.length > 0,
+                        )
+                        .map((order: any, i: number, row: any) => (
+                          <Box key={order.id}>
+                            <ListItemButton
+                              onClick={() => handleOrderClick(order.id)}
+                              dense
+                            >
+                              <ListItemIcon>
+                                {ORDER_STATUS_ICON[order.status]}
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  <>
+                                    <Typography
+                                      variant="body2"
+                                      component="span"
+                                    >
+                                      {capitalizeFirstLetter(
+                                        Array.from(
+                                          new Set(
+                                            order.products.map(
+                                              (orderProduct: any) =>
+                                                lowerFirstLetter(
+                                                  orderProduct.size.product
+                                                    .name,
+                                                ),
+                                            ),
                                           ),
-                                        ),
-                                      ).join(", "),
-                                    )}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    color="textSecondary"
-                                    component="span"
-                                  >
-                                    {" — "}
-                                  </Typography>
-                                  <Typography
-                                    variant="body2"
-                                    color={
-                                      order.status === OrderStatus.CREATED
-                                        ? "error"
-                                        : order.status ===
-                                            OrderStatus.PROCESSING
-                                          ? "secondary"
-                                          : "success"
-                                    }
-                                    component="span"
-                                  >
-                                    {order.amount.amount}{" "}
-                                    {order.amount.currency}
-                                  </Typography>
-                                </>
-                              }
-                              secondary={
-                                getEnumLabel(t, "order-status", order.status) +
-                                " " +
-                                (order.status >= OrderStatus.COMPLETED
-                                  ? t("pages.user-payments.payment.date-done")
-                                  : t(
-                                      "pages.user-payments.payment.date-doing",
-                                    )) +
-                                " " +
-                                new Date(
-                                  order.logs && order.logs.length > 0
-                                    ? order.logs[0].created_at
-                                    : order.created_at,
-                                )
-                                  .toISOString()
-                                  .slice(0, 10)
-                              }
-                            />
-                            {ordersOpen[order.id] ? (
-                              <IconExpandLess />
-                            ) : (
-                              <IconExpandMore />
-                            )}
-                          </ListItemButton>
-                          <Collapse
-                            in={ordersOpen[order.id]}
-                            timeout="auto"
-                            unmountOnExit
-                          >
-                            <List className={styles.userFamilyList}>
-                              {order.products.map(
-                                (orderProduct: any, i: number, row: any) => (
-                                  <Box key={orderProduct.id}>
-                                    <ListItemButton disableTouchRipple dense>
-                                      <ListItemIcon
-                                        className={styles.eventCardIcon}
-                                      >
-                                        {orderProduct.size.product.images &&
-                                          orderProduct.size.product.images
-                                            .length > 0 && (
-                                            <img
-                                              src={
-                                                BACKEND_BASE_URL +
-                                                orderProduct.size.product
-                                                  .images[0].picture
-                                              }
-                                              alt={
-                                                orderProduct.size.product.name
-                                              }
-                                              className={styles.eventCardImage}
-                                            />
-                                          )}
-                                      </ListItemIcon>
-                                      <ListItemText
-                                        primary={
-                                          orderProduct.quantity +
-                                          " x " +
-                                          orderProduct.size.product.name +
-                                          " — " +
-                                          orderProduct.size.size
-                                        }
-                                      />
-                                      <Typography
-                                        variant="body2"
-                                        component="span"
-                                      >
-                                        {orderProduct.amount.amount}{" "}
-                                        {orderProduct.amount.currency}
-                                      </Typography>
-                                    </ListItemButton>
-                                  </Box>
-                                ),
+                                        ).join(", "),
+                                      )}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                      component="span"
+                                    >
+                                      {" — "}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      color={
+                                        order.status === OrderStatus.CREATED
+                                          ? "error"
+                                          : order.status ===
+                                              OrderStatus.PROCESSING
+                                            ? "secondary"
+                                            : "success"
+                                      }
+                                      component="span"
+                                    >
+                                      {order.amount.amount}{" "}
+                                      {order.amount.currency}
+                                    </Typography>
+                                  </>
+                                }
+                                secondary={
+                                  getEnumLabel(
+                                    t,
+                                    "order-status",
+                                    order.status,
+                                  ) +
+                                  " " +
+                                  (order.status >= OrderStatus.COMPLETED
+                                    ? t("pages.user-payments.payment.date-done")
+                                    : t(
+                                        "pages.user-payments.payment.date-doing",
+                                      )) +
+                                  " " +
+                                  new Date(
+                                    order.logs && order.logs.length > 0
+                                      ? order.logs[0].created_at
+                                      : order.created_at,
+                                  )
+                                    .toISOString()
+                                    .slice(0, 10)
+                                }
+                              />
+                              {ordersOpen[order.id] ? (
+                                <IconExpandLess />
+                              ) : (
+                                <IconExpandMore />
                               )}
-                            </List>
-                          </Collapse>
+                            </ListItemButton>
+                            <Collapse
+                              in={ordersOpen[order.id]}
+                              timeout="auto"
+                              unmountOnExit
+                            >
+                              <List className={styles.userFamilyList}>
+                                {order.products.map(
+                                  (orderProduct: any, i: number, row: any) => (
+                                    <Box key={orderProduct.id}>
+                                      <ListItemButton disableTouchRipple dense>
+                                        <ListItemIcon
+                                          className={styles.eventCardIcon}
+                                        >
+                                          {orderProduct.size.product.images &&
+                                            orderProduct.size.product.images
+                                              .length > 0 && (
+                                              <img
+                                                src={
+                                                  BACKEND_BASE_URL +
+                                                  orderProduct.size.product
+                                                    .images[0].picture
+                                                }
+                                                alt={
+                                                  orderProduct.size.product.name
+                                                }
+                                                className={
+                                                  styles.eventCardImage
+                                                }
+                                              />
+                                            )}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                          primary={
+                                            orderProduct.quantity +
+                                            " x " +
+                                            orderProduct.size.product.name +
+                                            " — " +
+                                            orderProduct.size.size
+                                          }
+                                        />
+                                        <Typography
+                                          variant="body2"
+                                          component="span"
+                                        >
+                                          {orderProduct.amount.amount}{" "}
+                                          {orderProduct.amount.currency}
+                                        </Typography>
+                                      </ListItemButton>
+                                    </Box>
+                                  ),
+                                )}
+                              </List>
+                            </Collapse>
 
-                          {i + 1 < row.length && <Divider />}
-                        </Box>
-                      ))}
-                  </List>
-                ) : (
-                  <Box className={styles.userFamilyEmpty}>
-                    <Typography component="div">
-                      {t("pages.user-dashboard.section.orders.empty")}
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
+                            {i + 1 < row.length && <Divider />}
+                          </Box>
+                        ))}
+                    </List>
+                  ) : (
+                    <Box className={styles.userFamilyEmpty}>
+                      <Typography component="div">
+                        {t("pages.user-dashboard.section.orders.empty")}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Box className={styles.loader}>
+                  <LoaderClip />
+                </Box>
+              )}
             </Card>
             {orders &&
               orders.results.length > 0 &&
@@ -1423,171 +1452,183 @@ function UserDashboardPage() {
               </Box>
               <Divider />
 
-              <Box className={styles.userFamilyBox}>
-                {expenses && expenses.results.length > 0 ? (
-                  <List className={styles.userFamilyList}>
-                    {expenses.results.map(
-                      (expense: any, i: number, row: any) => {
-                        return (
-                          <Box key={expense.id}>
-                            <ListItemButton
-                              onClick={() => handleExpenseClick(expense.id)}
-                              disableTouchRipple={
-                                !expense.receipts ||
-                                !(expense.receipts.length > 0)
-                              }
-                              dense
-                            >
-                              <ListItemIcon>
-                                {expense.file ? (
-                                  <IconButton
-                                    className={styles.expenseFileIcon}
-                                    href={
-                                      new URL(expense.file, BACKEND_BASE_URL)
-                                        .href
-                                    }
-                                    target="_blank"
-                                  >
-                                    <IconDowload />
-                                  </IconButton>
-                                ) : (
-                                  EXPENSE_STATUS_ICON[expense.status]
-                                )}
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={
-                                  <>
-                                    <Typography
-                                      variant="body2"
-                                      component="span"
-                                    >
-                                      {expense.description}
-                                    </Typography>
-                                    <Typography
-                                      variant="body2"
-                                      color="textSecondary"
-                                      component="span"
-                                    >
-                                      {" — "}
-                                    </Typography>
-                                    <Typography
-                                      variant="body2"
-                                      color={
-                                        expense.status === PaymentStatus.PENDING
-                                          ? "error"
-                                          : expense.status ===
-                                              PaymentStatus.PROCESSING
-                                            ? "secondary"
-                                            : "success"
+              {expenses ? (
+                <Box className={styles.userFamilyBox}>
+                  {expenses.results.length > 0 ? (
+                    <List className={styles.userFamilyList}>
+                      {expenses.results.map(
+                        (expense: any, i: number, row: any) => {
+                          return (
+                            <Box key={expense.id}>
+                              <ListItemButton
+                                onClick={() => handleExpenseClick(expense.id)}
+                                disableTouchRipple={
+                                  !expense.receipts ||
+                                  !(expense.receipts.length > 0)
+                                }
+                                dense
+                              >
+                                <ListItemIcon>
+                                  {expense.file ? (
+                                    <IconButton
+                                      className={styles.expenseFileIcon}
+                                      href={
+                                        new URL(expense.file, BACKEND_BASE_URL)
+                                          .href
                                       }
-                                      component="span"
+                                      target="_blank"
                                     >
-                                      {expense.amount.amount}{" "}
-                                      {expense.amount.currency}
-                                    </Typography>
-                                  </>
-                                }
-                                secondary={
-                                  getEnumLabel(
-                                    t,
-                                    "expense-status",
-                                    expense.status,
-                                  ) +
-                                  " " +
-                                  (expense.status >= ExpenseStatus.APPROVED
-                                    ? t("pages.user-payments.payment.date-done")
-                                    : t(
-                                        "pages.user-payments.payment.date-doing",
-                                      )) +
-                                  " " +
-                                  new Date(
-                                    expense.logs && expense.logs.length > 0
-                                      ? expense.logs[0].created_at
-                                      : expense.created_at,
-                                  )
-                                    .toISOString()
-                                    .slice(0, 10)
-                                }
-                              />
+                                      <IconDowload />
+                                    </IconButton>
+                                  ) : (
+                                    EXPENSE_STATUS_ICON[expense.status]
+                                  )}
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={
+                                    <>
+                                      <Typography
+                                        variant="body2"
+                                        component="span"
+                                      >
+                                        {expense.description}
+                                      </Typography>
+                                      <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                        component="span"
+                                      >
+                                        {" — "}
+                                      </Typography>
+                                      <Typography
+                                        variant="body2"
+                                        color={
+                                          expense.status ===
+                                          PaymentStatus.PENDING
+                                            ? "error"
+                                            : expense.status ===
+                                                PaymentStatus.PROCESSING
+                                              ? "secondary"
+                                              : "success"
+                                        }
+                                        component="span"
+                                      >
+                                        {expense.amount.amount}{" "}
+                                        {expense.amount.currency}
+                                      </Typography>
+                                    </>
+                                  }
+                                  secondary={
+                                    getEnumLabel(
+                                      t,
+                                      "expense-status",
+                                      expense.status,
+                                    ) +
+                                    " " +
+                                    (expense.status >= ExpenseStatus.APPROVED
+                                      ? t(
+                                          "pages.user-payments.payment.date-done",
+                                        )
+                                      : t(
+                                          "pages.user-payments.payment.date-doing",
+                                        )) +
+                                    " " +
+                                    new Date(
+                                      expense.logs && expense.logs.length > 0
+                                        ? expense.logs[0].created_at
+                                        : expense.created_at,
+                                    )
+                                      .toISOString()
+                                      .slice(0, 10)
+                                  }
+                                />
+                                {expense.receipts &&
+                                  expense.receipts.length > 0 &&
+                                  (expensesOpen[expense.id] ? (
+                                    <IconExpandLess />
+                                  ) : (
+                                    <IconExpandMore />
+                                  ))}
+                              </ListItemButton>
                               {expense.receipts &&
-                                expense.receipts.length > 0 &&
-                                (expensesOpen[expense.id] ? (
-                                  <IconExpandLess />
-                                ) : (
-                                  <IconExpandMore />
-                                ))}
-                            </ListItemButton>
-                            {expense.receipts &&
-                              expense.receipts.length > 0 && (
-                                <Collapse
-                                  in={expensesOpen[expense.id]}
-                                  timeout="auto"
-                                  unmountOnExit
-                                >
-                                  <List className={styles.userFamilyList}>
-                                    {expense.receipts.map(
-                                      (
-                                        expenseReceipt: any,
-                                        i: number,
-                                        row: any,
-                                      ) => {
-                                        return (
-                                          <Box key={expenseReceipt.id}>
-                                            <ListItemButton
-                                              disableTouchRipple
-                                              dense
-                                            >
-                                              <ListItemText
-                                                primary={
-                                                  expenseReceipt.description
-                                                }
-                                              />
-                                              <Typography
-                                                variant="body2"
-                                                component="span"
+                                expense.receipts.length > 0 && (
+                                  <Collapse
+                                    in={expensesOpen[expense.id]}
+                                    timeout="auto"
+                                    unmountOnExit
+                                  >
+                                    <List className={styles.userFamilyList}>
+                                      {expense.receipts.map(
+                                        (
+                                          expenseReceipt: any,
+                                          i: number,
+                                          row: any,
+                                        ) => {
+                                          return (
+                                            <Box key={expenseReceipt.id}>
+                                              <ListItemButton
+                                                disableTouchRipple
+                                                dense
                                               >
-                                                {expenseReceipt.amount.amount}{" "}
-                                                {expenseReceipt.amount.currency}
-                                              </Typography>
-                                              {expenseReceipt.file && (
-                                                <IconButton
-                                                  className={
-                                                    styles.receiptFileIcon
+                                                <ListItemText
+                                                  primary={
+                                                    expenseReceipt.description
                                                   }
-                                                  href={
-                                                    new URL(
-                                                      expenseReceipt.file,
-                                                      BACKEND_BASE_URL,
-                                                    ).href
-                                                  }
-                                                  target="_blank"
+                                                />
+                                                <Typography
+                                                  variant="body2"
+                                                  component="span"
                                                 >
-                                                  <IconDowload />
-                                                </IconButton>
-                                              )}
-                                            </ListItemButton>
-                                          </Box>
-                                        );
-                                      },
-                                    )}
-                                  </List>
-                                </Collapse>
-                              )}
+                                                  {expenseReceipt.amount.amount}{" "}
+                                                  {
+                                                    expenseReceipt.amount
+                                                      .currency
+                                                  }
+                                                </Typography>
+                                                {expenseReceipt.file && (
+                                                  <IconButton
+                                                    className={
+                                                      styles.receiptFileIcon
+                                                    }
+                                                    href={
+                                                      new URL(
+                                                        expenseReceipt.file,
+                                                        BACKEND_BASE_URL,
+                                                      ).href
+                                                    }
+                                                    target="_blank"
+                                                  >
+                                                    <IconDowload />
+                                                  </IconButton>
+                                                )}
+                                              </ListItemButton>
+                                            </Box>
+                                          );
+                                        },
+                                      )}
+                                    </List>
+                                  </Collapse>
+                                )}
 
-                            {i + 1 < row.length && <Divider />}
-                          </Box>
-                        );
-                      },
-                    )}
-                  </List>
-                ) : (
-                  <Box className={styles.userFamilyEmpty}>
-                    <Typography component="div">
-                      {t("pages.user-dashboard.section.expenses.empty")}
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
+                              {i + 1 < row.length && <Divider />}
+                            </Box>
+                          );
+                        },
+                      )}
+                    </List>
+                  ) : (
+                    <Box className={styles.userFamilyEmpty}>
+                      <Typography component="div">
+                        {t("pages.user-dashboard.section.expenses.empty")}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Box className={styles.loader}>
+                  <LoaderClip />
+                </Box>
+              )}
             </Card>
             {expenses &&
               expenses.results.length > 0 &&
