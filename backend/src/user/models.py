@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from comunicat.db.mixins import Timestamps, StandardModel
 from comunicat.enums import Module
 from user.enums import FamilyMemberRole, FamilyMemberStatus, FamilyMemberRequestStatus
-from user.managers import UserManager
+from user.managers import UserManager, FamilyMemberQuerySet, FamilyQuerySet
 from user.utils import is_over_minimum_age
 
 
@@ -137,6 +137,8 @@ class Family(StandardModel, Timestamps):
             )
         return str(self.id)
 
+    objects = FamilyQuerySet.as_manager()
+
     class Meta:
         verbose_name = "family"
         verbose_name_plural = "families"
@@ -155,6 +157,8 @@ class FamilyMember(StandardModel, Timestamps):
         choices=((fms.value, fms.name) for fms in FamilyMemberStatus),
         default=FamilyMemberStatus.REQUESTED,
     )
+
+    objects = FamilyMemberQuerySet.as_manager()
 
     def __str__(self) -> str:
         return str(self.user)

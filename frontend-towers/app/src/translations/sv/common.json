@@ -242,6 +242,7 @@
   "pages.admin-user.users-table.title-children": "Barn",
   "pages.admin-user.users-table.firstname": "Namn",
   "pages.admin-user.users-table.lastname": "Efternamn",
+  "pages.admin-user.users-table.family": "Familj",
   "pages.admin-user.users-table.alias": "Smeknamn",
   "pages.admin-user.users-table.height-shoulders": "Axlar",
   "pages.admin-user.users-table.height-arms": "Armar",

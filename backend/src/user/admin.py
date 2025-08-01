@@ -241,6 +241,7 @@ class UserAdmin(admin.ModelAdmin):
             super()
             .get_queryset(request)
             .with_has_active_membership()
+            .with_family_name()
             .select_related("towers")
         )
 
@@ -281,7 +282,7 @@ class UserAdmin(admin.ModelAdmin):
                 "admin:user_family_change", args=(obj.family_member.family_id,)
             )
             return mark_safe(
-                f'<a href="{family_link}">{str(obj.family_member.family)}</a>'
+                f'<a href="{family_link}">{obj.family_name or str(obj.family_member.family)}</a>'
             )
         return "-"
 

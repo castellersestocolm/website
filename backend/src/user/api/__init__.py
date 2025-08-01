@@ -91,6 +91,7 @@ def get_list(
             ),
         )
         .with_permission_level(modules=modules)
+        .with_family_name()
         .order_by(
             *(
                 ordering

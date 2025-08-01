@@ -244,6 +244,7 @@
   "pages.admin-user.users-table.title-children": "Canalla",
   "pages.admin-user.users-table.firstname": "Nom",
   "pages.admin-user.users-table.lastname": "Cognom",
+  "pages.admin-user.users-table.family": "Família",
   "pages.admin-user.users-table.alias": "Malnom",
   "pages.admin-user.users-table.height-shoulders": "Espatlles",
   "pages.admin-user.users-table.height-arms": "Braços",

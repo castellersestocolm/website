@@ -37,7 +37,7 @@ export const TableUsers = ({ isAdult }: any) => {
     apiAdminUserList(
       paginationModel.page + 1,
       paginationModel.pageSize,
-      "firstname,lastname",
+      isAdult ? "firstname,lastname" : "family_name,firstname,lastname",
       isAdult,
     ).then((response) => {
       if (response.status === 200) {
@@ -113,7 +113,7 @@ export const TableUsers = ({ isAdult }: any) => {
     }
   };
 
-  const gridColumns: GridColDef[] = [
+  const initGridColumns: GridColDef[] = [
     { field: "id", headerName: "ID" },
     {
       field: "firstname",
@@ -135,52 +135,74 @@ export const TableUsers = ({ isAdult }: any) => {
         </Typography>
       ),
     },
-    {
-      field: "heightShoulder",
-      type: "number",
-      headerName: t("pages.admin-user.users-table.height-shoulders"),
-      width: 100,
-      editable: isAdult,
-      align: "left",
-      headerAlign: "left",
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin-user.users-table.height-shoulders")}
-        </Typography>
-      ),
-      renderCell: (params: GridRenderCellParams<any, string>) => (
-        <Typography
-          variant="body2"
-          component="span"
-          className={styles.adminMono}
-        >
-          {params.value}
-        </Typography>
-      ),
-    },
-    {
-      field: "heightArms",
-      type: "number",
-      headerName: t("pages.admin-user.users-table.height-arms"),
-      width: 100,
-      editable: isAdult,
-      align: "left",
-      headerAlign: "left",
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin-user.users-table.height-arms")}
-        </Typography>
-      ),
-      renderCell: (params: GridRenderCellParams<any, string>) => (
-        <Typography
-          variant="body2"
-          component="span"
-          className={styles.adminMono}
-        >
-          {params.value}
-        </Typography>
-      ),
-    },
+  ];
+
+  const midGridColumns: GridColDef[] = isAdult
+    ? initGridColumns.concat([
+        {
+          field: "heightShoulder",
+          type: "number",
+          headerName: t("pages.admin-user.users-table.height-shoulders"),
+          width: 100,
+          editable: isAdult,
+          align: "left",
+          headerAlign: "left",
+          renderHeader: () => (
+            <Typography variant="body2" fontWeight={600}>
+              {t("pages.admin-user.users-table.height-shoulders")}
+            </Typography>
+          ),
+          renderCell: (params: GridRenderCellParams<any, string>) => (
+            <Typography
+              variant="body2"
+              component="span"
+              className={styles.adminMono}
+            >
+              {params.value}
+            </Typography>
+          ),
+        },
+        {
+          field: "heightArms",
+          type: "number",
+          headerName: t("pages.admin-user.users-table.height-arms"),
+          width: 100,
+          editable: isAdult,
+          align: "left",
+          headerAlign: "left",
+          renderHeader: () => (
+            <Typography variant="body2" fontWeight={600}>
+              {t("pages.admin-user.users-table.height-arms")}
+            </Typography>
+          ),
+          renderCell: (params: GridRenderCellParams<any, string>) => (
+            <Typography
+              variant="body2"
+              component="span"
+              className={styles.adminMono}
+            >
+              {params.value}
+            </Typography>
+          ),
+        },
+      ])
+    : initGridColumns.concat([
+        {
+          field: "family",
+          type: "string",
+          headerName: t("pages.admin-user.users-table.family"),
+          width: 150,
+          align: "left",
+          headerAlign: "left",
+          renderHeader: () => (
+            <Typography variant="body2" fontWeight={600}>
+              {t("pages.admin-user.users-table.family")}
+            </Typography>
+          ),
+        },
+      ]);
+
+  const gridColumns: GridColDef[] = midGridColumns.concat([
     {
       field: "alias",
       type: "string",
@@ -302,7 +324,7 @@ export const TableUsers = ({ isAdult }: any) => {
         ];
       },
     },
-  ];
+  ]);
 
   const gridRows =
     users && users.results.length > 0
@@ -311,8 +333,22 @@ export const TableUsers = ({ isAdult }: any) => {
             id: user.id,
             firstname: user.firstname,
             lastname: user.lastname,
-            heightShoulder: user.towers && user.towers.height_shoulders,
-            heightArms: user.towers && user.towers.height_arms,
+            ...(isAdult
+              ? {
+                  heightShoulder: user.towers && user.towers.height_shoulders,
+                  heightArms: user.towers && user.towers.height_arms,
+                }
+              : {
+                  family: Array.from(
+                    new Set(
+                      user.family.members
+                        .filter((member: any) => member.user.can_manage)
+                        .map(
+                          (member: any) => member.user.lastname.split(" ")[0],
+                        ),
+                    ),
+                  ).join("-"),
+                }),
             alias: user.towers && user.towers.alias,
             membershipStatus: user.membership && user.membership.status,
             membershipDateTo:
@@ -352,7 +388,16 @@ export const TableUsers = ({ isAdult }: any) => {
         },
         density: "compact",
         sorting: {
-          sortModel: [{ field: "name", sort: "asc" }],
+          sortModel: isAdult
+            ? [
+                { field: "firstname", sort: "asc" },
+                { field: "lastname", sort: "asc" },
+              ]
+            : [
+                { field: "family", sort: "asc" },
+                { field: "firstname", sort: "asc" },
+                { field: "lastname", sort: "asc" },
+              ],
         },
       }}
       disableRowSelectionOnClick

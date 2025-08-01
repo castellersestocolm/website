@@ -580,12 +580,18 @@ function CalendarPage() {
                   );
                 })}
               </Grid>
-              <Stack alignItems="center">
-                <Pagination
-                  count={Math.ceil(events.count / API_EVENTS_LIST_PAGE_SIZE)}
-                  onChange={(e: any, value: number) => setEventPage(value)}
-                />
-              </Stack>
+              {events &&
+                events.results.length > 0 &&
+                (eventPage !== 1 || events.count > events.results.length) && (
+                  <Stack alignItems="center">
+                    <Pagination
+                      count={Math.ceil(
+                        events.count / API_EVENTS_LIST_PAGE_SIZE,
+                      )}
+                      onChange={(e: any, value: number) => setEventPage(value)}
+                    />
+                  </Stack>
+                )}
             </>
           )}
         </Grid>

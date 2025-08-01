@@ -242,6 +242,7 @@
   "pages.admin-user.users-table.title-children": "Children",
   "pages.admin-user.users-table.firstname": "Name",
   "pages.admin-user.users-table.lastname": "Surname",
+  "pages.admin-user.users-table.family": "Family",
   "pages.admin-user.users-table.alias": "Alias",
   "pages.admin-user.users-table.height-shoulders": "Shoulders",
   "pages.admin-user.users-table.height-arms": "Arms",

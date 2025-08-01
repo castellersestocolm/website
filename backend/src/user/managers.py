@@ -4,6 +4,7 @@ from uuid import UUID
 from django.apps import apps
 
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.postgres.aggregates import StringAgg
 from django.db import IntegrityError
 from django.db.models import (
     Exists,
@@ -27,10 +28,32 @@ from django.conf import settings
 
 from legal.enums import TeamType, PermissionLevel
 from membership.enums import MembershipStatus
+from user.enums import FamilyMemberStatus, FamilyMemberRole
 from user.utils import is_over_minimum_age
 
 
 class UserQuerySet(QuerySet):
+    def with_family_name(self):
+        Family = apps.get_model("user", "Family")
+
+        return self.annotate(
+            family_name=Subquery(
+                Family.objects.filter(id=OuterRef("family_member__family_id"))
+                .annotate(
+                    family_name=StringAgg(
+                        "members__user__lastname",
+                        filter=Q(
+                            members__status=FamilyMemberStatus.ACTIVE,
+                            members__role=FamilyMemberRole.MANAGER,
+                        ),
+                        delimiter="-",
+                        order_by="members__user__lastname",
+                    )
+                )
+                .values("family_name")[:1]
+            ),
+        )
+
     def with_has_active_membership(
         self,
         with_pending: bool = False,
@@ -211,6 +234,9 @@ class UserManager(BaseUserManager):
     def get_queryset(self):
         return UserQuerySet(model=self.model, using=self._db, hints=self._hints)
 
+    def with_family_name(self):
+        return self.get_queryset().with_family_name()
+
     def with_has_active_membership(
         self,
         with_pending: bool = False,
@@ -320,3 +346,41 @@ class UserManager(BaseUserManager):
         )
         user.save(using=self._db)
         return user
+
+
+class FamilyQuerySet(QuerySet):
+    def with_name(self):
+        return self.annotate(
+            name=StringAgg(
+                "members__user__lastname",
+                delimiter="-",
+                filter=Q(
+                    members__status=FamilyMemberStatus.ACTIVE,
+                    members__role=FamilyMemberRole.MANAGER,
+                ),
+                order_by="members__user__lastname",
+            )
+        )
+
+
+class FamilyMemberQuerySet(QuerySet):
+    def with_family_name(self):
+        Family = apps.get_model("user", "Family")
+
+        return self.annotate(
+            family_name=Subquery(
+                Family.objects.filter(id=OuterRef("family_id"))
+                .annotate(
+                    family_name=StringAgg(
+                        "members__user__lastname",
+                        filter=Q(
+                            members__status=FamilyMemberStatus.ACTIVE,
+                            members__role=FamilyMemberRole.MANAGER,
+                        ),
+                        delimiter="-",
+                        order_by="members__user__lastname",
+                    )
+                )
+                .values("family_name")[:1]
+            ),
+        )
