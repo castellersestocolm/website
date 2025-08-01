@@ -622,6 +622,7 @@ function CalendarPage() {
       title={t("pages.calendar.title")}
       content={content}
       hero={ImageHeroCalendar}
+      loading={!events}
     />
   );
 }

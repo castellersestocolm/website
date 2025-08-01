@@ -29,6 +29,7 @@ class AdminUserAPI(ComuniCatViewSet):
     permission_classes = (AllowLevelAdmin,)
     pagination_class = AdminUserResultsSetPagination
     ordering_fields = ["created_at", "firstname", "lastname"]
+    filterset_fields = ["can_manage"]
     lookup_field = "id"
 
     @swagger_auto_schema(
@@ -40,7 +41,18 @@ class AdminUserAPI(ComuniCatViewSet):
         if ordering:
             ordering = ordering.split(",")
 
+        is_adult = (
+            request.query_params.get("is_adult").lower() == "true"
+            if "is_adult" in request.query_params
+            else None
+        )
+
         user_objs = user.api.get_list(modules=[self.module], ordering=ordering)
+
+        if is_adult is not None:
+            user_objs = [
+                user_obj for user_obj in user_objs if user_obj.is_adult == is_adult
+            ]
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(user_objs, request)

@@ -55,6 +55,7 @@ function AboutBylawsPage() {
       title={t("pages.about-bylaws.title")}
       content={content}
       hero={ImageHeroAboutBylaws}
+      loading={!bylaws}
     />
   );
 }

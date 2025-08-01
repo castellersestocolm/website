@@ -502,7 +502,13 @@ function OrderPaymentPage() {
     </Grid>
   );
 
-  return <PageBase title={t("pages.order-cart.title")} content={content} />;
+  return (
+    <PageBase
+      title={t("pages.order-cart.title")}
+      content={content}
+      loading={!order || !paymentProvider}
+    />
+  );
 }
 
 export default OrderPaymentPage;

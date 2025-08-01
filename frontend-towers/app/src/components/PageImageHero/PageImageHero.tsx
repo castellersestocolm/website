@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import FormUpdate from "../FormUpdate/FormUpdate";
 import Grid from "@mui/material/Grid";
 import Hero from "../Hero/Hero";
+import { LoaderClip } from "../LoaderClip/LoaderClip";
 
 export default function PageImageHero({
   title,
@@ -15,6 +16,7 @@ export default function PageImageHero({
   contentPost,
   hero,
   finishedRegistration = false,
+  loading = false,
 }: any) {
   const { t } = useTranslation("common");
 
@@ -28,6 +30,20 @@ export default function PageImageHero({
         sx={{
           marginTop: { xs: "56px", md: "65px" },
           padding: { xs: "32px 0", md: "64px 0" },
+          ...(loading
+            ? {
+                position: "absolute",
+                bottom: 0,
+                top: 0,
+                left: 0,
+                right: 0,
+                alignItems: "stretch",
+                display: "flex",
+                flexGrow: 1,
+                flexDirection: "row",
+                zIndex: -100,
+              }
+            : {}),
         }}
       >
         <Grid
@@ -35,6 +51,16 @@ export default function PageImageHero({
           display="flex"
           alignItems="center"
           flexDirection="column"
+          sx={
+            loading
+              ? {
+                  alignItems: "stretch",
+                  display: "flex",
+                  flexGrow: 1,
+                  flexDirection: "column",
+                }
+              : {}
+          }
         >
           <Hero title={title} hero={hero} />
           <Container
@@ -43,6 +69,13 @@ export default function PageImageHero({
               marginTop: { xs: "16px", md: "32px" },
               paddingTop: { xs: "32px", md: "64px" },
               paddingBottom: { xs: "24px", md: "32px" },
+              ...(loading
+                ? {
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                  }
+                : {}),
             }}
           >
             <Alerts />
@@ -60,6 +93,10 @@ export default function PageImageHero({
                   <FormUpdate />
                 </Box>
               </>
+            ) : loading ? (
+              <Box className={styles.pageLoader}>
+                <LoaderClip />
+              </Box>
             ) : (
               content
             )}

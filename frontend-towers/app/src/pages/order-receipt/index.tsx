@@ -104,7 +104,13 @@ function OrderReceiptPage() {
     </>
   );
 
-  return <PageBase title={t("pages.order-receipt.title")} content={content} />;
+  return (
+    <PageBase
+      title={t("pages.order-receipt.title")}
+      content={content}
+      loading={!order}
+    />
+  );
 }
 
 export default OrderReceiptPage;

@@ -104,6 +104,7 @@ function AboutTeamPage() {
       title={t("pages.about-team.title")}
       content={content}
       hero={ImageHeroAboutTeam}
+      loading={!teams}
     />
   );
 }

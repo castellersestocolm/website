@@ -442,7 +442,13 @@ function OrderPage() {
     </Grid>
   );
 
-  return <PageBase title={t("pages.order.title")} content={content} />;
+  return (
+    <PageBase
+      title={t("pages.order.title")}
+      content={content}
+      loading={!products}
+    />
+  );
 }
 
 export default OrderPage;

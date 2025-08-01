@@ -384,6 +384,13 @@ function AdminAttendancePage() {
                 height: "fit-content !important",
               },
             }}
+            loading={!userAdults}
+            slotProps={{
+              loadingOverlay: {
+                variant: "circular-progress",
+                noRowsVariant: "circular-progress",
+              },
+            }}
           />
         </Box>
       </Card>
@@ -427,6 +434,13 @@ function AdminAttendancePage() {
                 height: "fit-content !important",
               },
             }}
+            loading={!userChildren}
+            slotProps={{
+              loadingOverlay: {
+                variant: "circular-progress",
+                noRowsVariant: "circular-progress",
+              },
+            }}
           />
         </Box>
       </Card>
@@ -438,6 +452,7 @@ function AdminAttendancePage() {
       title={t("pages.admin-attendance.title")}
       content={content}
       finishedRegistration={true}
+      loading={!users}
     />
   );
 }

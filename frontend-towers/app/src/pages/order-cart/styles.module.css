@@ -76,3 +76,8 @@
 .error {
   text-align: center !important;
 }
+
+.loader {
+  height: calc(100% - 56px - 48px);
+  padding: 24px;
+}

@@ -683,6 +683,7 @@ export const apiAdminUserList = async (
   page: number = undefined,
   pageSize: number = undefined,
   ordering: string = undefined,
+  isAdult: boolean = undefined,
 ) => {
   try {
     return await instance.get("/admin/user/", {
@@ -690,6 +691,7 @@ export const apiAdminUserList = async (
         page_size: pageSize ? pageSize : API_ADMIN_USER_LIST_PAGE_SIZE,
         page: page,
         ordering: ordering,
+        is_adult: isAdult,
       },
     });
   } catch (error) {

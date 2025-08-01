@@ -5,3 +5,9 @@
 .pageForm {
   margin-top: 32px !important;
 }
+
+.pageLoader {
+  align-content: center;
+  flex: 1;
+  display: flex;
+}

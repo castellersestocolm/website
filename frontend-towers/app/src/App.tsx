@@ -110,7 +110,7 @@ const App = () => {
               }}
             >
               <NavBar />
-              <Box style={{ flexGrow: 1 }}>
+              <Box style={{ flexGrow: 1, position: "relative" }}>
                 <Routes>
                   <Route path={ROUTES.home.path} element={<HomePage />} />
                   <Route

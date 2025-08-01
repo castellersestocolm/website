@@ -9,6 +9,7 @@ export default function PageAdmin({
   title,
   content,
   finishedRegistration = false,
+  loading = false,
 }: any) {
   let navigate = useNavigate();
 
@@ -26,6 +27,7 @@ export default function PageAdmin({
       title={title}
       content={content}
       finishedRegistration={finishedRegistration}
+      loading={loading}
     />
   );
 }

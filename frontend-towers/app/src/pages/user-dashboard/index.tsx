@@ -1865,6 +1865,7 @@ function UserDashboardPage() {
       title={t("pages.user-dashboard.title")}
       content={content}
       finishedRegistration={true}
+      loading={!user}
     />
   );
 }

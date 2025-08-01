@@ -134,6 +134,13 @@ function AdminEquipmentPage() {
                         height: "fit-content !important",
                       },
                     }}
+                    loading={!products}
+                    slotProps={{
+                      loadingOverlay: {
+                        variant: "circular-progress",
+                        noRowsVariant: "circular-progress",
+                      },
+                    }}
                   />
                 </Box>
               </Card>
@@ -148,6 +155,7 @@ function AdminEquipmentPage() {
       title={t("pages.admin-equipment.title")}
       content={content}
       finishedRegistration={true}
+      loading={!products}
     />
   );
 }

@@ -46,6 +46,7 @@ import { OrderDeliveryType } from "../../enums";
 import { TransitionGroup } from "react-transition-group";
 import { capitalizeFirstLetter } from "../../utils/string";
 import { amountToString } from "../../utils/money";
+import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -904,502 +905,538 @@ function OrderCartPage() {
                   )}
                 </Box>
                 <Divider />
-                <Box className={styles.dataDetailsBox}>
-                  <Typography
-                    variant="body1"
-                    fontWeight={700}
-                    mb={2}
-                    width="100%"
-                  >
-                    {t("pages.order-cart.entity-card.delivery-info.title")}
-                  </Typography>
-                  {deliveryProviderById &&
-                    Object.values(deliveryProviderById).map(
-                      (deliveryProvider: any) => {
-                        return (
-                          <Accordion
-                            elevation={0}
-                            expanded={
-                              formDeliveryProviderId === deliveryProvider.id
-                            }
-                            onChange={() =>
-                              handleFormDeliveryProvider(deliveryProvider.id)
-                            }
-                          >
-                            <AccordionSummary
-                              aria-controls="panel1d-content"
-                              id="panel1d-header"
-                              disabled={!deliveryProvider.is_enabled}
-                            >
-                              <Typography
-                                variant="body2"
-                                fontWeight={700}
-                                component="span"
+                {deliveryProviderById ? (
+                  <>
+                    <Box className={styles.dataDetailsBox}>
+                      <Typography
+                        variant="body1"
+                        fontWeight={700}
+                        mb={2}
+                        width="100%"
+                      >
+                        {t("pages.order-cart.entity-card.delivery-info.title")}
+                      </Typography>
+                      {deliveryProviderById &&
+                        Object.values(deliveryProviderById).map(
+                          (deliveryProvider: any) => {
+                            return (
+                              <Accordion
+                                elevation={0}
+                                expanded={
+                                  formDeliveryProviderId === deliveryProvider.id
+                                }
+                                onChange={() =>
+                                  handleFormDeliveryProvider(
+                                    deliveryProvider.id,
+                                  )
+                                }
                               >
-                                {deliveryProvider.name}
-                              </Typography>
-                            </AccordionSummary>
-                            {deliveryProvider.is_enabled && (
-                              <AccordionDetails>
-                                <Grid
-                                  container
-                                  spacing={{ xs: 2, md: 4 }}
-                                  className={styles.deliveryGrid}
+                                <AccordionSummary
+                                  aria-controls="panel1d-content"
+                                  id="panel1d-header"
+                                  disabled={!deliveryProvider.is_enabled}
                                 >
-                                  {deliveryProvider.picture &&
-                                    deliveryProvider.picture.medium && (
-                                      <Grid size={{ xs: 8, md: 3 }}>
-                                        <img
-                                          src={
-                                            BACKEND_BASE_URL +
-                                            deliveryProvider.picture.medium
-                                          }
-                                          alt={deliveryProvider.name}
-                                          className={styles.deliveryCardImage}
-                                        />
-                                      </Grid>
-                                    )}
-                                  {deliveryProvider.description && (
+                                  <Typography
+                                    variant="body2"
+                                    fontWeight={700}
+                                    component="span"
+                                  >
+                                    {deliveryProvider.name}
+                                  </Typography>
+                                </AccordionSummary>
+                                {deliveryProvider.is_enabled && (
+                                  <AccordionDetails>
                                     <Grid
-                                      size={{
-                                        xs: 12,
-                                        md:
-                                          deliveryProvider.picture &&
-                                          deliveryProvider.picture.medium
-                                            ? 9
-                                            : 12,
-                                      }}
+                                      container
+                                      spacing={{ xs: 2, md: 4 }}
+                                      className={styles.deliveryGrid}
                                     >
-                                      {" "}
-                                      <Typography
-                                        variant="body2"
-                                        component="span"
-                                      >
-                                        <div
-                                          dangerouslySetInnerHTML={{
-                                            __html:
-                                              deliveryProvider.description,
+                                      {deliveryProvider.picture &&
+                                        deliveryProvider.picture.medium && (
+                                          <Grid size={{ xs: 8, md: 3 }}>
+                                            <img
+                                              src={
+                                                BACKEND_BASE_URL +
+                                                deliveryProvider.picture.medium
+                                              }
+                                              alt={deliveryProvider.name}
+                                              className={
+                                                styles.deliveryCardImage
+                                              }
+                                            />
+                                          </Grid>
+                                        )}
+                                      {deliveryProvider.description && (
+                                        <Grid
+                                          size={{
+                                            xs: 12,
+                                            md:
+                                              deliveryProvider.picture &&
+                                              deliveryProvider.picture.medium
+                                                ? 9
+                                                : 12,
                                           }}
-                                        />
-                                        {deliveryProvider.dates &&
-                                          deliveryProvider.dates.length > 0 && (
-                                            <>
-                                              <br />
-                                              <strong>
-                                                {t(
-                                                  "pages.order-cart.entity-card.delivery-info.date",
-                                                )}
-                                                {": "}
-                                                {capitalizeFirstLetter(
-                                                  new Date(
-                                                    deliveryProvider.dates[0].date,
-                                                  ).toLocaleDateString(
-                                                    i18n.resolvedLanguage,
-                                                    {
-                                                      day: "numeric",
-                                                      month: "long",
-                                                      year: "numeric",
-                                                    },
-                                                  ),
-                                                )}
-                                                {"."}
-                                              </strong>
-                                            </>
-                                          )}
-                                        {allowedCountryNames &&
-                                          allowedCountryNames.length > 0 && (
-                                            <>
-                                              {deliveryProvider.dates &&
-                                                deliveryProvider.dates.length >
-                                                  0 && <br />}
-                                              <br />
-                                              <span>
-                                                {t(
-                                                  "pages.order-cart.entity-card.delivery-info.countries-list",
-                                                )}
-                                                {": "}
-                                                {allowedCountryNames.join(", ")}
-                                                {". "}
-                                                {t(
-                                                  "pages.order-cart.entity-card.delivery-info.countries-reason",
-                                                )}
-                                              </span>
-                                            </>
-                                          )}
-                                      </Typography>
+                                        >
+                                          {" "}
+                                          <Typography
+                                            variant="body2"
+                                            component="span"
+                                          >
+                                            <div
+                                              dangerouslySetInnerHTML={{
+                                                __html:
+                                                  deliveryProvider.description,
+                                              }}
+                                            />
+                                            {deliveryProvider.dates &&
+                                              deliveryProvider.dates.length >
+                                                0 && (
+                                                <>
+                                                  <br />
+                                                  <strong>
+                                                    {t(
+                                                      "pages.order-cart.entity-card.delivery-info.date",
+                                                    )}
+                                                    {": "}
+                                                    {capitalizeFirstLetter(
+                                                      new Date(
+                                                        deliveryProvider.dates[0].date,
+                                                      ).toLocaleDateString(
+                                                        i18n.resolvedLanguage,
+                                                        {
+                                                          day: "numeric",
+                                                          month: "long",
+                                                          year: "numeric",
+                                                        },
+                                                      ),
+                                                    )}
+                                                    {"."}
+                                                  </strong>
+                                                </>
+                                              )}
+                                            {allowedCountryNames &&
+                                              allowedCountryNames.length >
+                                                0 && (
+                                                <>
+                                                  {deliveryProvider.dates &&
+                                                    deliveryProvider.dates
+                                                      .length > 0 && <br />}
+                                                  <br />
+                                                  <span>
+                                                    {t(
+                                                      "pages.order-cart.entity-card.delivery-info.countries-list",
+                                                    )}
+                                                    {": "}
+                                                    {allowedCountryNames.join(
+                                                      ", ",
+                                                    )}
+                                                    {". "}
+                                                    {t(
+                                                      "pages.order-cart.entity-card.delivery-info.countries-reason",
+                                                    )}
+                                                  </span>
+                                                </>
+                                              )}
+                                          </Typography>
+                                        </Grid>
+                                      )}
                                     </Grid>
-                                  )}
-                                </Grid>
-                              </AccordionDetails>
-                            )}
-                          </Accordion>
-                        );
-                      },
-                    )}
-                </Box>
-                <TransitionGroup>
-                  {cart &&
-                    Object.keys(cart).length > 0 &&
-                    displayFormAddress && (
-                      <Collapse in={displayFormAddress}>
-                        <Divider />
-                        <Box className={styles.dataDetailsBox}>
-                          <Typography
-                            variant="body1"
-                            fontWeight={700}
-                            mb={2}
-                            width="100%"
-                          >
-                            {t(
-                              "pages.order-cart.entity-card.address-info.title",
-                            )}
-                          </Typography>
-                          <Grid container spacing={3}>
-                            <FormGrid size={8}>
-                              <FormLabel htmlFor="address" required>
-                                {t("pages.order-cart.form.street")}
-                              </FormLabel>
-                              <OutlinedInput
-                                id="address"
-                                name="address"
-                                type="text"
-                                placeholder="Drottninggatan 1"
-                                autoComplete="address"
-                                required
-                                size="small"
-                                onChange={(event: ChangeEvent) =>
-                                  handleFormDeliveryData(
-                                    "address",
-                                    (event.target as HTMLTextAreaElement).value,
-                                  )
-                                }
-                                error={
-                                  validationErrors &&
-                                  validationErrors.delivery &&
-                                  validationErrors.delivery.address &&
-                                  validationErrors.delivery.address.address
-                                }
-                              />
-                              {validationErrors &&
-                                validationErrors.delivery &&
-                                validationErrors.delivery.address &&
-                                validationErrors.delivery.address.address && (
-                                  <FormHelperText error>
-                                    {
+                                  </AccordionDetails>
+                                )}
+                              </Accordion>
+                            );
+                          },
+                        )}
+                    </Box>
+                    <TransitionGroup>
+                      {cart &&
+                        Object.keys(cart).length > 0 &&
+                        displayFormAddress && (
+                          <Collapse in={displayFormAddress}>
+                            <Divider />
+                            <Box className={styles.dataDetailsBox}>
+                              <Typography
+                                variant="body1"
+                                fontWeight={700}
+                                mb={2}
+                                width="100%"
+                              >
+                                {t(
+                                  "pages.order-cart.entity-card.address-info.title",
+                                )}
+                              </Typography>
+                              <Grid container spacing={3}>
+                                <FormGrid size={8}>
+                                  <FormLabel htmlFor="address" required>
+                                    {t("pages.order-cart.form.street")}
+                                  </FormLabel>
+                                  <OutlinedInput
+                                    id="address"
+                                    name="address"
+                                    type="text"
+                                    placeholder="Drottninggatan 1"
+                                    autoComplete="address"
+                                    required
+                                    size="small"
+                                    onChange={(event: ChangeEvent) =>
+                                      handleFormDeliveryData(
+                                        "address",
+                                        (event.target as HTMLTextAreaElement)
+                                          .value,
+                                      )
+                                    }
+                                    error={
+                                      validationErrors &&
+                                      validationErrors.delivery &&
+                                      validationErrors.delivery.address &&
+                                      validationErrors.delivery.address.address
+                                    }
+                                  />
+                                  {validationErrors &&
+                                    validationErrors.delivery &&
+                                    validationErrors.delivery.address &&
+                                    validationErrors.delivery.address
+                                      .address && (
+                                      <FormHelperText error>
+                                        {
+                                          validationErrors.delivery.address
+                                            .address[0].detail
+                                        }
+                                      </FormHelperText>
+                                    )}
+                                </FormGrid>
+                                <FormGrid size={4}>
+                                  <FormLabel htmlFor="apartment">
+                                    {t("pages.order-cart.form.apartment")}
+                                  </FormLabel>
+                                  <OutlinedInput
+                                    id="apartment"
+                                    name="apartment"
+                                    type="text"
+                                    placeholder="1001"
+                                    autoComplete="apartment"
+                                    size="small"
+                                    onChange={(event: ChangeEvent) =>
+                                      handleFormDeliveryData(
+                                        "apartment",
+                                        (event.target as HTMLTextAreaElement)
+                                          .value,
+                                      )
+                                    }
+                                    error={
+                                      validationErrors &&
+                                      validationErrors.delivery &&
+                                      validationErrors.delivery.address &&
                                       validationErrors.delivery.address
-                                        .address[0].detail
+                                        .apartment
                                     }
-                                  </FormHelperText>
-                                )}
-                            </FormGrid>
-                            <FormGrid size={4}>
-                              <FormLabel htmlFor="apartment">
-                                {t("pages.order-cart.form.apartment")}
-                              </FormLabel>
-                              <OutlinedInput
-                                id="apartment"
-                                name="apartment"
-                                type="text"
-                                placeholder="1001"
-                                autoComplete="apartment"
-                                size="small"
-                                onChange={(event: ChangeEvent) =>
-                                  handleFormDeliveryData(
-                                    "apartment",
-                                    (event.target as HTMLTextAreaElement).value,
-                                  )
-                                }
-                                error={
-                                  validationErrors &&
-                                  validationErrors.delivery &&
-                                  validationErrors.delivery.address &&
-                                  validationErrors.delivery.address.apartment
-                                }
-                              />
-                              {validationErrors &&
-                                validationErrors.delivery &&
-                                validationErrors.delivery.address &&
-                                validationErrors.delivery.address.apartment && (
-                                  <FormHelperText error>
-                                    {
-                                      validationErrors.delivery.address
-                                        .apartment[0].detail
+                                  />
+                                  {validationErrors &&
+                                    validationErrors.delivery &&
+                                    validationErrors.delivery.address &&
+                                    validationErrors.delivery.address
+                                      .apartment && (
+                                      <FormHelperText error>
+                                        {
+                                          validationErrors.delivery.address
+                                            .apartment[0].detail
+                                        }
+                                      </FormHelperText>
+                                    )}
+                                </FormGrid>
+                                <FormGrid size={12}>
+                                  <FormLabel htmlFor="address2">
+                                    {t("pages.order-cart.form.street2")}
+                                  </FormLabel>
+                                  <OutlinedInput
+                                    id="address2"
+                                    name="address2"
+                                    type="text"
+                                    autoComplete="address2"
+                                    size="small"
+                                    onChange={(event: ChangeEvent) =>
+                                      handleFormDeliveryData(
+                                        "address2",
+                                        (event.target as HTMLTextAreaElement)
+                                          .value,
+                                      )
                                     }
-                                  </FormHelperText>
-                                )}
-                            </FormGrid>
-                            <FormGrid size={12}>
-                              <FormLabel htmlFor="address2">
-                                {t("pages.order-cart.form.street2")}
-                              </FormLabel>
-                              <OutlinedInput
-                                id="address2"
-                                name="address2"
-                                type="text"
-                                autoComplete="address2"
-                                size="small"
-                                onChange={(event: ChangeEvent) =>
-                                  handleFormDeliveryData(
-                                    "address2",
-                                    (event.target as HTMLTextAreaElement).value,
-                                  )
-                                }
-                                error={
-                                  validationErrors &&
-                                  validationErrors.delivery &&
-                                  validationErrors.delivery.address &&
-                                  validationErrors.delivery.address.address2
-                                }
-                              />
-                              {validationErrors &&
-                                validationErrors.delivery &&
-                                validationErrors.delivery.address &&
-                                validationErrors.delivery.address.address2 && (
-                                  <FormHelperText error>
-                                    {
-                                      validationErrors.delivery.address
-                                        .address2[0].detail
+                                    error={
+                                      validationErrors &&
+                                      validationErrors.delivery &&
+                                      validationErrors.delivery.address &&
+                                      validationErrors.delivery.address.address2
                                     }
-                                  </FormHelperText>
-                                )}
-                            </FormGrid>
-                            <FormGrid size={{ xs: 12, md: 4 }}>
-                              <FormLabel htmlFor="postcode" required>
-                                {t("pages.order-cart.form.postcode")}
-                              </FormLabel>
-                              <OutlinedInput
-                                id="postcode"
-                                name="postcode"
-                                type="text"
-                                placeholder="123 45"
-                                autoComplete="postcode"
-                                required
-                                onChange={(event: ChangeEvent) =>
-                                  handleFormDeliveryData(
-                                    "postcode",
-                                    (event.target as HTMLTextAreaElement).value,
-                                  )
-                                }
-                                size="small"
-                                error={
-                                  validationErrors &&
-                                  validationErrors.delivery &&
-                                  validationErrors.delivery.address &&
-                                  validationErrors.delivery.address.postcode
-                                }
-                              />
-                              {validationErrors &&
-                                validationErrors.delivery &&
-                                validationErrors.delivery.address &&
-                                validationErrors.delivery.address.postcode && (
-                                  <FormHelperText error>
-                                    {
-                                      validationErrors.delivery.address
-                                        .postcode[0].detail
+                                  />
+                                  {validationErrors &&
+                                    validationErrors.delivery &&
+                                    validationErrors.delivery.address &&
+                                    validationErrors.delivery.address
+                                      .address2 && (
+                                      <FormHelperText error>
+                                        {
+                                          validationErrors.delivery.address
+                                            .address2[0].detail
+                                        }
+                                      </FormHelperText>
+                                    )}
+                                </FormGrid>
+                                <FormGrid size={{ xs: 12, md: 4 }}>
+                                  <FormLabel htmlFor="postcode" required>
+                                    {t("pages.order-cart.form.postcode")}
+                                  </FormLabel>
+                                  <OutlinedInput
+                                    id="postcode"
+                                    name="postcode"
+                                    type="text"
+                                    placeholder="123 45"
+                                    autoComplete="postcode"
+                                    required
+                                    onChange={(event: ChangeEvent) =>
+                                      handleFormDeliveryData(
+                                        "postcode",
+                                        (event.target as HTMLTextAreaElement)
+                                          .value,
+                                      )
                                     }
-                                  </FormHelperText>
-                                )}
-                            </FormGrid>
-                            <FormGrid size={{ xs: 12, md: 8 }}>
-                              <FormLabel htmlFor="city" required>
-                                {t("pages.order-cart.form.city")}
-                              </FormLabel>
-                              <OutlinedInput
-                                id="city"
-                                name="city"
-                                type="text"
-                                placeholder="Stockholm"
-                                autoComplete="city"
-                                required
-                                onChange={(event: ChangeEvent) =>
-                                  handleFormDeliveryData(
-                                    "city",
-                                    (event.target as HTMLTextAreaElement).value,
-                                  )
-                                }
-                                size="small"
-                                error={
-                                  validationErrors &&
-                                  validationErrors.delivery &&
-                                  validationErrors.delivery.address &&
-                                  validationErrors.delivery.address.city
-                                }
-                              />
-                              {validationErrors &&
-                                validationErrors.delivery &&
-                                validationErrors.delivery.address &&
-                                validationErrors.delivery.address.city && (
-                                  <FormHelperText error>
-                                    {
-                                      validationErrors.delivery.address.city[0]
-                                        .detail
+                                    size="small"
+                                    error={
+                                      validationErrors &&
+                                      validationErrors.delivery &&
+                                      validationErrors.delivery.address &&
+                                      validationErrors.delivery.address.postcode
                                     }
-                                  </FormHelperText>
-                                )}
-                            </FormGrid>
+                                  />
+                                  {validationErrors &&
+                                    validationErrors.delivery &&
+                                    validationErrors.delivery.address &&
+                                    validationErrors.delivery.address
+                                      .postcode && (
+                                      <FormHelperText error>
+                                        {
+                                          validationErrors.delivery.address
+                                            .postcode[0].detail
+                                        }
+                                      </FormHelperText>
+                                    )}
+                                </FormGrid>
+                                <FormGrid size={{ xs: 12, md: 8 }}>
+                                  <FormLabel htmlFor="city" required>
+                                    {t("pages.order-cart.form.city")}
+                                  </FormLabel>
+                                  <OutlinedInput
+                                    id="city"
+                                    name="city"
+                                    type="text"
+                                    placeholder="Stockholm"
+                                    autoComplete="city"
+                                    required
+                                    onChange={(event: ChangeEvent) =>
+                                      handleFormDeliveryData(
+                                        "city",
+                                        (event.target as HTMLTextAreaElement)
+                                          .value,
+                                      )
+                                    }
+                                    size="small"
+                                    error={
+                                      validationErrors &&
+                                      validationErrors.delivery &&
+                                      validationErrors.delivery.address &&
+                                      validationErrors.delivery.address.city
+                                    }
+                                  />
+                                  {validationErrors &&
+                                    validationErrors.delivery &&
+                                    validationErrors.delivery.address &&
+                                    validationErrors.delivery.address.city && (
+                                      <FormHelperText error>
+                                        {
+                                          validationErrors.delivery.address
+                                            .city[0].detail
+                                        }
+                                      </FormHelperText>
+                                    )}
+                                </FormGrid>
 
-                            <FormGrid
-                              size={hasRegions ? { xs: 12, md: 6 } : 12}
-                            >
-                              <FormLabel
-                                id="label-country"
-                                htmlFor="country"
-                                required
-                              >
-                                {t("pages.order-cart.form.country")}
-                              </FormLabel>
-                              <Select
-                                size="small"
-                                labelId="label-country"
-                                id="country"
-                                input={
-                                  <OutlinedInput
-                                    label={t("pages.order-cart.form.country")}
-                                  />
-                                }
-                                onChange={(event: SelectChangeEvent) =>
-                                  handleFormDeliveryData(
-                                    "country",
-                                    event.target.value,
-                                  )
-                                }
-                                defaultValue={formDeliveryData.country}
-                                MenuProps={MenuProps}
-                                variant="standard"
-                              >
-                                {countriesAllowed &&
-                                  countriesAllowed.length > 0 &&
-                                  countriesAllowed.map(
-                                    (country: any, i: number) => {
-                                      return (
-                                        <MenuItem key={i} value={country.code}>
-                                          {country.name}
-                                        </MenuItem>
-                                      );
-                                    },
-                                  )}
-                              </Select>
-                            </FormGrid>
-                            {hasRegions && (
-                              <FormGrid size={{ xs: 12, md: 6 }}>
-                                <FormLabel
-                                  id="label-region"
-                                  htmlFor="region"
-                                  required
+                                <FormGrid
+                                  size={hasRegions ? { xs: 12, md: 6 } : 12}
                                 >
-                                  {t("pages.order-cart.form.region")}
-                                </FormLabel>
-                                <Select
-                                  size="small"
-                                  labelId="label-region"
-                                  id="region"
-                                  input={
-                                    <OutlinedInput
-                                      label={t("pages.order-cart.form.region")}
-                                    />
-                                  }
-                                  onChange={(event: SelectChangeEvent) =>
-                                    handleFormDeliveryData(
-                                      "region",
-                                      event.target.value,
-                                    )
-                                  }
-                                  defaultValue={formDeliveryData.region}
-                                  MenuProps={MenuProps}
-                                  variant="standard"
-                                >
-                                  {hasRegions &&
-                                    regionsByCountryCode[
-                                      formDeliveryData.country
-                                    ].map((region: any, i: number) => {
-                                      return (
-                                        <MenuItem key={i} value={region.code}>
-                                          {region.name}
-                                        </MenuItem>
-                                      );
-                                    })}
-                                </Select>
-                              </FormGrid>
-                            )}
-                          </Grid>
-                        </Box>
-                      </Collapse>
-                    )}
-                </TransitionGroup>
-                <TransitionGroup>
-                  {cart &&
-                    Object.keys(cart).length > 0 &&
-                    displayFormPickup && (
-                      <Collapse in={displayFormPickup}>
-                        <Divider />
-                        <Box className={styles.dataDetailsBox}>
-                          <Typography
-                            variant="body1"
-                            fontWeight={700}
-                            mb={2}
-                            width="100%"
-                          >
-                            {t(
-                              "pages.order-cart.entity-card.pickup-info.title",
-                            )}
-                          </Typography>
-                          <Grid container spacing={3}>
-                            <FormGrid size={12}>
-                              <FormLabel
-                                id="label-event"
-                                htmlFor="event"
-                                required
+                                  <FormLabel
+                                    id="label-country"
+                                    htmlFor="country"
+                                    required
+                                  >
+                                    {t("pages.order-cart.form.country")}
+                                  </FormLabel>
+                                  <Select
+                                    size="small"
+                                    labelId="label-country"
+                                    id="country"
+                                    input={
+                                      <OutlinedInput
+                                        label={t(
+                                          "pages.order-cart.form.country",
+                                        )}
+                                      />
+                                    }
+                                    onChange={(event: SelectChangeEvent) =>
+                                      handleFormDeliveryData(
+                                        "country",
+                                        event.target.value,
+                                      )
+                                    }
+                                    defaultValue={formDeliveryData.country}
+                                    MenuProps={MenuProps}
+                                    variant="standard"
+                                  >
+                                    {countriesAllowed &&
+                                      countriesAllowed.length > 0 &&
+                                      countriesAllowed.map(
+                                        (country: any, i: number) => {
+                                          return (
+                                            <MenuItem
+                                              key={i}
+                                              value={country.code}
+                                            >
+                                              {country.name}
+                                            </MenuItem>
+                                          );
+                                        },
+                                      )}
+                                  </Select>
+                                </FormGrid>
+                                {hasRegions && (
+                                  <FormGrid size={{ xs: 12, md: 6 }}>
+                                    <FormLabel
+                                      id="label-region"
+                                      htmlFor="region"
+                                      required
+                                    >
+                                      {t("pages.order-cart.form.region")}
+                                    </FormLabel>
+                                    <Select
+                                      size="small"
+                                      labelId="label-region"
+                                      id="region"
+                                      input={
+                                        <OutlinedInput
+                                          label={t(
+                                            "pages.order-cart.form.region",
+                                          )}
+                                        />
+                                      }
+                                      onChange={(event: SelectChangeEvent) =>
+                                        handleFormDeliveryData(
+                                          "region",
+                                          event.target.value,
+                                        )
+                                      }
+                                      defaultValue={formDeliveryData.region}
+                                      MenuProps={MenuProps}
+                                      variant="standard"
+                                    >
+                                      {hasRegions &&
+                                        regionsByCountryCode[
+                                          formDeliveryData.country
+                                        ].map((region: any, i: number) => {
+                                          return (
+                                            <MenuItem
+                                              key={i}
+                                              value={region.code}
+                                            >
+                                              {region.name}
+                                            </MenuItem>
+                                          );
+                                        })}
+                                    </Select>
+                                  </FormGrid>
+                                )}
+                              </Grid>
+                            </Box>
+                          </Collapse>
+                        )}
+                    </TransitionGroup>
+                    <TransitionGroup>
+                      {cart &&
+                        Object.keys(cart).length > 0 &&
+                        displayFormPickup && (
+                          <Collapse in={displayFormPickup}>
+                            <Divider />
+                            <Box className={styles.dataDetailsBox}>
+                              <Typography
+                                variant="body1"
+                                fontWeight={700}
+                                mb={2}
+                                width="100%"
                               >
-                                {t("pages.order-cart.form.event")}
-                              </FormLabel>
-                              <Select
-                                size="small"
-                                labelId="label-date"
-                                id="event"
-                                input={
-                                  <OutlinedInput
-                                    label={t("pages.order-cart.form.event")}
-                                  />
-                                }
-                                onChange={(event: SelectChangeEvent) =>
-                                  handleFormPickupData(
-                                    "event",
-                                    event.target.value,
-                                  )
-                                }
-                                defaultValue={formPickupData.event}
-                                MenuProps={MenuProps}
-                                variant="standard"
-                              >
-                                {events &&
-                                  events.results &&
-                                  events.results.length > 0 &&
-                                  events.results.map(
-                                    (event: any, i: number) => {
-                                      return (
-                                        <MenuItem key={i} value={event.id}>
-                                          {event.title +
-                                            " — " +
-                                            capitalizeFirstLetter(
-                                              new Date(event.time_from)
-                                                .toISOString()
-                                                .slice(0, 10),
-                                            ) +
-                                            " " +
-                                            new Date(event.time_from)
-                                              .toTimeString()
-                                              .slice(0, 5)}
-                                        </MenuItem>
-                                      );
-                                    },
-                                  )}
-                              </Select>
-                            </FormGrid>
-                          </Grid>
-                        </Box>
-                      </Collapse>
-                    )}
-                </TransitionGroup>
+                                {t(
+                                  "pages.order-cart.entity-card.pickup-info.title",
+                                )}
+                              </Typography>
+                              <Grid container spacing={3}>
+                                <FormGrid size={12}>
+                                  <FormLabel
+                                    id="label-event"
+                                    htmlFor="event"
+                                    required
+                                  >
+                                    {t("pages.order-cart.form.event")}
+                                  </FormLabel>
+                                  <Select
+                                    size="small"
+                                    labelId="label-date"
+                                    id="event"
+                                    input={
+                                      <OutlinedInput
+                                        label={t("pages.order-cart.form.event")}
+                                      />
+                                    }
+                                    onChange={(event: SelectChangeEvent) =>
+                                      handleFormPickupData(
+                                        "event",
+                                        event.target.value,
+                                      )
+                                    }
+                                    defaultValue={formPickupData.event}
+                                    MenuProps={MenuProps}
+                                    variant="standard"
+                                  >
+                                    {events &&
+                                      events.results &&
+                                      events.results.length > 0 &&
+                                      events.results.map(
+                                        (event: any, i: number) => {
+                                          return (
+                                            <MenuItem key={i} value={event.id}>
+                                              {event.title +
+                                                " — " +
+                                                capitalizeFirstLetter(
+                                                  new Date(event.time_from)
+                                                    .toISOString()
+                                                    .slice(0, 10),
+                                                ) +
+                                                " " +
+                                                new Date(event.time_from)
+                                                  .toTimeString()
+                                                  .slice(0, 5)}
+                                            </MenuItem>
+                                          );
+                                        },
+                                      )}
+                                  </Select>
+                                </FormGrid>
+                              </Grid>
+                            </Box>
+                          </Collapse>
+                        )}
+                    </TransitionGroup>
+                  </>
+                ) : (
+                  <Box className={styles.loader}>
+                    <LoaderClip />
+                  </Box>
+                )}
               </Card>
             )}
           </Grid>
@@ -1567,7 +1604,13 @@ function OrderCartPage() {
     </Grid>
   );
 
-  return <PageBase title={t("pages.order-cart.title")} content={content} />;
+  return (
+    <PageBase
+      title={t("pages.order-cart.title")}
+      content={content}
+      loading={cart == null}
+    />
+  );
 }
 
 export default OrderCartPage;
