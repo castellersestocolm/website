@@ -21,3 +21,4 @@ class FamilyMemberRequestStatus(IntEnum):
 
 class UserProductSource(IntEnum):
     OWNED = 10
+    FROM_ORDER = 20

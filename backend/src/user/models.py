@@ -1,6 +1,7 @@
 import os
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -136,10 +137,26 @@ class UserProduct(StandardModel, Timestamps):
         related_name="user_products",
         on_delete=models.CASCADE,
     )
+    order = models.ForeignKey(
+        "order.Order",
+        related_name="user_products",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
     source = models.PositiveSmallIntegerField(
         choices=((ups.value, ups.name) for ups in UserProductSource),
     )
+
+    def clean(self):
+        if self.source == UserProductSource.FROM_ORDER and not self.order:
+            raise ValidationError(
+                {
+                    "order": _("Order must be set for source %s.")
+                    % (UserProductSource(self.source).name,)
+                }
+            )
 
 
 class UserEmail(StandardModel, Timestamps):
