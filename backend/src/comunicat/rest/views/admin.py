@@ -35,7 +35,7 @@ class AdminUserAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: AdminUserSerializer(many=True), 403: Serializer()},
     )
-    # @method_decorator(cache_page(1))
+    @method_decorator(cache_page(1))
     def list(self, request):
         ordering = request.query_params.get("ordering")
         if ordering:
@@ -47,14 +47,11 @@ class AdminUserAPI(ComuniCatViewSet):
             else None
         )
 
-        user_objs = (
-            user.api.get_list(
-                modules=[self.module],
-                with_orders=True,
-                with_teams=True,
-                ordering=ordering,
-            )
-            * 5
+        user_objs = user.api.get_list(
+            modules=[self.module],
+            with_orders=True,
+            with_teams=True,
+            ordering=ordering,
         )
 
         if is_adult is not None:

@@ -16,12 +16,13 @@ import {
 import { apiAdminUserList, apiAdminUserUpdate } from "../../api";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import { getEnumLabel, MembershipStatus } from "../../enums";
+import { getEnumLabel, MembershipStatus, OrderStatus } from "../../enums";
 import IconEdit from "@mui/icons-material/Edit";
 import IconSave from "@mui/icons-material/Save";
 import IconCancel from "@mui/icons-material/Close";
+import { filterProductsForUser } from "../../utils/product";
 
-export const TableUsers = ({ isAdult }: any) => {
+export const TableUsers = ({ isAdult, products }: any) => {
   const { t } = useTranslation("common");
 
   const [users, setUsers] = React.useState(undefined);
@@ -44,7 +45,12 @@ export const TableUsers = ({ isAdult }: any) => {
         setUsers(response.data);
       }
     });
-  }, [setUsers, paginationModel.page, paginationModel.pageSize]);
+  }, [setUsers, paginationModel.page, paginationModel.pageSize, isAdult]);
+
+  const allProducts =
+    products &&
+    products.results.length > 0 &&
+    filterProductsForUser(products.results, undefined);
 
   const handleEditClick = (id: GridRowId) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
@@ -202,6 +208,7 @@ export const TableUsers = ({ isAdult }: any) => {
         },
       ]);
 
+  // @ts-ignore
   const gridColumns: GridColDef[] = midGridColumns.concat([
     {
       field: "alias",
@@ -216,6 +223,51 @@ export const TableUsers = ({ isAdult }: any) => {
         </Typography>
       ),
     },
+    ...(allProducts && allProducts.length > 0
+      ? allProducts.map((product: any) => {
+          return {
+            field: "product-" + product.id,
+            headerName: product.name,
+            sortable: false,
+            filterable: false,
+            disableColumnMenu: true,
+            width: 100,
+            align: "right",
+            headerAlign: "right",
+            cellClassName: styles.adminGridCell,
+            headerClassName: styles.adminGridHeaderRight,
+            renderHeader: () => (
+              <Typography variant="body2" fontWeight={600}>
+                {product.name}
+              </Typography>
+            ),
+            renderCell: (params: any) => {
+              const orderStatus = params.row["product-" + product.id];
+              return (
+                <Box
+                  className={
+                    orderStatus !== undefined
+                      ? orderStatus === OrderStatus.COMPLETED
+                        ? styles.adminTableCellActive
+                        : orderStatus === OrderStatus.PROCESSING
+                          ? styles.adminTableCellProcessing
+                          : styles.adminTableCellExpired
+                      : undefined
+                  }
+                >
+                  {orderStatus !== undefined
+                    ? orderStatus === OrderStatus.COMPLETED
+                      ? t("pages.admin-user.users-table.product.yes")
+                      : orderStatus === OrderStatus.PROCESSING
+                        ? t("pages.admin-user.users-table.product.ordered")
+                        : t("pages.admin-user.users-table.product.no")
+                    : undefined}
+                </Box>
+              );
+            },
+          };
+        })
+      : []),
     {
       field: "membershipStatus",
       headerName: t("pages.admin-user.users-table.membership-status"),
@@ -291,7 +343,7 @@ export const TableUsers = ({ isAdult }: any) => {
           {t("pages.admin-user.users-table.actions")}
         </Typography>
       ),
-      getActions: ({ id }) => {
+      getActions: ({ id }: any) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
@@ -329,6 +381,16 @@ export const TableUsers = ({ isAdult }: any) => {
   const gridRows =
     users && users.results.length > 0
       ? users.results.map((user: any, i: number, row: any) => {
+          const userTeamIds = user.members
+            ? user.members.map((member: any) => member.team.id)
+            : [];
+          const userProducts =
+            products &&
+            products.results.length > 0 &&
+            filterProductsForUser(products.results, userTeamIds);
+          const userProdcutIds =
+            userProducts && userProducts.map((product: any) => product.id);
+
           return {
             id: user.id,
             firstname: user.firstname,
@@ -350,6 +412,34 @@ export const TableUsers = ({ isAdult }: any) => {
                   ).join("-"),
                 }),
             alias: user.towers && user.towers.alias,
+            ...(allProducts &&
+            allProducts.length > 0 &&
+            userProducts &&
+            userProducts.length > 0 &&
+            userProdcutIds
+              ? Object.fromEntries(
+                  allProducts.map((product: any) => {
+                    const order =
+                      user.orders &&
+                      user.orders.find(
+                        (order: any) =>
+                          order.products.filter(
+                            (orderProduct: any) =>
+                              orderProduct.size.product.id === product.id,
+                          ).length > 0,
+                      );
+
+                    return [
+                      "product-" + product.id,
+                      userProdcutIds.includes(product.id)
+                        ? order
+                          ? order.status
+                          : OrderStatus.ABANDONED
+                        : undefined,
+                    ];
+                  }),
+                )
+              : {}),
             membershipStatus: user.membership && user.membership.status,
             membershipDateTo:
               user.membership &&

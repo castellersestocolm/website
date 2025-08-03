@@ -6,9 +6,20 @@ import { Card, Divider, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { TableUsers } from "../../components/TableUsers/TableUsers";
+import { apiProductList } from "../../api";
 
 function AdminUserPage() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
+
+  const [products, setProducts] = React.useState(undefined);
+
+  React.useEffect(() => {
+    apiProductList().then((response) => {
+      if (response.status === 200) {
+        setProducts(response.data);
+      }
+    });
+  }, [setProducts, i18n.resolvedLanguage]);
 
   const content = (
     <Grid container spacing={4} className={styles.adminGrid}>
@@ -20,7 +31,7 @@ function AdminUserPage() {
         </Box>
         <Divider />
         <Box>
-          <TableUsers isAdult={true} />
+          <TableUsers isAdult={true} products={products} />
         </Box>
       </Card>
       <Card variant="outlined" className={styles.adminCard}>
@@ -31,7 +42,7 @@ function AdminUserPage() {
         </Box>
         <Divider />
         <Box>
-          <TableUsers isAdult={false} />
+          <TableUsers isAdult={false} products={products} />
         </Box>
       </Card>
     </Grid>

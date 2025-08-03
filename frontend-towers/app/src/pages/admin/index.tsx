@@ -20,10 +20,8 @@ import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { apiEventList, apiProductList, apiAdminUserList } from "../../api";
 import {
   EventType,
-  getEnumLabel,
   MEMBERSHIP_STATUS_ICON,
   MembershipStatus,
-  Module,
   ORDER_STATUS_ICON,
   OrderStatus,
   RegistrationStatus,
@@ -39,6 +37,7 @@ import { get_event_icon } from "../../utils/event";
 import IconShoppingCart from "@mui/icons-material/ShoppingCart";
 import IconInventory from "@mui/icons-material/Inventory";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
+import { filterProductsForUser } from "../../utils/product";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -288,11 +287,13 @@ function AdminPage() {
                   .slice(
                     0,
                     events && events.results.length > 0
-                      ? events.results.length >= 4 && events.results.length <= 5
+                      ? events.results.length === 4
                         ? 7
-                        : events.results.length >= 6
-                          ? 10
-                          : 5
+                        : events.results.length === 5
+                          ? 8
+                          : events.results.length === 6
+                            ? 10
+                            : 5
                       : 5,
                   )
                   .map((user: any, i: number, row: any) => {
@@ -330,74 +331,55 @@ function AdminPage() {
                           >
                             {products &&
                               products.results.length > 0 &&
-                              products.results
-                                .filter(
-                                  (product: any) =>
-                                    product.modules &&
-                                    product.modules.filter(
-                                      (productModule: any) =>
-                                        productModule.module ===
-                                          Module.TOWERS &&
-                                        productModule.is_required &&
-                                        (productModule.teams.length === 0 ||
-                                          productModule.teams.some(
-                                            (team: any) =>
-                                              userTeamIds.includes(team.id),
-                                          )) &&
-                                        (productModule.exclude_teams.length ===
-                                          0 ||
-                                          !productModule.exclude_teams.some(
-                                            (team: any) =>
-                                              userTeamIds.includes(team.id),
-                                          )),
-                                    ).length > 0,
-                                )
-                                .map((product: any) => {
-                                  const order =
-                                    user.orders &&
-                                    user.orders.find(
-                                      (order: any) =>
-                                        order.products.filter(
-                                          (orderProduct: any) =>
-                                            orderProduct.size.product.id ===
-                                            product.id,
-                                        ).length > 0,
-                                    );
-
-                                  return (
-                                    <Box className={styles.userListBox}>
-                                      <Box
-                                        component="span"
-                                        className={styles.userListIcon}
-                                        color={
-                                          order
-                                            ? order.status ===
-                                              OrderStatus.COMPLETED
-                                              ? "var(--mui-palette-success-main) !important"
-                                              : order.status ===
-                                                  OrderStatus.PROCESSING
-                                                ? "var(--mui-palette-secondary-main) !important"
-                                                : "var(--mui-palette-error-main) !important"
-                                            : "var(--mui-palette-error-main) !important"
-                                        }
-                                      >
-                                        {
-                                          ORDER_STATUS_ICON[
-                                            order
-                                              ? order.status
-                                              : OrderStatus.CANCELED
-                                          ]
-                                        }
-                                      </Box>
-                                      <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                      >
-                                        {product.name}
-                                      </Typography>
-                                    </Box>
+                              filterProductsForUser(
+                                products.results,
+                                userTeamIds,
+                              ).map((product: any) => {
+                                const order =
+                                  user.orders &&
+                                  user.orders.find(
+                                    (order: any) =>
+                                      order.products.filter(
+                                        (orderProduct: any) =>
+                                          orderProduct.size.product.id ===
+                                          product.id,
+                                      ).length > 0,
                                   );
-                                })}
+
+                                return (
+                                  <Box className={styles.userListBox}>
+                                    <Box
+                                      component="span"
+                                      className={styles.userListIcon}
+                                      color={
+                                        order
+                                          ? order.status ===
+                                            OrderStatus.COMPLETED
+                                            ? "var(--mui-palette-success-main) !important"
+                                            : order.status ===
+                                                OrderStatus.PROCESSING
+                                              ? "var(--mui-palette-secondary-main) !important"
+                                              : "var(--mui-palette-error-main) !important"
+                                          : "var(--mui-palette-error-main) !important"
+                                      }
+                                    >
+                                      {
+                                        ORDER_STATUS_ICON[
+                                          order
+                                            ? order.status
+                                            : OrderStatus.CANCELED
+                                        ]
+                                      }
+                                    </Box>
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                    >
+                                      {product.name}
+                                    </Typography>
+                                  </Box>
+                                );
+                              })}
                             {user.membership && (
                               <Box className={styles.userListBox}>
                                 <Box
@@ -414,7 +396,7 @@ function AdminPage() {
                                             ].includes(user.membership.status)
                                           ? "var(--mui-palette-secondary-main) !important"
                                           : "var(--mui-palette-error-main) !important"
-                                      : "var(--mui-palette-error-main) !important"
+                                      : "var(--mui-palette-text-secondary)"
                                   }
                                 >
                                   {
