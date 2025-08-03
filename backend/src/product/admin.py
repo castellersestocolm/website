@@ -12,6 +12,7 @@ from product.models import (
     ProductPrice,
     StockOrder,
     StockProduct,
+    ProductModule,
 )
 
 
@@ -40,6 +41,12 @@ class ProductPriceInline(admin.TabularInline):
     extra = 0
 
 
+class ProductModuleInline(admin.TabularInline):
+    model = ProductModule
+    ordering = ("module",)
+    extra = 0
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     search_fields = ("id", "name")
@@ -53,7 +60,12 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("type", "weight_grams", "created_at")
     readonly_fields = ("stock",)
     ordering = ("type", "created_at")
-    inlines = (ProductSizeInline, ProductPriceInline, ProductImageInline)
+    inlines = (
+        ProductSizeInline,
+        ProductPriceInline,
+        ProductImageInline,
+        ProductModuleInline,
+    )
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},

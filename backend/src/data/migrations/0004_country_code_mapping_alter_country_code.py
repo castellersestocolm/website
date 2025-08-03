@@ -7,18 +7,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0003_zone_country_zone'),
+        ("data", "0003_zone_country_zone"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='country',
-            name='code_mapping',
-            field=models.CharField(blank=True, max_length=3, null=True, validators=[django.core.validators.MinLengthValidator(2)]),
+            model_name="country",
+            name="code_mapping",
+            field=models.CharField(
+                blank=True,
+                max_length=3,
+                null=True,
+                validators=[django.core.validators.MinLengthValidator(2)],
+            ),
         ),
         migrations.AlterField(
-            model_name='country',
-            name='code',
-            field=models.CharField(max_length=3, unique=True, validators=[django.core.validators.MinLengthValidator(2)]),
+            model_name="country",
+            name="code",
+            field=models.CharField(
+                max_length=3,
+                unique=True,
+                validators=[django.core.validators.MinLengthValidator(2)],
+            ),
         ),
     ]

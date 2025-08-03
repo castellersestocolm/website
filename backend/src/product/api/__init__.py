@@ -29,6 +29,9 @@ def get_list(module: Module, user_id: UUID | None = None) -> List[Product]:
             ),
             Prefetch("images", ProductImage.objects.all().order_by("created_at")),
             "prices",
+            "modules",
+            "modules__teams",
+            "modules__exclude_teams",
         )
         .with_stock()
         .with_price(modules=modules)

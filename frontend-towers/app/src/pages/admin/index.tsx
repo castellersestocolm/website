@@ -23,6 +23,9 @@ import {
   getEnumLabel,
   MEMBERSHIP_STATUS_ICON,
   MembershipStatus,
+  Module,
+  ORDER_STATUS_ICON,
+  OrderStatus,
   RegistrationStatus,
 } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
@@ -93,7 +96,7 @@ function AdminPage() {
   }, [setProducts, i18n.resolvedLanguage]);
 
   React.useEffect(() => {
-    apiAdminUserList(undefined, undefined, "-created_at").then((response) => {
+    apiAdminUserList(undefined, 10, "-created_at").then((response) => {
       if (response.status === 200) {
         setUsers(response.data);
       }
@@ -269,19 +272,178 @@ function AdminPage() {
             underline="none"
             component="button"
             className={styles.adminTitleLink}
+            onClick={handleAdminUserSubmit}
           >
             <Box className={styles.adminTopBoxLink}>
               <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.admin.events-table.title")}
+                {t("pages.admin.users-table.title")}
               </Typography>
-              {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
-          <Box className={styles.adminBox}>
-            <Typography variant="body2" component="div">
-              Coming soon...
-            </Typography>
-          </Box>
+          {users && users.results.length > 0 ? (
+            <Box>
+              <List className={styles.adminList}>
+                {users.results
+                  .slice(
+                    0,
+                    events && events.results.length > 0
+                      ? events.results.length >= 4 && events.results.length <= 5
+                        ? 7
+                        : events.results.length >= 6
+                          ? 10
+                          : 5
+                      : 5,
+                  )
+                  .map((user: any, i: number, row: any) => {
+                    const userTeamIds = user.members
+                      ? user.members.map((member: any) => member.team.id)
+                      : [];
+
+                    return (
+                      <>
+                        <ListItemButton disableTouchRipple dense>
+                          <Box
+                            className={styles.userFamilyListInner}
+                            flexDirection={{ xs: "column", lg: "row" }}
+                            alignItems={{ xs: "start", lg: "center" }}
+                          >
+                            <ListItemText
+                              className={styles.userFamilyListItem}
+                              disableTypography
+                              primary={
+                                <Typography variant="body2">
+                                  {user.lastname
+                                    ? user.firstname + " " + user.lastname
+                                    : user.firstname}
+                                </Typography>
+                              }
+                            ></ListItemText>
+                          </Box>
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            marginLeft={{ xs: "0", lg: "16px" }}
+                            marginTop={{ xs: "8px", lg: "0" }}
+                            marginBottom={{ xs: "8px", lg: "0" }}
+                            whiteSpace="nowrap"
+                          >
+                            {products &&
+                              products.results.length > 0 &&
+                              products.results
+                                .filter(
+                                  (product: any) =>
+                                    product.modules &&
+                                    product.modules.filter(
+                                      (productModule: any) =>
+                                        productModule.module ===
+                                          Module.TOWERS &&
+                                        productModule.is_required &&
+                                        (productModule.teams.length === 0 ||
+                                          productModule.teams.some(
+                                            (team: any) =>
+                                              userTeamIds.includes(team.id),
+                                          )) &&
+                                        (productModule.exclude_teams.length ===
+                                          0 ||
+                                          !productModule.exclude_teams.some(
+                                            (team: any) =>
+                                              userTeamIds.includes(team.id),
+                                          )),
+                                    ).length > 0,
+                                )
+                                .map((product: any) => {
+                                  const order =
+                                    user.orders &&
+                                    user.orders.find(
+                                      (order: any) =>
+                                        order.products.filter(
+                                          (orderProduct: any) =>
+                                            orderProduct.size.product.id ===
+                                            product.id,
+                                        ).length > 0,
+                                    );
+
+                                  return (
+                                    <Box className={styles.userListBox}>
+                                      <Box
+                                        component="span"
+                                        className={styles.userListIcon}
+                                        color={
+                                          order
+                                            ? order.status ===
+                                              OrderStatus.COMPLETED
+                                              ? "var(--mui-palette-success-main) !important"
+                                              : order.status ===
+                                                  OrderStatus.PROCESSING
+                                                ? "var(--mui-palette-secondary-main) !important"
+                                                : "var(--mui-palette-error-main) !important"
+                                            : "var(--mui-palette-error-main) !important"
+                                        }
+                                      >
+                                        {
+                                          ORDER_STATUS_ICON[
+                                            order
+                                              ? order.status
+                                              : OrderStatus.CANCELED
+                                          ]
+                                        }
+                                      </Box>
+                                      <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                      >
+                                        {product.name}
+                                      </Typography>
+                                    </Box>
+                                  );
+                                })}
+                            {user.membership && (
+                              <Box className={styles.userListBox}>
+                                <Box
+                                  component="span"
+                                  className={styles.userListIcon}
+                                  color={
+                                    user.membership
+                                      ? user.membership.status ===
+                                        MembershipStatus.ACTIVE
+                                        ? "var(--mui-palette-success-main) !important"
+                                        : [
+                                              MembershipStatus.REQUESTED,
+                                              MembershipStatus.PROCESSING,
+                                            ].includes(user.membership.status)
+                                          ? "var(--mui-palette-secondary-main) !important"
+                                          : "var(--mui-palette-error-main) !important"
+                                      : "var(--mui-palette-error-main) !important"
+                                  }
+                                >
+                                  {
+                                    MEMBERSHIP_STATUS_ICON[
+                                      user.membership.status
+                                    ]
+                                  }
+                                </Box>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {t("pages.admin.users-table.membership")}
+                                </Typography>
+                              </Box>
+                            )}
+                          </Stack>
+                        </ListItemButton>
+                        {i + 1 < row.length && <Divider />}
+                      </>
+                    );
+                  })}
+              </List>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
         </Card>
       </Grid>
       <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
@@ -377,90 +539,19 @@ function AdminPage() {
             underline="none"
             component="button"
             className={styles.adminTitleLink}
-            onClick={handleAdminUserSubmit}
           >
             <Box className={styles.adminTopBoxLink}>
               <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.admin.users-table.title")}
+                {t("pages.admin.orders-table.title")}
               </Typography>
-              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
+              {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
             </Box>
           </Link>
-          {users && users.results.length > 0 ? (
-            <Box>
-              <List className={styles.adminList}>
-                {users.results.map((user: any, i: number, row: any) => {
-                  return (
-                    <>
-                      <ListItemButton disableTouchRipple dense>
-                        <Box
-                          className={styles.userFamilyListInner}
-                          flexDirection={{ xs: "column", lg: "row" }}
-                          alignItems={{ xs: "start", lg: "center" }}
-                        >
-                          <ListItemText
-                            className={styles.userFamilyListItem}
-                            disableTypography
-                            primary={
-                              <Typography variant="body2">
-                                {user.lastname
-                                  ? user.firstname + " " + user.lastname
-                                  : user.firstname}
-                              </Typography>
-                            }
-                          ></ListItemText>
-                        </Box>
-                        <Stack
-                          direction="row"
-                          spacing={2}
-                          marginLeft={{ xs: "0", lg: "16px" }}
-                          marginTop={{ xs: "8px", lg: "0" }}
-                          marginBottom={{ xs: "8px", lg: "0" }}
-                          whiteSpace="nowrap"
-                        >
-                          {user.membership && (
-                            <Box className={styles.userListBox}>
-                              <Box
-                                component="span"
-                                className={styles.userListIcon}
-                                color={
-                                  user.membership
-                                    ? user.membership.status ===
-                                      MembershipStatus.ACTIVE
-                                      ? "var(--mui-palette-success-main) !important"
-                                      : [
-                                            MembershipStatus.REQUESTED,
-                                            MembershipStatus.PROCESSING,
-                                          ].includes(user.membership.status)
-                                        ? "var(--mui-palette-secondary-main) !important"
-                                        : "var(--mui-palette-error-main) !important"
-                                    : "var(--mui-palette-error-main) !important"
-                                }
-                              >
-                                {MEMBERSHIP_STATUS_ICON[user.membership.status]}
-                              </Box>
-                              <Typography variant="body2" color="textSecondary">
-                                {getEnumLabel(
-                                  t,
-                                  "membership-status",
-                                  user.membership.status,
-                                )}
-                              </Typography>
-                            </Box>
-                          )}
-                        </Stack>
-                      </ListItemButton>
-                      {i + 1 < row.length && <Divider />}
-                    </>
-                  );
-                })}
-              </List>
-            </Box>
-          ) : (
-            <Box className={styles.providerLoader}>
-              <LoaderClip />
-            </Box>
-          )}
+          <Box className={styles.adminBox}>
+            <Typography variant="body2" component="div">
+              Coming soon...
+            </Typography>
+          </Box>
         </Card>
       </Grid>
       <Grid container size={{ xs: 12, md: 12 }} spacing={4} direction="row">

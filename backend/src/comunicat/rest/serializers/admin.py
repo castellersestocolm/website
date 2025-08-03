@@ -1,11 +1,15 @@
 from drf_yasg.utils import swagger_serializer_method
 
 from comunicat.enums import Module
+from comunicat.rest.serializers.legal import TeamSlimSerializer, RoleSerializer
+from comunicat.rest.serializers.order import OrderProductSerializer
 from comunicat.rest.serializers.user import UserExtraSlimWithFamilySerializer
 from rest_framework import serializers as s
 
-from comunicat.rest.utils.fields import IntEnumField
+from comunicat.rest.utils.fields import IntEnumField, MoneyField
+from legal.models import Member
 from membership.enums import MembershipStatus
+from order.enums import OrderStatus
 from user.models import User, TowersUser
 
 
@@ -18,8 +22,39 @@ class AdminMembershipSerializer(s.Serializer):
     )
 
 
+class AdminOrderSerializer(s.Serializer):
+    status = IntEnumField(OrderStatus, read_only=True)
+    products = OrderProductSerializer(many=True, read_only=True)
+    amount = MoneyField(read_only=True)
+    amount_vat = MoneyField(read_only=True)
+
+
+class AdminMemberSerializer(s.ModelSerializer):
+    team = TeamSlimSerializer(read_only=True)
+    role = RoleSerializer(read_only=True)
+
+    class Meta:
+        model = Member
+        fields = (
+            "id",
+            "team",
+            "role",
+            "picture",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "team",
+            "role",
+            "picture",
+            "created_at",
+        )
+
+
 class AdminUserSerializer(UserExtraSlimWithFamilySerializer):
     membership = s.SerializerMethodField(read_only=True)
+    orders = AdminOrderSerializer(many=True, source="entity.orders", read_only=True)
+    members = AdminMemberSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -31,6 +66,8 @@ class AdminUserSerializer(UserExtraSlimWithFamilySerializer):
             "membership",
             "family",
             "towers",
+            "orders",
+            "members",
             "created_at",
         )
         read_only_fields = (
@@ -41,6 +78,8 @@ class AdminUserSerializer(UserExtraSlimWithFamilySerializer):
             "membership",
             "family",
             "towers",
+            "orders",
+            "members",
             "created_at",
         )
 

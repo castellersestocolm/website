@@ -108,6 +108,43 @@ class ProductPrice(StandardModel, Timestamps):
         ordering = ("product__type", "module", "amount")
 
 
+class ProductModule(StandardModel, Timestamps):
+    product = models.ForeignKey(
+        "Product",
+        related_name="modules",
+        on_delete=models.CASCADE,
+    )
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+    )
+    teams = models.ManyToManyField(
+        "legal.Team",
+        related_name="product_modules",
+        blank=True,
+    )
+    exclude_teams = models.ManyToManyField(
+        "legal.Team",
+        related_name="product_exclude_modules",
+        blank=True,
+    )
+
+    is_required = models.BooleanField(default=False)
+
+    def clean(self):
+        if any([team_obj.module != self.module for team_obj in self.teams.all()]):
+            raise ValidationError({"teams": _("Team's module must match module.")})
+        if any(
+            [team_obj.module != self.module for team_obj in self.exclude_teams.all()]
+        ):
+            raise ValidationError(
+                {"exclude_teams": _("Team's module must match module.")}
+            )
+
+    class Meta:
+        unique_together = ("product", "module")
+
+
 class StockOrder(StandardModel, Timestamps):
     entity = models.ForeignKey(
         "payment.Entity",

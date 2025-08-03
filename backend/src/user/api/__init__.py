@@ -22,6 +22,8 @@ from legal.enums import TeamType
 from legal.models import Member
 from notify.enums import EmailType
 from notify.tasks import send_user_email
+from order.enums import OrderStatus
+from order.models import Order
 from user.enums import FamilyMemberStatus, FamilyMemberRole
 from user.models import User, TowersUser, FamilyMember, Family, UserEmail
 from user.utils import get_default_consent_pictures
@@ -73,6 +75,8 @@ def get_list(
     team_ids: list[UUID] | None = None,
     team_types: list[TeamType] | None = None,
     with_pending_membership: bool = True,
+    with_orders: bool = False,
+    with_teams: bool = False,
     modules: list[Module] | None = None,
     ordering: list[str] | None = None,
 ) -> list[User]:
@@ -118,6 +122,33 @@ def get_list(
         user_qs = user_qs.with_has_active_role(
             team_types=team_types, modules=modules
         ).filter(has_active_role=True)
+
+    if with_orders:
+        user_qs = user_qs.prefetch_related(
+            Prefetch(
+                "entity__orders",
+                Order.objects.filter(
+                    status__in=(OrderStatus.PROCESSING, OrderStatus.COMPLETED)
+                )
+                .prefetch_related(
+                    "products", "products__size", "products__size__product"
+                )
+                .order_by("created_at"),
+            ),
+        )
+
+    if with_teams:
+        user_qs = user_qs.prefetch_related(
+            Prefetch(
+                "members",
+                Member.objects.filter(
+                    team__date_from__lte=timezone.localdate(),
+                    team__date_to__gte=timezone.localdate(),
+                )
+                .select_related("role", "team")
+                .order_by("team__type", "-team__date_from", "role__order"),
+            ),
+        )
 
     return list(user_qs)
 

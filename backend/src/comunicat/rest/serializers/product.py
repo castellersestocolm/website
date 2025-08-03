@@ -2,8 +2,9 @@ from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
+from comunicat.rest.serializers.legal import TeamSlimSerializer
 from comunicat.rest.utils.fields import MoneyField
-from product.models import Product, ProductSize, ProductImage
+from product.models import Product, ProductSize, ProductImage, ProductModule
 
 
 class ProductImageSerializer(s.ModelSerializer):
@@ -52,12 +53,35 @@ class ProductPriceSerializer(s.Serializer):
     max = MoneyField(required=False, read_only=True)
 
 
+class ProductModuleSerializer(s.ModelSerializer):
+    teams = TeamSlimSerializer(many=True, read_only=True)
+    exclude_teams = TeamSlimSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ProductModule
+        fields = (
+            "id",
+            "module",
+            "teams",
+            "exclude_teams",
+            "is_required",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+            "teams",
+            "exclude_teams",
+            "is_required",
+        )
+
+
 class ProductSerializer(s.ModelSerializer):
     name = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
     sizes = ProductSizeWithStockSerializer(many=True, read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
     price = s.SerializerMethodField(required=False, read_only=True)
+    modules = ProductModuleSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
@@ -70,6 +94,7 @@ class ProductSerializer(s.ModelSerializer):
             "sizes",
             "images",
             "price",
+            "modules",
         )
         read_only_fields = (
             "id",
@@ -80,6 +105,7 @@ class ProductSerializer(s.ModelSerializer):
             "sizes",
             "images",
             "price",
+            "modules",
         )
 
     @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
@@ -131,6 +157,7 @@ class ProductWithStockSerializer(ProductSerializer):
             "price",
             "sizes",
             "images",
+            "modules",
         )
         read_only_fields = (
             "id",
@@ -144,6 +171,7 @@ class ProductWithStockSerializer(ProductSerializer):
             "price",
             "sizes",
             "images",
+            "modules",
         )
 
 
