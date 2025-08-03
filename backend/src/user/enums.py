@@ -17,3 +17,7 @@ class FamilyMemberRequestStatus(IntEnum):
     ACCEPTED = 20
     DELETED = 30
     REJECTED = 40
+
+
+class UserProductSource(IntEnum):
+    OWNED = 10

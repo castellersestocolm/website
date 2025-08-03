@@ -17,6 +17,7 @@ from user.models import (
     GoogleGroup,
     GoogleGroupModule,
     UserEmail,
+    UserProduct,
 )
 from django.conf import settings
 
@@ -40,6 +41,11 @@ class FamilyMemberRequestReceivedInline(admin.TabularInline):
 
 class UserEmailInline(admin.TabularInline):
     model = UserEmail
+    extra = 0
+
+
+class UserProductInline(admin.TabularInline):
+    model = UserProduct
     extra = 0
 
 
@@ -182,6 +188,7 @@ class UserAdmin(admin.ModelAdmin):
     inlines = (
         FamilyMemberRequestSentInline,
         FamilyMemberRequestReceivedInline,
+        UserProductInline,
         UserEmailInline,
     )
     actions = (

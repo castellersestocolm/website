@@ -68,6 +68,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = (
         "reference",
         "entity",
+        "notes",
         "delivery_type",
         "payment_type",
         "status",

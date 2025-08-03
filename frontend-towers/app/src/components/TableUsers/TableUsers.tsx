@@ -429,12 +429,23 @@ export const TableUsers = ({ isAdult, products }: any) => {
                           ).length > 0,
                       );
 
+                    const userProduct =
+                      user.products &&
+                      user.products.find(
+                        (userProduct: any) =>
+                          userProduct.product.id === product.id,
+                      );
+
+                    const orderStatus = userProduct
+                      ? OrderStatus.COMPLETED
+                      : order
+                        ? order.status
+                        : OrderStatus.CANCELED;
+
                     return [
                       "product-" + product.id,
                       userProdcutIds.includes(product.id)
-                        ? order
-                          ? order.status
-                          : OrderStatus.ABANDONED
+                        ? orderStatus
                         : undefined,
                     ];
                   }),

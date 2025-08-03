@@ -7,7 +7,12 @@ from django.utils.translation import gettext_lazy as _
 
 from comunicat.db.mixins import Timestamps, StandardModel
 from comunicat.enums import Module
-from user.enums import FamilyMemberRole, FamilyMemberStatus, FamilyMemberRequestStatus
+from user.enums import (
+    FamilyMemberRole,
+    FamilyMemberStatus,
+    FamilyMemberRequestStatus,
+    UserProductSource,
+)
 from user.managers import UserManager, FamilyMemberQuerySet, FamilyQuerySet
 from user.utils import is_over_minimum_age
 
@@ -118,6 +123,23 @@ class TowersUser(StandardModel, Timestamps):
     alias = models.CharField(unique=True)
     height_shoulders = models.PositiveIntegerField(null=True, blank=True)
     height_arms = models.PositiveIntegerField(null=True, blank=True)
+
+
+class UserProduct(StandardModel, Timestamps):
+    user = models.ForeignKey(
+        "User",
+        related_name="products",
+        on_delete=models.CASCADE,
+    )
+    product = models.ForeignKey(
+        "product.Product",
+        related_name="user_products",
+        on_delete=models.CASCADE,
+    )
+
+    source = models.PositiveSmallIntegerField(
+        choices=((ups.value, ups.name) for ups in UserProductSource),
+    )
 
 
 class UserEmail(StandardModel, Timestamps):

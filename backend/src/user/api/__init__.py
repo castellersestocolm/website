@@ -77,6 +77,7 @@ def get_list(
     with_pending_membership: bool = True,
     with_orders: bool = False,
     with_teams: bool = False,
+    with_products: bool = False,
     modules: list[Module] | None = None,
     ordering: list[str] | None = None,
 ) -> list[User]:
@@ -149,6 +150,9 @@ def get_list(
                 .order_by("team__type", "-team__date_from", "role__order"),
             ),
         )
+
+    if with_products:
+        user_qs = user_qs.prefetch_related("products")
 
     return list(user_qs)
 

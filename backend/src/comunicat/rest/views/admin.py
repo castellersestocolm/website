@@ -51,6 +51,7 @@ class AdminUserAPI(ComuniCatViewSet):
             modules=[self.module],
             with_orders=True,
             with_teams=True,
+            with_products=True,
             ordering=ordering,
         )
 

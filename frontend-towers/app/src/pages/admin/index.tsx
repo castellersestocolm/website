@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
-import { apiEventList, apiProductList, apiAdminUserList } from "../../api";
+import { apiAdminUserList, apiEventList, apiProductList } from "../../api";
 import {
   EventType,
   MEMBERSHIP_STATUS_ICON,
@@ -346,30 +346,34 @@ function AdminPage() {
                                       ).length > 0,
                                   );
 
+                                const userProduct =
+                                  user.products &&
+                                  user.products.find(
+                                    (userProduct: any) =>
+                                      userProduct.product.id === product.id,
+                                  );
+
+                                const orderStatus = userProduct
+                                  ? OrderStatus.COMPLETED
+                                  : order
+                                    ? order.status
+                                    : OrderStatus.CANCELED;
+
                                 return (
                                   <Box className={styles.userListBox}>
                                     <Box
                                       component="span"
                                       className={styles.userListIcon}
                                       color={
-                                        order
-                                          ? order.status ===
-                                            OrderStatus.COMPLETED
-                                            ? "var(--mui-palette-success-main) !important"
-                                            : order.status ===
-                                                OrderStatus.PROCESSING
-                                              ? "var(--mui-palette-secondary-main) !important"
-                                              : "var(--mui-palette-error-main) !important"
-                                          : "var(--mui-palette-error-main) !important"
+                                        orderStatus === OrderStatus.COMPLETED
+                                          ? "var(--mui-palette-success-main) !important"
+                                          : orderStatus ===
+                                              OrderStatus.PROCESSING
+                                            ? "var(--mui-palette-secondary-main) !important"
+                                            : "var(--mui-palette-error-main) !important"
                                       }
                                     >
-                                      {
-                                        ORDER_STATUS_ICON[
-                                          order
-                                            ? order.status
-                                            : OrderStatus.CANCELED
-                                        ]
-                                      }
+                                      {ORDER_STATUS_ICON[orderStatus]}
                                     </Box>
                                     <Typography
                                       variant="body2"
