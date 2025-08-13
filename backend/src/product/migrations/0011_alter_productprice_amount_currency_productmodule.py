@@ -9,29 +9,72 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('legal', '0004_role_name_plural'),
-        ('product', '0010_alter_productprice_options_product_weight_grams'),
+        ("legal", "0004_role_name_plural"),
+        ("product", "0010_alter_productprice_options_product_weight_grams"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='productprice',
-            name='amount_currency',
-            field=djmoney.models.fields.CurrencyField(choices=[('EUR', 'Euro'), ('SEK', 'Swedish Krona')], default='SEK', editable=False, max_length=3),
+            model_name="productprice",
+            name="amount_currency",
+            field=djmoney.models.fields.CurrencyField(
+                choices=[("EUR", "Euro"), ("SEK", "Swedish Krona")],
+                default="SEK",
+                editable=False,
+                max_length=3,
+            ),
         ),
         migrations.CreateModel(
-            name='ProductModule',
+            name="ProductModule",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('module', models.PositiveSmallIntegerField(choices=[(10, 'ORG'), (20, 'TOWERS')])),
-                ('exclude_teams', models.ManyToManyField(blank=True, related_name='product_exclude_modules', to='legal.team')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modules', to='product.product')),
-                ('teams', models.ManyToManyField(blank=True, related_name='product_modules', to='legal.team')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                (
+                    "module",
+                    models.PositiveSmallIntegerField(
+                        choices=[(10, "ORG"), (20, "TOWERS")]
+                    ),
+                ),
+                (
+                    "exclude_teams",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="product_exclude_modules",
+                        to="legal.team",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="modules",
+                        to="product.product",
+                    ),
+                ),
+                (
+                    "teams",
+                    models.ManyToManyField(
+                        blank=True, related_name="product_modules", to="legal.team"
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('product', 'module')},
+                "unique_together": {("product", "module")},
             },
         ),
     ]

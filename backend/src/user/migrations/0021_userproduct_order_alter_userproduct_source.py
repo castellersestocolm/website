@@ -7,19 +7,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0028_orderdeliveryaddress_zone_and_more'),
-        ('user', '0020_userproduct'),
+        ("order", "0028_orderdeliveryaddress_zone_and_more"),
+        ("user", "0020_userproduct"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userproduct',
-            name='order',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='user_products', to='order.order'),
+            model_name="userproduct",
+            name="order",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="user_products",
+                to="order.order",
+            ),
         ),
         migrations.AlterField(
-            model_name='userproduct',
-            name='source',
-            field=models.PositiveSmallIntegerField(choices=[(10, 'OWNED'), (20, 'FROM_ORDER')]),
+            model_name="userproduct",
+            name="source",
+            field=models.PositiveSmallIntegerField(
+                choices=[(10, "OWNED"), (20, "FROM_ORDER")]
+            ),
         ),
     ]

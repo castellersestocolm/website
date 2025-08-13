@@ -68,6 +68,8 @@ class ProductImage(StandardModel, Timestamps):
 
     picture = VersatileImageField("Image", upload_to="product/image/picture/")
 
+    order = models.PositiveSmallIntegerField(default=0)
+
     def __str__(self) -> str:
         return f"{str(self.product)} <{self.picture.name}>"
 

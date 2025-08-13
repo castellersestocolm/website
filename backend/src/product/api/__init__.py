@@ -27,7 +27,7 @@ def get_list(module: Module, user_id: UUID | None = None) -> List[Product]:
                 .with_price(modules=modules)
                 .order_by("order", "category", "size"),
             ),
-            Prefetch("images", ProductImage.objects.all().order_by("created_at")),
+            Prefetch("images", ProductImage.objects.order_by("order")),
             "prices",
             "modules",
             "modules__teams",

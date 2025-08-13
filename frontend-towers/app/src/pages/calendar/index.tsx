@@ -22,7 +22,6 @@ import {
 import Box from "@mui/material/Box";
 import IconAttachFile from "@mui/icons-material/AttachFile";
 import {
-  EVENT_TYPE_ICON,
   EventType,
   REGISTRATION_STATUS_ICON,
   RegistrationStatus,
@@ -222,6 +221,7 @@ function CalendarPage() {
         >
           {events && events.count > 0 && (
             <>
+              aboutBylawsContainerBox
               <Grid container spacing={2} maxWidth="100%">
                 {events.results.map((event: any, i: number, row: any) => {
                   const castles = eventsCastles[event.id];

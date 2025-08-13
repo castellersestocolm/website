@@ -125,6 +125,12 @@ export default function NavBar() {
       ],
     },
     {
+      name: t("components.navbar-menu.press"),
+      path: ROUTES.press.path,
+      target: "_self",
+      permission: undefined,
+    },
+    {
       name: t("components.navbar-menu.admin"),
       path: ROUTES.admin.path,
       target: "_self",

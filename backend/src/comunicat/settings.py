@@ -60,6 +60,7 @@ if not DEBUG:
 
 # Timezone
 
+USE_I18N = True
 USE_TZ = True
 TIME_ZONE = os.getenv("TIME_ZONE", "Europe/Stockholm")
 
@@ -91,6 +92,7 @@ INSTALLED_APPS = [
     "event",
     "document",
     "legal",
+    "media",
     "notify",
     "pinyator",
 ]
@@ -204,27 +206,21 @@ LOGGING = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "sv_SE")
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en")
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 
 LANGUAGES = [
     (language.split(":")[0], _(language.split(":")[-1]))
     for language in filter(
-        None, os.getenv("LANGUAGES", "en-English,sv-Swedish,ca-Catalan").split(",")
+        None, os.getenv("LANGUAGES", "en:English,ca:Catalan").split(",")
     )
 ]
 LANGUAGES_FALLBACK = {
     language.split(":")[0]: language.split(":")[-1].split("-")
     for language in filter(
-        None, os.getenv("LANGUAGES_FALLBACK", "en:sv-ca,ca:en-sv,sv:en-ca").split(",")
+        None, os.getenv("LANGUAGES_FALLBACK", "en:ca,ca:en").split(",")
     )
 }
-
-TIME_ZONE = "Europe/Stockholm"
-
-USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -277,9 +273,6 @@ REST_FRAMEWORK = {
         "user.create": os.getenv("USER_CREATE_THROTTLE_RATE", "10/minute"),
         "user.partial_update": os.getenv(
             "USER_PARTIAL_UPDATE_THROTTLE_RATE", "10/minute"
-        ),
-        "user.request_password": os.getenv(
-            "USER_REQUEST_PASSWORD_THROTTLE_RATE", "5/minute"
         ),
         "user.request_password": os.getenv(
             "USER_REQUEST_PASSWORD_THROTTLE_RATE", "5/minute"
@@ -345,7 +338,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 MODULE_ORG_ENABLED = os.getenv("MODULE_ORG_ENABLED", "true").lower() == "true"
 MODULE_TOWERS_ENABLED = os.getenv("MODULE_TOWERS_ENABLED", "true").lower() == "true"
 
-MODULE_DEFAULT = os.getenv("MODULE_DEFAULT", Module.ORG)
+MODULE_DEFAULT = Module(os.getenv("MODULE_DEFAULT", Module.ORG.value))
 
 MODULE_ALL_USER_FIELDS = list(
     filter(None, os.getenv("MODULE_ALL_USER_FIELDS", "").split(","))
@@ -376,7 +369,7 @@ MODULE_ALL_CURRENCY = os.getenv("MODULE_ALL_CURRENCY", "SEK")
 MODULE_ALL_CURRENCIES = list(
     filter(None, os.getenv("MODULE_ALL_CURRENCIES", MODULE_ALL_CURRENCY).split(","))
 )
-MODULE_ALL_CURRENCY_LOCALE = os.getenv("MODULE_ALL_CURRENCY_LOCALE", "sv_SE")
+MODULE_ALL_CURRENCY_LOCALE = os.getenv("MODULE_ALL_CURRENCY_LOCALE", "en")
 MODULE_ALL_VAT = os.getenv("MODULE_ALL_VAT", 0)
 MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES = [
     Module[module.upper()]
@@ -415,6 +408,7 @@ MODULE_ORG_MEMBERSHIP_CONFIG = [
     config.split("-")
     for config in filter(None, os.getenv("MODULE_ORG_MEMBERSHIP_CONFIG", "").split(","))
 ]
+# TODO: Missing live?
 MODULE_ORG_MEMBERSHIP_ACCOUNT_CONFIG = [
     config.split("-")
     for config in filter(
@@ -541,6 +535,7 @@ SLACK_TOWERS_CHANNEL_ORDERS = os.getenv("SLACK_TOWERS_CHANNEL_ORDERS", "C097RN4E
 CURRENCIES = MODULE_ALL_CURRENCIES
 # Free plan offers 100 calls/month
 EXCHANGE_BACKEND = "djmoney.contrib.exchange.backends.FixerBackend"
+# TODO: Fix this live too and change key
 FIXER_ACCESS_KEY = os.getenv("FIXER_ACCESS_KEY", "902acae40806d5ec2d280f919d3265ed")
 # MONEY_FORMAT = {"locale": MODULE_ALL_CURRENCY_LOCALE}
 
@@ -563,6 +558,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
     "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", None
 )
+# TODO: Allow this to be an env
 SOCIAL_AUTH_ENABLED = False
 
 if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:
@@ -627,6 +623,7 @@ if not DEBUG and SENTRY_DSN:
             DjangoIntegration(transaction_style="function_name"),
             CeleryIntegration(),
         ],
+        # TODO: Fix this too
         environment="live",
         # release,
         traces_sample_rate=1.0,

@@ -26,11 +26,13 @@ function AboutBylawsPage() {
     <>
       {bylaws && (
         <Box className={styles.aboutBylawsContainerBox}>
-          <div
-            dangerouslySetInnerHTML={{
-              __html: markdown(bylaws.content).toString(),
-            }}
-          ></div>
+          <Typography variant="body1" component="div">
+            <div
+              dangerouslySetInnerHTML={{
+                __html: markdown(bylaws.content).toString(),
+              }}
+            ></div>
+          </Typography>
           <Typography
             variant="h6"
             fontWeight="700"

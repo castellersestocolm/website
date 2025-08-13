@@ -3,6 +3,7 @@ export const API_PAYMENTS_LIST_PAGE_SIZE = 5;
 export const API_EXPENSES_LIST_PAGE_SIZE = 5;
 export const API_ORDERS_LIST_PAGE_SIZE = 5;
 export const API_PRODUCTS_LIST_PAGE_SIZE = 10;
+export const API_MEDIA_PRESS_LIST_PAGE_SIZE = 10;
 
 export const API_ADMIN_USER_LIST_PAGE_SIZE = 5;
 

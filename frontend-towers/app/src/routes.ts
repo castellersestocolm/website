@@ -62,6 +62,12 @@ export const ROUTES = {
   "order-receipt": {
     path: "/order/receipt/:id",
   },
+  press: {
+    path: "/press",
+  },
+  "press-release": {
+    path: "/press/release/:slug",
+  },
   admin: {
     path: "/admin",
   },

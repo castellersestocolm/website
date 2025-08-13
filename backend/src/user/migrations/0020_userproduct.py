@@ -9,23 +9,51 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0012_productmodule_is_required'),
-        ('user', '0019_remove_googlegroupmodule_delete_on_expire_and_more'),
+        ("product", "0012_productmodule_is_required"),
+        ("user", "0019_remove_googlegroupmodule_delete_on_expire_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UserProduct',
+            name="UserProduct",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('source', models.PositiveSmallIntegerField(choices=[(10, 'OWNED')])),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_products', to='product.product')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='products', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("source", models.PositiveSmallIntegerField(choices=[(10, "OWNED")])),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_products",
+                        to="product.product",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="products",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

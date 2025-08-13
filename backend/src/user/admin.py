@@ -47,6 +47,7 @@ class UserEmailInline(admin.TabularInline):
 class UserProductInline(admin.TabularInline):
     model = UserProduct
     extra = 0
+    raw_id_fields = ("order",)
 
 
 @admin.action(description="Send event sign-up email")

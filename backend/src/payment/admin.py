@@ -395,6 +395,10 @@ class ReceiptInline(admin.TabularInline):
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
     extra = 0
+    raw_id_fields = (
+        "entity",
+        "expense",
+    )
 
 
 class ExpenseLogInline(admin.TabularInline):
