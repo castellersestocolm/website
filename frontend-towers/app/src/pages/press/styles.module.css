@@ -19,6 +19,12 @@
 }
 
 .pressCardImage {
+  background-color: var(--mui-palette-grey-100);
+}
+
+.pressCardImageBox {
+  width: 100%;
+  padding-bottom: 100%;
   background-size: cover;
   background-position: center;
 }
@@ -29,4 +35,8 @@
 
 .pressCardTitle {
   line-height: 1.25 !important;
+
+  p {
+    margin: 0 !important;
+  }
 }

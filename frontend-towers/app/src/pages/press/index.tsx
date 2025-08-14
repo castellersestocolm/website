@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid";
 import { capitalizeFirstLetter } from "../../utils/string";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
+import Box from "@mui/material/Box";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -68,24 +69,29 @@ function PressPage() {
                       onClick={() => handlePressReleaseClick(release.slug)}
                     >
                       <Grid container spacing={1}>
-                        <Grid
-                          size={3}
-                          className={styles.pressCardImage}
-                          style={{
-                            backgroundImage:
-                              "url(" +
-                              BACKEND_BASE_URL +
-                              release.images[0].picture +
-                              ")",
-                          }}
-                        ></Grid>
+                        <Grid size={3} className={styles.pressCardImage}>
+                          <Box
+                            style={{
+                              backgroundImage:
+                                "url(" +
+                                BACKEND_BASE_URL +
+                                release.images[0].picture +
+                                ")",
+                            }}
+                            className={styles.pressCardImageBox}
+                          ></Box>
+                        </Grid>
                         <Grid size={9} className={styles.pressCardText}>
                           <Typography
                             variant="h6"
                             fontWeight={700}
                             className={styles.pressCardTitle}
                           >
-                            {release.title}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: markdown(release.title).toString(),
+                              }}
+                            ></div>
                           </Typography>
                           {release.subtitle && (
                             <Typography
@@ -95,14 +101,28 @@ function PressPage() {
                               color="textSecondary"
                               className={styles.pressCardTitle}
                             >
-                              {release.subtitle}
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: markdown(release.subtitle).toString(),
+                                }}
+                              ></div>
                             </Typography>
                           )}
                           <Typography variant="body1" component="div">
                             <div
                               dangerouslySetInnerHTML={{
                                 __html: markdown(
-                                  release.content.slice(0, 250).trim() + "...",
+                                  // Should remove non alphanumerical characters from the end perhaps
+                                  release.content
+                                    .replace("\n", " ")
+                                    .replace("\n\n", " ")
+                                    .replace("  ", " ")
+                                    .slice(0, release.subtitle ? 150 : 250)
+                                    .trim(".")
+                                    .trim(",")
+                                    .trim(":")
+                                    .trim(";")
+                                    .trim() + "...",
                                 ).toString(),
                               }}
                             ></div>

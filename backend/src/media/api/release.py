@@ -16,7 +16,7 @@ def get_list(module: Module, slug: str | None = None) -> List[Release]:
     return list(
         Release.objects.filter(
             release_filter,
-            # module=module,
+            module=module,
             date__lte=timezone.now(),
         )
         .prefetch_related(

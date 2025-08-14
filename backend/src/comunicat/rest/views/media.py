@@ -46,7 +46,7 @@ class ReleaseAPI(
     @swagger_auto_schema(
         responses={200: ReleaseSerializer(), 404: Serializer()},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def retrieve(self, request, slug):
         release_obj = media.api.release.get(
             slug=slug,

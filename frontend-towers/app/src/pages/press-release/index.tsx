@@ -38,7 +38,11 @@ function PressReleasePage() {
               mb={3}
               textAlign="center"
             >
-              {release.subtitle}
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: markdown(release.subtitle).toString(),
+                }}
+              ></div>
             </Typography>
           )}
 
