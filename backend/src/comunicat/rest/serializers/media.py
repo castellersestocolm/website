@@ -11,10 +11,12 @@ class ReleaseImageSerializer(s.ModelSerializer):
         fields = (
             "id",
             "picture",
+            "footnote",
         )
         read_only_fields = (
             "id",
             "picture",
+            "footnote",
         )
 
 

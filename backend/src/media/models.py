@@ -9,7 +9,6 @@ from versatileimagefield.fields import VersatileImageField
 from comunicat.db.mixins import Timestamps, StandardModel
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
-from notify.enums import EmailType, MessageSlackType
 
 
 class Release(StandardModel, Timestamps):
@@ -50,6 +49,7 @@ class ReleaseImage(StandardModel, Timestamps):
     )
 
     picture = VersatileImageField("Image", upload_to="media/release/image/picture/")
+    footnote = models.CharField(blank=True, null=True, max_length=255)
 
     order = models.PositiveSmallIntegerField(default=0)
 

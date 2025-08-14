@@ -34,4 +34,18 @@
   padding-bottom: 100%;
   background-size: cover;
   background-position: center;
+  position: relative;
+}
+
+.pressReleaseFootnote {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--mui-palette-grey-100);
+  border-left: var(--mui-palette-divider) solid 1px;
+  border-right: var(--mui-palette-divider) solid 1px;
+  border-bottom: var(--mui-palette-divider) solid 1px;
+  border-radius: 0 0 4px 4px;
+  padding: 4px 8px;
 }

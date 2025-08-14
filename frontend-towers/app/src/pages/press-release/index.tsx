@@ -75,7 +75,7 @@ function PressReleasePage() {
                   <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <Link href={BACKEND_BASE_URL + releaseImage.picture}>
                       <Card
-                        variant="outlined"
+                        elevation={0}
                         style={{
                           backgroundImage:
                             "url(" +
@@ -84,7 +84,15 @@ function PressReleasePage() {
                             ")",
                         }}
                         className={styles.pressReleaseCard}
-                      ></Card>
+                      >
+                        {releaseImage.footnote && (
+                          <Box className={styles.pressReleaseFootnote}>
+                            <Typography variant="body2">
+                              {releaseImage.footnote}
+                            </Typography>
+                          </Box>
+                        )}
+                      </Card>
                     </Link>
                   </Grid>
                 );
