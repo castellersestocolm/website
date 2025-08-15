@@ -221,7 +221,6 @@ function CalendarPage() {
         >
           {events && events.count > 0 && (
             <>
-              aboutBylawsContainerBox
               <Grid container spacing={2} maxWidth="100%">
                 {events.results.map((event: any, i: number, row: any) => {
                   const castles = eventsCastles[event.id];
