@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
@@ -29,11 +31,12 @@ class ReleaseAPI(
     @swagger_auto_schema(
         responses={200: ReleaseSerializer(many=True)},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def list(self, request):
         release_objs = media.api.release.get_list(
             module=self.module,
-            only_published=request.user.permission_level
+            only_published=not request.user.is_authenticated
+            or request.user.permission_level
             < PERMISSIONS_BY_LEVEL["media"]["release"]["list"],
         )
 
@@ -47,12 +50,13 @@ class ReleaseAPI(
     @swagger_auto_schema(
         responses={200: ReleaseSerializer(), 404: Serializer()},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def retrieve(self, request, slug):
         release_obj = media.api.release.get(
             slug=slug,
             module=self.module,
-            only_published=request.user.permission_level
+            only_published=not request.user.is_authenticated
+            or request.user.permission_level
             < PERMISSIONS_BY_LEVEL["media"]["release"]["retrieve"],
         )
 
