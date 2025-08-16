@@ -189,6 +189,10 @@ const App = () => {
                     path={ROUTES["press-release"].path}
                     element={<PressReleasePage />}
                   />
+                  <Route
+                    path={ROUTES["press-release-no-date"].path}
+                    element={<PressReleasePage />}
+                  />
                   <Route path={ROUTES.admin.path} element={<AdminPage />} />
                   <Route
                     path={ROUTES["admin-attendance"].path}

@@ -87,7 +87,7 @@ function PressReleasePage() {
                       >
                         {releaseImage.footnote && (
                           <Box className={styles.pressReleaseFootnote}>
-                            <Typography variant="body2">
+                            <Typography variant="caption">
                               {releaseImage.footnote}
                             </Typography>
                           </Box>

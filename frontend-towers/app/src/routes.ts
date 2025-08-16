@@ -66,6 +66,10 @@ export const ROUTES = {
     path: "/press",
   },
   "press-release": {
+    path: "/press/release/:year/:month/:day/:slug",
+  },
+  // Kept for compatibility
+  "press-release-no-date": {
     path: "/press/release/:slug",
   },
   admin: {

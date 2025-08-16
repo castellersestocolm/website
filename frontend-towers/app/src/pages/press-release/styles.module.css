@@ -47,5 +47,5 @@
   border-right: var(--mui-palette-divider) solid 1px;
   border-bottom: var(--mui-palette-divider) solid 1px;
   border-radius: 0 0 4px 4px;
-  padding: 4px 8px;
+  padding: 0 8px 4px 8px;
 }

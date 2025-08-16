@@ -48,6 +48,12 @@ PERMISSIONS_BY_LEVEL = {
             "list": PermissionLevel.ADMIN,
         }
     },
+    "media": {
+        "release": {
+            "list": PermissionLevel.ADMIN,
+            "retrieve": PermissionLevel.ADMIN,
+        }
+    },
 }
 
 

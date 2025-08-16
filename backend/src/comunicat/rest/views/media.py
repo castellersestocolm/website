@@ -1,11 +1,10 @@
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
+from comunicat.consts import PERMISSIONS_BY_LEVEL
 from comunicat.rest.serializers.media import ReleaseSerializer
 
 from comunicat.rest.viewsets import ComuniCatViewSet
@@ -30,10 +29,12 @@ class ReleaseAPI(
     @swagger_auto_schema(
         responses={200: ReleaseSerializer(many=True)},
     )
-    @method_decorator(cache_page(60))
+    # @method_decorator(cache_page(60))
     def list(self, request):
         release_objs = media.api.release.get_list(
             module=self.module,
+            only_published=request.user.permission_level
+            < PERMISSIONS_BY_LEVEL["media"]["release"]["list"],
         )
 
         paginator = self.pagination_class()
@@ -46,11 +47,13 @@ class ReleaseAPI(
     @swagger_auto_schema(
         responses={200: ReleaseSerializer(), 404: Serializer()},
     )
-    @method_decorator(cache_page(60))
+    # @method_decorator(cache_page(60))
     def retrieve(self, request, slug):
         release_obj = media.api.release.get(
             slug=slug,
             module=self.module,
+            only_published=request.user.permission_level
+            < PERMISSIONS_BY_LEVEL["media"]["release"]["retrieve"],
         )
 
         if not release_obj:

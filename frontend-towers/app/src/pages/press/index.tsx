@@ -31,8 +31,20 @@ function PressPage() {
     });
   }, [setReleases, pressPage, i18n.resolvedLanguage]);
 
-  function handlePressReleaseClick(slug: string) {
-    navigate(ROUTES["press-release"].path.replace(":slug", slug));
+  function handlePressReleaseClick(
+    year: string,
+    month: string,
+    day: string,
+    slug: string,
+  ) {
+    console.log(year, month, day, slug);
+    navigate(
+      ROUTES["press-release"].path
+        .replace(":year", year)
+        .replace(":month", month)
+        .replace(":day", day)
+        .replace(":slug", slug),
+    );
   }
 
   const content = (
@@ -52,24 +64,35 @@ function PressPage() {
         display="flex"
         alignItems="stretch"
       >
-        <Grid
-          container
-          size={{ xs: 12, md: 10, lg: 8 }}
-          spacing={4}
-          direction="column"
-        >
-          {releases && releases.results.length > 0 && (
-            <>
-              <Grid>
-                {releases.results.map((release: any) => {
-                  return (
-                    <Card
-                      variant="outlined"
-                      className={styles.pressCard}
-                      onClick={() => handlePressReleaseClick(release.slug)}
-                    >
-                      <Grid container spacing={1}>
-                        <Grid size={3} className={styles.pressCardImage}>
+        {releases && releases.results.length > 0 && (
+          <>
+            <Grid
+              container
+              size={{ xs: 12, md: 10, lg: 8 }}
+              spacing={3}
+              direction="column"
+            >
+              {releases.results.map((release: any) => {
+                return (
+                  <Card
+                    variant="outlined"
+                    className={
+                      new Date(release.date) >= new Date()
+                        ? styles.pressCardUnpublished
+                        : styles.pressCard
+                    }
+                    onClick={() =>
+                      handlePressReleaseClick(
+                        release.date.slice(0, 4),
+                        release.date.slice(5, 7),
+                        release.date.slice(8, 10),
+                        release.slug,
+                      )
+                    }
+                  >
+                    <Grid container spacing={1}>
+                      <Grid size={3} className={styles.pressCardImage}>
+                        {release.images && release.images.length > 0 && (
                           <Box
                             style={{
                               backgroundImage:
@@ -80,90 +103,89 @@ function PressPage() {
                             }}
                             className={styles.pressCardImageBox}
                           ></Box>
-                        </Grid>
-                        <Grid size={9} className={styles.pressCardText}>
+                        )}
+                      </Grid>
+                      <Grid size={9} className={styles.pressCardText}>
+                        <Typography
+                          variant="h6"
+                          fontWeight={700}
+                          className={styles.pressCardTitle}
+                        >
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: markdown(release.title).toString(),
+                            }}
+                          ></div>
+                        </Typography>
+                        {release.subtitle && (
                           <Typography
                             variant="h6"
-                            fontWeight={700}
+                            fontWeight={500}
+                            mt={1}
+                            color="textSecondary"
                             className={styles.pressCardTitle}
                           >
                             <div
                               dangerouslySetInnerHTML={{
-                                __html: markdown(release.title).toString(),
+                                __html: markdown(release.subtitle).toString(),
                               }}
                             ></div>
                           </Typography>
-                          {release.subtitle && (
-                            <Typography
-                              variant="h6"
-                              fontWeight={500}
-                              mt={1}
-                              color="textSecondary"
-                              className={styles.pressCardTitle}
-                            >
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: markdown(release.subtitle).toString(),
-                                }}
-                              ></div>
-                            </Typography>
+                        )}
+                        <Typography variant="body1" component="div">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: markdown(
+                                // Should remove non alphanumerical characters from the end perhaps
+                                release.content
+                                  .replace("\n", " ")
+                                  .replace("\n\n", " ")
+                                  .replace("  ", " ")
+                                  .slice(0, release.subtitle ? 150 : 250)
+                                  .trim(".")
+                                  .trim(",")
+                                  .trim(":")
+                                  .trim(";")
+                                  .trim() + "...",
+                              ).toString(),
+                            }}
+                          ></div>
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          fontWeight={700}
+                          mt={1}
+                          color="textSecondary"
+                        >
+                          {capitalizeFirstLetter(
+                            new Date(release.date).toLocaleDateString(
+                              i18n.resolvedLanguage,
+                              {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              },
+                            ),
                           )}
-                          <Typography variant="body1" component="div">
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: markdown(
-                                  // Should remove non alphanumerical characters from the end perhaps
-                                  release.content
-                                    .replace("\n", " ")
-                                    .replace("\n\n", " ")
-                                    .replace("  ", " ")
-                                    .slice(0, release.subtitle ? 150 : 250)
-                                    .trim(".")
-                                    .trim(",")
-                                    .trim(":")
-                                    .trim(";")
-                                    .trim() + "...",
-                                ).toString(),
-                              }}
-                            ></div>
-                          </Typography>
-                          <Typography
-                            variant="body1"
-                            fontWeight={700}
-                            mt={1}
-                            color="textSecondary"
-                          >
-                            {capitalizeFirstLetter(
-                              new Date(release.date).toLocaleDateString(
-                                i18n.resolvedLanguage,
-                                {
-                                  day: "numeric",
-                                  month: "long",
-                                  year: "numeric",
-                                },
-                              ),
-                            )}
-                          </Typography>
-                        </Grid>
+                        </Typography>
                       </Grid>
-                    </Card>
-                  );
-                })}
-              </Grid>
-              {(pressPage !== 1 ||
-                releases.count > releases.results.length) && (
-                <Stack alignItems="center">
-                  <Pagination
-                    count={Math.ceil(
-                      releases.count / API_MEDIA_PRESS_LIST_PAGE_SIZE,
-                    )}
-                    onChange={(e: any, value: number) => setPressPage(value)}
-                  />
-                </Stack>
-              )}
-            </>
-          )}
-        </Grid>
+                    </Grid>
+                  </Card>
+                );
+              })}
+            </Grid>
+            {(pressPage !== 1 || releases.count > releases.results.length) && (
+              <Stack alignItems="center">
+                <Pagination
+                  count={Math.ceil(
+                    releases.count / API_MEDIA_PRESS_LIST_PAGE_SIZE,
+                  )}
+                  onChange={(e: any, value: number) => setPressPage(value)}
+                />
+              </Stack>
+            )}
+          </>
+        )}
       </Grid>
     </>
   );
