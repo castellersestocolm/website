@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import ImageHero from "../../assets/images/hero.jpg";
-import ImageJoin from "../../assets/images/join2.jpg";
+import ImageJoin from "../../assets/images/join3.jpg";
 import styles from "./styles.module.css";
 import {
   Button,
@@ -52,11 +52,8 @@ import { EventType, TRANSPORT_MODE_ICON } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
-import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import Hero from "../../components/Hero/Hero";
-import ImageHeroTrips2025Berlin from "../../assets/images/heros/trips-2025-berlin.jpg";
-import ImageHeroCalendar20250715KulturfestivalenPerformance from "../../assets/images/heros/calendar-2025-08-15-kulturfestivalen-performance.jpg";
-import HeroKulturfestivalen from "../../components/HeroKulturfestivalen/HeroKulturfestivalen";
+import ImageHeroCalendarDiada from "../../assets/images/heros/calendar-2025-09-07-diada-performance.jpg";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -155,11 +152,9 @@ function HomePage() {
           </Box>
         </Box>
       </Box>
-      <HeroKulturfestivalen
-        title={t(
-          "pages.calendar-2025-08-15-kulturfestivalen-performance.title",
-        )}
-        hero={ImageHeroCalendar20250715KulturfestivalenPerformance}
+      <Hero
+        title={t("pages.calendar-2025-09-07-diada-performance.title")}
+        hero={ImageHeroCalendarDiada}
         content={
           <Box>
             <Typography
@@ -167,76 +162,22 @@ function HomePage() {
               className={styles.heroSectionSubtitle}
               marginTop="12px"
             >
-              {t("pages.home-kulturfestivalen.description")}
+              {t("pages.home-311-diada.description")}
             </Typography>
             <Grid size={12} marginTop="24px">
               <Stack direction="row" spacing={2} className={styles.joinButtons}>
                 <Button
                   variant="contained"
-                  href={
-                    ROUTES[
-                      "external-calendar-2025-07-17-kulturfestivalen-performance"
-                    ].path
-                  }
-                  target={"_blank"}
+                  href={ROUTES.calendar.path}
                   disableElevation
                 >
-                  {t("pages.home-kulturfestivalen.button-page")}
-                  <IconArrowOutward className={styles.externalIcon} />
+                  {t("pages.calendar.title")}
                 </Button>
               </Stack>
             </Grid>
           </Box>
         }
       />
-      {false && (
-        <Hero
-          title={t("pages.trips-2025-berlin.title")}
-          hero={ImageHeroTrips2025Berlin}
-          content={
-            <Box>
-              <Typography
-                variant="h4"
-                className={styles.heroSectionSubtitle}
-                marginTop="12px"
-              >
-                {t("pages.home-berlin.description")}
-              </Typography>
-              <Grid size={12} marginTop="24px">
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  className={styles.joinButtons}
-                >
-                  <Button
-                    variant="contained"
-                    href={ROUTES["trips-2025-berlin"].path + "#gallery"}
-                    disableElevation
-                  >
-                    {t("pages.home-berlin.button-page")}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    href={ROUTES["trips-2025-berlin"].path + "#donations"}
-                    disableElevation
-                  >
-                    {t("pages.home-berlin.button-donations")}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    href={ROUTES["external-berlin-diada-2025"].path}
-                    target={"_blank"}
-                    disableElevation
-                  >
-                    {t("pages.home-berlin.button-diada")}
-                    <IconArrowOutward className={styles.externalIcon} />
-                  </Button>
-                </Stack>
-              </Grid>
-            </Box>
-          }
-        />
-      )}
       <Box component="section" className={styles.rehearsals}>
         <Container maxWidth="lg">
           <Typography
