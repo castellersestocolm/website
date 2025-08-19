@@ -19,6 +19,23 @@ from django.utils.translation import gettext_lazy as _
 from user.utils import is_over_minimum_age
 
 
+class UserSuperSlimSerializer(s.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "can_manage",
+        )
+        read_only_fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "can_manage",
+        )
+
+
 class TowersUserSerializer(s.ModelSerializer):
     class Meta:
         model = TowersUser
@@ -26,7 +43,7 @@ class TowersUserSerializer(s.ModelSerializer):
         read_only_fields = ("id", "alias", "height_shoulders", "height_arms")
 
 
-class UserExtraSlimSerializer(s.ModelSerializer):
+class UserExtraSlimSerializer(UserSuperSlimSerializer):
     towers = TowersUserSerializer(read_only=True)
     members = MemberWithTeamSerializer(many=True, read_only=True)
 

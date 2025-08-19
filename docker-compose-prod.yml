@@ -31,8 +31,8 @@ services:
     stdin_open: true
     tty: true
     restart: on-failure
-    entrypoint: ["wait-for-it", "database:5432", "--", "python", "manage.py"]
-    command: ["runserver", "0.0.0.0:8000"]
+    entrypoint: ["wait-for-it", "database:5432", "--", "gunicorn"]
+    command: ["--bind", "0.0.0.0:8000", "--workers", "2", "comunicat.wsgi:application"]
     networks:
       - comunicat
     volumes:

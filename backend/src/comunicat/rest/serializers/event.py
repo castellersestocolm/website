@@ -3,7 +3,7 @@ from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from comunicat.rest.serializers.legal import TeamSerializer
-from comunicat.rest.serializers.user import UserExtraSlimSerializer
+from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField
 from event.enums import RegistrationStatus
 from event.models import (
@@ -68,7 +68,7 @@ class LocationSerializer(s.ModelSerializer):
 
 
 class RegistrationSlimSerializer(s.ModelSerializer):
-    user = UserExtraSlimSerializer(read_only=True)
+    user = UserSuperSlimSerializer(read_only=True)
 
     class Meta:
         model = Registration
@@ -249,7 +249,7 @@ class CreateRegistrationSerializer(s.Serializer):
 
 class RegistrationSerializer(RegistrationSlimSerializer):
     event = EventSerializer(read_only=True)
-    user = UserExtraSlimSerializer(read_only=True)
+    user = UserSuperSlimSerializer(read_only=True)
 
     class Meta:
         model = Registration
