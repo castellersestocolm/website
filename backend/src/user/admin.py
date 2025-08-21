@@ -250,7 +250,7 @@ class UserAdmin(admin.ModelAdmin):
             .get_queryset(request)
             .with_has_active_membership()
             .with_family_name()
-            .select_related("towers")
+            .select_related("towers", "family_member", "family_member__family")
         )
 
     def get_fieldsets(self, request, obj=None):

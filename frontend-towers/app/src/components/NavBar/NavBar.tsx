@@ -89,12 +89,6 @@ export default function NavBar() {
       permission: undefined,
     },
     {
-      name: t("components.navbar-menu.resources"),
-      path: ROUTES.resources.path,
-      target: "_self",
-      permission: undefined,
-    },
-    {
       name: t("components.navbar-menu.trips"),
       children: [
         {

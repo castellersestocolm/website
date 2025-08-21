@@ -35,12 +35,6 @@ export default function Footer() {
       path: ROUTES["user-join"].path,
       target: "_self",
     },
-    // TODO: Temporary until we start accepting sign-ups
-    // !user && {
-    //   name: t("components.navbar-menu.membership"),
-    //   path: ROUTES["user-join"].path,
-    //   target: "_self",
-    // },
     {
       name: user
         ? t("components.navbar-menu.equipmment")
@@ -49,13 +43,8 @@ export default function Footer() {
       target: "_self",
     },
     {
-      name: t("components.navbar-menu.resources"),
-      path: ROUTES.resources.path,
-      target: "_self",
-    },
-    {
-      name: t("components.navbar-menu.trips.2025.berlin"),
-      path: ROUTES["trips-2025-berlin"].path,
+      name: t("components.navbar-menu.press"),
+      path: ROUTES.press.path,
       target: "_self",
     },
   ];

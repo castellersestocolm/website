@@ -80,6 +80,18 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = (OrderProductInline, OrderLogInline)
     actions = (send_created_email,)
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "delivery",
+                "delivery__provider",
+                "payment_order",
+                "payment_order__provider",
+            )
+        )
+
     def delivery_type(self, obj):
         return (
             OrderDeliveryType(obj.delivery.provider.type).name if obj.delivery else "-"

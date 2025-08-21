@@ -69,7 +69,7 @@ def get_list(
                 (
                     Registration.objects.filter(
                         user_id__in=family_user_ids,
-                    )
+                    ).select_related("user")
                     if request_user_id
                     else Registration.objects.none()
                 ),
