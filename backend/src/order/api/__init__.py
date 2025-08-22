@@ -149,7 +149,7 @@ def create(
                     "firstname": user_obj.firstname,
                     "lastname": user_obj.lastname,
                     "phone": user_obj.phone,
-                    "user_id": user_obj.user_id,
+                    "user_id": user_obj.id,
                 },
             )
     else:
