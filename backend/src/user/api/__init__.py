@@ -356,7 +356,9 @@ def update(
                         user_obj.towers.alias
                         if hasattr(user_obj, "towers") and user_obj.towers.alias
                         else generate_alias(
-                            user_id=user_obj.id, firstname=firstname, lastname=lastname
+                            user_id=user_obj.id,
+                            firstname=firstname or user_obj.firstname,
+                            lastname=lastname or user_obj.lastname,
                         )
                     ),
                 ),
