@@ -23,6 +23,7 @@ def user_picture_filename(instance, filename):
     return f"user/picture/{instance.id}{ext}"
 
 
+# TODO: Add consent tracking
 class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
     email = models.EmailField(unique=True)
     firstname = models.CharField(max_length=255, null=True, blank=True)

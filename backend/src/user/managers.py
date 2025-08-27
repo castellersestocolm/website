@@ -103,11 +103,9 @@ class UserQuerySet(QuerySet):
                         then=Subquery(
                             MembershipModule.objects.filter(
                                 module_filter,
-                                Q(
-                                    membership__date_end__isnull=True,
-                                    membership__date_to__lt=date,
-                                )
-                                | Q(membership__date_end__lt=date),
+                                # Doesn't have date end set
+                                membership__date_end__isnull=True,
+                                membership__date_to__lt=date,
                                 status__in=status,
                                 membership__status__in=status,
                                 membership__membership_users__user_id=OuterRef("id"),
