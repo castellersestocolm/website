@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 
 class FamilyMemberRole(IntEnum):
@@ -22,3 +22,9 @@ class FamilyMemberRequestStatus(IntEnum):
 class UserProductSource(IntEnum):
     OWNED = 10
     FROM_ORDER = 20
+
+
+class GoogleGroupUserRole(Enum):
+    OWNER = "OWNER"
+    MANAGER = "MANAGER"
+    MEMBER = "MEMBER"

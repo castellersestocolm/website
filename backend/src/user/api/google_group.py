@@ -4,6 +4,7 @@ from googleapiclient.errors import HttpError
 
 from comunicat.consts import DOMAIN_BY_MODULE
 from user.consts import GOOGLE_GROUP_SCOPES
+from user.enums import GoogleGroupUserRole
 from user.models import GoogleGroup, GoogleGroupUser
 
 import user.api
@@ -28,6 +29,7 @@ def sync_users() -> None:
         service = build("admin", "directory_v1", credentials=creds)
 
         user_emails = set()
+        domain_emails = set()
         google_group_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
             for google_group_user_obj in google_group_obj.users.all()
@@ -65,26 +67,26 @@ def sync_users() -> None:
 
             email_domain = f"@{DOMAIN_BY_MODULE[google_group_module_obj.module]}"
             if google_group_module_obj.require_module_domain:
-                user_emails = user_emails.union(
-                    {
-                        email
-                        for user_obj in user_objs
-                        if user_obj.can_manage
-                        for email in [
-                            tmp_email
-                            for tmp_email in [user_obj.email]
-                            + (
-                                [
-                                    user_email_obj.email
-                                    for user_email_obj in user_obj.emails.all()
-                                ]
-                                if hasattr(user_obj, "emails")
-                                else []
-                            )
-                            if tmp_email.endswith(email_domain)
-                        ][:1]
-                    }
-                )
+                user_domain_emails = {
+                    email
+                    for user_obj in user_objs
+                    if user_obj.can_manage
+                    for email in [
+                        tmp_email
+                        for tmp_email in [user_obj.email]
+                        + (
+                            [
+                                user_email_obj.email
+                                for user_email_obj in user_obj.emails.all()
+                            ]
+                            if hasattr(user_obj, "emails")
+                            else []
+                        )
+                        if tmp_email.endswith(email_domain)
+                    ][:1]
+                }
+                domain_emails = domain_emails.union(user_domain_emails)
+                user_emails = user_emails.union(user_domain_emails)
             else:
                 user_emails = user_emails.union(
                     {
@@ -152,13 +154,19 @@ def sync_users() -> None:
             try:
                 service.members().insert(
                     groupKey=google_group_obj.external_id,
-                    body={"email": create_email},
+                    body={
+                        "email": create_email,
+                        "role": (
+                            GoogleGroupUserRole.MANAGER.value
+                            if create_email in domain_emails
+                            else GoogleGroupUserRole.MEMBER.value
+                        ),
+                    },
                 ).execute()
             except HttpError as e:
                 _log.exception(e)
 
         for user_email in user_emails:
-            tmp = user_by_email[user_email]
             if user_email not in google_group_user_by_email:
                 user_obj = user_by_email[user_email]
                 google_group_user_creates.append(
