@@ -57,6 +57,7 @@ class UserQuerySet(QuerySet):
     def with_has_active_membership(
         self,
         with_pending: bool = False,
+        with_expired: bool = False,
         date: datetime.date | None = None,
         modules: list[Module] | None = None,
     ):
@@ -79,12 +80,18 @@ class UserQuerySet(QuerySet):
 
         date = date or timezone.localdate()
 
+        if with_expired:
+            date_filter = Q(membership__date_end__lt=date)
+        else:
+            date_filter = Q(membership__date_end__isnull=True) | Q(
+                membership__date_end__gte=date
+            )
+
         return self.annotate(
             membership_id=Subquery(
                 MembershipModule.objects.filter(
                     module_filter,
-                    Q(membership__date_end__isnull=True)
-                    | Q(membership__date_end__gte=date),
+                    date_filter,
                     status__in=status,
                     membership__status__in=status,
                     membership__date_from__lte=date,
@@ -240,11 +247,15 @@ class UserManager(BaseUserManager):
     def with_has_active_membership(
         self,
         with_pending: bool = False,
+        with_expired: bool = False,
         date: datetime.date | None = None,
         modules: list[Module] | None = None,
     ):
         return self.get_queryset().with_has_active_membership(
-            with_pending=with_pending, date=date, modules=modules
+            with_pending=with_pending,
+            with_expired=with_expired,
+            date=date,
+            modules=modules,
         )
 
     def with_has_active_role(

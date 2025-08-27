@@ -75,7 +75,7 @@ def get_list(
     team_ids: list[UUID] | None = None,
     team_types: list[TeamType] | None = None,
     with_pending_membership: bool = True,
-    with_active_membership: bool = True,
+    with_expired_membership: bool = False,
     with_orders: bool = False,
     with_teams: bool = False,
     with_products: bool = False,
@@ -112,8 +112,10 @@ def get_list(
 
     if modules:
         user_qs = user_qs.with_has_active_membership(
-            with_pending=with_pending_membership, modules=modules
-        ).filter(has_active_membership=with_active_membership)
+            with_pending=with_pending_membership,
+            with_expired=with_expired_membership,
+            modules=modules,
+        ).filter(has_active_membership=True)
 
     if team_ids:
         user_qs = user_qs.with_has_active_team(
