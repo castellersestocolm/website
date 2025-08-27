@@ -334,19 +334,19 @@ class GoogleGroupModuleInline(admin.TabularInline):
 
 class GoogleGroupUserInline(admin.TabularInline):
     model = GoogleGroupUser
-    # readonly_fields = ("user", "email")
+    readonly_fields = ("user", "email")
     extra = 0
 
     def has_add_permission(self, request, obj=None):
-        return True or False
+        return False
 
     def has_delete_permission(self, request, obj=None):
-        return True or False
+        return False
 
 
 @admin.action(description="Sync Google group users")
 def sync_google_group_users(modeladmin, request, queryset):
-    user.tasks.sync_users()
+    user.tasks.sync_users.delay()
 
 
 @admin.register(GoogleGroup)

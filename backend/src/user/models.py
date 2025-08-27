@@ -276,7 +276,10 @@ class GoogleGroupModule(StandardModel, Timestamps):
 
     require_module_domain = models.BooleanField(default=False)
     require_membership = models.BooleanField(default=True)
-    exclude_membership = models.BooleanField(default=False)
+    exclude_active = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{Module(self.module).name} - {str(self.group)}"
 
 
 class GoogleGroupUser(StandardModel, Timestamps):
@@ -289,6 +292,9 @@ class GoogleGroupUser(StandardModel, Timestamps):
     email = models.EmailField()
 
     force_member = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"{str(self.group)} <{self.email}>"
 
     class Meta:
         unique_together = ("group", "email")

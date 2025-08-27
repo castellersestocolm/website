@@ -47,7 +47,7 @@ def sync_users() -> None:
                 team_ids=team_ids,
                 modules=[google_group_module_obj.module],
                 with_pending_membership=not google_group_module_obj.require_membership,
-                with_active_membership=not google_group_module_obj.exclude_membership,
+                with_active_membership=not google_group_module_obj.exclude_active,
             )
 
             user_by_email = {
