@@ -19,6 +19,7 @@ from django.db.models import (
     ExpressionWrapper,
     BooleanField,
     F,
+    UUIDField,
 )
 from django.utils import timezone
 
@@ -81,26 +82,64 @@ class UserQuerySet(QuerySet):
         date = date or timezone.localdate()
 
         if with_expired:
-            date_filter = Q(membership__date_end__lt=date)
+            annotate_dict = {
+                "membership_current_id": Subquery(
+                    MembershipModule.objects.filter(
+                        module_filter,
+                        Q(membership__date_end__isnull=True)
+                        | Q(membership__date_end__gte=date),
+                        status__in=status,
+                        membership__status__in=status,
+                        membership__date_from__lte=date,
+                        membership__date_to__gte=date,
+                        membership__membership_users__user_id=OuterRef("id"),
+                    )
+                    .order_by("-membership__date_to")
+                    .values_list("membership_id", flat=True)[:1]
+                ),
+                "membership_id": Case(
+                    When(
+                        membership_current_id__isnull=True,
+                        then=Subquery(
+                            MembershipModule.objects.filter(
+                                module_filter,
+                                Q(
+                                    membership__date_end__isnull=True,
+                                    membership__date_to__lt=date,
+                                )
+                                | Q(membership__date_end__lt=date),
+                                status__in=status,
+                                membership__status__in=status,
+                                membership__membership_users__user_id=OuterRef("id"),
+                            )
+                            .order_by("-membership__date_to")
+                            .values_list("membership_id", flat=True)[:1]
+                        ),
+                    ),
+                    default=Value(None),
+                    output_field=UUIDField(),
+                ),
+            }
         else:
-            date_filter = Q(membership__date_end__isnull=True) | Q(
-                membership__date_end__gte=date
-            )
+            annotate_dict = {
+                "membership_id": Subquery(
+                    MembershipModule.objects.filter(
+                        module_filter,
+                        Q(membership__date_end__isnull=True)
+                        | Q(membership__date_end__gte=date),
+                        status__in=status,
+                        membership__status__in=status,
+                        membership__date_from__lte=date,
+                        membership__date_to__gte=date,
+                        membership__membership_users__user_id=OuterRef("id"),
+                    )
+                    .order_by("-membership__date_to")
+                    .values_list("membership_id", flat=True)[:1]
+                ),
+            }
 
         return self.annotate(
-            membership_id=Subquery(
-                MembershipModule.objects.filter(
-                    module_filter,
-                    date_filter,
-                    status__in=status,
-                    membership__status__in=status,
-                    membership__date_from__lte=date,
-                    membership__date_to__gte=date,
-                    membership__membership_users__user_id=OuterRef("id"),
-                )
-                .order_by("-membership__date_to")
-                .values_list("membership_id", flat=True)[:1]
-            ),
+            **annotate_dict,
             membership_status=Subquery(
                 Membership.objects.filter(
                     id=OuterRef("membership_id"),

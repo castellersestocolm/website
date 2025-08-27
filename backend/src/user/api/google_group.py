@@ -47,7 +47,7 @@ def sync_users() -> None:
                 team_ids=team_ids,
                 modules=[google_group_module_obj.module],
                 with_pending_membership=not google_group_module_obj.require_membership,
-                with_expired_membership=not google_group_module_obj.exclude_active,
+                with_expired_membership=google_group_module_obj.exclude_active,
             )
 
             user_by_email = {
@@ -158,6 +158,7 @@ def sync_users() -> None:
                 _log.exception(e)
 
         for user_email in user_emails:
+            tmp = user_by_email[user_email]
             if user_email not in google_group_user_by_email:
                 user_obj = user_by_email[user_email]
                 google_group_user_creates.append(
