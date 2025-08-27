@@ -6,6 +6,7 @@ from django.utils import translation
 from django.utils.safestring import mark_safe
 
 import event.tasks
+import user.tasks
 from membership.enums import MembershipStatus
 from notify.enums import EmailType
 from user.models import (
@@ -18,6 +19,7 @@ from user.models import (
     GoogleGroupModule,
     UserEmail,
     UserProduct,
+    GoogleGroupUser,
 )
 from django.conf import settings
 
@@ -330,8 +332,26 @@ class GoogleGroupModuleInline(admin.TabularInline):
     extra = 0
 
 
+class GoogleGroupUserInline(admin.TabularInline):
+    model = GoogleGroupUser
+    # readonly_fields = ("user", "email")
+    extra = 0
+
+    def has_add_permission(self, request, obj=None):
+        return True or False
+
+    def has_delete_permission(self, request, obj=None):
+        return True or False
+
+
+@admin.action(description="Sync Google group users")
+def sync_google_group_users(modeladmin, request, queryset):
+    user.tasks.sync_users()
+
+
 @admin.register(GoogleGroup)
 class GoogleGroupAdmin(admin.ModelAdmin):
     search_fields = ("name", "external_id")
     ordering = ("google_integration__module", "name", "external_id")
-    inlines = (GoogleGroupModuleInline,)
+    inlines = (GoogleGroupModuleInline, GoogleGroupUserInline)
+    actions = (sync_google_group_users,)

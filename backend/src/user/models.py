@@ -276,3 +276,19 @@ class GoogleGroupModule(StandardModel, Timestamps):
 
     require_module_domain = models.BooleanField(default=False)
     require_membership = models.BooleanField(default=True)
+    exclude_membership = models.BooleanField(default=False)
+
+
+class GoogleGroupUser(StandardModel, Timestamps):
+    group = models.ForeignKey(
+        GoogleGroup, related_name="users", on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        User, related_name="google_groups", on_delete=models.CASCADE
+    )
+    email = models.EmailField()
+
+    force_member = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ("group", "email")
