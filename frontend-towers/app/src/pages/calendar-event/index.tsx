@@ -176,6 +176,7 @@ function CalendarEventPage() {
                         event.location.coordinate_lat,
                         event.location.coordinate_lon,
                       ]}
+                      connections={event.location.connections}
                       zoom={16}
                     />
                   </CardContent>
