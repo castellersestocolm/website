@@ -14,6 +14,7 @@ import logging
 _log = logging.getLogger(__name__)
 
 
+# TODO: Missing update with role and store in model
 def sync_users() -> None:
     google_group_objs = list(
         GoogleGroup.objects.select_related("google_integration").prefetch_related(

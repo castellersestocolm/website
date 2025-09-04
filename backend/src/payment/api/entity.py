@@ -2,9 +2,12 @@ from uuid import UUID
 
 from django.db import transaction
 
-from payment.models import Entity
+from order.models import Order
+from payment.models import Entity, Payment
+from product.models import StockOrder
 
 
+# TODO: Detect if any model is using an entity that will be deleted before deleting it
 @transaction.atomic
 def merge(entity_ids: list[UUID]) -> Entity | None:
     entity_objs = list(Entity.objects.filter(id__in=entity_ids).order_by("created_at"))
@@ -14,7 +17,7 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
 
     entity_obj = entity_objs[0]
 
-    for duplicate_entity_obj in entity_objs:
+    for duplicate_entity_obj in entity_objs[1:]:
         entity_obj.firstname = entity_obj.firstname or duplicate_entity_obj.firstname
         entity_obj.lastname = entity_obj.lastname or duplicate_entity_obj.lastname
         entity_obj.email = entity_obj.email or duplicate_entity_obj.email
@@ -29,6 +32,22 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
         else:
             entity_obj.user = duplicate_entity_obj.user
 
+    # Update all payments to the remaining entity
+    Payment.objects.filter(entity_id__in=entity_ids).exclude(entity=entity_obj).update(
+        entity=entity_obj
+    )
+
+    # Update all stock orders to the remaining entity
+    StockOrder.objects.filter(entity_id__in=entity_ids).exclude(
+        entity=entity_obj
+    ).update(entity=entity_obj)
+
+    # Update all orders to the remaining entity
+    Order.objects.filter(entity_id__in=entity_ids).exclude(entity=entity_obj).update(
+        entity=entity_obj
+    )
+
+    # Delete old entities
     Entity.objects.filter(id__in=entity_ids).exclude(id=entity_obj.id).delete()
 
     entity_obj.save(update_fields=("firstname", "lastname", "email", "phone", "user"))
