@@ -1,6 +1,7 @@
 from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from comunicat.rest.serializers.legal import TeamSerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
@@ -87,6 +88,9 @@ class RegistrationSlimSerializer(s.ModelSerializer):
 
 
 class AgendaItemSerializer(s.ModelSerializer):
+    name = s.SerializerMethodField(read_only=True)
+    description = s.SerializerMethodField(read_only=True)
+
     class Meta:
         model = AgendaItem
         fields = (
@@ -103,6 +107,14 @@ class AgendaItemSerializer(s.ModelSerializer):
             "time_from",
             "time_to",
         )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_name(self, obj):
+        return obj.name.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
 
 
 class EventModuleSerializer(s.ModelSerializer):
@@ -128,11 +140,24 @@ class EventModuleSerializer(s.ModelSerializer):
 
 class EventSerializer(s.ModelSerializer):
     location = LocationSerializer(read_only=True)
+    description = s.SerializerMethodField(read_only=True)
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
     registrations = RegistrationSlimSerializer(many=True, read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
     agenda_items = AgendaItemSerializer(many=True, read_only=True)
+    poster = VersatileImageFieldSerializer(
+        allow_null=True,
+        sizes=[
+            ("large", "url"),
+            # TODO: Fix this
+            ("medium", "url"),
+            ("small", "url"),
+            # ("medium", "thumbnail__500x500"),
+            # ("small", "thumbnail__100x100")
+        ],
+        read_only=True,
+    )
 
     class Meta:
         model = Event
@@ -142,6 +167,7 @@ class EventSerializer(s.ModelSerializer):
             "time_from",
             "time_to",
             "location",
+            "description",
             "type",
             "module",
             "require_signup",
@@ -149,6 +175,7 @@ class EventSerializer(s.ModelSerializer):
             "registrations",
             "modules",
             "agenda_items",
+            "poster",
             "created_at",
         )
         read_only_fields = (
@@ -156,6 +183,8 @@ class EventSerializer(s.ModelSerializer):
             "title",
             "time_from",
             "time_to",
+            "location",
+            "description",
             "type",
             "module",
             "require_signup",
@@ -163,8 +192,13 @@ class EventSerializer(s.ModelSerializer):
             "registrations",
             "modules",
             "agenda_items",
+            "poster",
             "created_at",
         )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
 
 
 class RegistrationItemCountsSerializer(s.Serializer):
@@ -281,6 +315,11 @@ class ListEventSerializer(s.Serializer):
     date_to = s.DateField(required=False)
     with_counts = s.BooleanField(required=False)
     token = s.CharField(required=False)
+
+
+class PageEventSerializer(s.Serializer):
+    date = s.DateField()
+    code = s.CharField()
 
 
 class DestroyRegistrationSerializer(s.Serializer):

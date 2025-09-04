@@ -32,6 +32,9 @@ from django.conf import settings
 
 def get_list(
     module: Module,
+    event_ids: list[UUID] | None = None,
+    date: datetime.date | None = None,
+    code: str | None = None,
     request_user_id: UUID | None = None,
     date_from: datetime.date | None = None,
     date_to: datetime.date | None = None,
@@ -49,8 +52,21 @@ def get_list(
     else:
         family_user_ids = []
 
+    event_filter = Q()
+
+    if event_ids:
+        event_filter &= Q(id__in=event_ids)
+
+    if date:
+        # TODO: Check if this causes timezone issues
+        event_filter &= Q(time_from__date=date)
+
+    if code:
+        event_filter &= Q(code=code)
+
     event_qs = (
         Event.objects.filter(
+            event_filter,
             Q(module__isnull=True) | Q(module=module) | Q(modules__module=module),
             status=EventStatus.PUBLISHED,
         )
@@ -173,6 +189,23 @@ def get_list(
         )
 
     return list(event_qs)
+
+
+def get(
+    module: Module,
+    event_id: UUID | None = None,
+    date: datetime.date | None = None,
+    code: str | None = None,
+) -> Event | None:
+    return (
+        get_list(
+            event_ids=[event_id] if event_id else None,
+            date=date,
+            code=code,
+            module=module,
+        )
+        + [None]
+    )[0]
 
 
 def send_events_signup(

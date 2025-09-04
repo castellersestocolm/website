@@ -270,7 +270,11 @@ def create_or_update_event(
             "registrations",
             Prefetch(
                 "agenda_items",
-                (AgendaItem.objects.order_by("time_from")),
+                (
+                    AgendaItem.objects.with_name()
+                    .with_description()
+                    .order_by("time_from")
+                ),
             ),
         )
         .first()
@@ -407,7 +411,7 @@ def create_or_update_event(
                     },
                     "description": "\n\n".join(
                         [
-                            f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name}</b>\n{agenda_item_obj.description}"
+                            f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}</b>\n{agenda_item_obj.description_locale}"
                             for agenda_item_obj in event_obj.agenda_items.all()
                         ]
                     ),

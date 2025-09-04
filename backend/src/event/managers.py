@@ -10,9 +10,10 @@ from django.db.models import (
     BooleanField,
     Case,
     When,
+    F,
 )
 from django.db.models.functions import Coalesce
-from django.utils import timezone
+from django.utils import timezone, translation
 
 from comunicat.enums import Module
 
@@ -42,6 +43,29 @@ class EventQuerySet(QuerySet):
                 Value(False),
                 output_field=BooleanField(),
             ),
+        )
+
+    def with_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            description_locale=F(f"description__{locale}"),
+        )
+
+
+class AgendaItemQuerySet(QuerySet):
+    def with_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            name_locale=F(f"name__{locale}"),
+        )
+
+    def with_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            description_locale=F(f"description__{locale}"),
         )
 
 

@@ -1,9 +1,11 @@
 import calendar
 import datetime
 
-from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
@@ -20,6 +22,7 @@ from comunicat.rest.serializers.event import (
     ListRegistrationSerializer,
     RegistrationSlimSerializer,
     EventWithCountsSerializer,
+    PageEventSerializer,
 )
 
 from comunicat.rest.viewsets import ComuniCatViewSet
@@ -78,6 +81,43 @@ class EventAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        responses={200: EventSerializer(), 404: Serializer()},
+    )
+    def retrieve(self, request, id):
+        event_obj = event.api.get(
+            event_id=id,
+            module=self.module,
+        )
+
+        if not event_obj:
+            return Response(status=404)
+
+        serializer = self.serializer_class(event_obj, context={"module": self.module})
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        query_serializer=PageEventSerializer,
+        responses={200: EventSerializer(), 404: Serializer()},
+    )
+    @action(methods=["get"], detail=False, url_path="page", url_name="page")
+    @method_decorator(cache_page(60))
+    def page(self, request):
+        serializer = PageEventSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        event_obj = event.api.get(
+            date=serializer.validated_data["date"],
+            code=serializer.validated_data["code"],
+            module=self.module,
+        )
+
+        if not event_obj:
+            return Response(status=404)
+
+        serializer = self.serializer_class(event_obj, context={"module": self.module})
+        return Response(serializer.data)
 
 
 class CalendarAPI(ComuniCatViewSet):

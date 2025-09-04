@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0023_googlegroupuser'),
+        ("user", "0023_googlegroupuser"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='googlegroupuser',
-            unique_together={('group', 'email')},
+            name="googlegroupuser",
+            unique_together={("group", "email")},
         ),
     ]

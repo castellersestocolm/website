@@ -59,6 +59,10 @@ class AgendaItemInline(admin.TabularInline):
     ordering = ("time_from",)
     extra = 0
 
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
@@ -81,6 +85,10 @@ class EventAdmin(admin.ModelAdmin):
         AgendaItemInline,
         RegistrationInline,
     )
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
 
 
 class RegistrationLogInline(admin.TabularInline):

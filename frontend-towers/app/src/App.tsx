@@ -39,6 +39,7 @@ import OrderCompletePage from "./pages/order-complete";
 import AdminUserPage from "./pages/admin-user";
 import PressPage from "./pages/press";
 import PressReleasePage from "./pages/press-release";
+import CalendarEventPage from "./pages/calendar-event";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -126,6 +127,10 @@ const App = () => {
                   <Route
                     path={ROUTES["calendar-signup"].path}
                     element={<CalendarPage />}
+                  />
+                  <Route
+                    path={ROUTES["calendar-event"].path}
+                    element={<CalendarEventPage />}
                   />
                   <Route
                     path={ROUTES["user-login"].path}

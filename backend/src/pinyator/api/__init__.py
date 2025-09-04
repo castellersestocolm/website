@@ -62,7 +62,11 @@ def update_or_create_event(event_id: UUID) -> None:
         .prefetch_related(
             Prefetch(
                 "agenda_items",
-                (AgendaItem.objects.order_by("time_from")),
+                (
+                    AgendaItem.objects.with_name()
+                    .with_description()
+                    .order_by("time_from")
+                ),
             ),
         )
         .first()
@@ -88,7 +92,7 @@ def update_or_create_event(event_id: UUID) -> None:
     event_status = 1
     agenda = "\n\n".join(
         [
-            f"{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name}\n{agenda_item_obj.description}"
+            f"{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}\n{agenda_item_obj.description_locale}"
             for agenda_item_obj in event_obj.agenda_items.all()
         ]
     )

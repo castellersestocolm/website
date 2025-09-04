@@ -1,9 +1,17 @@
+import os
+import re
+import unicodedata
+from zoneinfo import ZoneInfo
+
 from celery.beat import event_t
+from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.db.models import JSONField
+from django.db.models import JSONField, Q
+from django.db.models.functions import Trunc
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from versatileimagefield.fields import VersatileImageField
 
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
@@ -21,7 +29,7 @@ from event.enums import (
 
 from django.utils.translation import gettext_lazy as _
 
-from event.managers import EventQuerySet, RegistrationQuerySet
+from event.managers import EventQuerySet, RegistrationQuerySet, AgendaItemQuerySet
 from event.utils.event import get_event_name
 
 
@@ -61,9 +69,17 @@ class EventSeries(StandardModel, Timestamps):
     name = models.CharField(max_length=255)
 
 
+def get_event_poster_name(instance, filename):
+    return os.path.join(
+        "event/event/poster/", f"{instance.id}.{filename.split('.')[-1]}"
+    )
+
+
 # TODO: Add event status
 class Event(StandardModel, Timestamps):
     title = models.CharField(max_length=255)
+
+    code = models.CharField(max_length=255, blank=True)
 
     time_from = models.DateTimeField()
     time_to = models.DateTimeField()
@@ -71,6 +87,8 @@ class Event(StandardModel, Timestamps):
     location = models.ForeignKey(
         Location, null=True, blank=True, related_name="events", on_delete=models.CASCADE
     )
+
+    description = JSONField(default=language_field_default)
 
     series = models.ForeignKey(
         EventSeries,
@@ -96,6 +114,10 @@ class Event(StandardModel, Timestamps):
 
     max_registrations = models.PositiveSmallIntegerField(null=True, blank=True)
 
+    poster = VersatileImageField(
+        "Image", blank=True, null=True, upload_to=get_event_poster_name
+    )
+
     objects = EventQuerySet.as_manager()
 
     def __str__(self) -> str:
@@ -111,7 +133,12 @@ class Event(StandardModel, Timestamps):
         if self.series:
             self.series.events.exclude(id=self.id).update(type=self.type)
 
-        if self.status == EventStatus.PUBLISHED:
+        if not self.code:
+            self.code = unicodedata.normalize(
+                "NFKD", re.sub(r"[^\w\-]", "", self.title.replace(" ", "-"))
+            ).lower()
+
+        if self.module and self.status == EventStatus.PUBLISHED:
             import event.tasks
 
             if GOOGLE_ENABLED_BY_MODULE[self.module]["calendar"]:
@@ -133,6 +160,21 @@ class Event(StandardModel, Timestamps):
         )
 
         super().save(*args, **kwargs)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                "code",
+                Trunc(
+                    "time_from",
+                    "day",
+                    output_field=models.DateTimeField(),
+                    tzinfo=ZoneInfo(settings.TIME_ZONE),
+                ),
+                condition=Q(status=EventStatus.PUBLISHED),
+                name="event_event_code_time_from_unique",
+            )
+        ]
 
 
 # TODO: Automatically create other event modules for events in series
@@ -252,10 +294,11 @@ class RegistrationLog(StandardModel, Timestamps):
     )
 
 
-# TODO: Maybe add type, multilanguage support?
+# TODO: Maybe add type?
 class AgendaItem(StandardModel, Timestamps):
-    name = models.CharField(max_length=255)
-    description = models.TextField(max_length=1000, null=True, blank=True)
+    name = JSONField(default=language_field_default)
+
+    description = JSONField(default=language_field_default)
 
     time_from = models.DateTimeField()
     time_to = models.DateTimeField(null=True, blank=True)
@@ -263,6 +306,8 @@ class AgendaItem(StandardModel, Timestamps):
     event = models.ForeignKey(
         Event, related_name="agenda_items", on_delete=models.CASCADE
     )
+
+    objects = AgendaItemQuerySet.as_manager()
 
 
 class GoogleCalendar(StandardModel, Timestamps):

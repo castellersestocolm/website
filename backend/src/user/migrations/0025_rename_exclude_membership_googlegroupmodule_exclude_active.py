@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0024_alter_googlegroupuser_unique_together'),
+        ("user", "0024_alter_googlegroupuser_unique_together"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='googlegroupmodule',
-            old_name='exclude_membership',
-            new_name='exclude_active',
+            model_name="googlegroupmodule",
+            old_name="exclude_membership",
+            new_name="exclude_active",
         ),
     ]

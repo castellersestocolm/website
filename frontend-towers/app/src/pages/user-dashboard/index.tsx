@@ -1046,9 +1046,13 @@ function UserDashboardPage() {
                               <ListItemText
                                 className={styles.rehearsalAgendaItem}
                                 primary={
-                                  new Date(agendaItem.time_from)
-                                    .toTimeString()
-                                    .slice(0, 5) +
+                                  new Date(
+                                    agendaItem.time_from,
+                                  ).toLocaleTimeString(i18n.resolvedLanguage, {
+                                    hour12: false,
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  }) +
                                   " — " +
                                   agendaItem.name
                                 }

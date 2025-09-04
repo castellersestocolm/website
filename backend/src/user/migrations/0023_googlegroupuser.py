@@ -9,23 +9,51 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0022_googlegroupmodule_exclude_membership'),
+        ("user", "0022_googlegroupmodule_exclude_membership"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GoogleGroupUser',
+            name="GoogleGroupUser",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='updated')),
-                ('email', models.EmailField(max_length=254)),
-                ('force_member', models.BooleanField(default=False)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users', to='user.googlegroup')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='google_groups', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="updated"),
+                ),
+                ("email", models.EmailField(max_length=254)),
+                ("force_member", models.BooleanField(default=False)),
+                (
+                    "group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="users",
+                        to="user.googlegroup",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="google_groups",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]
