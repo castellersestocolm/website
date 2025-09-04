@@ -168,6 +168,17 @@ function HomePage() {
               <Stack direction="row" spacing={2} className={styles.joinButtons}>
                 <Button
                   variant="contained"
+                  href={ROUTES["calendar-event"].path
+                    .replace(":year", "2025")
+                    .replace(":month", "09")
+                    .replace(":day", "07")
+                    .replace(":code", "diada-performance")}
+                  disableElevation
+                >
+                  {t("pages.home-berlin.button-diada")}
+                </Button>
+                <Button
+                  variant="contained"
                   href={ROUTES.calendar.path}
                   disableElevation
                 >

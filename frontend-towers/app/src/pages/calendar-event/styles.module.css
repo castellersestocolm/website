@@ -2,10 +2,6 @@
   line-height: 1.6;
 }
 
-.calendarEventGrid {
-  margin-top: 32px;
-}
-
 .calendarEventDescription {
   p {
     margin-top: 0;
@@ -27,4 +23,23 @@
 
 .calenderEventMap {
   height: 500px;
+}
+
+.mapCard {
+  display: flex;
+  flex: 1;
+  border: var(--mui-palette-divider) solid 1px;
+  border-radius: 4px;
+  padding: 0 !important;
+  margin-bottom: 0;
+  height: calc(100% - 8px);
+  min-height: 300px;
+  /* min-height: calc(100% - 4px);
+  height: min(100%, 600px); */
+
+  iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+  }
 }

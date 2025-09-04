@@ -7,6 +7,7 @@ import {
   ListItemText,
   ListItemIcon,
   ListItemButton,
+  CardContent,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -85,119 +86,102 @@ function CalendarEventPage() {
           )}
 
           {(event.description ||
-            (event.agenda_items && event.agenda_items.length > 0)) &&
-            event.poster &&
-            event.poster.large && (
-              <Grid
-                container
-                spacing={{ xs: 2, md: 4 }}
-                className={styles.calendarEventGrid}
-                mb={3}
+            (event.agenda_items && event.agenda_items.length > 0)) && (
+            <Box mb={3}>
+              <Typography
+                variant="body1"
+                component="div"
+                className={styles.calendarEventDescription}
               >
-                {(event.description ||
-                  (event.agenda_items && event.agenda_items.length > 0)) && (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      md: event.poster && event.poster.large ? 6 : 12,
-                    }}
-                    order={{ xs: 1, md: 2 }}
-                  >
-                    <Typography
-                      variant="body1"
-                      component="div"
-                      className={styles.calendarEventDescription}
-                    >
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: markdown(event.description).toString(),
-                        }}
-                      ></div>
-                    </Typography>
-                    {event.agenda_items && event.agenda_items.length > 0 && (
-                      <Box>
-                        <Typography
-                          variant="h6"
-                          fontWeight={700}
-                          textAlign="center"
-                        >
-                          {t("pages.calendar-event.agenda.title")}
-                        </Typography>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: markdown(event.description).toString(),
+                  }}
+                ></div>
+              </Typography>
+              {event.agenda_items && event.agenda_items.length > 0 && (
+                <Box>
+                  <Typography variant="h6" fontWeight={700} textAlign="center">
+                    {t("pages.calendar-event.agenda.title")}
+                  </Typography>
 
-                        <List dense={true}>
-                          {event.agenda_items.map((agendaItem: any) => (
-                            <ListItem className={styles.calendarEventListItem}>
-                              <ListItemText
-                                primary={
-                                  <Typography variant="body1" fontWeight={700}>
-                                    {new Date(
-                                      agendaItem.time_from,
-                                    ).toLocaleTimeString(
-                                      i18n.resolvedLanguage,
-                                      {
-                                        hour12: false,
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      },
-                                    ) +
-                                      " — " +
-                                      agendaItem.name}
-                                  </Typography>
-                                }
-                                secondary={
-                                  <Typography variant="body2" component="div">
-                                    <div
-                                      dangerouslySetInnerHTML={{
-                                        __html: markdown(
-                                          agendaItem.description,
-                                        ).toString(),
-                                      }}
-                                    ></div>
-                                  </Typography>
-                                }
-                              />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </Box>
-                    )}
-                  </Grid>
-                )}
-                {event.poster && event.poster.large && (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      md:
-                        event.description ||
-                        (event.agenda_items && event.agenda_items.length > 0)
-                          ? 6
-                          : 12,
-                    }}
-                    order={{ xs: 2, md: 1 }}
-                  >
-                    <Link href={BACKEND_BASE_URL + event.poster.large}>
-                      <img
-                        src={BACKEND_BASE_URL + event.poster.large}
-                        className={styles.calendarEventPoster}
-                        alt="poster"
-                      />
-                    </Link>
-                  </Grid>
-                )}
-              </Grid>
-            )}
-
-          {event.location && (
-            <Box className={styles.calenderEventMap}>
-              <Map
-                location={event.location}
-                coordinates={[
-                  event.location.coordinate_lat,
-                  event.location.coordinate_lon,
-                ]}
-                connections={event.location.connections}
-              />
+                  <List dense={true}>
+                    {event.agenda_items.map((agendaItem: any) => (
+                      <ListItem className={styles.calendarEventListItem}>
+                        <ListItemText
+                          primary={
+                            <Typography variant="body1" fontWeight={700}>
+                              {new Date(
+                                agendaItem.time_from,
+                              ).toLocaleTimeString(i18n.resolvedLanguage, {
+                                hour12: false,
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }) +
+                                " — " +
+                                agendaItem.name}
+                            </Typography>
+                          }
+                          secondary={
+                            <Typography variant="body2" component="div">
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: markdown(
+                                    agendaItem.description,
+                                  ).toString(),
+                                }}
+                              ></div>
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
             </Box>
+          )}
+
+          {((event.poster && event.poster.large) || event.location) && (
+            <Grid container spacing={{ xs: 3, md: 4 }} mb={2}>
+              {event.poster && event.poster.large && (
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4,
+                  }}
+                >
+                  <Link href={BACKEND_BASE_URL + event.poster.large}>
+                    <img
+                      src={BACKEND_BASE_URL + event.poster.large}
+                      className={styles.calendarEventPoster}
+                      alt="poster"
+                    />
+                  </Link>
+                </Grid>
+              )}
+              {event.location && (
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: event.poster && event.poster.large ? 6 : 12,
+                    md: event.poster && event.poster.large ? 8 : 12,
+                  }}
+                >
+                  <CardContent className={styles.mapCard}>
+                    <Map
+                      location={event.location}
+                      coordinates={[
+                        event.location.coordinate_lat,
+                        event.location.coordinate_lon,
+                      ]}
+                      zoom={16}
+                    />
+                  </CardContent>
+                </Grid>
+              )}
+            </Grid>
           )}
         </Box>
       )}
