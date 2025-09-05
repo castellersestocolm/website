@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import JSONField
+from django.db.models import JSONField, F
 from django.utils import timezone, translation
 from versatileimagefield.fields import VersatileImageField
 
@@ -70,6 +70,12 @@ class Order(StandardModel, Timestamps):
             or not OrderLog.objects.filter(order_id=self.id).exists()
         ):
             OrderLog.objects.create(order_id=self.id, status=self.status)
+
+            if self.status == OrderStatus.COMPLETED:
+                OrderProduct.objects.filter(order_id=self.id).update(
+                    quantity_given=F("quantity")
+                )
+
         super().save(*args, **kwargs)
 
 
@@ -174,6 +180,7 @@ class OrderProduct(StandardModel, Timestamps):
     )
 
     quantity = models.PositiveSmallIntegerField()
+    quantity_given = models.PositiveSmallIntegerField(default=0)
 
     amount_unit = MoneyField(
         max_digits=7,
@@ -188,6 +195,19 @@ class OrderProduct(StandardModel, Timestamps):
     vat = models.PositiveSmallIntegerField(default=0)
 
     objects = OrderProductQuerySet.as_manager()
+
+    def __str__(self) -> str:
+        return f"{str(self.order)} - {str(self.size)}"
+
+    def clean(self):
+        if self.quantity_given > self.quantity:
+            raise ValidationError(
+                {
+                    "quantity_given": _(
+                        "The quantity given must be equal or lower than the ordered quantity."
+                    )
+                }
+            )
 
 
 class DeliveryProvider(StandardModel, Timestamps):

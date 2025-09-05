@@ -260,6 +260,7 @@ def create(
         delivery=order_delivery_obj,
         payment_order=payment_order_obj,
         origin_module=module,
+        origin_language=translation.get_language(),
     )
 
     for size in sizes:

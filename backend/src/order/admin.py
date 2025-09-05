@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.db.models import JSONField
 from django.utils import translation
+from django.utils.html import format_html
 from jsoneditor.forms import JSONEditor
 
 from notify.enums import EmailType
-from order.enums import OrderDeliveryType
+from order.enums import OrderDeliveryType, OrderStatus
 from order.models import (
     OrderProduct,
     Order,
@@ -27,6 +28,26 @@ class OrderProductInline(admin.TabularInline):
     model = OrderProduct
     extra = 0
     raw_id_fields = ("line",)
+    ordering = ("size__product__type", "size__product__created_at")
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "size",
+                "size__product",
+            )
+        )
+
+    def has_add_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_change_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_delete_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
 
 
 class OrderLogInline(admin.TabularInline):
@@ -83,6 +104,7 @@ class OrderAdmin(admin.ModelAdmin):
         "delivery_type",
         "payment_type",
         "status",
+        "products_pending",
         "created_at",
     )
     list_filter = ("status", "created_at")
@@ -95,12 +117,21 @@ class OrderAdmin(admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
+            .with_products_pending()
             .select_related(
                 "delivery",
                 "delivery__provider",
                 "payment_order",
                 "payment_order__provider",
             )
+        )
+
+    def products_pending(self, obj):
+        if not obj.products_pending or obj.status != OrderStatus.PROCESSING:
+            return "-"
+
+        return format_html(
+            f"<ul style='margin:0;'>{''.join([f'<li>{str(order_product_obj.quantity - order_product_obj.quantity_given)} x {str(order_product_obj.size)}</li>' for order_product_obj in obj.products_pending])}</ul>"
         )
 
     def delivery_type(self, obj):
@@ -118,6 +149,7 @@ class OrderAdmin(admin.ModelAdmin):
             or list(payment_provider_obj.name.values())[0]
         )
 
+    products_pending.short_description = _("pending")
     delivery_type.short_description = _("delivery")
     payment_type.short_description = _("payment")
 

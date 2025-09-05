@@ -9,6 +9,7 @@ from django.db.models import (
     CharField,
     Subquery,
     OuterRef,
+    Prefetch,
 )
 from django.db.models.functions import Coalesce, Concat, Cast
 from django.utils import translation
@@ -19,6 +20,7 @@ from comunicat.utils.managers import MoneyOutput
 class OrderQuerySet(QuerySet):
     def with_amount(self):
         OrderProduct = apps.get_model("order", "OrderProduct")
+
         return self.annotate(
             amount_products=Coalesce(
                 Sum("products__amount"), Value(0), output_field=MoneyOutput()
@@ -48,6 +50,21 @@ class OrderQuerySet(QuerySet):
             amount_vat=Cast(
                 F("amount_products_vat") + F("amount_delivery_vat"),
                 output_field=MoneyOutput(),
+            ),
+        )
+
+    def with_products_pending(self):
+        OrderProduct = apps.get_model("order", "OrderProduct")
+
+        return self.prefetch_related(
+            Prefetch(
+                "products",
+                OrderProduct.objects.filter(
+                    quantity_given__lt=F("quantity"),
+                )
+                .select_related("size", "size__product")
+                .order_by("size__product__type", "size__product__created_at"),
+                to_attr="products_pending",
             ),
         )
 

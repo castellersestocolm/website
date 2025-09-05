@@ -429,6 +429,18 @@ export const TableUsers = ({ isAdult, products }: any) => {
                           ).length > 0,
                       );
 
+                    const orderProducts =
+                      user.orders &&
+                      user.orders
+                        .filter((order: any) =>
+                          order.products.filter(
+                            (orderProduct: any) =>
+                              orderProduct.size.product.id === product.id,
+                          ),
+                        )
+                        .map((order: any) => order.products)
+                        .flat();
+
                     const userProduct =
                       user.products &&
                       user.products.find(
@@ -436,11 +448,18 @@ export const TableUsers = ({ isAdult, products }: any) => {
                           userProduct.product.id === product.id,
                       );
 
-                    const orderStatus = userProduct
-                      ? OrderStatus.COMPLETED
-                      : order
-                        ? order.status
-                        : OrderStatus.CANCELED;
+                    const orderProductGiven =
+                      orderProducts &&
+                      orderProducts.filter(
+                        (orderProduct: any) => orderProduct.quantity_given > 0,
+                      ).length > 0;
+
+                    const orderStatus =
+                      userProduct || orderProductGiven
+                        ? OrderStatus.COMPLETED
+                        : order
+                          ? order.status
+                          : OrderStatus.CANCELED;
 
                     return [
                       "product-" + product.id,
