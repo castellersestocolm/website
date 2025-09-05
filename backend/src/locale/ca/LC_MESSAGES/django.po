@@ -189,6 +189,15 @@ msgstr ""
 "Gràcies per la teva comanda! Trobaràs un resum dels productes que has "
 "comprat a continuació així com la informació de pagament."
 
+#: comunicat/templates/email/org/order/paid.html:5
+#: comunicat/templates/email/towers/order/paid.html:5
+msgid ""
+"Your order has been marked as paid! You will find a summary of the products "
+"you have purchased right below."
+msgstr ""
+"La teva comanda s'ha marcat com a pagada! Trobaràs un resum dels productes "
+"que has comprat a continuació."
+
 #: comunicat/templates/email/org/order/created.html:14
 #: comunicat/templates/email/towers/order/created.html:14
 msgid "Summary"
@@ -454,6 +463,10 @@ msgstr "La teva quota ha caducat"
 #: notify/consts.py:66 notify/consts.py:108
 msgid "Thank you for your order"
 msgstr "Gràcies per la teva comanda"
+
+#: notify/consts.py:66 notify/consts.py:108
+msgid "Your order is now paid"
+msgstr "La teva comanda s'ha pagat"
 
 #: notify/consts.py:84
 msgid "Welcome to Castellers d'Estocolm"

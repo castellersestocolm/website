@@ -15,6 +15,7 @@ class EmailType(enum.IntEnum):
     MEMBERSHIP_RENEW = 40
     MEMBERSHIP_EXPIRED = 41
     ORDER_CREATED = 50
+    ORDER_PAID = 51
 
 
 class MessageSlackType(enum.IntEnum):

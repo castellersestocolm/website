@@ -56,6 +56,17 @@ def send_created_email(modeladmin, request, queryset):
         )
 
 
+@admin.action(description="Send paid email")
+def send_paid_email(modeladmin, request, queryset):
+    for order_obj in queryset:
+        notify.tasks.send_order_email.delay(
+            order_id=order_obj.id,
+            email_type=EmailType.ORDER_PAID,
+            module=order_obj.origin_module,
+            locale=order_obj.origin_language,
+        )
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     search_fields = (
@@ -78,7 +89,7 @@ class OrderAdmin(admin.ModelAdmin):
     raw_id_fields = ("entity",)
     ordering = ("-created_at",)
     inlines = (OrderProductInline, OrderLogInline)
-    actions = (send_created_email,)
+    actions = (send_created_email, send_paid_email)
 
     def get_queryset(self, request):
         return (

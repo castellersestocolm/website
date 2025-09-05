@@ -187,6 +187,15 @@ msgstr ""
 "Tack för din beställning! Du hittar en sammanfattning av produkterna du har "
 "köpt tillsammans med betalningsinformation nedan."
 
+#: comunicat/templates/email/org/order/paid.html:5
+#: comunicat/templates/email/towers/order/paid.html:5
+msgid ""
+"Your order has been marked as paid! You will find a summary of the products "
+"you have purchased right below."
+msgstr ""
+"Din beställning har markerats som betald! Du hittar en sammanfattning av "
+"produkterna du har köpt nedan."
+
 #: comunicat/templates/email/org/order/created.html:14
 #: comunicat/templates/email/towers/order/created.html:14
 msgid "Summary"
@@ -451,6 +460,10 @@ msgstr "Ditt medlemskap har löpt ut"
 #: notify/consts.py:66 notify/consts.py:108
 msgid "Thank you for your order"
 msgstr "Tack för din beställning"
+
+#: notify/consts.py:66 notify/consts.py:108
+msgid "Your order is now paid"
+msgstr "Din beställning är nu betald"
 
 #: notify/consts.py:84
 msgid "Welcome to Castellers d'Estocolm"

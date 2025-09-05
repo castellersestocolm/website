@@ -2,7 +2,7 @@
 {% load i18n comunicat_tags %}
 
 {% block email_body %}
-    <p>{% trans "Thank you for your order! You will find a summary of the products you have purchased along with payment information right below." %}</p>
+    <p>{% trans "Your order has been marked as paid! You will find a summary of the products you have purchased right below." %}</p>
     <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
 .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
@@ -26,10 +26,4 @@
       <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;"><strong>{{ order_obj|order_amount|format_money }}</strong></p></td>
   </tr>
 </table>
-<h4 style="margin-bottom:10px;">{% trans "Payment options" %}</h4>
-    <ul>
-        <li>Swish: 123 068 88 20</li>
-        <li>PlusGirot: 97 09 16-3</li>
-        <li>IBAN: SE84 9500 0099 6042 0970 9163</li>
-    </ul>
 {% endblock %}
