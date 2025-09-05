@@ -187,8 +187,8 @@ def send_order_email(
     email_type: EmailType,
     module: Module,
     email: str | None = None,
-    context: Optional[dict] = None,
-    locale: Optional[str] = settings.LANGUAGE_CODE,
+    context: Optional[dict] | None = None,
+    locale: Optional[str] | None = None,
 ) -> None:
     order_obj = (
         Order.objects.filter(id=order_id)
@@ -211,6 +211,11 @@ def send_order_email(
     entity = order_obj.entity
     user_obj = entity.user
     email = email or (user_obj.email if user_obj else entity.email)
+    locale = (
+        locale
+        or (user_obj.preferred_language if user_obj else None)
+        or settings.LANGUAGE_CODE
+    )
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
