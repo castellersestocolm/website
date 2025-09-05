@@ -429,17 +429,16 @@ export const TableUsers = ({ isAdult, products }: any) => {
                           ).length > 0,
                       );
 
-                    const orderProducts =
+                    const orderProductGiven =
                       user.orders &&
-                      user.orders
-                        .filter((order: any) =>
+                      user.orders.filter(
+                        (order: any) =>
                           order.products.filter(
                             (orderProduct: any) =>
-                              orderProduct.size.product.id === product.id,
-                          ),
-                        )
-                        .map((order: any) => order.products)
-                        .flat();
+                              orderProduct.size.product.id === product.id &&
+                              orderProduct.quantity_given > 0,
+                          ).length > 0,
+                      ).length > 0;
 
                     const userProduct =
                       user.products &&
@@ -447,12 +446,6 @@ export const TableUsers = ({ isAdult, products }: any) => {
                         (userProduct: any) =>
                           userProduct.product.id === product.id,
                       );
-
-                    const orderProductGiven =
-                      orderProducts &&
-                      orderProducts.filter(
-                        (orderProduct: any) => orderProduct.quantity_given > 0,
-                      ).length > 0;
 
                     const orderStatus =
                       userProduct || orderProductGiven
