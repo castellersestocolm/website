@@ -219,7 +219,7 @@ def send_order_email(
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
-        context_full = {**context, "order_obj": order_obj}
+        context_full = {**context, "order_obj": order_obj, "user_obj": user_obj}
 
         template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
             email_type
