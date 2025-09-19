@@ -1,7 +1,11 @@
+from django.db.models import Q
+
 from comunicat.enums import Module
 from comunicat.utils.request import get_module_from_request
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import Family, FamilyMember
+from user.models import Family, FamilyMember, User
+
+from social_core.pipeline.partial import partial
 
 import membership.api
 
@@ -50,3 +54,18 @@ def module_data(backend, response, details, user, *args, **kwargs):
         )
 
     membership.api.create_or_update(user_id=user.id, modules=[origin_module])
+
+
+@partial
+def associate_by_email(backend, details, user=None, *args, **kwargs):
+    if user:
+        return None
+
+    email = details.get("email")
+    if email:
+        user_obj = User.objects.filter(Q(email=email) | Q(emails__email=email)).first()
+
+        if user_obj:
+            return {"user": user_obj, "is_new": False}
+
+    return None
