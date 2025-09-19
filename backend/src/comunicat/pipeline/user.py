@@ -6,6 +6,7 @@ from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import Family, FamilyMember, User
 
 from social_core.pipeline.partial import partial
+from social_core.exceptions import AuthAlreadyAssociated, AuthException, AuthForbidden
 
 import membership.api
 
@@ -65,7 +66,22 @@ def associate_by_email(backend, details, user=None, *args, **kwargs):
     if email:
         user_obj = User.objects.filter(Q(email=email) | Q(emails__email=email)).first()
 
-        if user_obj:
-            return {"user": user_obj, "is_new": False}
+        if not user_obj:
+            return None
 
-    return None
+        # Try to associate accounts registered with the same email address,
+        # only if it's a single object. AuthException is raised if multiple
+        # objects are returned.
+        users = list(backend.strategy.storage.user.get_users_by_email(user_obj.email))
+
+        # That's the line you want to add
+        active_users = [user for user in users if user.is_active]
+
+        if len(active_users) == 0:
+            return None
+        elif len(active_users) > 1:
+            raise AuthException(
+                backend, "The given email address is associated with another account"
+            )
+        else:
+            return {"user": active_users[0], "is_new": False}
