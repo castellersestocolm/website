@@ -93,8 +93,10 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 import QRCode from "qrcode";
 import { get_event_icon, getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
+import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
+const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
 function UserDashboardPage() {
@@ -619,6 +621,32 @@ function UserDashboardPage() {
     </Grid>
   );
 
+  const contentSidebarEmails = user &&
+    user.emails &&
+    user.emails.length > 0 && (
+      <Grid>
+        <Card variant="outlined">
+          <Box className={styles.userTopBox}>
+            <Typography variant="h6" fontWeight="600" component="div">
+              {t("pages.user-dashboard.section.emails.title")}
+            </Typography>
+          </Box>
+          <Divider />
+          <FormDashboardEmails />
+
+          <Box className={styles.userMembershipInfoBox}>
+            <Typography variant="body2" component="span">
+              {t("pages.user-dashboard.section.emails.description") + " "}
+              <Link color="textSecondary" href={"mailto:" + TOWERS_INFO_EMAIL}>
+                {TOWERS_INFO_EMAIL}
+              </Link>
+              {"."}
+            </Typography>
+          </Box>
+        </Card>
+      </Grid>
+    );
+
   const contentSidebarMembership = user && (
     <Grid>
       {(membership || membershipRenewOptions) && (
@@ -1085,6 +1113,7 @@ function UserDashboardPage() {
           direction="column"
         >
           {contentSidebarProfile}
+          {contentSidebarEmails}
           {contentSidebarMembership}
         </Grid>
 
@@ -1900,6 +1929,7 @@ function UserDashboardPage() {
         direction="column"
       >
         {contentSidebarProfile}
+        {contentSidebarEmails}
         {contentSidebarMembership}
       </Grid>
     </Grid>

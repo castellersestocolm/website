@@ -64,6 +64,10 @@ def get(user_id: UUID, module: Module | None = None) -> User:
                 .select_related("team")
                 .order_by("-role"),
             ),
+            Prefetch(
+                "emails",
+                UserEmail.objects.filter().order_by("email"),
+            ),
         )
         .with_permission_level(modules=[module])
         .first()

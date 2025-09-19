@@ -164,6 +164,7 @@ class UserEmail(StandardModel, Timestamps):
     user = models.ForeignKey("User", related_name="emails", on_delete=models.CASCADE)
 
     email = models.EmailField(unique=True)
+    email_verified = models.BooleanField(default=False)
 
 
 class Family(StandardModel, Timestamps):

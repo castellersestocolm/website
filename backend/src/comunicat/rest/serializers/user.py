@@ -11,12 +11,26 @@ from comunicat.rest.serializers.legal import MemberWithTeamSerializer
 from comunicat.rest.utils.fields import IntEnumField, EnumField
 from legal.enums import PermissionLevel
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import User, TowersUser, Family, FamilyMember, FamilyMemberRequest
+from user.models import (
+    User,
+    TowersUser,
+    Family,
+    FamilyMember,
+    FamilyMemberRequest,
+    UserEmail,
+)
 from django.conf import settings
 
 from django.utils.translation import gettext_lazy as _
 
 from user.utils import is_over_minimum_age
+
+
+class UserEmailSerializer(s.ModelSerializer):
+    class Meta:
+        model = UserEmail
+        fields = ("id", "email", "email_verified", "created_at")
+        read_only_fields = ("id", "email", "email_verified", "created_at")
 
 
 class UserSuperSlimSerializer(s.ModelSerializer):
@@ -116,6 +130,8 @@ class UserExtraSlimWithFamilySerializer(s.ModelSerializer):
 
 
 class UserSlimSerializer(UserExtraSlimSerializer):
+    emails = UserEmailSerializer(many=True, read_only=True)
+
     class Meta:
         model = User
         fields = (
@@ -123,6 +139,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "firstname",
             "lastname",
             "email",
+            "emails",
             "phone",
             "birthday",
             "consent_pictures",
@@ -137,6 +154,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "firstname",
             "lastname",
             "email",
+            "emails",
             "phone",
             "birthday",
             "consent_pictures",
@@ -210,6 +228,7 @@ class UserSerializer(UserSlimSerializer):
             "firstname",
             "lastname",
             "email",
+            "emails",
             "phone",
             "birthday",
             "consent_pictures",
@@ -227,6 +246,7 @@ class UserSerializer(UserSlimSerializer):
             "firstname",
             "lastname",
             "email",
+            "emails",
             "phone",
             "birthday",
             "consent_pictures",
