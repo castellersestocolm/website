@@ -254,6 +254,9 @@ def send_events_signup(
                 user_ids_by_team_type[team_obj.type].append(member_obj.user_id)
 
         for user_obj in user_objs:
+            if not user_obj.can_manage:
+                continue
+
             token = user.api.event.get_events_signup_token(user_id=user_obj.id)
 
             user_event_objs = [
