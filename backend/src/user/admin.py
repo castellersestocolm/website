@@ -94,7 +94,7 @@ def send_membership_paid_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership().filter(
         has_active_membership=True
     ):
-        notify.tasks.send_user_email(
+        notify.tasks.send_user_email.delay(
             user_id=user_obj.id,
             email_type=EmailType.MEMBERSHIP_PAID,
             module=user_obj.origin_module,
