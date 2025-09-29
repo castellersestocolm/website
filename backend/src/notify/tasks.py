@@ -58,6 +58,10 @@ def send_user_email(
         if modules:
             # This works for now as we want to get the "specific" module for email branding
             module = sorted(modules)[-1]
+        else:
+            modules = [module]
+    else:
+        modules = [module]
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
@@ -98,42 +102,48 @@ def send_user_email(
                 )
             )
 
-        if email_type in (EmailType.MEMBERSHIP_RENEW, EmailType.MEMBERSHIP_EXPIRED):
-            user_ids = list(
-                {user_id}
-                | {
-                    family_member_obj.user_id
-                    # TODO: Review this as it could be wrong
-                    for family_member_obj in FamilyMember.objects.filter(
-                        family__members__user_id=user_id,
-                        status=FamilyMemberStatus.ACTIVE,
-                    )
-                }
-            )
-
-            membership_amount = sum(
-                [
-                    membership.utils.get_membership_amount(
-                        member_count=len(user_ids), module=current_module
-                    )
-                    for current_module in modules
-                ]
-            )
-
-            membership_length = membership.utils.get_membership_length(
-                member_count=len(user_ids)
-            )
-            membership_date_to = membership.utils.get_membership_date_to(
-                months=membership_length
-            )
-
+        if email_type in (
+            EmailType.MEMBERSHIP_RENEW,
+            EmailType.MEMBERSHIP_EXPIRED,
+            EmailType.MEMBERSHIP_PAID,
+        ):
             context_full["membership_obj"] = membership_obj
-            context_full["membership_amount"] = membership_amount
-            context_full["membership_length"] = membership_length
-            context_full["membership_date_from"] = (
-                membership_obj.date_to if membership_obj else timezone.localdate()
-            )
-            context_full["membership_date_to"] = membership_date_to
+
+            if email_type != EmailType.MEMBERSHIP_PAID:
+                user_ids = list(
+                    {user_id}
+                    | {
+                        family_member_obj.user_id
+                        # TODO: Review this as it could be wrong
+                        for family_member_obj in FamilyMember.objects.filter(
+                            family__members__user_id=user_id,
+                            status=FamilyMemberStatus.ACTIVE,
+                        )
+                    }
+                )
+
+                membership_amount = sum(
+                    [
+                        membership.utils.get_membership_amount(
+                            member_count=len(user_ids), module=current_module
+                        )
+                        for current_module in modules
+                    ]
+                )
+
+                membership_length = membership.utils.get_membership_length(
+                    member_count=len(user_ids)
+                )
+                membership_date_to = membership.utils.get_membership_date_to(
+                    months=membership_length
+                )
+
+                context_full["membership_amount"] = membership_amount
+                context_full["membership_length"] = membership_length
+                context_full["membership_date_from"] = (
+                    membership_obj.date_to if membership_obj else timezone.localdate()
+                )
+                context_full["membership_date_to"] = membership_date_to
 
         template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
             email_type

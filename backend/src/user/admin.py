@@ -89,6 +89,19 @@ def send_imported_email(modeladmin, request, queryset):
         )
 
 
+@admin.action(description="Send membership paid email")
+def send_membership_paid_email(modeladmin, request, queryset):
+    for user_obj in queryset.with_has_active_membership().filter(
+        has_active_membership=True
+    ):
+        notify.tasks.send_user_email(
+            user_id=user_obj.id,
+            email_type=EmailType.MEMBERSHIP_PAID,
+            module=user_obj.origin_module,
+            locale=user_obj.preferred_language or translation.get_language(),
+        )
+
+
 @admin.action(description="Send membership renew email")
 def send_membership_renew_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership().filter(
@@ -199,6 +212,7 @@ class UserAdmin(admin.ModelAdmin):
         send_welcome_email,
         send_imported_email,
         send_signup_email,
+        send_membership_paid_email,
         send_membership_renew_email,
         send_membership_expired_email,
     )

@@ -62,6 +62,10 @@ TEMPLATE_BY_MODULE = {
                     "subject": _("Your membership has expired"),
                     "html": "email/org/membership/expired.html",
                 },
+                EmailType.MEMBERSHIP_PAID: {
+                    "subject": _("Your membership is now paid"),
+                    "html": "email/org/membership/paid.html",
+                },
                 EmailType.ORDER_CREATED: {
                     "subject": _("Thank you for your order"),
                     "html": "email/org/order/created.html",
@@ -107,6 +111,10 @@ TEMPLATE_BY_MODULE = {
                 EmailType.MEMBERSHIP_EXPIRED: {
                     "subject": _("Your membership has expired"),
                     "html": "email/towers/membership/expired.html",
+                },
+                EmailType.MEMBERSHIP_PAID: {
+                    "subject": _("Your membership is now paid"),
+                    "html": "email/towers/membership/paid.html",
                 },
                 EmailType.ORDER_CREATED: {
                     "subject": _("Thank you for your order"),

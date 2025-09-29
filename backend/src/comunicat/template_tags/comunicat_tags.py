@@ -6,35 +6,37 @@ from django.template.defaulttags import register
 from django.utils import timezone, translation
 from djmoney.money import Money
 
+from comunicat.enums import Module
 from event.models import Registration, Event
+from membership.models import Membership
 from order.models import Order
 from user.models import User
 
 
 @register.simple_tag
-def full_url(path):
+def full_url(path: str):
     return urljoin(f"{settings.HTTP_PROTOCOL}://{settings.DOMAIN}/", path)
 
 
 @register.simple_tag
-def full_org_url(path):
+def full_org_url(path: str):
     return urljoin(f"{settings.HTTP_PROTOCOL}://{settings.MODULE_ORG_DOMAIN}/", path)
 
 
 @register.simple_tag
-def full_towers_url(path):
+def full_towers_url(path: str):
     return urljoin(f"{settings.HTTP_PROTOCOL}://{settings.MODULE_TOWERS_DOMAIN}/", path)
 
 
 @register.simple_tag
-def full_static(path):
+def full_static(path: str):
     return urljoin(
         f"{settings.HTTP_PROTOCOL}://{settings.DOMAIN}{settings.STATIC_URL}/", path
     )
 
 
 @register.simple_tag
-def full_org_static(path):
+def full_org_static(path: str):
     return urljoin(
         f"{settings.HTTP_PROTOCOL}://{settings.MODULE_ORG_DOMAIN}{settings.STATIC_URL}/",
         path,
@@ -42,7 +44,7 @@ def full_org_static(path):
 
 
 @register.simple_tag
-def full_towers_static(path):
+def full_towers_static(path: str):
     return urljoin(
         f"{settings.HTTP_PROTOCOL}://{settings.MODULE_TOWERS_DOMAIN}{settings.STATIC_URL}/",
         path,
@@ -50,15 +52,20 @@ def full_towers_static(path):
 
 
 @register.simple_tag
-def full_media(path):
+def full_media(path: str):
     return urljoin(
         f"{settings.HTTP_PROTOCOL}://{settings.DOMAIN}{settings.MEDIA_URL}/", path
     )
 
 
 @register.filter
-def settings_value(name):
+def settings_value(name: str):
     return getattr(settings, name, "")
+
+
+@register.filter
+def module_settings_value(module: Module, name: str):
+    return getattr(settings, f"MODULE_{Module(module).name}_{name}", "")
 
 
 @register.filter
@@ -100,6 +107,16 @@ def localise(text: dict[str]) -> str:
 def order_amount(order_obj: Order) -> Money:
     return sum(
         [order_product_obj.amount for order_product_obj in order_obj.products.all()]
+    )
+
+
+@register.filter
+def membership_amount(membership_obj: Membership) -> Money:
+    return sum(
+        [
+            membership_module_obj.amount
+            for membership_module_obj in membership_obj.modules.all()
+        ]
     )
 
 
