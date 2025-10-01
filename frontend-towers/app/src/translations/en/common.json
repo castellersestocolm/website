@@ -260,6 +260,8 @@
   "pages.admin-user.users-table.product.yes": "Yes",
   "pages.admin-user.users-table.product.ordered": "Requested",
   "pages.admin-user.users-table.product.no": "No",
+  "pages.admin-user.users-table.update.success": "The user has been updated.",
+  "pages.admin-user.users-table.update.error": "There was an error trying to update the user.",
   "pages.sale-bandana.title": "Sale of bandanas",
   "pages.sale-tshirts.title": "Sale of t-shirts",
   "pages.order.title": "Merch and equipment",

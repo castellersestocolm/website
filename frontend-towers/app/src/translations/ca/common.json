@@ -262,6 +262,8 @@
   "pages.admin-user.users-table.product.yes": "Sí",
   "pages.admin-user.users-table.product.ordered": "Demanat",
   "pages.admin-user.users-table.product.no": "No",
+  "pages.admin-user.users-table.update.success": "S'ha actualitzat el casteller.",
+  "pages.admin-user.users-table.update.error": "Hi ha hagut un error intentant actualitzar el casteller.",
   "pages.sale-bandana.title": "Venda de mocadors",
   "pages.sale-tshirts.title": "Venda de samarretes",
   "pages.order.title": "Merxandatge i material",

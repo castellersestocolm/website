@@ -69,6 +69,7 @@ export default function PageImageHero({
               marginTop: { xs: "16px", md: "32px" },
               paddingTop: { xs: "32px", md: "64px" },
               paddingBottom: { xs: "24px", md: "32px" },
+              position: "relative",
               ...(loading
                 ? {
                     display: "flex",

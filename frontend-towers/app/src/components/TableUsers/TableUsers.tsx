@@ -21,9 +21,12 @@ import IconEdit from "@mui/icons-material/Edit";
 import IconSave from "@mui/icons-material/Save";
 import IconCancel from "@mui/icons-material/Close";
 import { filterProductsForUser } from "../../utils/product";
+import { useAppContext } from "../AppContext/AppContext";
 
 export const TableUsers = ({ isAdult, products }: any) => {
   const { t } = useTranslation("common");
+
+  const { setMessages } = useAppContext();
 
   const [users, setUsers] = React.useState(undefined);
   const [paginationModel, setPaginationModel] = React.useState({
@@ -112,6 +115,41 @@ export const TableUsers = ({ isAdult, products }: any) => {
       ).then((response) => {
         if (response.status === 202) {
           setUsers(newUsers);
+          setMessages([
+            {
+              message: t("pages.admin-user.users-table.update.success"),
+              type: "success",
+            },
+          ]);
+          setTimeout(() => setMessages(undefined), 5000);
+        } else {
+          try {
+            // TODO: Fix this for all values not just "towers"
+            setMessages([
+              {
+                message: Object.entries(response.data.towers)
+                  .map(
+                    ([field, errors]: [string, Array<any>]) =>
+                      t(
+                        "pages.admin-user.users-table." +
+                          field.replace("_", "-"),
+                      ) +
+                      ": " +
+                      errors.map((error: any) => error.detail).join(" "),
+                  )
+                  .join("\n"),
+                type: "error",
+              },
+            ]);
+          } catch {
+            setMessages([
+              {
+                message: t("pages.admin-user.users-table.update.error"),
+                type: "error",
+              },
+            ]);
+          }
+          setTimeout(() => setMessages(undefined), 5000);
         }
       });
 

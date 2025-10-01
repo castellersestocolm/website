@@ -31,7 +31,12 @@ function UserLoginPage() {
           padding: { xs: "32px 0", md: "64px 0" },
         }}
       >
-        <Container maxWidth="lg">
+        <Container
+          maxWidth="lg"
+          sx={{
+            position: "relative",
+          }}
+        >
           <Alerts />
           <Typography
             variant="h3"

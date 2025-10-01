@@ -44,15 +44,16 @@ export default function PageBase({
       >
         <Container
           maxWidth="lg"
-          sx={
-            loading
+          sx={{
+            position: "relative",
+            ...(loading
               ? {
                   display: "flex",
                   flexDirection: "column",
                   flexGrow: 1,
                 }
-              : {}
-          }
+              : {}),
+          }}
         >
           <Alerts />
           {finishedRegistration && user && !user.registration_finished ? (

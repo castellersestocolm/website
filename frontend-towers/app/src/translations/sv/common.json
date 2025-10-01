@@ -260,6 +260,8 @@
   "pages.admin-user.users-table.product.yes": "Ja",
   "pages.admin-user.users-table.product.ordered": "Begärt",
   "pages.admin-user.users-table.product.no": "Nej",
+  "pages.admin-user.users-table.update.success": "Användaren har uppdaterats.",
+  "pages.admin-user.users-table.update.error": "Det uppstod ett fel när användaren skulle uppdateras.",
   "pages.sale-bandana.title": "Försäljning av sjaletter",
   "pages.sale-tshirts.title": "Försäljning av t-shirts",
   "pages.order.title": "Merchandise och utrustning",

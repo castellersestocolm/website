@@ -34,7 +34,14 @@ export default function Alerts() {
                 }
                 severity={message.type}
               >
-                {message.message}
+                {message.message.split("\n").map((msg: string, ix: number) => {
+                  return (
+                    <>
+                      {ix > 0 && <br />}
+                      {msg}
+                    </>
+                  );
+                })}
               </Alert>
             </Collapse>
           ))}

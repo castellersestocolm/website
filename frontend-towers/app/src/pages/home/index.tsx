@@ -93,7 +93,12 @@ function HomePage() {
             },
           }}
         >
-          <Container maxWidth="xl">
+          <Container
+            maxWidth="xl"
+            sx={{
+              position: "relative",
+            }}
+          >
             <Alerts />
             <Grid
               container
