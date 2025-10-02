@@ -8,10 +8,12 @@ import {
   GridEventListener,
   GridRenderCellParams,
   GridRowEditStopReasons,
+  GridRowHeightParams,
   GridRowId,
   GridRowModel,
   GridRowModes,
   GridRowModesModel,
+  gridStringOrNumberComparator,
 } from "@mui/x-data-grid";
 import { apiAdminUserList, apiAdminUserUpdate } from "../../api";
 import { Typography } from "@mui/material";
@@ -21,14 +23,14 @@ import IconEdit from "@mui/icons-material/Edit";
 import IconSave from "@mui/icons-material/Save";
 import IconCancel from "@mui/icons-material/Close";
 import { filterProductsForUser } from "../../utils/product";
-import { useAppContext } from "../AppContext/AppContext";
+import AlertsInline from "../AlertsInline/AlertsInline";
 
 export const TableUsers = ({ isAdult, products }: any) => {
   const { t } = useTranslation("common");
 
-  const { setMessages } = useAppContext();
-
   const [users, setUsers] = React.useState(undefined);
+  const [usersById, setUsersById] = React.useState(undefined);
+  const [messages, setMessages] = React.useState(undefined);
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: 100,
     page: 0,
@@ -46,9 +48,20 @@ export const TableUsers = ({ isAdult, products }: any) => {
     ).then((response) => {
       if (response.status === 200) {
         setUsers(response.data);
+        setUsersById(
+          Object.fromEntries(
+            response.data.results.map((user: any) => [user.id, user]),
+          ),
+        );
       }
     });
-  }, [setUsers, paginationModel.page, paginationModel.pageSize, isAdult]);
+  }, [
+    setUsers,
+    setUsersById,
+    paginationModel.page,
+    paginationModel.pageSize,
+    isAdult,
+  ]);
 
   const allProducts =
     products &&
@@ -117,6 +130,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
           setUsers(newUsers);
           setMessages([
             {
+              userId: newUser.id,
               message: t("pages.admin-user.users-table.update.success"),
               type: "success",
             },
@@ -127,6 +141,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
             // TODO: Fix this for all values not just "towers"
             setMessages([
               {
+                userId: newUser.id,
                 message: Object.entries(response.data.towers)
                   .map(
                     ([field, errors]: [string, Array<any>]) =>
@@ -144,6 +159,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
           } catch {
             setMessages([
               {
+                userId: newUser.id,
                 message: t("pages.admin-user.users-table.update.error"),
                 type: "error",
               },
@@ -168,6 +184,47 @@ export const TableUsers = ({ isAdult, products }: any) => {
           {t("pages.admin-user.users-table.firstname")}
         </Typography>
       ),
+      colSpan: (value, row) => (row.id.endsWith("-message") ? 10 : 1),
+      renderCell: (params: GridRenderCellParams<any, string>) =>
+        params.row.id.endsWith("-message") ? (
+          <Box sx={{ margin: "0 -10px" }}>
+            <AlertsInline messages={params.value} />
+          </Box>
+        ) : (
+          params.value
+        ),
+      getSortComparator: (sortDirection) => {
+        const modifier = sortDirection === "desc" ? -1 : 1;
+        return (value1, value2, cellParams1, cellParams2) => {
+          console.log(cellParams1, cellParams2, value1, value2);
+          const realValue1 = usersById
+            ? usersById[cellParams1.id.toString().replace("-message", "")][
+                cellParams1.field
+              ]
+            : value1;
+          const realValue2 = usersById
+            ? usersById[cellParams2.id.toString().replace("-message", "")][
+                cellParams2.field
+              ]
+            : value2;
+
+          if (realValue1 === null) {
+            return 1;
+          }
+          if (realValue2 === null) {
+            return -1;
+          }
+          return (
+            modifier *
+            gridStringOrNumberComparator(
+              realValue1,
+              realValue2,
+              cellParams1,
+              cellParams2,
+            )
+          );
+        };
+      },
     },
     {
       field: "lastname",
@@ -418,95 +475,115 @@ export const TableUsers = ({ isAdult, products }: any) => {
 
   const gridRows =
     users && users.results.length > 0
-      ? users.results.map((user: any, i: number, row: any) => {
-          const userTeamIds = user.members
-            ? user.members.map((member: any) => member.team.id)
-            : [];
-          const userProducts =
-            products &&
-            products.results.length > 0 &&
-            filterProductsForUser(products.results, userTeamIds);
-          const userProdcutIds =
-            userProducts && userProducts.map((product: any) => product.id);
+      ? users.results
+          .map((user: any, i: number, row: any) => {
+            const userTeamIds = user.members
+              ? user.members.map((member: any) => member.team.id)
+              : [];
+            const userProducts =
+              products &&
+              products.results.length > 0 &&
+              filterProductsForUser(products.results, userTeamIds);
+            const userProdcutIds =
+              userProducts && userProducts.map((product: any) => product.id);
+            const currentMessages =
+              messages &&
+              messages.filter((message: any) => message.userId === user.id);
 
-          return {
-            id: user.id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            ...(isAdult
-              ? {
-                  heightShoulder: user.towers && user.towers.height_shoulders,
-                  heightArms: user.towers && user.towers.height_arms,
-                }
-              : {
-                  family: Array.from(
-                    new Set(
-                      user.family.members
-                        .filter((member: any) => member.user.can_manage)
-                        .map(
-                          (member: any) => member.user.lastname.split(" ")[0],
+            return [
+              {
+                id: user.id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                ...(isAdult
+                  ? {
+                      heightShoulder:
+                        user.towers && user.towers.height_shoulders,
+                      heightArms: user.towers && user.towers.height_arms,
+                    }
+                  : {
+                      family: Array.from(
+                        new Set(
+                          user.family.members
+                            .filter((member: any) => member.user.can_manage)
+                            .map(
+                              (member: any) =>
+                                member.user.lastname.split(" ")[0],
+                            ),
                         ),
-                    ),
-                  ).join("-"),
-                }),
-            alias: user.towers && user.towers.alias,
-            ...(allProducts &&
-            allProducts.length > 0 &&
-            userProducts &&
-            userProducts.length > 0 &&
-            userProdcutIds
-              ? Object.fromEntries(
-                  allProducts.map((product: any) => {
-                    const order =
-                      user.orders &&
-                      user.orders.find(
-                        (order: any) =>
-                          order.products.filter(
-                            (orderProduct: any) =>
-                              orderProduct.size.product.id === product.id,
-                          ).length > 0,
-                      );
+                      ).join("-"),
+                    }),
+                alias: user.towers && user.towers.alias,
+                ...(allProducts &&
+                allProducts.length > 0 &&
+                userProducts &&
+                userProducts.length > 0 &&
+                userProdcutIds
+                  ? Object.fromEntries(
+                      allProducts.map((product: any) => {
+                        const order =
+                          user.orders &&
+                          user.orders.find(
+                            (order: any) =>
+                              order.products.filter(
+                                (orderProduct: any) =>
+                                  orderProduct.size.product.id === product.id,
+                              ).length > 0,
+                          );
 
-                    const orderProductGiven =
-                      user.orders &&
-                      user.orders.filter(
-                        (order: any) =>
-                          order.products.filter(
-                            (orderProduct: any) =>
-                              orderProduct.size.product.id === product.id &&
-                              orderProduct.quantity_given > 0,
-                          ).length > 0,
-                      ).length > 0;
+                        const orderProductGiven =
+                          user.orders &&
+                          user.orders.filter(
+                            (order: any) =>
+                              order.products.filter(
+                                (orderProduct: any) =>
+                                  orderProduct.size.product.id === product.id &&
+                                  orderProduct.quantity_given > 0,
+                              ).length > 0,
+                          ).length > 0;
 
-                    const userProduct =
-                      user.products &&
-                      user.products.find(
-                        (userProduct: any) =>
-                          userProduct.product.id === product.id,
-                      );
+                        const userProduct =
+                          user.products &&
+                          user.products.find(
+                            (userProduct: any) =>
+                              userProduct.product.id === product.id,
+                          );
 
-                    const orderStatus =
-                      userProduct || orderProductGiven
-                        ? OrderStatus.COMPLETED
-                        : order
-                          ? order.status
-                          : OrderStatus.CANCELED;
+                        const orderStatus =
+                          userProduct || orderProductGiven
+                            ? OrderStatus.COMPLETED
+                            : order
+                              ? order.status
+                              : OrderStatus.CANCELED;
 
-                    return [
-                      "product-" + product.id,
-                      userProdcutIds.includes(product.id)
-                        ? orderStatus
-                        : undefined,
-                    ];
-                  }),
-                )
-              : {}),
-            membershipStatus: user.membership && user.membership.status,
-            membershipDateTo:
-              user.membership &&
-              new Date(user.membership.date_to).toISOString().substring(0, 10),
-          };
-        })
+                        return [
+                          "product-" + product.id,
+                          userProdcutIds.includes(product.id)
+                            ? orderStatus
+                            : undefined,
+                        ];
+                      }),
+                    )
+                  : {}),
+                membershipStatus: user.membership && user.membership.status,
+                membershipDateTo:
+                  user.membership &&
+                  new Date(user.membership.date_to)
+                    .toISOString()
+                    .substring(0, 10),
+              },
+              ...(messages && currentMessages.length > 0
+                ? [
+                    {
+                      id: user.id + "-message",
+                      firstname: currentMessages,
+                    },
+                  ]
+                : []),
+            ];
+          })
+          .flat()
+          .filter((user: any) => user)
       : [];
 
   return (
@@ -564,6 +641,9 @@ export const TableUsers = ({ isAdult, products }: any) => {
           variant: "circular-progress",
           noRowsVariant: "circular-progress",
         },
+      }}
+      getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
+        return id.toString().endsWith("-message") ? "auto" : null;
       }}
     />
   );
