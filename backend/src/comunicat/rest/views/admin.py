@@ -16,6 +16,7 @@ from comunicat.rest.serializers.admin import (
     AdminUserRequestSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
+from legal.enums import TeamType
 
 
 class AdminUserResultsSetPagination(PageNumberPagination):
@@ -35,7 +36,7 @@ class AdminUserAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: AdminUserSerializer(many=True), 403: Serializer()},
     )
-    @method_decorator(cache_page(1))
+    # @method_decorator(cache_page(1))
     def list(self, request):
         ordering = request.query_params.get("ordering")
         if ordering:
@@ -44,6 +45,12 @@ class AdminUserAPI(ComuniCatViewSet):
         is_adult = (
             request.query_params.get("is_adult").lower() == "true"
             if "is_adult" in request.query_params
+            else None
+        )
+
+        is_musician = (
+            request.query_params.get("is_musician").lower() == "true"
+            if "is_musician" in request.query_params
             else None
         )
 
@@ -58,6 +65,13 @@ class AdminUserAPI(ComuniCatViewSet):
         if is_adult is not None:
             user_objs = [
                 user_obj for user_obj in user_objs if user_obj.is_adult == is_adult
+            ]
+        for user_obj in user_objs:
+            print(user_obj.members.all())
+
+        if is_musician is not None:
+            user_objs = [
+                user_obj for user_obj in user_objs if any([member_obj.team.type == TeamType.MUSICIANS for member_obj in user_obj.members.all()])
             ]
 
         paginator = self.pagination_class()

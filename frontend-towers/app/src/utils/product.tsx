@@ -10,14 +10,14 @@ export function filterProductsForUser(products: any[], teamIds: string[]) {
           productModule.is_required &&
           (productModule.teams.length === 0 ||
             !teamIds ||
-            productModule.teams.some((team: any) =>
-              teamIds.includes(team.id),
-            )) &&
-          (productModule.exclude_teams.length === 0 ||
-            !teamIds ||
-            !productModule.exclude_teams.some((team: any) =>
-              teamIds.includes(team.id),
-            )),
+            productModule.teams.some((team: any) => teamIds.includes(team.id))),
+        // TODO: While musicians don't need e.g. faixes they can buy one and we should display it
+        // &&
+        // (productModule.exclude_teams.length === 0 ||
+        //   !teamIds ||
+        //   !productModule.exclude_teams.some((team: any) =>
+        //     teamIds.includes(team.id),
+        //   )),
       ).length > 0,
   );
 }

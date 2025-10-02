@@ -1,11 +1,14 @@
 import styles from "./styles.module.css";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { useAppContext } from "../../components/AppContext/AppContext";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { getEnumLabel, RegistrationStatus } from "../../enums";
-import { apiEventList, apiEventRegistrationList, apiUserList } from "../../api";
+import { getEnumLabel, RegistrationStatus, TeamType } from "../../enums";
+import {
+  apiEventList,
+  apiEventRegistrationList,
+  apiAdminUserList,
+} from "../../api";
 import { Card, Divider, Typography } from "@mui/material";
 import { capitalizeFirstLetter } from "../../utils/string";
 import Box from "@mui/material/Box";
@@ -15,11 +18,12 @@ import { getEventsCount } from "../../utils/admin";
 function AdminAttendancePage() {
   const { t } = useTranslation("common");
 
-  const { user } = useAppContext();
-
   const [events, setEvents] = React.useState(undefined);
+  const [eventsMusicians, setEventsMusicians] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
   const [registrations, setRegistrations] = React.useState(undefined);
+  const [registrationsMusicians, setRegistrationsMusicians] =
+    React.useState(undefined);
 
   React.useEffect(() => {
     apiEventList(1).then((response) => {
@@ -27,12 +31,25 @@ function AdminAttendancePage() {
         setEvents(response.data);
       }
     });
-  }, [setEvents]);
+    apiEventList(
+      1,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true,
+    ).then((response) => {
+      if (response.status === 200) {
+        setEventsMusicians(response.data);
+      }
+    });
+  }, [setEvents, setEventsMusicians]);
 
   React.useEffect(() => {
-    apiUserList().then((response) => {
+    apiAdminUserList().then((response) => {
       if (response.status === 200) {
-        setUsers(response.data);
+        setUsers(response.data.results);
       }
     });
   }, [setUsers]);
@@ -58,13 +75,50 @@ function AdminAttendancePage() {
     }
   }, [events, setRegistrations]);
 
+  React.useEffect(() => {
+    if (eventsMusicians && eventsMusicians.results.length > 0) {
+      for (let i = 0; i < eventsMusicians.results.length; i++) {
+        const event = eventsMusicians.results[i];
+        apiEventRegistrationList(event.id, true).then((response) => {
+          if (response.status === 200) {
+            setRegistrationsMusicians((registrations: any) => ({
+              ...registrations,
+              [event.id]: Object.fromEntries(
+                response.data.map((registration: any) => [
+                  registration.user.id,
+                  registration,
+                ]),
+              ),
+            }));
+          }
+        });
+      }
+    }
+  }, [eventsMusicians, setRegistrationsMusicians]);
+
   const userChildren: any[] =
     users && users.filter((user: any) => !user.can_manage);
 
   const userAdults: any[] =
     users && users.filter((user: any) => user.can_manage);
 
+  const userMusicians: any[] =
+    users &&
+    users.filter(
+      (user: any) =>
+        user.members &&
+        user.members.filter(
+          (member: any) => member.team.type === TeamType.MUSICIANS,
+        ).length > 0,
+    );
+
   const eventsCountAdults = getEventsCount(events, registrations, userAdults);
+
+  const eventsCountMusicians = getEventsCount(
+    eventsMusicians,
+    registrations,
+    userMusicians,
+  );
 
   const eventsCountChildren = getEventsCount(
     events,
@@ -162,6 +216,91 @@ function AdminAttendancePage() {
                           className={styles.adminMono}
                         >
                           {eventsCountAdults[event.id].join("/")}
+                        </Typography>
+                      }
+                    </Typography>
+                  )}
+                </Box>
+              ),
+              renderCell: (params: any) => {
+                const registration = params.row["event-" + event.id];
+                return (
+                  <Box
+                    className={
+                      registration
+                        ? registration.status === RegistrationStatus.ACTIVE
+                          ? styles.adminTableCellAttending
+                          : registration.status === RegistrationStatus.CANCELLED
+                            ? styles.adminTableCellNotAttending
+                            : styles.adminTableCellUnknown
+                        : styles.adminTableCellUnknown
+                    }
+                  >
+                    {getEnumLabel(
+                      t,
+                      "registration-status",
+                      registration ? registration.status : 0,
+                    )}
+                  </Box>
+                );
+              },
+            };
+          })
+      : []),
+  ];
+
+  const columnsMusicians: GridColDef[] = [
+    { field: "id", headerName: "ID" },
+    {
+      field: "name",
+      headerName: t("pages.admin-attendance.events-table.user"),
+      width: 200,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin-attendance.events-table.user")}
+        </Typography>
+      ),
+    },
+    ...(eventsMusicians && eventsMusicians.results.length > 0
+      ? eventsMusicians.results
+          .filter((event: any) => event.require_signup)
+          .map((event: any) => {
+            return {
+              field: "event-" + event.id,
+              headerName:
+                capitalizeFirstLetter(
+                  new Date(event.time_from).toISOString().slice(0, 10),
+                ) +
+                " " +
+                new Date(event.time_from).toTimeString().slice(0, 5),
+              sortable: false,
+              flex: 1,
+              minWidth: 200,
+              headerClassName: styles.adminGridHeader,
+              cellClassName: styles.adminGridCell,
+              renderHeader: () => (
+                <Box my={1}>
+                  <Typography variant="body2" fontWeight={600}>
+                    {event.title}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {capitalizeFirstLetter(
+                      new Date(event.time_from).toISOString().slice(0, 10),
+                    ) +
+                      " " +
+                      new Date(event.time_from).toTimeString().slice(0, 5)}
+                  </Typography>
+                  {eventsCountMusicians && event.id in eventsCountMusicians && (
+                    <Typography variant="body2" color="textSecondary">
+                      {t("pages.admin-attendance.events-table.attendance")}
+                      {": "}
+                      {
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          className={styles.adminMono}
+                        >
+                          {eventsCountMusicians[event.id].join("/")}
                         </Typography>
                       }
                     </Typography>
@@ -315,6 +454,31 @@ function AdminAttendancePage() {
         })
       : [];
 
+  const rowsMusicians =
+    userMusicians && userMusicians.length > 0
+      ? userMusicians.map((user: any, i: number, row: any) => {
+          return {
+            id: user.id,
+            name: user.firstname + " " + user.lastname,
+            ...(eventsMusicians &&
+            eventsMusicians.results.length > 0 &&
+            registrationsMusicians
+              ? Object.fromEntries(
+                  eventsMusicians.results
+                    .filter((event: any) => event.require_signup)
+                    .map((event: any) => {
+                      const registration =
+                        event.id in registrationsMusicians &&
+                        user.id in registrationsMusicians[event.id] &&
+                        registrationsMusicians[event.id][user.id];
+                      return ["event-" + event.id, registration];
+                    }),
+                )
+              : {}),
+          };
+        })
+      : [];
+
   const rowsChildren =
     userChildren && userChildren.length > 0
       ? userChildren.map((user: any, i: number, row: any) => {
@@ -385,6 +549,53 @@ function AdminAttendancePage() {
               },
             }}
             loading={!userAdults}
+            slotProps={{
+              loadingOverlay: {
+                variant: "circular-progress",
+                noRowsVariant: "circular-progress",
+              },
+            }}
+          />
+        </Box>
+      </Card>
+      <Card variant="outlined" className={styles.adminCard}>
+        <Box className={styles.adminTopBox}>
+          <Typography variant="h6" fontWeight="600" component="div">
+            {t("pages.admin-attendance.events-table.title-musicians")}
+          </Typography>
+        </Box>
+        <Divider />
+
+        <Box>
+          <DataGrid
+            rows={rowsMusicians}
+            columns={columnsMusicians}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 100,
+                },
+              },
+              columns: {
+                ...columnsAdults,
+                columnVisibilityModel: {
+                  id: false,
+                },
+              },
+              density: "compact",
+              sorting: {
+                sortModel: [{ field: "name", sort: "asc" }],
+              },
+            }}
+            disableRowSelectionOnClick
+            pageSizeOptions={[10, 25, 50, 100]}
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-columnHeaders > div": {
+                height: "fit-content !important",
+              },
+            }}
+            loading={!userMusicians}
             slotProps={{
               loadingOverlay: {
                 variant: "circular-progress",

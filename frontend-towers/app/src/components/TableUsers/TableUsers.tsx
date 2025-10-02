@@ -18,7 +18,12 @@ import {
 import { apiAdminUserList, apiAdminUserUpdate } from "../../api";
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import { getEnumLabel, MembershipStatus, OrderStatus } from "../../enums";
+import {
+  getEnumLabel,
+  MembershipStatus,
+  OrderStatus,
+  TeamType,
+} from "../../enums";
 import IconEdit from "@mui/icons-material/Edit";
 import IconSave from "@mui/icons-material/Save";
 import IconCancel from "@mui/icons-material/Close";
@@ -107,6 +112,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
               height_shoulders: newUser.heightShoulder,
               height_arms: newUser.heightArms,
               alias: newUser.alias,
+              is_musician: newUser.isMusician,
             }
           : {
               ...oldUser.towers,
@@ -184,7 +190,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
           {t("pages.admin-user.users-table.firstname")}
         </Typography>
       ),
-      colSpan: (value, row) => (row.id.endsWith("-message") ? 10 : 1),
+      colSpan: (value, row) => (row.id.endsWith("-message") ? 11 : 1),
       renderCell: (params: GridRenderCellParams<any, string>) =>
         params.row.id.endsWith("-message") ? (
           <Box sx={{ margin: "0 -10px" }}>
@@ -196,7 +202,6 @@ export const TableUsers = ({ isAdult, products }: any) => {
       getSortComparator: (sortDirection) => {
         const modifier = sortDirection === "desc" ? -1 : 1;
         return (value1, value2, cellParams1, cellParams2) => {
-          console.log(cellParams1, cellParams2, value1, value2);
           const realValue1 = usersById
             ? usersById[cellParams1.id.toString().replace("-message", "")][
                 cellParams1.field
@@ -304,20 +309,42 @@ export const TableUsers = ({ isAdult, products }: any) => {
       ]);
 
   // @ts-ignore
-  const gridColumns: GridColDef[] = midGridColumns.concat([
-    {
-      field: "alias",
-      type: "string",
-      headerName: t("pages.admin-user.users-table.alias"),
-      minWidth: 100,
-      flex: 1,
-      editable: true,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin-user.users-table.alias")}
-        </Typography>
-      ),
-    },
+  const mid2GridColumns: GridColDef[] = midGridColumns.concat({
+    field: "alias",
+    type: "string",
+    headerName: t("pages.admin-user.users-table.alias"),
+    minWidth: 100,
+    flex: 1,
+    editable: true,
+    renderHeader: () => (
+      <Typography variant="body2" fontWeight={600}>
+        {t("pages.admin-user.users-table.alias")}
+      </Typography>
+    ),
+  });
+
+  // @ts-ignore
+  const mid3GridColumns: GridColDef[] = isAdult
+    ? mid2GridColumns.concat([
+        {
+          field: "isMusician",
+          type: "boolean",
+          headerName: t("pages.admin-user.users-table.is-musician"),
+          width: 75,
+          editable: false,
+          align: "left",
+          headerAlign: "left",
+          renderHeader: () => (
+            <Typography variant="body2" fontWeight={600}>
+              {t("pages.admin-user.users-table.is-musician")}
+            </Typography>
+          ),
+        },
+      ])
+    : mid2GridColumns;
+
+  // @ts-ignore
+  const gridColumns: GridColDef[] = mid3GridColumns.concat([
     ...(allProducts && allProducts.length > 0
       ? allProducts.map((product: any) => {
           return {
@@ -326,7 +353,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
             sortable: false,
             filterable: false,
             disableColumnMenu: true,
-            width: 100,
+            width: 75,
             align: "right",
             headerAlign: "right",
             cellClassName: styles.adminGridCell,
@@ -366,7 +393,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
     {
       field: "membershipStatus",
       headerName: t("pages.admin-user.users-table.membership-status"),
-      width: 125,
+      width: 100,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -486,6 +513,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
               filterProductsForUser(products.results, userTeamIds);
             const userProdcutIds =
               userProducts && userProducts.map((product: any) => product.id);
+            console.log(user, userProducts);
             const currentMessages =
               messages &&
               messages.filter((message: any) => message.userId === user.id);
@@ -500,6 +528,12 @@ export const TableUsers = ({ isAdult, products }: any) => {
                       heightShoulder:
                         user.towers && user.towers.height_shoulders,
                       heightArms: user.towers && user.towers.height_arms,
+                      isMusician:
+                        user.members &&
+                        user.members.filter(
+                          (member: any) =>
+                            member.team.type === TeamType.MUSICIANS,
+                        ).length > 0,
                     }
                   : {
                       family: Array.from(
@@ -612,6 +646,7 @@ export const TableUsers = ({ isAdult, products }: any) => {
             id: false,
             heightShoulder: isAdult,
             heightArms: isAdult,
+            isMusician: isAdult,
           },
         },
         density: "compact",

@@ -17,8 +17,9 @@ from django.utils import timezone, translation
 
 import legal.api.team
 from comunicat.enums import Module
-from event.enums import EventStatus, RegistrationStatus
+from event.enums import EventStatus, RegistrationStatus, EventType
 from event.models import Event, Registration, AgendaItem, Connection, EventModule
+from legal.enums import TeamType
 from notify.enums import EmailType
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
@@ -39,6 +40,7 @@ def get_list(
     date_from: datetime.date | None = None,
     date_to: datetime.date | None = None,
     with_counts: bool = False,
+    for_musicians: bool | None = None,
 ) -> List[Event]:
     if request_user_id:
         family_user_ids = [
@@ -63,6 +65,12 @@ def get_list(
 
     if code:
         event_filter &= Q(code=code)
+
+    if for_musicians is not None:
+        if for_musicians:
+            event_filter &= Q(~Q(type=EventType.REHEARSAL) | Q(modules__team__module=module, modules__team__type=TeamType.MUSICIANS))
+        else:
+            event_filter &= Q(~Q(type=EventType.REHEARSAL) | Q(modules__team__module=module, modules__team__type__isnull=True))
 
     event_qs = (
         Event.objects.filter(

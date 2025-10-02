@@ -50,6 +50,12 @@ class EventAPI(ComuniCatViewSet):
         serializer = ListEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
+        for_musicians = (
+            request.query_params.get("for_musicians").lower() == "true"
+            if "for_musicians" in request.query_params
+            else None
+        )
+
         token = serializer.validated_data.get("token")
         user_obj = (
             request.user
@@ -69,6 +75,7 @@ class EventAPI(ComuniCatViewSet):
             date_from=serializer.validated_data.get("date_from"),
             date_to=serializer.validated_data.get("date_to"),
             with_counts=with_counts,
+            for_musicians=for_musicians,
         )
 
         serializer_class = (

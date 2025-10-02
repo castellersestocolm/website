@@ -150,8 +150,8 @@ def get_list(
             Prefetch(
                 "members",
                 Member.objects.filter(
+                    Q(team__date_to__isnull=True) | Q(team__date_to__gte=timezone.localdate()),
                     team__date_from__lte=timezone.localdate(),
-                    team__date_to__gte=timezone.localdate(),
                 )
                 .select_related("role", "team")
                 .order_by("team__type", "-team__date_from", "role__order"),
@@ -354,14 +354,15 @@ def update(
     )
 
     if towers:
+        towers_user_obj = user_obj.towers if hasattr(user_obj, "towers") else None
         TowersUser.objects.update_or_create(
             user=user_obj,
             defaults={
                 "alias": towers.get(
                     "alias",
                     (
-                        user_obj.towers.alias
-                        if hasattr(user_obj, "towers") and user_obj.towers.alias
+                        towers_user_obj.alias
+                        if towers_user_obj and towers_user_obj.alias
                         else generate_alias(
                             user_id=user_obj.id,
                             firstname=firstname or user_obj.firstname,
@@ -369,8 +370,8 @@ def update(
                         )
                     ),
                 ),
-                "height_shoulders": towers.get("height_shoulders"),
-                "height_arms": towers.get("height_arms"),
+                "height_shoulders": towers.get("height_shoulders", towers_user_obj and towers_user_obj.height_shoulders),
+                "height_arms": towers.get("height_arms", towers_user_obj and towers_user_obj.height_arms),
             },
         )
 

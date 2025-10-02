@@ -464,6 +464,7 @@ export const apiEventList = async (
   dateFrom: string = undefined,
   dateTo: string = undefined,
   withCounts: boolean = undefined,
+  forMusicians: boolean = undefined,
 ) => {
   try {
     return await instance.get("/event/", {
@@ -476,6 +477,7 @@ export const apiEventList = async (
           : new Date().toISOString().substring(0, 10),
         date_to: dateTo,
         with_counts: withCounts,
+        for_musicians: forMusicians,
       },
     });
   } catch (error) {
