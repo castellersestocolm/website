@@ -47,7 +47,8 @@ function AdminAttendancePage() {
   }, [setEvents, setEventsMusicians]);
 
   React.useEffect(() => {
-    apiAdminUserList().then((response) => {
+    // TODO: Fix pagination
+    apiAdminUserList(1, 100).then((response) => {
       if (response.status === 200) {
         setUsers(response.data.results);
       }
