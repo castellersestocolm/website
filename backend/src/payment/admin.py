@@ -247,6 +247,9 @@ class AccountAdmin(admin.ModelAdmin):
             },
         }
         for account_obj in Account.objects.with_amount(year=year):
+            if not account_obj.module:
+                continue
+
             account_amount = (
                 1 if account_obj.type == PaymentType.DEBIT else -1
             ) * getattr(account_obj, f"amount_{timezone.localdate().year}")
