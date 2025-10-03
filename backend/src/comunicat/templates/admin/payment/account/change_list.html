@@ -1,0 +1,47 @@
+{% extends "admin/change_list.html" %}
+
+{% block pagination %}
+{{ block.super }}
+<div style="margin-top: 30px;">
+    <h1>Account summary</h1>
+    <div class="results">
+        <table id="summary_list">
+            <thead>
+            <tr>
+                <th scope="col" class="column-summary_type">
+
+                    <div class="text"><span>Type</span></div>
+                    <div class="clear"></div>
+                </th>
+                {% for module in modules %}
+                <th scope="col" class="column-summary_balance">
+
+                    <div class="text"><span>{{ module|module_settings_value:"NAME" }}</span></div>
+                    <div class="clear"></div>
+                </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for type, balances in account_summary.items %}
+            <tr>
+                {% if type %}
+                <td class="field-summary_type">{{ "payment.enums.PaymentType"|format_enum:type|lower|capfirst }}</td>
+                {% for module, balance in balances.items %}
+                <td class="field-summary_balance">{{ balance|format_money }}</td>
+                {% endfor %}
+                {% else %}
+                <th class="field-summary_type">Total</th>
+                {% for module, balance in balances.items %}
+                <th class="field-summary_balance">{{ balance|format_money }}</th>
+                {% endfor %}
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+{% endblock %}

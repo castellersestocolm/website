@@ -1,9 +1,13 @@
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import JSONField
 from django.utils import timezone, translation
+from djmoney.money import Money
 
 import payment.api.entity
 import payment.tasks
+from comunicat.enums import Module
+from payment.enums import PaymentType
 
 from payment.models import (
     Payment,
@@ -227,6 +231,31 @@ class AccountAdmin(admin.ModelAdmin):
             .with_amount(year=year - 1)
             .with_amount(year=year - 2)
         )
+
+    def changelist_view(self, request, extra_context=None):
+        year = timezone.localdate().year
+
+        account_summary = {
+            PaymentType.DEBIT: {
+                module: Money("0", settings.MODULE_ALL_CURRENCY) for module in Module
+            },
+            PaymentType.CREDIT: {
+                module: Money("0", settings.MODULE_ALL_CURRENCY) for module in Module
+            },
+            None: {
+                module: Money("0", settings.MODULE_ALL_CURRENCY) for module in Module
+            },
+        }
+        for account_obj in Account.objects.with_amount(year=year):
+            account_amount = (
+                1 if account_obj.type == PaymentType.DEBIT else -1
+            ) * getattr(account_obj, f"amount_{timezone.localdate().year}")
+            account_summary[account_obj.type][account_obj.module] += account_amount
+            account_summary[None][account_obj.module] += account_amount
+
+        extra_context = {"account_summary": account_summary, "modules": list(Module)}
+
+        return super().changelist_view(request, extra_context=extra_context)
 
     def balance(self, obj):
         return getattr(obj, f"amount_{timezone.localdate().year}")

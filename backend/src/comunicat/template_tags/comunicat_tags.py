@@ -1,3 +1,4 @@
+import importlib
 from typing import List
 from urllib.parse import urljoin
 
@@ -123,3 +124,10 @@ def membership_amount(membership_obj: Membership) -> Money:
 @register.filter
 def format_money(amount: Money) -> str:
     return f"{'{:,}'.format(int(amount.amount)).replace(',', ' ')} {amount.currency}"
+
+
+@register.filter
+def format_enum(enum: str, value):
+    enum_module = importlib.import_module(".".join(enum.split(".")[:-1]))
+    enum_class = getattr(enum_module, enum.split(".")[-1])
+    return enum_class(value).name

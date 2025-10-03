@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0020_alter_agendaitem_description'),
+        ("event", "0020_alter_agendaitem_description"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='agendaitem',
-            name='name',
-            field=models.JSONField(default=comunicat.utils.models.language_field_default),
+            model_name="agendaitem",
+            name="name",
+            field=models.JSONField(
+                default=comunicat.utils.models.language_field_default
+            ),
         ),
     ]

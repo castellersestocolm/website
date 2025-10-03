@@ -68,9 +68,17 @@ def get_list(
 
     if for_musicians is not None:
         if for_musicians:
-            event_filter &= Q(~Q(type=EventType.REHEARSAL) | Q(modules__team__module=module, modules__team__type=TeamType.MUSICIANS))
+            event_filter &= Q(
+                ~Q(type=EventType.REHEARSAL)
+                | Q(
+                    modules__team__module=module, modules__team__type=TeamType.MUSICIANS
+                )
+            )
         else:
-            event_filter &= Q(~Q(type=EventType.REHEARSAL) | Q(modules__team__module=module, modules__team__type__isnull=True))
+            event_filter &= Q(
+                ~Q(type=EventType.REHEARSAL)
+                | Q(modules__team__module=module, modules__team__type__isnull=True)
+            )
 
     event_qs = (
         Event.objects.filter(

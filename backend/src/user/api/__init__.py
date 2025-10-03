@@ -150,7 +150,8 @@ def get_list(
             Prefetch(
                 "members",
                 Member.objects.filter(
-                    Q(team__date_to__isnull=True) | Q(team__date_to__gte=timezone.localdate()),
+                    Q(team__date_to__isnull=True)
+                    | Q(team__date_to__gte=timezone.localdate()),
                     team__date_from__lte=timezone.localdate(),
                 )
                 .select_related("role", "team")
@@ -370,8 +371,13 @@ def update(
                         )
                     ),
                 ),
-                "height_shoulders": towers.get("height_shoulders", towers_user_obj and towers_user_obj.height_shoulders),
-                "height_arms": towers.get("height_arms", towers_user_obj and towers_user_obj.height_arms),
+                "height_shoulders": towers.get(
+                    "height_shoulders",
+                    towers_user_obj and towers_user_obj.height_shoulders,
+                ),
+                "height_arms": towers.get(
+                    "height_arms", towers_user_obj and towers_user_obj.height_arms
+                ),
             },
         )
 

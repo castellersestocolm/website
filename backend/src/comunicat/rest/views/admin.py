@@ -71,7 +71,14 @@ class AdminUserAPI(ComuniCatViewSet):
 
         if is_musician is not None:
             user_objs = [
-                user_obj for user_obj in user_objs if any([member_obj.team.type == TeamType.MUSICIANS for member_obj in user_obj.members.all()])
+                user_obj
+                for user_obj in user_objs
+                if any(
+                    [
+                        member_obj.team.type == TeamType.MUSICIANS
+                        for member_obj in user_obj.members.all()
+                    ]
+                )
             ]
 
         paginator = self.pagination_class()

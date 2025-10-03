@@ -7,18 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('event', '0018_event_event_event_code_time_from_unique'),
+        ("event", "0018_event_event_event_code_time_from_unique"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='code',
+            model_name="event",
+            name="code",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='description',
-            field=models.JSONField(default=comunicat.utils.models.language_field_default),
+            model_name="event",
+            name="description",
+            field=models.JSONField(
+                default=comunicat.utils.models.language_field_default
+            ),
         ),
     ]

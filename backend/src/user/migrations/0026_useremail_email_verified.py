@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0025_rename_exclude_membership_googlegroupmodule_exclude_active'),
+        ("user", "0025_rename_exclude_membership_googlegroupmodule_exclude_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='useremail',
-            name='email_verified',
+            model_name="useremail",
+            name="email_verified",
             field=models.BooleanField(default=False),
         ),
     ]
