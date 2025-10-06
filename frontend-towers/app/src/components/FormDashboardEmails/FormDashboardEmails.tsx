@@ -23,7 +23,7 @@ export default function FormDashboardEmails() {
       {user.emails && user.emails.length > 0 && (
         <>
           <List className={styles.userFamilyList}>
-            {user.emails.map((userEmail: any, i: number, row: any) => (
+            {user.emails.filter((userEmail: any) => userEmail.email !== user.email).map((userEmail: any, i: number, row: any) => (
               <Box key={i}>
                 <ListItemButton disableTouchRipple dense>
                   <ListItemIcon>

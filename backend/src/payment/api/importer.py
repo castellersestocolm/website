@@ -216,28 +216,16 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                 "extra": extra,
             }
 
-            if external_id:
-                transaction_obj, __ = Transaction.objects.update_or_create(
-                    source=transaction_import_obj.source,
-                    method=method,
-                    amount=amount,
-                    text=text,
-                    sender=sender,
-                    reference=reference,
-                    date_accounting=date_accounting,
-                    defaults=transaction_data,
-                )
-            else:
-                transaction_obj = Transaction.objects.create(
-                    source=transaction_import_obj.source,
-                    method=method,
-                    amount=amount,
-                    text=text,
-                    sender=sender,
-                    reference=reference,
-                    date_accounting=date_accounting,
-                    **transaction_data,
-                )
+            transaction_obj, __ = Transaction.objects.update_or_create(
+                source=transaction_import_obj.source,
+                method=method,
+                amount=amount,
+                text=text,
+                sender=sender,
+                reference=reference,
+                date_accounting=date_accounting,
+                defaults=transaction_data,
+            )
 
             payment_type = (
                 PaymentType.DEBIT if amount.amount >= 0 else PaymentType.CREDIT
@@ -303,10 +291,6 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                                     has_found_new_account = True
                 else:
                     found_accounts = [(abs(amount.amount), found_account_obj)]
-
-            print(amount, text)
-            print(found_account_obj)
-            print(found_accounts)
 
             # TODO: Create membership from payment if not found
             # TODO: If not existing split into multiple lines according to membership
@@ -393,17 +377,16 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                         membership_obj.status = MembershipStatus.ACTIVE
                         membership_obj.save(update_fields=("status",))
 
-            print(found_accounts)
             if not payment_obj:
                 # TODO: Link with existing payment based on similarity
                 payment_obj, __ = Payment.objects.get_or_create(
                     type=payment_type,
                     status=PaymentStatus.COMPLETED,
                     method=method,
-                    text=text,
                     transaction=transaction_obj,
                     defaults={
                         "entity": found_entity_obj,
+                        "text": text,
                     },
                 )
 
@@ -444,7 +427,6 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                     if hasattr(found_user_obj, "family_member"):
                         family_id = found_user_obj.family_member.family.id
 
-                    print("UPDATE MEMBERSHIP")
                     membership.api.create_or_update(
                         user_id=found_user_obj.id,
                         modules=list(
@@ -457,8 +439,6 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                         ),
                         family_id=family_id,
                     )
-
-            print("")
 
         transaction_import_obj.status = TransactionImportStatus.COMPLETED
     except KeyError:

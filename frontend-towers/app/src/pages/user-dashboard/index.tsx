@@ -623,7 +623,7 @@ function UserDashboardPage() {
 
   const contentSidebarEmails = user &&
     user.emails &&
-    user.emails.length > 0 && (
+    user.emails.filter((userEmail: any) => userEmail.email !== user.email).length > 0 && (
       <Grid>
         <Card variant="outlined">
           <Box className={styles.userTopBox}>

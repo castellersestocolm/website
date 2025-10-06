@@ -65,12 +65,11 @@ class Payment(StandardModel, Timestamps):
 
     text = models.CharField(max_length=255, null=True, blank=True)
 
-    transaction = models.ForeignKey(
+    transaction = models.OneToOneField(
         "Transaction",
-        related_name="payments",
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
     )
 
     debit_payment = models.ForeignKey(
@@ -78,7 +77,7 @@ class Payment(StandardModel, Timestamps):
         null=True,
         blank=True,
         related_name="credit_payments",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
     )
 
     objects = PaymentQuerySet.as_manager()
@@ -474,6 +473,9 @@ class TransactionImport(StandardModel, Timestamps):
         validators=[FileExtensionValidator(["csv"])],
     )
     input = models.TextField(max_length=10000, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.source} - {self.date_from.strftime('%Y-%m-%d')}{' / ' + self.date_to.strftime('%Y-%m-%d') if self.date_to != self.date_from else ''}"
 
     def save(self, run: bool = True, *args, **kwargs):
         super().save(*args, **kwargs)

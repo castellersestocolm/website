@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import JSONField
+from django.forms import BaseInlineFormSet
 from django.utils import timezone, translation
 from djmoney.money import Money
 
@@ -33,12 +34,56 @@ from jsoneditor.forms import JSONEditor
 from django.utils.translation import gettext_lazy as _
 
 
+class PaymentLineForPaymentFormset(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+
+        if self.instance.transaction:
+            amount_left = self.instance.transaction.amount
+            for form in self.forms:
+                if "amount" not in form.cleaned_data:
+                    continue
+
+                current_amount = min(form.cleaned_data["amount"], amount_left)
+                amount_left -= current_amount
+
+                if current_amount != form.cleaned_data["amount"]:
+                    if current_amount.amount > 0:
+                        form.instance.amount = current_amount
+                        form.instance.save(update_fields=("amount",))
+                    else:
+                        form.instance.delete()
+
+            if amount_left:
+                PaymentLine.objects.create(payment=self.instance, amount=amount_left)
+
+        return self.instance
+
+    def delete_existing(self, obj, commit=True):
+        super().delete_existing(obj=obj, commit=commit)
+
+        current_amount = sum(
+            [
+                payment_line_obj.amount
+                for payment_line_obj in PaymentLine.objects.filter(
+                    payment=self.instance
+                )
+            ]
+        )
+        print(current_amount, self.instance.transaction.amount)
+        if current_amount < self.instance.transaction.amount:
+            amount_left = self.instance.transaction.amount - current_amount
+            PaymentLine.objects.create(payment=self.instance, amount=amount_left)
+
+
 class PaymentLineForPaymentInline(admin.TabularInline):
     model = PaymentLine
-    ordering = ("-created_at",)
+    ordering = ("created_at",)
     readonly_fields = ("debit_line",)
     raw_id_fields = ("receipt",)
     extra = 0
+
+    formset = PaymentLineForPaymentFormset
 
 
 class PaymentLogInline(admin.TabularInline):
@@ -78,7 +123,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "balance",
     )
     list_filter = ("type", "status", "method")
-    readonly_fields = ("debit_payment",)
+    readonly_fields = ("debit_payment", "transaction")
     raw_id_fields = (
         "entity",
         "transaction",
@@ -323,6 +368,15 @@ class TransactionAdmin(admin.ModelAdmin):
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},
     }
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Source)
