@@ -2,6 +2,7 @@ import datetime
 import re
 from uuid import UUID
 
+from django.db import transaction
 from django.db.models import Q, Prefetch
 from django.utils import timezone
 from google.oauth2.credentials import Credentials
@@ -241,10 +242,32 @@ def import_events() -> None:
                 pass
 
     if event_creates:
-        Event.objects.bulk_create(event_creates)
+        event_objs = Event.objects.bulk_create(event_creates)
+
+        import event.tasks
+
+        for event_obj in event_objs:
+            if GOOGLE_ENABLED_BY_MODULE[event_obj.module]["photos"]:
+                transaction.on_commit(
+                    lambda: event.tasks.create_or_update_album.delay(
+                        event_id=event_obj.id
+                    )
+                )
 
     if event_updates:
-        Event.objects.bulk_update(event_updates, fields=("time_from", "time_to"))
+        event_objs = Event.objects.bulk_update(
+            event_updates, fields=("time_from", "time_to")
+        )
+
+        import event.tasks
+
+        for event_obj in event_objs:
+            if GOOGLE_ENABLED_BY_MODULE[event_obj.module]["photos"]:
+                transaction.on_commit(
+                    lambda: event.tasks.create_or_update_album.delay(
+                        event_id=event_obj.id
+                    )
+                )
 
     if google_event_creates:
         GoogleEvent.objects.bulk_create(google_event_creates)
