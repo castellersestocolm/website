@@ -255,13 +255,13 @@ def import_events() -> None:
                 )
 
     if event_updates:
-        event_objs = Event.objects.bulk_update(
+        Event.objects.bulk_update(
             event_updates, fields=("time_from", "time_to")
         )
 
         import event.tasks
 
-        for event_obj in event_objs:
+        for event_obj in event_updates:
             if GOOGLE_ENABLED_BY_MODULE[event_obj.module]["photos"]:
                 transaction.on_commit(
                     lambda: event.tasks.create_or_update_album.delay(
