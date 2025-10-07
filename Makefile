@@ -13,4 +13,4 @@ backend-requirements:
 	pip-compile \
 		--upgrade --generate-hashes --resolver=backtracking \
 		--output-file $(BACKEND_DIR)/requirements/dev/requirements.txt \
-		$(BACKEND_DIR)/requirements/dev/requirements.in $(BACKEND_DIR)/requirements/dev/requirements.in
+		$(BACKEND_DIR)/requirements/live/requirements.in $(BACKEND_DIR)/requirements/dev/requirements.in

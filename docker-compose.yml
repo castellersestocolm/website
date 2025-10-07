@@ -3,7 +3,10 @@ version: "3.9"
 services:
   backend:
     image: backend
-    build: backend
+    build:
+      context: backend
+      args:
+        - BUILD_TARGET=dev
     stdin_open: true
     tty: true
     restart: on-failure

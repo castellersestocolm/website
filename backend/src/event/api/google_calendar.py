@@ -255,9 +255,7 @@ def import_events() -> None:
                 )
 
     if event_updates:
-        Event.objects.bulk_update(
-            event_updates, fields=("time_from", "time_to")
-        )
+        Event.objects.bulk_update(event_updates, fields=("time_from", "time_to"))
 
         import event.tasks
 

@@ -25,7 +25,7 @@ from notify.tasks import send_user_email
 from order.enums import OrderStatus
 from order.models import Order
 from user.enums import FamilyMemberStatus, FamilyMemberRole
-from user.models import User, TowersUser, FamilyMember, Family, UserEmail
+from user.models import User, TowersUser, FamilyMember, Family, UserEmail, UserProduct
 from user.utils import get_default_consent_pictures
 
 
@@ -93,7 +93,10 @@ def get_list(
                 "family_member__family__members",
                 FamilyMember.objects.filter(
                     status__in=(FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
-                ).order_by("-role", "user__firstname", "user__lastname"),
+                )
+                .select_related("user", "user__towers")
+                .prefetch_related("user__members", "user__members__team")
+                .order_by("-role", "user__firstname", "user__lastname"),
             ),
             Prefetch(
                 "emails",
@@ -139,7 +142,16 @@ def get_list(
                     status__in=(OrderStatus.PROCESSING, OrderStatus.COMPLETED)
                 )
                 .prefetch_related(
-                    "products", "products__size", "products__size__product"
+                    "products",
+                    "products__size",
+                    "products__size__product",
+                    "products__size__product__sizes",
+                    "products__size__product__images",
+                    "products__size__product__modules",
+                    "products__size__product__modules__teams",
+                    "products__size__product__modules__exclude_teams",
+                    "products__line",
+                    "products__line__receipt",
                 )
                 .order_by("created_at"),
             ),
@@ -160,7 +172,18 @@ def get_list(
         )
 
     if with_products:
-        user_qs = user_qs.prefetch_related("products")
+        user_qs = user_qs.prefetch_related(
+            Prefetch(
+                "products",
+                UserProduct.objects.select_related("product").prefetch_related(
+                    "product__sizes",
+                    "product__images",
+                    "product__modules",
+                    "product__modules__teams",
+                    "product__modules__exclude_teams",
+                ),
+            ),
+        )
 
     return list(user_qs)
 

@@ -36,7 +36,7 @@ class AdminUserAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: AdminUserSerializer(many=True), 403: Serializer()},
     )
-    # @method_decorator(cache_page(1))
+    @method_decorator(cache_page(1))
     def list(self, request):
         ordering = request.query_params.get("ordering")
         if ordering:

@@ -140,9 +140,18 @@ def get_list_sent(
     module: Module,
 ) -> List[FamilyMemberRequest]:
     return list(
-        FamilyMemberRequest.objects.filter(user_sender_id=user_id).order_by(
-            "status", "created_at"
+        FamilyMemberRequest.objects.filter(user_sender_id=user_id)
+        .select_related("user_sender", "user_receiver", "family")
+        .prefetch_related(
+            "family__members",
+            "family__members__user",
+            "family__members__user__towers",
+            "family__members__user__emails",
+            "family__members__user__members",
+            "family__members__user__members__team",
+            "family__members__user__members__role",
         )
+        .order_by("status", "created_at")
     )
 
 
@@ -151,9 +160,18 @@ def get_list_received(
     module: Module,
 ) -> List[FamilyMemberRequest]:
     return list(
-        FamilyMemberRequest.objects.filter(user_receiver_id=user_id).order_by(
-            "status", "created_at"
+        FamilyMemberRequest.objects.filter(user_receiver_id=user_id)
+        .select_related("user_sender", "user_receiver", "family")
+        .prefetch_related(
+            "family__members",
+            "family__members__user",
+            "family__members__user__towers",
+            "family__members__user__emails",
+            "family__members__user__members",
+            "family__members__user__members__team",
+            "family__members__user__members__role",
         )
+        .order_by("status", "created_at")
     )
 
 

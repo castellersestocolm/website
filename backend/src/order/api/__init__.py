@@ -104,7 +104,13 @@ def get_list(
                     "size__product__type", "size__order", "size__category", "size__size"
                 )
                 .select_related("size", "size__product", "line")
-                .prefetch_related("size__product__images")
+                .prefetch_related(
+                    "size__product__sizes",
+                    "size__product__images",
+                    "size__product__modules",
+                    "size__product__modules__teams",
+                    "size__product__modules__exclude_teams",
+                )
                 .with_name(),
             ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),

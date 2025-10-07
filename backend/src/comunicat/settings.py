@@ -30,6 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
+INTERNAL_IPS = ("127.0.0.1",)
 
 DOMAIN = os.getenv("DOMAIN")
 HTTP_PROTOCOL = "http" if DEBUG else "https"
@@ -629,3 +630,25 @@ if not DEBUG and SENTRY_DSN:
         traces_sample_rate=1.0,
         send_default_pii=True,
     )
+
+# Debug toolbar
+
+if False and DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
+    DEBUG_TOOLBAR_CONFIG = {"SHOW_COLLAPSED": True}
+
+    # Fix for debug toolbar when run in docker container
+    import socket
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS += tuple(ip[:-1] + "1" for ip in ips)
+
+# Silk
+
+if DEBUG:
+    INSTALLED_APPS += ["silk"]
+    MIDDLEWARE = ["silk.middleware.SilkyMiddleware"] + MIDDLEWARE
+
+    SILKY_PYTHON_PROFILER = False
+    SILKY_PYTHON_PROFILER_BINARY = False

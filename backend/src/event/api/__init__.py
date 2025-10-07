@@ -86,7 +86,14 @@ def get_list(
             Q(module__isnull=True) | Q(module=module) | Q(modules__module=module),
             status=EventStatus.PUBLISHED,
         )
-        .select_related("location")
+        .select_related(
+            "location",
+            "google_event",
+            "google_event__google_calendar",
+            "google_event__google_calendar__google_integration",
+            "google_album",
+            "google_album__google_integration",
+        )
         .prefetch_related(
             Prefetch(
                 "modules",
