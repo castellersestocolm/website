@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = os.getenv("DEBUG", "true").lower() == "true"
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 INTERNAL_IPS = ("127.0.0.1",)
 
 DOMAIN = os.getenv("DOMAIN")
@@ -633,7 +633,7 @@ if not DEBUG and SENTRY_DSN:
 
 # Debug toolbar
 
-if False and DEBUG:
+if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
     DEBUG_TOOLBAR_CONFIG = {"SHOW_COLLAPSED": True}
