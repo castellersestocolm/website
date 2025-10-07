@@ -14,7 +14,10 @@ from event.models import (
     AgendaItem,
     Connection,
     EventModule,
+    GoogleEvent,
+    GoogleCalendar,
 )
+from integration.models import GoogleIntegration
 
 
 class ConnectionSerializer(s.ModelSerializer):
@@ -33,6 +36,72 @@ class ConnectionSerializer(s.ModelSerializer):
             "type",
             "coordinate_lat",
             "coordinate_lon",
+        )
+
+
+class GoogleIntegrationSerializer(s.ModelSerializer):
+    class Meta:
+        model = GoogleIntegration
+        fields = (
+            "id",
+            "module",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+        )
+
+
+class GoogleCalendarSerializer(s.ModelSerializer):
+    google_integration = GoogleIntegrationSerializer(read_only=True)
+
+    class Meta:
+        model = GoogleCalendar
+        fields = (
+            "id",
+            "name",
+            "external_id",
+            "google_integration",
+        )
+        read_only_fields = (
+            "id",
+            "name",
+            "external_id",
+            "google_integration",
+        )
+
+
+class GoogleEventSerializer(s.ModelSerializer):
+    google_calendar = GoogleCalendarSerializer(read_only=True)
+
+    class Meta:
+        model = GoogleEvent
+        fields = (
+            "id",
+            "google_calendar",
+            "external_id",
+        )
+        read_only_fields = (
+            "id",
+            "google_calendar",
+            "external_id",
+        )
+
+
+class GoogleAlbumSerializer(s.ModelSerializer):
+    google_integration = GoogleIntegrationSerializer(read_only=True)
+
+    class Meta:
+        model = GoogleEvent
+        fields = (
+            "id",
+            "google_integration",
+            "external_id",
+        )
+        read_only_fields = (
+            "id",
+            "google_integration",
+            "external_id",
         )
 
 
@@ -158,6 +227,8 @@ class EventSerializer(s.ModelSerializer):
         ],
         read_only=True,
     )
+    google_event = GoogleEventSerializer(required=False, read_only=True)
+    google_album = GoogleAlbumSerializer(required=False, read_only=True)
 
     class Meta:
         model = Event
@@ -176,6 +247,8 @@ class EventSerializer(s.ModelSerializer):
             "modules",
             "agenda_items",
             "poster",
+            "google_event",
+            "google_album",
             "created_at",
         )
         read_only_fields = (
@@ -193,6 +266,8 @@ class EventSerializer(s.ModelSerializer):
             "modules",
             "agenda_items",
             "poster",
+            "google_event",
+            "google_album",
             "created_at",
         )
 

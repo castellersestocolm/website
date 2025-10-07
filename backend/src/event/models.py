@@ -344,6 +344,9 @@ class GoogleEvent(StandardModel, Timestamps):
     )
     external_id = models.CharField(max_length=255, unique=True)
 
+    def __str__(self) -> str:
+        return f"{Module(self.google_calendar.google_integration.module).name} - {self.external_id}"
+
 
 @receiver(pre_delete, sender=GoogleEvent)
 def event_on_delete(sender, instance, using, **kwargs):
@@ -362,6 +365,9 @@ class GoogleAlbum(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
     external_id = models.CharField(max_length=255, unique=True)
+
+    def __str__(self) -> str:
+        return f"{Module(self.google_integration.module).name} - {self.external_id}"
 
 
 @receiver(pre_delete, sender=GoogleAlbum)

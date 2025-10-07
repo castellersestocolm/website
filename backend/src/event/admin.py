@@ -85,6 +85,7 @@ class EventAdmin(admin.ModelAdmin):
         AgendaItemInline,
         RegistrationInline,
     )
+    readonly_fields = ("google_event", "google_album")
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},
@@ -136,6 +137,7 @@ class GoogleEventAdmin(admin.ModelAdmin):
     search_fields = ("id", "external_id")
     list_display = ("event", "google_calendar", "external_id")
     ordering = ("-event__time_from",)
+    raw_id_fields = ("event",)
 
 
 @admin.register(GoogleAlbum)
@@ -143,3 +145,4 @@ class GoogleEventAdmin(admin.ModelAdmin):
     search_fields = ("id", "external_id")
     list_display = ("event", "google_integration", "external_id")
     ordering = ("-event__time_from",)
+    raw_id_fields = ("event",)
