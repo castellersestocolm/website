@@ -39,7 +39,7 @@ class PaymentLineForPaymentFormset(BaseInlineFormSet):
         super().clean()
 
         if self.instance.transaction:
-            amount_left = self.instance.transaction.amount
+            amount_left = abs(self.instance.transaction.amount)
             for form in self.forms:
                 if "amount" not in form.cleaned_data:
                     continue
@@ -123,7 +123,6 @@ class PaymentAdmin(admin.ModelAdmin):
         "balance",
     )
     list_filter = ("type", "status", "method")
-    readonly_fields = ("debit_payment", "transaction")
     raw_id_fields = (
         "entity",
         "transaction",
@@ -140,6 +139,20 @@ class PaymentAdmin(admin.ModelAdmin):
             .prefetch_related("lines")
             .order_by("-date_accounting", "-date_interest", "-created_at")
         )
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = ["debit_payment", "transaction"]
+
+        if obj is None:
+            return readonly_fields
+
+        if obj.transaction:
+            readonly_fields += [
+                "type",
+                "method",
+            ]
+
+        return readonly_fields
 
     @admin.display(ordering="amount")
     def amount(self, obj):
