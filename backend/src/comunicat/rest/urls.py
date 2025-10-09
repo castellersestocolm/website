@@ -50,6 +50,7 @@ router.register("data/location", data.LocationAPI, "data_location")
 router.register("media/release", media.ReleaseAPI, "media_release")
 
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
+router.register("admin/order", admin.AdminOrderAPI, "admin_order")
 
 
 api_patterns = [

@@ -41,6 +41,7 @@ def get_list(
     module: Module | None = None,
     user_id: UUID | None = None,
     order_id: UUID | None = None,
+    for_admin: bool = False,
 ) -> List[Order]:
     order_filter = Q()
     order_annotate = {}
@@ -72,7 +73,7 @@ def get_list(
         }
         order_filter &= Q(entity__user_id=user_id) | Q(is_user_related=True)
     else:
-        if not order_id:
+        if not order_id and not for_admin:
             return []
 
     return list(

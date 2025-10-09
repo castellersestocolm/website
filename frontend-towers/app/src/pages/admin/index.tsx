@@ -17,7 +17,12 @@ import {
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
-import { apiAdminUserList, apiEventList, apiProductList } from "../../api";
+import {
+  apiAdminOrderList,
+  apiAdminUserList,
+  apiEventList,
+  apiProductList,
+} from "../../api";
 import {
   EventType,
   MEMBERSHIP_STATUS_ICON,
@@ -53,6 +58,7 @@ function AdminPage() {
   const [statEvents, setStatEvents] = React.useState(undefined);
   const [products, setProducts] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
+  const [orders, setOrders] = React.useState(undefined);
 
   React.useEffect(() => {
     apiEventList(
@@ -101,6 +107,14 @@ function AdminPage() {
       }
     });
   }, [setUsers]);
+
+  React.useEffect(() => {
+    apiAdminOrderList(undefined, 10).then((response) => {
+      if (response.status === 200) {
+        setOrders(response.data);
+      }
+    });
+  }, [setOrders, i18n.resolvedLanguage]);
 
   function handleAdminAttendanceSubmit() {
     navigate(ROUTES["admin-attendance"].path);
@@ -546,11 +560,109 @@ function AdminPage() {
               {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
             </Box>
           </Link>
-          <Box className={styles.adminBox}>
-            <Typography variant="body2" component="div">
-              Coming soon...
-            </Typography>
-          </Box>
+          {orders && orders.results.length > 0 ? (
+            <Box>
+              <List className={styles.adminList}>
+                {orders.results
+                  .slice(
+                    0,
+                    products && products.results.length > 0
+                      ? products.results.length
+                      : 5,
+                  )
+                  .filter(
+                    (order: any) => order.products && order.products.length > 0,
+                  )
+                  .map((order: any, i: number, row: any) => {
+                    const userFirstname =
+                      order.entity.firstname ||
+                      (order.entity.user && order.entity.user.firstname);
+                    const userLastname =
+                      order.entity.lastname ||
+                      (order.entity.user && order.entity.user.lastname);
+
+                    return (
+                      <>
+                        <ListItemButton disableTouchRipple dense>
+                          <Box
+                            className={styles.userFamilyListInner}
+                            flexDirection={{ xs: "column", lg: "row" }}
+                            alignItems={{ xs: "start", lg: "center" }}
+                          >
+                            <ListItemText
+                              className={styles.userFamilyListItem}
+                              disableTypography
+                              primary={
+                                <Typography variant="body2">
+                                  {userLastname
+                                    ? userFirstname + " " + userLastname
+                                    : userFirstname}
+                                </Typography>
+                              }
+                            ></ListItemText>
+                          </Box>
+                          <Box>
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              gap={0.5}
+                              marginLeft={{ xs: "0", lg: "16px" }}
+                              marginTop={{ xs: "8px", lg: "0" }}
+                              marginBottom={{ xs: "8px", lg: "0" }}
+                              whiteSpace="nowrap"
+                              flexWrap="wrap"
+                              justifyContent="end"
+                            >
+                              {order.products.map((orderProduct: any) => {
+                                return (
+                                  <Box className={styles.userListBox}>
+                                    <Box
+                                      component="span"
+                                      className={styles.userListIcon}
+                                      color={
+                                        orderProduct.quantity ===
+                                        orderProduct.quantity_given
+                                          ? "var(--mui-palette-success-main) !important"
+                                          : "var(--mui-palette-secondary-main) !important"
+                                      }
+                                    >
+                                      {
+                                        ORDER_STATUS_ICON[
+                                          orderProduct.quantity ===
+                                          orderProduct.quantity_given
+                                            ? OrderStatus.COMPLETED
+                                            : OrderStatus.PROCESSING
+                                        ]
+                                      }
+                                    </Box>
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                    >
+                                      {orderProduct.quantity +
+                                        " x " +
+                                        orderProduct.size.product.name +
+                                        " (" +
+                                        orderProduct.size.size +
+                                        ")"}
+                                    </Typography>
+                                  </Box>
+                                );
+                              })}
+                            </Stack>
+                          </Box>
+                        </ListItemButton>
+                        {i + 1 < row.length && <Divider />}
+                      </>
+                    );
+                  })}
+              </List>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
         </Card>
       </Grid>
       <Grid container size={{ xs: 12, md: 12 }} spacing={4} direction="row">

@@ -4,13 +4,18 @@ from comunicat.enums import Module
 from comunicat.rest.serializers.legal import TeamSlimSerializer, RoleSerializer
 from comunicat.rest.serializers.order import OrderProductSerializer
 from comunicat.rest.serializers.product import ProductSerializer
-from comunicat.rest.serializers.user import UserExtraSlimWithFamilySerializer
+from comunicat.rest.serializers.user import (
+    UserExtraSlimWithFamilySerializer,
+    UserSuperSlimSerializer,
+)
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from legal.models import Member
 from membership.enums import MembershipStatus
 from order.enums import OrderStatus
+from order.models import Order
+from payment.models import Entity
 from user.enums import UserProductSource
 from user.models import User, TowersUser
 
@@ -24,11 +29,74 @@ class AdminMembershipSerializer(s.Serializer):
     )
 
 
-class AdminOrderSerializer(s.Serializer):
+class AdminEntitySerializer(s.ModelSerializer):
+    user = UserSuperSlimSerializer(required=False, read_only=True)
+
+    class Meta:
+        model = Entity
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+            "user",
+        )
+        read_only_fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+            "user",
+        )
+
+
+class AdminOrderSlimSerializer(s.ModelSerializer):
     status = IntEnumField(OrderStatus, read_only=True)
     products = OrderProductSerializer(many=True, read_only=True)
     amount = MoneyField(read_only=True)
     amount_vat = MoneyField(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "status",
+            "products",
+            "amount",
+            "amount_vat",
+        )
+        read_only_fields = (
+            "id",
+            "status",
+            "products",
+            "amount",
+            "amount_vat",
+        )
+
+
+class AdminOrderSerializer(AdminOrderSlimSerializer):
+    entity = AdminEntitySerializer(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "entity",
+            "status",
+            "products",
+            "amount",
+            "amount_vat",
+        )
+        read_only_fields = (
+            "id",
+            "entity",
+            "status",
+            "products",
+            "amount",
+            "amount_vat",
+        )
 
 
 class AdminUserProductSerializer(s.Serializer):
@@ -60,7 +128,7 @@ class AdminMemberSerializer(s.ModelSerializer):
 
 class AdminUserSerializer(UserExtraSlimWithFamilySerializer):
     membership = s.SerializerMethodField(read_only=True)
-    orders = AdminOrderSerializer(many=True, source="entity.orders", read_only=True)
+    orders = AdminOrderSlimSerializer(many=True, source="entity.orders", read_only=True)
     members = AdminMemberSerializer(many=True, read_only=True)
     products = AdminUserProductSerializer(many=True, read_only=True)
 

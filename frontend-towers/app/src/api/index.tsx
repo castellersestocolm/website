@@ -8,6 +8,7 @@ import {
   API_ORDERS_LIST_PAGE_SIZE,
   API_PRODUCTS_LIST_PAGE_SIZE,
   API_ADMIN_USER_LIST_PAGE_SIZE,
+  API_ADMIN_ORDER_LIST_PAGE_SIZE,
   API_MEDIA_PRESS_LIST_PAGE_SIZE,
 } from "../consts";
 import { RegistrationStatus } from "../enums";
@@ -735,6 +736,24 @@ export const apiAdminUserList = async (
         page: page,
         ordering: ordering,
         is_adult: isAdult,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminOrderList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+) => {
+  try {
+    return await instance.get("/admin/order/", {
+      params: {
+        page_size: pageSize ? pageSize : API_ADMIN_ORDER_LIST_PAGE_SIZE,
+        page: page,
       },
     });
   } catch (error) {

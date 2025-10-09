@@ -23,30 +23,34 @@ export default function FormDashboardEmails() {
       {user.emails && user.emails.length > 0 && (
         <>
           <List className={styles.userFamilyList}>
-            {user.emails.filter((userEmail: any) => userEmail.email !== user.email).map((userEmail: any, i: number, row: any) => (
-              <Box key={i}>
-                <ListItemButton disableTouchRipple dense>
-                  <ListItemIcon>
-                    <IconMail />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={userEmail.email}
-                    secondary={
-                      t("pages.user-dashboard.form-emails.created") +
-                      " " +
-                      capitalizeFirstLetter(
+            {user.emails
+              .filter((userEmail: any) => userEmail.email !== user.email)
+              .map((userEmail: any, i: number, row: any) => (
+                <Box key={i}>
+                  <ListItemButton disableTouchRipple dense>
+                    <ListItemIcon>
+                      <IconMail />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={userEmail.email}
+                      secondary={
+                        t("pages.user-dashboard.form-emails.created") +
+                        " " +
+                        capitalizeFirstLetter(
+                          new Date(userEmail.created_at)
+                            .toISOString()
+                            .slice(0, 10),
+                        ) +
+                        " " +
                         new Date(userEmail.created_at)
-                          .toISOString()
-                          .slice(0, 10),
-                      ) +
-                      " " +
-                      new Date(userEmail.created_at).toTimeString().slice(0, 5)
-                    }
-                  />
-                </ListItemButton>
-                {i + 1 < row.length && <Divider />}
-              </Box>
-            ))}
+                          .toTimeString()
+                          .slice(0, 5)
+                      }
+                    />
+                  </ListItemButton>
+                  {i + 1 < row.length && <Divider />}
+                </Box>
+              ))}
           </List>
           <Divider />
         </>
