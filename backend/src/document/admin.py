@@ -16,10 +16,12 @@ class DocumentAdmin(admin.ModelAdmin):
         "code",
         "language",
         "version",
+        "module",
         "type",
         "status",
         "created_at",
     )
-    list_filter = ("language", "type", "status", "created_at")
+    list_filter = ("language", "type", "status", "module", "created_at")
+    readonly_fields = ("preview",)
     ordering = ("-created_at",)
     inlines = (EmailAttachmentInline,)

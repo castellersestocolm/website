@@ -1,7 +1,7 @@
 {
   "components.navbar-menu.home": "Inici",
   "components.navbar-menu.calendar": "Calendari",
-  "components.navbar-menu.resources": "Material",
+  "components.navbar-menu.resources": "Recursos",
   "components.navbar-menu.about": "Sobre nosaltres",
   "components.navbar-menu.about.team": "L'equip",
   "components.navbar-menu.about.association": "El casal",
@@ -42,7 +42,7 @@
   "pages.home-rehearsals.box2.text1-2": "Solna centrum",
   "pages.home-rehearsals.box2.text1-location": "Lloc a concretar, consulta el calendari",
   "pages.home-rehearsals.box2.text2": "Zona nord, al costat de Skytteholmsfältet",
-  "pages.resources.title": "Material",
+  "pages.resources.title": "Recursos",
   "pages.association.title": "Casal català Les Quatre Barres",
   "pages.association.box1.title": "Com fer-se membre",
   "pages.association.box1.text1": "Tothom pot fer-se soci de Les Quatre Barres, una associació cultural catalana constituïda a la ciutat d'Estocolm. El casal fomenta els valors culturals dels Països Catalans entre els catalans residents als països nòrdics donant-los a conèixer dins d'aquesta àrea geogràfica per tal d'afavorir la comunicació i l'intercanvi cultural.",

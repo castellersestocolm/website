@@ -73,13 +73,6 @@ export default function NavBar() {
       target: "_self",
       permission: undefined,
     },
-    // TODO: Temporary until we start accepting sign-ups
-    // !user && {
-    //   name: t("components.navbar-menu.membership"),
-    //   path: ROUTES["user-join"].path,
-    //   target: "_self",
-    //   permission: undefined,
-    // },
     {
       name: user
         ? t("components.navbar-menu.equipmment")
@@ -87,6 +80,12 @@ export default function NavBar() {
       path: ROUTES.order.path,
       target: "_self",
       permission: undefined,
+    },
+    {
+      name: t("components.navbar-menu.resources"),
+      path: ROUTES.resources.path,
+      target: "_self",
+      permission: PermissionLevel.USER,
     },
     {
       name: t("components.navbar-menu.trips"),

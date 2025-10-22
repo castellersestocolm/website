@@ -4,6 +4,7 @@ import enum
 class DocumentType(enum.IntEnum):
     GENERAL = 10
     GUIDE = 20
+    RESOURCE = 30
 
 
 class DocumentStatus(enum.IntEnum):

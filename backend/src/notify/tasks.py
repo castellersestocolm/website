@@ -158,6 +158,7 @@ def send_user_email(
             type=email_type,
             document__status=DocumentStatus.PUBLISHED,
             document__language=locale,
+            document__module=module,
         )
         .select_related("document")
         .order_by("document__code", "document__version")

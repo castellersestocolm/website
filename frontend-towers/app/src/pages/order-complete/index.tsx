@@ -11,8 +11,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { apiOrderRetrieve } from "../../api";
 import { OrderStatus } from "../../enums";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
-
 function OrderCompletePage() {
   const [t, i18n] = useTranslation("common");
   const { id, token } = useParams();

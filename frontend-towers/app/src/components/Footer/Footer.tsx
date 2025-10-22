@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import { ROUTES } from "../../routes";
 import { useAppContext } from "../AppContext/AppContext";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
+import { PermissionLevel } from "../../enums";
 
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 
@@ -40,6 +41,11 @@ export default function Footer() {
         ? t("components.navbar-menu.equipmment")
         : t("components.navbar-menu.merch"),
       path: ROUTES.order.path,
+      target: "_self",
+    },
+    user && {
+      name: t("components.navbar-menu.resources"),
+      path: ROUTES.resources.path,
       target: "_self",
     },
     {
