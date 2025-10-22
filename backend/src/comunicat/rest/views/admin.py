@@ -10,12 +10,15 @@ import user.api.family
 import user.api.family_member
 import user.api.family_member_request
 import order.api
+import event.api
 from comunicat.rest.permissions import AllowLevelAdmin
 
 from comunicat.rest.serializers.admin import (
     AdminUserSerializer,
     AdminUserRequestSerializer,
     AdminOrderSerializer,
+    AdminEventSerializer,
+    AdminListEventSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import TeamType
@@ -28,6 +31,12 @@ class AdminUserResultsSetPagination(PageNumberPagination):
 
 
 class AdminOrderResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class AdminEventResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -117,7 +126,7 @@ class AdminOrderAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: AdminOrderSerializer(many=True), 403: Serializer()},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def list(self, request):
         order_objs = order.api.get_list(
             module=self.module,
@@ -126,6 +135,46 @@ class AdminOrderAPI(ComuniCatViewSet):
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(order_objs, request)
+        serializer = self.serializer_class(
+            result_page, context={"module": self.module}, many=True
+        )
+        return paginator.get_paginated_response(serializer.data)
+
+
+class AdminEventAPI(ComuniCatViewSet):
+    serializer_class = AdminEventSerializer
+    permission_classes = (AllowLevelAdmin,)
+    pagination_class = AdminEventResultsSetPagination
+    ordering_fields = [
+        "time_from",
+    ]
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        query_serializer=AdminListEventSerializer,
+        responses={200: AdminEventSerializer(many=True), 403: Serializer()},
+    )
+    @method_decorator(cache_page(1))
+    def list(self, request):
+        serializer = AdminListEventSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        for_musicians = (
+            request.query_params.get("for_musicians").lower() == "true"
+            if "for_musicians" in request.query_params
+            else None
+        )
+
+        event_objs = event.api.get_list(
+            module=self.module,
+            date_from=serializer.validated_data.get("date_from"),
+            date_to=serializer.validated_data.get("date_to"),
+            with_counts=False,
+            for_musicians=for_musicians,
+        )
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(event_objs, request)
         serializer = self.serializer_class(
             result_page, context={"module": self.module}, many=True
         )

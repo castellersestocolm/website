@@ -633,7 +633,8 @@ if not DEBUG and SENTRY_DSN:
 
 # Debug toolbar
 
-if DEBUG:
+DEBUG_TOOLBAR = os.getenv("DEBUG_TOOLBAR", "false").lower() == "true"
+if DEBUG and DEBUG_TOOLBAR:
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
     DEBUG_TOOLBAR_CONFIG = {"SHOW_COLLAPSED": True}
@@ -646,7 +647,8 @@ if DEBUG:
 
 # Silk
 
-if DEBUG:
+DEBUG_SILK = os.getenv("DEBUG_SILK", "false").lower() == "true"
+if DEBUG and DEBUG_SILK:
     INSTALLED_APPS += ["silk"]
     MIDDLEWARE = ["silk.middleware.SilkyMiddleware"] + MIDDLEWARE
 

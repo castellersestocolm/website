@@ -1,6 +1,7 @@
 from drf_yasg.utils import swagger_serializer_method
 
 from comunicat.enums import Module
+from comunicat.rest.serializers.event import EventModuleSerializer
 from comunicat.rest.serializers.legal import TeamSlimSerializer, RoleSerializer
 from comunicat.rest.serializers.order import OrderProductSerializer
 from comunicat.rest.serializers.product import ProductSerializer
@@ -11,6 +12,7 @@ from comunicat.rest.serializers.user import (
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
+from event.models import Event
 from legal.models import Member
 from membership.enums import MembershipStatus
 from order.enums import OrderStatus
@@ -199,3 +201,41 @@ class AdminUserRequestSerializer(s.ModelSerializer):
     class Meta:
         model = User
         fields = ("towers",)
+
+
+class AdminListEventSerializer(s.Serializer):
+    date_from = s.DateField(required=False)
+    date_to = s.DateField(required=False)
+
+
+class AdminEventSerializer(s.ModelSerializer):
+    require_signup = s.BooleanField(read_only=True)
+    require_approve = s.BooleanField(read_only=True)
+    modules = EventModuleSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "title",
+            "time_from",
+            "time_to",
+            "type",
+            "module",
+            "require_signup",
+            "require_approve",
+            "modules",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "time_from",
+            "time_to",
+            "type",
+            "module",
+            "require_signup",
+            "require_approve",
+            "modules",
+            "created_at",
+        )

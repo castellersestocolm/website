@@ -5,46 +5,170 @@ import Grid from "@mui/material/Grid";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { getEnumLabel, RegistrationStatus, TeamType } from "../../enums";
 import {
-  apiEventList,
   apiEventRegistrationList,
   apiAdminUserList,
+  apiAdminEventList,
 } from "../../api";
-import { Card, Divider, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Card,
+  Divider,
+  Typography,
+} from "@mui/material";
 import { capitalizeFirstLetter } from "../../utils/string";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { getEventsCount } from "../../utils/admin";
+import IconArrowDownward from "@mui/icons-material/ArrowDownward";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
 function AdminAttendancePage() {
   const { t } = useTranslation("common");
 
   const [events, setEvents] = React.useState(undefined);
-  const [eventsMusicians, setEventsMusicians] = React.useState(undefined);
+  const [eventMusicians, setEventMusicians] = React.useState(undefined);
+  const [eventIdsSelected, setEventIdsSelected] = React.useState(undefined);
+  const [eventMusicianIdsSelected, setEventMusicianIdsSelected] =
+    React.useState(undefined);
+  const [eventsById, setEventsById] = React.useState(undefined);
+  const [eventMusiciansById, setEventMusiciansById] = React.useState(undefined);
+  const [userEvents, setUserEvents] = React.useState(undefined);
+  const [userEventsMusicians, setUserEventsMusicians] =
+    React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
   const [registrations, setRegistrations] = React.useState(undefined);
   const [registrationsMusicians, setRegistrationsMusicians] =
     React.useState(undefined);
 
+  const handleEventCheckbox = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    eventId: string,
+  ) => {
+    if (event.target.checked) {
+      if (eventIdsSelected.length < 5) {
+        const eventIds = [...eventIdsSelected, eventId];
+        setEventIdsSelected(eventIds);
+        setUserEvents({
+          results: eventIds
+            .map((eventId: string) => eventsById[eventId])
+            .sort(
+              (a: any, b: any) =>
+                new Date(a.time_from).getDate() -
+                new Date(b.time_from).getDate(),
+            ),
+        });
+      }
+    } else {
+      if (eventIdsSelected.length > 1) {
+        const eventIds = eventIdsSelected.filter(
+          (currentEventId: string) => currentEventId !== eventId,
+        );
+        setEventIdsSelected(eventIds);
+        setUserEvents({
+          results: eventIds
+            .map((eventId: string) => eventsById[eventId])
+            .sort(
+              (a: any, b: any) =>
+                new Date(a.time_from).getDate() -
+                new Date(b.time_from).getDate(),
+            ),
+        });
+      }
+    }
+  };
+
+  const handleEventMusicianCheckbox = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    eventId: string,
+  ) => {
+    if (event.target.checked) {
+      if (eventMusicianIdsSelected.length < 5) {
+        const eventIds = [...eventMusicianIdsSelected, eventId];
+        setEventMusicianIdsSelected(eventIds);
+        setUserEventsMusicians({
+          results: eventIds
+            .map((eventId: string) => eventMusiciansById[eventId])
+            .sort(
+              (a: any, b: any) =>
+                new Date(a.time_from).getDate() -
+                new Date(b.time_from).getDate(),
+            ),
+        });
+      }
+    } else {
+      if (eventMusicianIdsSelected.length > 1) {
+        const eventIds = eventMusicianIdsSelected.filter(
+          (currentEventId: string) => currentEventId !== eventId,
+        );
+        setEventMusicianIdsSelected(eventIds);
+        setUserEventsMusicians({
+          results: eventIds
+            .map((eventId: string) => eventMusiciansById[eventId])
+            .sort(
+              (a: any, b: any) =>
+                new Date(a.time_from).getDate() -
+                new Date(b.time_from).getDate(),
+            ),
+        });
+      }
+    }
+  };
+
   React.useEffect(() => {
-    apiEventList(1).then((response) => {
+    apiAdminEventList(
+      1,
+      50,
+      new Date().toISOString().slice(0, 10),
+      undefined,
+      false,
+    ).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
+        setEventsById(
+          Object.fromEntries(
+            response.data.results.map((event: any) => [event.id, event]),
+          ),
+        );
+        setEventIdsSelected(
+          response.data.results.slice(0, 5).map((event: any) => event.id),
+        );
+        setUserEvents({ results: response.data.results.slice(0, 5) });
       }
     });
-    apiEventList(
+    apiAdminEventList(
       1,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
+      50,
+      new Date().toISOString().slice(0, 10),
       undefined,
       true,
     ).then((response) => {
       if (response.status === 200) {
-        setEventsMusicians(response.data);
+        setEventMusicians(response.data);
+        setEventMusiciansById(
+          Object.fromEntries(
+            response.data.results.map((event: any) => [event.id, event]),
+          ),
+        );
+        setEventMusicianIdsSelected(
+          response.data.results.slice(0, 5).map((event: any) => event.id),
+        );
+        setUserEventsMusicians({ results: response.data.results.slice(0, 5) });
       }
     });
-  }, [setEvents, setEventsMusicians]);
+  }, [
+    setEvents,
+    setEventsById,
+    setEventIdsSelected,
+    setUserEvents,
+    setEventMusicians,
+    setEventMusiciansById,
+    setEventMusicianIdsSelected,
+    setUserEventsMusicians,
+  ]);
 
   React.useEffect(() => {
     // TODO: Fix pagination
@@ -56,9 +180,9 @@ function AdminAttendancePage() {
   }, [setUsers]);
 
   React.useEffect(() => {
-    if (events && events.results.length > 0) {
-      for (let i = 0; i < events.results.length; i++) {
-        const event = events.results[i];
+    if (userEvents && userEvents.results.length > 0) {
+      for (let i = 0; i < userEvents.results.length; i++) {
+        const event = userEvents.results[i];
         apiEventRegistrationList(event.id, true).then((response) => {
           if (response.status === 200) {
             setRegistrations((registrations: any) => ({
@@ -74,12 +198,12 @@ function AdminAttendancePage() {
         });
       }
     }
-  }, [events, setRegistrations]);
+  }, [userEvents, setRegistrations]);
 
   React.useEffect(() => {
-    if (eventsMusicians && eventsMusicians.results.length > 0) {
-      for (let i = 0; i < eventsMusicians.results.length; i++) {
-        const event = eventsMusicians.results[i];
+    if (userEventsMusicians && userEventsMusicians.results.length > 0) {
+      for (let i = 0; i < userEventsMusicians.results.length; i++) {
+        const event = userEventsMusicians.results[i];
         apiEventRegistrationList(event.id, true).then((response) => {
           if (response.status === 200) {
             setRegistrationsMusicians((registrations: any) => ({
@@ -95,7 +219,7 @@ function AdminAttendancePage() {
         });
       }
     }
-  }, [eventsMusicians, setRegistrationsMusicians]);
+  }, [userEventsMusicians, setRegistrationsMusicians]);
 
   const userChildren: any[] =
     users && users.filter((user: any) => !user.can_manage);
@@ -113,16 +237,20 @@ function AdminAttendancePage() {
         ).length > 0,
     );
 
-  const eventsCountAdults = getEventsCount(events, registrations, userAdults);
+  const eventsCountAdults = getEventsCount(
+    userEvents,
+    registrations,
+    userAdults,
+  );
 
   const eventsCountMusicians = getEventsCount(
-    eventsMusicians,
+    userEventsMusicians,
     registrations,
     userMusicians,
   );
 
   const eventsCountChildren = getEventsCount(
-    events,
+    userEvents,
     registrations,
     userChildren,
   );
@@ -177,8 +305,8 @@ function AdminAttendancePage() {
         </Typography>
       ),
     },
-    ...(events && events.results.length > 0
-      ? events.results
+    ...(userEvents && userEvents.results.length > 0
+      ? userEvents.results
           .filter((event: any) => event.require_signup)
           .map((event: any) => {
             return {
@@ -262,8 +390,8 @@ function AdminAttendancePage() {
         </Typography>
       ),
     },
-    ...(eventsMusicians && eventsMusicians.results.length > 0
-      ? eventsMusicians.results
+    ...(userEventsMusicians && userEventsMusicians.results.length > 0
+      ? userEventsMusicians.results
           .filter((event: any) => event.require_signup)
           .map((event: any) => {
             return {
@@ -357,8 +485,8 @@ function AdminAttendancePage() {
         </Typography>
       ),
     },
-    ...(events && events.results.length > 0
-      ? events.results
+    ...(userEvents && userEvents.results.length > 0
+      ? userEvents.results
           .filter((event: any) => event.require_signup)
           .map((event: any) => {
             return {
@@ -438,9 +566,9 @@ function AdminAttendancePage() {
             name: user.firstname + " " + user.lastname,
             heightShoulder: user.towers && user.towers.height_shoulders,
             heightArms: user.towers && user.towers.height_arms,
-            ...(events && events.results.length > 0 && registrations
+            ...(userEvents && userEvents.results.length > 0 && registrations
               ? Object.fromEntries(
-                  events.results
+                  userEvents.results
                     .filter((event: any) => event.require_signup)
                     .map((event: any) => {
                       const registration =
@@ -461,11 +589,11 @@ function AdminAttendancePage() {
           return {
             id: user.id,
             name: user.firstname + " " + user.lastname,
-            ...(eventsMusicians &&
-            eventsMusicians.results.length > 0 &&
+            ...(userEventsMusicians &&
+            userEventsMusicians.results.length > 0 &&
             registrationsMusicians
               ? Object.fromEntries(
-                  eventsMusicians.results
+                  userEventsMusicians.results
                     .filter((event: any) => event.require_signup)
                     .map((event: any) => {
                       const registration =
@@ -493,9 +621,9 @@ function AdminAttendancePage() {
                   .map((member: any) => member.user.lastname.split(" ")[0]),
               ),
             ).join("-"),
-            ...(events && events.results.length > 0 && registrations
+            ...(userEvents && userEvents.results.length > 0 && registrations
               ? Object.fromEntries(
-                  events.results
+                  userEvents.results
                     .filter((event: any) => event.require_signup)
                     .map((event: any) => {
                       const registration =
@@ -519,7 +647,53 @@ function AdminAttendancePage() {
           </Typography>
         </Box>
         <Divider />
-
+        {events && events.results.length > 0 && (
+          <Box>
+            <Accordion elevation={0} className={styles.accordion}>
+              <AccordionSummary
+                expandIcon={<IconArrowDownward />}
+                aria-controls="event-choose-users-content"
+                id="event-choose-users-header"
+                className={styles.accordionSummary}
+              >
+                <Typography component="span">
+                  {t("pages.admin-attendance.events-table.settings")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails className={styles.accordionDetails}>
+                <FormGroup>
+                  {events.results.map((event: any) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={
+                              eventIdsSelected &&
+                              eventIdsSelected.includes(event.id)
+                            }
+                            onChange={(e) => handleEventCheckbox(e, event.id)}
+                          />
+                        }
+                        label={
+                          event.title +
+                          " — " +
+                          capitalizeFirstLetter(
+                            new Date(event.time_from)
+                              .toISOString()
+                              .slice(0, 10),
+                          ) +
+                          " " +
+                          new Date(event.time_from).toTimeString().slice(0, 5)
+                        }
+                      />
+                    );
+                  })}
+                </FormGroup>
+              </AccordionDetails>
+            </Accordion>
+            <Divider />
+          </Box>
+        )}
         <Box>
           <DataGrid
             rows={rowsAdults}
@@ -566,6 +740,55 @@ function AdminAttendancePage() {
           </Typography>
         </Box>
         <Divider />
+        {eventMusicians && eventMusicians.results.length > 0 && (
+          <Box>
+            <Accordion elevation={0} className={styles.accordion}>
+              <AccordionSummary
+                expandIcon={<IconArrowDownward />}
+                aria-controls="event-choose-musicians-content"
+                id="event-choose-musicians-header"
+                className={styles.accordionSummary}
+              >
+                <Typography component="span">
+                  {t("pages.admin-attendance.events-table.settings")}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails className={styles.accordionDetails}>
+                <FormGroup>
+                  {eventMusicians.results.map((event: any) => {
+                    return (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={
+                              eventMusicianIdsSelected &&
+                              eventMusicianIdsSelected.includes(event.id)
+                            }
+                            onChange={(e) =>
+                              handleEventMusicianCheckbox(e, event.id)
+                            }
+                          />
+                        }
+                        label={
+                          event.title +
+                          " — " +
+                          capitalizeFirstLetter(
+                            new Date(event.time_from)
+                              .toISOString()
+                              .slice(0, 10),
+                          ) +
+                          " " +
+                          new Date(event.time_from).toTimeString().slice(0, 5)
+                        }
+                      />
+                    );
+                  })}
+                </FormGroup>
+              </AccordionDetails>
+            </Accordion>
+            <Divider />
+          </Box>
+        )}
 
         <Box>
           <DataGrid
@@ -664,6 +887,7 @@ function AdminAttendancePage() {
       title={t("pages.admin-attendance.title")}
       content={content}
       finishedRegistration={true}
+      loading={!events}
     />
   );
 }

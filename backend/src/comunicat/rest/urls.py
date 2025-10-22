@@ -51,6 +51,7 @@ router.register("media/release", media.ReleaseAPI, "media_release")
 
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
 router.register("admin/order", admin.AdminOrderAPI, "admin_order")
+router.register("admin/event", admin.AdminEventAPI, "admin_event")
 
 
 api_patterns = [
