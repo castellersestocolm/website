@@ -5,6 +5,20 @@
   align-items: stretch;
 }
 
+.resourcesGridItem {
+  background-color: var(--mui-palette-grey-100);
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 4px;
+}
+
 .resourcesFileImage {
+  border-radius: 4px 4px 0 0;
   width: 100%;
+  color: var(--mui-palette-text-primary) !important;
+  text-decoration: none !important;
+}
+
+.resourcesFileTitle {
+  border-radius: 0 0 4px 4px;
+  padding: 4px 12px 8px 12px;
 }

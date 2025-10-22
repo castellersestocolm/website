@@ -29,7 +29,7 @@ class DocumentAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: DocumentSerializer(many=True)},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def list(self, request):
         document_objs = document.api.get_list(module=self.module)
 
