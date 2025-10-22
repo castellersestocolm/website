@@ -234,6 +234,7 @@
   "pages.admin.stats-table.attendance-title": "Attendance",
   "pages.admin-attendance.title": "Event attendance",
   "pages.admin-attendance.events-table.settings": "Choose the events",
+  "pages.admin-attendance.events-table.settings-of": "of",
   "pages.admin-attendance.events-table.title-adults": "Attendance",
   "pages.admin-attendance.events-table.title-musicians": "Musicians attendance",
   "pages.admin-attendance.events-table.title-families": "Children attendance",

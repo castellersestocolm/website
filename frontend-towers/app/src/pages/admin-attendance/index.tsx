@@ -34,8 +34,6 @@ function AdminAttendancePage() {
   const [eventIdsSelected, setEventIdsSelected] = React.useState(undefined);
   const [eventMusicianIdsSelected, setEventMusicianIdsSelected] =
     React.useState(undefined);
-  const [eventsById, setEventsById] = React.useState(undefined);
-  const [eventMusiciansById, setEventMusiciansById] = React.useState(undefined);
   const [userEvents, setUserEvents] = React.useState(undefined);
   const [userEventsMusicians, setUserEventsMusicians] =
     React.useState(undefined);
@@ -53,13 +51,9 @@ function AdminAttendancePage() {
         const eventIds = [...eventIdsSelected, eventId];
         setEventIdsSelected(eventIds);
         setUserEvents({
-          results: eventIds
-            .map((eventId: string) => eventsById[eventId])
-            .sort(
-              (a: any, b: any) =>
-                new Date(a.time_from).getDate() -
-                new Date(b.time_from).getDate(),
-            ),
+          results: events.results.filter((event: any) =>
+            eventIds.includes(event.id),
+          ),
         });
       }
     } else {
@@ -69,13 +63,9 @@ function AdminAttendancePage() {
         );
         setEventIdsSelected(eventIds);
         setUserEvents({
-          results: eventIds
-            .map((eventId: string) => eventsById[eventId])
-            .sort(
-              (a: any, b: any) =>
-                new Date(a.time_from).getDate() -
-                new Date(b.time_from).getDate(),
-            ),
+          results: events.results.filter((event: any) =>
+            eventIds.includes(event.id),
+          ),
         });
       }
     }
@@ -90,13 +80,9 @@ function AdminAttendancePage() {
         const eventIds = [...eventMusicianIdsSelected, eventId];
         setEventMusicianIdsSelected(eventIds);
         setUserEventsMusicians({
-          results: eventIds
-            .map((eventId: string) => eventMusiciansById[eventId])
-            .sort(
-              (a: any, b: any) =>
-                new Date(a.time_from).getDate() -
-                new Date(b.time_from).getDate(),
-            ),
+          results: eventMusicians.results.filter((event: any) =>
+            eventIds.includes(event.id),
+          ),
         });
       }
     } else {
@@ -106,13 +92,9 @@ function AdminAttendancePage() {
         );
         setEventMusicianIdsSelected(eventIds);
         setUserEventsMusicians({
-          results: eventIds
-            .map((eventId: string) => eventMusiciansById[eventId])
-            .sort(
-              (a: any, b: any) =>
-                new Date(a.time_from).getDate() -
-                new Date(b.time_from).getDate(),
-            ),
+          results: eventMusicians.results.filter((event: any) =>
+            eventIds.includes(event.id),
+          ),
         });
       }
     }
@@ -128,11 +110,6 @@ function AdminAttendancePage() {
     ).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
-        setEventsById(
-          Object.fromEntries(
-            response.data.results.map((event: any) => [event.id, event]),
-          ),
-        );
         setEventIdsSelected(
           response.data.results.slice(0, 5).map((event: any) => event.id),
         );
@@ -148,11 +125,6 @@ function AdminAttendancePage() {
     ).then((response) => {
       if (response.status === 200) {
         setEventMusicians(response.data);
-        setEventMusiciansById(
-          Object.fromEntries(
-            response.data.results.map((event: any) => [event.id, event]),
-          ),
-        );
         setEventMusicianIdsSelected(
           response.data.results.slice(0, 5).map((event: any) => event.id),
         );
@@ -161,11 +133,9 @@ function AdminAttendancePage() {
     });
   }, [
     setEvents,
-    setEventsById,
     setEventIdsSelected,
     setUserEvents,
     setEventMusicians,
-    setEventMusiciansById,
     setEventMusicianIdsSelected,
     setUserEventsMusicians,
   ]);
@@ -657,7 +627,14 @@ function AdminAttendancePage() {
                 className={styles.accordionSummary}
               >
                 <Typography component="span">
-                  {t("pages.admin-attendance.events-table.settings")}
+                  {t("pages.admin-attendance.events-table.settings") +
+                    " (" +
+                    eventIdsSelected.length +
+                    " " +
+                    t("pages.admin-attendance.events-table.settings-of") +
+                    " " +
+                    Math.min(5, events.results.length) +
+                    ")"}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails className={styles.accordionDetails}>
@@ -750,7 +727,14 @@ function AdminAttendancePage() {
                 className={styles.accordionSummary}
               >
                 <Typography component="span">
-                  {t("pages.admin-attendance.events-table.settings")}
+                  {t("pages.admin-attendance.events-table.settings") +
+                    " (" +
+                    eventMusicianIdsSelected.length +
+                    " " +
+                    t("pages.admin-attendance.events-table.settings-of") +
+                    " " +
+                    Math.min(5, eventMusicians.results.length) +
+                    ")"}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails className={styles.accordionDetails}>
