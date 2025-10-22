@@ -124,7 +124,7 @@ function AdminAttendancePage() {
       50,
       new Date().toISOString().slice(0, 10),
       undefined,
-      false,
+      undefined,
     ).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
