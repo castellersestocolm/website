@@ -15,7 +15,7 @@ from django.db.models import (
     DateField,
     Func,
 )
-from django.db.models.functions import Coalesce, Cast, Concat, Substr
+from django.db.models.functions import Coalesce, Cast, Concat, Substr, Abs
 from django.utils import timezone, translation
 
 from comunicat.enums import Module
@@ -154,7 +154,7 @@ class AccountQuerySet(QuerySet):
                     .with_dates()
                     .filter(date_accounting__year=year)
                     .values("account_id")
-                    .annotate(amount=Sum("amount"))
+                    .annotate(amount=Sum(Abs("amount")))
                     .values("amount")[:1]
                 ),
                 Value(0),
