@@ -144,7 +144,7 @@ class PaymentAdmin(admin.ModelAdmin):
         readonly_fields = ["debit_payment", "transaction"]
 
         if obj is None:
-            return readonly_fields
+            return []
 
         if obj.transaction:
             readonly_fields += [
