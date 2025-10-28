@@ -103,8 +103,8 @@ services:
     image: backend
     stdin_open: true
     tty: true
-    entrypoint: [ "celery" ]
-    command: [ "-A", "comunicat", "worker", "-Q", "default" ]
+    entrypoint: ["celery"]
+    command: ["-A", "comunicat", "worker", "-Q", "default"]
     depends_on:
       - redis
       - database
@@ -119,9 +119,8 @@ services:
       - ./envs/local.env
   beat:
     image: backend
-    entrypoint: [ "celery" ]
-    command:
-      [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
+    entrypoint: ["celery"]
+    command: ["-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug"]
     depends_on:
       - worker
     volumes:
