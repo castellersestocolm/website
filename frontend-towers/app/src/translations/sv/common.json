@@ -317,6 +317,7 @@
   "pages.order-receipt.order.message": "Din beställning har nu lagts och behandlas så snart vi mottager betalningen. Det tar 2-3 arbetsdagar vanligtvis men det kan ta längre för banköverföringar med ursprung utanför Sverige. Du får ett nytt e-postmeddelande när din beställning är redo att hämtas eller när den har skickats.",
   "pages.press.title": "Pressrum",
   "pages.press.releases.title": "Pressmeddelanden",
+  "pages.workshops.title": "Teambuildingaktiviteter och avsparkar",
   "swish.payment.membership": "Medlemskap",
   "swish.payment.order": "Beställning",
   "enums.module.10": "Les Quatre Barres",
