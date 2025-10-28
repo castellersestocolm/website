@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+# Change to the frontend-org directory and build the project
+cd frontend-org
+echo "Running build to ensure project compiles..."
+npm run build

@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+# Change to the frontend-org directory and run lint-staged
+cd frontend-org
+npx lint-staged
