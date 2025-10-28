@@ -75,6 +75,9 @@ export const ROUTES = {
   "press-release-no-date": {
     path: "/press/release/:slug",
   },
+  workshops: {
+    path: "/workshops",
+  },
   admin: {
     path: "/admin",
   },

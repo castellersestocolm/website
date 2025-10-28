@@ -1,9 +1,12 @@
+from django.templatetags.i18n import language
 from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from legal.models import Team, Member, Role, Bylaws
 from user.models import User
+
+from django.conf import settings
 
 
 class MemberUserSerializer(s.ModelSerializer):
@@ -150,6 +153,7 @@ class MemberWithTeamSerializer(MemberSerializer):
 
 class BylawsSerializer(s.ModelSerializer):
     content = s.SerializerMethodField(read_only=True)
+    language = s.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Bylaws
@@ -157,18 +161,39 @@ class BylawsSerializer(s.ModelSerializer):
             "id",
             "date",
             "content",
+            "language",
             "created_at",
         )
         read_only_fields = (
             "id",
             "date",
             "content",
+            "language",
             "created_at",
         )
 
     @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
     def get_content(self, obj):
+        locale = translation.get_language()
         return (
-            obj.content.get(translation.get_language())
-            or ([content for content in obj.content.values() if content] + [""])[0]
-        )
+            [
+                obj.content[locale_fallback]
+                for locale_fallback in [locale]
+                + settings.LANGUAGES_FALLBACK.get(locale, [])
+                if locale_fallback in obj.content and obj.content[locale_fallback]
+            ]
+            + [""]
+        )[0]
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_language(self, obj):
+        locale = translation.get_language()
+        return (
+            [
+                locale_fallback
+                for locale_fallback in [locale]
+                + settings.LANGUAGES_FALLBACK.get(locale, [])
+                if locale_fallback in obj.content and obj.content[locale_fallback]
+            ]
+            + [locale]
+        )[0]
