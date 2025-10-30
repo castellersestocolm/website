@@ -40,7 +40,8 @@ import AdminUserPage from "./pages/admin-user";
 import PressPage from "./pages/press";
 import PressReleasePage from "./pages/press-release";
 import CalendarEventPage from "./pages/calendar-event";
-import WorkshopsPage from "./pages/workshops";
+import BusinessWorkshopsPage from "./pages/business-workshops";
+import BusinessPerformancesPage from "./pages/business-performances";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -219,8 +220,12 @@ const App = () => {
                     element={<Calendar20250614AnniversaryPerformancePage />}
                   />
                   <Route
-                    path={ROUTES.workshops.path}
-                    element={<WorkshopsPage />}
+                    path={ROUTES["business-workshops"].path}
+                    element={<BusinessWorkshopsPage />}
+                  />
+                  <Route
+                    path={ROUTES["business-performances"].path}
+                    element={<BusinessPerformancesPage />}
                   />
                 </Routes>
               </Box>

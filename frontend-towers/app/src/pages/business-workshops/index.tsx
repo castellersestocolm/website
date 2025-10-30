@@ -15,10 +15,10 @@ import ImageHeroWorkshops from "../../assets/images/heros/workshops.jpg";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import LanguageChip from "../../components/LanguageChip/LanguageChip";
 import MarkdownText from "../../components/MarkdownText/MarkdownText";
-import styles from "../admin-equipment/styles.module.css";
+import styles from "./styles.module.css";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import ImageHelmets from "../../assets/images/workshops/helmets.jpg";
+import ImageClean from "../../assets/images/workshops/clean.jpg";
 import IconSchool from "@mui/icons-material/School";
 import IconGroup from "@mui/icons-material/Group";
 import IconTranslate from "@mui/icons-material/Translate";
@@ -28,19 +28,20 @@ import ImageTraining1 from "../../assets/images/workshops/training1.jpg";
 import ImageTraining2 from "../../assets/images/workshops/training2.jpg";
 import IconLocationOn from "@mui/icons-material/LocationOn";
 import IconMailOutline from "@mui/icons-material/MailOutline";
+import IconEvent from "@mui/icons-material/Event";
 
-function WorkshopsPage() {
+function BusinessWorkshopsPage() {
   const { t } = useTranslation("common");
 
   const content = (
     <>
       <Container maxWidth="lg">
-        <Grid container spacing={4} mb={{ xs: "40px", md: "64px" }}>
+        <Grid container spacing={5} mb={{ xs: "40px", md: "64px" }}>
           <Grid size={{ xs: 12, md: 4 }} order={{ xs: 2, md: 1 }}>
-            <Box
-              className={styles.introImage}
-              style={{ backgroundImage: "url(" + ImageHelmets + ")" }}
-              sx={{ height: { xs: "200px !important", md: "unset" } }}
+            <img
+              src={ImageClean}
+              className={styles.workshopsImage}
+              alt="poster"
             />
           </Grid>
           <Grid
@@ -303,11 +304,8 @@ function WorkshopsPage() {
             </Typography>
           </Box>
           <Grid container spacing={4} className={styles.workshopsPricingGrid}>
-            <Grid
-              size={{ xs: 12, md: 6 }}
-              sx={{ display: "flex", flexDirection: "column" }}
-            >
-              <React.Fragment>
+            <Grid container direction="row" size={{ xs: 12, md: 6 }}>
+              <Card variant="outlined" className={styles.workshopsPricingCard}>
                 <CardContent className={styles.workshopsPricingCard}>
                   <IconMailOutline className={styles.workshopsPricingIcon} />
                   <Box>
@@ -323,13 +321,10 @@ function WorkshopsPage() {
                     </Typography>
                   </Box>
                 </CardContent>
-              </React.Fragment>
+              </Card>
             </Grid>
-            <Grid
-              size={{ xs: 12, md: 6 }}
-              sx={{ display: "flex", flexDirection: "column" }}
-            >
-              <React.Fragment>
+            <Grid container direction="row" size={{ xs: 12, md: 6 }}>
+              <Card variant="outlined" className={styles.workshopsPricingCard}>
                 <CardContent className={styles.workshopsPricingCard}>
                   <IconLocationOn className={styles.workshopsPricingIcon} />
                   <Box>
@@ -345,7 +340,7 @@ function WorkshopsPage() {
                     </Typography>
                   </Box>
                 </CardContent>
-              </React.Fragment>
+              </Card>
             </Grid>
           </Grid>
         </Container>
@@ -367,4 +362,4 @@ function WorkshopsPage() {
   );
 }
 
-export default WorkshopsPage;
+export default BusinessWorkshopsPage;

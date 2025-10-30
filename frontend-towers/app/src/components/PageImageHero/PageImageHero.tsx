@@ -12,6 +12,7 @@ import { LoaderClip } from "../LoaderClip/LoaderClip";
 
 export default function PageImageHero({
   title,
+  subtitle = undefined,
   content,
   contentPost,
   hero,
@@ -62,7 +63,7 @@ export default function PageImageHero({
               : {}
           }
         >
-          <Hero title={title} hero={hero} />
+          <Hero title={title} subtitle={subtitle} hero={hero} />
           {content && (
             <Container
               maxWidth="xl"

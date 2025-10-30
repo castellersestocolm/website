@@ -12,6 +12,7 @@ import { ROUTES } from "../../routes";
 import { useAppContext } from "../AppContext/AppContext";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import { PermissionLevel } from "../../enums";
+import LanguageChip from "../LanguageChip/LanguageChip";
 
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 
@@ -20,21 +21,24 @@ export default function Footer() {
 
   const { user } = useAppContext();
 
-  const pages = [
+  const pages: any = [
     {
       name: t("components.navbar-menu.home"),
       path: ROUTES.home.path,
       target: "_self",
+      language: undefined,
     },
     {
       name: t("components.navbar-menu.calendar"),
       path: ROUTES.calendar.path,
       target: "_self",
+      language: undefined,
     },
     !user && {
       name: t("components.navbar-menu.membership"),
       path: ROUTES["user-join"].path,
       target: "_self",
+      language: undefined,
     },
     {
       name: user
@@ -42,16 +46,19 @@ export default function Footer() {
         : t("components.navbar-menu.merch"),
       path: ROUTES.order.path,
       target: "_self",
+      language: undefined,
     },
     user && {
       name: t("components.navbar-menu.resources"),
       path: ROUTES.resources.path,
       target: "_self",
+      language: undefined,
     },
     {
       name: t("components.navbar-menu.press"),
       path: ROUTES.press.path,
       target: "_self",
+      language: undefined,
     },
   ];
 
@@ -72,7 +79,7 @@ export default function Footer() {
             sx={{ display: { xs: "none", md: "flex" } }}
             className={styles.footerMenu}
           >
-            {pages.map((page) => (
+            {pages.map((page: any) => (
               <>
                 {page && (
                   <MenuItem
@@ -82,7 +89,12 @@ export default function Footer() {
                     component={Link}
                     href={page.path}
                   >
-                    <Typography fontWeight={600}>{page.name}</Typography>
+                    <Typography fontWeight={600}>
+                      {page.name}
+                      {page.language && (
+                        <LanguageChip language={page.language} size="small" />
+                      )}
+                    </Typography>
                     {page.target === "_blank" && (
                       <IconArrowOutward className={styles.externalIcon} />
                     )}
