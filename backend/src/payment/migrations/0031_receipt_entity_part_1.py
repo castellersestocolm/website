@@ -10,7 +10,7 @@ def set_receipt_entity(apps, schema_editor):
 
     receipt_updates = []
 
-    entity_obj = Entity.objects.first() or Entity.object.create()
+    entity_obj = Entity.objects.first() or Entity.objects.create()
 
     for receipt_obj in Receipt.objects.select_related("expense"):
         if receipt_obj.expense:
