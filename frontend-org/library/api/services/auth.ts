@@ -8,20 +8,19 @@ import { apiClient, getApiErrorMessage } from "../client";
 import type {
   User,
   LoginRequest,
-  LoginResponse,
   RegisterRequest,
   PasswordResetRequest,
   PasswordResetConfirm,
 } from "@/types/api";
 
 /**
- * Login user with username and password
+ * Login user with email and password
  */
 export async function loginUser(
   credentials: LoginRequest
-): Promise<LoginResponse> {
+): Promise<User> {
   try {
-    const response = await apiClient.post<LoginResponse>(
+    const response = await apiClient.post<User>(
       "/user/login/",
       credentials
     );
@@ -59,13 +58,9 @@ export async function getCurrentUser(): Promise<User> {
  */
 export async function registerUser(
   data: RegisterRequest
-): Promise<LoginResponse> {
+): Promise<void> {
   try {
-    const response = await apiClient.post<LoginResponse>(
-      "/auth/register/",
-      data
-    );
-    return response.data;
+    await apiClient.post("/user/", data);
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
   }
@@ -76,30 +71,22 @@ export async function registerUser(
  */
 export async function requestPasswordReset(
   data: PasswordResetRequest
-): Promise<{ message: string }> {
+): Promise<void> {
   try {
-    const response = await apiClient.post<{ message: string }>(
-      "/auth/password-reset/",
-      data
-    );
-    return response.data;
+    await apiClient.post("/user/request-password/", data);
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
   }
 }
 
 /**
- * Confirm password reset with token
+ * Confirm password reset with token and new password
  */
 export async function confirmPasswordReset(
   data: PasswordResetConfirm
-): Promise<{ message: string }> {
+): Promise<void> {
   try {
-    const response = await apiClient.post<{ message: string }>(
-      "/auth/password-reset-confirm/",
-      data
-    );
-    return response.data;
+    await apiClient.post("/user/password/", data);
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
   }
@@ -107,10 +94,10 @@ export async function confirmPasswordReset(
 
 /**
  * Login with Google OAuth2
- * Redirects to backend OAuth2 endpoint
+ * Redirects to backend's Google OAuth endpoint
  */
 export function loginWithGoogle(): void {
-  const backendUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-  window.location.href = `${backendUrl}/auth/google/`;
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api/1.0', '') || "http://localhost:8000";
+  // Social Django OAuth endpoints are at /api/1.0/user/login/google-oauth2/
+  window.location.href = `${apiBaseUrl}/api/1.0/user/login/google-oauth2/`;
 }
