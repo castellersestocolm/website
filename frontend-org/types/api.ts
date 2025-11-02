@@ -22,6 +22,8 @@ export interface User {
   profile_picture?: string;
   date_joined: string;
   last_login: string | null;
+  is_staff?: boolean;
+  is_superuser?: boolean;
 }
 
 /**
@@ -39,8 +41,8 @@ export interface LoginResponse {
 
 export interface RegisterRequest {
   email: string;
-  username: string;
   password: string;
+  password2: string;
   first_name: string;
   last_name: string;
   module: UserModule;
