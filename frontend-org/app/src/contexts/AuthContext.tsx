@@ -62,8 +62,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setLoading(true);
       setError(null);
-      const response = await loginUser(credentials);
-      setUser(response.user);
+      const userData = await loginUser(credentials);
+      setUser(userData);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Login failed";
       setError(message);
