@@ -30,6 +30,7 @@ import IconShoppingCart from "@mui/icons-material/ShoppingCartOutlined";
 import IconShoppingCartCheckout from "@mui/icons-material/ShoppingCartCheckout";
 import { styled } from "@mui/material/styles";
 import Badge, { badgeClasses } from "@mui/material/Badge";
+import LanguageChip from "../LanguageChip/LanguageChip";
 
 /*
         <IconButton size="large" aria-label="show 2 new messages" color="inherit">
@@ -54,24 +55,27 @@ export default function NavBar() {
     setCart(tmpCartString ? JSON.parse(tmpCartString) : undefined);
   }, [setOrder, setCart]);
 
-  const pages = [
+  const pages: any = [
     {
       name: t("components.navbar-menu.home"),
       path: ROUTES.home.path,
       target: "_self",
       permission: undefined,
+      language: undefined,
     },
     {
       name: t("components.navbar-menu.calendar"),
       path: ROUTES.calendar.path,
       target: "_self",
       permission: undefined,
+      language: undefined,
     },
     !user && {
       name: t("components.navbar-menu.membership"),
       path: ROUTES["user-join"].path,
       target: "_self",
       permission: undefined,
+      language: undefined,
     },
     {
       name: user
@@ -80,14 +84,16 @@ export default function NavBar() {
       path: ROUTES.order.path,
       target: "_self",
       permission: undefined,
+      language: undefined,
     },
     {
       name: t("components.navbar-menu.resources"),
       path: ROUTES.resources.path,
       target: "_self",
       permission: PermissionLevel.USER,
+      language: undefined,
     },
-    {
+    /** {
       name: t("components.navbar-menu.trips"),
       children: [
         {
@@ -96,24 +102,21 @@ export default function NavBar() {
           target: "_self",
         },
       ],
-    },
+    }, **/
     {
-      name: t("components.navbar-menu.about"),
+      name: t("components.navbar-menu.business"),
       children: [
         {
-          name: t("components.navbar-menu.about.team"),
-          path: ROUTES["about-team"].path,
+          name: t("components.navbar-menu.business.workshops"),
+          path: ROUTES["business-workshops"].path,
           target: "_self",
+          language: "en",
         },
         {
-          name: t("components.navbar-menu.about.bylaws"),
-          path: ROUTES["about-bylaws"].path,
+          name: t("components.navbar-menu.business.performances"),
+          path: ROUTES["business-performances"].path,
           target: "_self",
-        },
-        {
-          name: t("components.navbar-menu.about.association"),
-          path: ROUTES.association.path,
-          target: "_self",
+          language: "en",
         },
       ],
     },
@@ -122,12 +125,37 @@ export default function NavBar() {
       path: ROUTES.press.path,
       target: "_self",
       permission: undefined,
+      language: undefined,
+    },
+    {
+      name: t("components.navbar-menu.about"),
+      children: [
+        {
+          name: t("components.navbar-menu.about.team"),
+          path: ROUTES["about-team"].path,
+          target: "_self",
+          language: undefined,
+        },
+        {
+          name: t("components.navbar-menu.about.bylaws"),
+          path: ROUTES["about-bylaws"].path,
+          target: "_self",
+          language: undefined,
+        },
+        {
+          name: t("components.navbar-menu.about.association"),
+          path: ROUTES.association.path,
+          target: "_self",
+          language: undefined,
+        },
+      ],
     },
     {
       name: t("components.navbar-menu.admin"),
       path: ROUTES.admin.path,
       target: "_self",
       permission: PermissionLevel.ADMIN,
+      language: undefined,
     },
   ];
 
@@ -164,7 +192,7 @@ export default function NavBar() {
                   page.permission === PermissionLevel.NONE ||
                   (user && user.permission_level >= PermissionLevel.ADMIN)),
             )
-            .map((page) => (
+            .map((page: any) => (
               <>
                 {page &&
                   (page.children ? (
@@ -176,7 +204,17 @@ export default function NavBar() {
                         target={childrenPage.target}
                         className={styles.drawerItem}
                       >
-                        <Typography>{childrenPage.name}</Typography>
+                        <Typography>
+                          {page.name}
+                          {" — "}
+                          {childrenPage.name}
+                          {childrenPage.language && (
+                            <LanguageChip
+                              language={childrenPage.language}
+                              size="small"
+                            />
+                          )}
+                        </Typography>
                         {childrenPage.target === "_blank" && (
                           <IconArrowOutward className={styles.externalIcon} />
                         )}
@@ -190,7 +228,12 @@ export default function NavBar() {
                       target={page.target}
                       className={styles.drawerItem}
                     >
-                      <Typography>{page.name}</Typography>
+                      <Typography>
+                        {page.name}
+                        {page.language && (
+                          <LanguageChip language={page.language} size="small" />
+                        )}
+                      </Typography>
                       {page.target === "_blank" && (
                         <IconArrowOutward className={styles.externalIcon} />
                       )}
@@ -223,7 +266,7 @@ export default function NavBar() {
                     page.permission === PermissionLevel.NONE ||
                     (user && user.permission_level >= PermissionLevel.ADMIN)),
               )
-              .map((page) => (
+              .map((page: any) => (
                 <>
                   {page &&
                     (page.children ? (
@@ -240,13 +283,19 @@ export default function NavBar() {
                             >
                               <Typography fontWeight={600}>
                                 {page.name}
+                                {page.language && (
+                                  <LanguageChip
+                                    language={page.language}
+                                    size="small"
+                                  />
+                                )}
                               </Typography>
                             </Button>
                             <Menu
                               {...bindMenu(popupState)}
                               className={styles.nestedNavMenu}
                             >
-                              {page.children.map((childrenPage) => (
+                              {page.children.map((childrenPage: any) => (
                                 <MenuItem
                                   key={childrenPage.name}
                                   className={styles.nestedNavButton}
@@ -256,6 +305,12 @@ export default function NavBar() {
                                 >
                                   <Typography fontWeight={600}>
                                     {childrenPage.name}
+                                    {childrenPage.language && (
+                                      <LanguageChip
+                                        language={childrenPage.language}
+                                        size="small"
+                                      />
+                                    )}
                                   </Typography>
                                   {childrenPage.target === "_blank" && (
                                     <IconArrowOutward

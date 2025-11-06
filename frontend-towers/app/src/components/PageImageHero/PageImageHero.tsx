@@ -12,6 +12,7 @@ import { LoaderClip } from "../LoaderClip/LoaderClip";
 
 export default function PageImageHero({
   title,
+  subtitle = undefined,
   content,
   contentPost,
   hero,
@@ -62,46 +63,48 @@ export default function PageImageHero({
               : {}
           }
         >
-          <Hero title={title} hero={hero} />
-          <Container
-            maxWidth="xl"
-            sx={{
-              marginTop: { xs: "16px", md: "32px" },
-              paddingTop: { xs: "32px", md: "64px" },
-              paddingBottom: { xs: "24px", md: "32px" },
-              position: "relative",
-              ...(loading
-                ? {
-                    display: "flex",
-                    flexDirection: "column",
-                    flexGrow: 1,
-                  }
-                : {}),
-            }}
-          >
-            <Alerts />
-            {finishedRegistration && user && !user.registration_finished ? (
-              <>
-                <Typography
-                  variant="h4"
-                  fontWeight="700"
-                  align="center"
-                  marginBottom="32px"
-                >
-                  {t("pages.user-registration.title")}
-                </Typography>
-                <Box className={styles.pageForm}>
-                  <FormUpdate />
+          <Hero title={title} subtitle={subtitle} hero={hero} />
+          {content && (
+            <Container
+              maxWidth="xl"
+              sx={{
+                marginTop: { xs: "16px", md: "32px" },
+                paddingTop: { xs: "32px", md: "64px" },
+                paddingBottom: { xs: "24px", md: "32px" },
+                position: "relative",
+                ...(loading
+                  ? {
+                      display: "flex",
+                      flexDirection: "column",
+                      flexGrow: 1,
+                    }
+                  : {}),
+              }}
+            >
+              <Alerts />
+              {finishedRegistration && user && !user.registration_finished ? (
+                <>
+                  <Typography
+                    variant="h4"
+                    fontWeight="700"
+                    align="center"
+                    marginBottom="32px"
+                  >
+                    {t("pages.user-registration.title")}
+                  </Typography>
+                  <Box className={styles.pageForm}>
+                    <FormUpdate />
+                  </Box>
+                </>
+              ) : loading ? (
+                <Box className={styles.pageLoader}>
+                  <LoaderClip />
                 </Box>
-              </>
-            ) : loading ? (
-              <Box className={styles.pageLoader}>
-                <LoaderClip />
-              </Box>
-            ) : (
-              content
-            )}
-          </Container>
+              ) : (
+                content
+              )}
+            </Container>
+          )}
         </Grid>
       </Box>
       {contentPost}

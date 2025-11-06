@@ -8,6 +8,7 @@ import { apiLegalBylawsList } from "../../api";
 import markdown from "@wcj/markdown-to-html";
 import { capitalizeFirstLetter } from "../../utils/string";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
+import LanguageChip from "../../components/LanguageChip/LanguageChip";
 
 function AboutBylawsPage() {
   const [t, i18n] = useTranslation("common");
@@ -54,7 +55,14 @@ function AboutBylawsPage() {
 
   return (
     <PageImageHero
-      title={t("pages.about-bylaws.title")}
+      title={
+        <>
+          {t("pages.about-bylaws.title")}
+          {bylaws && (
+            <LanguageChip language={bylaws.language} marginLeft="16px" />
+          )}
+        </>
+      }
       content={content}
       hero={ImageHeroAboutBylaws}
       loading={!bylaws}

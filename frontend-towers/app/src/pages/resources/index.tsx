@@ -7,6 +7,7 @@ import ImageHeroResources from "../../assets/images/heros/resources.jpg";
 import { apiDocumentList } from "../../api";
 import PageUserImageHero from "../../components/PageUserImageHero/PageUserImageHero";
 import Box from "@mui/material/Box";
+import LanguageChip from "../../components/LanguageChip/LanguageChip";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -47,9 +48,7 @@ function ResourcesPage() {
                   <Box className={styles.resourcesFileTitle}>
                     <Typography variant="body2" fontWeight="600">
                       {document.name}
-                      {i18n.resolvedLanguage !== document.language
-                        ? " (" + document.language + ")"
-                        : undefined}
+                      <LanguageChip language={document.language} size="small" />
                     </Typography>
                   </Box>
                 </Link>

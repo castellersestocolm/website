@@ -571,7 +571,10 @@ function AdminPage() {
                       : 5,
                   )
                   .filter(
-                    (order: any) => order.products && order.products.length > 0 && order.entity,
+                    (order: any) =>
+                      order.products &&
+                      order.products.length > 0 &&
+                      order.entity,
                   )
                   .map((order: any, i: number, row: any) => {
                     const userFirstname =
