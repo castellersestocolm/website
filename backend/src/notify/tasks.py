@@ -160,9 +160,10 @@ def send_user_email(
             document__language=locale,
             document__module=module,
         )
+        .with_language_match()
         .select_related("document")
-        .order_by("document__code", "document__version")
-        .distinct("document__code", "document__version")
+        .order_by("document__code", "document__language_match", "-document__version")
+        .distinct("document__code")
     ):
         attachments.append(
             (

@@ -13,6 +13,7 @@ from django.db import models
 from comunicat.enums import Module
 from comunicat.storage import signed_storage
 from document.enums import DocumentType, DocumentStatus
+from document.managers import DocumentQuerySet, EmailAttachmentQuerySet
 from notify.enums import EmailType
 
 
@@ -65,6 +66,8 @@ class Document(StandardModel, Timestamps):
         blank=True,
     )
 
+    objects = DocumentQuerySet.as_manager()
+
     def __str__(self) -> str:
         return self.name
 
@@ -93,3 +96,5 @@ class EmailAttachment(StandardModel, Timestamps):
     type = models.PositiveSmallIntegerField(
         choices=((et.value, et.name) for et in EmailType),
     )
+
+    objects = EmailAttachmentQuerySet.as_manager()
