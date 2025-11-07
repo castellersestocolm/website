@@ -1,19 +1,12 @@
-from django.apps import apps
 from django.conf import settings
 from django.db.models import (
     QuerySet,
-    Sum,
     IntegerField,
     Value,
-    Subquery,
-    OuterRef,
     Case,
     When,
 )
-from django.db.models.functions import Coalesce
 from django.utils import translation
-
-from user.enums import FamilyMemberRole
 
 
 class DocumentQuerySet(QuerySet):

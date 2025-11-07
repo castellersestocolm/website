@@ -157,7 +157,6 @@ def send_user_email(
         EmailAttachment.objects.filter(
             type=email_type,
             document__status=DocumentStatus.PUBLISHED,
-            document__language=locale,
             document__module=module,
         )
         .with_language_match()
