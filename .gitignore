@@ -51,6 +51,12 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Frontend org:
+/frontend-org-old/*
+node_modules
+.next
+.env.local
+
 # Translations
 *.mo
 *.pot
