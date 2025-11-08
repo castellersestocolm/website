@@ -17,7 +17,7 @@ export async function getEvents(params?: {
   event_type?: string;
 }): Promise<PaginatedResponse<Event>> {
   try {
-    const response = await apiClient.get<PaginatedResponse<Event>>("/events/", {
+    const response = await apiClient.get<PaginatedResponse<Event>>("/event/", {
       params,
     });
     return response.data;
@@ -31,7 +31,7 @@ export async function getEvents(params?: {
  */
 export async function getEvent(id: number): Promise<Event> {
   try {
-    const response = await apiClient.get<Event>(`/events/${id}/`);
+    const response = await apiClient.get<Event>(`/event/${id}/`);
     return response.data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
@@ -43,7 +43,7 @@ export async function getEvent(id: number): Promise<Event> {
  */
 export async function createEvent(data: Partial<Event>): Promise<Event> {
   try {
-    const response = await apiClient.post<Event>("/events/", data);
+    const response = await apiClient.post<Event>("/event/", data);
     return response.data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
@@ -58,7 +58,7 @@ export async function updateEvent(
   data: Partial<Event>
 ): Promise<Event> {
   try {
-    const response = await apiClient.patch<Event>(`/events/${id}/`, data);
+    const response = await apiClient.patch<Event>(`/event/${id}/`, data);
     return response.data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
@@ -70,7 +70,7 @@ export async function updateEvent(
  */
 export async function deleteEvent(id: number): Promise<void> {
   try {
-    await apiClient.delete(`/events/${id}/`);
+    await apiClient.delete(`/event/${id}/`);
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
   }
@@ -84,7 +84,7 @@ export async function registerForEvent(
 ): Promise<{ message: string }> {
   try {
     const response = await apiClient.post<{ message: string }>(
-      `/events/${eventId}/register/`
+      `/event/${eventId}/register/`
     );
     return response.data;
   } catch (error) {
@@ -100,7 +100,7 @@ export async function unregisterFromEvent(
 ): Promise<{ message: string }> {
   try {
     const response = await apiClient.post<{ message: string }>(
-      `/events/${eventId}/unregister/`
+      `/event/${eventId}/unregister/`
     );
     return response.data;
   } catch (error) {

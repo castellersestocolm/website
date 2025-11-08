@@ -30,7 +30,7 @@ export interface User {
  * Authentication request/response types
  */
 export interface LoginRequest {
-  email: string;
+  username: string; // Email is sent as 'username' field to match Django auth backend
   password: string;
 }
 

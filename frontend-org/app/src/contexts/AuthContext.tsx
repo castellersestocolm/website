@@ -62,6 +62,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setLoading(true);
       setError(null);
+      // Note: LoginRequest now uses 'username' field (email goes here)
       const userData = await loginUser(credentials);
       setUser(userData);
     } catch (err) {

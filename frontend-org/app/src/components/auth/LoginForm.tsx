@@ -36,7 +36,8 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
     try {
       setIsSubmitting(true);
-      await login(formData);
+      // Backend expects 'username' field with email value (Django auth pattern)
+      await login({ username: formData.email, password: formData.password });
       if (onSuccess) {
         onSuccess();
       } else {

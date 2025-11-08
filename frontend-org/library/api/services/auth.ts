@@ -112,9 +112,14 @@ export interface CreateFamilyMemberData {
 }
 
 export interface RegisterWithFamilyRequest {
+  firstname: string; // Primary adult's first name
+  lastname: string; // Primary adult's last name
   email: string;
+  phone: string;
+  birthday: string; // ISO date string (YYYY-MM-DD)
   password: string;
   password2: string;
+  consent_pictures: boolean;
   module: string;
   partner?: CreateFamilyMemberData;
   children?: CreateFamilyMemberData[];
@@ -124,16 +129,25 @@ export async function registerUserWithFamily(
   data: RegisterWithFamilyRequest
 ): Promise<User> {
   try {
-    // Step 1: Register user account
+    // Step 1: Register user account with all required fields
     await apiClient.post("/user/", {
       email: data.email,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      phone: data.phone,
+      birthday: data.birthday,
       password: data.password,
       password2: data.password2,
+      consent_pictures: data.consent_pictures,
+      preferred_language: "sv", // Default to Swedish
+      // Module-specific data (empty objects for now)
+      organisation: {},
+      towers: {},
     });
 
-    // Step 2: Login
+    // Step 2: Login (backend expects 'username' field with email value)
     const loginResponse = await apiClient.post<User>("/user/login/", {
-      username: data.email,
+      username: data.email, // Django auth backend expects 'username' field
       password: data.password,
     });
 
@@ -150,9 +164,9 @@ export async function registerUserWithFamily(
       familyMembersToAdd.push(...data.children);
     }
 
-    // Add each family member
+    // Add each family member to the user's family
     for (const member of familyMembersToAdd) {
-      await apiClient.post("/user-family-member/", member);
+      await apiClient.post("/user/family/member/", member);
     }
 
     return user;

@@ -33,6 +33,7 @@
       "remove_child": "Remove",
       "consent": "I accept the data processing terms",
       "consent_link": "Privacy Policy",
+      "consent_pictures": "I consent to pictures being taken and used for promotional purposes",
       "submit": "Join Now",
       "max_children": "Maximum 10 children allowed",
       "validation": {

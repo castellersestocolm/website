@@ -22,6 +22,18 @@ export const adultMemberSchema = z.object({
   phone: z
     .string()
     .regex(phoneRegex, "Invalid phone number. Use format: +46XXXXXXXXX"),
+  birthday: z
+    .string()
+    .refine((date) => {
+      const parsedDate = new Date(date);
+      return !isNaN(parsedDate.getTime());
+    }, "Invalid date")
+    .refine((date) => {
+      const birthDate = new Date(date);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      return age >= 18; // Adults must be 18 or older
+    }, "Adult must be 18 years or older"),
 });
 
 // Child member schema
@@ -112,6 +124,12 @@ export const registrationFormSchema = membershipBaseSchema
     password: z.string().min(8, "Password must be at least 8 characters"),
     password2: z.string().min(8, "Password must be at least 8 characters"),
     module: z.enum(["ORG", "TOWERS"]),
+    consentPictures: z
+      .boolean()
+      .refine(
+        (val) => val === true,
+        "You must accept the picture consent terms"
+      ),
   })
   .refine((data) => data.password === data.password2, {
     message: "Passwords do not match",
@@ -129,7 +147,8 @@ export const registrationFormSchema = membershipBaseSchema
             data.adult2.firstname &&
             data.adult2.lastname &&
             data.adult2.email &&
-            data.adult2.phone;
+            data.adult2.phone &&
+            data.adult2.birthday;
           return hasAllFields;
         }
       }

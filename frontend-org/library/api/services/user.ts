@@ -12,7 +12,7 @@ import type { User } from "@/types/api";
  */
 export async function getUserProfile(userId: number): Promise<User> {
   try {
-    const response = await apiClient.get<User>(`/users/${userId}/`);
+    const response = await apiClient.get<User>(`/user/${userId}/`);
     return response.data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
@@ -27,7 +27,7 @@ export async function updateUserProfile(
   data: Partial<User>
 ): Promise<User> {
   try {
-    const response = await apiClient.patch<User>(`/users/${userId}/`, data);
+    const response = await apiClient.patch<User>(`/user/${userId}/`, data);
     return response.data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
@@ -45,15 +45,11 @@ export async function uploadProfilePicture(
     const formData = new FormData();
     formData.append("profile_picture", file);
 
-    const response = await apiClient.patch<User>(
-      `/users/${userId}/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await apiClient.patch<User>(`/user/${userId}/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error));
@@ -69,7 +65,7 @@ export async function changePassword(data: {
 }): Promise<{ message: string }> {
   try {
     const response = await apiClient.post<{ message: string }>(
-      "/users/change-password/",
+      "/user/change-password/",
       data
     );
     return response.data;

@@ -40,15 +40,18 @@ export default function JoinPage() {
         lastname: "",
         email: "",
         phone: "",
+        birthday: "",
       },
       adult2: {
         firstname: "",
         lastname: "",
         email: "",
         phone: "",
+        birthday: "",
       },
       children: [],
       consentProcessing: false,
+      consentPictures: false,
       password: "",
       password2: "",
       module: "ORG",
@@ -70,11 +73,12 @@ export default function JoinPage() {
         (data.adult2.firstname ||
           data.adult2.lastname ||
           data.adult2.email ||
-          data.adult2.phone)
+          data.adult2.phone ||
+          data.adult2.birthday)
           ? {
               firstname: data.adult2.firstname!,
               lastname: data.adult2.lastname!,
-              birthday: "1990-01-01", // TODO: collect birthday for adults
+              birthday: data.adult2.birthday!,
               consent_pictures: true,
             }
           : undefined;
@@ -92,9 +96,14 @@ export default function JoinPage() {
 
       // Register user + create family
       await registerUserWithFamily({
+        firstname: data.adult1.firstname,
+        lastname: data.adult1.lastname,
         email: data.adult1.email,
+        phone: data.adult1.phone,
+        birthday: data.adult1.birthday,
         password: data.password,
         password2: data.password2,
+        consent_pictures: data.consentPictures,
         module: data.module,
         partner,
         children,
@@ -268,6 +277,23 @@ export default function JoinPage() {
                 </p>
               )}
             </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                {t("form.birthday")} <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                {...register("adult1.birthday")}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                max={new Date().toISOString().split("T")[0]}
+              />
+              {errors.adult1?.birthday && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.adult1.birthday.message}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -394,6 +420,23 @@ export default function JoinPage() {
                 )}
               </div>
 
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  {t("form.birthday")}
+                </label>
+                <input
+                  type="date"
+                  {...register("adult2.birthday")}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                  max={new Date().toISOString().split("T")[0]}
+                />
+                {errors.adult2?.birthday && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.adult2.birthday.message}
+                  </p>
+                )}
+              </div>
+
               {errors.adult2 && typeof errors.adult2.message === "string" && (
                 <div className="col-span-2">
                   <p className="text-sm text-red-500">
@@ -512,7 +555,7 @@ export default function JoinPage() {
         </div>
 
         {/* Consent */}
-        <div className="mb-6">
+        <div className="mb-6 space-y-4">
           <label className="flex items-start gap-2">
             <input
               type="checkbox"
@@ -533,6 +576,23 @@ export default function JoinPage() {
           {errors.consentProcessing && (
             <p className="mt-1 text-sm text-red-500">
               {errors.consentProcessing.message}
+            </p>
+          )}
+
+          <label className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              {...register("consentPictures")}
+              className="mt-1 h-4 w-4"
+            />
+            <span className="text-sm">
+              {t("form.consent_pictures")}{" "}
+              <span className="text-red-500">*</span>
+            </span>
+          </label>
+          {errors.consentPictures && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.consentPictures.message}
             </p>
           )}
         </div>
