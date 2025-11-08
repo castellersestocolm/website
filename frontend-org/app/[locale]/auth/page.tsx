@@ -1,8 +1,8 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import LoginForm from "../src/components/auth/LoginForm";
-import RegisterForm from "../src/components/auth/RegisterForm";
+import LoginForm from "@/app/src/components/auth/LoginForm";
+import RegisterForm from "@/app/src/components/auth/RegisterForm";
 
 export default function AuthPage() {
   return (

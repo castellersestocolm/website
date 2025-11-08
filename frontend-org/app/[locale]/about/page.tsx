@@ -17,15 +17,16 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              Les Quatre Barres is the Catalan cultural association in Stockholm 
-              (Casal Català d&apos;Estocolm). We bring together Catalans and friends 
-              of Catalan culture living in Sweden to celebrate our language, 
-              traditions, and heritage.
+              Les Quatre Barres is the Catalan cultural association in Stockholm
+              (Casal Català d&apos;Estocolm). We bring together Catalans and
+              friends of Catalan culture living in Sweden to celebrate our
+              language, traditions, and heritage.
             </p>
             <p>
-              Since 1978, our association has been a home away from home for the 
-              Catalan community in Stockholm, organizing cultural events, celebrations, 
-              and activities that keep our traditions alive in Scandinavia.
+              Since 1978, our association has been a home away from home for the
+              Catalan community in Stockholm, organizing cultural events,
+              celebrations, and activities that keep our traditions alive in
+              Scandinavia.
             </p>
           </CardContent>
         </Card>
@@ -36,30 +37,32 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              Throughout the year, we organize a variety of events and activities:
+              Throughout the year, we organize a variety of events and
+              activities:
             </p>
             <ul className="space-y-2 list-disc list-inside ml-4">
               <li>
-                <strong>Diada Nacional de Catalunya</strong> - Celebrating Catalonia&apos;s 
-                National Day every September 11th
+                <strong>Diada Nacional de Catalunya</strong> - Celebrating
+                Catalonia&apos;s National Day every September 11th
               </li>
               <li>
                 <strong>Calçotades</strong> - Traditional spring onion barbecues
               </li>
               <li>
-                <strong>L&apos;Esplai Català</strong> - Catalan children&apos;s activities 
-                and language learning
+                <strong>L&apos;Esplai Català</strong> - Catalan children&apos;s
+                activities and language learning
               </li>
               <li>
-                <strong>Castellers d&apos;Estocolm</strong> - Our human towers group, 
-                practicing the UNESCO-recognized tradition
+                <strong>Castellers d&apos;Estocolm</strong> - Our human towers
+                group, practicing the UNESCO-recognized tradition
               </li>
               <li>
-                <strong>Film screenings</strong> - Catalan cinema and documentaries
+                <strong>Film screenings</strong> - Catalan cinema and
+                documentaries
               </li>
               <li>
-                <strong>Cultural seminars</strong> - Discussions on Catalan history, 
-                literature, and current affairs
+                <strong>Cultural seminars</strong> - Discussions on Catalan
+                history, literature, and current affairs
               </li>
             </ul>
           </CardContent>

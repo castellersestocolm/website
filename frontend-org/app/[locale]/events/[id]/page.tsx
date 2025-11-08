@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, MapPin, Users, Clock } from "lucide-react";
 import { getEvent } from "@/library/api/services/event";
-import { useAuth } from "../../src/contexts/AuthContext";
+import { useAuth } from "@/app/src/contexts/AuthContext";
 import type { Event } from "@/types/api";
 
 export default function EventDetailPage() {

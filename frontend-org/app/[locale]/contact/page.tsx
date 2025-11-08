@@ -72,7 +72,7 @@ export default function ContactPage() {
               <CardContent>
                 <p>Stockholm, Sweden</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  We organize events at various locations in Stockholm. Contact 
+                  We organize events at various locations in Stockholm. Contact
                   us for details about upcoming activities.
                 </p>
               </CardContent>

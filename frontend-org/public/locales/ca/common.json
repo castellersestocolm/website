@@ -1,0 +1,81 @@
+{
+  "navigation": {
+    "home": "Inici",
+    "about": "Sobre Nosaltres",
+    "events": "Esdeveniments",
+    "news": "Notícies",
+    "contact": "Contacte",
+    "login": "Iniciar Sessió",
+    "register": "Registrar-se",
+    "logout": "Tancar Sessió",
+    "profile": "Perfil",
+    "membership": "Membre",
+    "admin": "Administració",
+    "join": "Uneix-te"
+  },
+  "membership": {
+    "title": "Uneix-te a la Nostra Organització",
+    "subtitle": "Fes-te membre de la nostra comunitat",
+    "form": {
+      "section_adult1": "Informació del Membre Principal",
+      "section_adult2": "Parella/Segon Adult (Opcional)",
+      "section_children": "Fills/es (Opcional)",
+      "create_account": "Crea el Teu Compte",
+      "firstname": "Nom",
+      "lastname": "Cognoms",
+      "email": "Correu Electrònic",
+      "phone": "Telèfon",
+      "birthday": "Data de Naixement",
+      "password": "Contrasenya",
+      "password2": "Confirma la Contrasenya",
+      "add_partner": "Afegir Parella/Segon Adult",
+      "add_child": "Afegir Fill/a",
+      "remove_child": "Eliminar",
+      "consent": "Accepto els termes de tractament de dades",
+      "consent_link": "Política de Privacitat",
+      "submit": "Uneix-te Ara",
+      "max_children": "Màxim 10 fills permesos",
+      "validation": {
+        "firstname_min": "El nom ha de tenir almenys 2 caràcters",
+        "firstname_max": "El nom ha de tenir menys de 50 caràcters",
+        "lastname_min": "Els cognoms han de tenir almenys 2 caràcters",
+        "lastname_max": "Els cognoms han de tenir menys de 50 caràcters",
+        "email_invalid": "Adreça de correu electrònic no vàlida",
+        "phone_invalid": "Número de telèfon no vàlid. Utilitzeu el format: +46XXXXXXXXX",
+        "birthday_invalid": "Data no vàlida",
+        "birthday_age": "El fill/a ha de tenir menys de 18 anys",
+        "consent_required": "Heu d'acceptar els termes de tractament de dades",
+        "adult2_incomplete": "Si afegiu un segon adult, tots els camps són obligatoris"
+      }
+    },
+    "payment": {
+      "title": "Informació de Pagament",
+      "amount": "Import",
+      "reference": "Referència",
+      "instructions": "Escaneja el codi QR amb Swish per completar el pagament",
+      "steps": {
+        "1": "Obre l'aplicació Swish al teu telèfon",
+        "2": "Escaneja el codi QR",
+        "3": "Confirma el pagament",
+        "4": "T'enviarem un correu de confirmació quan rebem el pagament"
+      },
+      "individual": "150 SEK",
+      "family": "250 SEK",
+      "membership_for": "Membre per a"
+    },
+    "success": {
+      "title": "Sol·licitud Enviada Amb Èxit!",
+      "message": "Gràcies per unir-te a la nostra organització. Si us plau, completa el pagament per activar la teva membre.",
+      "back": "Tornar a l'Inici"
+    },
+    "error": {
+      "generic": "S'ha produït un error. Si us plau, torna-ho a provar.",
+      "rate_limit": "Massa sol·licituds. Si us plau, torna-ho a provar més tard."
+    }
+  },
+  "language": {
+    "en": "English",
+    "ca": "Català",
+    "sv": "Svenska"
+  }
+}

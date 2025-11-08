@@ -1,0 +1,81 @@
+{
+  "navigation": {
+    "home": "Hem",
+    "about": "Om Oss",
+    "events": "Evenemang",
+    "news": "Nyheter",
+    "contact": "Kontakt",
+    "login": "Logga In",
+    "register": "Registrera",
+    "logout": "Logga Ut",
+    "profile": "Profil",
+    "membership": "Medlemskap",
+    "admin": "Admin",
+    "join": "Gå Med"
+  },
+  "membership": {
+    "title": "Gå Med i Vår Organisation",
+    "subtitle": "Bli medlem i vår gemenskap",
+    "form": {
+      "section_adult1": "Primär Medlemsinformation",
+      "section_adult2": "Partner/Andra Vuxen (Valfritt)",
+      "section_children": "Barn (Valfritt)",
+      "create_account": "Skapa Ditt Konto",
+      "firstname": "Förnamn",
+      "lastname": "Efternamn",
+      "email": "E-post",
+      "phone": "Telefon",
+      "birthday": "Födelsedag",
+      "password": "Lösenord",
+      "password2": "Bekräfta Lösenord",
+      "add_partner": "Lägg Till Partner/Andra Vuxen",
+      "add_child": "Lägg Till Barn",
+      "remove_child": "Ta Bort",
+      "consent": "Jag accepterar villkoren för databehandling",
+      "consent_link": "Integritetspolicy",
+      "submit": "Gå Med Nu",
+      "max_children": "Maximalt 10 barn tillåtna",
+      "validation": {
+        "firstname_min": "Förnamnet måste vara minst 2 tecken",
+        "firstname_max": "Förnamnet måste vara mindre än 50 tecken",
+        "lastname_min": "Efternamnet måste vara minst 2 tecken",
+        "lastname_max": "Efternamnet måste vara mindre än 50 tecken",
+        "email_invalid": "Ogiltig e-postadress",
+        "phone_invalid": "Ogiltigt telefonnummer. Använd format: +46XXXXXXXXX",
+        "birthday_invalid": "Ogiltigt datum",
+        "birthday_age": "Barnet måste vara under 18 år",
+        "consent_required": "Du måste acceptera villkoren för databehandling",
+        "adult2_incomplete": "Om du lägger till en andra vuxen är alla fält obligatoriska"
+      }
+    },
+    "payment": {
+      "title": "Betalningsinformation",
+      "amount": "Belopp",
+      "reference": "Referens",
+      "instructions": "Skanna QR-koden med Swish för att slutföra betalningen",
+      "steps": {
+        "1": "Öppna Swish-appen på din telefon",
+        "2": "Skanna QR-koden",
+        "3": "Bekräfta betalningen",
+        "4": "Vi skickar ett bekräftelsemail när betalningen mottas"
+      },
+      "individual": "150 SEK",
+      "family": "250 SEK",
+      "membership_for": "Medlemskap för"
+    },
+    "success": {
+      "title": "Ansökan Skickad Framgångsrikt!",
+      "message": "Tack för att du går med i vår organisation. Slutför betalningen för att aktivera ditt medlemskap.",
+      "back": "Tillbaka Till Hem"
+    },
+    "error": {
+      "generic": "Ett fel uppstod. Försök igen.",
+      "rate_limit": "För många förfrågningar. Försök igen senare."
+    }
+  },
+  "language": {
+    "en": "English",
+    "ca": "Català",
+    "sv": "Svenska"
+  }
+}

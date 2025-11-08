@@ -1,0 +1,81 @@
+{
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "events": "Events",
+    "news": "News",
+    "contact": "Contact",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "membership": "Membership",
+    "admin": "Admin",
+    "join": "Join Us"
+  },
+  "membership": {
+    "title": "Join Our Organization",
+    "subtitle": "Become a member of our community",
+    "form": {
+      "section_adult1": "Primary Member Information",
+      "section_adult2": "Partner/Second Adult (Optional)",
+      "section_children": "Children (Optional)",
+      "create_account": "Create Your Account",
+      "firstname": "First Name",
+      "lastname": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "birthday": "Birthday",
+      "password": "Password",
+      "password2": "Confirm Password",
+      "add_partner": "Add Partner/Second Adult",
+      "add_child": "Add Child",
+      "remove_child": "Remove",
+      "consent": "I accept the data processing terms",
+      "consent_link": "Privacy Policy",
+      "submit": "Join Now",
+      "max_children": "Maximum 10 children allowed",
+      "validation": {
+        "firstname_min": "First name must be at least 2 characters",
+        "firstname_max": "First name must be less than 50 characters",
+        "lastname_min": "Last name must be at least 2 characters",
+        "lastname_max": "Last name must be less than 50 characters",
+        "email_invalid": "Invalid email address",
+        "phone_invalid": "Invalid phone number. Use format: +46XXXXXXXXX",
+        "birthday_invalid": "Invalid date",
+        "birthday_age": "Child must be under 18 years old",
+        "consent_required": "You must accept the data processing terms",
+        "adult2_incomplete": "If adding a second adult, all fields are required"
+      }
+    },
+    "payment": {
+      "title": "Payment Information",
+      "amount": "Amount",
+      "reference": "Reference",
+      "instructions": "Scan the QR code with Swish to complete your payment",
+      "steps": {
+        "1": "Open the Swish app on your phone",
+        "2": "Scan the QR code",
+        "3": "Confirm the payment",
+        "4": "We'll send you a confirmation email once payment is received"
+      },
+      "individual": "150 SEK",
+      "family": "250 SEK",
+      "membership_for": "Membership for"
+    },
+    "success": {
+      "title": "Application Submitted Successfully!",
+      "message": "Thank you for joining our organization. Please complete the payment to activate your membership.",
+      "back": "Back to Home"
+    },
+    "error": {
+      "generic": "An error occurred. Please try again.",
+      "rate_limit": "Too many requests. Please try again later."
+    }
+  },
+  "language": {
+    "en": "English",
+    "ca": "Català",
+    "sv": "Svenska"
+  }
+}
