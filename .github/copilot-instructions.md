@@ -82,9 +82,10 @@ class Module(IntEnum):
 **NOT JWT-based**. Uses Django sessions with cookies:
 
 1. Login creates session → `sessionid` cookie set
-2. Frontend sends credentials to `/api/1.0/auth/login/`
-3. All subsequent requests include `sessionid` cookie + `X-CSRFToken` header
-4. CSRF token extracted from `csrftoken` cookie (see `frontend-org/library/api/client.ts`)
+2. Frontend sends credentials to `/api/1.0/user/login/` (note: endpoint is `user/login/`, not `auth/login/`)
+3. Login payload must use field name `username` with the email value: `{ username: email, password }`
+4. All subsequent requests include `sessionid` cookie + `X-CSRFToken` header
+5. CSRF token extracted from `csrftoken` cookie (see `frontend-org/library/api/client.ts`)
 
 **axios config** (`apiClient`):
 
@@ -229,19 +230,53 @@ frontend-org:
 - Use shadcn/ui components (not MUI)
 - Use `next-intl` for translations (not `react-i18next`)
 
-### 10. Payment & Membership Flow
+### 10. Unified Registration, Payment & Membership Flow
 
 **Swedish currency**: SEK (kronor)  
-**Payment method**: Swish QR codes (see `qrcode` package usage in `join/page.tsx`)  
-**Membership tiers**: Defined in `MODULE_*_MEMBERSHIP_CONFIG` (e.g., `1-150,2-250`)
+**Payment method**: Swish QR codes (`qrcode` package in `join/page.tsx`)  
+**Membership tiers**: From `MODULE_*_MEMBERSHIP_CONFIG` (e.g., `1-150,2-250`)
 
-**Registration flow** (Frontend-Org):
+There is a SINGLE full registration form implemented in the reusable `JoinForm` component (`app/src/components/membership/JoinForm.tsx`), used on the `/join` page (`app/[locale]/join/page.tsx`). The old `RegisterForm` component has been removed; do NOT reintroduce it.
 
-1. User fills form (adult1 required, adult2/children optional)
-2. Submit to `registerUserWithFamily` API service
-3. Backend creates user + family + membership records
-4. Frontend generates Swish QR code with payment reference
-5. User pays via Swish → Backend webhook confirms → Membership activated
+The authentication page `/[locale]/auth` renders the combined `AuthSwitchPanel` with two tabs: Login | Join. The Join tab embeds the full `JoinForm` (no separate quick registration path). This avoids duplicate logic while allowing users on the auth page to switch directly to the full membership form. All strings in `AuthSwitchPanel` and `JoinForm` must use `next-intl` translation keys under `membership.*` — avoid hard-coded text.
+
+**Required backend user creation fields (CreateSerializer)**:
+
+```
+email, firstname, lastname, phone, birthday (YYYY-MM-DD), password, password2,
+consent_pictures (boolean), preferred_language (default "sv"), organisation {}, towers {}
+```
+
+**Frontend service call (`registerUserWithFamily`) must send:**
+
+```
+{
+  firstname, lastname, email, phone, birthday,
+  password, password2,
+  consent_pictures: consentPictures,
+  module, partner?, children?
+}
+```
+
+**Flow:**
+
+1. User completes the `/join` form (adult1 mandatory; optional adult2 + children).
+2. Form validation via Zod ensures birthdays, phone format, and consent.
+3. `registerUserWithFamily` posts to `/user/` with all required fields.
+4. On success, immediate login call to `/user/login/` using `{ username: email, password }`.
+5. Partner and children are added via `/user/family/member/` endpoints.
+6. A Swish payment QR code is generated client-side with amount derived from tier (individual vs family) and a reference.
+7. User pays; backend (future webhook/integration) confirms and activates membership.
+
+**Do NOT:**
+
+- Omit required fields (especially `birthday`, `phone`, `consent_pictures`).
+- Use `email` instead of `username` in login payload.
+- Recreate or reuse the deprecated `RegisterForm` component.
+- Add new hard-coded English strings to auth/registration flows without corresponding locale entries.
+- Reintroduce a separate "Quick Join" flow duplicating the full form logic.
+
+**Extending:** If adding new membership options (e.g. student tier), extend backend config & adjust payment calculation logic in `/join` page; keep service contract unchanged unless serializers change.
 
 ## Common Tasks
 
