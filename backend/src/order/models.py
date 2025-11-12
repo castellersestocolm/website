@@ -194,7 +194,13 @@ class OrderProduct(StandardModel, Timestamps):
     )
     vat = models.PositiveSmallIntegerField(default=0)
 
+    __line = None
+
     objects = OrderProductQuerySet.as_manager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__line = self.line
 
     def __str__(self) -> str:
         return f"{str(self.order)} - {str(self.size)}"
@@ -208,6 +214,28 @@ class OrderProduct(StandardModel, Timestamps):
                     )
                 }
             )
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            if self.line != self.__line:
+                if self.line:
+                    self.line.item = self
+                    self.line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+                if self.__line:
+                    self.__line.item = None
+                    self.__line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+
+        super().save(*args, **kwargs)
 
 
 class DeliveryProvider(StandardModel, Timestamps):

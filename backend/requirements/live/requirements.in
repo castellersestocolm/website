@@ -20,6 +20,8 @@ gunicorn ~= 23.0.0
 
 # Admin
 django-jsoneditor ~= 0.2.4
+django-nested-admin ~= 4.1.6
+django4-inline-actions ~= 2.1
 
 # Google
 google-auth ~= 2.28.2

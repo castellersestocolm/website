@@ -12,16 +12,16 @@ apimatic-core==0.2.23 \
     --hash=sha256:3919a5cf043594dd3cf7a847c299fccd48bd889e127be9316db29c93bd706f32 \
     --hash=sha256:74505cc3148eefaab0558d9bd9979dae3a9521b041e51ef992c04bbdeba959c0
     # via paypal-server-sdk
-apimatic-core-interfaces==0.1.7 \
-    --hash=sha256:34ae8aa76747f1c222812d13e52c8ed12f8cbabebfe296996011ebde2891959e \
-    --hash=sha256:e8c98a87a6ce531e62d9fd154f1d76153c52b764c245c78307a744008de18156
+apimatic-core-interfaces==0.1.8 \
+    --hash=sha256:67c4ddbd5d9df92f5d8241cf4258762422d4b3f204b8d353fc25b4a95cb66ac0 \
+    --hash=sha256:d8d42ab60f3bc5840c9fd414af8ddfd9bee3e5ab7a73d4340a814ea92a5c1dd1
     # via
     #   apimatic-core
     #   apimatic-requests-client-adapter
     #   paypal-server-sdk
-apimatic-requests-client-adapter==0.1.8 \
-    --hash=sha256:6a7a85d5b0f84ce87b3b9826fa2567b63d8ddca051d17508d0c4177c302474ce \
-    --hash=sha256:99b028f98e9deebba16b604fddb329106b4c9b6cf32345ce9646faadb92c8e43
+apimatic-requests-client-adapter==0.1.9 \
+    --hash=sha256:0080d9a351586a69dbdf4c6f73ff097e8bc929fe1edd3cd91bde1f6119e5ac5b \
+    --hash=sha256:40f132f97bd84a6e4c9efb4f549c328d0434c9e6d23fb74f539a8b632d97fe43
     # via paypal-server-sdk
 asgiref==3.10.0 \
     --hash=sha256:aef8a81283a34d0ab31630c9b7dfe70c812c95eba78171367ca8745e88124734 \
@@ -73,9 +73,9 @@ celery==5.4.0 \
     --hash=sha256:369631eb580cf8c51a82721ec538684994f8277637edde2dfc0dacd73ed97f64 \
     --hash=sha256:504a19140e8d3029d5acad88330c541d4c3f64c789d85f94756762d8bca7e706
     # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
-certifi==2025.10.5 \
-    --hash=sha256:0f212c2744a9bb6de0c56639a6f68afe01ecd92d91f14ae897c4fe7bbeeef0de \
-    --hash=sha256:47c09d31ccf2acf0be3f701ea53595ee7e0b8fa08801c6624be771df09ae7b43
+certifi==2025.11.12 \
+    --hash=sha256:97de8790030bbd5c2d96b7ec782fc2f7820ef8dba6db909ccf95449f2d062d4b \
+    --hash=sha256:d8ab5478f2ecd78af242878415affce761ca6bc54a22a27e026d7c25357c3316
     # via
     #   django-money
     #   requests
@@ -364,9 +364,9 @@ defusedxml==0.7.1 \
     # via
     #   python3-openid
     #   social-auth-core
-django==5.1.13 \
-    --hash=sha256:06f257f79dc4c17f3f9e23b106a4c5ed1335abecbe731e83c598c941d14fbeed \
-    --hash=sha256:543ff21679f15e80edfc01fe7ea35f8291b6d4ea589433882913626a7c1cf929
+django==5.1.14 \
+    --hash=sha256:2a4b9c20404fd1bf50aaaa5542a19d860594cba1354f688f642feb271b91df27 \
+    --hash=sha256:b98409fb31fdd6e8c3a6ba2eef3415cc5c0020057b43b21ba7af6eff5f014831
     # via
     #   -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
     #   django-cors-headers
@@ -378,6 +378,7 @@ django==5.1.13 \
     #   django-redis
     #   django-silk
     #   django-versatileimagefield
+    #   django4-inline-actions
     #   djangorestframework
     #   drf-nested-routers
     #   drf-yasg
@@ -407,6 +408,10 @@ django-money[exchange]==3.5.4 \
     --hash=sha256:25933ed6177f8dc981114db813c7c5d36c7c89bc4017f2b1b2bb0209b5f68876 \
     --hash=sha256:628b3afb6671edc2cbd26743d858c31d3b99a735357f7acb6a399ab3ab008d2b
     # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
+django-nested-admin==4.1.6 \
+    --hash=sha256:0222475cc343e7b8813d7a5db583cddef15f5c0f44dbe17b91b4d682db7bd73a \
+    --hash=sha256:ae3e1d910631e6cc3b5815d80129f18c6c081b7dd7f775bf392d9bb1ac88ef93
+    # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
 django-phonenumber-field==8.0.0 \
     --hash=sha256:196c917b70c01a98e327f482eb8a4a4a55a29891db551f99078585397370b3ba \
     --hash=sha256:8a560fe1b01b94c9de8cde22bc373b695f023cc6df4baba00264cb079da9f631
@@ -422,6 +427,10 @@ django-silk==5.4.3 \
 django-versatileimagefield==3.1 \
     --hash=sha256:3390e20048098e897bf299b0360763d10cd089665b7aef8eba900eecbaead0d8 \
     --hash=sha256:dfdffa11a0d4c169e44f164481d2b26f94a0a00517216ee85748324c2f96a669
+    # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
+django4-inline-actions==2.1 \
+    --hash=sha256:26f04084aab82f116949472bce1ff702dd23c335a2dbd1b8fe00942f169b61c7 \
+    --hash=sha256:f8c40334e633b06fff8c3cde9f28dab9cbccad560c1df7a73ea36c153040b0ed
     # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
 djangorestframework==3.15.2 \
     --hash=sha256:2b8871b062ba1aefc2de01f773875441a961fefbf79f5eed1e32b2f096944b20 \
@@ -442,9 +451,9 @@ et-xmlfile==2.0.0 \
     --hash=sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa \
     --hash=sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54
     # via openpyxl
-google-api-core==2.26.0 \
-    --hash=sha256:2b204bd0da2c81f918e3582c48458e24c11771f987f6258e6e227212af78f3ed \
-    --hash=sha256:e6e6d78bd6cf757f4aee41dcc85b07f485fbb069d5daa3afb126defba1e91a62
+google-api-core==2.28.1 \
+    --hash=sha256:2b405df02d68e68ce0fbc138559e6036559e685159d148ae5861013dc201baf8 \
+    --hash=sha256:4021b0f8ceb77a6fb4de6fde4502cecab45062e66ff4f2895169e0b35bc9466c
     # via google-api-python-client
 google-api-python-client==2.161.0 \
     --hash=sha256:324c0cce73e9ea0a0d2afd5937e01b7c2d6a4d7e2579cdb6c384f9699d6c9f37 \
@@ -459,19 +468,19 @@ google-auth==2.28.2 \
     #   google-api-python-client
     #   google-auth-httplib2
     #   google-auth-oauthlib
-google-auth-httplib2==0.2.0 \
-    --hash=sha256:38aa7badf48f974f1eb9861794e9c0cb2a0511a4ec0679b1f886d108f5640e05 \
-    --hash=sha256:b65a0a2123300dd71281a7bf6e64d65a0759287df52729bdd1ae2e47dc311a3d
+google-auth-httplib2==0.2.1 \
+    --hash=sha256:1be94c611db91c01f9703e7f62b0a59bbd5587a95571c7b6fade510d648bc08b \
+    --hash=sha256:5ef03be3927423c87fb69607b42df23a444e434ddb2555b73b3679793187b7de
     # via
     #   -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
     #   google-api-python-client
-google-auth-oauthlib==1.2.2 \
-    --hash=sha256:11046fb8d3348b296302dd939ace8af0a724042e8029c1b872d87fabc9f41684 \
-    --hash=sha256:fd619506f4b3908b5df17b65f39ca8d66ea56986e5472eb5978fd8f3786f00a2
+google-auth-oauthlib==1.2.3 \
+    --hash=sha256:7c0940e037677f25e71999607493640d071212e7f3c15aa0febea4c47a5a0680 \
+    --hash=sha256:eb09e450d3cc789ecbc2b3529cb94a713673fd5f7a22c718ad91cf75aedc2ea4
     # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
-googleapis-common-protos==1.71.0 \
-    --hash=sha256:1aec01e574e29da63c80ba9f7bbf1ccfaacf1da877f23609fe236ca7c72a2e2e \
-    --hash=sha256:59034a1d849dc4d18971997a72ac56246570afdd17f9369a0ff68218d50ab78c
+googleapis-common-protos==1.72.0 \
+    --hash=sha256:4299c5a82d5ae1a9702ada957347726b167f9f8d1fc352477702a1e851ff4038 \
+    --hash=sha256:e55a601c1b32b52d7a3e65f43563e2aa61bcd737998ee672ac9b951cd49319f5
     # via google-api-core
 gprof2dot==2025.4.14 \
     --hash=sha256:0742e4c0b4409a5e8777e739388a11e1ed3750be86895655312ea7c20bd0090e \
@@ -510,9 +519,9 @@ jsonpointer==2.4 \
     --hash=sha256:15d51bba20eea3165644553647711d150376234112651b4f1811022aecad7d7a \
     --hash=sha256:585cee82b70211fa9e6043b7bb89db6e1aa49524340dde8ad6b63206ea689d88
     # via apimatic-core
-kombu==5.5.4 \
-    --hash=sha256:886600168275ebeada93b888e831352fe578168342f0d1d5833d88ba0d847363 \
-    --hash=sha256:a12ed0557c238897d8e518f1d1fdf84bd1516c5e305af2dacd85c2015115feb8
+kombu==5.6.0 \
+    --hash=sha256:03d2d4adc5381abd200014e11c947c3ae5cb7384e676cbbaf9e7ffd8652da0c2 \
+    --hash=sha256:97280ee43e6c1b74f129ec4e5c8c52516b8104260639dec0cebe9e52c69c3246
     # via celery
 msgpack==1.1.2 \
     --hash=sha256:0051fffef5a37ca2cd16978ae4f0aef92f164df86823871b5162812bebecd8e2 \
@@ -744,13 +753,17 @@ protobuf==6.33.0 \
     #   googleapis-common-protos
     #   proto-plus
 psycopg2-binary==2.9.11 \
+    --hash=sha256:00ce1830d971f43b667abe4a56e42c1e2d594b32da4802e44a73bacacb25535f \
     --hash=sha256:04195548662fa544626c8ea0f06561eb6203f1984ba5b4562764fbeb4c3d14b1 \
+    --hash=sha256:0da4de5c1ac69d94ed4364b6cbe7190c1a70d325f112ba783d83f8440285f152 \
     --hash=sha256:0e8480afd62362d0a6a27dd09e4ca2def6fa50ed3a4e7c09165266106b2ffa10 \
     --hash=sha256:20e7fb94e20b03dcc783f76c0865f9da39559dcc0c28dd1a3fce0d01902a6b9c \
     --hash=sha256:2c226ef95eb2250974bf6fa7a842082b31f68385c4f3268370e3f3870e7859ee \
+    --hash=sha256:2d11098a83cca92deaeaed3d58cfd150d49b3b06ee0d0852be466bf87596899e \
     --hash=sha256:2e164359396576a3cc701ba8af4751ae68a07235d7a380c631184a611220d9a4 \
     --hash=sha256:304fd7b7f97eef30e91b8f7e720b3db75fee010b520e434ea35ed1ff22501d03 \
     --hash=sha256:31b32c457a6025e74d233957cc9736742ac5a6cb196c6b68499f6bb51390bd6a \
+    --hash=sha256:32770a4d666fbdafab017086655bcddab791d7cb260a16679cc5a7338b64343b \
     --hash=sha256:366df99e710a2acd90efed3764bb1e28df6c675d33a7fb40df9b7281694432ee \
     --hash=sha256:37d8412565a7267f7d79e29ab66876e55cb5e8e7b3bbf94f8206f6795f8f7e7e \
     --hash=sha256:4012c9c954dfaccd28f94e84ab9f94e12df76b4afb22331b1f0d3154893a6316 \
@@ -764,6 +777,8 @@ psycopg2-binary==2.9.11 \
     --hash=sha256:62b6d93d7c0b61a1dd6197d208ab613eb7dcfdcca0a49c42ceb082257991de9d \
     --hash=sha256:691c807d94aecfbc76a14e1408847d59ff5b5906a04a23e12a89007672b9e819 \
     --hash=sha256:763c93ef1df3da6d1a90f86ea7f3f806dc06b21c198fa87c3c25504abec9404a \
+    --hash=sha256:84011ba3109e06ac412f95399b704d3d6950e386b7994475b231cf61eec2fc1f \
+    --hash=sha256:865f9945ed1b3950d968ec4690ce68c55019d79e4497366d36e090327ce7db14 \
     --hash=sha256:875039274f8a2361e5207857899706da840768e2a775bf8c65e82f60b197df02 \
     --hash=sha256:8b81627b691f29c4c30a8f322546ad039c40c328373b11dff7490a3e1b517855 \
     --hash=sha256:8c55b385daa2f92cb64b12ec4536c66954ac53654c7f15a203578da4e78105c0 \
@@ -773,11 +788,14 @@ psycopg2-binary==2.9.11 \
     --hash=sha256:9bd81e64e8de111237737b29d68039b9c813bdf520156af36d26819c9a979e5f \
     --hash=sha256:9c55460033867b4622cda1b6872edf445809535144152e5d14941ef591980edf \
     --hash=sha256:9d3a9edcfbe77a3ed4bc72836d466dfce4174beb79eda79ea155cc77237ed9e8 \
+    --hash=sha256:a1cf393f1cdaf6a9b57c0a719a1068ba1069f022a59b8b1fe44b006745b59757 \
     --hash=sha256:a28d8c01a7b27a1e3265b11250ba7557e5f72b5ee9e5f3a2fa8d2949c29bf5d2 \
+    --hash=sha256:a311f1edc9967723d3511ea7d2708e2c3592e3405677bf53d5c7246753591fbb \
     --hash=sha256:a6c0e4262e089516603a09474ee13eabf09cb65c332277e39af68f6233911087 \
     --hash=sha256:ab8905b5dcb05bf3fb22e0cf90e10f469563486ffb6a96569e51f897c750a76a \
     --hash=sha256:b31e90fdd0f968c2de3b26ab014314fe814225b6c324f770952f7d38abf17e3c \
     --hash=sha256:b33fabeb1fde21180479b2d4667e994de7bbf0eec22832ba5d9b5e4cf65b6c6d \
+    --hash=sha256:b637d6d941209e8d96a072d7977238eea128046effbf37d1d8b2c0764750017d \
     --hash=sha256:b6aed9e096bf63f9e75edf2581aa9a7e7186d97ab5c177aa6c87797cd591236c \
     --hash=sha256:b8fb3db325435d34235b044b199e56cdf9ff41223a4b9752e8576465170bb38c \
     --hash=sha256:ba34475ceb08cccbdd98f6b46916917ae6eeb92b5ae111df10b544c3a4621dc4 \
@@ -788,11 +806,14 @@ psycopg2-binary==2.9.11 \
     --hash=sha256:c47676e5b485393f069b4d7a811267d3168ce46f988fa602658b8bb901e9e64d \
     --hash=sha256:c665f01ec8ab273a61c62beeb8cce3014c214429ced8a308ca1fc410ecac3a39 \
     --hash=sha256:cffe9d7697ae7456649617e8bb8d7a45afb71cd13f7ab22af3e5c61f04840908 \
+    --hash=sha256:d526864e0f67f74937a8fce859bd56c979f5e2ec57ca7c627f5f1071ef7fee60 \
     --hash=sha256:d57c9c387660b8893093459738b6abddbb30a7eab058b77b0d0d1c7d521ddfd7 \
     --hash=sha256:d6fe6b47d0b42ce1c9f1fa3e35bb365011ca22e39db37074458f27921dca40f2 \
     --hash=sha256:db4fd476874ccfdbb630a54426964959e58da4c61c9feba73e6094d51303d7d8 \
     --hash=sha256:e0deeb03da539fa3577fcb0b3f2554a97f7e5477c246098dbb18091a4a01c16f \
+    --hash=sha256:e35b7abae2b0adab776add56111df1735ccc71406e56203515e228a8dc07089f \
     --hash=sha256:ebb415404821b6d1c47353ebe9c8645967a5235e6d88f914147e7fd411419e6f \
+    --hash=sha256:edcb3aeb11cb4bf13a2af3c53a15b3d612edeb6409047ea0b5d6a21a9d744b34 \
     --hash=sha256:ef7a6beb4beaa62f88592ccc65df20328029d721db309cb3250b0aae0fa146c3 \
     --hash=sha256:efff12b432179443f54e230fdf60de1f6cc726b6c832db8701227d089310e8aa \
     --hash=sha256:f07c9c4a5093258a03b28fab9b4f151aa376989e7f35f855088234e656ee6a94 \
@@ -824,15 +845,14 @@ pyjwt[crypto]==2.10.1 \
     # via
     #   pyjwt
     #   social-auth-core
-pymupdf==1.26.5 \
-    --hash=sha256:2bfb58f07ad631e5f71ad0bd6f1ff52700f7ba7ebb4973130e81e75b721beae1 \
-    --hash=sha256:39a6fb58182b27b51ea8150a0cd2e4ee7e0cf71e9d6723978f28699b42ee61ae \
-    --hash=sha256:7dfea81fdd73437a6a6ce83e1fcf556faee9327a6540571e58bf04fa362bb0cd \
-    --hash=sha256:8ef335e07f648492df240f2247854d0e7c0467afb9c4dc2376ec30978ec158c3 \
-    --hash=sha256:a2a42f5911d153a47bf5c3e162a0bfe8745eb9bec3e59fbaf87617b4003d8270 \
-    --hash=sha256:caad0ffeb63dcc4a29ca40f3c68d7b78d32a932e834b0056b529cc0bdbaaffc9 \
-    --hash=sha256:d58599479bc471d3ae56c3d68d9160d0b7de8a3bd40221ddc3a4eaae2d281b86 \
-    --hash=sha256:e24e7a7d696bd398543cc5c147869edb2026d5d5a21b7f8e35db2f20170b389e
+pymupdf==1.26.6 \
+    --hash=sha256:617ba69e02c44f0da1c0e039ea4a26cf630849fd570e169c71daeb8ac52a81d6 \
+    --hash=sha256:6844cd2396553c0fa06de4869d5d5ecb1260e6fc3b9d85abe8fa35f14dd9d688 \
+    --hash=sha256:7777d0b7124c2ebc94849536b6a1fb85d158df3b9d873935e63036559391534c \
+    --hash=sha256:8f3ef05befc90ca6bb0f12983200a7048d5bff3e1c1edef1bb3de60b32cb5274 \
+    --hash=sha256:a2b4531cd4ab36d6f1f794bb6d3c33b49bda22f36d58bb1f3e81cbc10183bd2b \
+    --hash=sha256:ce02ca96ed0d1acfd00331a4d41a34c98584d034155b06fd4ec0f051718de7ba \
+    --hash=sha256:e46f320a136ad55e5219e8f0f4061bdf3e4c12b126d2740d5a49f73fae7ea176
     # via -r /home/oriol/Documents/GitHub/Castellers/website/backend/requirements/live/requirements.in
 pyparsing==3.2.5 \
     --hash=sha256:2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6 \
@@ -848,6 +868,10 @@ python-magic==0.4.27 \
     --hash=sha256:c1ba14b08e4a5f5c31a302b7721239695b2f0f058d125bd5ce1ee36b9d9d3c3b \
     --hash=sha256:c212960ad306f700aa0d01e5d7a325d20548ff97eb9920dcd29513174f0294d3
     # via django-versatileimagefield
+python-monkey-business==1.1.0 \
+    --hash=sha256:15b4f603c749ba9a7b4f1acd36af023a6c5ba0f7e591c945f8253f0ef44bf389 \
+    --hash=sha256:8393839cc741415ed5ddc2bd58e2d4ce07f966a7d26b7aebff19dcec64818edc
+    # via django-nested-admin
 python3-openid==3.2.0 \
     --hash=sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf \
     --hash=sha256:6626f771e0417486701e0b4daff762e7212e820ca5b29fcc0d05f6f8736dfa6b

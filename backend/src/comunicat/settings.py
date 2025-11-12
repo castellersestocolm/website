@@ -82,6 +82,8 @@ INSTALLED_APPS = [
     "jsoneditor",
     "djmoney",
     "djmoney.contrib.exchange",
+    "nested_admin",
+    "inline_actions",
     "comunicat",
     "data",
     "user",

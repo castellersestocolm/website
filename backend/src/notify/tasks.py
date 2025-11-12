@@ -10,7 +10,7 @@ from django.utils import translation, timezone
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
-from event.models import EventModule
+from event.models import EventModule, Registration
 from membership.models import Membership
 from notify.api.email import send_email
 from notify.api.slack.chat import send_order_message
@@ -258,6 +258,69 @@ def send_order_email(
         attachments=[],
         module=module,
     )
+
+
+# TODO: Check here if registrations ever allow no-users (like entities)
+@shared_task
+def send_registration_email(
+    registration_ids: list[UUID],
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: Optional[dict] | None = None,
+    locale: Optional[str] | None = None,
+) -> None:
+    registration_objs = Registration.objects.filter(
+        id__in=registration_ids
+    ).select_related("user", "event", "line")
+
+    for registration_obj in registration_objs:
+        user_obj = registration_obj.user
+
+        if not user_obj.can_manage:
+            continue
+
+        current_email = email or user_obj.email
+        locale = (
+            locale
+            or (user_obj.preferred_language if user_obj else None)
+            or settings.LANGUAGE_CODE
+        )
+
+        with translation.override(locale):
+            context = {**SETTINGS_BY_MODULE[module], **(context or {})}
+            context_full = {
+                **context,
+                "registration_objs": registration_objs,
+                "user_obj": user_obj,
+            }
+
+            template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
+                email_type
+            ]
+            from_email = EMAIL_BY_MODULE[module]
+            body = render_to_string(template["html"], context_full)
+            subject = str(template["subject"])
+
+        Email.objects.create(
+            user=user_obj,
+            email=current_email,
+            type=email_type,
+            subject=subject,
+            context=context,
+            module=module,
+            locale=locale,
+        )
+
+        send_email(
+            subject=subject,
+            body=body,
+            from_email=from_email,
+            to=current_email,
+            reply_to=from_email,
+            attachments=[],
+            module=module,
+        )
 
 
 @shared_task

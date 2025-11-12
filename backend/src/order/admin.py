@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.db.models import JSONField
 from django.utils import translation
@@ -21,13 +22,24 @@ import notify.tasks
 
 from django.utils.translation import gettext_lazy as _
 
-from payment.enums import PaymentType
+from payment.models import PaymentLine
+
+
+# class OrderProductInlineFormAdmin(forms.ModelForm):
+#     class Meta:
+#         model = OrderProduct
+#         fields = ["size", "line", "quantity", "quantity_given", "amount_unit", "amount", "vat"]
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields["line"].queryset = PaymentLine.objects.filter(payment__entity__user_id=self.instance.order.entity.user_id).order_by("-created_at") if self.instance and hasattr(self.instance, "order") else PaymentLine.objects.none()
 
 
 class OrderProductInline(admin.TabularInline):
     model = OrderProduct
-    extra = 0
     raw_id_fields = ("line",)
+    # form = OrderProductInlineFormAdmin
+    extra = 0
     ordering = ("size__product__type", "size__product__created_at")
 
     def get_queryset(self, request):
@@ -66,7 +78,7 @@ class OrderLogInline(admin.TabularInline):
         return False
 
 
-@admin.action(description="Send created email")
+@admin.action(description=_("Send created email"))
 def send_created_email(modeladmin, request, queryset):
     for order_obj in queryset:
         notify.tasks.send_order_email.delay(
@@ -77,7 +89,7 @@ def send_created_email(modeladmin, request, queryset):
         )
 
 
-@admin.action(description="Send paid email")
+@admin.action(description=_("Send paid email"))
 def send_paid_email(modeladmin, request, queryset):
     for order_obj in queryset:
         notify.tasks.send_order_email.delay(

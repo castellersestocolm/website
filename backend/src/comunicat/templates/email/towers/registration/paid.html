@@ -1,0 +1,30 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_body %}
+    <p>{% trans "Your registration has been marked as paid! You will find a summary of the registration/s right below." %}</p>
+    <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+</style>
+<h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
+<table class="tg" style="margin-bottom:10px;">
+  <tr>
+    <th class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><h5 style="margin: 0 0 10px 0 !important;">{{ registration_objs.0.event }} — {{ registration_objs.0.event.time_from|date:"Y-m-d H:i" }}</h5></th>
+  </tr>
+                    {% for registration_obj in registration_objs %}
+  <tr>
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ registration_obj.user.name }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ registration_obj.line.amount|format_money }}</p></td>
+  </tr>
+                    {% endfor %}
+  <tr>
+      <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ registration_objs|registrations_amount|format_money }}</strong></p></td>
+  </tr>
+</table>
+{% endblock %}

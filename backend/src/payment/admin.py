@@ -1,5 +1,7 @@
+import itertools
+
 from django.conf import settings
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import JSONField
 from django.forms import BaseInlineFormSet
 from django.utils import timezone, translation
@@ -8,7 +10,11 @@ from djmoney.money import Money
 import payment.api.entity
 import payment.tasks
 from comunicat.enums import Module
+from event.models import Registration
+from notify.enums import EmailType
 from payment.enums import PaymentType
+
+import notify.tasks
 
 from payment.models import (
     Payment,
@@ -102,6 +108,29 @@ class PaymentLogInline(admin.TabularInline):
         return False
 
 
+@admin.action(description=_("Send paid email"))
+def send_paid_email(modeladmin, request, queryset):
+    for payment_obj in queryset:
+        registration_objs = list(
+            Registration.objects.filter(
+                line__in=payment_obj.lines.all()
+            ).select_related("event")
+        )
+        if registration_objs:
+            for event_obj, event_registration_objs in itertools.groupby(
+                registration_objs, lambda registration_obj: registration_obj.event
+            ):
+                notify.tasks.send_registration_email.delay(
+                    registration_ids=[
+                        registration_obj.id
+                        for registration_obj in event_registration_objs
+                    ],
+                    email_type=EmailType.REGISTRATION_PAID,
+                    module=event_obj.module,
+                )
+    messages.success(request, _("Action succeeded."))
+
+
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     search_fields = (
@@ -128,6 +157,7 @@ class PaymentAdmin(admin.ModelAdmin):
         "transaction",
     )
     inlines = (PaymentLineForPaymentInline, PaymentLogInline)
+    actions = (send_paid_email,)
 
     def get_queryset(self, request):
         return (

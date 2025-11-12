@@ -11,6 +11,7 @@ from django.db.models import JSONField, Q
 from django.db.models.functions import Trunc
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
@@ -221,6 +222,21 @@ class EventModule(StandardModel, Timestamps):
         unique_together = ("event", "module", "team")
 
 
+class EventModulePrice(StandardModel, Timestamps):
+    module = models.ForeignKey(
+        EventModule, related_name="prices", on_delete=models.CASCADE
+    )
+
+    is_over_minimum_age = models.BooleanField(default=False)
+
+    amount = MoneyField(
+        max_digits=7, decimal_places=2, null=True, blank=True, default_currency="SEK"
+    )
+
+    class Meta:
+        unique_together = ("module", "is_over_minimum_age")
+
+
 # TODO: Multilanguage support
 class EventRequirement(StandardModel, Timestamps):
     name = models.CharField(max_length=255)
@@ -249,17 +265,47 @@ class Registration(StandardModel, Timestamps):
         default=RegistrationStatus.REQUESTED,
     )
 
+    line = models.OneToOneField(
+        "payment.PaymentLine",
+        related_name="registration",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
     __status = None
+    __line = None
 
     objects = RegistrationQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__status = self.status
+        self.__line = self.line
 
     def save(self, *args, **kwargs):
-        if self.pk and self.status != self.__status:
-            RegistrationLog.objects.create(registration_id=self.id, status=self.status)
+        if self.pk:
+            if self.status != self.__status:
+                RegistrationLog.objects.create(
+                    registration_id=self.id, status=self.status
+                )
+            if self.line != self.__line:
+                if self.line:
+                    self.line.item = self
+                    self.line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+                if self.__line:
+                    self.__line.item = None
+                    self.__line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
 
         if not self.pk or self.status != self.__status:
             import event.tasks

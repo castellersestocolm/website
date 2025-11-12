@@ -112,6 +112,17 @@ def order_amount(order_obj: Order) -> Money:
 
 
 @register.filter
+def registrations_amount(registration_objs: list[Registration]) -> Money:
+    return sum(
+        [
+            registration_obj.line.amount
+            for registration_obj in registration_objs
+            if registration_obj.line
+        ]
+    )
+
+
+@register.filter
 def membership_amount(membership_obj: Membership) -> Money:
     return sum(
         [

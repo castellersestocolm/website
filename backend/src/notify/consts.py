@@ -74,6 +74,10 @@ TEMPLATE_BY_MODULE = {
                     "subject": _("Your order is now paid"),
                     "html": "email/org/order/paid.html",
                 },
+                EmailType.REGISTRATION_PAID: {
+                    "subject": _("Your registration is now paid"),
+                    "html": "email/org/registration/paid.html",
+                },
             },
         }
     },
@@ -123,6 +127,10 @@ TEMPLATE_BY_MODULE = {
                 EmailType.ORDER_PAID: {
                     "subject": _("Your order is now paid"),
                     "html": "email/towers/order/paid.html",
+                },
+                EmailType.REGISTRATION_PAID: {
+                    "subject": _("Your registration is now paid"),
+                    "html": "email/towers/registration/paid.html",
                 },
             },
         }

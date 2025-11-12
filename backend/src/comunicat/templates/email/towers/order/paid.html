@@ -18,12 +18,12 @@
     <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><img style="max-height: 2em; width: 2em; margin: 0; padding-right: 8px;" alt="{{ order_product_obj.size.product.name|localise }}"
                                                                                                               class="styles_eventCardImage__sN8Xw"
                                                                                                               src="{% full_media order_product_obj.size.product.images.first.picture.url %}"> <p style="margin: 0 !important;">{{ order_product_obj.quantity }} x {{ order_product_obj.size.product.name|localise }} — {{ order_product_obj.size.size }}</p></td>
-    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;">{{ order_product_obj.amount|format_money }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ order_product_obj.amount|format_money }}</p></td>
   </tr>
                     {% endfor %}
   <tr>
-      <td class="tg-hfk9"><p style="margin: 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
-      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;"><strong>{{ order_obj|order_amount|format_money }}</strong></p></td>
+      <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ order_obj|order_amount|format_money }}</strong></p></td>
   </tr>
 </table>
 {% endblock %}

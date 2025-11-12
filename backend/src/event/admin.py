@@ -1,6 +1,13 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import JSONField
 from jsoneditor.forms import JSONEditor
+import nested_admin
+
+import inline_actions.admin
+
+import notify.tasks
+
+from django.utils.translation import gettext_lazy as _
 
 from event.models import (
     Location,
@@ -15,7 +22,9 @@ from event.models import (
     GoogleEvent,
     Connection,
     GoogleAlbum,
+    EventModulePrice,
 )
+from notify.enums import EmailType
 
 
 class ConnectionInline(admin.TabularInline):
@@ -36,25 +45,69 @@ class LocationAdmin(admin.ModelAdmin):
     }
 
 
-class RegistrationInline(admin.TabularInline):
+# class RegistrationInlineFormAdmin(forms.ModelForm):
+#     class Meta:
+#         model = Registration
+#         fields = ["user", "status", "line"]
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields["line"].queryset = PaymentLine.objects.filter(payment__entity__user_id=self.instance.user_id).order_by("-created_at") if self.instance else PaymentLine.objects.none()
+
+
+class RegistrationInline(
+    inline_actions.admin.InlineActionsMixin, nested_admin.NestedTabularInline
+):
     model = Registration
+    ordering = (
+        "user__firstname",
+        "user__lastname",
+        "-created_at",
+    )
+    raw_id_fields = ("user", "line")
+    # form = RegistrationInlineFormAdmin
+    extra = 0
+
+    inline_actions = []
+
+    def get_inline_actions(self, request, obj=None):
+        actions = super().get_inline_actions(request, obj=None)
+        if obj.line and self.has_change_permission(request, obj):
+            actions.append("action_send_paid_email")
+        return actions
+
+    def action_send_paid_email(self, request, obj, parent_obj=None):
+        notify.tasks.send_registration_email.delay(
+            registration_ids=[obj.id],
+            email_type=EmailType.REGISTRATION_PAID,
+            module=obj.event.module,
+        )
+        messages.success(request, _("Action succeeded."))
+
+    action_send_paid_email.short_description = _("Send paid email")
+
+
+class EventModulePriceInline(nested_admin.NestedTabularInline):
+    model = EventModulePrice
     ordering = ("-created_at",)
     extra = 0
 
 
-class EventModuleInline(admin.TabularInline):
+class EventModuleInline(nested_admin.NestedTabularInline):
     model = EventModule
     ordering = ("module",)
+    inlines = (EventModulePriceInline,)
     extra = 0
 
 
-class EventRequirementInline(admin.TabularInline):
+class EventRequirementInline(nested_admin.NestedTabularInline):
     model = EventRequirement
     ordering = ("name",)
+    sortable_field_name = "name"
     extra = 0
 
 
-class AgendaItemInline(admin.TabularInline):
+class AgendaItemInline(nested_admin.NestedTabularInline):
     model = AgendaItem
     ordering = ("time_from",)
     extra = 0
@@ -65,7 +118,9 @@ class AgendaItemInline(admin.TabularInline):
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(
+    inline_actions.admin.InlineActionsModelAdminMixin, nested_admin.NestedModelAdmin
+):
     search_fields = ("id", "title")
     list_display = (
         "title",

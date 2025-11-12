@@ -7,18 +7,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('payment', '0039_paymentorderproviderlog'),
+        ("payment", "0039_paymentorderproviderlog"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='payment',
-            name='debit_payment',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='credit_payments', to='payment.payment'),
+            model_name="payment",
+            name="debit_payment",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="credit_payments",
+                to="payment.payment",
+            ),
         ),
         migrations.AlterField(
-            model_name='payment',
-            name='transaction',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='payment.transaction'),
+            model_name="payment",
+            name="transaction",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="payment.transaction",
+            ),
         ),
     ]
