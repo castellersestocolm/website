@@ -519,10 +519,8 @@ msgid "Your order is now paid"
 msgstr "Din beställning är nu betald"
 
 #: notify/consts.py:78 notify/consts.py:132
-#, fuzzy
-#| msgid "Your order is now paid"
 msgid "Your registration is now paid"
-msgstr "Din beställning är nu betald"
+msgstr "Din registrering är nu betald"
 
 #: notify/consts.py:96
 msgid "Welcome to Castellers d'Estocolm"

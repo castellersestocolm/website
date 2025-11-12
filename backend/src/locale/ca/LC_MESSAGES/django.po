@@ -522,10 +522,8 @@ msgid "Your order is now paid"
 msgstr "La teva comanda s'ha pagat"
 
 #: notify/consts.py:78 notify/consts.py:132
-#, fuzzy
-#| msgid "Your order is now paid"
 msgid "Your registration is now paid"
-msgstr "La teva comanda s'ha pagat"
+msgstr "La teva inscripció s'ha pagat"
 
 #: notify/consts.py:96
 msgid "Welcome to Castellers d'Estocolm"

@@ -281,13 +281,13 @@ def send_registration_email(
             continue
 
         current_email = email or user_obj.email
-        locale = (
+        current_locale = (
             locale
             or (user_obj.preferred_language if user_obj else None)
             or settings.LANGUAGE_CODE
         )
 
-        with translation.override(locale):
+        with translation.override(current_locale):
             context = {**SETTINGS_BY_MODULE[module], **(context or {})}
             context_full = {
                 **context,
@@ -309,7 +309,7 @@ def send_registration_email(
             subject=subject,
             context=context,
             module=module,
-            locale=locale,
+            locale=current_locale,
         )
 
         send_email(
