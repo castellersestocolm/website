@@ -22,14 +22,4 @@ class Migration(migrations.Migration):
                 to="payment.payment",
             ),
         ),
-        migrations.AlterField(
-            model_name="payment",
-            name="transaction",
-            field=models.OneToOneField(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                to="payment.transaction",
-            ),
-        ),
     ]

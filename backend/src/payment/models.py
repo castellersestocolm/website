@@ -65,7 +65,8 @@ class Payment(StandardModel, Timestamps):
 
     text = models.CharField(max_length=255, null=True, blank=True)
 
-    transaction = models.OneToOneField(
+    # TODO: Check admin payment line sums over transactions for multiple
+    transaction = models.ForeignKey(
         "Transaction",
         null=True,
         blank=True,
