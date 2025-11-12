@@ -432,7 +432,8 @@ function CalendarPage() {
                               >
                                 {eventUsers &&
                                   eventUsers.length > 0 &&
-                                  event.require_signup && (
+                                  event.require_signup &&
+                                  !event.require_approve && (
                                     <Button
                                       variant="contained"
                                       type="submit"
