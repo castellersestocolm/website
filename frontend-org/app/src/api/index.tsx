@@ -43,3 +43,15 @@ export const apiOrgCreate = async (adults: any[], children: any[]) => {
     throw error;
   }
 };
+
+export const apiOrgCheck = async (email: string) => {
+  try {
+    return await instance.post("/org/check/", {
+      email: email,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

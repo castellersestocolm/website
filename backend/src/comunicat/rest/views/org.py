@@ -29,7 +29,7 @@ class OrgAPI(ComuniCatViewSet):
     lookup_field = "id"
 
     def get_throttles(self):
-        if self.action in ("create",):
+        if self.action in ("create", "check"):
             self.throttle_scope = f"user.{self.action}"
         return super().get_throttles()
 

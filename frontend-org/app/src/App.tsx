@@ -10,6 +10,7 @@ import Box from "@mui/material/Box";
 import * as React from "react";
 import { ROUTES } from "./routes";
 import HomePage from "./pages/home";
+import StatusPage from "./pages/status";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -41,6 +42,7 @@ const App = () => {
           >
             <Routes>
               <Route path={ROUTES.home.path} element={<HomePage />} />
+              <Route path={ROUTES.status.path} element={<StatusPage />} />
             </Routes>
           </Box>
         </BrowserRouter>

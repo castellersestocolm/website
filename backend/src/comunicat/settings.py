@@ -274,6 +274,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "user.login": os.getenv("USER_LOGIN_THROTTLE_RATE", "10/minute"),
         "user.create": os.getenv("USER_CREATE_THROTTLE_RATE", "10/minute"),
+        "user.check": os.getenv("USER_CHECK_THROTTLE_RATE", "10/minute"),
         "user.partial_update": os.getenv(
             "USER_PARTIAL_UPDATE_THROTTLE_RATE", "10/minute"
         ),

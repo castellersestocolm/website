@@ -1,6 +1,7 @@
 {
   "pages.home.title": "Casal català Les Quatre Barres",
   "pages.home.subtitle": "Formulari d'inscripció o renovació",
+  "pages.home.unsure-member": "No recordes si has pagat la quota? Fes clic aquí per comprovar-ho",
   "pages.user-join.form.first-name": "Nom",
   "pages.user-join.form.last-name": "Cognom",
   "pages.user-join.form.email": "Correu electrònic",
@@ -17,9 +18,12 @@
   "pages.user-join.form.button-children.remove": "Esborra",
   "pages.user-join.form.button-join": "Uneix-te",
   "pages.home-join.success": "Realitzeu el pagament per completar la inscripció/renovació.",
+  "pages.status.subtitle": "Comprova l'estat de la quota",
+  "pages.status.success": "T'hem enviat un correu electrònic amb la informació, comprova la safata d'entrada així com el correu brossa.",
+  "pages.status.home": "Torna enrere",
+  "pages.user-status.form.button-status": "Comprova",
   "language.selector.ca": "En català",
   "language.selector.sv": "På svenska",
   "pages.home-join.payment-list": "Swish: 123 068 88 20\nPlusGirot: 97 09 16-3\nIBAN: SE84 9500 0099 6042 0970 9163",
-  "swish.payment.membership": "Quota",
-  "swish.payment.order": "Beställning"
+  "swish.payment.membership": "Quota"
 }
