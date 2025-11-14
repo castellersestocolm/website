@@ -10,6 +10,7 @@ from djmoney.money import Money
 from comunicat.enums import Module
 from event.models import Registration, Event
 from membership.models import Membership
+from notify.consts import SETTINGS_BY_MODULE
 from order.models import Order
 from user.models import User
 
@@ -127,9 +128,17 @@ def membership_amount(membership_obj: Membership) -> Money:
     return sum(
         [
             membership_module_obj.amount
-            for membership_module_obj in membership_obj.modules.all()
+            for membership_module_obj in membership_obj.all_modules
         ]
     )
+
+
+@register.filter
+def membership_module_names(membership_obj: Membership) -> list[str]:
+    return [
+        SETTINGS_BY_MODULE[membership_module_obj.module]["name"]
+        for membership_module_obj in membership_obj.all_modules
+    ]
 
 
 @register.filter

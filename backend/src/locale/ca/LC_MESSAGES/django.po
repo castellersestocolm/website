@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-12 18:37+0100\n"
+"POT-Creation-Date: 2025-11-14 20:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,7 +81,7 @@ msgstr "No són diners."
 msgid "Missing amount or currency."
 msgstr "Manca la quantitat o la divisa."
 
-#: comunicat/rest/views/org.py:107
+#: comunicat/rest/views/org.py:108
 msgid "The amount of children you entered is incorrect."
 msgstr "El nombre de nens que has introduït és incorrecte."
 
@@ -122,6 +122,86 @@ msgstr "Enviat amb"
 #: comunicat/templates/email/towers/base.html:61
 msgid "by"
 msgstr "per"
+
+#: comunicat/templates/email/org/membership/check.html:7
+#: comunicat/templates/email/towers/membership/check.html:7
+msgid "Your membership is active until"
+msgstr "La teva quota està activa fins el"
+
+#: comunicat/templates/email/org/membership/check.html:7
+#: comunicat/templates/email/towers/membership/check.html:7
+msgid "and therefore you are currently a member of"
+msgstr "i per tant actualment ets membre de"
+
+#: comunicat/templates/email/org/membership/check.html:7
+#: comunicat/templates/email/towers/membership/check.html:8
+msgid "and"
+msgstr "i"
+
+#: comunicat/templates/email/org/membership/check.html:9
+#: comunicat/templates/email/org/membership/renew.html:7
+#: comunicat/templates/email/towers/membership/check.html:10
+#: comunicat/templates/email/towers/membership/renew.html:7
+msgid "Amount"
+msgstr "Quantitat"
+
+#: comunicat/templates/email/org/membership/check.html:10
+#: comunicat/templates/email/org/membership/renew.html:8
+#: comunicat/templates/email/towers/membership/check.html:11
+#: comunicat/templates/email/towers/membership/renew.html:8
+msgid "Valid"
+msgstr "Validesa"
+
+#: comunicat/templates/email/org/membership/check.html:13
+#: comunicat/templates/email/towers/membership/check.html:14
+msgid "Your membership expired on"
+msgstr "La teva quota va caducar el"
+
+#: comunicat/templates/email/org/membership/check.html:13
+#: comunicat/templates/email/towers/membership/check.html:14
+msgid "and therefore you aren't a member anymore."
+msgstr "i per tant ja no ets membre."
+
+#: comunicat/templates/email/org/membership/check.html:14
+#: comunicat/templates/email/towers/membership/check.html:15
+#: comunicat/templates/email/towers/membership/renew.html:10
+msgid ""
+"In your dashboard you can find instructions on how to renew your membership "
+"as well as the payment information."
+msgstr ""
+"Al teu perfil trobaràs les instruccions per renovar la quota així com la "
+"informació de pagament."
+
+#: comunicat/templates/email/org/membership/check.html:17
+#: comunicat/templates/email/towers/membership/check.html:18
+msgid ""
+"You don't have an active membership registered with this email and therefore "
+"aren't a member."
+msgstr ""
+"No tens cap quota activa registrada amb aquest correu electrònic i, per "
+"tant, no ets membre."
+
+#: comunicat/templates/email/org/membership/check.html:18
+#: comunicat/templates/email/towers/membership/check.html:19
+msgid ""
+"However, not all is lost! You can become a member easily, head to our "
+"website to join."
+msgstr ""
+"Tanmateix, no tot està perdut! Et pots fer membre fàcilment visitant la "
+"nostra pàgina web."
+
+#: comunicat/templates/email/org/membership/check.html:31
+#: comunicat/templates/email/org/membership/renew.html:15
+#: comunicat/templates/email/towers/membership/check.html:32
+#: comunicat/templates/email/towers/membership/expired.html:10
+#: comunicat/templates/email/towers/membership/renew.html:15
+msgid "Renew membership"
+msgstr "Renova la quota"
+
+#: comunicat/templates/email/org/membership/check.html:31
+#: comunicat/templates/email/towers/membership/check.html:32
+msgid "Join us"
+msgstr "Uneix-te"
 
 #: comunicat/templates/email/org/membership/expired.html:5
 #: comunicat/templates/email/towers/membership/expired.html:5
@@ -171,7 +251,7 @@ msgstr "Resum"
 #: comunicat/templates/email/towers/membership/paid.html:23
 #: comunicat/templates/email/towers/order/created.html:25
 #: comunicat/templates/email/towers/order/paid.html:25
-#: comunicat/templates/email/towers/registration/paid.html:21
+#: comunicat/templates/email/towers/registration/paid.html:26
 msgid "Total"
 msgstr "Total"
 
@@ -189,26 +269,10 @@ msgstr ""
 "Per continuar gaudint de tots els avantatges que oferim i assistir als "
 "nostres esdeveniments, has de renovar-la abans que caduqui."
 
-#: comunicat/templates/email/org/membership/renew.html:7
-#: comunicat/templates/email/towers/membership/renew.html:7
-msgid "Amount"
-msgstr "Quantitat"
-
-#: comunicat/templates/email/org/membership/renew.html:8
-#: comunicat/templates/email/towers/membership/renew.html:8
-msgid "Valid"
-msgstr "Validesa"
-
 #: comunicat/templates/email/org/membership/renew.html:10
 msgid "You can find the form to renew your membership in the following page."
 msgstr ""
 "Podeu trobar el formulari per renovar la vostra quota a la pàgina següent."
-
-#: comunicat/templates/email/org/membership/renew.html:15
-#: comunicat/templates/email/towers/membership/expired.html:10
-#: comunicat/templates/email/towers/membership/renew.html:15
-msgid "Renew membership"
-msgstr "Renova la quota"
 
 #: comunicat/templates/email/org/order/created.html:5
 #: comunicat/templates/email/towers/order/created.html:5
@@ -223,14 +287,6 @@ msgstr ""
 #: comunicat/templates/email/towers/order/created.html:29
 msgid "Payment options"
 msgstr "Com pagar"
-
-#: comunicat/templates/email/towers/membership/renew.html:10
-msgid ""
-"In your dashboard you can find instructions on how to renew your membership "
-"as well as the payment information."
-msgstr ""
-"Al teu perfil trobaràs les instruccions per renovar la quota així com la "
-"informació de pagament."
 
 #: comunicat/templates/email/towers/order/paid.html:5
 msgid ""
@@ -436,10 +492,18 @@ msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
 #: data/admin.py:39 data/admin.py:70 data/admin.py:94 legal/admin.py:38
-#: legal/admin.py:59 order/admin.py:245 payment/admin.py:336
-#: payment/admin.py:578 product/admin.py:88
+#: legal/admin.py:59 order/admin.py:245 payment/admin.py:366
+#: payment/admin.py:608 product/admin.py:88
 msgid "name"
 msgstr "nom"
+
+#: event/admin.py:85 payment/admin.py:131
+msgid "Action succeeded."
+msgstr ""
+
+#: event/admin.py:87 order/admin.py:92 payment/admin.py:111
+msgid "Send paid email"
+msgstr ""
 
 #: event/models.py:130
 msgid "End time must be greater than start time."
@@ -477,11 +541,11 @@ msgstr "mòduls"
 msgid "View order"
 msgstr ""
 
-#: notify/consts.py:34 notify/consts.py:88
+#: notify/consts.py:34 notify/consts.py:92
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
 
-#: notify/consts.py:38 notify/consts.py:92
+#: notify/consts.py:38 notify/consts.py:96
 msgid "Reset your password to login"
 msgstr "Reinicia la teva contrasenya per entrar"
 
@@ -493,7 +557,7 @@ msgstr "Benvingut a Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
-#: notify/consts.py:50 notify/consts.py:104
+#: notify/consts.py:50 notify/consts.py:108
 msgid "You have been invited to join a family"
 msgstr "Has estat convidat a unir-te a una família"
 
@@ -501,41 +565,49 @@ msgstr "Has estat convidat a unir-te a una família"
 msgid "Sign-up for the upcoming events"
 msgstr "Confirma l'assistència als propers esdeveniments"
 
-#: notify/consts.py:58 notify/consts.py:112
+#: notify/consts.py:58 notify/consts.py:116
 msgid "Time to renew your membership"
 msgstr "La teva quota caduca aviat"
 
-#: notify/consts.py:62 notify/consts.py:116
+#: notify/consts.py:62 notify/consts.py:120
 msgid "Your membership has expired"
 msgstr "La teva quota ha caducat"
 
-#: notify/consts.py:66 notify/consts.py:120
+#: notify/consts.py:66 notify/consts.py:124
 msgid "Your membership is now paid"
 msgstr "La teva quota s'ha pagat"
 
-#: notify/consts.py:70 notify/consts.py:124
+#: notify/consts.py:70 notify/consts.py:128
+msgid "Your membership status"
+msgstr "L'estat de la teva quota"
+
+#: notify/consts.py:74 notify/consts.py:132
 msgid "Thank you for your order"
 msgstr "Gràcies per la teva comanda"
 
-#: notify/consts.py:74 notify/consts.py:128
+#: notify/consts.py:78 notify/consts.py:136
 msgid "Your order is now paid"
 msgstr "La teva comanda s'ha pagat"
 
-#: notify/consts.py:78 notify/consts.py:132
+#: notify/consts.py:82 notify/consts.py:140
 msgid "Your registration is now paid"
 msgstr "La teva inscripció s'ha pagat"
 
-#: notify/consts.py:96
+#: notify/consts.py:100
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Benvingut/da als Castellers d'Estocolm"
 
-#: notify/consts.py:100
+#: notify/consts.py:104
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 
-#: notify/consts.py:108
+#: notify/consts.py:112
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
+
+#: order/admin.py:81
+msgid "Send created email"
+msgstr ""
 
 #: order/admin.py:164
 #, fuzzy
@@ -561,39 +633,39 @@ msgstr ""
 msgid "The quantity given must be equal or lower than the ordered quantity."
 msgstr ""
 
-#: order/models.py:298
+#: order/models.py:308
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:172 payment/admin.py:227
+#: payment/admin.py:202 payment/admin.py:257
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:173 payment/admin.py:229
+#: payment/admin.py:203 payment/admin.py:259
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:174 payment/admin.py:230 payment/admin.py:333
-#: payment/admin.py:433
+#: payment/admin.py:204 payment/admin.py:260 payment/admin.py:363
+#: payment/admin.py:463
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:228
+#: payment/admin.py:258
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:334 payment/admin.py:335 payment/admin.py:434
-#: payment/admin.py:435
+#: payment/admin.py:364 payment/admin.py:365 payment/admin.py:464
+#: payment/admin.py:465
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:432
+#: payment/admin.py:462
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:489
+#: payment/admin.py:519
 msgid "file"
 msgstr "fitxer"
 
@@ -631,17 +703,17 @@ msgstr "(i més)"
 msgid "Expense"
 msgstr ""
 
-#: payment/models.py:102
+#: payment/models.py:103
 #, fuzzy
 #| msgid "Category must be set for accounts with parent."
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:127
+#: payment/models.py:128
 msgid "Unknown"
 msgstr ""
 
-#: payment/models.py:368
+#: payment/models.py:369
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 

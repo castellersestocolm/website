@@ -11,7 +11,7 @@ from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
 from event.models import EventModule, Registration
-from membership.models import Membership
+from membership.models import Membership, MembershipModule
 from notify.api.email import send_email
 from notify.api.slack.chat import send_order_message
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
@@ -43,9 +43,15 @@ def send_user_email(
         return None
 
     membership_obj = (
-        Membership.objects.filter(users__id=user_id)
+        Membership.objects.filter(users__id=user_obj.id if user_obj else user_id)
         .order_by("-date_to")
-        .prefetch_related("modules")
+        .prefetch_related(
+            Prefetch(
+                "modules",
+                MembershipModule.objects.order_by("module"),
+                to_attr="all_modules",
+            )
+        )
         .first()
     )
 
@@ -65,7 +71,11 @@ def send_user_email(
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
-        context_full = {**context, "user_obj": user_obj}
+        context_full = {
+            **context,
+            "user_obj": user_obj,
+            "email": email or user_obj.email,
+        }
 
         if "event_ids" in context:
             from event.models import Event
@@ -106,6 +116,7 @@ def send_user_email(
             EmailType.MEMBERSHIP_RENEW,
             EmailType.MEMBERSHIP_EXPIRED,
             EmailType.MEMBERSHIP_PAID,
+            EmailType.MEMBERSHIP_CHECK,
         ):
             context_full["membership_obj"] = membership_obj
 
@@ -161,7 +172,7 @@ def send_user_email(
         )
         .with_language_match()
         .select_related("document")
-        .order_by("document__code", "document__language_match", "-document__version")
+        .order_by("document__code", "language_match", "-document__version")
         .distinct("document__code")
     ):
         attachments.append(

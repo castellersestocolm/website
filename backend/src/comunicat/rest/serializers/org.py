@@ -42,3 +42,7 @@ class OrgCreateSerializer(s.Serializer):
     children = s.ListSerializer(
         child=MemberChildSerializer(), min_length=0, max_length=10, required=True
     )
+
+
+class OrgCheckSerializer(s.Serializer):
+    email = s.EmailField(required=True)

@@ -6,26 +6,11 @@ import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
-import {
-  Button,
-  FormHelperText,
-  Link,
-  MenuItem,
-  Select,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, FormHelperText, Stack } from "@mui/material";
 import styles from "./styles.module.css";
-import IconGoogle from "@mui/icons-material/Google";
-import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
-import IconEast from "@mui/icons-material/East";
-import { ROUTES } from "../../routes";
-import { apiUserCreate, apiUserMe, apiUserUpdate } from "../../api";
+import { apiUserMe, apiUserUpdate } from "../../api";
 import { useState } from "react";
-import Box from "@mui/material/Box";
-import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../AppContext/AppContext";
-import { getEnumLabel, Language } from "../../enums";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",

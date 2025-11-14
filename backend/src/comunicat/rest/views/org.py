@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from django.conf import settings
 from django.db import transaction
 from django.utils import translation
@@ -11,7 +9,8 @@ from rest_framework.response import Response
 
 from django.utils.translation import gettext_lazy as _
 
-from comunicat.rest.serializers.org import OrgCreateSerializer
+import notify.tasks
+from comunicat.rest.serializers.org import OrgCreateSerializer, OrgCheckSerializer
 
 import user.api
 import user.api.family
@@ -19,7 +18,9 @@ import user.api.family_member
 import membership.api
 
 from comunicat.rest.viewsets import ComuniCatViewSet
+from notify.enums import EmailType
 from user.enums import FamilyMemberRole, FamilyMemberStatus
+from rest_framework.decorators import action
 
 
 # TODO: This is a temporary API for the casal as they currently lack a new website
@@ -127,3 +128,30 @@ class OrgAPI(ComuniCatViewSet):
         membership.api.create_or_update(user_id=user_1_obj.id, modules=[self.module])
 
         return Response(status=201)
+
+    @swagger_auto_schema(
+        method="post",
+        request_body=OrgCheckSerializer,
+        responses={
+            200: Serializer(),
+            400: Serializer(),
+        },
+    )
+    @action(methods=["post"], detail=False, url_path="check", url_name="check")
+    def check(self, request):
+        serializer = OrgCheckSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        locale = translation.get_language()
+        if locale not in [code for code, __ in settings.LANGUAGES]:
+            locale = "ca"
+
+        notify.tasks.send_user_email.delay(
+            email_type=EmailType.MEMBERSHIP_CHECK,
+            email=validated_data["email"],
+            module=self.module,
+            locale=locale,
+        )
+
+        return Response(status=200)

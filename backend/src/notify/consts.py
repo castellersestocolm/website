@@ -66,6 +66,10 @@ TEMPLATE_BY_MODULE = {
                     "subject": _("Your membership is now paid"),
                     "html": "email/org/membership/paid.html",
                 },
+                EmailType.MEMBERSHIP_CHECK: {
+                    "subject": _("Your membership status"),
+                    "html": "email/org/membership/check.html",
+                },
                 EmailType.ORDER_CREATED: {
                     "subject": _("Thank you for your order"),
                     "html": "email/org/order/created.html",
@@ -119,6 +123,10 @@ TEMPLATE_BY_MODULE = {
                 EmailType.MEMBERSHIP_PAID: {
                     "subject": _("Your membership is now paid"),
                     "html": "email/towers/membership/paid.html",
+                },
+                EmailType.MEMBERSHIP_CHECK: {
+                    "subject": _("Your membership status"),
+                    "html": "email/towers/membership/check.html",
                 },
                 EmailType.ORDER_CREATED: {
                     "subject": _("Thank you for your order"),
