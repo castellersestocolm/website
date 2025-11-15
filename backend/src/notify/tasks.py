@@ -38,7 +38,7 @@ def send_user_email(
     if user_id:
         user_obj = User.objects.get(id=user_id)
     elif email:
-        user_obj = User.objects.filter(email=email).first()
+        user_obj = User.objects.filter_by_email(email=email).first()
     else:
         return None
 

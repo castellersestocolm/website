@@ -273,6 +273,19 @@ class UserQuerySet(QuerySet):
             ),
         )
 
+    def filter_by_email(self, email: str):
+        UserEmail = apps.get_model("user", "UserEmail")
+
+        return self.annotate(
+            secondary_email_matches=Exists(
+                UserEmail.objects.filter(
+                    user_id=OuterRef("id"),
+                    email__iexact=email,
+                    email_verified=True,
+                )
+            ),
+        ).filter(Q(email__iexact=email) | Q(secondary_email_matches=True))
+
 
 class UserManager(BaseUserManager):
     def get_queryset(self):
@@ -327,6 +340,9 @@ class UserManager(BaseUserManager):
 
     def with_is_adult(self):
         return self.get_queryset().with_is_adult()
+
+    def filter_by_email(self, email: str):
+        return self.get_queryset().filter_by_email(email=email)
 
     def create_user(
         self,
