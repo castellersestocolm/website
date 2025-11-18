@@ -18,8 +18,13 @@ def get_event_name(
     modules: list[tuple[Module, TeamType]] | None = None,
 ) -> str:
     if event_type == EventType.REHEARSAL:
-        if (Module.TOWERS, TeamType.MUSICIANS) in modules:
-            return str(_("Musicians rehearsal"))
+        if (Module.TOWERS, None) in modules and (
+            Module.TOWERS,
+            TeamType.MUSICIANS,
+        ) in modules:
+            return str(_("Rehearsal with musicians"))
         elif (Module.TOWERS, None) in modules:
             return str(_("Rehearsal"))
+        elif (Module.TOWERS, TeamType.MUSICIANS) in modules:
+            return str(_("Musicians rehearsal"))
     return event_title
