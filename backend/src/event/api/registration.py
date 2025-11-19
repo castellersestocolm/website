@@ -1,6 +1,7 @@
 from typing import List
 from uuid import UUID
 
+import payment.api.entity
 from comunicat.enums import Module
 from event.enums import RegistrationStatus
 from event.models import Registration, Event
@@ -16,7 +17,7 @@ def get_list(
 ) -> List[Registration]:
     registration_qs = (
         Registration.objects.filter(event_id=event_id)
-        .select_related("event", "user")
+        .select_related("event", "entity", "entity__user")
         .order_by("user__firstname", "user__lastname", "created_at")
     )
 
@@ -28,7 +29,9 @@ def get_list(
 
 def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> bool:
     registration_obj = (
-        Registration.objects.filter(id=registration_id).select_related("user").first()
+        Registration.objects.filter(id=registration_id)
+        .select_related("entity", "entity__user")
+        .first()
     )
 
     user_ids = [
@@ -38,7 +41,9 @@ def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> bool
         )
     ]
 
-    if not registration_obj or registration_obj.user_id not in user_ids:
+    if not registration_obj or (
+        registration_obj.entity.user and registration_obj.entity.user_id not in user_ids
+    ):
         return False
 
     registration_obj.status = RegistrationStatus.CANCELLED
@@ -71,7 +76,7 @@ def create(
         return []
 
     registration_obj = Registration.objects.filter(
-        user_id=user_id, event_id=event_id
+        entity__user_id=user_id, event_id=event_id
     ).first()
 
     # TODO: Change this, for now allow only creating with cancelled if specified
@@ -86,8 +91,9 @@ def create(
         registration_obj.status = registration_status
         registration_obj.save(update_fields=("status",))
     else:
+        entity_obj = payment.api.entity.get_entity_by_key(user_id=user_id)
         registration_obj = Registration.objects.create(
-            user_id=user_id, event_id=event_id, status=registration_status
+            entity=entity_obj, event_id=event_id, status=registration_status
         )
 
     return registration_obj

@@ -60,11 +60,11 @@ class RegistrationInline(
 ):
     model = Registration
     ordering = (
-        "user__firstname",
-        "user__lastname",
+        "entity__firstname",
+        "entity__lastname",
         "-created_at",
     )
-    raw_id_fields = ("user", "line")
+    raw_id_fields = ("entity", "line")
     # form = RegistrationInlineFormAdmin
     extra = 0
 
@@ -166,7 +166,7 @@ class RegistrationLogInline(admin.TabularInline):
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
     search_fields = ("id",)
-    list_display = ("id", "event", "user", "status")
+    list_display = ("id", "event", "entity", "status")
     list_filter = ("status",)
     ordering = ("-created_at",)
     inlines = (RegistrationLogInline,)

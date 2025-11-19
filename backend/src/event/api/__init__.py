@@ -107,8 +107,8 @@ def get_list(
                 "registrations",
                 (
                     Registration.objects.filter(
-                        user_id__in=family_user_ids,
-                    ).select_related("user")
+                        entity__user_id__in=family_user_ids,
+                    ).select_related("entity", "entity__user")
                     if request_user_id
                     else Registration.objects.none()
                 ),
@@ -159,7 +159,7 @@ def get_list(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.ACTIVE,
                     )
-                    .filter(user_id__in=user_ids)
+                    .filter(entity__user_id__in=user_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]
@@ -173,7 +173,7 @@ def get_list(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.ACTIVE,
                     )
-                    .filter(user_id__in=child_ids)
+                    .filter(entity__user_id__in=child_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]
@@ -187,7 +187,7 @@ def get_list(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.CANCELLED,
                     )
-                    .filter(user_id__in=user_ids)
+                    .filter(entity__user_id__in=user_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]
@@ -201,7 +201,7 @@ def get_list(
                         event_id=OuterRef("id"),
                         status=RegistrationStatus.CANCELLED,
                     )
-                    .filter(user_id__in=child_ids)
+                    .filter(entity__user_id__in=child_ids)
                     .values("event_id")
                     .annotate(count=Count("id"))
                     .values("count")[:1]

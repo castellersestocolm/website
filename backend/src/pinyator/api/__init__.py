@@ -117,7 +117,8 @@ def update_or_create_event(event_id: UUID) -> None:
 def update_or_create_registration(registration_id: UUID) -> None:
     registration_obj = (
         Registration.objects.filter(id=registration_id)
-        .select_related("event", "user")
+        .filter_with_user()
+        .select_related("event", "entity", "entity__user")
         .first()
     )
 
@@ -147,7 +148,7 @@ def update_or_create_registration(registration_id: UUID) -> None:
 
     exists_user = (
         cursor.execute(
-            f"SELECT Casteller_ID FROM CASTELLER WHERE Codi='{registration_obj.user.id}' LIMIT 1"
+            f"SELECT Casteller_ID FROM CASTELLER WHERE Codi='{registration_obj.entity.user_id}' LIMIT 1"
         )
         > 0
     )

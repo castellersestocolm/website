@@ -87,3 +87,6 @@ class RegistrationQuerySet(QuerySet):
                 output_field=BooleanField(),
             ),
         )
+
+    def filter_with_user(self):
+        return self.filter(entity__user__isnull=False)

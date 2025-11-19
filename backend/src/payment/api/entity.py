@@ -5,6 +5,7 @@ from django.db import transaction
 from order.models import Order
 from payment.models import Entity, Payment
 from product.models import StockOrder
+from user.models import User
 
 
 # TODO: Detect if any model is using an entity that will be deleted before deleting it
@@ -51,5 +52,21 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
     Entity.objects.filter(id__in=entity_ids).exclude(id=entity_obj.id).delete()
 
     entity_obj.save(update_fields=("firstname", "lastname", "email", "phone", "user"))
+
+    return entity_obj
+
+
+def get_entity_by_key(email: str | None = None, user_id: UUID | None = None) -> Entity:
+    if email:
+        user_obj = User.objects.filter(email=email).first()
+    else:
+        user_obj = User.objects.get(id=user_id)
+
+    if user_obj and hasattr(user_obj, "entity"):
+        return user_obj.entity
+
+    entity_obj, __ = Entity.objects.update_or_create(
+        email=email, defaults={"user_id": user_obj.id if user_obj else None}
+    )
 
     return entity_obj

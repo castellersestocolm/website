@@ -116,6 +116,10 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
             lambda: pinyator.tasks.update_or_create_user.delay(user_id=self.id)
         )
 
+        if hasattr(self, "entity"):
+            # Trigger entity to update according to the user
+            transaction.on_commit(lambda: self.entity.save())
+
         super().save(*args, **kwargs)
 
 

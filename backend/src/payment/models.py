@@ -149,6 +149,14 @@ class Entity(StandardModel, Timestamps):
             return f"{self.firstname}{end_str}"
         return self.email or self.id
 
+    def save(self, *args, **kwargs):
+        if self.user:
+            self.firstname = self.user.firstname
+            self.lastname = self.user.lastname
+            self.email = self.user.email
+            self.phone = self.user.phone
+        super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = "entity"
         verbose_name_plural = "entities"

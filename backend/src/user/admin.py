@@ -196,7 +196,8 @@ class UserAdmin(admin.ModelAdmin):
         "groups",
         "last_login",
         "created_at",
-        "family",
+        "entity_link",
+        "family_link",
     )
     exclude = ("password", "user_permissions")
     ordering = ("-created_at",)
@@ -228,7 +229,8 @@ class UserAdmin(admin.ModelAdmin):
                     "lastname",
                     "phone",
                     "birthday",
-                    "family",
+                    "entity_link",
+                    "family_link",
                     "preferred_language",
                     "email_verified",
                     "consent_pictures",
@@ -300,7 +302,13 @@ class UserAdmin(admin.ModelAdmin):
             return obj.towers.alias
         return "-"
 
-    def family(self, obj):
+    def entity_link(self, obj):
+        if hasattr(obj, "entity"):
+            entity_link = reverse("admin:payment_entity_change", args=(obj.entity.id,))
+            return mark_safe(f'<a href="{entity_link}">{obj.entity}</a>')
+        return "-"
+
+    def family_link(self, obj):
         if hasattr(obj, "family_member"):
             family_link = reverse(
                 "admin:user_family_change", args=(obj.family_member.family_id,)
@@ -309,6 +317,9 @@ class UserAdmin(admin.ModelAdmin):
                 f'<a href="{family_link}">{obj.family_name or str(obj.family_member.family)}</a>'
             )
         return "-"
+
+    entity_link.short_description = _("entity")
+    family_link.short_description = _("family")
 
 
 class FamilyMemberInlineForFamily(admin.TabularInline):

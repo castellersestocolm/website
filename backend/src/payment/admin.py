@@ -1,8 +1,13 @@
 import itertools
 
+from django.apps import apps
+
+from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
-from django.db.models import JSONField
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db.models import JSONField, Q
 from django.forms import BaseInlineFormSet
 from django.utils import timezone, translation
 from djmoney.money import Money
@@ -12,6 +17,7 @@ import payment.tasks
 from comunicat.enums import Module
 from event.models import Registration
 from notify.enums import EmailType
+from payment.consts import PAYMENT_LINE_CONTENT_TYPES
 from payment.enums import PaymentType
 
 import notify.tasks
@@ -82,6 +88,33 @@ class PaymentLineForPaymentFormset(BaseInlineFormSet):
             PaymentLine.objects.create(payment=self.instance, amount=amount_left)
 
 
+class PaymentLineForPaymentForm(forms.ModelForm):
+    class Meta:
+        model = PaymentLine
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        content_type_filter = Q()
+        for app_label, model_name in PAYMENT_LINE_CONTENT_TYPES:
+            content_type_filter |= Q(app_label=app_label, model=model_name)
+        self.fields["item_type"].queryset = ContentType.objects.filter(
+            content_type_filter
+        )
+        self.fields["account"].queryset = Account.objects.filter(
+            allow_transactions=True
+        ).order_by("code")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("item_type"):
+            try:
+                Model = cleaned_data["item_type"].model_class()
+                Model.objects.get(id=cleaned_data["item_id"])
+            except ObjectDoesNotExist:
+                raise ValidationError({"item_id": _("This item does not exist.")})
+
+
 class PaymentLineForPaymentInline(admin.TabularInline):
     model = PaymentLine
     ordering = ("created_at",)
@@ -89,6 +122,7 @@ class PaymentLineForPaymentInline(admin.TabularInline):
     raw_id_fields = ("receipt",)
     extra = 0
 
+    form = PaymentLineForPaymentForm
     formset = PaymentLineForPaymentFormset
 
 

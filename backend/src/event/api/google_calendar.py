@@ -77,11 +77,15 @@ def import_events() -> None:
             user_by_email = {}
 
         # TODO: Don't update if "approve required" on the event
+        # TODO: Not necessarily with user only
         registration_by_key = {
-            (registration_obj.event_id, registration_obj.user_id): registration_obj
+            (
+                registration_obj.event_id,
+                registration_obj.entity.user_id,
+            ): registration_obj
             for registration_obj in Registration.objects.filter(
                 event__time_to__gte=time_now,
-            )
+            ).filter_with_user()
         }
 
         creds = Credentials.from_authorized_user_info(

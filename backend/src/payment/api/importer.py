@@ -43,6 +43,8 @@ from user.models import User
 import unicodedata
 
 
+# TODO: Fix import when payments have been manually split into multiple lines after import such as for orders or registrations
+# TODO: Link payments with orders automatically based on order reference
 @transaction.atomic
 def run(transaction_import_id: UUID) -> List[Transaction]:
     transaction_import_obj = TransactionImport.objects.filter(

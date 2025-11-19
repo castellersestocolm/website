@@ -108,7 +108,7 @@ def send_user_email(
             context_full["registration_objs"] = list(
                 Registration.objects.filter(
                     event_id__in=context["event_ids"],
-                    user_id__in=context["user_ids"],
+                    entity__user_id__in=context["user_ids"],
                 )
             )
 
@@ -283,15 +283,21 @@ def send_registration_email(
 ) -> None:
     registration_objs = Registration.objects.filter(
         id__in=registration_ids
-    ).select_related("user", "event", "line")
+    ).select_related("entity", "entity__user", "event", "line")
+
+    # Registrations must belong to the same event
+    assert (
+        len({registration_obj.event_id for registration_obj in registration_objs}) == 1
+    )
 
     for registration_obj in registration_objs:
-        user_obj = registration_obj.user
+        entity_obj = registration_obj.entity
+        user_obj = entity_obj.user
 
-        if not user_obj.can_manage:
+        if user_obj and not user_obj.can_manage:
             continue
 
-        current_email = email or user_obj.email
+        current_email = email or user_obj.email if user_obj else entity_obj.email
         current_locale = (
             locale
             or (user_obj.preferred_language if user_obj else None)
@@ -302,7 +308,10 @@ def send_registration_email(
             context = {**SETTINGS_BY_MODULE[module], **(context or {})}
             context_full = {
                 **context,
+                "event_obj": registration_obj.event,
+                "registration_obj": registration_obj,
                 "registration_objs": registration_objs,
+                "entity_obj": entity_obj,
                 "user_obj": user_obj,
             }
 

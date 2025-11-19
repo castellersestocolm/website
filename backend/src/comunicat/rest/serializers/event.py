@@ -138,7 +138,7 @@ class LocationSerializer(s.ModelSerializer):
 
 
 class RegistrationSlimSerializer(s.ModelSerializer):
-    user = UserSuperSlimSerializer(read_only=True)
+    user = UserSuperSlimSerializer(read_only=True, source="entity.user")
 
     class Meta:
         model = Registration
@@ -358,7 +358,7 @@ class CreateRegistrationSerializer(s.Serializer):
 
 class RegistrationSerializer(RegistrationSlimSerializer):
     event = EventSerializer(read_only=True)
-    user = UserSuperSlimSerializer(read_only=True)
+    user = UserSuperSlimSerializer(read_only=True, source="entity.user")
 
     class Meta:
         model = Registration

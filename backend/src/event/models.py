@@ -256,8 +256,8 @@ class Registration(StandardModel, Timestamps):
     event = models.ForeignKey(
         Event, related_name="registrations", on_delete=models.CASCADE
     )
-    user = models.ForeignKey(
-        "user.User", related_name="registrations", on_delete=models.CASCADE
+    entity = models.ForeignKey(
+        "payment.Entity", related_name="registrations", on_delete=models.CASCADE
     )
 
     status = models.PositiveSmallIntegerField(
@@ -328,7 +328,7 @@ class Registration(StandardModel, Timestamps):
         super().save(*args, **kwargs)
 
     class Meta:
-        unique_together = ("event", "user")
+        unique_together = ("event", "entity")
 
 
 class RegistrationLog(StandardModel, Timestamps):
