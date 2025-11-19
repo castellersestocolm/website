@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-14 20:42+0100\n"
+"POT-Creation-Date: 2025-11-19 10:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,13 +87,15 @@ msgstr "El nombre de nens que has introduït és incorrecte."
 
 #: comunicat/templates/email/org/base.html:28
 #: comunicat/templates/email/org/base.html:30
+#: comunicat/templates/email/org/base.html:32
 #: comunicat/templates/email/towers/base.html:28
 #: comunicat/templates/email/towers/base.html:30
+#: comunicat/templates/email/towers/base.html:32
 msgid "Hello"
 msgstr "Hola"
 
-#: comunicat/templates/email/org/base.html:35
-#: comunicat/templates/email/towers/base.html:35
+#: comunicat/templates/email/org/base.html:37
+#: comunicat/templates/email/towers/base.html:37
 msgid ""
 "Looks like there's been a problem, this email doesn't have content! Please, "
 "let us know if this is the result of registering, subscribing or any other "
@@ -103,23 +105,23 @@ msgstr ""
 "plau, fes-nos saber si això ha estat al resultat de registrar-se, "
 "subscriure's o qualsevol altre acció que creguis que pugui haver causat això."
 
-#: comunicat/templates/email/org/base.html:42
-#: comunicat/templates/email/towers/base.html:42
+#: comunicat/templates/email/org/base.html:44
+#: comunicat/templates/email/towers/base.html:44
 msgid "Contact us"
 msgstr "Contacta'ns"
 
-#: comunicat/templates/email/org/base.html:52
-#: comunicat/templates/email/towers/base.html:52
+#: comunicat/templates/email/org/base.html:54
+#: comunicat/templates/email/towers/base.html:54
 msgid "Best"
 msgstr "Records"
 
-#: comunicat/templates/email/org/base.html:61
-#: comunicat/templates/email/towers/base.html:61
+#: comunicat/templates/email/org/base.html:63
+#: comunicat/templates/email/towers/base.html:63
 msgid "Sent with"
 msgstr "Enviat amb"
 
-#: comunicat/templates/email/org/base.html:61
-#: comunicat/templates/email/towers/base.html:61
+#: comunicat/templates/email/org/base.html:63
+#: comunicat/templates/email/towers/base.html:63
 msgid "by"
 msgstr "per"
 
@@ -239,6 +241,7 @@ msgstr ""
 
 #: comunicat/templates/email/org/membership/paid.html:14
 #: comunicat/templates/email/org/order/created.html:14
+#: comunicat/templates/email/org/registration/paid.html:14
 #: comunicat/templates/email/towers/membership/paid.html:14
 #: comunicat/templates/email/towers/order/created.html:14
 #: comunicat/templates/email/towers/order/paid.html:14
@@ -248,6 +251,7 @@ msgstr "Resum"
 
 #: comunicat/templates/email/org/membership/paid.html:23
 #: comunicat/templates/email/org/order/created.html:25
+#: comunicat/templates/email/org/registration/paid.html:26
 #: comunicat/templates/email/towers/membership/paid.html:23
 #: comunicat/templates/email/towers/order/created.html:25
 #: comunicat/templates/email/towers/order/paid.html:25
@@ -288,14 +292,7 @@ msgstr ""
 msgid "Payment options"
 msgstr "Com pagar"
 
-#: comunicat/templates/email/towers/order/paid.html:5
-msgid ""
-"Your order has been marked as paid! You will find a summary of the products "
-"you have purchased right below."
-msgstr ""
-"La teva comanda s'ha marcat com a pagada! Trobaràs un resum dels productes "
-"que has comprat a continuació."
-
+#: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
 msgid ""
 "Your registration has been marked as paid! You will find a summary of the "
@@ -303,6 +300,14 @@ msgid ""
 msgstr ""
 "La teva inscripció s'ha marcat com a pagada! Trobaràs un resum de la "
 "inscripció/ns a continuació."
+
+#: comunicat/templates/email/towers/order/paid.html:5
+msgid ""
+"Your order has been marked as paid! You will find a summary of the products "
+"you have purchased right below."
+msgstr ""
+"La teva comanda s'ha marcat com a pagada! Trobaràs un resum dels productes "
+"que has comprat a continuació."
 
 #: comunicat/templates/email/towers/user/imported.html:5
 msgid ""
@@ -492,16 +497,16 @@ msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
 #: data/admin.py:39 data/admin.py:70 data/admin.py:94 legal/admin.py:38
-#: legal/admin.py:59 order/admin.py:245 payment/admin.py:366
-#: payment/admin.py:608 product/admin.py:88
+#: legal/admin.py:59 order/admin.py:245 payment/admin.py:400
+#: payment/admin.py:642 product/admin.py:88
 msgid "name"
 msgstr "nom"
 
-#: event/admin.py:85 payment/admin.py:131
+#: event/admin.py:85 payment/admin.py:165
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:87 order/admin.py:92 payment/admin.py:111
+#: event/admin.py:87 order/admin.py:92 payment/admin.py:145
 msgid "Send paid email"
 msgstr ""
 
@@ -513,12 +518,16 @@ msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/utils/event.py:22
-msgid "Musicians rehearsal"
+#: event/utils/event.py:25
+msgid "Rehearsal with musicians"
 msgstr ""
 
-#: event/utils/event.py:24
+#: event/utils/event.py:27
 msgid "Rehearsal"
+msgstr ""
+
+#: event/utils/event.py:29
+msgid "Musicians rehearsal"
 msgstr ""
 
 #: media/admin.py:36
@@ -529,7 +538,7 @@ msgstr ""
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:112
+#: membership/admin.py:112 user/admin.py:322
 msgid "family"
 msgstr "família"
 
@@ -586,12 +595,14 @@ msgid "Thank you for your order"
 msgstr "Gràcies per la teva comanda"
 
 #: notify/consts.py:78 notify/consts.py:136
-msgid "Your order is now paid"
-msgstr "La teva comanda s'ha pagat"
+#, python-format
+msgid "Your order %s is now paid"
+msgstr "La teva comanda %s s'ha pagat"
 
 #: notify/consts.py:82 notify/consts.py:140
-msgid "Your registration is now paid"
-msgstr "La teva inscripció s'ha pagat"
+#, python-format
+msgid "Your registration for %s is now paid"
+msgstr "La teva inscripció per %s s'ha pagat"
 
 #: notify/consts.py:100
 msgid "Welcome to Castellers d'Estocolm"
@@ -637,35 +648,39 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:202 payment/admin.py:257
+#: payment/admin.py:115
+msgid "This item does not exist."
+msgstr ""
+
+#: payment/admin.py:236 payment/admin.py:291
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:203 payment/admin.py:259
+#: payment/admin.py:237 payment/admin.py:293
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:204 payment/admin.py:260 payment/admin.py:363
-#: payment/admin.py:463
+#: payment/admin.py:238 payment/admin.py:294 payment/admin.py:397
+#: payment/admin.py:497
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:258
+#: payment/admin.py:292 user/admin.py:321
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:364 payment/admin.py:365 payment/admin.py:464
-#: payment/admin.py:465
+#: payment/admin.py:398 payment/admin.py:399 payment/admin.py:498
+#: payment/admin.py:499
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:462
+#: payment/admin.py:496
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:519
+#: payment/admin.py:553
 msgid "file"
 msgstr "fitxer"
 
@@ -709,11 +724,11 @@ msgstr ""
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:128
+#: payment/models.py:132
 msgid "Unknown"
 msgstr ""
 
-#: payment/models.py:369
+#: payment/models.py:381
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
@@ -757,7 +772,7 @@ msgstr "personal"
 msgid "active"
 msgstr "actiu"
 
-#: user/models.py:157
+#: user/models.py:161
 #, fuzzy, python-format
 #| msgid "Category must be set for accounts with parent."
 msgid "Order must be set for source %s."

@@ -120,11 +120,15 @@ class Entity(StandardModel, Timestamps):
     )
 
     @cached_property
+    def name(self) -> str:
+        if self.lastname:
+            return f"{self.firstname} {self.lastname}"
+        return self.firstname
+
+    @cached_property
     def full_name(self) -> str:
-        if self.firstname:
-            if self.lastname:
-                return f"{self.firstname} {self.lastname}"
-            return self.firstname
+        if self.name:
+            return self.name
         return _("Unknown")
 
     @cached_property
@@ -150,6 +154,10 @@ class Entity(StandardModel, Timestamps):
         return self.email or self.id
 
     def save(self, *args, **kwargs):
+        if self.email:
+            from user.models import User
+
+            self.user = User.objects.filter(email=self.email).first()
         if self.user:
             self.firstname = self.user.firstname
             self.lastname = self.user.lastname

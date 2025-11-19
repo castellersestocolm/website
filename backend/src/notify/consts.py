@@ -75,11 +75,11 @@ TEMPLATE_BY_MODULE = {
                     "html": "email/org/order/created.html",
                 },
                 EmailType.ORDER_PAID: {
-                    "subject": _("Your order is now paid"),
+                    "subject": _("Your order %s is now paid"),
                     "html": "email/org/order/paid.html",
                 },
                 EmailType.REGISTRATION_PAID: {
-                    "subject": _("Your registration is now paid"),
+                    "subject": _("Your registration for %s is now paid"),
                     "html": "email/org/registration/paid.html",
                 },
             },
@@ -133,11 +133,11 @@ TEMPLATE_BY_MODULE = {
                     "html": "email/towers/order/created.html",
                 },
                 EmailType.ORDER_PAID: {
-                    "subject": _("Your order is now paid"),
+                    "subject": _("Your order %s is now paid"),
                     "html": "email/towers/order/paid.html",
                 },
                 EmailType.REGISTRATION_PAID: {
-                    "subject": _("Your registration is now paid"),
+                    "subject": _("Your registration for %s is now paid"),
                     "html": "email/towers/registration/paid.html",
                 },
             },

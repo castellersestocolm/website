@@ -26,6 +26,8 @@
                             {% block email_opening %}
                                 {% if user_obj and user_obj.name %}
                                     <p>{% trans "Hello" %}, {{ user_obj.name }}!</p>
+                                {% elif entity_obj and entity_obj.name %}
+                                    <p>{% trans "Hello" %}, {{ entity_obj.name }}!</p>
                                 {% else %}
                                     <p>{% trans "Hello" %}!</p>
                                 {% endif %}

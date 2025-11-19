@@ -14,11 +14,11 @@
 <h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
 <table class="tg" style="margin-bottom:10px;">
   <tr>
-    <th class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><h5 style="margin: 0 0 10px 0 !important;">{{ registration_objs.0.event }} — {{ registration_objs.0.event.time_from|date:"Y-m-d H:i" }}</h5></th>
+    <th class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><h5 style="margin: 0 0 10px 0 !important;">{{ event_obj.title }} — {{ event_obj.time_from|date:"Y-m-d H:i" }}</h5></th>
   </tr>
                     {% for registration_obj in registration_objs %}
   <tr>
-    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ registration_obj.user.name }}</p></td>
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{% if registration_obj.entity.user %}{{ registration_obj.entity.user.name }}{% else %}{{ registration_obj.entity.name }}{% endif %}</p></td>
     <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ registration_obj.line.amount|format_money }}</p></td>
   </tr>
                     {% endfor %}

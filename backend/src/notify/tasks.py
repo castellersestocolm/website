@@ -203,6 +203,7 @@ def send_user_email(
     )
 
 
+# TODO: Include cases for partial payment with status on each line
 @shared_task
 def send_order_email(
     order_id: UUID,
@@ -230,9 +231,9 @@ def send_order_email(
         .first()
     )
 
-    entity = order_obj.entity
-    user_obj = entity.user
-    email = email or (user_obj.email if user_obj else entity.email)
+    entity_obj = order_obj.entity
+    user_obj = entity_obj.user
+    email = email or (user_obj.email if user_obj else entity_obj.email)
     locale = (
         locale
         or (user_obj.preferred_language if user_obj else None)
@@ -241,14 +242,23 @@ def send_order_email(
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
-        context_full = {**context, "order_obj": order_obj, "user_obj": user_obj}
+        context_full = {
+            **context,
+            "order_obj": order_obj,
+            "entity_obj": entity_obj,
+            "user_obj": user_obj,
+        }
 
         template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
             email_type
         ]
         from_email = EMAIL_BY_MODULE[module]
         body = render_to_string(template["html"], context_full)
-        subject = str(template["subject"])
+
+        if email_type == EmailType.ORDER_PAID:
+            subject = str(template["subject"]) % (f"#{order_obj.reference}",)
+        else:
+            subject = str(template["subject"])
 
     Email.objects.create(
         user=user_obj,
@@ -281,9 +291,17 @@ def send_registration_email(
     context: Optional[dict] | None = None,
     locale: Optional[str] | None = None,
 ) -> None:
-    registration_objs = Registration.objects.filter(
-        id__in=registration_ids
-    ).select_related("entity", "entity__user", "event", "line")
+    registration_objs = list(
+        Registration.objects.filter(id__in=registration_ids)
+        .select_related("entity", "entity__user", "event", "line")
+        .order_by(
+            "-line__amount",
+            "entity__user__firstname",
+            "entity__user__lastname",
+            "entity__firstname",
+            "entity__lastname",
+        )
+    )
 
     # Registrations must belong to the same event
     assert (
@@ -320,7 +338,11 @@ def send_registration_email(
             ]
             from_email = EMAIL_BY_MODULE[module]
             body = render_to_string(template["html"], context_full)
-            subject = str(template["subject"])
+
+            if email_type == EmailType.REGISTRATION_PAID:
+                subject = str(template["subject"]) % (registration_obj.event.title,)
+            else:
+                subject = str(template["subject"])
 
         Email.objects.create(
             user=user_obj,

@@ -17,6 +17,7 @@ import payment.tasks
 from comunicat.enums import Module
 from event.models import Registration
 from notify.enums import EmailType
+from order.models import Order
 from payment.consts import PAYMENT_LINE_CONTENT_TYPES
 from payment.enums import PaymentType
 
@@ -145,10 +146,12 @@ class PaymentLogInline(admin.TabularInline):
 @admin.action(description=_("Send paid email"))
 def send_paid_email(modeladmin, request, queryset):
     for payment_obj in queryset:
+        paymeny_line_objs = list(payment_obj.lines.all())
+
         registration_objs = list(
-            Registration.objects.filter(
-                line__in=payment_obj.lines.all()
-            ).select_related("event")
+            Registration.objects.filter(line__in=paymeny_line_objs).select_related(
+                "event"
+            )
         )
         if registration_objs:
             for event_obj, event_registration_objs in itertools.groupby(
@@ -162,6 +165,14 @@ def send_paid_email(modeladmin, request, queryset):
                     email_type=EmailType.REGISTRATION_PAID,
                     module=event_obj.module,
                 )
+
+        order_objs = list(Order.objects.filter(products__line__in=paymeny_line_objs))
+        for order_obj in order_objs:
+            notify.tasks.send_order_email.delay(
+                order_id=order_obj.id,
+                email_type=EmailType.ORDER_PAID,
+                module=order_obj.origin_module,
+            )
     messages.success(request, _("Action succeeded."))
 
 
