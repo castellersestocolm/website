@@ -16,7 +16,9 @@ def get_list(
     for_admin: bool = False,
 ) -> List[Registration]:
     registration_qs = (
+        # TODO: Allow non-user registrations but add support for entity on serializer instead before
         Registration.objects.filter(event_id=event_id)
+        .filter_with_user()
         .select_related("event", "entity", "entity__user")
         .order_by("entity__user__firstname", "entity__user__lastname", "created_at")
     )
