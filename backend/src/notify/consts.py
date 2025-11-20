@@ -1,5 +1,3 @@
-from modulefinder import Module
-
 from comunicat.enums import Module
 from notify.enums import NotificationType, EmailType
 
@@ -145,6 +143,26 @@ TEMPLATE_BY_MODULE = {
             },
         }
     },
+}
+
+EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
+    EmailType.GENERAL: ("get_generic_email_render", tuple()),
+    EmailType.REGISTER: ("get_user_email_render", tuple()),
+    EmailType.PASSWORD: ("get_user_email_render", tuple()),
+    EmailType.WELCOME: ("get_user_email_render", tuple()),
+    EmailType.IMPORTED: ("get_user_email_render", tuple()),
+    EmailType.FAMILY_INVITE: ("get_user_email_render", tuple()),
+    EmailType.EVENT_SIGNUP: ("get_user_email_render", tuple()),
+    EmailType.MEMBERSHIP_RENEW: ("get_user_email_render", tuple()),
+    EmailType.MEMBERSHIP_EXPIRED: ("get_user_email_render", tuple()),
+    EmailType.MEMBERSHIP_PAID: ("get_user_email_render", tuple()),
+    EmailType.MEMBERSHIP_CHECK: ("get_user_email_render", tuple()),
+    EmailType.ORDER_CREATED: ("get_order_email_render", ("order_id",)),
+    EmailType.ORDER_PAID: ("get_order_email_render", ("order_id",)),
+    EmailType.REGISTRATION_PAID: (
+        "get_registration_email_renders",
+        ("registration_ids",),
+    ),
 }
 
 GOOGLE_EMAIL_SCOPES = [

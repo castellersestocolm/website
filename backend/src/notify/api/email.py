@@ -16,7 +16,7 @@ def send_email(
     reply_to: Optional[str] = None,
     track_clicks: bool = False,
     fail_silently: bool = False,
-    attachments: list = None,
+    attachments: list | None = None,
 ) -> None:
     if to and not isinstance(to, (list, tuple)):
         to = [to]

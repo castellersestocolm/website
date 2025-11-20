@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 import notify.tasks
 
 from comunicat.utils.admin import FIELD_LOCALE
+from notify.api.template import get_email_render
 from notify.consts import TEMPLATE_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import EmailStatus, NotificationType, EmailType
 from notify.models import Email, EmailTemplate
@@ -77,7 +78,7 @@ class EmailForm(forms.ModelForm):
 @admin.action(description=_("Send email"))
 def send_email(modeladmin, request, queryset):
     for email_obj in queryset:
-        notify.tasks.send_generic_email(
+        notify.tasks.send_generic_email.delay(
             email_id=email_obj.id,
         )
 
@@ -131,15 +132,12 @@ class EmailAdmin(admin.ModelAdmin):
         return mark_safe(preview_html)
 
     def preview_view(self, request, object_id: UUID):
-        email_obj = Email.objects.get(id=object_id)
+        email_render = get_email_render(email_id=object_id)
 
-        context = {**SETTINGS_BY_MODULE[email_obj.module], **email_obj.context}
-        template = TEMPLATE_BY_MODULE[email_obj.module][NotificationType.EMAIL][
-            email_obj.type
-        ]
-        body = render_to_string(template["html"], context)
+        if not email_render:
+            return HttpResponse()
 
-        return HttpResponse(body)
+        return HttpResponse(email_render.body)
 
     preview.short_description = _("preview")
 
