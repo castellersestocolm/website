@@ -187,9 +187,11 @@ def get_user_email_render(
                 context_full["membership_amount"] = membership_amount
                 context_full["membership_length"] = membership_length
                 context_full["membership_date_from"] = (
-                    membership_obj.date_to if membership_obj else timezone.localdate()
+                    membership_obj.date_from if membership_obj else timezone.localdate()
                 )
-                context_full["membership_date_to"] = membership_date_to
+                context_full["membership_date_to"] = (
+                    membership_obj.date_to if membership_obj else membership_date_to
+                )
 
         template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
         from_email = EMAIL_BY_MODULE[module]
