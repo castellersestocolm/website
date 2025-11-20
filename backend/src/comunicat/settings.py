@@ -59,6 +59,9 @@ if not DEBUG:
     CSRF_COOKIE_SAMESITE = "None"
     SESSION_COOKIE_SAMESITE = "None"
 
+# TODO: Add some CSP
+X_FRAME_OPTIONS = f"ALLOW-FROM {DOMAIN}"
+
 # Timezone
 
 USE_I18N = True
