@@ -18,7 +18,7 @@ def get_list(
     registration_qs = (
         Registration.objects.filter(event_id=event_id)
         .select_related("event", "entity", "entity__user")
-        .order_by("user__firstname", "user__lastname", "created_at")
+        .order_by("entity__user__firstname", "entity__user__lastname", "created_at")
     )
 
     if not for_admin:

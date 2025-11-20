@@ -1,20 +1,19 @@
 import itertools
 
-from django.apps import apps
-
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import JSONField, Q
-from django.forms import BaseInlineFormSet
+from django.forms import BaseInlineFormSet, Widget
 from django.utils import timezone, translation
 from djmoney.money import Money
 
 import payment.api.entity
 import payment.tasks
 from comunicat.enums import Module
+from comunicat.utils.admin import DynamicColumn
 from event.models import Registration
 from notify.enums import EmailType
 from order.models import Order
@@ -190,17 +189,6 @@ class PaymentAdmin(admin.ModelAdmin):
         "entity__lastname",
         "entity__email",
     )
-    list_display = (
-        # "id",
-        "date_accounting",
-        "type",
-        "status",
-        "text_short",
-        "amount",
-        "entity",
-        "method",
-        "balance",
-    )
     list_filter = ("type", "status", "method")
     raw_id_fields = (
         "entity",
@@ -219,6 +207,26 @@ class PaymentAdmin(admin.ModelAdmin):
             .prefetch_related("lines")
             .order_by("-date_accounting", "-date_interest", "-created_at")
         )
+
+    def get_list_display(self, request):
+        list_display = [
+            # "id",
+            "date_accounting",
+            "type",
+            "status",
+            "text_short",
+            "amount",
+            "entity",
+            "method",
+            "balance",
+        ]
+
+        source_objs = list(Source.objects.all().order_by("name"))
+
+        for source_obj in source_objs:
+            list_display.append(DynamicColumn(field=f"balance_{source_obj.code}"))
+
+        return list_display
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = ["debit_payment", "transaction"]
@@ -296,22 +304,31 @@ class PaymentLineAdmin(admin.ModelAdmin):
         "payment__entity__lastname",
         "payment__entity__email",
     )
-    list_display = (
-        # "id",
-        "date_accounting",
-        "text_short",
-        "text",
-        "entity",
-        "account",
-        "amount",
-        "vat",
-        "balance",
-    )
     # TODO: Unused, if used limit to "allow_transactions"
     # list_editable = ("account",)
     list_filter = ("vat",)
     list_per_page = 25
     form = PaymentLineForm
+
+    def get_list_display(self, request):
+        list_display = [
+            # "id",
+            "date_accounting",
+            "text_short",
+            "text",
+            "entity",
+            "account",
+            "amount",
+            "vat",
+            "balance",
+        ]
+
+        source_objs = list(Source.objects.all().order_by("name"))
+
+        for source_obj in source_objs:
+            list_display.append(DynamicColumn(field=f"balance_{source_obj.code}"))
+
+        return list_display
 
     def get_queryset(self, request):
         return (

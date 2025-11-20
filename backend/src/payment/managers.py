@@ -51,31 +51,46 @@ class PaymentQuerySet(QuerySet):
 
     def with_balance(self):
         PaymentLine = apps.get_model("payment", "PaymentLine")
+        Source = apps.get_model("payment", "Source")
+
+        source_objs = list(Source.objects.all())
+        balance_sum = F("balance_")
+        for source_obj in source_objs:
+            balance_sum += F(f"balance_{source_obj.code}")
 
         return self.with_dates().annotate(
-            balance=Coalesce(
-                Subquery(
-                    PaymentLine.objects.with_dates()
-                    .filter(
-                        payment__status=PaymentStatus.COMPLETED,
-                        date_accounting__lte=OuterRef("date_accounting"),
-                    )
-                    .annotate(
-                        actual_amount=Case(
-                            When(
-                                payment__type=PaymentType.CREDIT,
-                                then=-F("amount"),
+            **{
+                f"balance_{source_obj.code if source_obj else ''}": Coalesce(
+                    Subquery(
+                        PaymentLine.objects.with_dates()
+                        .filter(
+                            payment__status=PaymentStatus.COMPLETED,
+                            date_accounting__lte=OuterRef("date_accounting"),
+                            **(
+                                {"payment__transaction__source_id": source_obj.id}
+                                if source_obj
+                                else {"payment__transaction__isnull": True}
                             ),
-                            default=F("amount"),
-                            output_field=MoneyOutput(),
-                        ),
-                        balance=Func("actual_amount", function="Sum"),
-                    )
-                    .values("balance")[:1]
-                ),
-                Value(0),
-                output_field=MoneyOutput(),
-            )
+                        )
+                        .annotate(
+                            actual_amount=Case(
+                                When(
+                                    payment__type=PaymentType.CREDIT,
+                                    then=-F("amount"),
+                                ),
+                                default=F("amount"),
+                                output_field=MoneyOutput(),
+                            ),
+                            balance=Func("actual_amount", function="Sum"),
+                        )
+                        .values("balance")[:1]
+                    ),
+                    Value(0),
+                    output_field=MoneyOutput(),
+                )
+                for source_obj in source_objs + [None]
+            },
+            balance=Coalesce(balance_sum, Value(0), output_field=MoneyOutput()),
         )
 
     def with_amount(self):
@@ -238,31 +253,46 @@ class PaymentLineQuerySet(QuerySet):
 
     def with_balance(self):
         PaymentLine = apps.get_model("payment", "PaymentLine")
+        Source = apps.get_model("payment", "Source")
+
+        source_objs = list(Source.objects.all())
+        balance_sum = F("balance_")
+        for source_obj in source_objs:
+            balance_sum += F(f"balance_{source_obj.code}")
 
         return self.with_dates().annotate(
-            balance=Coalesce(
-                Subquery(
-                    PaymentLine.objects.with_dates()
-                    .filter(
-                        payment__status=PaymentStatus.COMPLETED,
-                        date_accounting__lte=OuterRef("date_accounting"),
-                    )
-                    .annotate(
-                        actual_amount=Case(
-                            When(
-                                payment__type=PaymentType.CREDIT,
-                                then=-F("amount"),
+            **{
+                f"balance_{source_obj.code if source_obj else ''}": Coalesce(
+                    Subquery(
+                        PaymentLine.objects.with_dates()
+                        .filter(
+                            payment__status=PaymentStatus.COMPLETED,
+                            date_accounting__lte=OuterRef("date_accounting"),
+                            **(
+                                {"payment__transaction__source_id": source_obj.id}
+                                if source_obj
+                                else {"payment__transaction__isnull": True}
                             ),
-                            default=F("amount"),
-                            output_field=MoneyOutput(),
-                        ),
-                        balance=Func("actual_amount", function="Sum"),
-                    )
-                    .values("balance")[:1]
-                ),
-                Value(0),
-                output_field=MoneyOutput(),
-            )
+                        )
+                        .annotate(
+                            actual_amount=Case(
+                                When(
+                                    payment__type=PaymentType.CREDIT,
+                                    then=-F("amount"),
+                                ),
+                                default=F("amount"),
+                                output_field=MoneyOutput(),
+                            ),
+                            balance=Func("actual_amount", function="Sum"),
+                        )
+                        .values("balance")[:1]
+                    ),
+                    Value(0),
+                    output_field=MoneyOutput(),
+                )
+                for source_obj in source_objs + [None]
+            },
+            balance=Coalesce(balance_sum, Value(0), output_field=MoneyOutput()),
         )
 
     def with_description(self):

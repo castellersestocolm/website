@@ -409,6 +409,10 @@ class Source(StandardModel, Timestamps):
         default=SourceType.BANK,
     )
 
+    @cached_property
+    def code(self):
+        return self.name.replace(" ", "").lower()
+
     objects = SourceQuerySet.as_manager()
 
     def __str__(self) -> str:

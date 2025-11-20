@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://corporate.nordea.se/accounts/details/*"
+        "*://secure.sbab.se/organisation/accounts/*"
       ],
       "js": ["download.js"]
     }
