@@ -27,6 +27,8 @@ class EmailForm(forms.ModelForm):
     )
     locale = FIELD_LOCALE
     body = forms.CharField(required=False, widget=forms.Textarea)
+    button_text = forms.CharField(required=False)
+    button_url = forms.CharField(required=False)
 
     class Meta:
         model = Email
@@ -41,10 +43,12 @@ class EmailForm(forms.ModelForm):
         cleaned_data = super().clean()
         email_template_obj = cleaned_data.get("template")
         template_body = email_template_obj.body.get(cleaned_data["locale"])
-        template_button_text = email_template_obj.button_text.get(
-            cleaned_data["locale"]
-        )
-        template_button_url = email_template_obj.button_url.get(cleaned_data["locale"])
+        button_text = cleaned_data.get(
+            "button_text"
+        ) or email_template_obj.button_text.get(cleaned_data["locale"])
+        button_url = cleaned_data.get(
+            "button_url"
+        ) or email_template_obj.button_url.get(cleaned_data["locale"])
         email_body = cleaned_data.get("body")
 
         self.instance.subject = email_template_obj.subject[cleaned_data["locale"]]
@@ -54,8 +58,8 @@ class EmailForm(forms.ModelForm):
             **({"extra_body": email_body} if email_body else {}),
             **self.instance.context,
             **(
-                {"button_text": template_button_text, "button_url": template_button_url}
-                if template_button_text and template_button_url
+                {"button_text": button_text, "button_url": button_url}
+                if button_text and button_url
                 else {}
             ),
         }

@@ -21,10 +21,10 @@ class EmailTemplate(StandardModel, Timestamps):
     objects = EmailTemplateQuerySet.as_manager()
 
     def __str__(self) -> str:
-        return (
-            self.subject.get(translation.get_language())
-            or list(self.subject.values())[0]
-        )
+        return f"{Module(self.module).name} - {
+        self.subject.get(translation.get_language())
+        or list(self.subject.values())[0]
+        }"
 
 
 class Email(StandardModel, Timestamps):
