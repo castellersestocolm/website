@@ -103,7 +103,12 @@ class PaymentLineForPaymentForm(forms.ModelForm):
             content_type_filter
         )
         self.fields["account"].queryset = Account.objects.filter(
-            allow_transactions=True
+            (
+                Q(type=self.instance.payment.type)
+                if hasattr(self.instance, "payment")
+                else Q()
+            ),
+            allow_transactions=True,
         ).order_by("code")
 
     def clean(self):
@@ -249,6 +254,38 @@ class PaymentAdmin(admin.ModelAdmin):
     balance.short_description = _("balance")
 
 
+class PaymentLineForm(forms.ModelForm):
+    class Meta:
+        model = PaymentLine
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        content_type_filter = Q()
+        for app_label, model_name in PAYMENT_LINE_CONTENT_TYPES:
+            content_type_filter |= Q(app_label=app_label, model=model_name)
+        self.fields["item_type"].queryset = ContentType.objects.filter(
+            content_type_filter
+        )
+        self.fields["account"].queryset = Account.objects.filter(
+            (
+                Q(type=self.instance.payment.type)
+                if hasattr(self.instance, "payment")
+                else Q()
+            ),
+            allow_transactions=True,
+        ).order_by("code")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data.get("item_type"):
+            try:
+                Model = cleaned_data["item_type"].model_class()
+                Model.objects.get(id=cleaned_data["item_id"])
+            except ObjectDoesNotExist:
+                raise ValidationError({"item_id": _("This item does not exist.")})
+
+
 @admin.register(PaymentLine)
 class PaymentLineAdmin(admin.ModelAdmin):
     search_fields = (
@@ -270,9 +307,11 @@ class PaymentLineAdmin(admin.ModelAdmin):
         "vat",
         "balance",
     )
-    list_editable = ("account",)
+    # TODO: Unused, if used limit to "allow_transactions"
+    # list_editable = ("account",)
     list_filter = ("vat",)
     list_per_page = 25
+    form = PaymentLineForm
 
     def get_queryset(self, request):
         return (
@@ -360,9 +399,9 @@ class AccountAdmin(admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
-            .with_amount(year=year)
-            .with_amount(year=year - 1)
-            .with_amount(year=year - 2)
+            .with_amount(year=year, with_parent=True)
+            .with_amount(year=year - 1, with_parent=True)
+            .with_amount(year=year - 2, with_parent=True)
         )
 
     def changelist_view(self, request, extra_context=None):
@@ -383,9 +422,7 @@ class AccountAdmin(admin.ModelAdmin):
             if not account_obj.module:
                 continue
 
-            account_amount = (
-                1 if account_obj.type == PaymentType.DEBIT else -1
-            ) * getattr(account_obj, f"amount_{timezone.localdate().year}")
+            account_amount = getattr(account_obj, f"amount_{timezone.localdate().year}")
             account_summary[account_obj.type][account_obj.module] += account_amount
             account_summary[None][account_obj.module] += account_amount
 

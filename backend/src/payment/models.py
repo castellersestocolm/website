@@ -316,11 +316,11 @@ class PaymentLine(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         extra_str = ""
-        if self.payment.entity:
+        if hasattr(self, "payment") and self.payment.entity:
             extra_str += f" - {self.payment.entity}"
-        if self.text or self.payment.text:
+        if self.text or hasattr(self, "payment") and self.payment.text:
             extra_str += f" - {self.text or self.payment.text}"
-        return f"{PaymentMethod(self.payment.method).name + ' - ' if self.payment.method else ''}{self.amount}{extra_str}"
+        return f"{PaymentMethod(self.payment.method).name + ' - ' if hasattr(self, 'payment') and self.payment.method else ''}{self.amount}{extra_str}"
 
 
 class PaymentLog(StandardModel, Timestamps):
@@ -332,6 +332,7 @@ class PaymentLog(StandardModel, Timestamps):
     )
 
 
+# TODO: Add check no more than one (account-account) for parent
 class Account(StandardModel, Timestamps):
     name = models.CharField(max_length=255)
     code = models.PositiveSmallIntegerField(unique=True)

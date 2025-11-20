@@ -14,6 +14,7 @@ from django.db.models import (
     Exists,
     DateField,
     Func,
+    IntegerField,
 )
 from django.db.models.functions import Coalesce, Cast, Concat, Substr, Abs
 from django.utils import timezone, translation
@@ -139,7 +140,7 @@ class PaymentQuerySet(QuerySet):
 
 
 class AccountQuerySet(QuerySet):
-    def with_amount(self, year: int | None = None):
+    def with_amount(self, year: int | None = None, with_parent: bool = False):
         PaymentLine = apps.get_model("payment", "PaymentLine")
 
         if year is None:
@@ -147,14 +148,28 @@ class AccountQuerySet(QuerySet):
 
         annotate_dict = {f"amount_{year}": F("amount")}
 
+        payment_line_filter = Q(account_id=OuterRef("id"))
+        if with_parent:
+            payment_line_filter |= Q(account__parent_id=OuterRef("id"))
+
         return self.annotate(
             amount=Coalesce(
                 Subquery(
-                    PaymentLine.objects.filter(account_id=OuterRef("id"))
+                    PaymentLine.objects.filter(payment_line_filter)
                     .with_dates()
                     .filter(date_accounting__year=year)
                     .values("account_id")
-                    .annotate(amount=Sum(Abs("amount")))
+                    .annotate(
+                        amount_multiplier=Case(
+                            When(
+                                Q(payment__type=PaymentType.CREDIT),
+                                then=Value(-1),
+                            ),
+                            default=Value(1),
+                            output_field=IntegerField(),
+                        ),
+                        amount=F("amount_multiplier") * Sum(Abs("amount")),
+                    )
                     .values("amount")[:1]
                 ),
                 Value(0),
