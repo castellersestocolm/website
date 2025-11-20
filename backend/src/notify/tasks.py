@@ -7,6 +7,7 @@ from django.db.models import Prefetch
 from django.template.loader import render_to_string
 from django.utils import translation, timezone
 
+import payment.api.entity
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
@@ -15,7 +16,7 @@ from membership.models import Membership, MembershipModule
 from notify.api.email import send_email
 from notify.api.slack.chat import send_order_message
 from notify.consts import TEMPLATE_BY_MODULE, EMAIL_BY_MODULE, SETTINGS_BY_MODULE
-from notify.enums import NotificationType, EmailType
+from notify.enums import NotificationType, EmailType, EmailStatus
 from notify.models import Email
 from order.models import Order, OrderProduct, OrderLog
 from user.enums import FamilyMemberStatus
@@ -182,14 +183,16 @@ def send_user_email(
             )
         )
 
+    entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
+
     Email.objects.create(
-        user=user_obj,
-        email=email or user_obj.email,
+        entity=entity_obj,
         type=email_type,
         subject=subject,
         context=context,
         module=module,
         locale=locale,
+        status=EmailStatus.SENT,
     )
 
     send_email(
@@ -260,14 +263,16 @@ def send_order_email(
         else:
             subject = str(template["subject"])
 
+    entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
+
     Email.objects.create(
-        user=user_obj,
-        email=email,
+        entity=entity_obj,
         type=email_type,
         subject=subject,
         context=context,
         module=module,
         locale=locale,
+        status=EmailStatus.SENT,
     )
 
     send_email(
@@ -344,14 +349,18 @@ def send_registration_email(
             else:
                 subject = str(template["subject"])
 
+        entity_obj = payment.api.entity.get_entity_by_key(
+            email=current_email or user_obj.email
+        )
+
         Email.objects.create(
-            user=user_obj,
-            email=current_email,
+            entity=entity_obj,
             type=email_type,
             subject=subject,
             context=context,
             module=module,
             locale=current_locale,
+            status=EmailStatus.SENT,
         )
 
         send_email(
@@ -363,6 +372,52 @@ def send_registration_email(
             attachments=[],
             module=module,
         )
+
+
+@shared_task
+def send_generic_email(
+    email_id: UUID,
+) -> Email:
+    email_obj = Email.objects.filter(id=email_id).select_related("entity").first()
+
+    entity_obj = email_obj.entity
+    user_obj = entity_obj.user
+    email = user_obj.email if user_obj else entity_obj.email
+    locale = (
+        email_obj.locale
+        or (user_obj.preferred_language if user_obj else None)
+        or settings.LANGUAGE_CODE
+    )
+
+    with translation.override(locale):
+        context = SETTINGS_BY_MODULE[email_obj.module]
+        context_full = {
+            **context,
+            **email_obj.context,
+            "entity_obj": entity_obj,
+            "user_obj": user_obj,
+        }
+
+        template = TEMPLATE_BY_MODULE[email_obj.module][NotificationType.EMAIL][
+            "general"
+        ][email_obj.type]
+        from_email = EMAIL_BY_MODULE[email_obj.module]
+        body = render_to_string(template["html"], context_full)
+
+    email_obj.status = EmailStatus.SENT
+    email_obj.save(update_fields=("status",))
+
+    send_email(
+        subject=email_obj.subject,
+        body=body,
+        from_email=from_email,
+        to=email,
+        reply_to=from_email,
+        attachments=[],
+        module=email_obj.module,
+    )
+
+    return email_obj
 
 
 @shared_task

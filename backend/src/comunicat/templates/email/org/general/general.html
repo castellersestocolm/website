@@ -1,0 +1,23 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    {% if template_body %}
+        {{ template_body|format_text }}
+    {% endif %}
+    {% if extra_body %}
+        {{ extra_body|format_text }}
+    {% endif %}
+{% endblock %}
+
+{% block email_button %}
+    {% if button_text and button_url %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% if button_text and button_url %}
+    {% block email_button_url %}{{ button_url }}{% endblock %}
+
+    {% block email_button_text %}{{ button_text }}{% endblock %}
+{% endif %}

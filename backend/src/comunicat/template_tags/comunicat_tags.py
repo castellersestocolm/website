@@ -5,6 +5,8 @@ from urllib.parse import urljoin
 from django.conf import settings
 from django.template.defaulttags import register
 from django.utils import timezone, translation
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from djmoney.money import Money
 
 from comunicat.enums import Module
@@ -151,3 +153,10 @@ def format_enum(enum: str, value):
     enum_module = importlib.import_module(".".join(enum.split(".")[:-1]))
     enum_class = getattr(enum_module, enum.split(".")[-1])
     return enum_class(value).name
+
+
+@register.filter
+def format_text(text: str) -> str:
+    return mark_safe(
+        format_html("".join([f"<p>{text_line}</p>" for text_line in text.split("\n")]))
+    )

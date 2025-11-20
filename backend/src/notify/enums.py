@@ -6,6 +6,7 @@ class NotificationType(enum.IntEnum):
 
 
 class EmailType(enum.IntEnum):
+    GENERAL = 5
     REGISTER = 10
     PASSWORD = 11
     WELCOME = 12
@@ -19,6 +20,11 @@ class EmailType(enum.IntEnum):
     ORDER_CREATED = 50
     ORDER_PAID = 51
     REGISTRATION_PAID = 61
+
+
+class EmailStatus(enum.IntEnum):
+    DRAFT = 10
+    SENT = 20
 
 
 class MessageSlackType(enum.IntEnum):

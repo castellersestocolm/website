@@ -29,6 +29,11 @@ SETTINGS_BY_MODULE = {
 TEMPLATE_BY_MODULE = {
     Module.ORG: {
         NotificationType.EMAIL: {
+            "general": {
+                EmailType.GENERAL: {
+                    "html": "email/org/general/general.html",
+                },
+            },
             "user": {
                 EmailType.REGISTER: {
                     "subject": _("Confirm your email to finish your registration"),
@@ -87,6 +92,11 @@ TEMPLATE_BY_MODULE = {
     },
     Module.TOWERS: {
         NotificationType.EMAIL: {
+            "general": {
+                EmailType.GENERAL: {
+                    "html": "email/towers/general/general.html",
+                },
+            },
             "user": {
                 EmailType.REGISTER: {
                     "subject": _("Confirm your email to finish your registration"),
