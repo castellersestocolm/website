@@ -15,7 +15,6 @@ from django.db.models import (
     DateField,
     Func,
     IntegerField,
-    UUIDField,
 )
 from django.db.models.functions import Coalesce, Cast, Concat, Substr, Abs
 from django.utils import timezone, translation
@@ -149,17 +148,12 @@ class AccountQuerySet(QuerySet):
 
         annotate_dict = {f"amount_{year}": F("amount")}
 
-        payment_line_filter = Q(account_id=OuterRef("id"))
-        if with_parent:
-            payment_line_filter |= Q(account__parent_id=OuterRef("id"))
-
         return self.annotate(
             amount_account=Coalesce(
                 Subquery(
                     PaymentLine.objects.filter(account_id=OuterRef("id"))
                     .with_dates()
                     .filter(date_accounting__year=year)
-                    .values("account_id")
                     .annotate(
                         amount_multiplier=Case(
                             When(
@@ -169,7 +163,11 @@ class AccountQuerySet(QuerySet):
                             default=Value(1),
                             output_field=IntegerField(),
                         ),
-                        amount=F("amount_multiplier") * Sum(Abs("amount")),
+                        amount_signed=F("amount_multiplier") * F("amount"),
+                    )
+                    .values("account_id")
+                    .annotate(
+                        amount=Sum("amount_signed"),
                     )
                     .values("amount")[:1]
                 ),
