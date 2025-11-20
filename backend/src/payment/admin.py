@@ -372,6 +372,18 @@ class PaymentLineForAccountInline(admin.TabularInline):
         return False
 
 
+class AccountForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["parent"].queryset = Account.objects.filter(
+            allow_transactions=False,
+        ).order_by("code")
+
+
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
     search_fields = ("id", "name", "code")
@@ -393,6 +405,7 @@ class AccountAdmin(admin.ModelAdmin):
         AccountTagInline,
         PaymentLineForAccountInline,
     )
+    form = AccountForm
 
     def get_queryset(self, request):
         year = timezone.localdate().year

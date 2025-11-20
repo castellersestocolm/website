@@ -15,6 +15,7 @@ from django.db.models import (
     DateField,
     Func,
     IntegerField,
+    UUIDField,
 )
 from django.db.models.functions import Coalesce, Cast, Concat, Substr, Abs
 from django.utils import timezone, translation
@@ -153,9 +154,9 @@ class AccountQuerySet(QuerySet):
             payment_line_filter |= Q(account__parent_id=OuterRef("id"))
 
         return self.annotate(
-            amount=Coalesce(
+            amount_account=Coalesce(
                 Subquery(
-                    PaymentLine.objects.filter(payment_line_filter)
+                    PaymentLine.objects.filter(account_id=OuterRef("id"))
                     .with_dates()
                     .filter(date_accounting__year=year)
                     .values("account_id")
@@ -174,6 +175,40 @@ class AccountQuerySet(QuerySet):
                 ),
                 Value(0),
                 output_field=MoneyOutput(),
+            ),
+            **(
+                {
+                    "amount_parent_account": Coalesce(
+                        Subquery(
+                            PaymentLine.objects.filter(
+                                account__parent_id=OuterRef("id")
+                            )
+                            .with_dates()
+                            .filter(date_accounting__year=year)
+                            .values("account__parent_id")
+                            .annotate(
+                                amount_multiplier=Case(
+                                    When(
+                                        Q(payment__type=PaymentType.CREDIT),
+                                        then=Value(-1),
+                                    ),
+                                    default=Value(1),
+                                    output_field=IntegerField(),
+                                ),
+                                amount=F("amount_multiplier") * Sum(Abs("amount")),
+                            )
+                            .values("amount")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
+                    "amount": Cast(
+                        F("amount_parent_account") + F("amount_account"),
+                        output_field=MoneyOutput(),
+                    ),
+                }
+                if with_parent
+                else {"amount": F("amount_account")}
             ),
             **annotate_dict,
         )
