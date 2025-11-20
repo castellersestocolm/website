@@ -33,7 +33,7 @@ class EmailForm(forms.ModelForm):
     template = forms.ModelChoiceField(
         EmailTemplate.objects.all(),
     )
-    locale = FIELD_LOCALE
+    locale = FIELD_LOCALE()
     body = forms.CharField(required=False, widget=forms.Textarea)
     button_text = forms.CharField(required=False)
     button_url = forms.CharField(required=False)
@@ -88,6 +88,7 @@ class EmailAdmin(admin.ModelAdmin):
     list_display = ("entity", "type", "status", "subject", "created_at")
     list_filter = ("type", "created_at")
     raw_id_fields = ("entity",)
+    exclude = ("context",)
     ordering = ("-created_at",)
     actions = (send_email,)
 
@@ -134,8 +135,8 @@ class EmailAdmin(admin.ModelAdmin):
 
         context = {**SETTINGS_BY_MODULE[email_obj.module], **email_obj.context}
         template = TEMPLATE_BY_MODULE[email_obj.module][NotificationType.EMAIL][
-            "general"
-        ][EmailType.GENERAL]
+            email_obj.type
+        ]
         body = render_to_string(template["html"], context)
 
         return HttpResponse(body)
@@ -195,7 +196,7 @@ class EmailTemplateAdmin(admin.ModelAdmin):
         }
         template = TEMPLATE_BY_MODULE[email_template_obj.module][
             NotificationType.EMAIL
-        ]["general"][EmailType.GENERAL]
+        ][EmailType.GENERAL]
         body = render_to_string(template["html"], context)
 
         return HttpResponse(body)

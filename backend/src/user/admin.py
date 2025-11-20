@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 
 import event.tasks
 import user.tasks
+from comunicat.utils.admin import FIELD_LOCALE
 from membership.enums import MembershipStatus
 from notify.enums import EmailType
 from user.models import (
@@ -129,6 +130,7 @@ def send_membership_expired_email(modeladmin, request, queryset):
 
 
 class UserAdminForm(forms.ModelForm):
+    preferred_language = FIELD_LOCALE(required=False)
     alias = forms.CharField(required=False)
     height_shoulders = forms.IntegerField(min_value=0, max_value=200, required=False)
     height_arms = forms.IntegerField(min_value=0, max_value=250, required=False)

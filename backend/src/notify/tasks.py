@@ -157,9 +157,7 @@ def send_user_email(
                 )
                 context_full["membership_date_to"] = membership_date_to
 
-        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
-            email_type
-        ]
+        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
         from_email = EMAIL_BY_MODULE[module]
         body = render_to_string(template["html"], context_full)
         subject = str(template["subject"])
@@ -252,9 +250,7 @@ def send_order_email(
             "user_obj": user_obj,
         }
 
-        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
-            email_type
-        ]
+        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
         from_email = EMAIL_BY_MODULE[module]
         body = render_to_string(template["html"], context_full)
 
@@ -338,9 +334,7 @@ def send_registration_email(
                 "user_obj": user_obj,
             }
 
-            template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL]["user"][
-                email_type
-            ]
+            template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
             from_email = EMAIL_BY_MODULE[module]
             body = render_to_string(template["html"], context_full)
 
@@ -399,8 +393,8 @@ def send_generic_email(
         }
 
         template = TEMPLATE_BY_MODULE[email_obj.module][NotificationType.EMAIL][
-            "general"
-        ][email_obj.type]
+            email_obj.type
+        ]
         from_email = EMAIL_BY_MODULE[email_obj.module]
         body = render_to_string(template["html"], context_full)
 

@@ -29,127 +29,119 @@ SETTINGS_BY_MODULE = {
 TEMPLATE_BY_MODULE = {
     Module.ORG: {
         NotificationType.EMAIL: {
-            "general": {
-                EmailType.GENERAL: {
-                    "html": "email/org/general/general.html",
-                },
+            EmailType.GENERAL: {
+                "html": "email/org/general/general.html",
             },
-            "user": {
-                EmailType.REGISTER: {
-                    "subject": _("Confirm your email to finish your registration"),
-                    "html": "email/org/user/register.html",
-                },
-                EmailType.PASSWORD: {
-                    "subject": _("Reset your password to login"),
-                    "html": "email/org/user/password.html",
-                },
-                EmailType.WELCOME: {
-                    "subject": _("Welcome to Les Quatre Barres"),
-                    "html": "email/org/user/welcome.html",
-                },
-                EmailType.IMPORTED: {
-                    "subject": _("Welcome to Les Quatre Barres new website"),
-                    "html": "email/org/user/imported.html",
-                },
-                EmailType.FAMILY_INVITE: {
-                    "subject": _("You have been invited to join a family"),
-                    "html": "email/org/user/invite.html",
-                },
-                EmailType.EVENT_SIGNUP: {
-                    "subject": _("Sign-up for the upcoming events"),
-                    "html": "email/org/user/signup.html",
-                },
-                EmailType.MEMBERSHIP_RENEW: {
-                    "subject": _("Time to renew your membership"),
-                    "html": "email/org/membership/renew.html",
-                },
-                EmailType.MEMBERSHIP_EXPIRED: {
-                    "subject": _("Your membership has expired"),
-                    "html": "email/org/membership/expired.html",
-                },
-                EmailType.MEMBERSHIP_PAID: {
-                    "subject": _("Your membership is now paid"),
-                    "html": "email/org/membership/paid.html",
-                },
-                EmailType.MEMBERSHIP_CHECK: {
-                    "subject": _("Your membership status"),
-                    "html": "email/org/membership/check.html",
-                },
-                EmailType.ORDER_CREATED: {
-                    "subject": _("Thank you for your order"),
-                    "html": "email/org/order/created.html",
-                },
-                EmailType.ORDER_PAID: {
-                    "subject": _("Your order %s is now paid"),
-                    "html": "email/org/order/paid.html",
-                },
-                EmailType.REGISTRATION_PAID: {
-                    "subject": _("Your registration for %s is now paid"),
-                    "html": "email/org/registration/paid.html",
-                },
+            EmailType.REGISTER: {
+                "subject": _("Confirm your email to finish your registration"),
+                "html": "email/org/user/register.html",
+            },
+            EmailType.PASSWORD: {
+                "subject": _("Reset your password to login"),
+                "html": "email/org/user/password.html",
+            },
+            EmailType.WELCOME: {
+                "subject": _("Welcome to Les Quatre Barres"),
+                "html": "email/org/user/welcome.html",
+            },
+            EmailType.IMPORTED: {
+                "subject": _("Welcome to Les Quatre Barres new website"),
+                "html": "email/org/user/imported.html",
+            },
+            EmailType.FAMILY_INVITE: {
+                "subject": _("You have been invited to join a family"),
+                "html": "email/org/user/invite.html",
+            },
+            EmailType.EVENT_SIGNUP: {
+                "subject": _("Sign-up for the upcoming events"),
+                "html": "email/org/user/signup.html",
+            },
+            EmailType.MEMBERSHIP_RENEW: {
+                "subject": _("Time to renew your membership"),
+                "html": "email/org/membership/renew.html",
+            },
+            EmailType.MEMBERSHIP_EXPIRED: {
+                "subject": _("Your membership has expired"),
+                "html": "email/org/membership/expired.html",
+            },
+            EmailType.MEMBERSHIP_PAID: {
+                "subject": _("Your membership is now paid"),
+                "html": "email/org/membership/paid.html",
+            },
+            EmailType.MEMBERSHIP_CHECK: {
+                "subject": _("Your membership status"),
+                "html": "email/org/membership/check.html",
+            },
+            EmailType.ORDER_CREATED: {
+                "subject": _("Thank you for your order"),
+                "html": "email/org/order/created.html",
+            },
+            EmailType.ORDER_PAID: {
+                "subject": _("Your order %s is now paid"),
+                "html": "email/org/order/paid.html",
+            },
+            EmailType.REGISTRATION_PAID: {
+                "subject": _("Your registration for %s is now paid"),
+                "html": "email/org/registration/paid.html",
             },
         }
     },
     Module.TOWERS: {
         NotificationType.EMAIL: {
-            "general": {
-                EmailType.GENERAL: {
-                    "html": "email/towers/general/general.html",
-                },
+            EmailType.GENERAL: {
+                "html": "email/towers/general/general.html",
             },
-            "user": {
-                EmailType.REGISTER: {
-                    "subject": _("Confirm your email to finish your registration"),
-                    "html": "email/towers/user/register.html",
-                },
-                EmailType.PASSWORD: {
-                    "subject": _("Reset your password to login"),
-                    "html": "email/towers/user/password.html",
-                },
-                EmailType.WELCOME: {
-                    "subject": _("Welcome to Castellers d'Estocolm"),
-                    "html": "email/towers/user/welcome.html",
-                },
-                EmailType.IMPORTED: {
-                    "subject": _("Welcome to Castellers d'Estocolm new website"),
-                    "html": "email/towers/user/imported.html",
-                },
-                EmailType.FAMILY_INVITE: {
-                    "subject": _("You have been invited to join a family"),
-                    "html": "email/towers/user/invite.html",
-                },
-                EmailType.EVENT_SIGNUP: {
-                    "subject": _("Sign-up for the upcoming events and rehearsals"),
-                    "html": "email/towers/user/signup.html",
-                },
-                EmailType.MEMBERSHIP_RENEW: {
-                    "subject": _("Time to renew your membership"),
-                    "html": "email/towers/membership/renew.html",
-                },
-                EmailType.MEMBERSHIP_EXPIRED: {
-                    "subject": _("Your membership has expired"),
-                    "html": "email/towers/membership/expired.html",
-                },
-                EmailType.MEMBERSHIP_PAID: {
-                    "subject": _("Your membership is now paid"),
-                    "html": "email/towers/membership/paid.html",
-                },
-                EmailType.MEMBERSHIP_CHECK: {
-                    "subject": _("Your membership status"),
-                    "html": "email/towers/membership/check.html",
-                },
-                EmailType.ORDER_CREATED: {
-                    "subject": _("Thank you for your order"),
-                    "html": "email/towers/order/created.html",
-                },
-                EmailType.ORDER_PAID: {
-                    "subject": _("Your order %s is now paid"),
-                    "html": "email/towers/order/paid.html",
-                },
-                EmailType.REGISTRATION_PAID: {
-                    "subject": _("Your registration for %s is now paid"),
-                    "html": "email/towers/registration/paid.html",
-                },
+            EmailType.REGISTER: {
+                "subject": _("Confirm your email to finish your registration"),
+                "html": "email/towers/user/register.html",
+            },
+            EmailType.PASSWORD: {
+                "subject": _("Reset your password to login"),
+                "html": "email/towers/user/password.html",
+            },
+            EmailType.WELCOME: {
+                "subject": _("Welcome to Castellers d'Estocolm"),
+                "html": "email/towers/user/welcome.html",
+            },
+            EmailType.IMPORTED: {
+                "subject": _("Welcome to Castellers d'Estocolm new website"),
+                "html": "email/towers/user/imported.html",
+            },
+            EmailType.FAMILY_INVITE: {
+                "subject": _("You have been invited to join a family"),
+                "html": "email/towers/user/invite.html",
+            },
+            EmailType.EVENT_SIGNUP: {
+                "subject": _("Sign-up for the upcoming events and rehearsals"),
+                "html": "email/towers/user/signup.html",
+            },
+            EmailType.MEMBERSHIP_RENEW: {
+                "subject": _("Time to renew your membership"),
+                "html": "email/towers/membership/renew.html",
+            },
+            EmailType.MEMBERSHIP_EXPIRED: {
+                "subject": _("Your membership has expired"),
+                "html": "email/towers/membership/expired.html",
+            },
+            EmailType.MEMBERSHIP_PAID: {
+                "subject": _("Your membership is now paid"),
+                "html": "email/towers/membership/paid.html",
+            },
+            EmailType.MEMBERSHIP_CHECK: {
+                "subject": _("Your membership status"),
+                "html": "email/towers/membership/check.html",
+            },
+            EmailType.ORDER_CREATED: {
+                "subject": _("Thank you for your order"),
+                "html": "email/towers/order/created.html",
+            },
+            EmailType.ORDER_PAID: {
+                "subject": _("Your order %s is now paid"),
+                "html": "email/towers/order/paid.html",
+            },
+            EmailType.REGISTRATION_PAID: {
+                "subject": _("Your registration for %s is now paid"),
+                "html": "email/towers/registration/paid.html",
             },
         }
     },

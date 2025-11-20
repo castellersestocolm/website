@@ -3,7 +3,7 @@ from django import forms
 from django.conf import settings
 from django.forms import Widget
 
-FIELD_LOCALE = forms.ChoiceField(choices=settings.LANGUAGES)
+FIELD_LOCALE = lambda **kwargs: forms.ChoiceField(choices=settings.LANGUAGES, **kwargs)
 
 
 class DynamicColumn:
