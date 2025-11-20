@@ -183,7 +183,6 @@ class AccountQuerySet(QuerySet):
                             )
                             .with_dates()
                             .filter(date_accounting__year=year)
-                            .values("account__parent_id")
                             .annotate(
                                 amount_multiplier=Case(
                                     When(
@@ -193,7 +192,11 @@ class AccountQuerySet(QuerySet):
                                     default=Value(1),
                                     output_field=IntegerField(),
                                 ),
-                                amount=F("amount_multiplier") * Sum(Abs("amount")),
+                                amount_signed=F("amount_multiplier") * F("amount"),
+                            )
+                            .values("account__parent_id")
+                            .annotate(
+                                amount=Sum("amount_signed"),
                             )
                             .values("amount")[:1]
                         ),
