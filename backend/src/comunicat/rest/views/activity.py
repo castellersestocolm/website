@@ -30,7 +30,7 @@ class ProgramAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: ProgramSerializer(many=True)},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def list(self, request):
         program_objs = activity.api.program.get_list(
             module=self.module,
