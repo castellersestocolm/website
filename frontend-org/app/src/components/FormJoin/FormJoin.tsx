@@ -22,11 +22,13 @@ import Box from "@mui/material/Box";
 import { useSearchParams } from "react-router-dom";
 import IconEast from "@mui/icons-material/East";
 import IconArrowDownward from "@mui/icons-material/ArrowDownward";
-import { apiOrgCreate } from "../../api";
+import { apiActivityProgramList, apiOrgCreate } from "../../api";
 import ImageIconSwish from "../../assets/images/icons/swish.png";
 
 // @ts-ignore
 import QRCode from "qrcode";
+import { getAge } from "../../utils/datetime";
+import { compareAmountObjects } from "../../utils/sort";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -57,10 +59,30 @@ export default function FormJoin() {
   const [submitted, setSubmitted] = useState(false);
 
   const [children, setChildren] = useState([[undefined, undefined, undefined]]);
+  const [childrenBirthdays, setChildrenBirthdays] = useState<{
+    [id: number]: string;
+  }>({});
+
+  const [activities, setActivityies] = useState(undefined);
+  let courseChildPriceById: { [id: string]: any } = {};
 
   const [paymentSvg, setPaymentSvg] = React.useState(undefined);
   const [paymentAmount, setPaymentAmount] = React.useState(undefined);
   const [paymentText, setPaymentText] = React.useState(undefined);
+
+  React.useEffect(() => {
+    apiActivityProgramList().then((response) => {
+      if (response.status === 200) {
+        setActivityies(response.data);
+      }
+    });
+  }, [setActivityies]);
+
+  function handleChildrenBirthday(childIndex: number, birthday: string) {
+    setChildrenBirthdays(
+      Object.assign({}, childrenBirthdays, { [childIndex]: birthday }),
+    );
+  }
 
   function handleButtonChildrenRemove(childIndex: number) {
     setChildren([
@@ -116,14 +138,42 @@ export default function FormJoin() {
             birthday:
               // @ts-ignore
               event.currentTarget.elements["birthday-c" + ix.toString()].value,
+            activities:
+              // @ts-ignore
+              Array.from(event.currentTarget.elements)
+                .filter(
+                  (element: any) =>
+                    element.name &&
+                    element.name.startsWith(
+                      "activity-" + ix.toString() + "-",
+                    ) &&
+                    element.checked,
+                )
+                .map((element: any) =>
+                  element.name.slice(
+                    ("activity-" + ix.toString() + "-").length,
+                  ),
+                ),
           }))
         : [];
     apiOrgCreate(subAdults, subChildren).then((response) => {
       if (response.status === 201) {
         setValidationErrors(undefined);
-        setPaymentAmount(
-          subAdults.length === 1 && subChildren.length === 0 ? "150" : "250",
-        );
+        const childActivityAmount = subChildren
+          .map((subChild: any, index: number) =>
+            subChild.activities
+              .map(
+                (activityId: string) =>
+                  courseChildPriceById[index.toString() + "-" + activityId]
+                    .amount.amount,
+              )
+              .reduce((partialSum: number, a: number) => partialSum + a, 0),
+          )
+          .reduce((partialSum: number, a: number) => partialSum + a, 0);
+        const amount =
+          (subAdults.length === 1 && subChildren.length === 0 ? 150 : 250) +
+          childActivityAmount;
+        setPaymentAmount(amount.toString());
         const membershipText =
           t("swish.payment.membership") +
           " " +
@@ -134,13 +184,7 @@ export default function FormJoin() {
           subAdults[0].lastname;
         setPaymentText(membershipText);
         QRCode.toDataURL(
-          "CC1230688820;" +
-            (subAdults.length === 1 && subChildren.length === 0
-              ? "150"
-              : "250") +
-            ";" +
-            membershipText +
-            ";0",
+          "CC1230688820;" + amount.toString() + ";" + membershipText + ";0",
           { width: 500, margin: 0 },
         )
           .then((url: string) => {
@@ -537,6 +581,9 @@ export default function FormJoin() {
                               type="date"
                               autoComplete={"birthday child " + ix}
                               size="small"
+                              onChange={(e) =>
+                                handleChildrenBirthday(ix, e.target.value)
+                              }
                               error={
                                 validationErrors &&
                                 validationErrors.children &&
@@ -556,6 +603,109 @@ export default function FormJoin() {
                                 </FormHelperText>
                               )}
                           </FormGrid>
+                          {activities && activities.results.length > 0 && (
+                            <FormGrid size={12}>
+                              {activities.results.map((activity: any) => {
+                                return (
+                                  <Box>
+                                    <Typography
+                                      variant="body1"
+                                      paddingBottom={1}
+                                    >
+                                      {activity.name}
+                                    </Typography>
+                                    <Stack direction="column" spacing={1}>
+                                      {activity.courses.map((course: any) => {
+                                        const isCoursePast =
+                                          course.signup_until &&
+                                          new Date(course.signup_until) <
+                                            new Date();
+                                        const childAge = getAge(
+                                          childrenBirthdays[ix],
+                                        );
+                                        const coursePrice = course.prices
+                                          .sort(compareAmountObjects)
+                                          .find(
+                                            (coursePrice: any) =>
+                                              (!coursePrice.age_from ||
+                                                (childAge &&
+                                                  childAge >=
+                                                    coursePrice.age_from)) &&
+                                              (!coursePrice.age_to ||
+                                                (childAge &&
+                                                  childAge <=
+                                                    coursePrice.age_to)),
+                                          );
+                                        courseChildPriceById[
+                                          ix.toString() + "-" + course.id
+                                        ] = coursePrice;
+                                        return (
+                                          <FormControlLabel
+                                            control={
+                                              <Checkbox
+                                                name={
+                                                  "activity-" +
+                                                  ix +
+                                                  "-" +
+                                                  course.id
+                                                }
+                                                value="yes"
+                                                className={
+                                                  styles.checkboxActivity
+                                                }
+                                                disabled={
+                                                  isCoursePast || !coursePrice
+                                                }
+                                              />
+                                            }
+                                            label={
+                                              <>
+                                                <Typography variant="body2">
+                                                  {course.date_from}
+                                                  {" - "}
+                                                  {course.date_to}
+                                                </Typography>
+                                                {course.signup_until &&
+                                                  !isCoursePast && (
+                                                    <Typography
+                                                      variant="body2"
+                                                      color="textSecondary"
+                                                    >
+                                                      {t(
+                                                        "pages.user-join.form.activity.signup-until",
+                                                      )}
+                                                      {": "}
+                                                      {course.signup_until}
+                                                    </Typography>
+                                                  )}
+                                                {!isCoursePast &&
+                                                  coursePrice && (
+                                                    <Typography
+                                                      variant="body2"
+                                                      fontWeight={600}
+                                                    >
+                                                      {
+                                                        coursePrice.amount
+                                                          .amount
+                                                      }{" "}
+                                                      {
+                                                        coursePrice.amount
+                                                          .currency
+                                                      }
+                                                    </Typography>
+                                                  )}
+                                              </>
+                                            }
+                                            required={false}
+                                          />
+                                        );
+                                      })}
+                                    </Stack>
+                                  </Box>
+                                );
+                              })}
+                            </FormGrid>
+                          )}
                         </Grid>
                       </Box>
                     ))}

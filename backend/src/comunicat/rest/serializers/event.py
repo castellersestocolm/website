@@ -207,9 +207,39 @@ class EventModuleSerializer(s.ModelSerializer):
         )
 
 
-class EventSerializer(s.ModelSerializer):
-    location = LocationSerializer(read_only=True)
+class EventSlimSerializer(s.ModelSerializer):
     description = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "title",
+            "time_from",
+            "time_to",
+            "description",
+            "type",
+            "module",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "time_from",
+            "time_to",
+            "description",
+            "type",
+            "module",
+            "created_at",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
+
+
+class EventSerializer(EventSlimSerializer):
+    location = LocationSerializer(read_only=True)
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
     registrations = RegistrationSlimSerializer(many=True, read_only=True)
@@ -270,10 +300,6 @@ class EventSerializer(s.ModelSerializer):
             "google_album",
             "created_at",
         )
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_description(self, obj):
-        return obj.description.get(translation.get_language())
 
 
 class RegistrationItemCountsSerializer(s.Serializer):

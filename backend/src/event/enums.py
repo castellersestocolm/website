@@ -8,6 +8,7 @@ class EventType(enum.IntEnum):
     GATHERING = 40
     REHEARSAL = 50
     PERFORMANCE = 60
+    COURSE = 70
 
 
 class EventStatus(enum.IntEnum):

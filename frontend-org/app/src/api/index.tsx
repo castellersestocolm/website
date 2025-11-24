@@ -55,3 +55,13 @@ export const apiOrgCheck = async (email: string) => {
     throw error;
   }
 };
+
+export const apiActivityProgramList = async () => {
+  try {
+    return await instance.get("/activity/program/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

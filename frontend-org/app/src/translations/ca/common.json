@@ -17,6 +17,7 @@
   "pages.user-join.form.button-children.add": "Afegeix nen/a",
   "pages.user-join.form.button-children.remove": "Esborra",
   "pages.user-join.form.button-join": "Uneix-te",
+  "pages.user-join.form.activity.signup-until": "Últim dia per registrar-se",
   "pages.home-join.success": "Realitzeu el pagament per completar la inscripció/renovació.",
   "pages.status.subtitle": "Comprova l'estat de la quota",
   "pages.status.success": "T'hem enviat un correu electrònic amb la informació, comprova la safata d'entrada així com el correu brossa.",

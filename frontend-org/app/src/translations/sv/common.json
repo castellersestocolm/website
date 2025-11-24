@@ -17,6 +17,7 @@
   "pages.user-join.form.button-children.add": "Lägg till barn",
   "pages.user-join.form.button-children.remove": "Ta bort",
   "pages.user-join.form.button-join": "Gå med",
+  "pages.user-join.form.activity.signup-until": "Sista datum för registrering",
   "pages.home-join.success": "Slutför betalningen för att slutföra registreringen/förnyelsen.",
   "pages.status.subtitle": "Kontrollera medlemskap status",
   "pages.status.success": "Vi har skickat ett e-postmeddelande med uppgifterna, vänligen kontrollera din inkorg och skräppostmapp.",

@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.db.models import JSONField
-from django.utils import translation
 from jsoneditor.forms import JSONEditor
 
 from legal.models import Team, Member, Role, Bylaws
@@ -32,8 +31,11 @@ class TeamAdmin(admin.ModelAdmin):
         JSONField: {"widget": JSONEditor},
     }
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_name()
+
     def name_locale(self, obj):
-        return obj.name.get(translation.get_language()) or list(obj.name.values())[0]
+        return obj.name_locale
 
     name_locale.short_description = _("name")
 
@@ -53,8 +55,11 @@ class RoleAdmin(admin.ModelAdmin):
         JSONField: {"widget": JSONEditor},
     }
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_name()
+
     def name_locale(self, obj):
-        return obj.name.get(translation.get_language()) or list(obj.name.values())[0]
+        return obj.name_locale
 
     name_locale.short_description = _("name")
 

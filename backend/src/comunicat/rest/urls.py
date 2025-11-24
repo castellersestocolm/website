@@ -15,6 +15,7 @@ from comunicat.rest.views import (
     media,
     admin,
     document,
+    activity,
 )
 from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
@@ -50,6 +51,7 @@ router.register("org", org.OrgAPI, "org")
 router.register("data/location", data.LocationAPI, "data_location")
 router.register("media/release", media.ReleaseAPI, "media_release")
 router.register("document", document.DocumentAPI, "document")
+router.register("activity/program", activity.ProgramAPI, "activity_program")
 
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
 router.register("admin/order", admin.AdminOrderAPI, "admin_order")

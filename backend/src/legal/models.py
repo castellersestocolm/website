@@ -8,7 +8,7 @@ from django.db import models
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 from legal.enums import TeamType
-from legal.managers import RoleQuerySet
+from legal.managers import RoleQuerySet, TeamQuerySet
 
 
 class Team(StandardModel, Timestamps):
@@ -22,6 +22,8 @@ class Team(StandardModel, Timestamps):
 
     date_from = models.DateField()
     date_to = models.DateField(null=True, blank=True)
+
+    objects = TeamQuerySet.as_manager()
 
     def __str__(self) -> str:
         return f"{Module(self.module).name} - {self.name.get(translation.get_language()) or list(self.name.values())[0]}"

@@ -3,14 +3,14 @@ import re
 import unicodedata
 from zoneinfo import ZoneInfo
 
-from celery.beat import event_t
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.db.models import JSONField, Q
+from django.db.models import JSONField, Q, F
 from django.db.models.functions import Trunc
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils import timezone
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
@@ -113,6 +113,14 @@ class Event(StandardModel, Timestamps):
         blank=True,
     )
 
+    course = models.ForeignKey(
+        "activity.ProgramCourse",
+        null=True,
+        blank=True,
+        related_name="events",
+        on_delete=models.SET_NULL,
+    )
+
     max_registrations = models.PositiveSmallIntegerField(null=True, blank=True)
 
     poster = VersatileImageField(
@@ -125,14 +133,38 @@ class Event(StandardModel, Timestamps):
         return self.title
 
     def clean(self):
+        validation_errors = {}
         if self.time_to < self.time_from:
-            raise ValidationError(
-                {"time_to": _("End time must be greater than start time.")}
+            validation_errors["time_to"] = _(
+                "The end time must be greater than start time."
             )
+        if self.course:
+            if self.course.program.module != self.module:
+                validation_errors["module"] = _(
+                    "The module must match the course program module."
+                )
+            if (
+                self.course.date_from
+                > timezone.localdate(self.time_from)
+                > self.course.date_to
+            ):
+                validation_errors["time_from"] = _(
+                    "The start time must be within the course dates."
+                )
+
+        if validation_errors:
+            raise ValidationError(validation_errors)
 
     def save(self, *args, **kwargs):
         if self.series:
             self.series.events.exclude(id=self.id).update(type=self.type)
+
+        if self.course:
+            if not self.title:
+                self.title = self.course.program.name.get(settings.LANGUAGE_CODE)
+            if not self.module:
+                self.module = self.course.program.module
+            self.type = EventType.COURSE
 
         if not self.code:
             self.code = unicodedata.normalize(

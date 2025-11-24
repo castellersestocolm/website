@@ -12,6 +12,8 @@ from django.utils.translation import gettext_lazy as _
 import notify.tasks
 from comunicat.rest.serializers.org import OrgCreateSerializer, OrgCheckSerializer
 
+import activity.api.course
+
 import user.api
 import user.api.family
 import user.api.family_member
@@ -19,6 +21,7 @@ import membership.api
 
 from comunicat.rest.viewsets import ComuniCatViewSet
 from notify.enums import EmailType
+from payment.api.entity import get_entity_by_key
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from rest_framework.decorators import action
 
@@ -108,13 +111,14 @@ class OrgAPI(ComuniCatViewSet):
                     {"general": _("The amount of children you entered is incorrect.")}
                 )
             for i, child in enumerate(validated_data["children"]):
+                course_ids = child.pop("activities")
                 if i < len(family_member_objs):
                     user_i_obj = family_member_objs[i].user
                     for k, v in child.items():
                         setattr(user_i_obj, k, v)
                     user_i_obj.save(update_fields=tuple(child.keys()))
                 else:
-                    user.api.family_member.create(
+                    family_member_obj = user.api.family_member.create(
                         user_id=user_1_obj.id,
                         **child,
                         consent_pictures=False,
@@ -124,6 +128,12 @@ class OrgAPI(ComuniCatViewSet):
                         role=FamilyMemberRole.MEMBER,
                         status=FamilyMemberStatus.ACTIVE,
                     )
+                    user_i_obj = family_member_obj.user
+
+                entity_i_obj = get_entity_by_key(email=user_i_obj.email)
+                activity.api.course.register_entity(
+                    entity_id=entity_i_obj.id, course_ids=course_ids
+                )
 
         membership.api.create_or_update(user_id=user_1_obj.id, modules=[self.module])
 

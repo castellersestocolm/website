@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "comunicat",
     "data",
     "user",
+    "activity",
     "integration",
     "payment",
     "product",

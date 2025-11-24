@@ -3,6 +3,7 @@ import os
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
@@ -104,6 +105,19 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
         #         return False
 
         return True
+
+    @cached_property
+    def age(self) -> int | None:
+        if not self.birthday:
+            return None
+
+        today = timezone.localdate()
+
+        return (
+            today.year
+            - self.birthday.year
+            - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
+        )
 
     def disable_verify(self):
         self.email_verified = False

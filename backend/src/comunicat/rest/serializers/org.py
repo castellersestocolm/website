@@ -33,6 +33,7 @@ class MemberChildSerializer(s.Serializer):
     firstname = s.CharField(required=True)
     lastname = s.CharField(required=True)
     birthday = s.DateField(required=True)
+    activities = s.ListSerializer(required=True, child=s.UUIDField())
 
 
 class OrgCreateSerializer(s.Serializer):

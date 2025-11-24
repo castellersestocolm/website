@@ -1,5 +1,6 @@
+from django import forms
 from django.contrib import admin, messages
-from django.db.models import JSONField
+from django.db.models import JSONField, Q
 from jsoneditor.forms import JSONEditor
 import nested_admin
 
@@ -9,6 +10,7 @@ import notify.tasks
 
 from django.utils.translation import gettext_lazy as _
 
+from activity.models import ProgramCourse
 from event.models import (
     Location,
     Event,
@@ -117,6 +119,21 @@ class AgendaItemInline(nested_admin.NestedTabularInline):
     }
 
 
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        program_course_filter = Q()
+        if self.instance.module:
+            program_course_filter &= Q(program__module=self.instance.module)
+        self.fields["course"].queryset = ProgramCourse.objects.filter(
+            program_course_filter
+        ).order_by("-date_from", "-date_to")
+
+
 @admin.register(Event)
 class EventAdmin(
     inline_actions.admin.InlineActionsModelAdminMixin, nested_admin.NestedModelAdmin
@@ -141,6 +158,7 @@ class EventAdmin(
         RegistrationInline,
     )
     readonly_fields = ("google_event", "google_album")
+    form = EventForm
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},
