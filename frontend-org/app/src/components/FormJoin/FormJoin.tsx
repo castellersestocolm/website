@@ -50,7 +50,7 @@ interface CreateFormElement extends HTMLFormElement {
 }
 
 export default function FormJoin() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
 
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
@@ -76,7 +76,7 @@ export default function FormJoin() {
         setActivityies(response.data);
       }
     });
-  }, [setActivityies]);
+  }, [setActivityies, i18n.resolvedLanguage]);
 
   function handleChildrenBirthday(childIndex: number, birthday: string) {
     setChildrenBirthdays(
