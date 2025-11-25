@@ -15,8 +15,10 @@ from django.db.models import (
     DateField,
     Func,
     IntegerField,
+    UUIDField,
 )
-from django.db.models.functions import Coalesce, Cast, Concat, Substr, Abs
+from django.db.models.fields.json import KeyTextTransform
+from django.db.models.functions import Coalesce, Cast, Concat, Substr
 from django.utils import timezone, translation
 
 from comunicat.enums import Module
@@ -297,6 +299,10 @@ class PaymentLineQuerySet(QuerySet):
 
     def with_description(self):
         PaymentLine = apps.get_model("payment", "PaymentLine")
+        Registration = apps.get_model("event", "Registration")
+        OrderProduct = apps.get_model("order", "OrderProduct")
+
+        locale = translation.get_language()
 
         return self.annotate(
             is_update=Exists(
@@ -307,6 +313,7 @@ class PaymentLineQuerySet(QuerySet):
                     id=OuterRef("id"),
                 )
             ),
+            item_uuid=Cast(F("item_id"), output_field=UUIDField()),
             description=Case(
                 When(
                     Q(
@@ -350,6 +357,33 @@ class PaymentLineQuerySet(QuerySet):
                         ),
                         default=Value(str(_("Membership"))),
                         output_field=CharField(),
+                    ),
+                ),
+                When(
+                    Q(
+                        item_type__app_label="event",
+                        item_type__model="registration",
+                    ),
+                    then=Subquery(
+                        Registration.objects.filter(
+                            id=OuterRef("item_uuid")
+                        ).values_list("event__title", flat=True)[:1]
+                    ),
+                ),
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="orderproduct",
+                    ),
+                    then=Subquery(
+                        OrderProduct.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(
+                            name_locale=Cast(
+                                KeyTextTransform(locale, "size__product__name"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("name_locale", flat=True)[:1]
                     ),
                 ),
                 When(Q(receipt__isnull=False), then=F("receipt__description")),
