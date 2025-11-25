@@ -9,6 +9,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+import payment.api.entity
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.enums import Module
 from event.consts import (
@@ -66,26 +67,30 @@ def import_events() -> None:
             google_integration_obj.module
             in settings.MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES
         ):
-            user_by_email = {
-                user_obj.email: user_obj
+            entity_by_email = {
+                user_obj.email: (
+                    user_obj.entity
+                    if hasattr(user_obj, "entity")
+                    else payment.api.entity.get_entity_by_key(email=user_obj.email)
+                )
                 for user_obj in User.objects.with_has_active_membership(
                     modules=[google_integration_obj.module]
                 ).filter(has_active_membership=True)
                 if user_obj.can_manage
             }
         else:
-            user_by_email = {}
+            entity_by_email = {}
 
         # TODO: Don't update if "approve required" on the event
         # TODO: Not necessarily with user only
         registration_by_key = {
             (
                 registration_obj.event_id,
-                registration_obj.entity.user_id,
+                registration_obj.entity_id,
             ): registration_obj
             for registration_obj in Registration.objects.filter(
                 event__time_to__gte=time_now,
-            ).filter_with_user()
+            )
         }
 
         creds = Credentials.from_authorized_user_info(
@@ -124,11 +129,11 @@ def import_events() -> None:
                             event_updates.append(event_obj)
 
                             for attendee in event.get("attendees", []):
-                                if attendee["email"] in user_by_email:
+                                if attendee["email"] in entity_by_email:
                                     registration_obj = registration_by_key.get(
                                         (
                                             event_obj.id,
-                                            user_by_email[attendee["email"]].id,
+                                            entity_by_email[attendee["email"]].id,
                                         )
                                     )
                                     registration_status = (
@@ -157,7 +162,7 @@ def import_events() -> None:
                                             registration_creates.append(
                                                 Registration(
                                                     event=event_obj,
-                                                    user=user_by_email[
+                                                    entity=entity_by_email[
                                                         attendee["email"]
                                                     ],
                                                     status=registration_status,
@@ -218,7 +223,7 @@ def import_events() -> None:
                                         )
                                     )
                             for attendee in event.get("attendees", []):
-                                if attendee["email"] in user_by_email:
+                                if attendee["email"] in entity_by_email:
                                     registration_status = (
                                         GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS[
                                             attendee["responseStatus"]
@@ -231,7 +236,9 @@ def import_events() -> None:
                                         registration_creates.append(
                                             Registration(
                                                 event=event_obj,
-                                                user=user_by_email[attendee["email"]],
+                                                entity=entity_by_email[
+                                                    attendee["email"]
+                                                ],
                                                 status=registration_status,
                                             )
                                         )
@@ -344,8 +351,8 @@ def create_or_update_event(
         if user_obj.can_manage
     ]
     registration_by_user_id = {
-        registration_obj.user_id: registration_obj
-        for registration_obj in event_obj.registrations.all()
+        registration_obj.entity.user_id: registration_obj
+        for registration_obj in event_obj.registrations.filter_with_user()
     }
 
     registration_updates = []

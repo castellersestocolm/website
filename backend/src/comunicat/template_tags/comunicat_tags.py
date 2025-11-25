@@ -95,7 +95,9 @@ def registration_by_event_and_user(
         [
             registration_obj
             for registration_obj in registration_objs
-            if registration_obj.event == event_obj and registration_obj.user == user_obj
+            if registration_obj.event == event_obj
+            and registration_obj.entity.user
+            and registration_obj.entity.user == user_obj
         ]
         + [None]
     )[0]

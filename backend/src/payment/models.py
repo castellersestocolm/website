@@ -581,13 +581,14 @@ class PaymentOrder(StandardModel, Timestamps):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__provider_id = self.provider.id
+        if self.provider:
+            self.__provider_id = self.provider.id
 
     def __str__(self) -> str:
         return f"{self.provider.name.get(translation.get_language()) or list(self.provider.name.values())[0]}{' - ' + self.external_id if self.external_id else ''}"
 
     def save(self, *args, **kwargs):
-        if self.pk and self.provider.id != self.__provider_id:
+        if self.pk and self.provider and self.provider.id != self.__provider_id:
             PaymentOrderProviderLog.objects.create(
                 payment_order_id=self.id, provider=self.provider
             )
