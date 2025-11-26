@@ -165,6 +165,7 @@ def export_payments(
                             else ""
                         ),
                         "",
+                        "",
                         multiplier * payment_line_obj.amount.amount,
                         "",
                         "",
