@@ -24,7 +24,7 @@ def export_payments(
             .filter(date_accounting__gte=date_from, date_accounting__lte=date_to)
             .with_amount()
             .with_description()
-            .select_related("entity", "transaction")
+            .select_related("entity", "transaction", "transaction__source")
             .prefetch_related(
                 Prefetch(
                     "lines", PaymentLine.objects.with_description().order_by("amount")
@@ -47,6 +47,7 @@ def export_payments(
                 "Account",
                 "Account name",
                 "Module",
+                "Source",
                 "Amount",
                 "Line amount",
                 "Entity",
@@ -63,14 +64,15 @@ def export_payments(
     ws.column_dimensions["E"].width = 20
     ws.column_dimensions["F"].width = 15
     ws.column_dimensions["G"].width = 15
-    ws.column_dimensions["H"].width = 30
-    ws.column_dimensions["I"].width = 15
+    ws.column_dimensions["H"].width = 15
+    ws.column_dimensions["I"].width = 30
     ws.column_dimensions["J"].width = 15
+    ws.column_dimensions["K"].width = 15
 
     ws.column_dimensions["A"].number_format = numbers.FORMAT_DATE_YYYYMMDD2
-    ws.column_dimensions["F"].number_format = numbers.FORMAT_NUMBER_00
     ws.column_dimensions["G"].number_format = numbers.FORMAT_NUMBER_00
-    ws.column_dimensions["J"].number_format = numbers.FORMAT_NUMBER_00
+    ws.column_dimensions["H"].number_format = numbers.FORMAT_NUMBER_00
+    ws.column_dimensions["K"].number_format = numbers.FORMAT_NUMBER_00
 
     font_fold = Font(bold=True)
 
@@ -116,6 +118,11 @@ def export_payments(
                         and payment_line_objs[0].account.module
                         else ""
                     )
+                ),
+                (
+                    payment_obj.transaction.source.name
+                    if payment_obj.transaction
+                    else ""
                 ),
                 multiplier
                 * sum(
