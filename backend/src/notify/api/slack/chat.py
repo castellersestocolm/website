@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models import Prefetch
 from django.urls import reverse
 from django.utils import timezone, translation
+from drf_yasg.openapi import Contact
 
 from comunicat.enums import Module
 from comunicat.template_tags.comunicat_tags import full_url, full_media
@@ -12,8 +13,8 @@ from notify.api.slack import get_client
 
 from django.utils.translation import gettext_lazy as _
 
-from notify.enums import MessageSlackType
-from notify.models import MessageSlack
+from notify.enums import MessageSlackType, ContactMessageStatus, ContactMessageType
+from notify.models import MessageSlack, ContactMessage
 from order.enums import OrderStatus
 from order.models import Order, OrderProduct, OrderLog
 from product.models import ProductSize
@@ -30,7 +31,7 @@ def post_message(channel_id: str, blocks: list[dict], module: Module) -> Optiona
     return None
 
 
-def send_order_message(order_id: UUID) -> None:
+def send_order_message(order_id: UUID) -> MessageSlack:
     order_obj = (
         Order.objects.filter(id=order_id)
         .select_related(
@@ -160,11 +161,88 @@ def send_order_message(order_id: UUID) -> None:
         channel_id=channel_id, blocks=blocks, module=order_obj.origin_module
     )
 
-    MessageSlack.objects.create(
+    return MessageSlack.objects.create(
         channel_id=channel_id,
         message_id=message_id,
         type=MessageSlackType.ORDER_CREATED,
         module=order_obj.origin_module,
+        locale=translation.get_language(),
+        blocks=blocks,
+    )
+
+
+def send_contact_message(message_id: UUID) -> MessageSlack:
+    contact_message_obj = (
+        ContactMessage.objects.filter(id=message_id)
+        .select_related(
+            "entity",
+        )
+        .first()
+    )
+
+    blocks = [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{_('A new contact message has just been sent!')}\n*<{full_url(path=reverse("admin:notify_contactmessage_change", args=(str(message_id),)))}|{contact_message_obj.entity.full_name} — {timezone.localtime(contact_message_obj.created_at).strftime('%Y-%m-%d %H:%M')}>*",
+            },
+        },
+        {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Type*\n{ContactMessageType(contact_message_obj.status).name.capitalize()}",
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Status*\n{ContactMessageStatus(contact_message_obj.status).name.capitalize()}",
+                },
+            ],
+        },
+        {"type": "divider"},
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": contact_message_obj.message,
+            },
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": str(_("View message")),
+                        "emoji": True,
+                    },
+                    "url": full_url(
+                        path=reverse(
+                            "admin:notify_contactmessage_change",
+                            args=(str(message_id),),
+                        )
+                    ),
+                }
+            ],
+        },
+    ]
+
+    channel_id = getattr(
+        settings, f"SLACK_{Module(contact_message_obj.module).name}_CHANNEL_CONTACT"
+    )
+
+    message_id = post_message(
+        channel_id=channel_id, blocks=blocks, module=contact_message_obj.module
+    )
+
+    return MessageSlack.objects.create(
+        channel_id=channel_id,
+        message_id=message_id,
+        type=MessageSlackType.CONTACT_MESSAGE_CREATED,
+        module=contact_message_obj.module,
         locale=translation.get_language(),
         blocks=blocks,
     )

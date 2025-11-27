@@ -389,9 +389,9 @@ def complete(
                 locale=translation.get_language(),
             )
 
-            notify.tasks.send_order_message_slack.delay(
-                order_id=order_obj.id,
-            )
+        notify.tasks.send_order_message_slack.delay(
+            order_id=order_obj.id,
+        )
 
         return get(order_id=order_id, user_id=user_id, module=module)
 

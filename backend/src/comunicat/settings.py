@@ -303,6 +303,9 @@ REST_FRAMEWORK = {
             "EVENT_REGISTRATION_CREATE_THROTTLE_RATE", "5/second"
         ),
         "order.create": os.getenv("ORDER_CREATE_THROTTLE_RATE", "10/minute"),
+        "notify-contact-message.create": os.getenv(
+            "NOTIFY_CONTACT_MESSAGE_CREATE_THROTTLE_RATE", "2/minute"
+        ),
     },
     "EXCEPTION_HANDLER": "comunicat.utils.exceptions.full_details_exception_handler",
 }
@@ -533,10 +536,12 @@ PAYMENT_PROVIDER_PAYPAL_ENVIRONMENT = os.getenv("PAYMENT_PROVIDER_PAYPAL_ENVIRON
 SLACK_ORG_ENABLED = os.getenv("SLACK_ORG_ENABLED", "false").lower() == "true"
 SLACK_ORG_BOT_TOKEN = os.getenv("SLACK_ORG_BOT_TOKEN")
 SLACK_ORG_CHANNEL_ORDERS = os.getenv("SLACK_ORG_CHANNEL_ORDERS")
+SLACK_ORG_CHANNEL_CONTACT = os.getenv("SLACK_ORG_CHANNEL_CONTACT")
 
-SLACK_TOWERS_ENABLED = os.getenv("SLACK_TOWERS_ENABLED", "true").lower() == "true"
+SLACK_TOWERS_ENABLED = os.getenv("SLACK_TOWERS_ENABLED", "false").lower() == "true"
 SLACK_TOWERS_BOT_TOKEN = os.getenv("SLACK_TOWERS_BOT_TOKEN")
-SLACK_TOWERS_CHANNEL_ORDERS = os.getenv("SLACK_TOWERS_CHANNEL_ORDERS", "C097RN4E5B7")
+SLACK_TOWERS_CHANNEL_ORDERS = os.getenv("SLACK_TOWERS_CHANNEL_ORDERS")
+SLACK_TOWERS_CHANNEL_CONTACT = os.getenv("SLACK_TOWERS_CHANNEL_CONTACT")
 
 # Django money
 

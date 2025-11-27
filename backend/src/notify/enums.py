@@ -29,3 +29,16 @@ class EmailStatus(enum.IntEnum):
 
 class MessageSlackType(enum.IntEnum):
     ORDER_CREATED = 50
+    CONTACT_MESSAGE_CREATED = 60
+
+
+class ContactMessageType(enum.IntEnum):
+    CONTACT = 10
+    BUSINESS_WORKSHOP = 20
+    BUSINESS_PERFORMANCE = 21
+
+
+class ContactMessageStatus(enum.IntEnum):
+    CREATED = 10
+    REPLIED = 20
+    DELETED = 30

@@ -56,7 +56,13 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
     return entity_obj
 
 
-def get_entity_by_key(email: str | None = None, user_id: UUID | None = None) -> Entity:
+def get_entity_by_key(
+    email: str | None = None,
+    user_id: UUID | None = None,
+    firstname: str | None = None,
+    lastname: str | None = None,
+    phone: str | None = None,
+) -> Entity:
     if email:
         user_obj = User.objects.filter(email=email).first()
     else:
@@ -66,7 +72,25 @@ def get_entity_by_key(email: str | None = None, user_id: UUID | None = None) -> 
         return user_obj.entity
 
     entity_obj, __ = Entity.objects.update_or_create(
-        email=email, defaults={"user_id": user_obj.id if user_obj else None}
+        email=email,
+        defaults={
+            "user_id": user_obj.id if user_obj else None,
+            **(
+                {"firstname": user_obj.firstname or firstname}
+                if user_obj or firstname is not None
+                else {}
+            ),
+            **(
+                {"lastname": user_obj.lastname or lastname}
+                if user_obj or lastname is not None
+                else {}
+            ),
+            **(
+                {"phone": user_obj.phone or phone}
+                if user_obj or phone is not None
+                else {}
+            ),
+        },
     )
 
     return entity_obj

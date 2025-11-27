@@ -5,7 +5,13 @@ from django.utils import translation
 from comunicat.db.mixins import Timestamps, StandardModel
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
-from notify.enums import EmailType, MessageSlackType, EmailStatus
+from notify.enums import (
+    EmailType,
+    MessageSlackType,
+    EmailStatus,
+    ContactMessageType,
+    ContactMessageStatus,
+)
 from notify.managers import EmailTemplateQuerySet
 
 
@@ -56,7 +62,7 @@ class Email(StandardModel, Timestamps):
     context = JSONField(default=dict)
 
     def __str__(self) -> str:
-        return f"{self.subject} <{self.entity.email or self.entity.user.email}>"
+        return f"{self.subject}{(' <' + self.entity.email or self.entity.user.email + '>') if self.entity.email or self.entity.user else ''}"
 
 
 class MessageSlack(StandardModel, Timestamps):
@@ -70,3 +76,24 @@ class MessageSlack(StandardModel, Timestamps):
     )
     locale = models.CharField(max_length=5)
     blocks = JSONField(default=dict)
+
+
+class ContactMessage(StandardModel, Timestamps):
+    entity = models.ForeignKey(
+        "payment.Entity",
+        related_name="contact_messages",
+        on_delete=models.CASCADE,
+    )
+    type = models.PositiveSmallIntegerField(
+        choices=((cmt.value, cmt.name) for cmt in ContactMessageType),
+        default=ContactMessageType.CONTACT,
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((cms.value, cms.name) for cms in ContactMessageStatus),
+        default=ContactMessageStatus.CREATED,
+    )
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+    )
+    message = models.TextField(max_length=1000)
+    context = JSONField(default=dict)

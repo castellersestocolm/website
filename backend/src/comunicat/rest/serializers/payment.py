@@ -2,7 +2,9 @@ from django.conf import settings
 from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from paypalserversdk.configuration import Environment
+from phonenumber_field.formfields import PhoneNumberField
 from rest_framework import serializers as s
+from rest_framework.exceptions import ValidationError
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from comunicat.rest.utils.fields import MoneyField
@@ -17,7 +19,71 @@ from payment.models import (
     ExpenseLog,
     PaymentProvider,
     PaymentOrder,
+    Entity,
 )
+from django.utils.translation import gettext_lazy as _
+
+
+class CreateEntitySerializer(s.Serializer):
+    firstname = s.CharField(allow_null=True)
+    lastname = s.CharField(allow_null=True)
+    email = s.EmailField()
+    phone = PhoneNumberField(empty_value=True)
+
+    def validate_firstname(self, value: str | None):
+        user_obj = self.context.get("user")
+
+        if not user_obj and not value:
+            raise ValidationError(
+                {"firstname": _("The first name is required for non-logged in users.")}
+            )
+
+        return value
+
+    def validate_lastname(self, value: str | None):
+        user_obj = self.context.get("user")
+
+        if not user_obj and not value:
+            raise ValidationError(
+                {"lastname": _("The last name is required for non-logged in users.")}
+            )
+
+        return value
+
+
+class EntitySlimSerializer(s.ModelSerializer):
+    firstname = s.SerializerMethodField(read_only=True)
+    lastname = s.SerializerMethodField(read_only=True)
+    email = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Entity
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "email",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "email",
+            "created_at",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_firstname(self, obj):
+        return obj.user.firstname if obj.user else obj.firstname
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_lastname(self, obj):
+        return obj.user.lastname if obj.user else obj.lastname
+
+    @swagger_serializer_method(serializer_or_field=s.EmailField(read_only=True))
+    def get_email(self, obj):
+        return obj.user.email if obj.user else obj.email
 
 
 class PaymentLogSerializer(s.ModelSerializer):
