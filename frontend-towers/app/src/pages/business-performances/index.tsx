@@ -29,6 +29,8 @@ import ImagePerformance2 from "../../assets/images/performances/performance2.jpg
 import IconMailOutline from "@mui/icons-material/MailOutline";
 import IconLocationOn from "@mui/icons-material/LocationOn";
 import IconEvent from "@mui/icons-material/Event";
+import FormContactMessage from "../../components/FormContactMessage/FormContactMessage";
+import { ContactMessageType } from "../../enums";
 
 function BusinessPerformancesPage() {
   const { t } = useTranslation("common");
@@ -210,26 +212,7 @@ function BusinessPerformancesPage() {
             </Typography>
           </Box>
           <Grid container spacing={4} className={styles.workshopsPricingGrid}>
-            <Grid container direction="row" size={{ xs: 12, md: 4 }}>
-              <Card variant="outlined" className={styles.workshopsPricingCard}>
-                <CardContent className={styles.workshopsPricingCard}>
-                  <IconMailOutline className={styles.workshopsPricingIcon} />
-                  <Box>
-                    <Typography variant="h5" fontWeight="600">
-                      {t("pages.performances.pricing-card.grid-contact.title")}
-                    </Typography>
-                    <Typography className={styles.workshopsPricingCardText}>
-                      <MarkdownText
-                        text={t(
-                          "pages.performances.pricing-card.grid-contact.body",
-                        )}
-                      />
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid container direction="row" size={{ xs: 12, md: 4 }}>
+            <Grid container direction="row" size={{ xs: 12, md: 6 }}>
               <Card variant="outlined" className={styles.workshopsPricingCard}>
                 <CardContent className={styles.workshopsPricingCard}>
                   <IconLocationOn className={styles.workshopsPricingIcon} />
@@ -248,7 +231,7 @@ function BusinessPerformancesPage() {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid container direction="row" size={{ xs: 12, md: 4 }}>
+            <Grid container direction="row" size={{ xs: 12, md: 6 }}>
               <Card variant="outlined" className={styles.workshopsPricingCard}>
                 <CardContent className={styles.workshopsPricingCard}>
                   <IconEvent className={styles.workshopsPricingIcon} />
@@ -263,6 +246,21 @@ function BusinessPerformancesPage() {
                         )}
                       />
                     </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid container direction="row" size={12}>
+              <Card variant="outlined" className={styles.workshopsPricingCard}>
+                <CardContent className={styles.workshopsPricingCard}>
+                  <IconMailOutline className={styles.workshopsPricingIcon} />
+                  <Box width="100%">
+                    <Typography variant="h5" fontWeight="600" mb={2}>
+                      {t("pages.performances.pricing-card.grid-contact.title")}
+                    </Typography>
+                    <FormContactMessage
+                      type={ContactMessageType.BUSINESS_PERFORMANCE}
+                    />
                   </Box>
                 </CardContent>
               </Card>

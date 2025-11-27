@@ -30,8 +30,8 @@ class ContactMessageAPI(ComuniCatViewSet):
     lookup_field = "id"
 
     def get_throttles(self):
-        # if self.action in ("create",):
-        #     self.throttle_scope = f"notify-contact-message.{self.action}"
+        if self.action in ("create",):
+            self.throttle_scope = f"notify-contact-message.{self.action}"
         return super().get_throttles()
 
     @swagger_auto_schema(
@@ -62,7 +62,7 @@ class ContactMessageAPI(ComuniCatViewSet):
             entity_id=entity_obj.id,
             message_type=validated_data["type"],
             message=validated_data["message"],
-            context=validated_data["context"],
+            context=validated_data.get("context", {}),
             module=self.module,
         )
 

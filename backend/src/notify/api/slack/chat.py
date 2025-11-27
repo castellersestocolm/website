@@ -193,7 +193,7 @@ def send_contact_message(message_id: UUID) -> MessageSlack:
             "fields": [
                 {
                     "type": "mrkdwn",
-                    "text": f"*Type*\n{ContactMessageType(contact_message_obj.status).name.capitalize()}",
+                    "text": f"*Type*\n{ContactMessageType(contact_message_obj.status).name.capitalize().replace('_', ' ')}",
                 },
                 {
                     "type": "mrkdwn",

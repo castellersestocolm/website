@@ -1,7 +1,6 @@
 from rest_framework import serializers as s
 
 from comunicat.rest.serializers.payment import (
-    EntitySlimSerializer,
     CreateEntitySerializer,
 )
 from comunicat.rest.utils.fields import IntEnumField
@@ -10,7 +9,6 @@ from notify.models import ContactMessage
 
 
 class ContactMessageSerializer(s.ModelSerializer):
-    entity = EntitySlimSerializer(read_only=True)
     type = IntEnumField(ContactMessageType, read_only=True)
     status = IntEnumField(ContactMessageStatus, read_only=True)
 
@@ -18,7 +16,6 @@ class ContactMessageSerializer(s.ModelSerializer):
         model = ContactMessage
         fields = (
             "id",
-            "entity",
             "type",
             "status",
             "message",
@@ -27,7 +24,6 @@ class ContactMessageSerializer(s.ModelSerializer):
         )
         read_only_fields = (
             "id",
-            "entity",
             "type",
             "status",
             "message",

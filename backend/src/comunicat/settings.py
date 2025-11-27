@@ -304,7 +304,7 @@ REST_FRAMEWORK = {
         ),
         "order.create": os.getenv("ORDER_CREATE_THROTTLE_RATE", "10/minute"),
         "notify-contact-message.create": os.getenv(
-            "NOTIFY_CONTACT_MESSAGE_CREATE_THROTTLE_RATE", "2/minute"
+            "NOTIFY_CONTACT_MESSAGE_CREATE_THROTTLE_RATE", "5/minute"
         ),
     },
     "EXCEPTION_HANDLER": "comunicat.utils.exceptions.full_details_exception_handler",

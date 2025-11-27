@@ -13,7 +13,7 @@ import {
   API_ADMIN_EVENT_LIST_PAGE_SIZE,
   API_DOCUMENTS_LIST_PAGE_SIZE,
 } from "../consts";
-import { RegistrationStatus } from "../enums";
+import { ContactMessageType, RegistrationStatus } from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -820,6 +820,24 @@ export const apiDocumentList = async (
         page_size: pageSize ? pageSize : API_DOCUMENTS_LIST_PAGE_SIZE,
         page: page,
       },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiContactMessageCreate = async (
+  entity: { firstname: string; lastname: string; email: string },
+  type: ContactMessageType,
+  message: string,
+) => {
+  try {
+    return await instance.post("/contact/message/", {
+      entity: entity,
+      type: type,
+      message: message,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

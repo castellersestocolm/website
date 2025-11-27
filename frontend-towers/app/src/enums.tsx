@@ -226,3 +226,9 @@ export enum TeamType {
   MUSICIANS = 30,
   COMMISSION = 40,
 }
+
+export enum ContactMessageType {
+  CONTACT = 10,
+  BUSINESS_WORKSHOP = 20,
+  BUSINESS_PERFORMANCE = 21,
+}
