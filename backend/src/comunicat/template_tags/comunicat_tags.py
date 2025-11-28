@@ -1,5 +1,5 @@
 import importlib
-from typing import List
+from typing import List, Any
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -8,6 +8,8 @@ from django.utils import timezone, translation
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from djmoney.money import Money
+
+import membership.enums
 
 from comunicat.enums import Module
 from event.models import Registration, Event
@@ -65,6 +67,16 @@ def full_media(path: str):
 @register.filter
 def settings_value(name: str):
     return getattr(settings, name, "")
+
+
+@register.filter
+def get_attr(object: Any, name: str):
+    return getattr(object, name, "")
+
+
+@register.filter
+def enums_membership(name: str):
+    return getattr(membership.enums, name, "")
 
 
 @register.filter

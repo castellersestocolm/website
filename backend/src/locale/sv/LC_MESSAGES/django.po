@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-19 10:23+0100\n"
+"POT-Creation-Date: 2025-11-28 10:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: activity/admin.py:48 activity/admin.py:128 data/admin.py:39 data/admin.py:70
+#: data/admin.py:94 legal/admin.py:40 legal/admin.py:64 order/admin.py:245
+#: payment/admin.py:478 payment/admin.py:720 product/admin.py:88
+msgid "name"
+msgstr "namn"
 
 #: comunicat/db/mixins.py:15
 msgid "created"
@@ -29,6 +35,14 @@ msgstr "uppdaterad"
 #: comunicat/rest/serializers/order.py:319
 #: comunicat/rest/serializers/order.py:324
 msgid "This field is required."
+msgstr ""
+
+#: comunicat/rest/serializers/payment.py:38
+msgid "The first name is required for non-logged in users."
+msgstr ""
+
+#: comunicat/rest/serializers/payment.py:48
+msgid "The last name is required for non-logged in users."
 msgstr ""
 
 #: comunicat/rest/serializers/user.py:314
@@ -80,21 +94,21 @@ msgstr "Inte ett betalningsmedel."
 msgid "Missing amount or currency."
 msgstr "Det saknas mängd eller valuta."
 
-#: comunicat/rest/views/org.py:108
+#: comunicat/rest/views/org.py:111
 msgid "The amount of children you entered is incorrect."
 msgstr "Antalet barn du angav är felaktigt."
 
-#: comunicat/templates/email/org/base.html:28
-#: comunicat/templates/email/org/base.html:30
-#: comunicat/templates/email/org/base.html:32
-#: comunicat/templates/email/towers/base.html:28
-#: comunicat/templates/email/towers/base.html:30
-#: comunicat/templates/email/towers/base.html:32
+#: comunicat/templates/email/org/base.html:31
+#: comunicat/templates/email/org/base.html:33
+#: comunicat/templates/email/org/base.html:35
+#: comunicat/templates/email/towers/base.html:31
+#: comunicat/templates/email/towers/base.html:33
+#: comunicat/templates/email/towers/base.html:35
 msgid "Hello"
 msgstr "Hej"
 
-#: comunicat/templates/email/org/base.html:37
-#: comunicat/templates/email/towers/base.html:37
+#: comunicat/templates/email/org/base.html:40
+#: comunicat/templates/email/towers/base.html:40
 msgid ""
 "Looks like there's been a problem, this email doesn't have content! Please, "
 "let us know if this is the result of registering, subscribing or any other "
@@ -104,67 +118,101 @@ msgstr ""
 "god och låt oss veta om det beror på registreringen, prenumerationen eller "
 "något annat."
 
-#: comunicat/templates/email/org/base.html:44
-#: comunicat/templates/email/towers/base.html:44
+#: comunicat/templates/email/org/base.html:47
+#: comunicat/templates/email/towers/base.html:47
 msgid "Contact us"
 msgstr "Kontakta oss"
 
-#: comunicat/templates/email/org/base.html:54
-#: comunicat/templates/email/towers/base.html:54
+#: comunicat/templates/email/org/base.html:57
+#: comunicat/templates/email/towers/base.html:57
 msgid "Best"
 msgstr "Hälsningar"
 
-#: comunicat/templates/email/org/base.html:63
-#: comunicat/templates/email/towers/base.html:63
+#: comunicat/templates/email/org/base.html:66
+#: comunicat/templates/email/towers/base.html:66
 msgid "Sent with"
 msgstr "Skickat med"
 
-#: comunicat/templates/email/org/base.html:63
-#: comunicat/templates/email/towers/base.html:63
+#: comunicat/templates/email/org/base.html:66
+#: comunicat/templates/email/towers/base.html:66
 msgid "by"
 msgstr "av"
 
-#: comunicat/templates/email/org/membership/check.html:7
-#: comunicat/templates/email/towers/membership/check.html:7
+#: comunicat/templates/email/org/membership/check.html:8
+#: comunicat/templates/email/towers/membership/check.html:8
 msgid "Your membership is active until"
 msgstr "Ditt medlemskap är aktivt till"
 
-#: comunicat/templates/email/org/membership/check.html:7
-#: comunicat/templates/email/towers/membership/check.html:7
+#: comunicat/templates/email/org/membership/check.html:8
+#: comunicat/templates/email/towers/membership/check.html:8
 msgid "and therefore you are currently a member of"
 msgstr "och därför är du för närvarande medlem i"
 
-#: comunicat/templates/email/org/membership/check.html:7
+#: comunicat/templates/email/org/membership/check.html:8
+#: comunicat/templates/email/org/membership/check.html:10
+#: comunicat/templates/email/org/membership/check.html:12
+#: comunicat/templates/email/org/membership/check.html:14
 #: comunicat/templates/email/towers/membership/check.html:8
+#: comunicat/templates/email/towers/membership/check.html:10
+#: comunicat/templates/email/towers/membership/check.html:12
+#: comunicat/templates/email/towers/membership/check.html:14
 msgid "and"
 msgstr "och"
 
-#: comunicat/templates/email/org/membership/check.html:9
-#: comunicat/templates/email/org/membership/renew.html:7
+#: comunicat/templates/email/org/membership/check.html:10
+#: comunicat/templates/email/org/membership/check.html:12
 #: comunicat/templates/email/towers/membership/check.html:10
+#: comunicat/templates/email/towers/membership/check.html:12
+msgid "Your membership which is valid until"
+msgstr "Ditt medlemskap som är giltigt till"
+
+#: comunicat/templates/email/org/membership/check.html:10
+#: comunicat/templates/email/towers/membership/check.html:10
+msgid ""
+"is currently being processed. When the process is over you will be a member "
+"of"
+msgstr ""
+"behandlas för närvarande. När processen är över kommer du att vara medlem i"
+
+#: comunicat/templates/email/org/membership/check.html:12
+#: comunicat/templates/email/towers/membership/check.html:12
+msgid ""
+"is awaiting for payment. When the process is over you will be a member of"
+msgstr "väntar på betalning. När processen är över kommer du att vara medlem i"
+
+#: comunicat/templates/email/org/membership/check.html:14
+#: comunicat/templates/email/towers/membership/check.html:14
+msgid ""
+"Your membership is expired and therefore you are not currently a member of"
+msgstr ""
+"Ditt medlemskap har löpt ut och du är därför för närvarande inte medlem i"
+
+#: comunicat/templates/email/org/membership/check.html:17
+#: comunicat/templates/email/org/membership/renew.html:7
+#: comunicat/templates/email/towers/membership/check.html:17
 #: comunicat/templates/email/towers/membership/renew.html:7
 msgid "Amount"
 msgstr "Belopp"
 
-#: comunicat/templates/email/org/membership/check.html:10
+#: comunicat/templates/email/org/membership/check.html:18
 #: comunicat/templates/email/org/membership/renew.html:8
-#: comunicat/templates/email/towers/membership/check.html:11
+#: comunicat/templates/email/towers/membership/check.html:18
 #: comunicat/templates/email/towers/membership/renew.html:8
 msgid "Valid"
 msgstr "Giltighet"
 
-#: comunicat/templates/email/org/membership/check.html:13
-#: comunicat/templates/email/towers/membership/check.html:14
+#: comunicat/templates/email/org/membership/check.html:21
+#: comunicat/templates/email/towers/membership/check.html:21
 msgid "Your membership expired on"
 msgstr "Ditt medlemskap upphörde den"
 
-#: comunicat/templates/email/org/membership/check.html:13
-#: comunicat/templates/email/towers/membership/check.html:14
+#: comunicat/templates/email/org/membership/check.html:21
+#: comunicat/templates/email/towers/membership/check.html:21
 msgid "and therefore you aren't a member anymore."
 msgstr "och därför är du inte längre medlem."
 
-#: comunicat/templates/email/org/membership/check.html:14
-#: comunicat/templates/email/towers/membership/check.html:15
+#: comunicat/templates/email/org/membership/check.html:22
+#: comunicat/templates/email/towers/membership/check.html:22
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
 "In your dashboard you can find instructions on how to renew your membership "
@@ -173,8 +221,8 @@ msgstr ""
 "På din profil hittar du instruktioner om hur du kan förnya ditt medlemskap "
 "samt betalningsinformationen."
 
-#: comunicat/templates/email/org/membership/check.html:17
-#: comunicat/templates/email/towers/membership/check.html:18
+#: comunicat/templates/email/org/membership/check.html:25
+#: comunicat/templates/email/towers/membership/check.html:25
 msgid ""
 "You don't have an active membership registered with this email and therefore "
 "aren't a member."
@@ -182,8 +230,8 @@ msgstr ""
 "Du har inget aktivt medlemskap registrerat med denna e-postadress och är "
 "därför inte medlem."
 
-#: comunicat/templates/email/org/membership/check.html:18
-#: comunicat/templates/email/towers/membership/check.html:19
+#: comunicat/templates/email/org/membership/check.html:26
+#: comunicat/templates/email/towers/membership/check.html:26
 msgid ""
 "However, not all is lost! You can become a member easily, head to our "
 "website to join."
@@ -191,16 +239,16 @@ msgstr ""
 "Men allt är inte förlorat! Du kan enkelt bli medlem, gå till vår hemsida för "
 "att gå med."
 
-#: comunicat/templates/email/org/membership/check.html:31
+#: comunicat/templates/email/org/membership/check.html:39
 #: comunicat/templates/email/org/membership/renew.html:15
-#: comunicat/templates/email/towers/membership/check.html:32
+#: comunicat/templates/email/towers/membership/check.html:39
 #: comunicat/templates/email/towers/membership/expired.html:10
 #: comunicat/templates/email/towers/membership/renew.html:15
 msgid "Renew membership"
 msgstr "Förnya medlemskapet"
 
-#: comunicat/templates/email/org/membership/check.html:31
-#: comunicat/templates/email/towers/membership/check.html:32
+#: comunicat/templates/email/org/membership/check.html:39
+#: comunicat/templates/email/towers/membership/check.html:39
 msgid "Join us"
 msgstr "Gå med"
 
@@ -493,25 +541,31 @@ msgstr ""
 msgid "Join the community"
 msgstr "Gå med i gemenskapen"
 
-#: data/admin.py:39 data/admin.py:70 data/admin.py:94 legal/admin.py:38
-#: legal/admin.py:59 order/admin.py:245 payment/admin.py:400
-#: payment/admin.py:642 product/admin.py:88
-msgid "name"
-msgstr "namn"
-
-#: event/admin.py:85 payment/admin.py:165
+#: event/admin.py:87 payment/admin.py:180
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:87 order/admin.py:92 payment/admin.py:145
+#: event/admin.py:89 order/admin.py:92 payment/admin.py:150
 msgid "Send paid email"
 msgstr ""
 
-#: event/models.py:130
-msgid "End time must be greater than start time."
+#: event/models.py:139
+#, fuzzy
+#| msgid "End time must be greater than start time."
+msgid "The end time must be greater than start time."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: event/models.py:202 product/models.py:138 product/models.py:143
+#: event/models.py:144
+msgid "The module must match the course program module."
+msgstr ""
+
+#: event/models.py:152
+#, fuzzy
+#| msgid "The family member must be below %s to create."
+msgid "The start time must be within the course dates."
+msgstr "Familjemedlemmen måste vara under %s för att skapa."
+
+#: event/models.py:234 product/models.py:138 product/models.py:143
 msgid "Team's module must match module."
 msgstr ""
 
@@ -535,7 +589,7 @@ msgstr ""
 msgid "users"
 msgstr "användare"
 
-#: membership/admin.py:112 user/admin.py:322
+#: membership/admin.py:112 user/admin.py:324
 msgid "family"
 msgstr "familj"
 
@@ -543,15 +597,33 @@ msgstr "familj"
 msgid "modules"
 msgstr "moduler"
 
-#: notify/api/slack/chat.py:144
+#: notify/admin.py:78
+#, fuzzy
+#| msgid "Confirm email"
+msgid "Send email"
+msgstr "Bekräfta e-post"
+
+#: notify/admin.py:142 notify/admin.py:203
+msgid "preview"
+msgstr ""
+
+#: notify/admin.py:202
+msgid "subject"
+msgstr ""
+
+#: notify/api/slack/chat.py:145
 msgid "View order"
 msgstr ""
 
-#: notify/consts.py:34 notify/consts.py:92
+#: notify/api/slack/chat.py:219
+msgid "View message"
+msgstr ""
+
+#: notify/consts.py:34 notify/consts.py:93
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
 
-#: notify/consts.py:38 notify/consts.py:96
+#: notify/consts.py:38 notify/consts.py:97
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
@@ -563,7 +635,7 @@ msgstr "Välkomen till Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:50 notify/consts.py:108
+#: notify/consts.py:50 notify/consts.py:109
 msgid "You have been invited to join a family"
 msgstr "Du har blivit inbjuden att gå med i en familj"
 
@@ -571,45 +643,45 @@ msgstr "Du har blivit inbjuden att gå med i en familj"
 msgid "Sign-up for the upcoming events"
 msgstr "Registrera dig till kommande evenemang"
 
-#: notify/consts.py:58 notify/consts.py:116
+#: notify/consts.py:58 notify/consts.py:117
 msgid "Time to renew your membership"
 msgstr "Dags att förnya ditt medlemskap"
 
-#: notify/consts.py:62 notify/consts.py:120
+#: notify/consts.py:62 notify/consts.py:121
 msgid "Your membership has expired"
 msgstr "Ditt medlemskap har löpt ut"
 
-#: notify/consts.py:66 notify/consts.py:124
+#: notify/consts.py:66 notify/consts.py:125
 msgid "Your membership is now paid"
 msgstr "Ditt medlemskap är nu betalt"
 
-#: notify/consts.py:70 notify/consts.py:128
+#: notify/consts.py:70 notify/consts.py:129
 msgid "Your membership status"
 msgstr "Ditt medlemskap status"
 
-#: notify/consts.py:74 notify/consts.py:132
+#: notify/consts.py:74 notify/consts.py:133
 msgid "Thank you for your order"
 msgstr "Tack för din beställning"
 
-#: notify/consts.py:78 notify/consts.py:136
+#: notify/consts.py:78 notify/consts.py:137
 #, python-format
 msgid "Your order %s is now paid"
 msgstr "Din beställning %s är nu betald"
 
-#: notify/consts.py:82 notify/consts.py:140
+#: notify/consts.py:82 notify/consts.py:141
 #, python-format
 msgid "Your registration for %s is now paid"
 msgstr "Din registrering för %s är nu betald"
 
-#: notify/consts.py:100
+#: notify/consts.py:101
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Välkommen till Castellers d'Estocolm"
 
-#: notify/consts.py:104
+#: notify/consts.py:105
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:112
+#: notify/consts.py:113
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Registrera dig till kommande evenemang och repetitioner"
 
@@ -645,39 +717,39 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:115
+#: payment/admin.py:120 payment/admin.py:294
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:236 payment/admin.py:291
+#: payment/admin.py:260 payment/admin.py:358
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:237 payment/admin.py:293
+#: payment/admin.py:261 payment/admin.py:360
 msgid "date"
 msgstr "datum"
 
-#: payment/admin.py:238 payment/admin.py:294 payment/admin.py:397
-#: payment/admin.py:497
+#: payment/admin.py:262 payment/admin.py:361 payment/admin.py:475
+#: payment/admin.py:575
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:292 user/admin.py:321
+#: payment/admin.py:359 user/admin.py:323
 msgid "entity"
 msgstr "enhet"
 
-#: payment/admin.py:398 payment/admin.py:399 payment/admin.py:498
-#: payment/admin.py:499
+#: payment/admin.py:476 payment/admin.py:477 payment/admin.py:576
+#: payment/admin.py:577
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:496
+#: payment/admin.py:574
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:553
+#: payment/admin.py:631
 msgid "file"
 msgstr "fil"
 
@@ -691,27 +763,27 @@ msgstr "Betalning"
 msgid "Receipts"
 msgstr ""
 
-#: payment/managers.py:120 payment/managers.py:268
+#: payment/managers.py:138 payment/managers.py:356
 msgid "Membership update"
 msgstr "Medlemskapsuppdatering"
 
-#: payment/managers.py:126 payment/managers.py:270
+#: payment/managers.py:144 payment/managers.py:358
 msgid "Membership"
 msgstr "Medlemskap"
 
-#: payment/managers.py:135
+#: payment/managers.py:153
 msgid "Payment"
 msgstr "Betalning"
 
-#: payment/managers.py:276
+#: payment/managers.py:391
 msgid "Unspecified"
 msgstr "Ospecificerad"
 
-#: payment/managers.py:308
+#: payment/managers.py:423
 msgid "(and more)"
 msgstr "(och mer)"
 
-#: payment/managers.py:311
+#: payment/managers.py:426
 msgid "Expense"
 msgstr ""
 
@@ -725,7 +797,7 @@ msgstr "Kategorin måste vara inställd för konto med förälder."
 msgid "Unknown"
 msgstr ""
 
-#: payment/models.py:381
+#: payment/models.py:386
 msgid "Category must be set for accounts with parent."
 msgstr "Kategorin måste vara inställd för konto med förälder."
 
@@ -737,7 +809,7 @@ msgstr ""
 msgid "Product size must match product."
 msgstr ""
 
-#: user/admin.py:156
+#: user/admin.py:158
 msgid "Another user already has the same alias."
 msgstr "En annan användare har redan samma alias."
 
@@ -761,15 +833,15 @@ msgstr "Du har nått högsta mängd av medlemmar i din familj."
 msgid "You have reached the maximum amount of adult members in your family."
 msgstr "Du har redan nått högsta mängd av vuxna medlemmar i din familj."
 
-#: user/models.py:34
+#: user/models.py:35
 msgid "staff status"
 msgstr "personalstatus"
 
-#: user/models.py:38
+#: user/models.py:39
 msgid "active"
 msgstr "aktiv"
 
-#: user/models.py:161
+#: user/models.py:175
 #, fuzzy, python-format
 #| msgid "Category must be set for accounts with parent."
 msgid "Order must be set for source %s."

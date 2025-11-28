@@ -3,15 +3,21 @@
 
 {% block email_message_pre %}
     {% if membership_obj %}
-        {% if membership_obj.date_to|date_is_future %}
-            <p>{% trans "Your membership is active until" %} <strong>{{ membership_obj.date_to|date:"Y-m-d" }}</strong> {% trans "and therefore you are currently a member of" %} {% for module_name in membership_obj|membership_module_names %}<strong>{{ module_name }}</strong>{% if forloop.counter0 < membership_obj.all_modules|length|add:"-2" %}, {% elif forloop.counter0 < membership_obj.all_modules|length|add:"-1" %} {% trans "and" %} {% endif %}{% endfor %}.
+        {% if membership_obj.date_to|date_is_future and not membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"EXPIRED" %}
+            {% if membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"ACTIVE" %}
+                <p>{% trans "Your membership is active until" %} <strong>{{ membership_obj.date_to|date:"Y-m-d" }}</strong> {% trans "and therefore you are currently a member of" %} {% for module_name in membership_obj|membership_module_names %}<strong>{{ module_name }}</strong>{% if forloop.counter0 < membership_obj.all_modules|length|add:"-2" %}, {% elif forloop.counter0 < membership_obj.all_modules|length|add:"-1" %} {% trans "and" %} {% endif %}{% endfor %}.
+            {% elif membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"PROCESSING" %}
+                <p>{% trans "Your membership which is valid until" %} <strong>{{ membership_obj.date_to|date:"Y-m-d" }}</strong> {% trans "is currently being processed. When the process is over you will be a member of" %} {% for module_name in membership_obj|membership_module_names %}<strong>{{ module_name }}</strong>{% if forloop.counter0 < membership_obj.all_modules|length|add:"-2" %}, {% elif forloop.counter0 < membership_obj.all_modules|length|add:"-1" %} {% trans "and" %} {% endif %}{% endfor %}.
+            {% elif membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"REQUESTED" %}
+                <p>{% trans "Your membership which is valid until" %} <strong>{{ membership_obj.date_to|date:"Y-m-d" }}</strong> {% trans "is awaiting for payment. When the process is over you will be a member of" %} {% for module_name in membership_obj|membership_module_names %}<strong>{{ module_name }}</strong>{% if forloop.counter0 < membership_obj.all_modules|length|add:"-2" %}, {% elif forloop.counter0 < membership_obj.all_modules|length|add:"-1" %} {% trans "and" %} {% endif %}{% endfor %}.
+            {% endif %}
             <ul>
-                <li>{% trans "Amount" %}: <strong>{{ membership_amount }} SEK</strong></li>
-                <li>{% trans "Valid" %}: <strong>{{ membership_date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_date_to|date:"Y-m-d" }}</strong></li>
+                <li>{% trans "Amount" %}: <strong>{{ membership_obj|membership_amount|format_money }}</strong></li>
+                <li>{% trans "Valid" %}: <strong>{{ membership_obj.date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_obj.date_to|date:"Y-m-d" }}</strong></li>
             </ul>
         {% else %}
             <p>{% trans "Your membership expired on" %} <strong>{{ membership_obj.date_to|date:"Y-m-d" }}</strong> {% trans "and therefore you aren't a member anymore." %}
-            <p>{% trans "In your dashboard you can find instructions on how to renew your membership as well as the payment information." %}</p>
+            <p>{% trans "However, not all is lost! You can become a member easily, head to our website to join." %}
         {% endif %}
     {% else %}
         <p>{% trans "You don't have an active membership registered with this email and therefore aren't a member." %}
@@ -20,12 +26,12 @@
 {% endblock %}
 
 {% block email_button %}
-    {% if membership_obj and not membership_obj.date_to|date_is_future or not membership_obj %}
+    {% if membership_obj and not membership_obj.date_to|date_is_future or membership_obj and membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"EXPIRED" or not membership_obj %}
         {{ block.super }}
     {% endif %}
 {% endblock %}
 
-{% if membership_obj and not membership_obj.date_to|date_is_future or not membership_obj %}
+{% if membership_obj and not membership_obj.date_to|date_is_future or membership_obj and membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"EXPIRED" or not membership_obj %}
     {% block email_button_url %}https://quota.lesquatrebarres.org?email={{ email }}{% endblock %}
 
     {% block email_button_text %}{% if membership_obj %}{% trans "Renew membership" %}{% else %}{% trans "Join us" %}{% endif %}{% endblock %}

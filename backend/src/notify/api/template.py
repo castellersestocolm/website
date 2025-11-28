@@ -155,7 +155,7 @@ def get_user_email_render(
         ):
             context_full["membership_obj"] = membership_obj
 
-            if email_type != EmailType.MEMBERSHIP_PAID:
+            if email_type in (EmailType.MEMBERSHIP_RENEW, EmailType.MEMBERSHIP_EXPIRED):
                 user_ids = list(
                     {user_id}
                     | {
