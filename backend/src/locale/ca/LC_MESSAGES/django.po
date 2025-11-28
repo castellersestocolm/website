@@ -679,10 +679,8 @@ msgid "Your registration for %s is now paid"
 msgstr "La teva inscripció per %s s'ha pagat"
 
 #: notify/consts.py:86 notify/consts.py:149
-#, fuzzy, python-format
-#| msgid "Contact us"
 msgid "Contact form — %s"
-msgstr "Contacta'ns"
+msgstr "Formulari de contacte — %s"
 
 #: notify/consts.py:105
 msgid "Welcome to Castellers d'Estocolm"
