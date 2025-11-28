@@ -171,6 +171,10 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
         "get_registration_email_renders",
         ("registration_ids",),
     ),
+    EmailType.CONTACT_MESSAGE: (
+        "get_contact_message_email_render",
+        ("contact_message_id",),
+    ),
 }
 
 GOOGLE_EMAIL_SCOPES = [

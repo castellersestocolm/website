@@ -72,7 +72,6 @@ class EmailForm(forms.ModelForm):
                 else {}
             ),
         }
-        self.instance.save()
 
 
 @admin.action(description=_("Send email"))
