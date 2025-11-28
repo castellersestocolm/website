@@ -20,6 +20,7 @@ class EmailType(enum.IntEnum):
     ORDER_CREATED = 50
     ORDER_PAID = 51
     REGISTRATION_PAID = 61
+    CONTACT_MESSAGE = 70
 
 
 class EmailStatus(enum.IntEnum):

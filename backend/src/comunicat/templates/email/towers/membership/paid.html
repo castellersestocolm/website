@@ -16,12 +16,12 @@
                     {% for membership_module_obj in membership_obj.modules.all %}
   <tr>
     <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ membership_module_obj.module|module_settings_value:"NAME" }}</p></td>
-    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;">{{ membership_module_obj.amount|format_money }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ membership_module_obj.amount|format_money }}</p></td>
   </tr>
                     {% endfor %}
   <tr>
-      <td class="tg-hfk9"><p style="margin: 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
-      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;"><strong>{{ membership_obj|membership_amount|format_money }}</strong></p></td>
+      <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ membership_obj|membership_amount|format_money }}</strong></p></td>
   </tr>
 </table>
 {% endblock %}

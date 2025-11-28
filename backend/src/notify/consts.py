@@ -82,6 +82,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Your registration for %s is now paid"),
                 "html": "email/org/registration/paid.html",
             },
+            EmailType.CONTACT_MESSAGE: {
+                "subject": _("Contact form — %s"),
+                "html": "email/org/contact/message.html",
+            },
         }
     },
     Module.TOWERS: {
@@ -140,6 +144,10 @@ TEMPLATE_BY_MODULE = {
             EmailType.REGISTRATION_PAID: {
                 "subject": _("Your registration for %s is now paid"),
                 "html": "email/towers/registration/paid.html",
+            },
+            EmailType.CONTACT_MESSAGE: {
+                "subject": _("Contact form — %s"),
+                "html": "email/towers/contact/message.html",
             },
         }
     },

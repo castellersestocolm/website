@@ -1,0 +1,32 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_opening %}{% endblock %}
+
+{% block email_body %}
+    <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+</style>
+
+<table class="tg" style="margin-bottom:10px;">
+  <tr>
+      <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;"><strong>{% trans "Name" %}</strong></p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ contact_message_obj.entity.name }}</p></td>
+  </tr>
+  <tr>
+      <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;"><strong>{% trans "Email" %}</strong></p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ contact_message_obj.entity.email }}</p></td>
+  </tr>
+</table>
+
+<h4 style="margin-bottom:15px;">{% trans "Message" %}</h4>
+{{ contact_message_obj.message|format_text }}
+
+{% endblock %}
+
+{% block email_closing %}{% endblock %}

@@ -14,6 +14,7 @@ def send_email(
     module: Module,
     from_email: Optional[str] = None,
     reply_to: Optional[str] = None,
+    cc_to: Optional[str | list[str]] = None,
     track_clicks: bool = False,
     fail_silently: bool = False,
     attachments: list | None = None,
@@ -27,6 +28,7 @@ def send_email(
         from_email=from_email or settings.DEFAULT_FROM_EMAIL,
         to_email=to,
         reply_email=reply_to or settings.DEFAULT_FROM_EMAIL,
+        cc_email=cc_to,
         attachments=attachments,
         module=module,
     )

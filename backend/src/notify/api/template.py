@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from PIL.features import modules
 from django.conf import settings
 from django.db.models import Prefetch
 from django.template.loader import render_to_string
@@ -16,8 +17,8 @@ from notify.consts import (
     EMAIL_BY_MODULE,
     EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE,
 )
-from notify.enums import NotificationType, EmailType
-from notify.models import Email
+from notify.enums import NotificationType, EmailType, ContactMessageType
+from notify.models import Email, ContactMessage
 
 import membership.utils
 import payment.api.entity
@@ -34,6 +35,7 @@ class EmailRender:
     from_email: str
     locale: str
     context: dict
+    module: Module
     email_obj: Email | None
     entity_obj: Entity | None
     attachments: list | None
@@ -46,6 +48,7 @@ class EmailRender:
         from_email: str,
         locale: str,
         context: dict,
+        module: Module,
         email_obj: Email | None = None,
         entity_obj: Entity | None = None,
         attachments: list | None = None,
@@ -57,6 +60,7 @@ class EmailRender:
         self.from_email = from_email
         self.locale = locale
         self.context = context
+        self.module = module
         self.email_obj = email_obj
         self.entity_obj = entity_obj
         self.attachments = attachments
@@ -225,6 +229,7 @@ def get_user_email_render(
         to_email=email or user_obj.email,
         from_email=from_email,
         context=context,
+        module=module,
         locale=locale,
         entity_obj=entity_obj,
         attachments=attachments,
@@ -296,6 +301,7 @@ def get_order_email_render(
         to_email=email or user_obj.email,
         from_email=from_email,
         context=context,
+        module=module,
         locale=locale,
         entity_obj=entity_obj,
     )
@@ -381,6 +387,7 @@ def get_registration_email_renders(
                 to_email=current_email or user_obj.email,
                 from_email=from_email,
                 context=context,
+                module=module,
                 locale=current_locale,
                 entity_obj=entity_obj,
             )
@@ -424,6 +431,61 @@ def get_generic_email_render(email_id: UUID) -> EmailRender:
         from_email=from_email,
         locale=locale,
         context=context,
+        module=email_obj.module,
+    )
+
+
+def get_contact_message_email_render(
+    contact_message_id: UUID,
+) -> EmailRender:
+    contact_message_obj = (
+        ContactMessage.objects.filter(id=contact_message_id)
+        .select_related("entity")
+        .first()
+    )
+
+    entity_obj = contact_message_obj.entity
+    user_obj = entity_obj.user
+    email = user_obj.email if user_obj else entity_obj.email
+    locale = (
+        user_obj.preferred_language if user_obj else None
+    ) or settings.LANGUAGE_CODE
+    module = contact_message_obj.module
+
+    with translation.override(locale):
+        context = {
+            **SETTINGS_BY_MODULE[module],
+            "contact_message_id": str(contact_message_id),
+        }
+        context_full = {
+            **context,
+            "contact_message_obj": contact_message_obj,
+            "entity_obj": entity_obj,
+            "user_obj": user_obj,
+        }
+
+        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][
+            EmailType.CONTACT_MESSAGE
+        ]
+        from_email = EMAIL_BY_MODULE[module]
+        body = render_to_string(template["html"], context_full)
+        subject = str(template["subject"]) % (
+            ContactMessageType(contact_message_obj.type)
+            .name.capitalize()
+            .replace("_", " "),
+        )
+
+    entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
+
+    return EmailRender(
+        subject=subject,
+        body=body,
+        to_email=email or user_obj.email,
+        from_email=from_email,
+        context=context,
+        module=module,
+        locale=locale,
+        entity_obj=entity_obj,
     )
 
 

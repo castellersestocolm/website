@@ -16,7 +16,8 @@ def send_email(
     subject: str,
     from_email: str,
     to_email: str | list[str],
-    reply_email: str,
+    reply_email: str | None,
+    cc_email: str | list[str] | None,
     body: str,
     attachments: list,
     module: Module,
@@ -31,6 +32,9 @@ def send_email(
     service = build("gmail", "v1", credentials=creds)
 
     to_emails = to_email if isinstance(to_email, list) else [to_email]
+    cc_emails = (
+        (cc_email if isinstance(cc_email, list) else [cc_email]) if cc_email else None
+    )
 
     for email in to_emails:
         message = MIMEMultipart("alternative")
@@ -45,8 +49,13 @@ def send_email(
 
         message["To"] = email
         message["From"] = from_email
-        message["ReplyTo"] = reply_email
         message["Subject"] = subject
+
+        if reply_email:
+            message["Reply-To"] = reply_email
+
+        if cc_emails:
+            message["CC"] = ",".join(cc_emails)
 
         encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
         create_message = {"raw": encoded_message}

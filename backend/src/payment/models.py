@@ -121,6 +121,8 @@ class Entity(StandardModel, Timestamps):
 
     @cached_property
     def name(self) -> str:
+        if self.user and self.user.name:
+            return self.user.name
         if self.lastname:
             return f"{self.firstname} {self.lastname}"
         return self.firstname

@@ -171,9 +171,9 @@ def send_order_message(order_id: UUID) -> MessageSlack:
     )
 
 
-def send_contact_message(message_id: UUID) -> MessageSlack:
+def send_contact_message(contact_message_id: UUID) -> MessageSlack:
     contact_message_obj = (
-        ContactMessage.objects.filter(id=message_id)
+        ContactMessage.objects.filter(id=contact_message_id)
         .select_related(
             "entity",
         )
@@ -185,7 +185,7 @@ def send_contact_message(message_id: UUID) -> MessageSlack:
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"{_('A new contact message has just been sent!')}\n*<{full_url(path=reverse("admin:notify_contactmessage_change", args=(str(message_id),)))}|{contact_message_obj.entity.full_name} — {timezone.localtime(contact_message_obj.created_at).strftime('%Y-%m-%d %H:%M')}>*",
+                "text": f"{_('A new contact message has just been sent!')}\n*<{full_url(path=reverse("admin:notify_contactmessage_change", args=(str(contact_message_id),)))}|{contact_message_obj.entity.full_name} — {timezone.localtime(contact_message_obj.created_at).strftime('%Y-%m-%d %H:%M')}>*",
             },
         },
         {
@@ -222,7 +222,7 @@ def send_contact_message(message_id: UUID) -> MessageSlack:
                     "url": full_url(
                         path=reverse(
                             "admin:notify_contactmessage_change",
-                            args=(str(message_id),),
+                            args=(str(contact_message_id),),
                         )
                     ),
                 }

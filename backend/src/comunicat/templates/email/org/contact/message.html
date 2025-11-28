@@ -1,0 +1,10 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_opening %}{% endblock %}
+
+{% block email_body %}
+    {{ contact_message_obj.message|format_text }}
+{% endblock %}
+
+{% block email_closing %}{% endblock %}

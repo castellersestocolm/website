@@ -22,8 +22,12 @@ def create(
         module=module,
     )
 
+    notify.tasks.send_contact_message_email.delay(
+        contact_message_id=contact_message_obj.id,
+    )
+
     notify.tasks.send_contact_message_slack.delay(
-        message_id=contact_message_obj.id,
+        contact_message_id=contact_message_obj.id,
     )
 
     return contact_message_obj

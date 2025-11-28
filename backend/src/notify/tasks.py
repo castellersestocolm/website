@@ -10,6 +10,7 @@ from notify.api.template import (
     get_registration_email_renders,
     get_order_email_render,
     get_user_email_render,
+    get_contact_message_email_render,
 )
 from notify.enums import EmailType, EmailStatus
 from notify.models import Email
@@ -35,7 +36,7 @@ def send_user_email(
         locale=locale,
     )
 
-    Email.objects.create(
+    email_obj = Email.objects.create(
         entity=email_render.entity_obj,
         type=email_type,
         subject=email_render.subject,
@@ -54,6 +55,8 @@ def send_user_email(
         attachments=email_render.attachments,
         module=module,
     )
+
+    return email_obj
 
 
 # TODO: Include cases for partial payment with status on each line
@@ -75,7 +78,7 @@ def send_order_email(
         locale=locale,
     )
 
-    Email.objects.create(
+    email_obj = Email.objects.create(
         entity=email_render.entity_obj,
         type=email_type,
         subject=email_render.subject,
@@ -95,6 +98,8 @@ def send_order_email(
         module=module,
     )
 
+    return email_obj
+
 
 # TODO: Check here if registrations ever allow no-users (like entities)
 @shared_task
@@ -105,7 +110,7 @@ def send_registration_email(
     email: str | None = None,
     context: dict | None = None,
     locale: str | None = None,
-) -> None:
+) -> list[Email]:
     email_renders = get_registration_email_renders(
         registration_ids=registration_ids,
         email_type=email_type,
@@ -114,16 +119,19 @@ def send_registration_email(
         context=context,
         locale=locale,
     )
+    email_objs = []
 
     for email_render in email_renders:
-        Email.objects.create(
-            entity=email_render.entity_obj,
-            type=email_type,
-            subject=email_render.subject,
-            context=email_render.context,
-            module=module,
-            locale=email_render.locale,
-            status=EmailStatus.SENT,
+        email_objs.append(
+            Email.objects.create(
+                entity=email_render.entity_obj,
+                type=email_type,
+                subject=email_render.subject,
+                context=email_render.context,
+                module=module,
+                locale=email_render.locale,
+                status=EmailStatus.SENT,
+            )
         )
 
         send_email(
@@ -135,6 +143,8 @@ def send_registration_email(
             attachments=[],
             module=module,
         )
+
+    return email_objs
 
 
 @shared_task
@@ -161,6 +171,38 @@ def send_generic_email(
     return email_obj
 
 
+# TODO: Send also an email to the person that filled in the contact form
+@shared_task
+def send_contact_message_email(
+    contact_message_id: UUID,
+) -> Email:
+    email_render = get_contact_message_email_render(
+        contact_message_id=contact_message_id
+    )
+
+    email_obj = Email.objects.create(
+        entity=email_render.entity_obj,
+        type=EmailType.CONTACT_MESSAGE,
+        subject=email_render.subject,
+        context=email_render.context,
+        module=email_render.module,
+        locale=email_render.locale,
+        status=EmailStatus.SENT,
+    )
+
+    send_email(
+        subject=email_render.subject,
+        body=email_render.body,
+        from_email=email_render.from_email,
+        to=email_render.from_email,
+        reply_to=email_render.to_email,
+        attachments=[],
+        module=email_render.module,
+    )
+
+    return email_obj
+
+
 @shared_task
 def send_order_message_slack(
     order_id: UUID,
@@ -170,6 +212,6 @@ def send_order_message_slack(
 
 @shared_task
 def send_contact_message_slack(
-    message_id: UUID,
+    contact_message_id: UUID,
 ) -> None:
-    send_contact_message(message_id=message_id)
+    send_contact_message(contact_message_id=contact_message_id)
