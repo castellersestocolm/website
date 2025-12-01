@@ -348,6 +348,9 @@ def get_registration_email_renders(
             or settings.LANGUAGE_CODE
         )
 
+        if not current_email:
+            continue
+
         with translation.override(current_locale):
             context = {
                 **SETTINGS_BY_MODULE[module],
@@ -376,15 +379,13 @@ def get_registration_email_renders(
             else:
                 subject = str(template["subject"])
 
-        entity_obj = payment.api.entity.get_entity_by_key(
-            email=current_email or user_obj.email
-        )
+        entity_obj = payment.api.entity.get_entity_by_key(email=current_email)
 
         email_renders.append(
             EmailRender(
                 subject=subject,
                 body=body,
-                to_email=current_email or user_obj.email,
+                to_email=current_email,
                 from_email=from_email,
                 context=context,
                 module=module,
