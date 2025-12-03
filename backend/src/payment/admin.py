@@ -12,6 +12,7 @@ from djmoney.money import Money
 
 import payment.api.entity
 import payment.tasks
+from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from comunicat.utils.admin import DynamicColumn
 from event.models import Registration
@@ -438,15 +439,9 @@ class AccountAdmin(admin.ModelAdmin):
         year = timezone.localdate().year
 
         account_summary = {
-            PaymentType.DEBIT: {
-                module: Money("0", settings.MODULE_ALL_CURRENCY) for module in Module
-            },
-            PaymentType.CREDIT: {
-                module: Money("0", settings.MODULE_ALL_CURRENCY) for module in Module
-            },
-            None: {
-                module: Money("0", settings.MODULE_ALL_CURRENCY) for module in Module
-            },
+            PaymentType.DEBIT: {module: ZERO_MONEY for module in Module},
+            PaymentType.CREDIT: {module: ZERO_MONEY for module in Module},
+            None: {module: ZERO_MONEY for module in Module},
         }
         for account_obj in Account.objects.with_amount(year=year):
             if not account_obj.module:

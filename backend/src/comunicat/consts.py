@@ -1,3 +1,4 @@
+from djmoney.money import Money
 from phonenumbers.phonenumberutil import country_code_for_region
 
 from comunicat.enums import Module
@@ -609,3 +610,5 @@ REGION_BY_COUNTRY_AND_CODE = {
     }
     for country_code, regions in REGION_LIST.items()
 }
+
+ZERO_MONEY = Money("0", settings.MODULE_ALL_CURRENCY)

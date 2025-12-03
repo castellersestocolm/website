@@ -246,7 +246,7 @@ def get_order_email_render(
 ) -> EmailRender:
     order_obj = (
         Order.objects.filter(id=order_id)
-        .select_related("entity", "delivery")
+        .select_related("entity", "delivery", "delivery__provider")
         .prefetch_related(
             Prefetch(
                 "products",

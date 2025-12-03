@@ -9,6 +9,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
+from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from data.models import Country, Region
 from notify.enums import EmailType
@@ -241,7 +242,7 @@ def create(
                 settings.MODULE_ALL_CURRENCY,
             )
     else:
-        delivery_amount = Money("0", settings.MODULE_ALL_CURRENCY)
+        delivery_amount = ZERO_MONEY
         delivery_vat = 0
 
     order_delivery_obj = OrderDelivery.objects.create(

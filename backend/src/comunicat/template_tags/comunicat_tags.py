@@ -10,6 +10,7 @@ from django.utils.safestring import mark_safe
 from djmoney.money import Money
 
 import membership.enums
+from comunicat.consts import ZERO_MONEY
 
 from comunicat.enums import Module
 from event.models import Registration, Event
@@ -125,7 +126,7 @@ def localise(text: dict[str]) -> str:
 def order_amount(order_obj: Order) -> Money:
     return sum(
         [order_product_obj.amount for order_product_obj in order_obj.products.all()]
-    )
+    ) + (order_obj.delivery.amount if order_obj.delivery else ZERO_MONEY)
 
 
 @register.filter

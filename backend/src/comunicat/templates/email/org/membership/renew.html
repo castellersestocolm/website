@@ -7,6 +7,7 @@
         <li>{% trans "Amount" %}: <strong>{{ membership_amount }} SEK</strong></li>
         <li>{% trans "Valid" %}: <strong>{{ membership_date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_date_to|date:"Y-m-d" }}</strong></li>
     </ul>
+    <p>{% trans "This year playtime in Catalan will have an added cost per kid and includes an improved schedule and activity plan. If you want to register your kid for playtime you need to mark the checkbox, the total amount to be paid will be updated automatically." %}</p>
     <p>{% trans "You can find the form to renew your membership in the following page." %}</p>
 {% endblock %}
 
