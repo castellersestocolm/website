@@ -16,12 +16,14 @@ class ProgramCoursePriceForProgramCourseSerializer(s.ModelSerializer):
             "id",
             "age_from",
             "age_to",
+            "min_registrations",
             "amount",
         )
         read_only_fields = (
             "id",
             "age_from",
             "age_to",
+            "min_registrations",
             "amount",
         )
 

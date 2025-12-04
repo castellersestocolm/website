@@ -51,6 +51,8 @@ class ProgramCoursePrice(StandardModel, Timestamps):
     age_from = models.PositiveSmallIntegerField(blank=True, null=True)
     age_to = models.PositiveSmallIntegerField(blank=True, null=True)
 
+    min_registrations = models.PositiveSmallIntegerField(default=0)
+
     amount = MoneyField(
         max_digits=7, decimal_places=2, null=True, blank=True, default_currency="SEK"
     )

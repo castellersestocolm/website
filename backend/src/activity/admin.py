@@ -50,7 +50,12 @@ class ProgramAdmin(admin.ModelAdmin):
 
 class ProgramCoursePriceInline(admin.TabularInline):
     model = ProgramCoursePrice
-    ordering = ("amount",)
+    ordering = (
+        "min_registrations",
+        "age_from",
+        "age_to",
+        "amount",
+    )
     extra = 0
 
     formfield_overrides = {

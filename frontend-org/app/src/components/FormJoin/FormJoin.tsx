@@ -70,13 +70,16 @@ export default function FormJoin() {
   const [paymentAmount, setPaymentAmount] = React.useState(undefined);
   const [paymentText, setPaymentText] = React.useState(undefined);
 
+  const [courseAmounts, setCourseAmounts] = React.useState(undefined);
+
   React.useEffect(() => {
     apiActivityProgramList().then((response) => {
       if (response.status === 200) {
         setActivityies(response.data);
+        setCourseAmounts(Object.fromEntries(response.data.results.map((program: any) => program.courses.map((course: any) => [course.id, []])).flat()));
       }
     });
-  }, [setActivityies, i18n.resolvedLanguage]);
+  }, [setActivityies, setCourseAmounts, i18n.resolvedLanguage]);
 
   function handleChildrenBirthday(childIndex: number, birthday: string) {
     setChildrenBirthdays(
@@ -96,6 +99,20 @@ export default function FormJoin() {
       setChildren([...children, undefined]);
     }
   }
+
+  const handleCourseCheckbox = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    courseId: string,
+    kidId: string,
+  ) => {
+    if (event.target.checked) {
+      setCourseAmounts({ ...courseAmounts, [courseId]: [...courseAmounts[courseId], kidId] });
+    } else {
+      setCourseAmounts({ ...courseAmounts, [courseId]: courseAmounts[courseId].filter((courseKidId: string) => courseKidId !== kidId) });
+    }
+  };
+
+  console.log(courseAmounts);
 
   function handleSubmit(event: React.FormEvent<CreateFormElement>) {
     event.preventDefault();
@@ -603,7 +620,7 @@ export default function FormJoin() {
                                 </FormHelperText>
                               )}
                           </FormGrid>
-                          {activities && activities.results.length > 0 && (
+                          {activities && activities.results.length > 0 && courseAmounts && (
                             <FormGrid size={12}>
                               {activities.results.map((activity: any) => {
                                 return (
@@ -623,6 +640,8 @@ export default function FormJoin() {
                                         const childAge = getAge(
                                           childrenBirthdays[ix],
                                         );
+                                        const kidId = ix.toString() + "-" + course.id;
+                                        const kidAmountsIndex = courseAmounts[course.id].indexOf(kidId);
                                         const coursePrice = course.prices
                                           .sort(compareAmountObjects)
                                           .find(
@@ -634,11 +653,9 @@ export default function FormJoin() {
                                               (!coursePrice.age_to ||
                                                 (childAge &&
                                                   childAge <=
-                                                    coursePrice.age_to)),
+                                                    coursePrice.age_to)) && (kidAmountsIndex >= coursePrice.min_registrations || (kidAmountsIndex === -1 && courseAmounts[course.id].length >= coursePrice.min_registrations)),
                                           );
-                                        courseChildPriceById[
-                                          ix.toString() + "-" + course.id
-                                        ] = coursePrice;
+                                        courseChildPriceById[kidId] = coursePrice;
                                         return (
                                           <FormControlLabel
                                             control={
@@ -656,6 +673,7 @@ export default function FormJoin() {
                                                 disabled={
                                                   isCoursePast || !coursePrice
                                                 }
+                                                onChange={(e) => handleCourseCheckbox(e, course.id, kidId)}
                                               />
                                             }
                                             label={
