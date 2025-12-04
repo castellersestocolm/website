@@ -9,12 +9,15 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from djmoney.money import Money
 
+import activity.enums
 import membership.enums
+from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 
 from comunicat.enums import Module
 from event.models import Registration, Event
+from membership.enums import MembershipStatus
 from membership.models import Membership
 from notify.consts import SETTINGS_BY_MODULE
 from order.models import Order
@@ -82,6 +85,11 @@ def enums_membership(name: str):
 
 
 @register.filter
+def enums_activity(name: str):
+    return getattr(activity.enums, name, "")
+
+
+@register.filter
 def module_settings_value(module: Module, name: str):
     return getattr(settings, f"MODULE_{Module(module).name}_{name}", "")
 
@@ -145,12 +153,14 @@ def registrations_amount(registration_objs: list[Registration]) -> Money:
 
 
 @register.filter
-def membership_amount(membership_obj: Membership) -> Money:
+def membership_amount(membership_obj: Membership, only_active: bool = True) -> Money:
     return (
         sum(
             [
                 membership_module_obj.amount
                 for membership_module_obj in membership_obj.all_modules
+                if membership_module_obj.status == MembershipStatus.ACTIVE
+                or not only_active
             ]
         )
         or ZERO_MONEY
@@ -160,12 +170,16 @@ def membership_amount(membership_obj: Membership) -> Money:
 @register.filter
 def program_course_registrations_amount(
     program_course_registration_objs: list[ProgramCourseRegistration],
+    only_active: bool = True,
 ) -> Money:
     return (
         sum(
             [
                 program_course_registration_obj.amount
                 for program_course_registration_obj in program_course_registration_objs
+                if program_course_registration_obj.status
+                == ProgramCourseRegistrationStatus.ACTIVE
+                or not only_active
             ]
         )
         or ZERO_MONEY

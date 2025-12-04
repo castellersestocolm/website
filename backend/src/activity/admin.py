@@ -67,7 +67,7 @@ class ProgramCourseRegistrationInline(admin.TabularInline):
     model = ProgramCourseRegistration
     ordering = ("entity__firstname", "entity__lastname")
     readonly_fields = ("created_at",)
-    raw_id_fields = ("entity",)
+    raw_id_fields = ("entity", "line")
     extra = 0
 
 

@@ -5,6 +5,7 @@ EDIT_DISTANCE_NAME_THRESHOLD = 0.7
 EDIT_DISTANCE_ACCOUNT_THRESHOLD = 0.3
 
 PAYMENT_LINE_CONTENT_TYPES = (
+    ("activity", "programcourseregistration"),
     ("membership", "membershipmodule"),
     ("order", "orderproduct"),
     ("event", "registration"),
