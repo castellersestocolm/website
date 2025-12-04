@@ -115,6 +115,8 @@ class Entity(StandardModel, Timestamps):
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
 
+    preferred_language = models.CharField(max_length=255, null=True, blank=True)
+
     user = models.OneToOneField(
         "user.User", null=True, blank=True, on_delete=models.CASCADE
     )
@@ -165,6 +167,8 @@ class Entity(StandardModel, Timestamps):
             self.lastname = self.user.lastname
             self.email = self.user.email
             self.phone = self.user.phone
+            if self.user.preferred_language:
+                self.preferred_language = self.user.preferred_language
         super().save(*args, **kwargs)
 
     class Meta:

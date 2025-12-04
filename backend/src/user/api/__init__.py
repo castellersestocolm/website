@@ -405,13 +405,10 @@ def update(
         )
 
     if not had_registration_finished and user_obj.registration_finished(module=module):
-        locale = user_obj.preferred_language or translation.get_language()
-
         send_user_email.delay(
             user_id=user_obj.id,
             email_type=EmailType.WELCOME,
             module=module,
-            locale=locale,
         )
 
     return user_obj
@@ -428,8 +425,6 @@ def request_password(email: str, module: Module, locale: str | None = None) -> N
         {"user_id": str(user_obj.id), "updated_at": user_obj.updated_at.isoformat()},
         salt="forgot-password",
     )
-
-    locale = locale or translation.get_language()
 
     send_user_email.delay(
         user_id=user_obj.id,
@@ -480,8 +475,6 @@ def request_verify(email: str, module: Module, locale: str | None = None) -> Non
         salt="verify-email",
     )
 
-    locale = locale or translation.get_language()
-
     send_user_email.delay(
         user_id=user_obj.id,
         email_type=EmailType.REGISTER,
@@ -509,13 +502,10 @@ def set_verify(token: str, module: Module, request: HttpRequest) -> User | None:
     user_obj.save(update_fields=("email_verified",))
 
     if user_obj.registration_finished(module=module):
-        locale = user_obj.preferred_language or translation.get_language()
-
         send_user_email.delay(
             user_id=user_obj.id,
             email_type=EmailType.WELCOME,
             module=module,
-            locale=locale,
         )
 
     django_login(

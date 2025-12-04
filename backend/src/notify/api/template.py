@@ -72,7 +72,7 @@ def get_user_email_render(
     user_id: UUID | None = None,
     email: str | None = None,
     context: dict = None,
-    locale: str = settings.LANGUAGE_CODE,
+    locale: str | None = None,
 ) -> EmailRender | None:
     if user_id:
         user_obj = User.objects.get(id=user_id)
@@ -107,6 +107,8 @@ def get_user_email_render(
             modules = [module]
     else:
         modules = [module]
+
+    locale = locale or user_obj.preferred_language or settings.LANGUAGE_CODE
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}
@@ -268,6 +270,7 @@ def get_order_email_render(
     locale = (
         locale
         or (user_obj.preferred_language if user_obj else None)
+        or (entity_obj.preferred_language if entity_obj else None)
         or settings.LANGUAGE_CODE
     )
 
@@ -345,6 +348,7 @@ def get_registration_email_renders(
         current_locale = (
             locale
             or (user_obj.preferred_language if user_obj else None)
+            or (entity_obj.preferred_language if entity_obj else None)
             or settings.LANGUAGE_CODE
         )
 
@@ -406,6 +410,7 @@ def get_generic_email_render(email_id: UUID) -> EmailRender:
     locale = (
         email_obj.locale
         or (user_obj.preferred_language if user_obj else None)
+        or (entity_obj.preferred_language if entity_obj else None)
         or settings.LANGUAGE_CODE
     )
 
@@ -449,8 +454,10 @@ def get_contact_message_email_render(
     user_obj = entity_obj.user
     email = user_obj.email if user_obj else entity_obj.email
     locale = (
-        user_obj.preferred_language if user_obj else None
-    ) or settings.LANGUAGE_CODE
+        (user_obj.preferred_language if user_obj else None)
+        or (entity_obj.preferred_language if entity_obj else None)
+        or settings.LANGUAGE_CODE
+    )
     module = contact_message_obj.module
 
     with translation.override(locale):

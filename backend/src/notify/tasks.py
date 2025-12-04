@@ -15,8 +15,6 @@ from notify.api.template import (
 from notify.enums import EmailType, EmailStatus
 from notify.models import Email
 
-from django.conf import settings
-
 
 @shared_task
 def send_user_email(
@@ -25,7 +23,7 @@ def send_user_email(
     user_id: UUID | None = None,
     email: str | None = None,
     context: dict = None,
-    locale: str = settings.LANGUAGE_CODE,
+    locale: str | None = None,
 ) -> None:
     email_render = get_user_email_render(
         email_type=email_type,

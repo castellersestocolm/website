@@ -14,7 +14,7 @@ import payment.api.entity
 import payment.tasks
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
-from comunicat.utils.admin import DynamicColumn
+from comunicat.utils.admin import DynamicColumn, FIELD_LOCALE
 from event.models import Registration
 from notify.enums import EmailType
 from order.models import Order
@@ -478,6 +478,14 @@ def merge_entities(modeladmin, request, queryset):
     payment.api.entity.merge(entity_ids=queryset.values_list("id", flat=True))
 
 
+class EntityAdminForm(forms.ModelForm):
+    preferred_language = FIELD_LOCALE(required=False)
+
+    class Meta:
+        model = Entity
+        fields = "__all__"
+
+
 @admin.register(Entity)
 class EntityAdmin(admin.ModelAdmin):
     search_fields = ("id", "firstname", "lastname", "email", "phone")
@@ -488,12 +496,14 @@ class EntityAdmin(admin.ModelAdmin):
         "email",
         "phone",
         "user",
+        "preferred_language",
         "created_at",
     )
     ordering = ("firstname", "lastname", "email", "created_at")
     raw_id_fields = ("user",)
     inlines = (PaymentInline,)
     actions = (merge_entities,)
+    form = EntityAdminForm
 
 
 @admin.register(Transaction)

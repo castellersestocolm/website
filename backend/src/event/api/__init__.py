@@ -337,5 +337,4 @@ def send_events_signup(
                     ),
                     "token": token,
                 },
-                locale=user_obj.preferred_language or translation.get_language(),
             )

@@ -42,5 +42,5 @@ class Migration(migrations.Migration):
             ),
             preserve_default=False,
         ),
-        migrations.RunPython(set_receipt_entity),
+        migrations.RunPython(set_receipt_entity, migrations.RunPython.noop),
     ]

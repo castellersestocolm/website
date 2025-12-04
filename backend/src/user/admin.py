@@ -75,7 +75,6 @@ def send_welcome_email(modeladmin, request, queryset):
                 user_id=user_obj.id,
                 email_type=EmailType.WELCOME,
                 module=user_obj.origin_module,
-                locale=user_obj.preferred_language or translation.get_language(),
             )
 
 
@@ -86,7 +85,6 @@ def send_imported_email(modeladmin, request, queryset):
             user_id=user_obj.id,
             email_type=EmailType.IMPORTED,
             module=user_obj.origin_module,
-            locale=user_obj.preferred_language or translation.get_language(),
         )
 
 
@@ -99,7 +97,6 @@ def send_membership_paid_email(modeladmin, request, queryset):
             user_id=user_obj.id,
             email_type=EmailType.MEMBERSHIP_PAID,
             module=user_obj.origin_module,
-            locale=user_obj.preferred_language or translation.get_language(),
         )
 
 
@@ -112,7 +109,6 @@ def send_membership_renew_email(modeladmin, request, queryset):
             user_id=user_obj.id,
             email_type=EmailType.MEMBERSHIP_RENEW,
             module=user_obj.origin_module,
-            locale=user_obj.preferred_language or translation.get_language(),
         )
 
 
@@ -125,7 +121,6 @@ def send_membership_expired_email(modeladmin, request, queryset):
             user_id=user_obj.id,
             email_type=EmailType.MEMBERSHIP_EXPIRED,
             module=user_obj.origin_module,
-            locale=user_obj.preferred_language or translation.get_language(),
         )
 
 

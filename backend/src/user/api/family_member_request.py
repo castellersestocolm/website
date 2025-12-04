@@ -113,11 +113,6 @@ def create(
             family=family_obj,
         )
 
-    if user_receiver_obj and user_receiver_obj.preferred_language:
-        locale = user_receiver_obj.preferred_language
-    else:
-        locale = translation.get_language()
-
     send_user_email.delay(
         user_id=user_receiver_obj.id if user_receiver_obj else None,
         email=email,
@@ -129,7 +124,6 @@ def create(
                 "lastname": user_sender_obj.lastname,
             }
         },
-        locale=locale,
     )
 
     return family_member_request_obj
