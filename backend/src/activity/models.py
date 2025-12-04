@@ -4,7 +4,11 @@ from django.utils import translation
 from djmoney.models.fields import MoneyField
 
 from activity.enums import ProgramType
-from activity.managers import ProgramQuerySet, ProgramCourseQuerySet
+from activity.managers import (
+    ProgramQuerySet,
+    ProgramCourseQuerySet,
+    ProgramCourseRegistrationQuerySet,
+)
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
@@ -75,3 +79,5 @@ class ProgramCourseRegistration(StandardModel, Timestamps):
     amount = MoneyField(
         max_digits=7, decimal_places=2, null=True, blank=True, default_currency="SEK"
     )
+
+    objects = ProgramCourseRegistrationQuerySet.as_manager()

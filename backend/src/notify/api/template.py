@@ -6,6 +6,7 @@ from django.db.models import Prefetch
 from django.template.loader import render_to_string
 from django.utils import translation, timezone
 
+from activity.models import ProgramCourseRegistration
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
@@ -161,18 +162,41 @@ def get_user_email_render(
         ):
             context_full["membership_obj"] = membership_obj
 
-            if email_type in (EmailType.MEMBERSHIP_RENEW, EmailType.MEMBERSHIP_EXPIRED):
-                user_ids = list(
-                    {user_id}
-                    | {
-                        family_member_obj.user_id
-                        # TODO: Review this as it could be wrong
-                        for family_member_obj in FamilyMember.objects.filter(
-                            family__members__user_id=user_id,
-                            status=FamilyMemberStatus.ACTIVE,
-                        )
-                    }
+            user_ids = list(
+                {user_id}
+                | {
+                    family_member_obj.user_id
+                    # TODO: Review this as it could be wrong
+                    for family_member_obj in FamilyMember.objects.filter(
+                        family__members__user_id=user_id,
+                        status=FamilyMemberStatus.ACTIVE,
+                    )
+                }
+            )
+
+            if email_type in (EmailType.MEMBERSHIP_PAID, EmailType.MEMBERSHIP_CHECK):
+                program_course_registration_objs = list(
+                    ProgramCourseRegistration.objects.filter(
+                        entity__user__id__in=user_ids,
+                    )
+                    .select_related("course", "course__program")
+                    .with_course_program_name()
+                    .order_by(
+                        "course_program_name_locale",
+                        "-amount",
+                        "entity__user__firstname",
+                        "entity__user__lastname",
+                        "entity__firstname",
+                        "entity__lastname",
+                    )
                 )
+                context_full["program_course_registration_objs"] = (
+                    program_course_registration_objs
+                )
+            elif email_type in (
+                EmailType.MEMBERSHIP_RENEW,
+                EmailType.MEMBERSHIP_EXPIRED,
+            ):
 
                 membership_amount = sum(
                     [

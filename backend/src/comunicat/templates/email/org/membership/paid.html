@@ -12,16 +12,28 @@
 .tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
 </style>
 <h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
-<table class="tg" style="margin-bottom:10px;">
+<table class="tg" style="margin-bottom:20px;">
                     {% for membership_module_obj in membership_obj.modules.all %}
   <tr>
     <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ membership_module_obj.module|module_settings_value:"NAME" }}</p></td>
     <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ membership_module_obj.amount|format_money }}</p></td>
   </tr>
                     {% endfor %}
+                    {% for program_course_registration_obj in program_course_registration_objs %}
+  <tr>
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ program_course_registration_obj.course_program_name_locale }} — {{ program_course_registration_obj.entity.name }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ program_course_registration_obj.amount|format_money }}</p></td>
+  </tr>
+                    {% endfor %}
   <tr>
       <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
-      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ membership_obj|membership_amount|format_money }}</strong></p></td>
+      {% with membership_obj|membership_amount as membership_total %}
+          {% with program_course_registration_objs|program_course_registrations_amount as program_course_registrations_total %}
+            {% with membership_total|add:program_course_registrations_total as total %}
+                <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ total|format_money }}</strong></p></td>
+            {% endwith %}
+        {% endwith %}
+      {% endwith %}
   </tr>
 </table>
 {% endblock %}

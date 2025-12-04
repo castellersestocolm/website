@@ -10,6 +10,7 @@ from django.utils.safestring import mark_safe
 from djmoney.money import Money
 
 import membership.enums
+from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 
 from comunicat.enums import Module
@@ -131,22 +132,43 @@ def order_amount(order_obj: Order) -> Money:
 
 @register.filter
 def registrations_amount(registration_objs: list[Registration]) -> Money:
-    return sum(
-        [
-            registration_obj.line.amount
-            for registration_obj in registration_objs
-            if registration_obj.line
-        ]
+    return (
+        sum(
+            [
+                registration_obj.line.amount
+                for registration_obj in registration_objs
+                if registration_obj.line
+            ]
+        )
+        or ZERO_MONEY
     )
 
 
 @register.filter
 def membership_amount(membership_obj: Membership) -> Money:
-    return sum(
-        [
-            membership_module_obj.amount
-            for membership_module_obj in membership_obj.all_modules
-        ]
+    return (
+        sum(
+            [
+                membership_module_obj.amount
+                for membership_module_obj in membership_obj.all_modules
+            ]
+        )
+        or ZERO_MONEY
+    )
+
+
+@register.filter
+def program_course_registrations_amount(
+    program_course_registration_objs: list[ProgramCourseRegistration],
+) -> Money:
+    return (
+        sum(
+            [
+                program_course_registration_obj.amount
+                for program_course_registration_obj in program_course_registration_objs
+            ]
+        )
+        or ZERO_MONEY
     )
 
 
