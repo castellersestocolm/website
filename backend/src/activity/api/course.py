@@ -40,8 +40,21 @@ def get_course_price(entity_id: UUID, course_id: UUID) -> ProgramCoursePrice | N
 
     user_obj = entity_obj.user
 
+    family_obj = user_obj.family_member.family if user_obj else None
+    if family_obj:
+        existing_family_members_registered = (
+            ProgramCourseRegistration.objects.exclude(entity_id=entity_id)
+            .filter(entity__user__family_member__family=family_obj)
+            .count()
+        )
+    else:
+        existing_family_members_registered = 0
+
     program_course_price_objs = list(
-        ProgramCoursePrice.objects.filter(course_id=course_id).order_by("amount")
+        ProgramCoursePrice.objects.filter(
+            course_id=course_id,
+            min_registrations__gte=existing_family_members_registered,
+        ).order_by("min_registrations", "amount")
     )
 
     for program_course_price_obj in program_course_price_objs:
