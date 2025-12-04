@@ -365,6 +365,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
 class PaymentInline(admin.TabularInline):
     model = Payment
     ordering = ("-created_at",)
+    readonly_fields = ("transaction", "debit_payment")
     extra = 0
 
 
