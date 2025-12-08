@@ -12,6 +12,8 @@ from activity.models import (
 
 from django.utils.translation import gettext_lazy as _
 
+import activity.tasks
+
 from comunicat import settings
 from event.enums import EventType
 from event.models import Event
@@ -21,6 +23,14 @@ class ProgramCourseInline(admin.TabularInline):
     model = ProgramCourse
     ordering = ("-date_from", "-date_to")
     extra = 0
+
+
+@admin.action(description="Sync programmes to Google Drive")
+def sync_programmes_google_drive(modeladmin, request, queryset):
+    for program_obj in queryset:
+        activity.tasks.sync_program.delay(
+            program_id=program_obj.id,
+        )
 
 
 @admin.register(Program)
@@ -34,6 +44,7 @@ class ProgramAdmin(admin.ModelAdmin):
     list_filter = ("type", "module")
     ordering = ("module", "name")
     inlines = (ProgramCourseInline,)
+    actions = (sync_programmes_google_drive,)
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},

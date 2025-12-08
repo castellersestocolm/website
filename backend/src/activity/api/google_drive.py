@@ -9,8 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from activity.consts import GOOGLE_DRIVE_ID, GOOGLE_DRIVE_FOLDER_ID
 
 
-# TODO: Sync other files related to the statement like payments and expenses
-def sync_programmes(program_id: UUID) -> None:
+def sync_program(program_id: UUID) -> None:
     program_obj = (
         Program.objects.filter(id=program_id)
         .prefetch_related("courses")
