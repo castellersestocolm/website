@@ -11,16 +11,5 @@ PAYMENT_LINE_CONTENT_TYPES = (
     ("event", "registration"),
 )
 
-GOOGLE_DRIVE_SCOPES = [
-    "https://www.googleapis.com/auth/drive.metadata.readonly",
-    "https://www.googleapis.com/auth/drive.file",
-]
-
-GOOGLE_DRIVE_ID = "0ANefqEg5Czl3Uk9PVA"
-
-GOOGLE_DRIVE_FILES_LIST = {
-    "driveId": "0ANefqEg5Czl3Uk9PVA",
-    "includeItemsFromAllDrives": True,
-    "corpora": "drive",
-    "supportsAllDrives": True,
-}
+GOOGLE_DRIVE_ID = settings.MODULE_ALL_GOOGLE_DRIVE["payment"]["drive_id"]
+GOOGLE_DRIVE_FOLDER_ID = settings.MODULE_ALL_GOOGLE_DRIVE["payment"]["folder_id"]

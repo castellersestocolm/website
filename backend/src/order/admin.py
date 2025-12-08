@@ -5,6 +5,7 @@ from django.utils import translation
 from django.utils.html import format_html
 from jsoneditor.forms import JSONEditor
 
+from comunicat.utils.admin import FIELD_LOCALE
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
 from order.models import (
@@ -100,6 +101,14 @@ def send_paid_email(modeladmin, request, queryset):
         )
 
 
+class OrderAdminForm(forms.ModelForm):
+    preferred_language = FIELD_LOCALE(required=False)
+
+    class Meta:
+        model = Order
+        fields = "__all__"
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     search_fields = (
@@ -122,6 +131,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ("status", "created_at")
     raw_id_fields = ("entity",)
     ordering = ("-created_at",)
+    form = OrderAdminForm
     inlines = (OrderProductInline, OrderLogInline)
     actions = (send_created_email, send_paid_email)
 

@@ -1,152 +1,45 @@
 from collections import defaultdict
-from io import BytesIO
 from uuid import UUID
-
-import mimetypes
 
 from django.db.models import Q
 
 from comunicat.enums import Module
-from integration.models import GoogleIntegration
-
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseUpload
+from integration.api.google.drive import create_folder, upload_file, get_service
 
 from payment.api.export import export_payments
-from payment.consts import GOOGLE_DRIVE_SCOPES, GOOGLE_DRIVE_FILES_LIST, GOOGLE_DRIVE_ID
+from payment.consts import GOOGLE_DRIVE_ID, GOOGLE_DRIVE_FOLDER_ID
 from payment.enums import ExpenseStatus
 from payment.models import Statement, Receipt, Payment
 
 from django.utils.translation import gettext_lazy as _
 
 
-def upload_file(
-    service,
-    file_bytes: BytesIO,
-    file_name: str,
-    folder_id: str,
-    mime_type: str | None = None,
-) -> str:
-    media = MediaIoBaseUpload(file_bytes, mimetype=mimetypes.guess_type(file_name)[0])
-    file_name = ".".join(file_name.split(".")[:-1])
-
-    results = (
-        service.files()
-        .list(
-            pageSize=100,
-            fields="files(id, name)",
-            **GOOGLE_DRIVE_FILES_LIST,
-            q=f"name = '{file_name}' and '{folder_id}' in parents",
-        )
-        .execute()
-    )
-
-    file_id_by_name = {file["name"]: file["id"] for file in results.get("files", [])}
-
-    file_id = file_id_by_name.get(file_name)
-    if file_id:
-        metadata = {
-            "name": file_name,
-            **({"mimeType": mime_type} if mime_type is not None else {}),
-        }
-        file = (
-            service.files()
-            .update(
-                fileId=file_id,
-                body=metadata,
-                media_body=media,
-                fields="id",
-                supportsAllDrives=True,
-            )
-            .execute()
-        )
-    else:
-        metadata = {
-            "name": file_name,
-            "parents": [folder_id],
-            **({"mimeType": mime_type} if mime_type is not None else {}),
-        }
-        file = (
-            service.files()
-            .create(
-                body=metadata,
-                media_body=media,
-                fields="id",
-                supportsAllDrives=True,
-            )
-            .execute()
-        )
-
-    return file["id"]
-
-
-def create_folder(
-    service,
-    folder_name: str,
-    parent_id: str | None = None,
-) -> str:
-    # TODO: Problematic if there are over 100 folders/months
-    results = (
-        service.files()
-        .list(
-            pageSize=100,
-            fields="files(id, name)",
-            **GOOGLE_DRIVE_FILES_LIST,
-            **({"q": f"'{parent_id}' in parents"} if parent_id else {}),
-        )
-        .execute()
-    )
-
-    folder_id_by_name = {
-        folder["name"]: folder["id"] for folder in results.get("files", [])
-    }
-
-    folder_id = folder_id_by_name.get(folder_name)
-    if not folder_id:
-        folder_id = (
-            service.files()
-            .create(
-                body={
-                    "name": folder_name,
-                    "mimeType": "application/vnd.google-apps.folder",
-                    **({"parents": [parent_id]} if parent_id else {}),
-                },
-                fields="id",
-                supportsAllDrives=True,
-            )
-            .execute()["id"]
-        )
-
-    return folder_id
-
-
 # TODO: Sync other files related to the statement like payments and expenses
 def sync_statement(statement_id: UUID, module: Module) -> None:
-    google_integration_obj = GoogleIntegration.objects.filter(module=module).first()
-
-    if not google_integration_obj:
-        return
-
     statement_obj = Statement.objects.filter(id=statement_id).first()
 
     if not statement_obj:
         return
 
+    service = get_service(module=module)
+
+    if not service:
+        return None
+
     statement_year = str(statement_obj.date_from.year)
     statement_month = str(statement_obj.date_from.month)
 
-    creds = Credentials.from_authorized_user_info(
-        info=google_integration_obj.authorized_user_info,
-        scopes=GOOGLE_DRIVE_SCOPES,
-    )
-    service = build("drive", "v3", credentials=creds)
-
     folder_year_id = create_folder(
-        service=service, folder_name=statement_year, parent_id=GOOGLE_DRIVE_ID
+        service=service,
+        drive_id=GOOGLE_DRIVE_ID,
+        folder_name=statement_year,
+        parent_id=GOOGLE_DRIVE_FOLDER_ID,
     )
     folder_month_id = create_folder(
-        service=service, folder_name=statement_month, parent_id=folder_year_id
+        service=service,
+        drive_id=GOOGLE_DRIVE_ID,
+        folder_name=statement_month,
+        parent_id=folder_year_id,
     )
 
     file_extension = statement_obj.file.name.split(".")[-1]
@@ -154,6 +47,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
     upload_file(
         service=service,
+        drive_id=GOOGLE_DRIVE_ID,
         file_bytes=statement_obj.file.file,
         file_name=file_name,
         folder_id=folder_month_id,
@@ -162,9 +56,10 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
     payments_file = export_payments(
         date_from=statement_obj.date_from, date_to=statement_obj.date_to, module=module
     )
-    payments_name = f"Payments_{statement_obj.date_from.strftime('%Y%m%d')}_{statement_obj.date_to.strftime('%Y%m%d')}.xlsx"
+    payments_name = f"{str(_('Payments'))}_{statement_obj.date_from.strftime('%Y%m%d')}_{statement_obj.date_to.strftime('%Y%m%d')}.xlsx"
     upload_file(
         service=service,
+        drive_id=GOOGLE_DRIVE_ID,
         file_bytes=payments_file,
         file_name=payments_name,
         folder_id=folder_month_id,
@@ -172,7 +67,10 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
     )
 
     folder_receipts_id = create_folder(
-        service=service, folder_name=str(_("Receipts")), parent_id=folder_month_id
+        service=service,
+        drive_id=GOOGLE_DRIVE_ID,
+        folder_name=str(_("Receipts")),
+        parent_id=folder_month_id,
     )
 
     payment_ids = list(
@@ -203,6 +101,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
         # Reuse the same folder for the same entity
         folder_expense_id = create_folder(
             service=service,
+            drive_id=GOOGLE_DRIVE_ID,
             folder_name=expense_obj.entity.full_name,
             parent_id=folder_receipts_id,
         )
@@ -213,6 +112,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
             upload_file(
                 service=service,
+                drive_id=GOOGLE_DRIVE_ID,
                 file_bytes=expense_obj.file.file,
                 file_name=expense_name,
                 folder_id=folder_expense_id,
@@ -224,6 +124,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
             upload_file(
                 service=service,
+                drive_id=GOOGLE_DRIVE_ID,
                 file_bytes=receipt_obj.file.file,
                 file_name=receipt_name,
                 folder_id=folder_expense_id,
@@ -236,6 +137,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
         upload_file(
             service=service,
+            drive_id=GOOGLE_DRIVE_ID,
             file_bytes=receipt_obj.file.file,
             file_name=receipt_name,
             folder_id=folder_receipts_id,

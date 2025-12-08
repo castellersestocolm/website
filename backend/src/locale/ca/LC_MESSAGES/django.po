@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-03 17:42+0100\n"
+"POT-Creation-Date: 2025-12-08 13:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: activity/admin.py:48 activity/admin.py:128 data/admin.py:39 data/admin.py:70
-#: data/admin.py:94 legal/admin.py:40 legal/admin.py:64 order/admin.py:245
-#: payment/admin.py:479 payment/admin.py:721 product/admin.py:88
+#: activity/admin.py:48 activity/admin.py:133 data/admin.py:39 data/admin.py:70
+#: data/admin.py:94 legal/admin.py:40 legal/admin.py:64 order/admin.py:255
+#: payment/admin.py:473 payment/admin.py:725 product/admin.py:88
 msgid "name"
 msgstr "nom"
+
+#: activity/api/export.py:41
+msgid "Registrations"
+msgstr "Inscripcions"
 
 #: comunicat/db/mixins.py:15
 msgid "created"
@@ -278,10 +282,10 @@ msgstr ""
 msgid "Summary"
 msgstr "Resum"
 
-#: comunicat/templates/email/org/membership/paid.html:23
+#: comunicat/templates/email/org/membership/paid.html:31
 #: comunicat/templates/email/org/order/created.html:31
 #: comunicat/templates/email/org/registration/paid.html:26
-#: comunicat/templates/email/towers/membership/paid.html:23
+#: comunicat/templates/email/towers/membership/paid.html:31
 #: comunicat/templates/email/towers/order/created.html:31
 #: comunicat/templates/email/towers/order/paid.html:31
 #: comunicat/templates/email/towers/registration/paid.html:26
@@ -304,15 +308,15 @@ msgstr ""
 
 #: comunicat/templates/email/org/membership/renew.html:10
 msgid ""
-"This year playtime in Catalan will have an added cost per kid and includes an "
-"improved schedule and activity plan. If you want to register your kid for "
-"playtime you need to mark the checkbox, the total amount to be paid will "
-"be updated automatically."
+"This year playtime in Catalan will have an added cost per kid and includes "
+"an improved schedule and activity plan. If you want to register your kid for "
+"playtime you need to mark the checkbox, the total amount to be paid will be "
+"updated automatically."
 msgstr ""
 "Enguany l'esplai tindrà un cost afegit per criatura i inclou una nova "
-"estructura i pla d'activitats. Si vols registrar la teva canalla per l'esplai "
-"has de seleccionar la casella corresponent, la quantitat total a pagar "
-"s'actualitzarà automàticament."
+"estructura i pla d'activitats. Si vols registrar la teva canalla per "
+"l'esplai has de seleccionar la casella corresponent, la quantitat total a "
+"pagar s'actualitzarà automàticament."
 
 #: comunicat/templates/email/org/membership/renew.html:11
 msgid "You can find the form to renew your membership in the following page."
@@ -558,11 +562,11 @@ msgstr ""
 msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
-#: event/admin.py:87 payment/admin.py:181
+#: event/admin.py:87 payment/admin.py:180
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:89 order/admin.py:92 payment/admin.py:151
+#: event/admin.py:89 order/admin.py:93 payment/admin.py:150
 msgid "Send paid email"
 msgstr ""
 
@@ -606,7 +610,7 @@ msgstr ""
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:112 user/admin.py:324
+#: membership/admin.py:112 user/admin.py:319
 msgid "family"
 msgstr "família"
 
@@ -707,21 +711,21 @@ msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
-#: order/admin.py:81
+#: order/admin.py:82
 msgid "Send created email"
 msgstr ""
 
-#: order/admin.py:164
+#: order/admin.py:174
 #, fuzzy
 #| msgid "Attending"
 msgid "pending"
 msgstr "Hi participo"
 
-#: order/admin.py:165
+#: order/admin.py:175
 msgid "delivery"
 msgstr ""
 
-#: order/admin.py:166
+#: order/admin.py:176
 #, fuzzy
 #| msgid "Payment"
 msgid "payment"
@@ -739,39 +743,39 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:121 payment/admin.py:295
+#: payment/admin.py:121 payment/admin.py:294
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:261 payment/admin.py:359
+#: payment/admin.py:260 payment/admin.py:358
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:262 payment/admin.py:361
+#: payment/admin.py:261 payment/admin.py:360
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:263 payment/admin.py:362 payment/admin.py:476
-#: payment/admin.py:576
+#: payment/admin.py:262 payment/admin.py:361 payment/admin.py:470
+#: payment/admin.py:580
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:360 user/admin.py:323
+#: payment/admin.py:359 user/admin.py:318
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:477 payment/admin.py:478 payment/admin.py:577
-#: payment/admin.py:578
+#: payment/admin.py:471 payment/admin.py:472 payment/admin.py:581
+#: payment/admin.py:582
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:575
+#: payment/admin.py:579
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:632
+#: payment/admin.py:636
 msgid "file"
 msgstr "fitxer"
 
@@ -781,7 +785,7 @@ msgstr "fitxer"
 msgid "Payments"
 msgstr "Pagament"
 
-#: payment/api/google_drive.py:175
+#: payment/api/google_drive.py:72
 msgid "Receipts"
 msgstr ""
 
@@ -815,11 +819,11 @@ msgstr ""
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:134
+#: payment/models.py:136
 msgid "Unknown"
 msgstr ""
 
-#: payment/models.py:388
+#: payment/models.py:392
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
@@ -831,7 +835,7 @@ msgstr ""
 msgid "Product size must match product."
 msgstr ""
 
-#: user/admin.py:158
+#: user/admin.py:153
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 

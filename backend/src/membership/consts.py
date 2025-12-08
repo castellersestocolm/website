@@ -83,3 +83,6 @@ MEMBERSHIP_BY_ACCOUNT_AND_AMOUNT = {
 MEMBERSHIP_LENGTHS = {
     int(config[0]): int(config[1]) for config in settings.MODULE_ALL_MEMBERSHIP_CONFIG
 }
+
+GOOGLE_DRIVE_ID = settings.MODULE_ALL_GOOGLE_DRIVE["membership"]["drive_id"]
+GOOGLE_DRIVE_FOLDER_ID = settings.MODULE_ALL_GOOGLE_DRIVE["membership"]["folder_id"]
