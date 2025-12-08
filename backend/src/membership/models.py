@@ -75,6 +75,11 @@ class Membership(StandardModel, Timestamps):
                 )
             )
 
+        import membership.tasks
+
+        # Sync memberships with Google Drive
+        transaction.on_commit(lambda: membership.tasks.sync_memberships.delay())
+
         super().save(*args, **kwargs)
 
 
@@ -98,6 +103,14 @@ class MembershipModule(StandardModel, Timestamps):
         related_query_name="membership_module",
     )
 
+    def save(self, *args, **kwargs):
+        import membership.tasks
+
+        # Sync memberships with Google Drive
+        transaction.on_commit(lambda: membership.tasks.sync_memberships.delay())
+
+        super().save(*args, **kwargs)
+
 
 class MembershipUser(StandardModel, Timestamps):
     user = models.ForeignKey(
@@ -115,3 +128,11 @@ class MembershipUser(StandardModel, Timestamps):
     )
 
     objects = MembershipUserQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        import membership.tasks
+
+        # Sync memberships with Google Drive
+        transaction.on_commit(lambda: membership.tasks.sync_memberships.delay())
+
+        super().save(*args, **kwargs)

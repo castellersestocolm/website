@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.db.models import JSONField
 from django.utils import translation
 from djmoney.models.fields import MoneyField
@@ -119,6 +119,13 @@ class ProgramCourseRegistration(StandardModel, Timestamps):
                             "item_id",
                         )
                     )
+
+        import activity.tasks
+
+        # Sync program with Google Drive
+        transaction.on_commit(
+            lambda: activity.tasks.sync_program.delay(program_id=self.course.program_id)
+        )
 
         super().save(*args, **kwargs)
 
