@@ -58,14 +58,14 @@ def export_program_course(course_id: UUID) -> BytesIO:
     )
 
     ws.column_dimensions["A"].width = 15
-    ws.column_dimensions["B"].width = 15
+    ws.column_dimensions["B"].width = 25
     ws.column_dimensions["C"].width = 10
-    ws.column_dimensions["D"].width = 15
-    ws.column_dimensions["E"].width = 20
-    ws.column_dimensions["F"].width = 20
-    ws.column_dimensions["G"].width = 15
+    ws.column_dimensions["D"].width = 25
+    ws.column_dimensions["E"].width = 30
+    ws.column_dimensions["F"].width = 30
+    ws.column_dimensions["G"].width = 20
     ws.column_dimensions["H"].width = 15
-    ws.column_dimensions["I"].width = 15
+    ws.column_dimensions["I"].width = 10
 
     ws.column_dimensions["C"].number_format = numbers.FORMAT_NUMBER_00
     ws.column_dimensions["I"].number_format = numbers.FORMAT_NUMBER_00
