@@ -48,7 +48,7 @@ export default function Footer() {
       target: "_self",
       language: undefined,
     },
-    user && {
+    {
       name: t("components.navbar-menu.resources"),
       path: ROUTES.resources.path,
       target: "_self",

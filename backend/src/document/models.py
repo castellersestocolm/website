@@ -53,8 +53,17 @@ class Document(StandardModel, Timestamps):
     order = models.PositiveSmallIntegerField(default=0)
 
     file = models.FileField(
+        null=True,
+        blank=True,
         upload_to=get_document_file_name,
         storage=signed_storage,
+        validators=[FileExtensionValidator(["pdf"])],
+    )
+
+    file_public = models.FileField(
+        null=True,
+        blank=True,
+        upload_to=get_document_file_name,
         validators=[FileExtensionValidator(["pdf"])],
     )
 
@@ -75,18 +84,29 @@ class Document(StandardModel, Timestamps):
         super().save(*args, **kwargs)
 
         # TODO: Only do this if the file has changed
-        with signed_storage.open(self.file.name) as f:
-            data = f.read()
+        if self.file or self.file_public:
+            if self.file:
+                with signed_storage.open(self.file.name) as f:
+                    data = f.read()
+            else:
+                data = self.file_public.read()
 
-        file = fitz.Document(stream=data)
-        file_page = file.load_page(0)
-        preview = file_page.get_pixmap(dpi=150).tobytes(output="png")
-        self.preview = ImageFile(BytesIO(preview), name=f"{self.id}.png")
+            file = fitz.Document(stream=data)
+            file_page = file.load_page(0)
+            preview = file_page.get_pixmap(dpi=150).tobytes(output="png")
+            self.preview = ImageFile(BytesIO(preview), name=f"{self.id}.png")
 
         super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ("code", "language", "version")
+        constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(models.Q(file="") | models.Q(file=None))
+                | ~models.Q(models.Q(file_public="") | models.Q(file_public=None)),
+                name="document_document_file_not_null",
+            )
+        ]
 
 
 class EmailAttachment(StandardModel, Timestamps):

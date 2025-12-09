@@ -232,3 +232,10 @@ export enum ContactMessageType {
   BUSINESS_WORKSHOP = 20,
   BUSINESS_PERFORMANCE = 21,
 }
+
+export enum DocumentType {
+  GENERAL = 10,
+  GUIDE = 20,
+  RESOURCE = 30,
+  PRESS = 40,
+}

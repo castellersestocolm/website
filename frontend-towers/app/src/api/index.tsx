@@ -813,12 +813,14 @@ export const apiAdminUserUpdate = async (
 export const apiDocumentList = async (
   page: number = undefined,
   pageSize: number = undefined,
+  filterTypes: number[] = undefined,
 ) => {
   try {
     return await instance.get("/document/", {
       params: {
         page_size: pageSize ? pageSize : API_DOCUMENTS_LIST_PAGE_SIZE,
         page: page,
+        filter_types: filterTypes && filterTypes.join(","),
       },
     });
   } catch (error) {

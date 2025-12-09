@@ -90,7 +90,7 @@ export default function NavBar() {
       name: t("components.navbar-menu.resources"),
       path: ROUTES.resources.path,
       target: "_self",
-      permission: PermissionLevel.USER,
+      permission: undefined,
       language: undefined,
     },
     /** {

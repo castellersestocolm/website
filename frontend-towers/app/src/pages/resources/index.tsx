@@ -1,13 +1,14 @@
 import styles from "./styles.module.css";
-import { Divider, Link, Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
 import ImageHeroResources from "../../assets/images/heros/resources.jpg";
 import { apiDocumentList } from "../../api";
-import PageUserImageHero from "../../components/PageUserImageHero/PageUserImageHero";
+import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import Box from "@mui/material/Box";
 import LanguageChip from "../../components/LanguageChip/LanguageChip";
+import { DocumentType } from "../../enums";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -17,7 +18,11 @@ function ResourcesPage() {
   const [documents, setDocuments] = React.useState(undefined);
 
   React.useEffect(() => {
-    apiDocumentList().then((response) => {
+    apiDocumentList(undefined, undefined, [
+      DocumentType.GENERAL,
+      DocumentType.GUIDE,
+      DocumentType.RESOURCE,
+    ]).then((response) => {
       if (response.status === 200) {
         setDocuments(response.data);
       }
@@ -60,7 +65,7 @@ function ResourcesPage() {
   );
 
   return (
-    <PageUserImageHero
+    <PageImageHero
       title={t("pages.resources.title")}
       content={content}
       hero={ImageHeroResources}
