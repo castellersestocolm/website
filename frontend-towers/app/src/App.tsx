@@ -37,11 +37,11 @@ import OrderPaymentPage from "./pages/order-payment";
 import OrderReceiptPage from "./pages/order-receipt";
 import OrderCompletePage from "./pages/order-complete";
 import AdminUserPage from "./pages/admin-user";
-import PressPage from "./pages/press";
 import PressReleasePage from "./pages/press-release";
 import CalendarEventPage from "./pages/calendar-event";
 import BusinessWorkshopsPage from "./pages/business-workshops";
 import BusinessPerformancesPage from "./pages/business-performances";
+import PressArticlePage from "./pages/press-articles";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -191,9 +191,16 @@ const App = () => {
                     path={ROUTES["order-receipt"].path}
                     element={<OrderReceiptPage />}
                   />
-                  <Route path={ROUTES.press.path} element={<PressPage />} />
+                  <Route
+                    path={ROUTES["press-article"].path}
+                    element={<PressArticlePage />}
+                  />
                   <Route
                     path={ROUTES["press-release"].path}
+                    element={<PressReleasePage />}
+                  />
+                  <Route
+                    path={ROUTES["press-release-date"].path}
                     element={<PressReleasePage />}
                   />
                   <Route

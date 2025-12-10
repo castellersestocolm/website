@@ -11,9 +11,9 @@
 
 .pressCard {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .pressCardImage {
@@ -48,4 +48,35 @@
   border-bottom: var(--mui-palette-divider) solid 1px;
   border-radius: 0 0 4px 4px;
   padding: 0 8px 4px 8px;
+}
+
+.pressCardUnpublished {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.pressCardImage {
+  background-color: var(--mui-palette-grey-100);
+}
+
+.pressCardImageBox {
+  width: 100%;
+  padding-bottom: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.pressCardText {
+  padding: 16px;
+}
+
+.pressCardTitle {
+  line-height: 1.25 !important;
+
+  p {
+    margin: 0 !important;
+  }
 }

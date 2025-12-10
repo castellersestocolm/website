@@ -122,10 +122,20 @@ export default function NavBar() {
     },
     {
       name: t("components.navbar-menu.press"),
-      path: ROUTES.press.path,
-      target: "_self",
-      permission: undefined,
-      language: undefined,
+      children: [
+        {
+          name: t("components.navbar-menu.press-article"),
+          path: ROUTES["press-article"].path,
+          target: "_self",
+          language: undefined,
+        },
+        {
+          name: t("components.navbar-menu.press-release"),
+          path: ROUTES["press-release"].path,
+          target: "_self",
+          language: undefined,
+        },
+      ],
     },
     {
       name: t("components.navbar-menu.about"),

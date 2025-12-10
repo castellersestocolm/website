@@ -50,6 +50,8 @@ class Document(StandardModel, Timestamps):
         default=DocumentStatus.DRAFT,
     )
 
+    date = models.DateField(null=True, blank=True)
+
     order = models.PositiveSmallIntegerField(default=0)
 
     file = models.FileField(

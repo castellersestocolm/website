@@ -65,10 +65,13 @@ export const ROUTES = {
   "order-receipt": {
     path: "/order/receipt/:id",
   },
-  press: {
-    path: "/press",
+  "press-article": {
+    path: "/press/article",
   },
   "press-release": {
+    path: "/press/release",
+  },
+  "press-release-date": {
     path: "/press/release/:year/:month/:day/:slug",
   },
   // Kept for compatibility

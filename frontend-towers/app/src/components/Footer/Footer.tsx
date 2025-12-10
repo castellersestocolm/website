@@ -55,8 +55,8 @@ export default function Footer() {
       language: undefined,
     },
     {
-      name: t("components.navbar-menu.press"),
-      path: ROUTES.press.path,
+      name: t("components.navbar-menu.press-release"),
+      path: ROUTES["press-release"].path,
       target: "_self",
       language: undefined,
     },
