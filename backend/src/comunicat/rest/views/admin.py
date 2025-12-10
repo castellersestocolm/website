@@ -11,6 +11,7 @@ import user.api.family_member
 import user.api.family_member_request
 import order.api
 import event.api
+import towers.api
 from comunicat.rest.permissions import AllowLevelAdmin
 
 from comunicat.rest.serializers.admin import (
@@ -19,6 +20,7 @@ from comunicat.rest.serializers.admin import (
     AdminOrderSerializer,
     AdminEventSerializer,
     AdminListEventSerializer,
+    AdminTowersEventSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import TeamType
@@ -179,3 +181,21 @@ class AdminEventAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+
+class AdminTowersEventAPI(ComuniCatViewSet):
+    serializer_class = AdminTowersEventSerializer
+    permission_classes = (AllowLevelAdmin,)
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: AdminTowersEventSerializer(), 403: Serializer()},
+    )
+    # @method_decorator(cache_page(60))
+    def retrieve(self, request, id):
+        event_towers = towers.api.get_towers_for_event(event_id=id)
+
+        serializer = self.serializer_class(
+            {"towers": event_towers}, context={"module": self.module}
+        )
+        return Response(serializer.data)

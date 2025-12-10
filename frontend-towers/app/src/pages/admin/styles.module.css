@@ -124,6 +124,17 @@
   }
 }
 
+.towerBox {
+  display: flex;
+  justify-content: end;
+  min-width: 24px;
+
+  p {
+    font-family: "DM Mono", "monospace" !important;
+    text-align: right;
+  }
+}
+
 .stockCountIcon {
   width: 18px !important;
   height: 18px !important;

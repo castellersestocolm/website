@@ -789,6 +789,16 @@ export const apiAdminEventList = async (
   }
 };
 
+export const apiAdminTowersEventList = async (eventId: string) => {
+  try {
+    return await instance.get("/admin/towers/event/" + eventId);
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiAdminUserUpdate = async (
   userId: string,
   alias: string = undefined,

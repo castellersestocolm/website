@@ -18,7 +18,9 @@ import {
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import {
+  apiAdminEventList,
   apiAdminOrderList,
+  apiAdminTowersEventList,
   apiAdminUserList,
   apiEventList,
   apiProductList,
@@ -55,10 +57,39 @@ function AdminPage() {
   let navigate = useNavigate();
 
   const [events, setEvents] = React.useState(undefined);
+  const [towersByEventId, setTowersByEventId] = React.useState<any>({});
+  const [userEvents, setUserEvents] = React.useState(undefined);
   const [statEvents, setStatEvents] = React.useState(undefined);
   const [products, setProducts] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
   const [orders, setOrders] = React.useState(undefined);
+
+  React.useEffect(() => {
+    apiAdminEventList(1, 5, new Date().toISOString().substring(0, 10)).then(
+      (response) => {
+        if (response.status === 200) {
+          setEvents(response.data);
+        }
+      },
+    );
+  }, [setEvents]);
+
+  React.useEffect(() => {
+    if (events) {
+      let currentTowersEvents: any[] = [];
+      for (let i = 0; i < events.results.length; i++) {
+        apiAdminTowersEventList(events.results[i].id).then((response) => {
+          if (response.status === 200) {
+            currentTowersEvents.push([
+              events.results[i].id,
+              response.data.towers,
+            ]);
+            setTowersByEventId(Object.fromEntries(currentTowersEvents));
+          }
+        });
+      }
+    }
+  }, [events, setTowersByEventId]);
 
   React.useEffect(() => {
     apiEventList(
@@ -70,15 +101,15 @@ function AdminPage() {
       true,
     ).then((response) => {
       if (response.status === 200) {
-        setEvents(response.data);
+        setUserEvents(response.data);
       }
     });
-  }, [setEvents]);
+  }, [setUserEvents]);
 
   React.useEffect(() => {
     apiEventList(
       1,
-      50,
+      10,
       undefined,
       new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
         .toISOString()
@@ -128,6 +159,10 @@ function AdminPage() {
     navigate(ROUTES["admin-user"].path);
   }
 
+  function handleAdminEventSubmit() {
+    navigate(ROUTES["admin-user"].path);
+  }
+
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
       <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
@@ -146,10 +181,10 @@ function AdminPage() {
               <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
-          {events && events.results.length > 0 ? (
+          {userEvents && userEvents.results.length > 0 ? (
             <Box>
               <List className={styles.adminList}>
-                {events.results.map((event: any, i: number, row: any) => {
+                {userEvents.results.map((event: any, i: number, row: any) => {
                   return (
                     <>
                       <ListItemButton disableTouchRipple dense>
@@ -300,12 +335,12 @@ function AdminPage() {
                 {users.results
                   .slice(
                     0,
-                    events && events.results.length > 0
-                      ? events.results.length === 4
+                    userEvents && userEvents.results.length > 0
+                      ? userEvents.results.length === 4
                         ? 7
-                        : events.results.length === 5
+                        : userEvents.results.length === 5
                           ? 8
-                          : events.results.length === 6
+                          : userEvents.results.length === 6
                             ? 10
                             : 5
                       : 5,
@@ -450,6 +485,118 @@ function AdminPage() {
                       </>
                     );
                   })}
+              </List>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
+        </Card>
+      </Grid>
+      <Grid container size={{ xs: 12, md: 12 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminCard}>
+          <Link
+            color="textPrimary"
+            underline="none"
+            component="button"
+            className={styles.adminTitleLink}
+            // onClick={handleAdminEventSubmit}
+          >
+            <Box className={styles.adminTopBoxLink}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.admin.events-table.title")}
+              </Typography>
+              {/* <IconKeyboardArrowRight className={styles.adminTitleIcon} /> */}
+            </Box>
+          </Link>
+          {events && events.results.length > 0 ? (
+            <Box>
+              <List className={styles.adminList}>
+                {events.results.map((event: any, i: number, row: any) => {
+                  return (
+                    <>
+                      <ListItemButton disableTouchRipple dense>
+                        <ListItemIcon className={styles.eventCardIcon}>
+                          {get_event_icon(event.type, event.modules)}
+                        </ListItemIcon>
+                        <Box
+                          className={styles.userFamilyListInner}
+                          flexDirection={{ xs: "column", lg: "row" }}
+                          alignItems={{ xs: "start", lg: "center" }}
+                        >
+                          <ListItemText
+                            className={styles.userFamilyListItem}
+                            disableTypography
+                            primary={
+                              <Typography variant="body2">
+                                {event.title +
+                                  (event.type === EventType.REHEARSAL &&
+                                  event.location !== null
+                                    ? " — " + event.location.name
+                                    : "")}
+                              </Typography>
+                            }
+                            secondary={
+                              <Typography variant="body2" color="textSecondary">
+                                {capitalizeFirstLetter(
+                                  new Date(event.time_from).toLocaleDateString(
+                                    i18n.resolvedLanguage,
+                                    {
+                                      day: "numeric",
+                                      month: "long",
+                                      year: "numeric",
+                                    },
+                                  ),
+                                ) +
+                                  " " +
+                                  new Date(event.time_from)
+                                    .toTimeString()
+                                    .slice(0, 5) +
+                                  " → " +
+                                  new Date(event.time_to)
+                                    .toTimeString()
+                                    .slice(0, 5)}
+                              </Typography>
+                            }
+                          ></ListItemText>
+                        </Box>
+                        {towersByEventId && event.id in towersByEventId && (
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            marginLeft={{ xs: "0", lg: "8px" }}
+                            marginTop={{ xs: "8px", lg: "0" }}
+                            marginBottom={{ xs: "8px", lg: "0" }}
+                            whiteSpace="nowrap"
+                            display={{ xs: "none", md: "flex" }}
+                          >
+                            {towersByEventId[event.id].map((tower: any) => {
+                              return (
+                                <Box className={styles.towerBox}>
+                                  <Typography
+                                    variant="body1"
+                                    color={
+                                      tower.is_published
+                                        ? "success"
+                                        : "textSecondary"
+                                    }
+                                    fontWeight={
+                                      tower.is_published ? "600" : undefined
+                                    }
+                                  >
+                                    {tower.name}
+                                  </Typography>
+                                </Box>
+                              );
+                            })}
+                          </Stack>
+                        )}
+                      </ListItemButton>
+                      {i + 1 < row.length && <Divider />}
+                    </>
+                  );
+                })}
               </List>
             </Box>
           ) : (

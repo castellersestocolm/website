@@ -58,6 +58,7 @@ router.register("contact/message", notify.ContactMessageAPI, "contact_message")
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
 router.register("admin/order", admin.AdminOrderAPI, "admin_order")
 router.register("admin/event", admin.AdminEventAPI, "admin_event")
+router.register("admin/towers/event", admin.AdminTowersEventAPI, "admin_towers_event")
 
 
 api_patterns = [

@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     "legal",
     "media",
     "notify",
+    "towers",
     "pinyator",
 ]
 

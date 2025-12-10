@@ -6,6 +6,7 @@ from django.utils import timezone
 from comunicat.enums import Module
 from event.enums import EventType, RegistrationStatus
 from event.models import Event, AgendaItem, Registration
+from towers.types import Tower, Position, Place
 from user.models import User
 
 from django.db import connections, transaction
@@ -177,23 +178,7 @@ def update_or_create_registration(registration_id: UUID) -> None:
     cursor.close()
 
 
-class Castle:
-    name: str
-    order: int
-
-    external_id: int
-
-    def __init__(
-        self, name: str, order: int, is_published: bool, external_id: int
-    ) -> None:
-        self.name = name
-        self.order = order
-        self.is_published = is_published
-
-        self.external_id = external_id
-
-
-def get_castles_for_event(event_id: UUID) -> list[Castle]:
+def get_towers_for_event(event_id: UUID) -> list[Tower]:
     cursor = connections["pinyator"].cursor()
 
     exists = cursor.execute(f"SELECT EVENT_ID FROM EVENT WHERE Codi='{event_id}'") > 0
@@ -209,12 +194,32 @@ def get_castles_for_event(event_id: UUID) -> list[Castle]:
 
     pinyator_castles = cursor.fetchall()
 
+    pinyator_positions = {}
+
+    for pinyator_tower_id, __, __, __ in pinyator_castles:
+        cursor.execute(
+            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, c.Codi FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID='{pinyator_tower_id}' AND ps.Casteller_ID != '0'"
+        )
+        pinyator_positions[pinyator_tower_id] = cursor.fetchall()
+
     return [
-        Castle(
+        Tower(
             name=name,
             order=order,
             is_published=bool.from_bytes(is_published),
-            external_id=pinyator_castle_id,
+            external_id=pinyator_tower_id,
+            places=[
+                Place(
+                    user_id=user_id,
+                    position=Position(
+                        name=position_name, external_id=pinyator_position_id
+                    ),
+                    external_id=pinyator_place_id,
+                )
+                for pinyator_place_id, pinyator_position_id, position_name, user_id in pinyator_positions[
+                    pinyator_tower_id
+                ]
+            ],
         )
-        for pinyator_castle_id, name, order, is_published in pinyator_castles
+        for pinyator_tower_id, name, order, is_published in pinyator_castles
     ]

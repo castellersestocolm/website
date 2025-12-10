@@ -4,8 +4,8 @@ from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 
-import pinyator.api
-from comunicat.rest.serializers.towers import CastleSerializer, ListCastleSerializer
+import towers.api
+from comunicat.rest.serializers.towers import ListTowerSerializer, TowerSerializer
 
 from comunicat.rest.viewsets import ComuniCatViewSet
 
@@ -19,26 +19,26 @@ class TowersResultsSetPagination(PageNumberPagination):
 class TowersCastleAPI(
     ComuniCatViewSet,
 ):
-    serializer_class = CastleSerializer
+    serializer_class = TowerSerializer
     permission_classes = (permissions.IsAuthenticated,)
     pagination_class = TowersResultsSetPagination
     lookup_field = "id"
 
     @swagger_auto_schema(
-        query_serializer=ListCastleSerializer,
-        responses={200: CastleSerializer(many=True)},
+        query_serializer=ListTowerSerializer(),
+        responses={200: TowerSerializer(many=True)},
     )
     @method_decorator(cache_page(60))
     def list(self, request):
-        serializer = ListCastleSerializer(data=request.query_params)
+        serializer = ListTowerSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
-        castles = pinyator.api.get_castles_for_event(
+        event_towers = towers.api.get_towers_for_event(
             event_id=serializer.validated_data["event_id"]
         )
 
         paginator = self.pagination_class()
-        result_page = paginator.paginate_queryset(castles, request)
+        result_page = paginator.paginate_queryset(event_towers, request)
         serializer = self.serializer_class(
             result_page, context={"module": self.module}, many=True
         )

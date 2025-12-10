@@ -1,10 +1,11 @@
 from drf_yasg.utils import swagger_serializer_method
 
 from comunicat.enums import Module
-from comunicat.rest.serializers.event import EventModuleSerializer
+from comunicat.rest.serializers.event import EventModuleSerializer, LocationSerializer
 from comunicat.rest.serializers.legal import TeamSlimSerializer, RoleSerializer
 from comunicat.rest.serializers.order import OrderProductSerializer
 from comunicat.rest.serializers.product import ProductSerializer
+from comunicat.rest.serializers.towers import TowerWithPlacesSerializer
 from comunicat.rest.serializers.user import (
     UserExtraSlimWithFamilySerializer,
     UserSuperSlimSerializer,
@@ -209,6 +210,7 @@ class AdminListEventSerializer(s.Serializer):
 
 
 class AdminEventSerializer(s.ModelSerializer):
+    location = LocationSerializer(read_only=True)
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
@@ -220,6 +222,7 @@ class AdminEventSerializer(s.ModelSerializer):
             "title",
             "time_from",
             "time_to",
+            "location",
             "type",
             "module",
             "require_signup",
@@ -232,6 +235,7 @@ class AdminEventSerializer(s.ModelSerializer):
             "title",
             "time_from",
             "time_to",
+            "location",
             "type",
             "module",
             "require_signup",
@@ -239,3 +243,7 @@ class AdminEventSerializer(s.ModelSerializer):
             "modules",
             "created_at",
         )
+
+
+class AdminTowersEventSerializer(s.Serializer):
+    towers = TowerWithPlacesSerializer(many=True, read_only=True)
