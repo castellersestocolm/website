@@ -116,6 +116,8 @@ export const TableUsers = ({ isAdult, products }: any) => {
             }
           : {
               ...oldUser.towers,
+              height_shoulders: newUser.heightShoulder,
+              height_arms: newUser.heightArms,
               alias: newUser.alias,
             },
       };
@@ -129,8 +131,8 @@ export const TableUsers = ({ isAdult, products }: any) => {
       apiAdminUserUpdate(
         newUser.id,
         newUser.alias,
-        isAdult ? newUser.heightShoulder : undefined,
-        isAdult ? newUser.heightArms : undefined,
+        newUser.heightShoulder,
+        newUser.heightArms,
       ).then((response) => {
         if (response.status === 202) {
           setUsers(newUsers);
@@ -241,63 +243,62 @@ export const TableUsers = ({ isAdult, products }: any) => {
         </Typography>
       ),
     },
+    {
+      field: "heightShoulder",
+      type: "number",
+      headerName: t("pages.admin-user.users-table.height-shoulders"),
+      width: 95,
+      editable: true,
+      align: "left",
+      headerAlign: "left",
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin-user.users-table.height-shoulders")}
+        </Typography>
+      ),
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <Typography
+          variant="body2"
+          component="span"
+          className={styles.adminMono}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: "heightArms",
+      type: "number",
+      headerName: t("pages.admin-user.users-table.height-arms"),
+      width: 85,
+      editable: true,
+      align: "left",
+      headerAlign: "left",
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin-user.users-table.height-arms")}
+        </Typography>
+      ),
+      renderCell: (params: GridRenderCellParams<any, string>) => (
+        <Typography
+          variant="body2"
+          component="span"
+          className={styles.adminMono}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
   ];
 
   const midGridColumns: GridColDef[] = isAdult
-    ? initGridColumns.concat([
-        {
-          field: "heightShoulder",
-          type: "number",
-          headerName: t("pages.admin-user.users-table.height-shoulders"),
-          width: 100,
-          editable: isAdult,
-          align: "left",
-          headerAlign: "left",
-          renderHeader: () => (
-            <Typography variant="body2" fontWeight={600}>
-              {t("pages.admin-user.users-table.height-shoulders")}
-            </Typography>
-          ),
-          renderCell: (params: GridRenderCellParams<any, string>) => (
-            <Typography
-              variant="body2"
-              component="span"
-              className={styles.adminMono}
-            >
-              {params.value}
-            </Typography>
-          ),
-        },
-        {
-          field: "heightArms",
-          type: "number",
-          headerName: t("pages.admin-user.users-table.height-arms"),
-          width: 100,
-          editable: isAdult,
-          align: "left",
-          headerAlign: "left",
-          renderHeader: () => (
-            <Typography variant="body2" fontWeight={600}>
-              {t("pages.admin-user.users-table.height-arms")}
-            </Typography>
-          ),
-          renderCell: (params: GridRenderCellParams<any, string>) => (
-            <Typography
-              variant="body2"
-              component="span"
-              className={styles.adminMono}
-            >
-              {params.value}
-            </Typography>
-          ),
-        },
-      ])
+    ? initGridColumns
     : initGridColumns.concat([
         {
           field: "family",
           type: "string",
           headerName: t("pages.admin-user.users-table.family"),
-          width: 150,
+          width: 100,
           align: "left",
           headerAlign: "left",
           renderHeader: () => (
@@ -513,7 +514,6 @@ export const TableUsers = ({ isAdult, products }: any) => {
               filterProductsForUser(products.results, userTeamIds);
             const userProdcutIds =
               userProducts && userProducts.map((product: any) => product.id);
-            console.log(user, userProducts);
             const currentMessages =
               messages &&
               messages.filter((message: any) => message.userId === user.id);
@@ -523,11 +523,10 @@ export const TableUsers = ({ isAdult, products }: any) => {
                 id: user.id,
                 firstname: user.firstname,
                 lastname: user.lastname,
+                heightShoulder: user.towers && user.towers.height_shoulders,
+                heightArms: user.towers && user.towers.height_arms,
                 ...(isAdult
                   ? {
-                      heightShoulder:
-                        user.towers && user.towers.height_shoulders,
-                      heightArms: user.towers && user.towers.height_arms,
                       isMusician:
                         user.members &&
                         user.members.filter(
@@ -644,8 +643,6 @@ export const TableUsers = ({ isAdult, products }: any) => {
           ...gridColumns,
           columnVisibilityModel: {
             id: false,
-            heightShoulder: isAdult,
-            heightArms: isAdult,
             isMusician: isAdult,
           },
         },
