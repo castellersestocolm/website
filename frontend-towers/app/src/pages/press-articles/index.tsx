@@ -40,9 +40,14 @@ function PressArticlePage() {
                 className={styles.resourcesGridItem}
               >
                 <Link
-                  href={BACKEND_BASE_URL + document.file}
+                  href={
+                    document.url_external
+                      ? document.url_external
+                      : BACKEND_BASE_URL + document.file
+                  }
                   underline="none"
                   color="textPrimary"
+                  target={document.url_external ? "_blank" : "_self"}
                 >
                   <img
                     src={BACKEND_BASE_URL + document.preview.medium}

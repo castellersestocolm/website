@@ -69,6 +69,8 @@ class Document(StandardModel, Timestamps):
         validators=[FileExtensionValidator(["pdf"])],
     )
 
+    url_external = models.URLField(null=True, blank=True, max_length=1000)
+
     preview = VersatileImageField(
         "Image",
         upload_to=get_document_preview_name,

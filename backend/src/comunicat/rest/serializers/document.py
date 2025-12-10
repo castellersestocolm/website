@@ -51,6 +51,7 @@ class DocumentSerializer(s.ModelSerializer):
             "date",
             "order",
             "file",
+            "url_external",
             "preview",
         )
         read_only_fields = (
@@ -63,5 +64,6 @@ class DocumentSerializer(s.ModelSerializer):
             "date",
             "order",
             "file",
+            "url_external",
             "preview",
         )

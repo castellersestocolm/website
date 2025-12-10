@@ -48,7 +48,6 @@ function PressReleasePage() {
     day: string,
     slug: string,
   ) {
-    console.log(year, month, day, slug);
     navigate(
       ROUTES["press-release-date"].path
         .replace(":year", year)
