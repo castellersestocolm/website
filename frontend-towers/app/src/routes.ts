@@ -96,6 +96,9 @@ export const ROUTES = {
   "admin-user": {
     path: "/admin/user",
   },
+  "admin-stats": {
+    path: "/admin/stats",
+  },
   "external-form-equipment": {
     path: "https://docs.google.com/forms/d/e/1FAIpQLSc1ZoTANdTVTpeZ_jqxvGVm1KXpjNZQLBD4m6pkCtugkBAWqg/viewform",
   },

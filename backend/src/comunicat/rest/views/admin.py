@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import Serializer
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ import user.api.family_member_request
 import order.api
 import event.api
 import towers.api
+import towers.api.statistics
 from comunicat.rest.permissions import AllowLevelAdmin
 
 from comunicat.rest.serializers.admin import (
@@ -21,6 +23,7 @@ from comunicat.rest.serializers.admin import (
     AdminEventSerializer,
     AdminListEventSerializer,
     AdminTowersEventSerializer,
+    AdminTowersStatsPositionSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import TeamType
@@ -39,6 +42,12 @@ class AdminOrderResultsSetPagination(PageNumberPagination):
 
 
 class AdminEventResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class AdminTowersStatsResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -191,7 +200,7 @@ class AdminTowersEventAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: AdminTowersEventSerializer(), 403: Serializer()},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def retrieve(self, request, id):
         event_towers = towers.api.get_towers_for_event(event_id=id)
 
@@ -199,3 +208,26 @@ class AdminTowersEventAPI(ComuniCatViewSet):
             {"towers": event_towers}, context={"module": self.module}
         )
         return Response(serializer.data)
+
+
+class AdminTowersStatsAPI(ComuniCatViewSet):
+    permission_classes = (AllowLevelAdmin,)
+    pagination_class = AdminTowersStatsResultsSetPagination
+
+    @swagger_auto_schema(
+        responses={
+            200: AdminTowersStatsPositionSerializer(many=True),
+            403: Serializer(),
+        },
+    )
+    @action(methods=["get"], detail=False, url_path="position", url_name="position")
+    @method_decorator(cache_page(60))
+    def position(self, request):
+        position_stats_towers = towers.api.statistics.get_positions()
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(position_stats_towers, request)
+        serializer = AdminTowersStatsPositionSerializer(
+            result_page, many=True, context={"module": self.module}
+        )
+        return paginator.get_paginated_response(serializer.data)

@@ -163,6 +163,10 @@ function AdminPage() {
     navigate(ROUTES["admin-user"].path);
   }
 
+  function handleAdminStatsSubmit() {
+    navigate(ROUTES["admin-stats"].path);
+  }
+
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
       <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
@@ -822,12 +826,13 @@ function AdminPage() {
             underline="none"
             component="button"
             className={styles.adminTitleLink}
+            onClick={handleAdminStatsSubmit}
           >
             <Box className={styles.adminTopBoxLink}>
               <Typography variant="h6" fontWeight="600" component="div">
                 {t("pages.admin.stats-table.title")}
               </Typography>
-              {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
+              <IconKeyboardArrowRight className={styles.adminTitleIcon} />
             </Box>
           </Link>
           {statEvents && statEvents.results.length > 0 ? (

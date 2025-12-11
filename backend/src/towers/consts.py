@@ -31,3 +31,12 @@ PINYATOR_POSITION_TO_POSITION_TYPE = {
     "Ultim Cordo": PositionType.CORDO,
     "Novelles": None,
 }
+
+POSITION_TYPE_TO_PINYATOR_POSITIONS = {
+    position_type: [
+        pp
+        for pp, pt in PINYATOR_POSITION_TO_POSITION_TYPE.items()
+        if pt == position_type
+    ]
+    for position_type in PositionType
+}

@@ -19,6 +19,7 @@ from membership.enums import MembershipStatus
 from order.enums import OrderStatus
 from order.models import Order
 from payment.models import Entity
+from towers.enums import PositionType
 from user.enums import UserProductSource
 from user.models import User, TowersUser
 
@@ -247,3 +248,13 @@ class AdminEventSerializer(s.ModelSerializer):
 
 class AdminTowersEventSerializer(s.Serializer):
     towers = TowerWithPlacesSerializer(many=True, read_only=True)
+
+
+class AdminTowersStatsUserPositionSerializer(s.Serializer):
+    user = UserSuperSlimSerializer(read_only=True)
+    times = s.IntegerField(read_only=True)
+
+
+class AdminTowersStatsPositionSerializer(s.Serializer):
+    type = IntEnumField(PositionType, read_only=True)
+    users = AdminTowersStatsUserPositionSerializer(many=True, read_only=True)

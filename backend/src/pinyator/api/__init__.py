@@ -6,6 +6,8 @@ from django.utils import timezone
 from comunicat.enums import Module
 from event.enums import EventType, RegistrationStatus
 from event.models import Event, AgendaItem, Registration
+from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS
+from towers.enums import PositionType
 from towers.types import Tower, Position, Place
 from user.models import User
 
@@ -198,7 +200,7 @@ def get_towers_for_event(event_id: UUID) -> list[Tower]:
 
     for pinyator_tower_id, __, __, __ in pinyator_castles:
         cursor.execute(
-            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, c.Codi FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID='{pinyator_tower_id}' AND ps.Casteller_ID != '0'"
+            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, c.Codi FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0'"
         )
         pinyator_positions[pinyator_tower_id] = cursor.fetchall()
 
@@ -223,3 +225,18 @@ def get_towers_for_event(event_id: UUID) -> list[Tower]:
         )
         for pinyator_tower_id, name, order, is_published in pinyator_castles
     ]
+
+
+def get_stats_for_position(position_type: PositionType) -> tuple[tuple[str, int]]:
+    cursor = connections["pinyator"].cursor()
+
+    pinyator_positions = POSITION_TYPE_TO_PINYATOR_POSITIONS[position_type]
+
+    if not pinyator_positions:
+        return tuple()
+
+    cursor.execute(
+        f"SELECT DISTINCT c.Codi, COUNT(c.Codi) FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE p.Nom IN ('{'\',\''.join(pinyator_positions)}') AND ps.Casteller_ID != '0' GROUP BY c.Codi LIMIT 5"
+    )
+
+    return cursor.fetchall()
