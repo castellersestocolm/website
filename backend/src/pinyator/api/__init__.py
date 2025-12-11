@@ -236,7 +236,7 @@ def get_stats_for_position(position_type: PositionType) -> tuple[tuple[str, int]
         return tuple()
 
     cursor.execute(
-        f"SELECT DISTINCT c.Codi, COUNT(c.Codi) FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE p.Nom IN ('{'\',\''.join(pinyator_positions)}') AND ps.Casteller_ID != '0' GROUP BY c.Codi LIMIT 5"
+        f"SELECT DISTINCT c.Codi, COUNT(c.Codi) FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE p.Nom IN ('{'\',\''.join(pinyator_positions)}') AND ps.Casteller_ID != '0' GROUP BY c.Codi ORDER BY COUNT(c.Codi) DESC LIMIT 5"
     )
 
     return cursor.fetchall()
