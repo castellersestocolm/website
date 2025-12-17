@@ -1,14 +1,12 @@
 import itertools
 
 from django import forms
-from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import JSONField, Q
-from django.forms import BaseInlineFormSet, Widget
+from django.forms import BaseInlineFormSet
 from django.utils import timezone, translation
-from djmoney.money import Money
 
 import payment.api.entity
 import payment.tasks
@@ -52,7 +50,12 @@ class PaymentLineForPaymentFormset(BaseInlineFormSet):
         super().clean()
 
         if self.instance.transaction:
-            amount_left = abs(self.instance.transaction.amount)
+            amount_left = abs(self.instance.transaction.amount) - sum(
+                Payment.objects.filter(transaction=self.instance.transaction)
+                .exclude(id=self.instance.id)
+                .with_amount()
+                .values_list("amount", flat=True)
+            )
             for form in self.forms:
                 if "amount" not in form.cleaned_data:
                     continue
@@ -364,8 +367,16 @@ class PaymentLineAdmin(admin.ModelAdmin):
 class PaymentInline(admin.TabularInline):
     model = Payment
     ordering = ("-created_at",)
-    readonly_fields = ("transaction", "debit_payment")
+    readonly_fields = ("amount", "transaction", "debit_payment")
     extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_amount().order_by("-created_at")
+
+    def amount(self, obj):
+        return obj.amount
+
+    amount.short_description = _("amount")
 
 
 class AccountInline(admin.TabularInline):
