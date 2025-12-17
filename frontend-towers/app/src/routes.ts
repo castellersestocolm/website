@@ -78,8 +78,14 @@ export const ROUTES = {
   "press-release-no-date": {
     path: "/press/release/:slug",
   },
+  workshops: {
+    path: "/workshops",
+  },
   "business-workshops": {
     path: "/business/workshops",
+  },
+  performances: {
+    path: "/performances",
   },
   "business-performances": {
     path: "/business/performances",

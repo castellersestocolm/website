@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./pages/home";
 import ResourcesPage from "./pages/resources";
 import UserLoginPage from "./pages/user-login";
@@ -238,6 +238,24 @@ const App = () => {
                   <Route
                     path={ROUTES["business-performances"].path}
                     element={<BusinessPerformancesPage />}
+                  />
+                  <Route
+                    path={ROUTES.workshops.path}
+                    element={
+                      <Navigate
+                        to={ROUTES["business-workshops"].path}
+                        replace
+                      />
+                    }
+                  />
+                  <Route
+                    path={ROUTES.performances.path}
+                    element={
+                      <Navigate
+                        to={ROUTES["business-performances"].path}
+                        replace
+                      />
+                    }
                   />
                 </Routes>
               </Box>
