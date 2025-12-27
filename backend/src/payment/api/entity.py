@@ -1,7 +1,9 @@
 from uuid import UUID
 
 from django.db import transaction
+from django.db.models import ExpressionWrapper, Q, BooleanField
 
+from activity.models import ProgramCourseRegistration
 from event.models import Registration
 from notify.models import Email, ContactMessage
 from order.models import Order
@@ -13,7 +15,15 @@ from user.models import User
 # TODO: Detect if any model is using an entity that will be deleted before deleting it
 @transaction.atomic
 def merge(entity_ids: list[UUID]) -> Entity | None:
-    entity_objs = list(Entity.objects.filter(id__in=entity_ids).order_by("created_at"))
+    entity_objs = list(
+        Entity.objects.filter(id__in=entity_ids)
+        .annotate(
+            has_user=ExpressionWrapper(
+                Q(user__isnull=False), output_field=BooleanField()
+            )
+        )
+        .order_by("-has_user", "created_at")
+    )
 
     if not entity_objs:
         return None
@@ -72,6 +82,11 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
 
     # Update all contact messages to the remaining entity
     ContactMessage.objects.filter(entity_id__in=entity_ids).exclude(
+        entity=entity_obj
+    ).update(entity=entity_obj)
+
+    # Update all program course registrations to the remaining entity
+    ProgramCourseRegistration.objects.filter(entity_id__in=entity_ids).exclude(
         entity=entity_obj
     ).update(entity=entity_obj)
 
