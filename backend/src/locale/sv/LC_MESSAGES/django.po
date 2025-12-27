@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-27 15:42+0100\n"
+"POT-Creation-Date: 2025-12-27 16:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -346,8 +346,8 @@ msgid ""
 "Your payment has been processed and it's on its way to you! You will find a "
 "summary right below."
 msgstr ""
-"Din betalning har behandlats och är på väg till dig! Du hittar en sammanfattning "
-"nedan."
+"Din betalning har behandlats och är på väg till dig! Du hittar en "
+"sammanfattning nedan."
 
 #: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
@@ -651,6 +651,10 @@ msgstr ""
 msgid "View message"
 msgstr ""
 
+#: notify/api/template.py:396
+msgid "receipt"
+msgstr "kvitto"
+
 #: notify/consts.py:34 notify/consts.py:101
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
@@ -732,20 +736,16 @@ msgid "Send created email"
 msgstr ""
 
 #: order/admin.py:174
-#, fuzzy
-#| msgid "Attending"
 msgid "pending"
-msgstr "Deltar"
+msgstr "väntande"
 
 #: order/admin.py:175
 msgid "delivery"
-msgstr ""
+msgstr "leverans"
 
 #: order/admin.py:176
-#, fuzzy
-#| msgid "Payment"
 msgid "payment"
-msgstr "Betalning"
+msgstr "betalning"
 
 #: order/api/__init__.py:282
 msgid "The amount of some products exceed the available stock."
@@ -802,14 +802,12 @@ msgid "file"
 msgstr "fil"
 
 #: payment/api/export.py:39
-#, fuzzy
-#| msgid "Payment"
 msgid "Payments"
-msgstr "Betalning"
+msgstr "Betalningar"
 
 #: payment/api/google_drive.py:72
 msgid "Receipts"
-msgstr ""
+msgstr "Kvitton"
 
 #: payment/managers.py:138 payment/managers.py:356
 msgid "Membership update"
@@ -833,7 +831,7 @@ msgstr "(och mer)"
 
 #: payment/managers.py:426
 msgid "Expense"
-msgstr ""
+msgstr "Bekostnad"
 
 #: payment/models.py:103
 #, fuzzy
@@ -843,7 +841,7 @@ msgstr "Kategorin måste vara inställd för konto med förälder."
 
 #: payment/models.py:136
 msgid "Unknown"
-msgstr ""
+msgstr "Okänd"
 
 #: payment/models.py:392
 msgid "Category must be set for accounts with parent."

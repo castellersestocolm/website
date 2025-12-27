@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-27 15:42+0100\n"
+"POT-Creation-Date: 2025-12-27 16:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -347,7 +347,8 @@ msgid ""
 "Your payment has been processed and it's on its way to you! You will find a "
 "summary right below."
 msgstr ""
-"El vostre pagament s'ha processat i ja és de camí! En trobaràs un resum a continuació."
+"El vostre pagament s'ha processat i ja és de camí! En trobaràs un resum a "
+"continuació."
 
 #: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
@@ -652,6 +653,10 @@ msgstr ""
 msgid "View message"
 msgstr ""
 
+#: notify/api/template.py:396
+msgid "receipt"
+msgstr "rebut"
+
 #: notify/consts.py:34 notify/consts.py:101
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
@@ -803,14 +808,12 @@ msgid "file"
 msgstr "fitxer"
 
 #: payment/api/export.py:39
-#, fuzzy
-#| msgid "Payment"
 msgid "Payments"
-msgstr "Pagament"
+msgstr "Pagaments"
 
 #: payment/api/google_drive.py:72
 msgid "Receipts"
-msgstr ""
+msgstr "Rebuts"
 
 #: payment/managers.py:138 payment/managers.py:356
 msgid "Membership update"
@@ -834,7 +837,7 @@ msgstr "(i més)"
 
 #: payment/managers.py:426
 msgid "Expense"
-msgstr ""
+msgstr "Despesa"
 
 #: payment/models.py:103
 #, fuzzy
@@ -844,7 +847,7 @@ msgstr "La categoria és obligatòria per comptes amb matrius."
 
 #: payment/models.py:136
 msgid "Unknown"
-msgstr ""
+msgstr "Desconegut"
 
 #: payment/models.py:392
 msgid "Category must be set for accounts with parent."

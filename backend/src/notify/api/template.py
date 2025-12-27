@@ -393,9 +393,10 @@ def get_payment_email_render(
                 receipt__isnull=False,
             )
         ):
+            rebut_text = str(_("receipt"))
             attachments.append(
                 (
-                    f"{_('receipt')}-{i+1}.{payment_line_obj.receipt.file.name.split('.')[-1]}",
+                    f"{rebut_text}-{i+1}.{payment_line_obj.receipt.file.name.split('.')[-1]}",
                     payment_line_obj.receipt.file.file.read(),
                 )
             )

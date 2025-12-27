@@ -1,4 +1,6 @@
 import base64
+from email import encoders
+from email.mime.base import MIMEBase
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -56,6 +58,16 @@ def send_email(
 
         if cc_emails:
             message["CC"] = ",".join(cc_emails)
+
+        for attachment_name, attachment_bytes in attachments or []:
+            attachment_part = MIMEBase("application", "octet-stream")
+            attachment_part.set_payload(attachment_bytes)
+            encoders.encode_base64(attachment_part)
+            attachment_part.add_header(
+                "Content-Disposition",
+                f'attachment; filename="{attachment_name}"',
+            )
+            message.attach(attachment_part)
 
         encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
         create_message = {"raw": encoded_message}

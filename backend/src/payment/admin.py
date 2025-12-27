@@ -193,7 +193,7 @@ def send_paid_email(modeladmin, request, queryset):
                 )
                 + [settings.MODULE_DEFAULT]
             )[0]
-            notify.tasks.send_payment_email.delay(
+            notify.tasks.send_payment_email(
                 payment_id=payment_obj.id,
                 email_type=EmailType.PAYMENT_PAID,
                 module=origin_module,
