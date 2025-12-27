@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-08 13:23+0100\n"
+"POT-Creation-Date: 2025-12-27 15:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,13 +18,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: activity/admin.py:48 activity/admin.py:133 data/admin.py:39 data/admin.py:70
+#: activity/admin.py:59 activity/admin.py:144 data/admin.py:39 data/admin.py:70
 #: data/admin.py:94 legal/admin.py:40 legal/admin.py:64 order/admin.py:255
-#: payment/admin.py:473 payment/admin.py:725 product/admin.py:88
+#: payment/admin.py:502 payment/admin.py:754 product/admin.py:88
 msgid "name"
 msgstr "nom"
 
-#: activity/api/export.py:41
+#: activity/api/export.py:41 membership/api/export.py:13
 msgid "Registrations"
 msgstr "Inscripcions"
 
@@ -270,24 +270,28 @@ msgstr ""
 msgid ""
 "Your membership has been marked as paid! You will find a summary right below."
 msgstr ""
-"La teva quota s'ha marcat com a pagada! Trobaràs un resum a continuació."
+"La teva quota s'ha marcat com a pagada! En trobaràs un resum a continuació."
 
 #: comunicat/templates/email/org/membership/paid.html:14
 #: comunicat/templates/email/org/order/created.html:14
+#: comunicat/templates/email/org/payment/paid.html:14
 #: comunicat/templates/email/org/registration/paid.html:14
 #: comunicat/templates/email/towers/membership/paid.html:14
 #: comunicat/templates/email/towers/order/created.html:14
 #: comunicat/templates/email/towers/order/paid.html:14
+#: comunicat/templates/email/towers/payment/paid.html:14
 #: comunicat/templates/email/towers/registration/paid.html:14
 msgid "Summary"
 msgstr "Resum"
 
 #: comunicat/templates/email/org/membership/paid.html:31
 #: comunicat/templates/email/org/order/created.html:31
+#: comunicat/templates/email/org/payment/paid.html:23
 #: comunicat/templates/email/org/registration/paid.html:26
 #: comunicat/templates/email/towers/membership/paid.html:31
 #: comunicat/templates/email/towers/order/created.html:31
 #: comunicat/templates/email/towers/order/paid.html:31
+#: comunicat/templates/email/towers/payment/paid.html:23
 #: comunicat/templates/email/towers/registration/paid.html:26
 msgid "Total"
 msgstr "Total"
@@ -337,13 +341,21 @@ msgstr ""
 msgid "Payment options"
 msgstr "Com pagar"
 
+#: comunicat/templates/email/org/payment/paid.html:5
+#: comunicat/templates/email/towers/payment/paid.html:5
+msgid ""
+"Your payment has been processed and it's on its way to you! You will find a "
+"summary right below."
+msgstr ""
+"El vostre pagament s'ha processat i ja és de camí! En trobaràs un resum a continuació."
+
 #: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
 msgid ""
 "Your registration has been marked as paid! You will find a summary of the "
 "registration/s right below."
 msgstr ""
-"La teva inscripció s'ha marcat com a pagada! Trobaràs un resum de la "
+"La teva inscripció s'ha marcat com a pagada! En trobaràs un resum de la "
 "inscripció/ns a continuació."
 
 #: comunicat/templates/email/towers/contact/message.html:18
@@ -562,11 +574,11 @@ msgstr ""
 msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
-#: event/admin.py:87 payment/admin.py:180
+#: event/admin.py:87 payment/admin.py:201
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:89 order/admin.py:93 payment/admin.py:150
+#: event/admin.py:89 order/admin.py:93 payment/admin.py:154
 msgid "Send paid email"
 msgstr ""
 
@@ -640,11 +652,11 @@ msgstr ""
 msgid "View message"
 msgstr ""
 
-#: notify/consts.py:34 notify/consts.py:97
+#: notify/consts.py:34 notify/consts.py:101
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
 
-#: notify/consts.py:38 notify/consts.py:101
+#: notify/consts.py:38 notify/consts.py:105
 msgid "Reset your password to login"
 msgstr "Reinicia la teva contrasenya per entrar"
 
@@ -656,7 +668,7 @@ msgstr "Benvingut a Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
-#: notify/consts.py:50 notify/consts.py:113
+#: notify/consts.py:50 notify/consts.py:117
 msgid "You have been invited to join a family"
 msgstr "Has estat convidat a unir-te a una família"
 
@@ -664,50 +676,55 @@ msgstr "Has estat convidat a unir-te a una família"
 msgid "Sign-up for the upcoming events"
 msgstr "Confirma l'assistència als propers esdeveniments"
 
-#: notify/consts.py:58 notify/consts.py:121
+#: notify/consts.py:58 notify/consts.py:125
 msgid "Time to renew your membership"
 msgstr "La teva quota caduca aviat"
 
-#: notify/consts.py:62 notify/consts.py:125
+#: notify/consts.py:62 notify/consts.py:129
 msgid "Your membership has expired"
 msgstr "La teva quota ha caducat"
 
-#: notify/consts.py:66 notify/consts.py:129
+#: notify/consts.py:66 notify/consts.py:133
 msgid "Your membership is now paid"
 msgstr "La teva quota s'ha pagat"
 
-#: notify/consts.py:70 notify/consts.py:133
+#: notify/consts.py:70 notify/consts.py:137
 msgid "Your membership status"
 msgstr "L'estat de la teva quota"
 
-#: notify/consts.py:74 notify/consts.py:137
+#: notify/consts.py:74 notify/consts.py:141
 msgid "Thank you for your order"
 msgstr "Gràcies per la teva comanda"
 
-#: notify/consts.py:78 notify/consts.py:141
+#: notify/consts.py:78 notify/consts.py:145
 #, python-format
 msgid "Your order %s is now paid"
 msgstr "La teva comanda %s s'ha pagat"
 
-#: notify/consts.py:82 notify/consts.py:145
+#: notify/consts.py:82 notify/consts.py:149
 #, python-format
 msgid "Your registration for %s is now paid"
 msgstr "La teva inscripció per %s s'ha pagat"
 
-#: notify/consts.py:86 notify/consts.py:149
+#: notify/consts.py:86 notify/consts.py:153
 #, python-format
 msgid "Contact form — %s"
 msgstr "Formulari de contacte — %s"
 
-#: notify/consts.py:105
+#: notify/consts.py:90 notify/consts.py:157
+#, python-format
+msgid "Your payment has been processed — %s"
+msgstr "El vostre pagament s'ha processat — %s"
+
+#: notify/consts.py:109
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Benvingut/da als Castellers d'Estocolm"
 
-#: notify/consts.py:109
+#: notify/consts.py:113
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 
-#: notify/consts.py:117
+#: notify/consts.py:121
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
@@ -743,39 +760,45 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:121 payment/admin.py:294
+#: payment/admin.py:125 payment/admin.py:315
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:260 payment/admin.py:358
+#: payment/admin.py:281 payment/admin.py:379
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:261 payment/admin.py:360
+#: payment/admin.py:282 payment/admin.py:381
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:262 payment/admin.py:361 payment/admin.py:470
-#: payment/admin.py:580
+#: payment/admin.py:283 payment/admin.py:382 payment/admin.py:499
+#: payment/admin.py:609
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:359 user/admin.py:318
+#: payment/admin.py:380 user/admin.py:318
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:471 payment/admin.py:472 payment/admin.py:581
-#: payment/admin.py:582
+#: payment/admin.py:397
+#, fuzzy
+#| msgid "Amount"
+msgid "amount"
+msgstr "Quantitat"
+
+#: payment/admin.py:500 payment/admin.py:501 payment/admin.py:610
+#: payment/admin.py:611
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:579
+#: payment/admin.py:608
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:636
+#: payment/admin.py:665
 msgid "file"
 msgstr "fitxer"
 

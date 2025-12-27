@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-08 13:23+0100\n"
+"POT-Creation-Date: 2025-12-27 15:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,13 +18,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: activity/admin.py:48 activity/admin.py:133 data/admin.py:39 data/admin.py:70
+#: activity/admin.py:59 activity/admin.py:144 data/admin.py:39 data/admin.py:70
 #: data/admin.py:94 legal/admin.py:40 legal/admin.py:64 order/admin.py:255
-#: payment/admin.py:473 payment/admin.py:725 product/admin.py:88
+#: payment/admin.py:502 payment/admin.py:754 product/admin.py:88
 msgid "name"
 msgstr "namn"
 
-#: activity/api/export.py:41
+#: activity/api/export.py:41 membership/api/export.py:13
 msgid "Registrations"
 msgstr "Registreringar"
 
@@ -274,20 +274,24 @@ msgstr ""
 
 #: comunicat/templates/email/org/membership/paid.html:14
 #: comunicat/templates/email/org/order/created.html:14
+#: comunicat/templates/email/org/payment/paid.html:14
 #: comunicat/templates/email/org/registration/paid.html:14
 #: comunicat/templates/email/towers/membership/paid.html:14
 #: comunicat/templates/email/towers/order/created.html:14
 #: comunicat/templates/email/towers/order/paid.html:14
+#: comunicat/templates/email/towers/payment/paid.html:14
 #: comunicat/templates/email/towers/registration/paid.html:14
 msgid "Summary"
 msgstr "Översikt"
 
 #: comunicat/templates/email/org/membership/paid.html:31
 #: comunicat/templates/email/org/order/created.html:31
+#: comunicat/templates/email/org/payment/paid.html:23
 #: comunicat/templates/email/org/registration/paid.html:26
 #: comunicat/templates/email/towers/membership/paid.html:31
 #: comunicat/templates/email/towers/order/created.html:31
 #: comunicat/templates/email/towers/order/paid.html:31
+#: comunicat/templates/email/towers/payment/paid.html:23
 #: comunicat/templates/email/towers/registration/paid.html:26
 msgid "Total"
 msgstr "Summa"
@@ -335,6 +339,15 @@ msgstr ""
 #: comunicat/templates/email/towers/order/created.html:35
 msgid "Payment options"
 msgstr "Betalningsalternativ"
+
+#: comunicat/templates/email/org/payment/paid.html:5
+#: comunicat/templates/email/towers/payment/paid.html:5
+msgid ""
+"Your payment has been processed and it's on its way to you! You will find a "
+"summary right below."
+msgstr ""
+"Din betalning har behandlats och är på väg till dig! Du hittar en sammanfattning "
+"nedan."
 
 #: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
@@ -560,11 +573,11 @@ msgstr ""
 msgid "Join the community"
 msgstr "Gå med i gemenskapen"
 
-#: event/admin.py:87 payment/admin.py:180
+#: event/admin.py:87 payment/admin.py:201
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:89 order/admin.py:93 payment/admin.py:150
+#: event/admin.py:89 order/admin.py:93 payment/admin.py:154
 msgid "Send paid email"
 msgstr ""
 
@@ -638,11 +651,11 @@ msgstr ""
 msgid "View message"
 msgstr ""
 
-#: notify/consts.py:34 notify/consts.py:97
+#: notify/consts.py:34 notify/consts.py:101
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
 
-#: notify/consts.py:38 notify/consts.py:101
+#: notify/consts.py:38 notify/consts.py:105
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
@@ -654,7 +667,7 @@ msgstr "Välkomen till Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:50 notify/consts.py:113
+#: notify/consts.py:50 notify/consts.py:117
 msgid "You have been invited to join a family"
 msgstr "Du har blivit inbjuden att gå med i en familj"
 
@@ -662,50 +675,55 @@ msgstr "Du har blivit inbjuden att gå med i en familj"
 msgid "Sign-up for the upcoming events"
 msgstr "Registrera dig till kommande evenemang"
 
-#: notify/consts.py:58 notify/consts.py:121
+#: notify/consts.py:58 notify/consts.py:125
 msgid "Time to renew your membership"
 msgstr "Dags att förnya ditt medlemskap"
 
-#: notify/consts.py:62 notify/consts.py:125
+#: notify/consts.py:62 notify/consts.py:129
 msgid "Your membership has expired"
 msgstr "Ditt medlemskap har löpt ut"
 
-#: notify/consts.py:66 notify/consts.py:129
+#: notify/consts.py:66 notify/consts.py:133
 msgid "Your membership is now paid"
 msgstr "Ditt medlemskap är nu betalt"
 
-#: notify/consts.py:70 notify/consts.py:133
+#: notify/consts.py:70 notify/consts.py:137
 msgid "Your membership status"
 msgstr "Ditt medlemskap status"
 
-#: notify/consts.py:74 notify/consts.py:137
+#: notify/consts.py:74 notify/consts.py:141
 msgid "Thank you for your order"
 msgstr "Tack för din beställning"
 
-#: notify/consts.py:78 notify/consts.py:141
+#: notify/consts.py:78 notify/consts.py:145
 #, python-format
 msgid "Your order %s is now paid"
 msgstr "Din beställning %s är nu betald"
 
-#: notify/consts.py:82 notify/consts.py:145
+#: notify/consts.py:82 notify/consts.py:149
 #, python-format
 msgid "Your registration for %s is now paid"
 msgstr "Din registrering för %s är nu betald"
 
-#: notify/consts.py:86 notify/consts.py:149
+#: notify/consts.py:86 notify/consts.py:153
 #, python-format
 msgid "Contact form — %s"
 msgstr "Kontaktformulär — %s"
 
-#: notify/consts.py:105
+#: notify/consts.py:90 notify/consts.py:157
+#, python-format
+msgid "Your payment has been processed — %s"
+msgstr "Din betalning har behandlats — %s"
+
+#: notify/consts.py:109
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Välkommen till Castellers d'Estocolm"
 
-#: notify/consts.py:109
+#: notify/consts.py:113
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:117
+#: notify/consts.py:121
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Registrera dig till kommande evenemang och repetitioner"
 
@@ -741,39 +759,45 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:121 payment/admin.py:294
+#: payment/admin.py:125 payment/admin.py:315
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:260 payment/admin.py:358
+#: payment/admin.py:281 payment/admin.py:379
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:261 payment/admin.py:360
+#: payment/admin.py:282 payment/admin.py:381
 msgid "date"
 msgstr "datum"
 
-#: payment/admin.py:262 payment/admin.py:361 payment/admin.py:470
-#: payment/admin.py:580
+#: payment/admin.py:283 payment/admin.py:382 payment/admin.py:499
+#: payment/admin.py:609
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:359 user/admin.py:318
+#: payment/admin.py:380 user/admin.py:318
 msgid "entity"
 msgstr "enhet"
 
-#: payment/admin.py:471 payment/admin.py:472 payment/admin.py:581
-#: payment/admin.py:582
+#: payment/admin.py:397
+#, fuzzy
+#| msgid "Amount"
+msgid "amount"
+msgstr "Belopp"
+
+#: payment/admin.py:500 payment/admin.py:501 payment/admin.py:610
+#: payment/admin.py:611
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:579
+#: payment/admin.py:608
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:636
+#: payment/admin.py:665
 msgid "file"
 msgstr "fil"
 
