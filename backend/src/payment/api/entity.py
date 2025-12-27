@@ -2,8 +2,10 @@ from uuid import UUID
 
 from django.db import transaction
 
+from event.models import Registration
+from notify.models import Email, ContactMessage
 from order.models import Order
-from payment.models import Entity, Payment
+from payment.models import Entity, Payment, Expense, Receipt
 from product.models import StockOrder
 from user.models import User
 
@@ -38,6 +40,16 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
         entity=entity_obj
     )
 
+    # Update all expenses to the remaining entity
+    Expense.objects.filter(entity_id__in=entity_ids).exclude(entity=entity_obj).update(
+        entity=entity_obj
+    )
+
+    # Update all receipts to the remaining entity
+    Receipt.objects.filter(entity_id__in=entity_ids).exclude(entity=entity_obj).update(
+        entity=entity_obj
+    )
+
     # Update all stock orders to the remaining entity
     StockOrder.objects.filter(entity_id__in=entity_ids).exclude(
         entity=entity_obj
@@ -47,6 +59,21 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
     Order.objects.filter(entity_id__in=entity_ids).exclude(entity=entity_obj).update(
         entity=entity_obj
     )
+
+    # Update all registrations to the remaining entity
+    Registration.objects.filter(entity_id__in=entity_ids).exclude(
+        entity=entity_obj
+    ).update(entity=entity_obj)
+
+    # Update all orders to the remaining entity
+    Email.objects.filter(entity_id__in=entity_ids).exclude(entity=entity_obj).update(
+        entity=entity_obj
+    )
+
+    # Update all contact messages to the remaining entity
+    ContactMessage.objects.filter(entity_id__in=entity_ids).exclude(
+        entity=entity_obj
+    ).update(entity=entity_obj)
 
     # Delete old entities
     Entity.objects.filter(id__in=entity_ids).exclude(id=entity_obj.id).delete()
