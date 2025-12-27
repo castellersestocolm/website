@@ -86,6 +86,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Contact form — %s"),
                 "html": "email/org/contact/message.html",
             },
+            EmailType.PAYMENT_PAID: {
+                "subject": _("Your payment has been processed — %s"),
+                "html": "email/org/payment/paid.html",
+            },
         }
     },
     Module.TOWERS: {
@@ -149,6 +153,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Contact form — %s"),
                 "html": "email/towers/contact/message.html",
             },
+            EmailType.PAYMENT_PAID: {
+                "subject": _("Your payment has been processed — %s"),
+                "html": "email/towers/payment/paid.html",
+            },
         }
     },
 }
@@ -174,6 +182,10 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
     EmailType.CONTACT_MESSAGE: (
         "get_contact_message_email_render",
         ("contact_message_id",),
+    ),
+    EmailType.PAYMENT_PAID: (
+        "get_payment_email_render",
+        ("payment_id",),
     ),
 }
 

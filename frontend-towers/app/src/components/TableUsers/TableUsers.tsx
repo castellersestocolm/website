@@ -27,11 +27,16 @@ import {
 import IconEdit from "@mui/icons-material/Edit";
 import IconSave from "@mui/icons-material/Save";
 import IconCancel from "@mui/icons-material/Close";
+import IconVisibility from "@mui/icons-material/Visibility";
 import { filterProductsForUser } from "../../utils/product";
 import AlertsInline from "../AlertsInline/AlertsInline";
+import { ROUTES } from "../../routes";
+import { useNavigate } from "react-router-dom";
 
 export const TableUsers = ({ isAdult, products }: any) => {
   const { t } = useTranslation("common");
+
+  let navigate = useNavigate();
 
   const [users, setUsers] = React.useState(undefined);
   const [usersById, setUsersById] = React.useState(undefined);
@@ -75,6 +80,10 @@ export const TableUsers = ({ isAdult, products }: any) => {
 
   const handleEditClick = (id: GridRowId) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleViewClick = (id: GridRowId) => () => {
+    navigate(ROUTES["admin-user-id"].path.replace(":id", id.toString()));
   };
 
   const handleSaveClick = (id: GridRowId) => () => {
@@ -494,6 +503,13 @@ export const TableUsers = ({ isAdult, products }: any) => {
             label="Edit"
             className="textPrimary"
             onClick={handleEditClick(id)}
+            color="inherit"
+          />,
+          <GridActionsCellItem
+            icon={<IconVisibility />}
+            label="View"
+            className="textPrimary"
+            onClick={handleViewClick(id)}
             color="inherit"
           />,
         ];

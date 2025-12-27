@@ -115,6 +115,22 @@ class AdminUserAPI(ComuniCatViewSet):
         return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(
+        responses={200: AdminUserSerializer(), 403: Serializer()},
+    )
+    @method_decorator(cache_page(1))
+    def retrieve(self, request, id):
+        user_obj = user.api.get(
+            user_id=id,
+            module=self.module,
+        )
+
+        if not user_obj:
+            return Response(status=404)
+
+        serializer = self.serializer_class(user_obj, context={"module": self.module})
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
         request_body=AdminUserRequestSerializer,
         responses={202: Serializer(), 403: Serializer()},
     )

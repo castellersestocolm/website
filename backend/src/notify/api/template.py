@@ -24,7 +24,7 @@ from notify.models import Email, ContactMessage
 import membership.utils
 import payment.api.entity
 from order.models import Order, OrderProduct, OrderLog
-from payment.models import Entity
+from payment.models import Entity, Payment, PaymentLine
 from user.enums import FamilyMemberStatus
 from user.models import User, FamilyMember
 
@@ -319,6 +319,72 @@ def get_order_email_render(
             subject = str(template["subject"]) % (f"#{order_obj.reference}",)
         else:
             subject = str(template["subject"])
+
+    entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
+
+    return EmailRender(
+        subject=subject,
+        body=body,
+        to_email=email or user_obj.email,
+        from_email=from_email,
+        context=context,
+        module=module,
+        locale=locale,
+        entity_obj=entity_obj,
+    )
+
+
+def get_payment_email_render(
+    payment_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> EmailRender:
+    payment_obj = (
+        Payment.objects.filter(id=payment_id)
+        .select_related("entity", "transaction", "transaction__source")
+        .prefetch_related(
+            Prefetch(
+                "lines", PaymentLine.objects.with_description().order_by("amount")
+            ),
+        )
+        .with_amount()
+        .first()
+    )
+
+    entity_obj = payment_obj.entity
+    user_obj = entity_obj.user
+    email = email or (user_obj.email if user_obj else entity_obj.email)
+    locale = (
+        locale
+        or (user_obj.preferred_language if user_obj else None)
+        or (entity_obj.preferred_language if entity_obj else None)
+        or settings.LANGUAGE_CODE
+    )
+
+    with translation.override(locale):
+        context = {
+            **SETTINGS_BY_MODULE[module],
+            **(context or {}),
+            "payment_id": str(payment_id),
+        }
+        context_full = {
+            **context,
+            "payment_obj": payment_obj,
+            "entity_obj": entity_obj,
+            "user_obj": user_obj,
+        }
+
+        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
+        from_email = EMAIL_BY_MODULE[module]
+        body = render_to_string(template["html"], context_full)
+
+        if email_type == EmailType.PAYMENT_PAID and payment_obj.text:
+            subject = str(template["subject"]) % (f"{payment_obj.text}",)
+        else:
+            subject = str(template["subject"]).rstrip(" — %s")
 
     entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
 

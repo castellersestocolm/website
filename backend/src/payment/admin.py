@@ -1,6 +1,7 @@
 import itertools
 
 from django import forms
+from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -153,32 +154,49 @@ class PaymentLogInline(admin.TabularInline):
 @admin.action(description=_("Send paid email"))
 def send_paid_email(modeladmin, request, queryset):
     for payment_obj in queryset:
-        paymeny_line_objs = list(payment_obj.lines.all())
+        if payment_obj.type == PaymentType.DEBIT:
+            paymeny_line_objs = list(payment_obj.lines.all())
 
-        registration_objs = list(
-            Registration.objects.filter(line__in=paymeny_line_objs).select_related(
-                "event"
-            )
-        )
-        if registration_objs:
-            for event_obj, event_registration_objs in itertools.groupby(
-                registration_objs, lambda registration_obj: registration_obj.event
-            ):
-                notify.tasks.send_registration_email.delay(
-                    registration_ids=[
-                        registration_obj.id
-                        for registration_obj in event_registration_objs
-                    ],
-                    email_type=EmailType.REGISTRATION_PAID,
-                    module=event_obj.module,
+            registration_objs = list(
+                Registration.objects.filter(line__in=paymeny_line_objs).select_related(
+                    "event"
                 )
+            )
+            if registration_objs:
+                for event_obj, event_registration_objs in itertools.groupby(
+                    registration_objs, lambda registration_obj: registration_obj.event
+                ):
+                    notify.tasks.send_registration_email.delay(
+                        registration_ids=[
+                            registration_obj.id
+                            for registration_obj in event_registration_objs
+                        ],
+                        email_type=EmailType.REGISTRATION_PAID,
+                        module=event_obj.module,
+                    )
 
-        order_objs = list(Order.objects.filter(products__line__in=paymeny_line_objs))
-        for order_obj in order_objs:
-            notify.tasks.send_order_email.delay(
-                order_id=order_obj.id,
-                email_type=EmailType.ORDER_PAID,
-                module=order_obj.origin_module,
+            order_objs = list(
+                Order.objects.filter(products__line__in=paymeny_line_objs)
+            )
+            for order_obj in order_objs:
+                notify.tasks.send_order_email.delay(
+                    order_id=order_obj.id,
+                    email_type=EmailType.ORDER_PAID,
+                    module=order_obj.origin_module,
+                )
+        else:
+            origin_module = (
+                list(
+                    payment_obj.lines.filter(account__isnull=False)
+                    .order_by("account__module")
+                    .values_list("account__module", flat=True)
+                )
+                + [settings.MODULE_DEFAULT]
+            )[0]
+            notify.tasks.send_payment_email(
+                payment_id=payment_obj.id,
+                email_type=EmailType.PAYMENT_PAID,
+                module=origin_module,
             )
     messages.success(request, _("Action succeeded."))
 

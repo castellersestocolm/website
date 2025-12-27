@@ -748,6 +748,16 @@ export const apiAdminUserList = async (
   }
 };
 
+export const apiAdminUserRetrieve = async (userId: string = undefined) => {
+  try {
+    return await instance.get("/admin/user/" + userId);
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiAdminOrderList = async (
   page: number = undefined,
   pageSize: number = undefined,

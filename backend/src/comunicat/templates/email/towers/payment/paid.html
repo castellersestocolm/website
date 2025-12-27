@@ -1,0 +1,27 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_body %}
+    <p>{% trans "Your payment has been processed and it's on its way to you! You will find a summary right below." %}</p>
+    <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+</style>
+<h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
+<table class="tg" style="margin-bottom:20px;">
+                    {% for payment_line_obj in payment_obj.lines.all %}
+  <tr>
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ payment_line_obj.description }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ payment_line_obj.amount|format_money }}</p></td>
+  </tr>
+                    {% endfor %}
+  <tr>
+      <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ payment_obj.amount|format_money }}</strong></p></td>
+  </tr>
+</table>
+{% endblock %}

@@ -1,5 +1,4 @@
 from djmoney.money import Money
-from phonenumbers.phonenumberutil import country_code_for_region
 
 from comunicat.enums import Module
 
