@@ -1,6 +1,5 @@
 from uuid import UUID
 
-from PIL.features import modules
 from django.conf import settings
 from django.db.models import Prefetch
 from django.template.loader import render_to_string
@@ -20,6 +19,8 @@ from notify.consts import (
 )
 from notify.enums import NotificationType, EmailType, ContactMessageType
 from notify.models import Email, ContactMessage
+
+from django.utils.translation import gettext_lazy as _
 
 import membership.utils
 import payment.api.entity
@@ -386,6 +387,19 @@ def get_payment_email_render(
         else:
             subject = str(template["subject"]).rstrip(" — %s")
 
+        attachments = []
+        for i, payment_line_obj in enumerate(
+            payment_obj.lines.filter(
+                receipt__isnull=False,
+            )
+        ):
+            attachments.append(
+                (
+                    f"{_('receipt')}-{i+1}.{payment_line_obj.receipt.file.name.split('.')[-1]}",
+                    payment_line_obj.receipt.file.read(),
+                )
+            )
+
     entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
 
     return EmailRender(
@@ -397,6 +411,7 @@ def get_payment_email_render(
         module=module,
         locale=locale,
         entity_obj=entity_obj,
+        attachments=attachments,
     )
 
 

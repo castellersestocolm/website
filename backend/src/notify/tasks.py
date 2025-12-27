@@ -135,7 +135,7 @@ def send_payment_email(
         from_email=email_render.from_email,
         to=email_render.to_email,
         reply_to=email_render.from_email,
-        attachments=[],
+        attachments=email_render.attachments,
         module=module,
     )
 
