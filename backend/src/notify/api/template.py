@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from django.conf import settings
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
 from django.utils import translation, timezone
 
@@ -10,6 +10,7 @@ from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
 from event.models import Registration, EventModule
+from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipModule
 from notify.consts import (
     SETTINGS_BY_MODULE,
@@ -83,8 +84,18 @@ def get_user_email_render(
     else:
         return None
 
+    membership_filter = Q()
+
+    if email_type in (
+        EmailType.MEMBERSHIP_RENEW,
+        EmailType.MEMBERSHIP_EXPIRED,
+        EmailType.MEMBERSHIP_PAID,
+    ):
+        membership_filter = Q(status=MembershipStatus.ACTIVE)
+
     membership_obj = (
         Membership.objects.filter(users__id=user_obj.id if user_obj else user_id)
+        .filter(membership_filter)
         .order_by("-date_to")
         .prefetch_related(
             Prefetch(

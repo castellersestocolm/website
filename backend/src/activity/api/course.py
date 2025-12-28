@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from activity.models import ProgramCourseRegistration, ProgramCoursePrice
+from comunicat.consts import ZERO_MONEY
 from payment.models import Entity
 
 
@@ -42,9 +43,10 @@ def get_course_price(entity_id: UUID, course_id: UUID) -> ProgramCoursePrice | N
 
     family_obj = user_obj.family_member.family if user_obj else None
     if family_obj:
+        # TODO: Store in the model if it should ignore free
         existing_family_members_registered = (
             ProgramCourseRegistration.objects.exclude(entity_id=entity_id)
-            .filter(entity__user__family_member__family=family_obj)
+            .filter(entity__user__family_member__family=family_obj, price__amount__gt=0)
             .count()
         )
     else:
@@ -53,7 +55,7 @@ def get_course_price(entity_id: UUID, course_id: UUID) -> ProgramCoursePrice | N
     program_course_price_objs = list(
         ProgramCoursePrice.objects.filter(
             course_id=course_id,
-            min_registrations__gte=existing_family_members_registered,
+            min_registrations__lte=existing_family_members_registered,
         ).order_by("min_registrations", "amount")
     )
 

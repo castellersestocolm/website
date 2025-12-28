@@ -105,14 +105,14 @@ export default function FormJoin() {
     courseId: string,
     kidId: string,
   ) => {
-    if (event.target.checked) {
-      setCourseAmounts({ ...courseAmounts, [courseId]: [...courseAmounts[courseId], kidId] });
-    } else {
-      setCourseAmounts({ ...courseAmounts, [courseId]: courseAmounts[courseId].filter((courseKidId: string) => courseKidId !== kidId) });
+    if (kidId in courseChildPriceById && courseChildPriceById[kidId].amount.amount !== 0){
+      if (event.target.checked) {
+        setCourseAmounts({ ...courseAmounts, [courseId]: [...courseAmounts[courseId], kidId] });
+      } else {
+        setCourseAmounts({ ...courseAmounts, [courseId]: courseAmounts[courseId].filter((courseKidId: string) => courseKidId !== kidId) });
+      }
     }
   };
-
-  console.log(courseAmounts);
 
   function handleSubmit(event: React.FormEvent<CreateFormElement>) {
     event.preventDefault();
