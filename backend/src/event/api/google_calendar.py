@@ -364,7 +364,7 @@ def create_or_update_event(
         )
         service = build("calendar", "v3", credentials=creds)
 
-        if event_obj.type == EventType.REHEARSAL and event_obj.location:
+        if event_obj.type in (EventType.REHEARSAL, EventType.WORKSHOP) and event_obj.location:
             event_title = f"{event_obj.title} - {event_obj.location.name}"
         else:
             event_title = event_obj.title
