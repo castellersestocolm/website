@@ -21,6 +21,8 @@ import IconPDF from "@mui/icons-material/PictureAsPdf";
 import IconImage from "@mui/icons-material/Image";
 import IconFile from "@mui/icons-material/FilePresent";
 import IconDeleteForeverRounded from "@mui/icons-material/DeleteForeverRounded";
+import IconSchool from "@mui/icons-material/School";
+import IconGroups from "@mui/icons-material/Groups";
 
 export enum Language {
   ENGLISH = "en",
@@ -96,6 +98,8 @@ export enum EventType {
   GATHERING = 40,
   REHEARSAL = 50,
   PERFORMANCE = 60,
+  COURSE = 70,
+  WORKSHOP = 80,
 }
 
 export const EVENT_TYPE_ICON: any = {
@@ -105,6 +109,8 @@ export const EVENT_TYPE_ICON: any = {
   40: <IconWavingHand />,
   50: <IconSportsGymnastics />,
   60: <IconLocalActivity />,
+  70: <IconSchool />,
+  80: <IconGroups />,
 };
 
 export enum ProductType {

@@ -276,7 +276,8 @@ function CalendarPage() {
                               primary={
                                 <Typography variant="body2">
                                   {event.title +
-                                    (event.type === EventType.REHEARSAL &&
+                                    ((event.type === EventType.REHEARSAL ||
+                                      event.type === EventType.WORKSHOP) &&
                                     event.location !== null
                                       ? " — " + event.location.name
                                       : "")}

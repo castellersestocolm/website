@@ -324,7 +324,8 @@ function UserDashboardPage() {
             );
           return (
             (event.type === EventType.REHEARSAL ||
-              event.type === EventType.PERFORMANCE) &&
+              event.type === EventType.PERFORMANCE ||
+              event.type === EventType.WORKSHOP) &&
             new Date(event.time_to) >= new Date() &&
             eventUsers &&
             eventUsers.length > 0
@@ -917,7 +918,8 @@ function UserDashboardPage() {
                         primary={
                           <Typography variant="body2">
                             {rehearsal.title +
-                              (rehearsal.type === EventType.REHEARSAL &&
+                              ((rehearsal.type === EventType.REHEARSAL ||
+                                rehearsal.type === EventType.WORKSHOP) &&
                               rehearsal.location !== null
                                 ? " — " + rehearsal.location.name
                                 : "")}

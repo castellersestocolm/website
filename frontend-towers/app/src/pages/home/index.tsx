@@ -70,7 +70,8 @@ function HomePage() {
           response.data.results.find((event: any) => {
             return (
               (event.type === EventType.REHEARSAL ||
-                event.type === EventType.PERFORMANCE) &&
+                event.type === EventType.PERFORMANCE ||
+                EventType.WORKSHOP) &&
               new Date(event.time_to) >= new Date()
             );
           }),
@@ -157,7 +158,7 @@ function HomePage() {
           </Box>
         </Box>
       </Box>
-      <Hero
+      {/*<Hero
         title={t("pages.calendar-2025-09-07-diada-performance.title")}
         hero={ImageHeroCalendarDiada}
         content={
@@ -193,7 +194,7 @@ function HomePage() {
             </Grid>
           </Box>
         }
-      />
+      />*/}
       <Box component="section" className={styles.rehearsals}>
         <Container maxWidth="lg">
           <Typography
