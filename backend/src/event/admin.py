@@ -158,6 +158,7 @@ class EventAdmin(
         RegistrationInline,
     )
     readonly_fields = ("google_event", "google_album")
+    raw_id_fields = ("course",)
     form = EventForm
 
     formfield_overrides = {
