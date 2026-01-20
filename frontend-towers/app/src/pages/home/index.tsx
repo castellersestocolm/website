@@ -52,8 +52,6 @@ import { EventType, TRANSPORT_MODE_ICON } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
-import Hero from "../../components/Hero/Hero";
-import ImageHeroCalendarDiada from "../../assets/images/heros/calendar-2025-09-07-diada-performance.jpg";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -70,8 +68,7 @@ function HomePage() {
           response.data.results.find((event: any) => {
             return (
               (event.type === EventType.REHEARSAL ||
-                event.type === EventType.PERFORMANCE ||
-                EventType.WORKSHOP) &&
+                event.type === EventType.PERFORMANCE) &&
               new Date(event.time_to) >= new Date()
             );
           }),
