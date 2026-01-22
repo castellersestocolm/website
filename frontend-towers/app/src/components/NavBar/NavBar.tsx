@@ -158,6 +158,12 @@ export default function NavBar() {
           target: "_self",
           language: undefined,
         },
+        {
+          name: t("components.navbar-menu.about.contact"),
+          path: ROUTES["about-contact"].path,
+          target: "_self",
+          language: undefined,
+        },
       ],
     },
     {

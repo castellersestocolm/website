@@ -32,6 +32,9 @@ export const ROUTES = {
   "about-bylaws": {
     path: "/about/bylaws",
   },
+  "about-contact": {
+    path: "/about/contact",
+  },
   calendar: {
     path: "/calendar",
   },

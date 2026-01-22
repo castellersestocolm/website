@@ -11,7 +11,6 @@ import IconButton from "@mui/material/IconButton";
 import { ROUTES } from "../../routes";
 import { useAppContext } from "../AppContext/AppContext";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
-import { PermissionLevel } from "../../enums";
 import LanguageChip from "../LanguageChip/LanguageChip";
 
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
@@ -49,14 +48,14 @@ export default function Footer() {
       language: undefined,
     },
     {
-      name: t("components.navbar-menu.resources"),
-      path: ROUTES.resources.path,
+      name: t("components.navbar-menu.press-release"),
+      path: ROUTES["press-release"].path,
       target: "_self",
       language: undefined,
     },
     {
-      name: t("components.navbar-menu.press-release"),
-      path: ROUTES["press-release"].path,
+      name: t("components.navbar-menu.about.contact"),
+      path: ROUTES["about-contact"].path,
       target: "_self",
       language: undefined,
     },
