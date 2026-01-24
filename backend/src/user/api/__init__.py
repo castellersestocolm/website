@@ -44,9 +44,9 @@ def get(user_id: UUID, module: Module | None = None) -> User:
                     Prefetch(
                         "user__members",
                         Member.objects.filter(
-                            Q(team__date_to__isnull=True)
-                            | Q(team__date_to__gte=timezone.localdate()),
-                            team__date_from__lte=timezone.localdate(),
+                            Q(team__group__date_to__isnull=True)
+                            | Q(team__group__date_to__gte=timezone.localdate()),
+                            team__group__date_from__lte=timezone.localdate(),
                         )
                         .select_related("team")
                         .order_by("-role"),
@@ -57,9 +57,9 @@ def get(user_id: UUID, module: Module | None = None) -> User:
             Prefetch(
                 "members",
                 Member.objects.filter(
-                    Q(team__date_to__isnull=True)
-                    | Q(team__date_to__gte=timezone.localdate()),
-                    team__date_from__lte=timezone.localdate(),
+                    Q(team__group__date_to__isnull=True)
+                    | Q(team__group__date_to__gte=timezone.localdate()),
+                    team__group__date_from__lte=timezone.localdate(),
                 )
                 .select_related("team")
                 .order_by("-role"),
@@ -162,12 +162,12 @@ def get_list(
             Prefetch(
                 "members",
                 Member.objects.filter(
-                    Q(team__date_to__isnull=True)
-                    | Q(team__date_to__gte=timezone.localdate()),
-                    team__date_from__lte=timezone.localdate(),
+                    Q(team__group__date_to__isnull=True)
+                    | Q(team__group__date_to__gte=timezone.localdate()),
+                    team__group__date_from__lte=timezone.localdate(),
                 )
                 .select_related("role", "team")
-                .order_by("team__type", "-team__date_from", "role__order"),
+                .order_by("team__type", "-team__group__date_from", "role__order"),
             ),
         )
 

@@ -1,9 +1,8 @@
-from django.templatetags.i18n import language
 from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
-from legal.models import Team, Member, Role, Bylaws
+from legal.models import Team, Member, Role, Bylaws, Group
 from user.models import User
 
 from django.conf import settings
@@ -65,6 +64,8 @@ class MemberSerializer(s.ModelSerializer):
             "user",
             "role",
             "picture",
+            "date_from",
+            "date_to",
             "created_at",
         )
         read_only_fields = (
@@ -72,6 +73,8 @@ class MemberSerializer(s.ModelSerializer):
             "user",
             "role",
             "picture",
+            "date_from",
+            "date_to",
             "created_at",
         )
 
@@ -108,8 +111,6 @@ class TeamSerializer(TeamSlimSerializer):
             "id",
             "name",
             "type",
-            "date_from",
-            "date_to",
             "members",
             "created_at",
         )
@@ -117,8 +118,6 @@ class TeamSerializer(TeamSlimSerializer):
             "id",
             "name",
             "type",
-            "date_from",
-            "date_to",
             "members",
             "created_at",
         )
@@ -147,6 +146,29 @@ class MemberWithTeamSerializer(MemberSerializer):
             "team",
             "role",
             "picture",
+            "created_at",
+        )
+
+
+class GroupSerializer(s.ModelSerializer):
+    teams = TeamSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Group
+        fields = (
+            "id",
+            "module",
+            "date_from",
+            "date_to",
+            "teams",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+            "date_from",
+            "date_to",
+            "teams",
             "created_at",
         )
 

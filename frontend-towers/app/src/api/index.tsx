@@ -13,6 +13,7 @@ import {
   API_ADMIN_EVENT_LIST_PAGE_SIZE,
   API_DOCUMENTS_LIST_PAGE_SIZE,
   API_ADMIN_TOWERS_STATS_POSITIONS_PAGE_SIZE,
+  API_LEGAL_GROUP_LIST_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, RegistrationStatus } from "../enums";
 
@@ -578,6 +579,21 @@ export const apiEventRegistrationList = async (
 export const apiLegalTeamList = async () => {
   try {
     return await instance.get("/legal/team/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiLegalGroupList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/legal/group/", {
+      params: {
+        page_size: API_LEGAL_GROUP_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

@@ -4,10 +4,15 @@ from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 
-from comunicat.rest.serializers.legal import TeamSerializer, BylawsSerializer
+from comunicat.rest.serializers.legal import (
+    TeamSerializer,
+    BylawsSerializer,
+    GroupSerializer,
+)
 
 from comunicat.rest.viewsets import ComuniCatViewSet
 import legal.api.team
+import legal.api.group
 import legal.api.bylaws
 
 
@@ -36,6 +41,37 @@ class TeamAPI(
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(team_objs, request)
+        serializer = self.serializer_class(
+            result_page, context={"module": self.module}, many=True
+        )
+        return paginator.get_paginated_response(serializer.data)
+
+
+class GroupResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class GroupAPI(
+    ComuniCatViewSet,
+):
+    serializer_class = GroupSerializer
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = GroupResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: GroupSerializer(many=True)},
+    )
+    @method_decorator(cache_page(60))
+    def list(self, request):
+        group_objs = legal.api.group.get_list(
+            module=self.module,
+        )
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(group_objs, request)
         serializer = self.serializer_class(
             result_page, context={"module": self.module}, many=True
         )

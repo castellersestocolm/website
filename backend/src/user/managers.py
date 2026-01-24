@@ -185,13 +185,15 @@ class UserQuerySet(QuerySet):
         date = date or timezone.localdate()
 
         member_filter = (
-            Q(team__date_from__lte=date)
-            & (Q(team__date_to__isnull=True) | Q(team__date_to__gte=date))
+            Q(team__group__date_from__lte=date)
+            & (Q(team__group__date_to__isnull=True) | Q(team__group__date_to__gte=date))
+            & (Q(date_from__isnull=True) | Q(date_from__gte=date))
+            & (Q(date_to__isnull=True) | Q(date_to__gte=date))
             & Q(team__type__in=team_types)
         )
 
         if modules is not None:
-            member_filter &= Q(team__module__in=modules)
+            member_filter &= Q(team__group__module__in=modules)
 
         return self.annotate(
             has_active_role=Exists(
@@ -213,13 +215,13 @@ class UserQuerySet(QuerySet):
         date = date or timezone.localdate()
 
         member_filter = (
-            Q(team__date_from__lte=date)
-            & (Q(team__date_to__isnull=True) | Q(team__date_to__gte=date))
+            Q(team__group__date_from__lte=date)
+            & (Q(team__group__date_to__isnull=True) | Q(team__group__date_to__gte=date))
             & Q(team_id__in=team_ids)
         )
 
         if modules is not None:
-            member_filter &= Q(team__module__in=modules)
+            member_filter &= Q(team__group__module__in=modules)
 
         return self.annotate(
             has_active_team=Exists(

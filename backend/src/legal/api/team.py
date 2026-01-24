@@ -10,9 +10,10 @@ from legal.models import Team, Member
 def get_list(module: Module) -> List[Team]:
     return list(
         Team.objects.filter(
-            Q(date_to__isnull=True) | Q(date_to__gte=timezone.localdate()),
-            date_from__lte=timezone.localdate(),
-            module=module,
+            Q(group__date_to__isnull=True)
+            | Q(group__date_to__gte=timezone.localdate()),
+            group__date_from__lte=timezone.localdate(),
+            group__module=module,
         )
         .prefetch_related(
             Prefetch(
@@ -22,5 +23,5 @@ def get_list(module: Module) -> List[Team]:
                 ),
             )
         )
-        .order_by("type", "-date_from")
+        .order_by("type", "-group__date_from")
     )

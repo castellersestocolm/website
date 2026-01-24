@@ -71,13 +71,17 @@ def get_list(
             event_filter &= Q(
                 ~Q(type=EventType.REHEARSAL)
                 | Q(
-                    modules__team__module=module, modules__team__type=TeamType.MUSICIANS
+                    modules__team__group__module=module,
+                    modules__team__type=TeamType.MUSICIANS,
                 )
             )
         else:
             event_filter &= Q(
                 ~Q(type=EventType.REHEARSAL)
-                | Q(modules__team__module=module, modules__team__type__isnull=True)
+                | Q(
+                    modules__team__group__module=module,
+                    modules__team__type__isnull=True,
+                )
             )
 
     event_qs = (
