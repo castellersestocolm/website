@@ -97,79 +97,78 @@ function AboutTeamPage() {
                       >
                         {team.members &&
                           team.members.length > 0 &&
-                          team.members.map((member: any) => (
-                            <Grid
-                              key={member.id}
-                              direction="column"
-                              display="flex"
-                              alignItems="center"
-                              flexDirection="column"
-                              ref={(ref) => {
-                                refMembers.current[member.id] = ref;
-                              }}
-                            >
-                              <Avatar
-                                alt={
-                                  member.user.firstname +
-                                  " " +
-                                  member.user.lastname
-                                }
-                                src={BACKEND_BASE_URL + member.picture}
-                                className={styles.aboutTeamAvatar}
-                              />
-                              <Typography variant="body1" fontWeight="600">
-                                {member.user.firstname} {member.user.lastname}
-                              </Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                {member.role.name}
-                              </Typography>
-                              {member.date_to &&
-                                new Date(member.date_to) < new Date() && (
+                          team.members.map((member: any) => {
+                            const memberDateFrom =
+                              member.date_from &&
+                              member.date_from !== group.date_from &&
+                              new Date(member.date_from) < new Date()
+                                ? new Date(member.date_from).toLocaleDateString(
+                                    languageToLocale(i18n.resolvedLanguage)
+                                      .code,
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    },
+                                  )
+                                : undefined;
+                            const memberDateTo =
+                              member.date_to &&
+                              (!group.date_to ||
+                                member.date_to !== group.date_to) &&
+                              new Date(member.date_to) < new Date()
+                                ? new Date(member.date_to).toLocaleDateString(
+                                    languageToLocale(i18n.resolvedLanguage)
+                                      .code,
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    },
+                                  )
+                                : undefined;
+                            return (
+                              <Grid
+                                key={member.id}
+                                direction="column"
+                                display="flex"
+                                alignItems="center"
+                                flexDirection="column"
+                                ref={(ref) => {
+                                  refMembers.current[member.id] = ref;
+                                }}
+                              >
+                                <Avatar
+                                  alt={
+                                    member.user.firstname +
+                                    " " +
+                                    member.user.lastname
+                                  }
+                                  src={BACKEND_BASE_URL + member.picture}
+                                  className={styles.aboutTeamAvatar}
+                                />
+                                <Typography variant="body1" fontWeight="600">
+                                  {member.user.firstname} {member.user.lastname}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {member.role.name}
+                                </Typography>
+                                {(memberDateFrom || memberDateTo) && (
                                   <Typography
                                     variant="caption"
                                     color="textSecondary"
                                   >
-                                    {(member.date_from
-                                      ? new Date(
-                                          member.date_from,
-                                        ).toLocaleDateString(
-                                          languageToLocale(
-                                            i18n.resolvedLanguage,
-                                          ).code,
-                                          {
-                                            day: "2-digit",
-                                            month: "2-digit",
-                                            year: "numeric",
-                                          },
-                                        )
-                                      : new Date(
-                                          group.date_from,
-                                        ).toLocaleDateString(
-                                          languageToLocale(
-                                            i18n.resolvedLanguage,
-                                          ).code,
-                                          {
-                                            day: "2-digit",
-                                            month: "2-digit",
-                                            year: "numeric",
-                                          },
-                                        )) +
-                                      " - " +
-                                      new Date(
-                                        member.date_to,
-                                      ).toLocaleDateString(
-                                        languageToLocale(i18n.resolvedLanguage)
-                                          .code,
-                                        {
-                                          day: "2-digit",
-                                          month: "2-digit",
-                                          year: "numeric",
-                                        },
-                                      )}
+                                    {memberDateFrom && memberDateFrom + " "}
+                                    {"-"}
+                                    {memberDateTo && " " + memberDateTo}
                                   </Typography>
                                 )}
-                            </Grid>
-                          ))}
+                              </Grid>
+                            );
+                          })}
                       </Grid>
                     </Box>
                     {i + 1 < row.length && <Divider />}
