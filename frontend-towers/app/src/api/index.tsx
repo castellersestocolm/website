@@ -14,6 +14,7 @@ import {
   API_DOCUMENTS_LIST_PAGE_SIZE,
   API_ADMIN_TOWERS_STATS_POSITIONS_PAGE_SIZE,
   API_LEGAL_GROUP_LIST_PAGE_SIZE,
+  API_HISTORY_EVENT_LIST_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, RegistrationStatus } from "../enums";
 
@@ -897,6 +898,21 @@ export const apiContactMessageCreate = async (
       entity: entity,
       type: type,
       message: message,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiHistoryEventGroupList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/history/event/", {
+      params: {
+        page_size: API_HISTORY_EVENT_LIST_PAGE_SIZE,
+        page: page,
+      },
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

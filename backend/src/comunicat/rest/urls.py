@@ -17,6 +17,7 @@ from comunicat.rest.views import (
     document,
     activity,
     notify,
+    history,
 )
 from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
@@ -55,6 +56,7 @@ router.register("media/release", media.ReleaseAPI, "media_release")
 router.register("document", document.DocumentAPI, "document")
 router.register("activity/program", activity.ProgramAPI, "activity_program")
 router.register("contact/message", notify.ContactMessageAPI, "contact_message")
+router.register("history/event", history.HistoryEventAPI, "history_event")
 
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
 router.register("admin/order", admin.AdminOrderAPI, "admin_order")

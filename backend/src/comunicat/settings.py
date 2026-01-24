@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     "event",
     "document",
     "legal",
+    "history",
     "media",
     "notify",
     "towers",

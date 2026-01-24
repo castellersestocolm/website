@@ -136,10 +136,13 @@
 }
 
 .timelineGrid {
-  margin-top: 16px;
+  margin-top: 32px;
   width: 100%;
-  display: flex;
-  align-items: stretch;
+  display: block !important;
+}
+
+.timelinePagination {
+  padding-top: 24px;
 }
 
 .timelineIcon {
@@ -230,4 +233,27 @@
 .heroSectionSubtitle {
   font-size: 16px !important;
   color: #fff;
+}
+
+.loader {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px;
+}
+
+.timetableIcon {
+  color: var(--mui-palette-common-white);
+}
+
+.timelineItemTitle {
+  * {
+    margin: 0;
+  }
+}
+
+.timelineItemDescription {
+  * {
+    margin: 0;
+  }
 }

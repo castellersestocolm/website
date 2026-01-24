@@ -30,12 +30,6 @@ import IconLoyalty from "@mui/icons-material/Loyalty";
 import IconCreditCardOff from "@mui/icons-material/CreditCardOff";
 import IconCheckroom from "@mui/icons-material/Checkroom";
 import IconPayment from "@mui/icons-material/Payment";
-import IconVisibility from "@mui/icons-material/Visibility";
-import IconNaturePeople from "@mui/icons-material/NaturePeople";
-import IconFitnessCenter from "@mui/icons-material/FitnessCenter";
-import IconLocalActivity from "@mui/icons-material/LocalActivity";
-import IconAcUnit from "@mui/icons-material/AcUnit";
-import IconMic from "@mui/icons-material/Mic";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
@@ -47,11 +41,16 @@ import { ROUTES } from "../../routes";
 import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Alerts from "../../components/Alerts/Alerts";
-import { apiEventList } from "../../api";
+import { apiEventList, apiHistoryEventGroupList } from "../../api";
 import { EventType, TRANSPORT_MODE_ICON } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
+import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
+import markdown from "@wcj/markdown-to-html";
+import Pagination from "@mui/material/Pagination";
+import { API_HISTORY_EVENT_LIST_PAGE_SIZE } from "../../consts";
+import { DynamicIcon } from "../../components/DynamicIcon/DynamicIcon";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -60,6 +59,17 @@ function HomePage() {
 
   const theme = useTheme();
   const timelineMatches = useMediaQuery(theme.breakpoints.up("md"));
+
+  const [historyEventsPage, setHistoryEventsPage] = React.useState(1);
+  const [historyEvents, setHistoryEvents] = React.useState(undefined);
+
+  React.useEffect(() => {
+    apiHistoryEventGroupList(historyEventsPage).then((response) => {
+      if (response.status === 200) {
+        setHistoryEvents(response.data);
+      }
+    });
+  }, [setHistoryEvents, historyEventsPage, i18n.resolvedLanguage]);
 
   React.useEffect(() => {
     apiEventList().then((response) => {
@@ -524,181 +534,97 @@ function HomePage() {
           >
             {t("pages.home-timeline.title")}
           </Typography>
-          <Grid container spacing={4} className={styles.timelineGrid}>
-            <Timeline position={timelineMatches ? "alternate" : "left"}>
-              <TimelineItem>
-                <TimelineOppositeContent
-                  sx={{ m: "auto 0" }}
-                  align="right"
-                  variant="body2"
-                  color="text.secondary"
+          <Grid
+            container
+            spacing={2}
+            direction="column"
+            className={styles.timelineGrid}
+          >
+            {historyEvents && historyEvents.results.length > 0 ? (
+              <Timeline position={timelineMatches ? "alternate" : "left"}>
+                {historyEvents.results.map((historyEvent: any) => {
+                  return (
+                    <TimelineItem key={historyEvent.id}>
+                      <TimelineOppositeContent
+                        sx={{ m: "auto 0" }}
+                        align="right"
+                        variant="body2"
+                        color="textSecondary"
+                      >
+                        {capitalizeFirstLetter(
+                          new Date(historyEvent.date).toLocaleDateString(
+                            i18n.resolvedLanguage,
+                            {
+                              month: "long",
+                              year: "numeric",
+                            },
+                          ),
+                        )}
+                      </TimelineOppositeContent>
+                      <TimelineSeparator>
+                        <TimelineConnector />
+                        <TimelineDot
+                          color="primary"
+                          style={{ boxShadow: "none" }}
+                          className={styles.timetableIcon}
+                        >
+                          <DynamicIcon iconName={historyEvent.icon} />
+                        </TimelineDot>
+                        <TimelineConnector />
+                      </TimelineSeparator>
+                      <TimelineContent sx={{ py: "12px", px: 2 }}>
+                        <Typography
+                          variant="h6"
+                          fontWeight={600}
+                          className={styles.timelineItemTitle}
+                        >
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: markdown(historyEvent.title).toString(),
+                            }}
+                          ></div>
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          className={styles.timelineItemDescription}
+                        >
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: markdown(
+                                historyEvent.description,
+                              ).toString(),
+                            }}
+                          ></div>
+                        </Typography>
+                      </TimelineContent>
+                    </TimelineItem>
+                  );
+                })}
+              </Timeline>
+            ) : (
+              <Box className={styles.loader}>
+                <LoaderClip />
+              </Box>
+            )}
+            {historyEvents &&
+              historyEvents.results.length > 0 &&
+              (historyEventsPage !== 1 ||
+                historyEvents.count > historyEvents.results.length) && (
+                <Stack
+                  alignItems="center"
+                  className={styles.timelinePagination}
                 >
-                  {t("pages.home-timeline.item-1.time")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineConnector />
-                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
-                    <IconGroups className={styles.timelineIcon} />
-                  </TimelineDot>
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent sx={{ py: "12px", px: 2 }}>
-                  <Typography variant="h6" component="span">
-                    {t("pages.home-timeline.item-1.title")}
-                  </Typography>
-                  <Typography>
-                    {t("pages.home-timeline.item-1.subtitle")}
-                  </Typography>
-                </TimelineContent>
-              </TimelineItem>
-              <TimelineItem>
-                <TimelineOppositeContent
-                  sx={{ m: "auto 0" }}
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {t("pages.home-timeline.item-2.time")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineConnector />
-                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
-                    <IconVisibility className={styles.timelineIcon} />
-                  </TimelineDot>
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent sx={{ py: "12px", px: 2 }}>
-                  <Typography variant="h6" component="span">
-                    {t("pages.home-timeline.item-2.title")}
-                  </Typography>
-                  <Typography>
-                    {t("pages.home-timeline.item-2.subtitle")}
-                  </Typography>
-                </TimelineContent>
-              </TimelineItem>
-              <TimelineItem>
-                <TimelineOppositeContent
-                  sx={{ m: "auto 0" }}
-                  align="right"
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {t("pages.home-timeline.item-3.time")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineConnector />
-                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
-                    <IconNaturePeople className={styles.timelineIcon} />
-                  </TimelineDot>
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent sx={{ py: "12px", px: 2 }}>
-                  <Typography variant="h6" component="span">
-                    {t("pages.home-timeline.item-3.title")}
-                  </Typography>
-                  <Typography>
-                    {t("pages.home-timeline.item-3.subtitle")}
-                  </Typography>
-                </TimelineContent>
-              </TimelineItem>
-              <TimelineItem>
-                <TimelineOppositeContent
-                  sx={{ m: "auto 0" }}
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {t("pages.home-timeline.item-4.time")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineConnector />
-                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
-                    <IconFitnessCenter className={styles.timelineIcon} />
-                  </TimelineDot>
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent sx={{ py: "12px", px: 2 }}>
-                  <Typography variant="h6" component="span">
-                    {t("pages.home-timeline.item-4.title")}
-                  </Typography>
-                  <Typography>
-                    {t("pages.home-timeline.item-4.subtitle")}
-                  </Typography>
-                </TimelineContent>
-              </TimelineItem>
-              <TimelineItem>
-                <TimelineOppositeContent
-                  sx={{ m: "auto 0" }}
-                  align="right"
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {t("pages.home-timeline.item-5.time")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineConnector />
-                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
-                    <IconLocalActivity className={styles.timelineIcon} />
-                  </TimelineDot>
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent sx={{ py: "12px", px: 2 }}>
-                  <Typography variant="h6" component="span">
-                    {t("pages.home-timeline.item-5.title")}
-                  </Typography>
-                  <Typography>
-                    {t("pages.home-timeline.item-5.subtitle")}
-                  </Typography>
-                </TimelineContent>
-              </TimelineItem>
-              <TimelineItem>
-                <TimelineOppositeContent
-                  sx={{ m: "auto 0" }}
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {t("pages.home-timeline.item-6.time")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineConnector />
-                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
-                    <IconAcUnit className={styles.timelineIcon} />
-                  </TimelineDot>
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent sx={{ py: "12px", px: 2 }}>
-                  <Typography variant="h6" component="span">
-                    {t("pages.home-timeline.item-6.title")}
-                  </Typography>
-                  <Typography>
-                    {t("pages.home-timeline.item-6.subtitle")}
-                  </Typography>
-                </TimelineContent>
-              </TimelineItem>
-              <TimelineItem>
-                <TimelineOppositeContent
-                  sx={{ m: "auto 0" }}
-                  align="right"
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {t("pages.home-timeline.item-7.time")}
-                </TimelineOppositeContent>
-                <TimelineSeparator>
-                  <TimelineConnector />
-                  <TimelineDot color="primary" style={{ boxShadow: "none" }}>
-                    <IconMic className={styles.timelineIcon} />
-                  </TimelineDot>
-                  <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent sx={{ py: "12px", px: 2 }}>
-                  <Typography variant="h6" component="span">
-                    {t("pages.home-timeline.item-7.title")}
-                  </Typography>
-                  <Typography>
-                    {t("pages.home-timeline.item-7.subtitle")}
-                  </Typography>
-                </TimelineContent>
-              </TimelineItem>
-            </Timeline>
+                  <Pagination
+                    page={historyEventsPage}
+                    count={Math.ceil(
+                      historyEvents.count / API_HISTORY_EVENT_LIST_PAGE_SIZE,
+                    )}
+                    onChange={(e: any, value: number) =>
+                      setHistoryEventsPage(value)
+                    }
+                  />
+                </Stack>
+              )}
           </Grid>
         </Container>
       </Box>
