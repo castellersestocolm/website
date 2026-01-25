@@ -1,6 +1,7 @@
 from typing import List
 
 from django.db.models import Prefetch
+from django.utils import timezone
 
 from comunicat.enums import Module
 from legal.models import Team, Member, Group
@@ -10,6 +11,7 @@ def get_list(module: Module) -> List[Team]:
     return list(
         Group.objects.filter(
             module=module,
+            date_from__gte=timezone.localdate(),
         )
         .prefetch_related(
             Prefetch(
