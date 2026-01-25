@@ -11,7 +11,7 @@ def get_list(module: Module) -> List[Team]:
     return list(
         Group.objects.filter(
             module=module,
-            date_from__gte=timezone.localdate(),
+            date_from__lte=timezone.localdate(),
         )
         .prefetch_related(
             Prefetch(
