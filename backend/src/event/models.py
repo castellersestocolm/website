@@ -127,7 +127,15 @@ class Event(StandardModel, Timestamps):
         "Image", blank=True, null=True, upload_to=get_event_poster_name
     )
 
+    __title = None
+    __time_from = None
+
     objects = EventQuerySet.as_manager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__title = self.title
+        self.__time_from = self.time_from
 
     def __str__(self) -> str:
         return self.title
@@ -180,9 +188,12 @@ class Event(StandardModel, Timestamps):
                 )
 
             if GOOGLE_ENABLED_BY_MODULE[self.module]["photos"]:
-                transaction.on_commit(
-                    lambda: event.tasks.create_or_update_album.delay(event_id=self.id)
-                )
+                if self.title != self.__title or self.time_from != self.__time_from:
+                    transaction.on_commit(
+                        lambda: event.tasks.create_or_update_album.delay(
+                            event_id=self.id
+                        )
+                    )
         elif hasattr(self, "google_event"):
             transaction.on_commit(lambda: self.google_event.delete())
 
