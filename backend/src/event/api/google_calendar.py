@@ -120,13 +120,19 @@ def import_events() -> None:
                         if event_key in google_event_by_key:
                             event_obj = google_event_by_key[event_key].event
 
-                            event_obj.time_from = datetime.datetime.fromisoformat(
+                            time_from = datetime.datetime.fromisoformat(
                                 event["start"]["dateTime"]
                             )
-                            event_obj.time_to = datetime.datetime.fromisoformat(
+                            time_to = datetime.datetime.fromisoformat(
                                 event["end"]["dateTime"]
                             )
-                            event_updates.append(event_obj)
+                            if (
+                                event_obj.time_from != time_from
+                                or event_obj.time_to != time_to
+                            ):
+                                event_obj.time_from = time_from
+                                event_obj.time_to = time_to
+                                event_updates.append(event_obj)
 
                             for attendee in event.get("attendees", []):
                                 if attendee["email"] in entity_by_email:

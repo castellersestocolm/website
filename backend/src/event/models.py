@@ -188,7 +188,9 @@ class Event(StandardModel, Timestamps):
                 )
 
             if GOOGLE_ENABLED_BY_MODULE[self.module]["photos"]:
-                if self.title != self.__title or self.time_from != self.__time_from:
+                if self.title != self.__title or timezone.localdate(
+                    self.time_from
+                ) != timezone.localdate(self.__time_from):
                     transaction.on_commit(
                         lambda: event.tasks.create_or_update_album.delay(
                             event_id=self.id
