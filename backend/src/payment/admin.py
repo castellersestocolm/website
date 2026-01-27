@@ -525,7 +525,7 @@ class EntityAdmin(admin.ModelAdmin):
         "preferred_language",
         "created_at",
     )
-    ordering = ("firstname", "lastname", "email", "created_at")
+    ordering = ("firstname", "lastname", "email", "-created_at")
     raw_id_fields = ("user",)
     inlines = (PaymentInline,)
     actions = (merge_entities,)

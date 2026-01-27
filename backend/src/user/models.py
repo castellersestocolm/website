@@ -136,6 +136,9 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
 
         super().save(*args, **kwargs)
 
+    class Meta:
+        indexes = [models.Index(fields=("-created_at",))]
+
 
 class TowersUser(StandardModel, Timestamps):
     user = models.OneToOneField("User", related_name="towers", on_delete=models.CASCADE)
