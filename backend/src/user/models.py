@@ -89,7 +89,7 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
 
     @cached_property
     def can_manage(self) -> bool:
-        return self.is_adult
+        return self.is_adult and "+" not in self.email
 
     def registration_finished(self, module: Module) -> bool:
         if not self.birthday:
