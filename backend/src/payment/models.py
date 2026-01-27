@@ -109,9 +109,7 @@ class Payment(StandardModel, Timestamps):
         super().save(*args, **kwargs)
 
     class Meta:
-        indexes = [
-            models.Index(fields=("-created_at",))
-        ]
+        indexes = [models.Index(fields=("-created_at",))]
 
 
 class Entity(StandardModel, Timestamps):
@@ -334,9 +332,7 @@ class PaymentLine(StandardModel, Timestamps):
         return f"{PaymentMethod(self.payment.method).name + ' - ' if hasattr(self, 'payment') and self.payment.method else ''}{self.amount}{extra_str}"
 
     class Meta:
-        indexes = [
-            models.Index(fields=("-created_at",))
-        ]
+        indexes = [models.Index(fields=("-created_at",))]
 
 
 class PaymentLog(StandardModel, Timestamps):

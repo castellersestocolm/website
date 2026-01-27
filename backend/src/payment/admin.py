@@ -256,11 +256,7 @@ class PaymentAdmin(admin.ModelAdmin):
             return []
 
         if obj.transaction:
-            readonly_fields += [
-                "type",
-                "method",
-                "date_accounting"
-            ]
+            readonly_fields += ["type", "method", "date_accounting"]
 
         return readonly_fields
 

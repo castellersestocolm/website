@@ -190,7 +190,7 @@ class OrderDeliveryAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("provider__type", "created_at")
-    raw_id_fields = ("address", "event", "price")
+    raw_id_fields = ("address", "event", "line", "price")
     ordering = ("-created_at",)
 
 
