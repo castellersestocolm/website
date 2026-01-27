@@ -49,6 +49,8 @@ def sync_users() -> None:
             user_objs = user.api.get_list(
                 team_ids=team_ids,
                 modules=[google_group_module_obj.module],
+                with_membership=google_group_module_obj.require_membership,
+                with_active_membership=google_group_module_obj.require_membership,
                 with_pending_membership=not google_group_module_obj.require_membership,
                 with_expired_membership=google_group_module_obj.exclude_active,
             )
