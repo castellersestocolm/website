@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from django.db import transaction
-from django.db.models import ExpressionWrapper, Q, BooleanField
+from django.db.models import ExpressionWrapper, Q, BooleanField, Exists, OuterRef
 
 from activity.models import ProgramCourseRegistration
 from event.models import Registration
@@ -70,7 +70,19 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
         entity=entity_obj
     )
 
-    # Update all registrations to the remaining entity
+    # Update all registrations to the remaining entity, delete duplicates
+    Registration.objects.filter(entity_id__in=entity_ids).exclude(
+        entity=entity_obj
+    ).annotate(
+        has_duplicate=Exists(
+            Registration.objects.filter(
+                event_id=OuterRef("event_id"), entity=entity_obj
+            )
+        )
+    ).filter(
+        has_duplicate=True
+    ).delete()
+
     Registration.objects.filter(entity_id__in=entity_ids).exclude(
         entity=entity_obj
     ).update(entity=entity_obj)

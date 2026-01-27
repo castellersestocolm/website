@@ -178,7 +178,9 @@ class Entity(StandardModel, Timestamps):
         verbose_name = "entity"
         verbose_name_plural = "entities"
 
-        indexes = [models.Index(fields=("firstname", "lastname", "email", "-created_at"))]
+        indexes = [
+            models.Index(fields=("firstname", "lastname", "email", "-created_at"))
+        ]
 
 
 def get_expense_file_name(instance, filename):
