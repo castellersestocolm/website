@@ -319,6 +319,9 @@ class DeliveryPrice(StandardModel, Timestamps):
 
     objects = DeliveryPriceQuerySet.as_manager()
 
+    def __str__(self) -> str:
+        return f"{self.provider} - {self.price}"
+
     def clean(self):
         if self.country and self.region and self.country != self.region.country:
             raise ValidationError({"size": _("Region's country must match country.")})
