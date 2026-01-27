@@ -127,7 +127,7 @@ class PaymentLineForPaymentForm(forms.ModelForm):
 
 class PaymentLineForPaymentInline(admin.TabularInline):
     model = PaymentLine
-    ordering = ("created_at",)
+    ordering = ("-created_at",)
     raw_id_fields = ("receipt", "debit_line")
     extra = 0
 
@@ -259,6 +259,7 @@ class PaymentAdmin(admin.ModelAdmin):
             readonly_fields += [
                 "type",
                 "method",
+                "date_accounting"
             ]
 
         return readonly_fields

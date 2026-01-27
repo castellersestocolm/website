@@ -108,6 +108,11 @@ class Payment(StandardModel, Timestamps):
             PaymentLog.objects.create(payment_id=self.id, status=self.status)
         super().save(*args, **kwargs)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=("-created_at",))
+        ]
+
 
 class Entity(StandardModel, Timestamps):
     firstname = models.CharField(max_length=255, null=True, blank=True)
@@ -327,6 +332,11 @@ class PaymentLine(StandardModel, Timestamps):
         if self.text or hasattr(self, "payment") and self.payment.text:
             extra_str += f" - {self.text or self.payment.text}"
         return f"{PaymentMethod(self.payment.method).name + ' - ' if hasattr(self, 'payment') and self.payment.method else ''}{self.amount}{extra_str}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=("-created_at",))
+        ]
 
 
 class PaymentLog(StandardModel, Timestamps):
