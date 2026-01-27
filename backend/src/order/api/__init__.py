@@ -212,6 +212,8 @@ def create(
         .with_stock()
     }
 
+    delivery_price_obj = None
+
     if delivery_provider_obj.type == OrderDeliveryType.DELIVERY:
         weight = sum(
             [
@@ -249,6 +251,7 @@ def create(
         provider=delivery_provider_obj,
         address=order_delivery_address_obj,
         event_id=event_id,
+        price=delivery_price_obj,
         amount=delivery_amount,
         vat=delivery_vat,
     )

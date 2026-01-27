@@ -141,6 +141,22 @@ class OrderDelivery(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
 
+    line = models.OneToOneField(
+        "payment.PaymentLine",
+        related_name="delivery",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    price = models.ForeignKey(
+        "DeliveryPrice",
+        blank=True,
+        null=True,
+        related_name="deliveries",
+        on_delete=models.PROTECT,
+    )
+
     amount = MoneyField(
         max_digits=7,
         decimal_places=2,
