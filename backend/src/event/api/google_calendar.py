@@ -75,7 +75,9 @@ def import_events() -> None:
                 )
                 for user_obj in User.objects.with_has_active_membership(
                     modules=[google_integration_obj.module]
-                ).filter(has_active_membership=True)
+                )
+                .filter(has_active_membership=True)
+                .select_related("entity")
                 if user_obj.can_manage
             }
         else:
