@@ -1,6 +1,7 @@
 import calendar
 import datetime
 
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import permissions
@@ -148,8 +149,13 @@ class CalendarAPI(ComuniCatViewSet):
             date_from = serializer.validated_data["date_from"]
             date_to = serializer.validated_data["date_to"]
         else:
-            year = serializer.validated_data["year"]
-            month = serializer.validated_data["month"]
+            year = serializer.validated_data.get("year")
+            month = serializer.validated_data.get("month")
+
+            if not year or not month:
+                today = timezone.localdate()
+                year = today.year
+                month = today.month
 
             __, day_last = calendar.monthrange(year=year, month=month)
 

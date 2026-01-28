@@ -12,7 +12,9 @@ class ListDocumentSerializer(s.Serializer):
 
     def to_internal_value(self, data):
         data["filter_types"] = (
-            data["filter_types"][0].split(",") if data["filter_types"] else []
+            data["filter_types"][0].split(",")
+            if data.get("filter_types", False)
+            else []
         )
         data = super().to_internal_value(data)
         return data
