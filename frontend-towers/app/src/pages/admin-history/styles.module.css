@@ -1,0 +1,85 @@
+.adminGrid {
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.adminCard {
+  width: 100%;
+}
+
+.adminTopBox {
+  padding: 12px 16px;
+  background-color: var(--mui-palette-primary-main);
+}
+
+.buttons {
+  justify-content: center;
+}
+
+.adminTopTransparentBox {
+  padding: 12px 16px 16px 16px;
+}
+
+.adminCardDivider {
+  margin: 12px 0;
+}
+
+.adminTableRowLast {
+  th,
+  td {
+    border-bottom: none !important;
+  }
+}
+
+.adminTableCellUnknown {
+  background-color: var(--mui-palette-LinearProgress-primaryBg);
+}
+
+.adminTableCellAttending {
+  background-color: var(--mui-palette-LinearProgress-successBg);
+}
+
+.adminTableCellNotAttending {
+  background-color: var(--mui-palette-LinearProgress-errorBg);
+}
+
+.adminGridHeader {
+  height: fit-content;
+}
+
+.adminGridCell {
+  padding: 0 !important;
+  & > div {
+    padding: 0 10px;
+  }
+}
+
+.adminMono {
+  font-family: "DM Mono", "monospace" !important;
+}
+
+.accordion {
+  width: 100%;
+}
+
+.accordionSummary {
+  min-height: 48px !important;
+  margin: 0 !important;
+}
+
+.accordionSummary span {
+  margin: 0 !important;
+}
+
+.accordionDetails {
+  border-top: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-grey-50);
+  padding: 12px 16px !important;
+}
+
+.providerLoader {
+  padding-top: 16px;
+}

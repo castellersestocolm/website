@@ -63,6 +63,9 @@ router.register("admin/order", admin.AdminOrderAPI, "admin_order")
 router.register("admin/event", admin.AdminEventAPI, "admin_event")
 router.register("admin/towers/event", admin.AdminTowersEventAPI, "admin_towers_event")
 router.register("admin/towers/stats", admin.AdminTowersStatsAPI, "admin_towers_stats")
+router.register(
+    "admin/history/event", admin.AdminHistoryEventAPI, "admin_history_event"
+)
 
 
 api_patterns = [

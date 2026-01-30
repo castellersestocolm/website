@@ -14,6 +14,7 @@ from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.models import Event
+from history.models import HistoryEvent
 from legal.models import Member
 from membership.enums import MembershipStatus
 from order.enums import OrderStatus
@@ -258,3 +259,37 @@ class AdminTowersStatsUserPositionSerializer(s.Serializer):
 class AdminTowersStatsPositionSerializer(s.Serializer):
     type = IntEnumField(PositionType, read_only=True)
     users = AdminTowersStatsUserPositionSerializer(many=True, read_only=True)
+
+
+class AdminHistoryEventSerializer(s.ModelSerializer):
+    class Meta:
+        model = HistoryEvent
+        fields = (
+            "id",
+            "title",
+            "description",
+            "date",
+            "module",
+            "icon",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "description",
+            "date",
+            "module",
+            "icon",
+            "created_at",
+        )
+
+
+class AdminHistoryEventUpdateSerializer(s.ModelSerializer):
+    class Meta:
+        model = HistoryEvent
+        fields = (
+            "title",
+            "description",
+            "date",
+            "icon",
+        )

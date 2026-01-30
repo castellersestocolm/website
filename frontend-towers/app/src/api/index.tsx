@@ -15,6 +15,7 @@ import {
   API_ADMIN_TOWERS_STATS_POSITIONS_PAGE_SIZE,
   API_LEGAL_GROUP_LIST_PAGE_SIZE,
   API_HISTORY_EVENT_LIST_PAGE_SIZE,
+  API_ADMIN_HISTORY_EVENT_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, RegistrationStatus } from "../enums";
 
@@ -860,6 +861,45 @@ export const apiAdminUserUpdate = async (
         height_shoulders: heightShoulders,
         height_arms: heightArms,
       },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminHistoryEventList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+) => {
+  try {
+    return await instance.get("/admin/history/event", {
+      params: {
+        page_size: pageSize ? pageSize : API_ADMIN_HISTORY_EVENT_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminHistoryEventUpdate = async (
+  id: string,
+  date: string,
+  title: Object,
+  description: Object,
+  icon: string,
+) => {
+  try {
+    return await instance.patch("/admin/history/event/" + id + "/", {
+      date: date,
+      title: title,
+      description: description,
+      icon: icon,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

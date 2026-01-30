@@ -243,7 +243,7 @@ class EventModule(StandardModel, Timestamps):
     require_approve = models.BooleanField(default=False)
 
     def clean(self):
-        if self.team and self.module != self.team.module:
+        if self.team and self.module != self.team.group.module:
             raise ValidationError({"size": _("Team's module must match module.")})
 
     def save(self, *args, **kwargs):

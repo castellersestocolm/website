@@ -14,7 +14,8 @@ import order.api
 import event.api
 import towers.api
 import towers.api.statistics
-from comunicat.rest.permissions import AllowLevelAdmin
+import history.api.history_event
+from comunicat.rest.permissions import AllowLevelAdmin, AllowLevelSuperAdmin
 
 from comunicat.rest.serializers.admin import (
     AdminUserSerializer,
@@ -24,6 +25,8 @@ from comunicat.rest.serializers.admin import (
     AdminListEventSerializer,
     AdminTowersEventSerializer,
     AdminTowersStatsPositionSerializer,
+    AdminHistoryEventSerializer,
+    AdminHistoryEventUpdateSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import TeamType
@@ -48,6 +51,12 @@ class AdminEventResultsSetPagination(PageNumberPagination):
 
 
 class AdminTowersStatsResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class AdminHistoryEventResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -247,3 +256,40 @@ class AdminTowersStatsAPI(ComuniCatViewSet):
             result_page, many=True, context={"module": self.module}
         )
         return paginator.get_paginated_response(serializer.data)
+
+
+class AdminHistoryEventAPI(ComuniCatViewSet):
+    permission_classes = (AllowLevelSuperAdmin,)
+    pagination_class = AdminHistoryEventResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: AdminHistoryEventSerializer(many=True), 403: Serializer()},
+    )
+    @method_decorator(cache_page(1))
+    def list(self, request):
+        history_event_objs = history.api.history_event.get_list(
+            module=self.module,
+        )
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(history_event_objs, request)
+        serializer = AdminHistoryEventSerializer(
+            result_page, many=True, context={"module": self.module}
+        )
+        return paginator.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        request_body=AdminHistoryEventUpdateSerializer,
+        responses={202: Serializer(), 403: Serializer()},
+    )
+    def partial_update(self, request, id):
+        serializer = AdminHistoryEventUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        history.api.history_event.update(
+            history_event_id=id, **validated_data, module=self.module
+        )
+
+        return Response(status=202)

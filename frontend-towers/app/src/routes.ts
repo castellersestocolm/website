@@ -108,6 +108,12 @@ export const ROUTES = {
   "admin-user-id": {
     path: "/admin/user/:id",
   },
+  "admin-history": {
+    path: "/admin/history",
+  },
+  "admin-team": {
+    path: "/admin/team",
+  },
   "admin-stats": {
     path: "/admin/stats",
   },

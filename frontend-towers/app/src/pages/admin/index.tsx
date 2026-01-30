@@ -31,6 +31,7 @@ import {
   MembershipStatus,
   ORDER_STATUS_ICON,
   OrderStatus,
+  PermissionLevel,
   RegistrationStatus,
 } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
@@ -161,6 +162,14 @@ function AdminPage() {
 
   function handleAdminEventSubmit() {
     navigate(ROUTES["admin-user"].path);
+  }
+
+  function handleAdminHistorySubmit() {
+    navigate(ROUTES["admin-history"].path);
+  }
+
+  function handleAdminTeamSubmit() {
+    navigate(ROUTES["admin-team"].path);
   }
 
   function handleAdminStatsSubmit() {
@@ -821,6 +830,46 @@ function AdminPage() {
           )}
         </Card>
       </Grid>
+      {user.permission_level >= PermissionLevel.SUPERADMIN && (
+        <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+          <Card variant="outlined" className={styles.adminCard}>
+            <Link
+              color="textPrimary"
+              underline="none"
+              component="button"
+              className={styles.adminTitleLink}
+              onClick={handleAdminHistorySubmit}
+            >
+              <Box className={styles.adminTopBoxLink}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.admin.history-table.title")}
+                </Typography>
+                <IconKeyboardArrowRight className={styles.adminTitleIcon} />
+              </Box>
+            </Link>
+          </Card>
+        </Grid>
+      )}
+      {user.permission_level >= PermissionLevel.SUPERADMIN && (
+        <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+          <Card variant="outlined" className={styles.adminCard}>
+            <Link
+              color="textPrimary"
+              underline="none"
+              component="button"
+              className={styles.adminTitleLink}
+              onClick={handleAdminTeamSubmit}
+            >
+              <Box className={styles.adminTopBoxLink}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.admin.team-table.title")}
+                </Typography>
+                {/* <IconKeyboardArrowRight className={styles.adminTitleIcon} /> */}
+              </Box>
+            </Link>
+          </Card>
+        </Grid>
+      )}
       <Grid container size={{ xs: 12, md: 12 }} spacing={4} direction="row">
         <Card variant="outlined" className={styles.adminCard}>
           <Link

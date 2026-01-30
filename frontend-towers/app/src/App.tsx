@@ -43,6 +43,7 @@ import BusinessWorkshopsPage from "./pages/business-workshops";
 import BusinessPerformancesPage from "./pages/business-performances";
 import PressArticlePage from "./pages/press-articles";
 import AdminStatsPage from "./pages/admin-stats";
+import AdminHistoryPage from "./pages/admin-history";
 import AdminUserIdPage from "./pages/admin-user-id";
 import AboutContactPage from "./pages/about-contact";
 
@@ -230,6 +231,10 @@ const App = () => {
                   <Route
                     path={ROUTES["admin-user-id"].path}
                     element={<AdminUserIdPage />}
+                  />
+                  <Route
+                    path={ROUTES["admin-history"].path}
+                    element={<AdminHistoryPage />}
                   />
                   <Route
                     path={ROUTES["admin-stats"].path}
