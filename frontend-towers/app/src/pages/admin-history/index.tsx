@@ -394,7 +394,7 @@ function AdminHistoryPage() {
         </TransitionGroup>
       </Grid>
       <Grid container size={12} spacing={2} direction="row">
-        {[...Array(3).keys()].map((i: number) => {
+        {[...Array(API_ADMIN_HISTORY_EVENT_PAGE_SIZE).keys()].map((i: number) => {
           const historyEvent = historyEvents.results[i];
           return (
             <>
