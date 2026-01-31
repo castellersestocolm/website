@@ -258,6 +258,7 @@
   "pages.admin-user.users-table.update.success": "S'ha actualitzat el casteller.",
   "pages.admin-user.users-table.update.error": "Hi ha hagut un error intentant actualitzar el casteller.",
   "pages.admin-history.title": "La nostra història",
+  "pages.admin-history.event-table.new": "Esdeveniment nou",
   "pages.admin-history.event-table.success": "L'esdeveniment s'ha actualitzat correctament.",
   "pages.admin-history.event-table.success-delete": "L'esdeveniment s'ha eliminat correctament.",
   "pages.admin-history.event-table.success-add": "L'esdeveniment s'ha creat correctament.",

@@ -20,6 +20,11 @@
   width: 100%;
 }
 
+.adminTopBoxTitleNew {
+  width: 100%;
+  font-style: italic;
+}
+
 .adminTopBoxButtons {
   width: fit-content !important;
 }

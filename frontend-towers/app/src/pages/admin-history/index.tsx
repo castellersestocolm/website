@@ -210,9 +210,9 @@ function AdminHistoryPage() {
                   variant="h6"
                   fontWeight="600"
                   component="div"
-                  className={styles.adminTopBoxTitle}
+                  className={styles.adminTopBoxTitleNew}
                 >
-                  TEST
+                  {t("pages.admin-history.event-table.new")}
                 </Typography>
                 <Stack
                   direction="row"
@@ -394,271 +394,279 @@ function AdminHistoryPage() {
         </TransitionGroup>
       </Grid>
       <Grid container size={12} spacing={2} direction="row">
-        {[...Array(API_ADMIN_HISTORY_EVENT_PAGE_SIZE).keys()].map((i: number) => {
-          const historyEvent = historyEvents.results[i];
-          return (
-            <>
-              <TransitionGroup className={styles.transitionAlert}>
-                {successDeletedByOrder[i] && (
-                  <Collapse>
-                    <Alert
-                      icon={<IconCheck fontSize="inherit" />}
-                      severity="success"
-                      className={styles.alert}
-                    >
-                      {t("pages.admin-history.event-table.success-delete")}
-                    </Alert>
-                  </Collapse>
-                )}
-                {successAddedByOrder[i] && (
-                  <Collapse>
-                    <Alert
-                      icon={<IconCheck fontSize="inherit" />}
-                      severity="success"
-                      className={styles.alert}
-                    >
-                      {t("pages.admin-history.event-table.success-add")}
-                    </Alert>
-                  </Collapse>
-                )}
-              </TransitionGroup>
-              {historyEvent && (
-                <Card
-                  variant="outlined"
-                  key={historyEvent.id}
-                  className={styles.adminCard}
-                >
-                  <Box className={styles.adminTopBox}>
-                    <Typography
-                      variant="h6"
-                      fontWeight="600"
-                      component="div"
-                      className={styles.adminTopBoxTitle}
-                    >
-                      {capitalizeFirstLetter(
-                        new Date(historyEvent.date).toLocaleDateString(
-                          i18n.resolvedLanguage,
-                          {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          },
-                        ),
-                      )}
-                      {Object.keys(historyEvent.title).includes(
-                        i18n.resolvedLanguage,
-                      ) &&
-                        historyEvent.title[i18n.resolvedLanguage] &&
-                        " — " + historyEvent.title[i18n.resolvedLanguage]}
-                    </Typography>
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      className={styles.adminTopBoxButtons}
-                      width="100%"
-                    >
-                      <Button
-                        variant="contained"
-                        type="submit"
-                        disableElevation
-                        color="secondary"
-                        onClick={() => handleDelete(i, historyEvent.id)}
+        {[...Array(API_ADMIN_HISTORY_EVENT_PAGE_SIZE).keys()].map(
+          (i: number) => {
+            const historyEvent = historyEvents.results[i];
+            return (
+              <>
+                <TransitionGroup className={styles.transitionAlert}>
+                  {successDeletedByOrder[i] && (
+                    <Collapse>
+                      <Alert
+                        icon={<IconCheck fontSize="inherit" />}
+                        severity="success"
+                        className={styles.alert}
                       >
-                        <IconRemoveCircleOutline
-                          fontSize="inherit"
-                          className={styles.buttonIcon}
-                        />
-                        {t("pages.admin-history.event-table.button-delete")}
-                      </Button>
-                    </Stack>
-                  </Box>
-                  <Divider />
-                  <TransitionGroup>
-                    {successById[historyEvent.id] && (
-                      <Collapse>
-                        <Alert
-                          icon={<IconCheck fontSize="inherit" />}
-                          severity="success"
-                          className={styles.alert}
-                        >
-                          {t("pages.admin-history.event-table.success")}
-                        </Alert>
-                      </Collapse>
-                    )}
-                  </TransitionGroup>
-                  <form
-                    onSubmit={(event: React.FormEvent<UpdateFormElement>) =>
-                      handleUpdate(historyEvent.id, event)
-                    }
+                        {t("pages.admin-history.event-table.success-delete")}
+                      </Alert>
+                    </Collapse>
+                  )}
+                  {successAddedByOrder[i] && (
+                    <Collapse>
+                      <Alert
+                        icon={<IconCheck fontSize="inherit" />}
+                        severity="success"
+                        className={styles.alert}
+                      >
+                        {t("pages.admin-history.event-table.success-add")}
+                      </Alert>
+                    </Collapse>
+                  )}
+                </TransitionGroup>
+                {historyEvent && (
+                  <Card
+                    variant="outlined"
+                    key={historyEvent.id}
+                    className={styles.adminCard}
                   >
-                    <Box className={styles.adminTopTransparentBox}>
-                      <Grid container spacing={2}>
-                        <FormGrid size={{ xs: 12, md: 3 }}>
-                          <FormLabel htmlFor="date" required>
-                            {t("pages.admin-history.event-table.date")}
-                          </FormLabel>
-                          <OutlinedInput
-                            id="date"
-                            name="date"
-                            type="date"
-                            autoComplete="date"
-                            required
-                            size="small"
-                            defaultValue={historyEvent.date}
-                            error={
-                              validationErrorsById[historyEvent.id] &&
-                              validationErrorsById[historyEvent.id].date &&
-                              validationErrorsById[historyEvent.id].date[0]
-                                .detail
-                            }
+                    <Box className={styles.adminTopBox}>
+                      <Typography
+                        variant="h6"
+                        fontWeight="600"
+                        component="div"
+                        className={styles.adminTopBoxTitle}
+                      >
+                        {capitalizeFirstLetter(
+                          new Date(historyEvent.date).toLocaleDateString(
+                            i18n.resolvedLanguage,
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            },
+                          ),
+                        )}
+                        {Object.keys(historyEvent.title).includes(
+                          i18n.resolvedLanguage,
+                        ) &&
+                          historyEvent.title[i18n.resolvedLanguage] &&
+                          " — " + historyEvent.title[i18n.resolvedLanguage]}
+                      </Typography>
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        className={styles.adminTopBoxButtons}
+                        width="100%"
+                      >
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          disableElevation
+                          color="secondary"
+                          onClick={() => handleDelete(i, historyEvent.id)}
+                        >
+                          <IconRemoveCircleOutline
+                            fontSize="inherit"
+                            className={styles.buttonIcon}
                           />
-                          {validationErrorsById[historyEvent.id] &&
-                            validationErrorsById[historyEvent.id].date && (
-                              <FormHelperText error>
-                                {
-                                  validationErrorsById[historyEvent.id].date[0]
-                                    .detail
-                                }
-                              </FormHelperText>
-                            )}
-                        </FormGrid>
-                        <FormGrid size={{ xs: 12, md: 3 }}>
-                          <FormLabel htmlFor="icon" required>
-                            {t("pages.admin-history.event-table.icon")}
-                          </FormLabel>
-                          <OutlinedInput
-                            id="icon"
-                            name="icon"
-                            type="text"
-                            autoComplete="icon"
-                            required
-                            size="small"
-                            defaultValue={historyEvent.icon}
-                            error={
-                              validationErrorsById[historyEvent.id] &&
-                              validationErrorsById[historyEvent.id].icon &&
-                              validationErrorsById[historyEvent.id].icon[0]
-                                .detail
-                            }
-                          />
-                          {validationErrorsById[historyEvent.id] &&
-                            validationErrorsById[historyEvent.id].icon && (
-                              <FormHelperText error>
-                                {
-                                  validationErrorsById[historyEvent.id].icon[0]
-                                    .detail
-                                }
-                              </FormHelperText>
-                            )}
-                        </FormGrid>
-                        {(
-                          Object.keys(Language) as Array<keyof typeof Language>
-                        ).map((language) => {
-                          return (
-                            <FormGrid size={12}>
-                              <FormLabel htmlFor="title" required>
-                                {t("pages.admin-history.event-table.title")}
-                                {" ["}
-                                {Language[language]}
-                                {"]"}
-                              </FormLabel>
-                              <OutlinedInput
-                                id={"title_" + Language[language]}
-                                name="title"
-                                type="text"
-                                autoComplete="title"
-                                required
-                                size="small"
-                                defaultValue={
-                                  historyEvent.title[Language[language]]
-                                }
-                                error={
-                                  validationErrorsById[historyEvent.id] &&
-                                  validationErrorsById[historyEvent.id].title &&
-                                  validationErrorsById[historyEvent.id].title[0]
-                                    .detail
-                                }
-                              />
-                              {validationErrorsById[historyEvent.id] &&
-                                validationErrorsById[historyEvent.id].title && (
-                                  <FormHelperText error>
-                                    {
-                                      validationErrorsById[historyEvent.id]
-                                        .title[0].detail
-                                    }
-                                  </FormHelperText>
-                                )}
-                            </FormGrid>
-                          );
-                        })}
-                        {(
-                          Object.keys(Language) as Array<keyof typeof Language>
-                        ).map((language) => {
-                          return (
-                            <FormGrid size={12}>
-                              <FormLabel htmlFor="description" required>
-                                {t(
-                                  "pages.admin-history.event-table.description",
-                                )}
-                                {" ["}
-                                {Language[language]}
-                                {"]"}
-                              </FormLabel>
-                              <OutlinedInput
-                                id={"description_" + Language[language]}
-                                name="description"
-                                type="text"
-                                autoComplete="description"
-                                required
-                                size="small"
-                                defaultValue={
-                                  historyEvent.description[Language[language]]
-                                }
-                                error={
-                                  validationErrorsById[historyEvent.id] &&
-                                  validationErrorsById[historyEvent.id]
-                                    .description &&
-                                  validationErrorsById[historyEvent.id]
-                                    .description[0].detail
-                                }
-                              />
-                              {validationErrorsById[historyEvent.id] &&
-                                validationErrorsById[historyEvent.id]
-                                  .description && (
-                                  <FormHelperText error>
-                                    {
-                                      validationErrorsById[historyEvent.id]
-                                        .description[0].detail
-                                    }
-                                  </FormHelperText>
-                                )}
-                            </FormGrid>
-                          );
-                        })}
-                        <FormGrid size={12}>
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            className={styles.buttons}
-                          >
-                            <Button
-                              variant="contained"
-                              type="submit"
-                              name="join-backend"
-                              disableElevation
-                            >
-                              {t("pages.admin-history.event-table.button")}
-                            </Button>
-                          </Stack>
-                        </FormGrid>
-                      </Grid>
+                          {t("pages.admin-history.event-table.button-delete")}
+                        </Button>
+                      </Stack>
                     </Box>
-                  </form>
-                </Card>
-              )}
-            </>
-          );
-        })}
+                    <Divider />
+                    <TransitionGroup>
+                      {successById[historyEvent.id] && (
+                        <Collapse>
+                          <Alert
+                            icon={<IconCheck fontSize="inherit" />}
+                            severity="success"
+                            className={styles.alert}
+                          >
+                            {t("pages.admin-history.event-table.success")}
+                          </Alert>
+                        </Collapse>
+                      )}
+                    </TransitionGroup>
+                    <form
+                      onSubmit={(event: React.FormEvent<UpdateFormElement>) =>
+                        handleUpdate(historyEvent.id, event)
+                      }
+                    >
+                      <Box className={styles.adminTopTransparentBox}>
+                        <Grid container spacing={2}>
+                          <FormGrid size={{ xs: 12, md: 3 }}>
+                            <FormLabel htmlFor="date" required>
+                              {t("pages.admin-history.event-table.date")}
+                            </FormLabel>
+                            <OutlinedInput
+                              id="date"
+                              name="date"
+                              type="date"
+                              autoComplete="date"
+                              required
+                              size="small"
+                              defaultValue={historyEvent.date}
+                              error={
+                                validationErrorsById[historyEvent.id] &&
+                                validationErrorsById[historyEvent.id].date &&
+                                validationErrorsById[historyEvent.id].date[0]
+                                  .detail
+                              }
+                            />
+                            {validationErrorsById[historyEvent.id] &&
+                              validationErrorsById[historyEvent.id].date && (
+                                <FormHelperText error>
+                                  {
+                                    validationErrorsById[historyEvent.id]
+                                      .date[0].detail
+                                  }
+                                </FormHelperText>
+                              )}
+                          </FormGrid>
+                          <FormGrid size={{ xs: 12, md: 3 }}>
+                            <FormLabel htmlFor="icon" required>
+                              {t("pages.admin-history.event-table.icon")}
+                            </FormLabel>
+                            <OutlinedInput
+                              id="icon"
+                              name="icon"
+                              type="text"
+                              autoComplete="icon"
+                              required
+                              size="small"
+                              defaultValue={historyEvent.icon}
+                              error={
+                                validationErrorsById[historyEvent.id] &&
+                                validationErrorsById[historyEvent.id].icon &&
+                                validationErrorsById[historyEvent.id].icon[0]
+                                  .detail
+                              }
+                            />
+                            {validationErrorsById[historyEvent.id] &&
+                              validationErrorsById[historyEvent.id].icon && (
+                                <FormHelperText error>
+                                  {
+                                    validationErrorsById[historyEvent.id]
+                                      .icon[0].detail
+                                  }
+                                </FormHelperText>
+                              )}
+                          </FormGrid>
+                          {(
+                            Object.keys(Language) as Array<
+                              keyof typeof Language
+                            >
+                          ).map((language) => {
+                            return (
+                              <FormGrid size={12}>
+                                <FormLabel htmlFor="title" required>
+                                  {t("pages.admin-history.event-table.title")}
+                                  {" ["}
+                                  {Language[language]}
+                                  {"]"}
+                                </FormLabel>
+                                <OutlinedInput
+                                  id={"title_" + Language[language]}
+                                  name="title"
+                                  type="text"
+                                  autoComplete="title"
+                                  required
+                                  size="small"
+                                  defaultValue={
+                                    historyEvent.title[Language[language]]
+                                  }
+                                  error={
+                                    validationErrorsById[historyEvent.id] &&
+                                    validationErrorsById[historyEvent.id]
+                                      .title &&
+                                    validationErrorsById[historyEvent.id]
+                                      .title[0].detail
+                                  }
+                                />
+                                {validationErrorsById[historyEvent.id] &&
+                                  validationErrorsById[historyEvent.id]
+                                    .title && (
+                                    <FormHelperText error>
+                                      {
+                                        validationErrorsById[historyEvent.id]
+                                          .title[0].detail
+                                      }
+                                    </FormHelperText>
+                                  )}
+                              </FormGrid>
+                            );
+                          })}
+                          {(
+                            Object.keys(Language) as Array<
+                              keyof typeof Language
+                            >
+                          ).map((language) => {
+                            return (
+                              <FormGrid size={12}>
+                                <FormLabel htmlFor="description" required>
+                                  {t(
+                                    "pages.admin-history.event-table.description",
+                                  )}
+                                  {" ["}
+                                  {Language[language]}
+                                  {"]"}
+                                </FormLabel>
+                                <OutlinedInput
+                                  id={"description_" + Language[language]}
+                                  name="description"
+                                  type="text"
+                                  autoComplete="description"
+                                  required
+                                  size="small"
+                                  defaultValue={
+                                    historyEvent.description[Language[language]]
+                                  }
+                                  error={
+                                    validationErrorsById[historyEvent.id] &&
+                                    validationErrorsById[historyEvent.id]
+                                      .description &&
+                                    validationErrorsById[historyEvent.id]
+                                      .description[0].detail
+                                  }
+                                />
+                                {validationErrorsById[historyEvent.id] &&
+                                  validationErrorsById[historyEvent.id]
+                                    .description && (
+                                    <FormHelperText error>
+                                      {
+                                        validationErrorsById[historyEvent.id]
+                                          .description[0].detail
+                                      }
+                                    </FormHelperText>
+                                  )}
+                              </FormGrid>
+                            );
+                          })}
+                          <FormGrid size={12}>
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              className={styles.buttons}
+                            >
+                              <Button
+                                variant="contained"
+                                type="submit"
+                                name="join-backend"
+                                disableElevation
+                              >
+                                {t("pages.admin-history.event-table.button")}
+                              </Button>
+                            </Stack>
+                          </FormGrid>
+                        </Grid>
+                      </Box>
+                    </form>
+                  </Card>
+                )}
+              </>
+            );
+          },
+        )}
         {historyEvents.results.length > 0 &&
           (historyEvents !== 1 ||
             historyEvents.count > historyEvents.results.length) && (
