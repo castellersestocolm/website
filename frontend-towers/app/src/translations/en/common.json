@@ -216,6 +216,8 @@
   "pages.admin.users-table.title": "Members",
   "pages.admin.users-table.membership": "Membership",
   "pages.admin.orders-table.title": "Orders",
+  "pages.admin.history-table.title": "Our history",
+  "pages.admin.team-table.title": "The team",
   "pages.admin.equipment-table.title": "Equipment",
   "pages.admin.stats-table.title": "Stats",
   "pages.admin.stats-table.attendance-title": "Attendance",
