@@ -50,6 +50,7 @@ interface UpdateFormElement extends HTMLFormElement {
 function AdminHistoryPage() {
   const [t, i18n] = useTranslation("common");
 
+  const [loading, setLoading] = React.useState(true);
   const [historyEvents, setHistoryEvents] = React.useState(undefined);
   const [historyEventsPage, setHistoryEventsPage] = React.useState(1);
   const [successById, setSuccessById] = React.useState<{
@@ -68,12 +69,14 @@ function AdminHistoryPage() {
   const [isAdding, setIsAdding] = React.useState(false);
 
   React.useEffect(() => {
+    setLoading(true);
     apiAdminHistoryEventList(historyEventsPage).then((response) => {
       if (response.status === 200) {
         setHistoryEvents(response.data);
       }
     });
-  }, [setHistoryEvents, historyEventsPage]);
+    setLoading(false);
+  }, [setHistoryEvents, setLoading, historyEventsPage]);
 
   function handleCreate(event: React.FormEvent<UpdateFormElement>) {
     event.preventDefault();
@@ -690,6 +693,7 @@ function AdminHistoryPage() {
       title={t("pages.admin-history.title")}
       content={content}
       finishedRegistration={true}
+      loading={loading}
     />
   );
 }
