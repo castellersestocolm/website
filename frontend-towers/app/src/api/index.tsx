@@ -908,6 +908,36 @@ export const apiAdminHistoryEventUpdate = async (
   }
 };
 
+export const apiAdminHistoryEventCreate = async (
+  date: string,
+  title: Object,
+  description: Object,
+  icon: string,
+) => {
+  try {
+    return await instance.post("/admin/history/event/", {
+      date: date,
+      title: title,
+      description: description,
+      icon: icon,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminHistoryEventDelete = async (id: string) => {
+  try {
+    return await instance.delete("/admin/history/event/" + id + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiDocumentList = async (
   page: number = undefined,
   pageSize: number = undefined,

@@ -283,6 +283,24 @@ class AdminHistoryEventAPI(ComuniCatViewSet):
         request_body=AdminHistoryEventUpdateSerializer,
         responses={202: Serializer(), 403: Serializer()},
     )
+    def create(self, request):
+        serializer = AdminHistoryEventUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        history_event_obj = history.api.history_event.create(
+            **validated_data, module=self.module
+        )
+
+        serializer = AdminHistoryEventSerializer(
+            history_event_obj, context={"module": self.module}
+        )
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        request_body=AdminHistoryEventUpdateSerializer,
+        responses={202: Serializer(), 403: Serializer()},
+    )
     def partial_update(self, request, id):
         serializer = AdminHistoryEventUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -293,3 +311,11 @@ class AdminHistoryEventAPI(ComuniCatViewSet):
         )
 
         return Response(status=202)
+
+    @swagger_auto_schema(
+        responses={204: Serializer(), 403: Serializer()},
+    )
+    def destroy(self, request, id):
+        history.api.history_event.delete(history_event_id=id, module=self.module)
+
+        return Response(status=204)

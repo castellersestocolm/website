@@ -31,7 +31,7 @@ import IconCreditCardOff from "@mui/icons-material/CreditCardOff";
 import IconCheckroom from "@mui/icons-material/Checkroom";
 import IconPayment from "@mui/icons-material/Payment";
 import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
@@ -541,26 +541,36 @@ function HomePage() {
             className={styles.timelineGrid}
           >
             {historyEvents && historyEvents.results.length > 0 ? (
-              <Timeline position={timelineMatches ? "alternate" : "left"}>
+              <Timeline
+                position={timelineMatches ? "alternate" : "right"}
+                sx={{
+                  [`& .${timelineItemClasses.root}:before`]: {
+                    flex: 0,
+                    padding: 0,
+                  },
+                }}
+              >
                 {historyEvents.results.map((historyEvent: any) => {
                   return (
                     <TimelineItem key={historyEvent.id}>
-                      <TimelineOppositeContent
-                        sx={{ m: "auto 0" }}
-                        align="right"
-                        variant="body2"
-                        color="textSecondary"
-                      >
-                        {capitalizeFirstLetter(
-                          new Date(historyEvent.date).toLocaleDateString(
-                            i18n.resolvedLanguage,
-                            {
-                              month: "long",
-                              year: "numeric",
-                            },
-                          ),
-                        )}
-                      </TimelineOppositeContent>
+                      {timelineMatches && (
+                        <TimelineOppositeContent
+                          sx={{ m: "auto 0" }}
+                          align="right"
+                          variant="body2"
+                          color="textSecondary"
+                        >
+                          {capitalizeFirstLetter(
+                            new Date(historyEvent.date).toLocaleDateString(
+                              i18n.resolvedLanguage,
+                              {
+                                month: "long",
+                                year: "numeric",
+                              },
+                            ),
+                          )}
+                        </TimelineOppositeContent>
+                      )}
                       <TimelineSeparator>
                         <TimelineConnector />
                         <TimelineDot
@@ -573,6 +583,19 @@ function HomePage() {
                         <TimelineConnector />
                       </TimelineSeparator>
                       <TimelineContent sx={{ py: "12px", px: 2 }}>
+                        {!timelineMatches && (
+                          <Typography variant="body2" color="textSecondary">
+                            {capitalizeFirstLetter(
+                              new Date(historyEvent.date).toLocaleDateString(
+                                i18n.resolvedLanguage,
+                                {
+                                  month: "long",
+                                  year: "numeric",
+                                },
+                              ),
+                            )}
+                          </Typography>
+                        )}
                         <Typography
                           variant="h6"
                           fontWeight={600}
