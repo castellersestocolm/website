@@ -2,13 +2,25 @@ import datetime
 from typing import List
 from uuid import UUID
 
+from django.db.models import Q
+
 from comunicat.enums import Module
 from history.models import HistoryEvent
 
 
-def get_list(module: Module) -> List[HistoryEvent]:
+def get_list(
+    module: Module,
+    date: datetime.date | None = None,
+) -> List[HistoryEvent]:
+    history_event_filter = Q()
+
+    if date:
+        # TODO: Check if this causes timezone issues
+        history_event_filter &= Q(date__lte=date)
+
     return list(
         HistoryEvent.objects.filter(
+            history_event_filter,
             module=module,
         ).order_by("-date", "created_at")
     )

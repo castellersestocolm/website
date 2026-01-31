@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import permissions
@@ -31,6 +32,7 @@ class HistoryEventAPI(
     def list(self, request):
         history_event_objs = history.api.history_event.get_list(
             module=self.module,
+            date=timezone.localdate(),
         )
 
         paginator = self.pagination_class()
