@@ -33,7 +33,7 @@ import FormContactMessage from "../../components/FormContactMessage/FormContactM
 import { ContactMessageType } from "../../enums";
 
 function BusinessWorkshopsPage() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
 
   const content = (
     <>
@@ -351,7 +351,9 @@ function BusinessWorkshopsPage() {
       title={
         <>
           {t("pages.workshops.title")}
-          <LanguageChip language="en" marginLeft="16px" />
+          {i18n.resolvedLanguage === "ca" && (
+            <LanguageChip language="en" marginLeft="16px" />
+          )}
         </>
       }
       contentPost={content}
