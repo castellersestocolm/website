@@ -51,6 +51,10 @@ import markdown from "@wcj/markdown-to-html";
 import Pagination from "@mui/material/Pagination";
 import { API_HISTORY_EVENT_LIST_PAGE_SIZE } from "../../consts";
 import { DynamicIcon } from "../../components/DynamicIcon/DynamicIcon";
+import Hero from "../../components/Hero/Hero";
+import { languageToLocale } from "../../utils/locale";
+
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -62,6 +66,8 @@ function HomePage() {
 
   const [historyEventsPage, setHistoryEventsPage] = React.useState(1);
   const [historyEvents, setHistoryEvents] = React.useState(undefined);
+
+  const [highligtedEvent, setHighlightedEvent] = React.useState(undefined);
 
   React.useEffect(() => {
     apiHistoryEventGroupList(historyEventsPage).then((response) => {
@@ -86,6 +92,16 @@ function HomePage() {
       }
     });
   }, [setRehearsal, i18n.resolvedLanguage]);
+
+  React.useEffect(() => {
+    apiEventList(1, 1, undefined, undefined, undefined, undefined, undefined, [
+      EventType.PERFORMANCE,
+    ]).then((response) => {
+      if (response.status === 200 && response.data.results.length > 0) {
+        setHighlightedEvent(response.data.results[0]);
+      }
+    });
+  }, [setHighlightedEvent, i18n.resolvedLanguage]);
 
   return (
     <>
@@ -165,43 +181,55 @@ function HomePage() {
           </Box>
         </Box>
       </Box>
-      {/*<Hero
-        title={t("pages.calendar-2025-09-07-diada-performance.title")}
-        hero={ImageHeroCalendarDiada}
-        content={
-          <Box>
-            <Typography
-              variant="h4"
-              className={styles.heroSectionSubtitle}
-              marginTop="12px"
-            >
-              {t("pages.home-311-diada.description")}
-            </Typography>
-            <Grid size={12} marginTop="24px">
-              <Stack direction="row" spacing={2} className={styles.joinButtons}>
-                <Button
-                  variant="contained"
-                  href={ROUTES["calendar-event"].path
-                    .replace(":year", "2025")
-                    .replace(":month", "09")
-                    .replace(":day", "07")
-                    .replace(":code", "diada-performance")}
-                  disableElevation
+      {highligtedEvent && (
+        <Hero
+          title={highligtedEvent.title}
+          subtitle={new Date(highligtedEvent.time_from).toLocaleDateString(
+            languageToLocale(i18n.resolvedLanguage).code,
+            {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            },
+          )}
+          hero={
+            highligtedEvent.picture &&
+            BACKEND_BASE_URL + highligtedEvent.picture.medium
+          }
+          content={
+            <Box>
+              <Typography
+                variant="h4"
+                className={styles.heroSectionSubtitle}
+                marginTop="12px"
+              >
+                {highligtedEvent.description}
+              </Typography>
+              <Grid size={12} marginTop="24px">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  className={styles.joinButtons}
                 >
-                  {t("pages.home-berlin.button-diada")}
-                </Button>
-                <Button
-                  variant="contained"
-                  href={ROUTES.calendar.path}
-                  disableElevation
-                >
-                  {t("pages.calendar.title")}
-                </Button>
-              </Stack>
-            </Grid>
-          </Box>
-        }
-      />*/}
+                  <Button
+                    variant="contained"
+                    href={ROUTES["calendar-event"].path
+                      .replace(":year", highligtedEvent.time_from.slice(0, 4))
+                      .replace(":month", highligtedEvent.time_from.slice(5, 7))
+                      .replace(":day", highligtedEvent.time_from.slice(8, 10))
+                      .replace(":code", highligtedEvent.code)}
+                    disableElevation
+                  >
+                    {t("pages.home-highlight.button-info")}
+                  </Button>
+                </Stack>
+              </Grid>
+            </Box>
+          }
+        />
+      )}
       <Box component="section" className={styles.rehearsals}>
         <Container maxWidth="lg">
           <Typography

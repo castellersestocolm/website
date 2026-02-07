@@ -41,6 +41,7 @@ def get_list(
     date_to: datetime.date | None = None,
     with_counts: bool = False,
     for_musicians: bool | None = None,
+    filter_types: list[EventType] | None = None,
 ) -> List[Event]:
     if request_user_id:
         family_user_ids = [
@@ -83,6 +84,9 @@ def get_list(
                     modules__team__type__isnull=True,
                 )
             )
+
+    if filter_types:
+        event_filter &= Q(type__in=filter_types)
 
     event_qs = (
         Event.objects.filter(

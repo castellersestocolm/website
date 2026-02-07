@@ -76,6 +76,12 @@ def get_event_poster_name(instance, filename):
     )
 
 
+def get_event_picture_name(instance, filename):
+    return os.path.join(
+        "event/event/picture/", f"{instance.id}.{filename.split('.')[-1]}"
+    )
+
+
 # TODO: Add event status
 class Event(StandardModel, Timestamps):
     title = models.CharField(max_length=255)
@@ -125,6 +131,9 @@ class Event(StandardModel, Timestamps):
 
     poster = VersatileImageField(
         "Image", blank=True, null=True, upload_to=get_event_poster_name
+    )
+    picture = VersatileImageField(
+        "Image", blank=True, null=True, upload_to=get_event_picture_name
     )
 
     __title = None

@@ -6,7 +6,7 @@ from versatileimagefield.serializers import VersatileImageFieldSerializer
 from comunicat.rest.serializers.legal import TeamSerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField
-from event.enums import RegistrationStatus
+from event.enums import RegistrationStatus, EventType
 from event.models import (
     Event,
     Location,
@@ -215,6 +215,7 @@ class EventSlimSerializer(s.ModelSerializer):
         fields = (
             "id",
             "title",
+            "code",
             "time_from",
             "time_to",
             "description",
@@ -225,6 +226,7 @@ class EventSlimSerializer(s.ModelSerializer):
         read_only_fields = (
             "id",
             "title",
+            "code",
             "time_from",
             "time_to",
             "description",
@@ -257,6 +259,18 @@ class EventSerializer(EventSlimSerializer):
         ],
         read_only=True,
     )
+    picture = VersatileImageFieldSerializer(
+        allow_null=True,
+        sizes=[
+            ("large", "url"),
+            # TODO: Fix this
+            ("medium", "url"),
+            ("small", "url"),
+            # ("medium", "thumbnail__500x500"),
+            # ("small", "thumbnail__100x100")
+        ],
+        read_only=True,
+    )
     google_event = GoogleEventSerializer(required=False, read_only=True)
     google_album = GoogleAlbumSerializer(required=False, read_only=True)
 
@@ -265,6 +279,7 @@ class EventSerializer(EventSlimSerializer):
         fields = (
             "id",
             "title",
+            "code",
             "time_from",
             "time_to",
             "location",
@@ -277,6 +292,7 @@ class EventSerializer(EventSlimSerializer):
             "modules",
             "agenda_items",
             "poster",
+            "picture",
             "google_event",
             "google_album",
             "created_at",
@@ -284,6 +300,7 @@ class EventSerializer(EventSlimSerializer):
         read_only_fields = (
             "id",
             "title",
+            "code",
             "time_from",
             "time_to",
             "location",
@@ -296,6 +313,7 @@ class EventSerializer(EventSlimSerializer):
             "modules",
             "agenda_items",
             "poster",
+            "picture",
             "google_event",
             "google_album",
             "created_at",
@@ -416,6 +434,15 @@ class ListEventSerializer(s.Serializer):
     date_to = s.DateField(required=False)
     with_counts = s.BooleanField(required=False)
     token = s.CharField(required=False)
+    filter_types = s.ListSerializer(child=IntEnumField(EventType), required=False)
+
+    def to_internal_value(self, data):
+        data = {k: v for k, v in data.items()}
+        data["filter_types"] = (
+            data["filter_types"].split(",") if data.get("filter_types", False) else []
+        )
+        data = super().to_internal_value(data)
+        return data
 
 
 class PageEventSerializer(s.Serializer):

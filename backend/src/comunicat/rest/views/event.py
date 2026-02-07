@@ -44,7 +44,7 @@ class EventAPI(ComuniCatViewSet):
     lookup_field = "id"
 
     @swagger_auto_schema(
-        query_serializer=ListEventSerializer,
+        query_serializer=ListEventSerializer(),
         responses={200: EventSerializer(many=True)},
     )
     def list(self, request):
@@ -69,6 +69,7 @@ class EventAPI(ComuniCatViewSet):
         )
 
         with_counts = serializer.validated_data.get("with_counts", False)
+        filter_types = serializer.validated_data.get("filter_types", None)
 
         event_objs = event.api.get_list(
             request_user_id=user_obj.id if user_obj else None,
@@ -77,6 +78,7 @@ class EventAPI(ComuniCatViewSet):
             date_to=serializer.validated_data.get("date_to"),
             with_counts=with_counts,
             for_musicians=for_musicians,
+            filter_types=filter_types,
         )
 
         serializer_class = (

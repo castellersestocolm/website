@@ -31,13 +31,13 @@ class DocumentAPI(ComuniCatViewSet):
     pagination_class = DocumentResultsSetPagination
 
     @swagger_auto_schema(
-        query_serializer=ListDocumentSerializer,
+        query_serializer=ListDocumentSerializer(),
         responses={200: DocumentSerializer(many=True)},
     )
     @method_decorator(cache_page(60))
     @method_decorator(cache_control(private=True))
     def list(self, request):
-        serializer = ListDocumentSerializer(data=dict(request.query_params))
+        serializer = ListDocumentSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
         document_objs = document.api.get_list(
