@@ -550,7 +550,7 @@ msgid ""
 "Castellers d'Estocolm, welcome!"
 msgstr ""
 "Has completat el procés de registre i ets part dels Castellers d'Estocolm, "
-"benvingut!"
+"et donem la benvinguda!"
 
 #: comunicat/templates/email/towers/user/welcome.html:6
 msgid ""
