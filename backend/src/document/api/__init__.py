@@ -12,6 +12,7 @@ def get_list(
     module: Module,
     is_authenticated: bool = False,
     filter_types: list[DocumentType] | None = None,
+    order_by: list[str] | None = None,
 ) -> list[Document]:
     document_filter = Q()
     document_exclude = Q()
@@ -32,5 +33,15 @@ def get_list(
             .order_by("code", "language_match", "-version")
             .distinct("code")
         ),
-        key=lambda document_obj: document_obj.order,
+        key=lambda document_obj: (
+            [
+                getattr(document_obj, order_by_attr.lstrip("-"))
+                for order_by_attr in order_by
+            ]
+            if order_by
+            else document_obj.order
+        ),
+        # TODO: Fix this per attribute
+        reverse=order_by
+        and any([order_by_attr.startswith("-") for order_by_attr in order_by]),
     )

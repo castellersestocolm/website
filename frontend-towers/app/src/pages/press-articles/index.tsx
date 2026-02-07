@@ -19,7 +19,7 @@ function PressArticlePage() {
   const [articles, setArticles] = React.useState(undefined);
 
   React.useEffect(() => {
-    apiDocumentList(undefined, undefined, [DocumentType.PRESS]).then(
+    apiDocumentList(undefined, undefined, [DocumentType.PRESS], ["-date"]).then(
       (response) => {
         if (response.status === 200) {
           setArticles(response.data);
@@ -55,7 +55,11 @@ function PressArticlePage() {
                     alt={document.name}
                   />
                   <Box className={styles.resourcesFileTitle}>
-                    <Typography variant="body2" fontWeight="600">
+                    <Typography
+                      variant="body2"
+                      fontWeight="600"
+                      component="span"
+                    >
                       {document.name}
                       <LanguageChip language={document.language} size="small" />
                     </Typography>

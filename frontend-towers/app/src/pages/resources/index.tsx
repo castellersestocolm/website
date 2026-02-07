@@ -51,7 +51,11 @@ function ResourcesPage() {
                     alt={document.name}
                   />
                   <Box className={styles.resourcesFileTitle}>
-                    <Typography variant="body2" fontWeight="600">
+                    <Typography
+                      variant="body2"
+                      fontWeight="600"
+                      component="span"
+                    >
                       {document.name}
                       <LanguageChip language={document.language} size="small" />
                     </Typography>

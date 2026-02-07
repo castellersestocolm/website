@@ -9,6 +9,12 @@
   background-color: var(--mui-palette-grey-100);
   border: 1px solid var(--mui-palette-divider);
   border-radius: 4px;
+  display: flex;
+
+  a {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .resourcesFileImage {
@@ -20,7 +26,9 @@
 
 .resourcesFileTitle {
   border-radius: 0 0 4px 4px;
-  padding: 4px 12px 8px 12px;
+  padding: 8px 12px;
+  flex: 1;
+  align-content: end;
 }
 
 .pressCardImageBox {

@@ -942,6 +942,7 @@ export const apiDocumentList = async (
   page: number = undefined,
   pageSize: number = undefined,
   filterTypes: number[] = undefined,
+  orderBy: string[] = undefined,
 ) => {
   try {
     return await instance.get("/document/", {
@@ -949,6 +950,7 @@ export const apiDocumentList = async (
         page_size: pageSize ? pageSize : API_DOCUMENTS_LIST_PAGE_SIZE,
         page: page,
         filter_types: filterTypes && filterTypes.join(","),
+        order_by: orderBy && orderBy.join(","),
       },
     });
   } catch (error) {

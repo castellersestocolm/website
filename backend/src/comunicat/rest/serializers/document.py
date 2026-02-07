@@ -9,12 +9,16 @@ from document.models import Document
 
 class ListDocumentSerializer(s.Serializer):
     filter_types = s.ListSerializer(child=IntEnumField(DocumentType), required=False)
+    order_by = s.ListSerializer(child=s.CharField(), required=False)
 
     def to_internal_value(self, data):
         data["filter_types"] = (
             data["filter_types"][0].split(",")
             if data.get("filter_types", False)
             else []
+        )
+        data["order_by"] = (
+            data["order_by"][0].split(",") if data.get("order_by", False) else []
         )
         data = super().to_internal_value(data)
         return data
