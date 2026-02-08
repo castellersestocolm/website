@@ -211,7 +211,7 @@ function OrderPage() {
                         </Typography>
                       )}
                     </CardContent>
-                    <CardContent>
+                    <CardContent className={styles.productCardSelect}>
                       <Stack direction="row" spacing={2}>
                         <FormControl className={styles.productSelect}>
                           <InputLabel id="demo-multiple-name-label">
