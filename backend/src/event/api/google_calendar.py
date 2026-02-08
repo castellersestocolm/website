@@ -12,6 +12,7 @@ from googleapiclient.errors import HttpError
 import payment.api.entity
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.enums import Module
+from comunicat.utils.models import language_field_default
 from event.consts import (
     GOOGLE_CALENDAR_SCOPES,
     REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS,
@@ -196,7 +197,10 @@ def import_events() -> None:
                                     break
 
                             event_obj = Event(
-                                title=title,
+                                title={
+                                    locale: title
+                                    for locale, __ in language_field_default().items()
+                                },
                                 time_from=datetime.datetime.fromisoformat(
                                     event["start"]["dateTime"]
                                 ),

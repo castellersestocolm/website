@@ -605,19 +605,19 @@ msgstr ""
 
 #: event/utils/event.py:25
 msgid "Rehearsal with musicians"
-msgstr ""
+msgstr "Assaig amb músics"
 
 #: event/utils/event.py:27
 msgid "Rehearsal"
-msgstr ""
+msgstr "Assaig"
 
 #: event/utils/event.py:29
 msgid "Musicians rehearsal"
-msgstr ""
+msgstr "Assaig de músics"
 
 #: media/admin.py:36
 msgid "title"
-msgstr ""
+msgstr "títol"
 
 #: membership/admin.py:111
 msgid "users"

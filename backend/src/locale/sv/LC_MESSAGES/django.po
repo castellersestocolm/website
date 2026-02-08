@@ -603,19 +603,19 @@ msgstr ""
 
 #: event/utils/event.py:25
 msgid "Rehearsal with musicians"
-msgstr ""
+msgstr "Repetition med musiker"
 
 #: event/utils/event.py:27
 msgid "Rehearsal"
-msgstr ""
+msgstr "Repetition"
 
 #: event/utils/event.py:29
 msgid "Musicians rehearsal"
-msgstr ""
+msgstr "Musikerns repetition"
 
 #: media/admin.py:36
 msgid "title"
-msgstr ""
+msgstr "titel"
 
 #: membership/admin.py:111
 msgid "users"

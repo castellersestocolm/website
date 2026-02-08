@@ -11,7 +11,7 @@ def set_event_title_lang(apps, schema_editor):
     for event_obj in Event.objects.all():
         event_obj.title_lang = {
             locale: event_obj.title
-            for locale, __ in comunicat.utils.models.language_field_default()
+            for locale, __ in comunicat.utils.models.language_field_default().items()
         }
         event_updates.append(event_obj)
 
