@@ -341,7 +341,13 @@ function UserDashboardPage() {
         }
       }
     });
-  }, [setRehearsal, setCastles, lastChangedAttendance, user]);
+  }, [
+    setRehearsal,
+    i18n.resolvedLanguage,
+    setCastles,
+    lastChangedAttendance,
+    user,
+  ]);
 
   function handleRequestCancelSubmit(id: string) {
     apiUserFamilyMemberRequestCancel(id).then((response) => {
