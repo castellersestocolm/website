@@ -25,6 +25,7 @@ def create_or_update_album(event_id: UUID) -> GoogleAlbum | None:
     event_obj = (
         Event.objects.filter(id=event_id)
         .select_related("location", "google_event")
+        .with_title()
         .first()
     )
 
@@ -50,7 +51,7 @@ def create_or_update_album(event_id: UUID) -> GoogleAlbum | None:
             "photoslibrary", "v1", credentials=creds, static_discovery=False
         )
 
-        event_title = f"{timezone.localdate(event_obj.time_from).strftime('%Y-%m-%d')} - {event_obj.title}"
+        event_title = f"{timezone.localdate(event_obj.time_from).strftime('%Y-%m-%d')} - {event_obj.title_locale}"
 
         if hasattr(event_obj, "google_album"):
             service.albums().patch(

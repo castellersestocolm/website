@@ -72,6 +72,7 @@ def update_or_create_event(event_id: UUID) -> None:
                 ),
             ),
         )
+        .with_title()
         .first()
     )
 
@@ -84,9 +85,9 @@ def update_or_create_event(event_id: UUID) -> None:
     cursor = connections["pinyator"].cursor()
 
     if event_obj.type == EventType.REHEARSAL and event_obj.location:
-        event_title = f"{event_obj.title} - {event_obj.location.name}"
+        event_title = f"{event_obj.title_locale} - {event_obj.location.name}"
     else:
-        event_title = event_obj.title
+        event_title = event_obj.title_locale
     event_time_from = timezone.localtime(event_obj.time_from).strftime(
         "%Y-%m-%d %H:%M:%S"
     )

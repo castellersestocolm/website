@@ -317,6 +317,7 @@ def create_or_update_event(
                 ),
             ),
         )
+        .with_title()
         .first()
     )
 
@@ -376,9 +377,9 @@ def create_or_update_event(
             event_obj.type in (EventType.REHEARSAL, EventType.WORKSHOP)
             and event_obj.location
         ):
-            event_title = f"{event_obj.title} - {event_obj.location.name}"
+            event_title = f"{event_obj.title_locale} - {event_obj.location.name}"
         else:
-            event_title = event_obj.title
+            event_title = event_obj.title_locale
 
         if hasattr(event_obj, "google_event"):
             event = (

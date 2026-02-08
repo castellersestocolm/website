@@ -1,3 +1,4 @@
+from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 
 from comunicat.enums import Module
@@ -212,6 +213,7 @@ class AdminListEventSerializer(s.Serializer):
 
 
 class AdminEventSerializer(s.ModelSerializer):
+    title = s.SerializerMethodField(read_only=True)
     location = LocationSerializer(read_only=True)
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
@@ -245,6 +247,10 @@ class AdminEventSerializer(s.ModelSerializer):
             "modules",
             "created_at",
         )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_title(self, obj):
+        return obj.title.get(translation.get_language())
 
 
 class AdminTowersEventSerializer(s.Serializer):

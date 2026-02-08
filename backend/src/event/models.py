@@ -10,7 +10,7 @@ from django.db.models import JSONField, Q, F
 from django.db.models.functions import Trunc
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.utils import timezone
+from django.utils import timezone, translation
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
@@ -84,7 +84,7 @@ def get_event_picture_name(instance, filename):
 
 # TODO: Add event status
 class Event(StandardModel, Timestamps):
-    title = models.CharField(max_length=255)
+    title = JSONField(default=language_field_default)
 
     code = models.CharField(max_length=255, blank=True)
 
@@ -147,7 +147,9 @@ class Event(StandardModel, Timestamps):
         self.__time_from = self.time_from
 
     def __str__(self) -> str:
-        return self.title
+        return (
+            self.title.get(translation.get_language()) or list(self.title.values())[0]
+        )
 
     def clean(self):
         validation_errors = {}
@@ -177,15 +179,20 @@ class Event(StandardModel, Timestamps):
             self.series.events.exclude(id=self.id).update(type=self.type)
 
         if self.course:
-            if not self.title:
-                self.title = self.course.program.name.get(settings.LANGUAGE_CODE)
+            if not any(self.title.values()):
+                self.title = self.course.program.name
             if not self.module:
                 self.module = self.course.program.module
             self.type = EventType.COURSE
 
         if not self.code:
             self.code = unicodedata.normalize(
-                "NFKD", re.sub(r"[^\w\-]", "", self.title.replace(" ", "-"))
+                "NFKD",
+                re.sub(
+                    r"[^\w\-]",
+                    "",
+                    self.title.get(settings.LANGUAGE_CODE).replace(" ", "-"),
+                ),
             ).lower()
 
         if self.module and self.status == EventStatus.PUBLISHED:

@@ -45,6 +45,13 @@ class EventQuerySet(QuerySet):
             ),
         )
 
+    def with_title(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            title_locale=F(f"title__{locale}"),
+        )
+
     def with_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 

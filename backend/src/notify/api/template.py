@@ -136,14 +136,16 @@ def get_user_email_render(
 
             context_full["event_objs"] = list(
                 sorted(
-                    Event.objects.filter(id__in=context["event_ids"]).prefetch_related(
+                    Event.objects.filter(id__in=context["event_ids"])
+                    .prefetch_related(
                         Prefetch(
                             "modules",
                             EventModule.objects.filter(module=module).order_by(
                                 "module"
                             ),
                         )
-                    ),
+                    )
+                    .with_title(),
                     key=lambda e_obj: context["event_ids"].index(str(e_obj.id)),
                 )
             )

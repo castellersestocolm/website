@@ -208,6 +208,7 @@ class EventModuleSerializer(s.ModelSerializer):
 
 
 class EventSlimSerializer(s.ModelSerializer):
+    title = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -234,6 +235,10 @@ class EventSlimSerializer(s.ModelSerializer):
             "module",
             "created_at",
         )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_title(self, obj):
+        return obj.title.get(translation.get_language())
 
     @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
     def get_description(self, obj):

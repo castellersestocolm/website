@@ -140,7 +140,7 @@ class EventAdmin(
 ):
     search_fields = ("id", "title")
     list_display = (
-        "title",
+        "title_locale",
         "time_from",
         "time_to",
         "type",
@@ -164,6 +164,14 @@ class EventAdmin(
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},
     }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_title()
+
+    def title_locale(self, obj):
+        return obj.title_locale
+
+    title_locale.short_description = _("title")
 
 
 class RegistrationLogInline(admin.TabularInline):

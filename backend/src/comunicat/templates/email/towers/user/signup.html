@@ -10,7 +10,7 @@
                 {% with "calendar/"|add:token|add:"?eventId="|add:event_id as event_signup_link %}
                     <a href="{% full_towers_url event_signup_link %}" target="_blank">
                         <div>
-                            <h5 style="margin-top: 4px; margin-bottom: 4px;">{{ event_obj.title }}{% if event_obj.location and event_obj.type == 50 %} — {{ event_obj.location.name }}{% endif %}</h5>
+                            <h5 style="margin-top: 4px; margin-bottom: 4px;">{{ event_obj.title_locale }}{% if event_obj.location and event_obj.type == 50 %} — {{ event_obj.location.name }}{% endif %}</h5>
                             <h6 style="margin-top: 0; margin-bottom: 12px; font-size: 100%;">{{ event_obj.time_from|date }} {{ event_obj.time_from|date:"G:i" }} → {{ event_obj.time_to|date:"G:i" }}</h6>
                             {% if event_obj.modules.all.0.require_signup %}
                                 <div>
