@@ -154,7 +154,7 @@ function CalendarPage() {
         setEvents(response.data);
       }
     });
-  }, [setEvents, lastChanged, eventPage, token]);
+  }, [setEvents, i18n.resolvedLanguage, lastChanged, eventPage, token]);
 
   React.useEffect(() => {
     if (user && events && events.count > 0) {
