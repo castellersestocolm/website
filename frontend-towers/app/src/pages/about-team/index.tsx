@@ -150,7 +150,8 @@ function AboutTeamPage() {
                                 <Typography variant="body1" fontWeight="600">
                                   {member.user.firstname} {member.user.lastname}
                                 </Typography>
-                                {member.user.contact &&
+                                {groupsPage === 1 &&
+                                  member.user.contact &&
                                   member.user.contact.emails.length > 0 &&
                                   member.user.contact.emails.map(
                                     (contactEmail: any) => (
