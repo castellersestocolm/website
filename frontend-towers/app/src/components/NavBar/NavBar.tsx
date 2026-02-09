@@ -41,7 +41,7 @@ import LanguageChip from "../LanguageChip/LanguageChip";
  */
 
 export default function NavBar() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
 
   const theme = useTheme();
 
@@ -110,13 +110,13 @@ export default function NavBar() {
           name: t("components.navbar-menu.business.workshops"),
           path: ROUTES["business-workshops"].path,
           target: "_self",
-          language: "en",
+          language: i18n.resolvedLanguage === "ca" && "en",
         },
         {
           name: t("components.navbar-menu.business.performances"),
           path: ROUTES["business-performances"].path,
           target: "_self",
-          language: "en",
+          language: i18n.resolvedLanguage === "ca" && "en",
         },
       ],
     },
