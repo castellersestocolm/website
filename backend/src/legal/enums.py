@@ -13,3 +13,8 @@ class PermissionLevel(enum.IntEnum):
     USER = 20
     ADMIN = 30
     SUPERADMIN = 40
+
+
+class ContactEmailType(enum.IntEnum):
+    PERSONAL = 10
+    MODULE = 20

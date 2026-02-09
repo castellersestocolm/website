@@ -2,23 +2,57 @@ from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
+from comunicat.rest.utils.fields import IntEnumField
+from comunicat.utils.email import get_module_emails_from_user
+from legal.enums import ContactEmailType
 from legal.models import Team, Member, Role, Bylaws, Group
 from user.models import User
 
 from django.conf import settings
 
 
+class MemberUserContactEmailSerializer(s.Serializer):
+    email = s.EmailField(read_only=True)
+    type = IntEnumField(ContactEmailType, read_only=True)
+
+
+class MemberUserContactSerializer(s.Serializer):
+    emails = MemberUserContactEmailSerializer(many=True, read_only=True)
+
+
 class MemberUserSerializer(s.ModelSerializer):
+    contact = s.SerializerMethodField(read_only=True)
+
     class Meta:
         model = User
         fields = (
             "firstname",
             "lastname",
+            "contact",
         )
         read_only_fields = (
             "firstname",
             "lastname",
+            "contact",
         )
+
+    @swagger_serializer_method(
+        serializer_or_field=MemberUserContactSerializer(read_only=True)
+    )
+    def get_contact(self, obj):
+        if "module" not in self.context:
+            return None
+
+        module_emails = get_module_emails_from_user(
+            user_obj=obj, module=self.context["module"]
+        )
+        contact_data = {
+            "emails": [
+                {"email": module_email, "type": ContactEmailType.MODULE}
+                for module_email in module_emails
+            ]
+        }
+        return MemberUserContactSerializer(contact_data).data
 
 
 class RoleSerializer(s.ModelSerializer):

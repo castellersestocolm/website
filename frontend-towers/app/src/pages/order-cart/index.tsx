@@ -106,7 +106,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 function OrderCartPage() {
   const [t, i18n] = useTranslation("common");
 
-  const { user, cart, setCart, order, setOrder, setMessages } = useAppContext();
+  const { user, cart, setCart, setOrder, setMessages } = useAppContext();
 
   const [events, setEvents] = React.useState(undefined);
   const [allowedCountryCodes, setAllowedCountryCodes] =
@@ -155,7 +155,7 @@ function OrderCartPage() {
         setEvents(response.data);
       }
     });
-  }, [setEvents]);
+  }, [setEvents, i18n.resolvedLanguage]);
 
   const handleFormDeliveryData = useCallback(
     (field: string, value: string) => {

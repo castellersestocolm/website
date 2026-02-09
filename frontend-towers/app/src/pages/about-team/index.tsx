@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { Avatar, Divider, Stack, Typography } from "@mui/material";
+import { Avatar, Divider, Link, Stack, Typography } from "@mui/material";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import ImageHeroAboutTeam from "../../assets/images/heros/about-team.jpg";
@@ -156,6 +156,22 @@ function AboutTeamPage() {
                                 >
                                   {member.role.name}
                                 </Typography>
+                                {!memberDateTo &&
+                                  member.user.contact &&
+                                  member.user.contact.emails.length > 0 &&
+                                  member.user.contact.emails.map(
+                                    (contactEmail: any) => (
+                                      <Typography variant="body2">
+                                        <Link
+                                          href={"mailto:" + contactEmail.email}
+                                          underline="none"
+                                          color="textDisabled"
+                                        >
+                                          {contactEmail.email}
+                                        </Link>
+                                      </Typography>
+                                    ),
+                                  )}
                                 {(memberDateFrom || memberDateTo) && (
                                   <Typography
                                     variant="caption"

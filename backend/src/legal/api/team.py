@@ -18,9 +18,9 @@ def get_list(module: Module) -> List[Team]:
         .prefetch_related(
             Prefetch(
                 "members",
-                Member.objects.select_related("user", "role").order_by(
-                    "role__order", "user__firstname", "user__lastname"
-                ),
+                Member.objects.select_related("user", "role")
+                .prefetch_related("user__emails")
+                .order_by("role__order", "user__firstname", "user__lastname"),
             )
         )
         .order_by("type", "-group__date_from")

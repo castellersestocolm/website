@@ -65,6 +65,9 @@ class Member(StandardModel, Timestamps):
 
     picture = VersatileImageField("Image", upload_to="legal/member/picture/")
 
+    def __str__(self) -> str:
+        return f"{self.user.name} - {self.role} - {self.team}"
+
     def clean(self):
         validation_errors = {}
         if self.date_from and (

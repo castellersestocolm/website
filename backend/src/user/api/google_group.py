@@ -2,7 +2,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from comunicat.consts import DOMAIN_BY_MODULE
+from comunicat.utils.email import get_module_emails_from_user
 from user.consts import GOOGLE_GROUP_SCOPES
 from user.enums import GoogleGroupUserRole
 from user.models import GoogleGroup, GoogleGroupUser
@@ -10,6 +10,7 @@ from user.models import GoogleGroup, GoogleGroupUser
 import user.api
 
 import logging
+
 
 _log = logging.getLogger(__name__)
 
@@ -68,25 +69,14 @@ def sync_users() -> None:
                 ),
             }
 
-            email_domain = f"@{DOMAIN_BY_MODULE[google_group_module_obj.module]}"
             if google_group_module_obj.require_module_domain:
                 user_domain_emails = {
                     email
                     for user_obj in user_objs
                     if user_obj.can_manage
-                    for email in [
-                        tmp_email
-                        for tmp_email in [user_obj.email]
-                        + (
-                            [
-                                user_email_obj.email
-                                for user_email_obj in user_obj.emails.all()
-                            ]
-                            if hasattr(user_obj, "emails")
-                            else []
-                        )
-                        if tmp_email.endswith(email_domain)
-                    ][:1]
+                    for email in get_module_emails_from_user(
+                        user_obj=user_obj, module=google_group_module_obj.module
+                    )
                 }
                 domain_emails = domain_emails.union(user_domain_emails)
                 user_emails = user_emails.union(user_domain_emails)
