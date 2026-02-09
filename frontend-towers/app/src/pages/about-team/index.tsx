@@ -150,14 +150,7 @@ function AboutTeamPage() {
                                 <Typography variant="body1" fontWeight="600">
                                   {member.user.firstname} {member.user.lastname}
                                 </Typography>
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                >
-                                  {member.role.name}
-                                </Typography>
-                                {!memberDateTo &&
-                                  member.user.contact &&
+                                {member.user.contact &&
                                   member.user.contact.emails.length > 0 &&
                                   member.user.contact.emails.map(
                                     (contactEmail: any) => (
@@ -172,6 +165,12 @@ function AboutTeamPage() {
                                       </Typography>
                                     ),
                                   )}
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                >
+                                  {member.role.name}
+                                </Typography>
                                 {(memberDateFrom || memberDateTo) && (
                                   <Typography
                                     variant="caption"
