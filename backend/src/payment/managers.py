@@ -365,9 +365,14 @@ class PaymentLineQuerySet(QuerySet):
                         item_type__model="registration",
                     ),
                     then=Subquery(
-                        Registration.objects.filter(
-                            id=OuterRef("item_uuid")
-                        ).values_list("event__title", flat=True)[:1]
+                        Registration.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(
+                            event_title_locale=Cast(
+                                KeyTextTransform(locale, "event__title"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("event_title_locale", flat=True)[:1]
                     ),
                 ),
                 When(
