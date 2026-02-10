@@ -8,7 +8,7 @@ from event.enums import EventType, RegistrationStatus
 from event.models import Event, AgendaItem, Registration
 from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS
 from towers.enums import PositionType
-from towers.types import Tower, Position, Place
+from towers.types import Tower, Position, Place, Placement, Size, PlaceExtra
 from user.models import User
 
 from django.db import connections, transaction
@@ -181,7 +181,11 @@ def update_or_create_registration(registration_id: UUID) -> None:
     cursor.close()
 
 
-def get_towers_for_event(event_id: UUID) -> list[Tower]:
+def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[Tower]:
+    user_by_id = {
+        str(user_obj.id): user_obj for user_obj in User.objects.select_related("towers")
+    }
+
     cursor = connections["pinyator"].cursor()
 
     exists = cursor.execute(f"SELECT EVENT_ID FROM EVENT WHERE Codi='{event_id}'") > 0
@@ -198,12 +202,19 @@ def get_towers_for_event(event_id: UUID) -> list[Tower]:
     pinyator_castles = cursor.fetchall()
 
     pinyator_positions = {}
+    pinyator_positions_extra = {}
 
     for pinyator_tower_id, __, __, __ in pinyator_castles:
         cursor.execute(
-            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, c.Codi FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0'"
+            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, c.Codi, ps.Cordo, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text, ps.Altura_Extra FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0'"
         )
         pinyator_positions[pinyator_tower_id] = cursor.fetchall()
+
+    for pinyator_tower_id, __, __, __ in pinyator_castles:
+        cursor.execute(
+            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, ps.Cordo, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text, ps.Altura_Extra FROM CASTELL_POSICIO AS ps JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0' AND ps.text != '' AND ps.Forma != 6"
+        )
+        pinyator_positions_extra[pinyator_tower_id] = cursor.fetchall()
 
     return [
         Tower(
@@ -211,18 +222,58 @@ def get_towers_for_event(event_id: UUID) -> list[Tower]:
             order=order,
             is_published=bool.from_bytes(is_published),
             external_id=pinyator_tower_id,
-            places=[
-                Place(
-                    user_id=user_id,
-                    position=Position(
-                        name=position_name, external_id=pinyator_position_id
-                    ),
-                    external_id=pinyator_place_id,
-                )
-                for pinyator_place_id, pinyator_position_id, position_name, user_id in pinyator_positions[
-                    pinyator_tower_id
+            places=(
+                [
+                    Place(
+                        user_obj=position_user_id and user_by_id.get(position_user_id),
+                        position=Position(
+                            name=position_name, external_id=pinyator_position_id
+                        ),
+                        placement=Placement(
+                            x=pos_x,
+                            y=pos_y,
+                            angle=pos_angle,
+                        ),
+                        size=Size(
+                            width=size_w,
+                            height=size_h,
+                        ),
+                        extra=PlaceExtra(
+                            text=extra_text if extra_text else None,
+                            height=extra_height if extra_height else None,
+                        ),
+                        external_id=pinyator_place_id,
+                        is_user=position_user_id == str(user_id),
+                    )
+                    for pinyator_place_id, pinyator_position_id, position_name, position_user_id, cordo_n, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text, extra_height in pinyator_positions[
+                        pinyator_tower_id
+                    ]
                 ]
-            ],
+                + [
+                    Place(
+                        position=Position(
+                            name=position_name, external_id=pinyator_position_id
+                        ),
+                        placement=Placement(
+                            x=pos_x,
+                            y=pos_y,
+                            angle=pos_angle,
+                        ),
+                        size=Size(
+                            width=size_w,
+                            height=size_h,
+                        ),
+                        extra=PlaceExtra(
+                            text=extra_text if extra_text else None,
+                            height=extra_height if extra_height else None,
+                        ),
+                        external_id=pinyator_place_id,
+                    )
+                    for pinyator_place_id, pinyator_position_id, position_name, cordo_n, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text, extra_height in pinyator_positions_extra[
+                        pinyator_tower_id
+                    ]
+                ]
+            ),
         )
         for pinyator_tower_id, name, order, is_published in pinyator_castles
     ]

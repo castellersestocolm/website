@@ -36,10 +36,10 @@ import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useCallback } from "react";
 import Pagination from "@mui/material/Pagination";
-import PinyatorIframe from "../../components/PinyatorIframe/PinyatorIframe";
 import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
 import Map from "../../components/Map/Map";
 import { get_event_icon, getEventUsers } from "../../utils/event";
+import CastleBase from "../../components/CastleBase/CastleBase";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -270,7 +270,7 @@ function CalendarPage() {
             <Box className={styles.modalTabContent}>
               {castlesPublishedModal.map((castle: any, ix: number) => (
                 <TabPanel value={castlePinya} index={ix}>
-                  <PinyatorIframe castle={castle} autoResize={false} />
+                  <CastleBase castle={castle} />
                 </TabPanel>
               ))}
             </Box>
@@ -631,7 +631,7 @@ function CalendarPage() {
                               {castlesPublished.map(
                                 (castle: any, ix: number) => (
                                   <TabPanel value={castlePinya} index={ix}>
-                                    <PinyatorIframe castle={castle} />
+                                    <CastleBase castle={castle} />
                                   </TabPanel>
                                 ),
                               )}

@@ -5,7 +5,10 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 
 import towers.api
-from comunicat.rest.serializers.towers import ListTowerSerializer, TowerSerializer
+from comunicat.rest.serializers.towers import (
+    ListTowerSerializer,
+    TowerWithPlacesAliasSerializer,
+)
 
 from comunicat.rest.viewsets import ComuniCatViewSet
 
@@ -19,14 +22,14 @@ class TowersResultsSetPagination(PageNumberPagination):
 class TowersCastleAPI(
     ComuniCatViewSet,
 ):
-    serializer_class = TowerSerializer
+    serializer_class = TowerWithPlacesAliasSerializer
     permission_classes = (permissions.IsAuthenticated,)
     pagination_class = TowersResultsSetPagination
     lookup_field = "id"
 
     @swagger_auto_schema(
         query_serializer=ListTowerSerializer(),
-        responses={200: TowerSerializer(many=True)},
+        responses={200: TowerWithPlacesAliasSerializer(many=True)},
     )
     @method_decorator(cache_page(60))
     def list(self, request):
@@ -34,7 +37,8 @@ class TowersCastleAPI(
         serializer.is_valid(raise_exception=True)
 
         event_towers = towers.api.get_towers_for_event(
-            event_id=serializer.validated_data["event_id"]
+            event_id=serializer.validated_data["event_id"],
+            user_id=request.user.is_authenticated and request.user.id,
         )
 
         paginator = self.pagination_class()

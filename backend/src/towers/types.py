@@ -1,5 +1,6 @@
 from towers.consts import PINYATOR_POSITION_TO_POSITION_TYPE
 from towers.enums import PositionType
+from user.models import User
 
 
 class Position:
@@ -15,17 +16,68 @@ class Position:
         self.external_id = external_id
 
 
+class Placement:
+    x: int
+    y: int
+    angle: int
+
+    def __init__(self, x: int, y: int, angle: int) -> None:
+        self.x = x
+        self.y = y
+        self.angle = angle
+
+
+class Size:
+    width: int
+    height: int
+
+    def __init__(self, width: int, height: int) -> None:
+        self.width = width
+        self.height = height
+
+
+class PlaceExtra:
+    text: str | None
+    height: int | None
+
+    def __init__(self, text: str | None = None, height: int | None = None) -> None:
+        self.text = text
+        self.height = height
+
+
 class Place:
-    user_id: str
+    user: User | None = None
     position: Position
+    placement: Placement
+    size: Size
+    extra: PlaceExtra
 
     external_id: int
 
-    def __init__(self, user_id: str, position: Position, external_id: int) -> None:
-        self.user_id = user_id
+    is_user: bool = False
+    is_family: bool = False
+
+    def __init__(
+        self,
+        position: Position,
+        placement: Placement,
+        size: Size,
+        extra: PlaceExtra,
+        external_id: int,
+        user_obj: User | None = None,
+        is_user: bool = False,
+        is_family: bool = False,
+    ) -> None:
+        self.user = user_obj
         self.position = position
+        self.placement = placement
+        self.size = size
+        self.extra = extra
 
         self.external_id = external_id
+
+        self.is_user = is_user
+        self.is_family = is_family
 
 
 class Tower:

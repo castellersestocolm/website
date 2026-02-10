@@ -19,6 +19,7 @@ PINYATOR_POSITION_TO_POSITION_TYPE = {
     "Agulla Folre": PositionType.AGULLA,
     "Portacrosses": None,
     "3TerÃ§os": PositionType.TRONC_TERC,
+    "3Teros": PositionType.TRONC_TERC,
     "4Quarts": PositionType.TRONC_QUART,
     "5Quints": PositionType.TRONC_QUINT,
     "2Segons": PositionType.TRONC_SEGON,
