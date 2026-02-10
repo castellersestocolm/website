@@ -29,7 +29,7 @@ COPY app .
 COPY ./nginx.conf ./
 
 RUN npm ci
-RUN npm run build
+RUN npm run build --force
 
 ######################################
 # Runtime step #######################
