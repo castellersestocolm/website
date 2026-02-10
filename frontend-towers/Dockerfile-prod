@@ -28,7 +28,7 @@ COPY app .
 # Copy the nginx config file
 COPY ./nginx.conf ./
 
-RUN npm ci
+RUN npm ci --force
 RUN npm run build --force
 
 ######################################
