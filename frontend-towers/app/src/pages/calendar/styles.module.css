@@ -193,7 +193,7 @@
         bottom: calc(2 * var(--mui-spacing));
         width: unset;
         height: unset;
-        max-height: calc(100vw - 4 * var(--mui-spacing));
+        max-height: calc((100vw - 4 * var(--mui-spacing)) / 1.5);
         iframe {
           height: 100% !important;
           width: 100% !important;
