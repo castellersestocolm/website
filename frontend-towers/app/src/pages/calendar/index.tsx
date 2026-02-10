@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { apiEventList, apiTowersCastleList, apiUserFamily } from "../../api";
 import ImageHeroCalendar from "../../assets/images/heros/calendar.jpg";
 import Grid from "@mui/material/Grid";
+import Modal from "@mui/material/Modal";
 import {
   Button,
   Card,
@@ -20,6 +21,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Box from "@mui/material/Box";
+import IconClose from "@mui/icons-material/Close";
 import IconAttachFile from "@mui/icons-material/AttachFile";
 import {
   EventType,
@@ -69,6 +71,11 @@ function CalendarPage() {
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get("eventId");
 
+  const theme = useTheme();
+  const calendarMatchesSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const calendarMatchesMd = useMediaQuery(theme.breakpoints.up("md"));
+  const calendarMatchesLg = useMediaQuery(theme.breakpoints.up("lg"));
+
   const { user } = useAppContext();
 
   const [eventPage, setEventPage] = React.useState(1);
@@ -85,6 +92,8 @@ function CalendarPage() {
   const [eventsCastlesOpen, setEventsCastlesOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
+  const [eventsCastlesModalOpen, setEventsCastlesModalOpen] =
+    React.useState<string>(undefined);
 
   const [eventsMapOpen, setEventsMapOpen] = React.useState<{
     [key: string]: boolean;
@@ -122,16 +131,30 @@ function CalendarPage() {
 
   const handleEventCastlesClick = useCallback(
     (eventId: string) => {
-      setEventsCastlesOpen((eventsCastlesOpen) => ({
-        ...Object.fromEntries(
-          Object.entries(eventsCastlesOpen).map(([k, v], i) => [k, false]),
-        ),
-        [eventId]: !eventsCastlesOpen[eventId],
-      }));
+      if (calendarMatchesMd) {
+        setEventsCastlesOpen((eventsCastlesOpen) => ({
+          ...Object.fromEntries(
+            Object.entries(eventsCastlesOpen).map(([k, v], i) => [k, false]),
+          ),
+          [eventId]: !eventsCastlesOpen[eventId],
+        }));
+        setEventsCastlesModalOpen(undefined);
+      } else {
+        setEventsCastlesModalOpen((eventsCastlesModalOpen) =>
+          eventsCastlesModalOpen != null ? undefined : eventId,
+        );
+        setEventsCastlesOpen({});
+      }
       setEventsRegistrationsOpen({});
       setEventsMapOpen({});
     },
-    [setEventsCastlesOpen, setEventsRegistrationsOpen, setEventsMapOpen],
+    [
+      setEventsCastlesOpen,
+      setEventsRegistrationsOpen,
+      setEventsCastlesModalOpen,
+      setEventsMapOpen,
+      calendarMatchesMd,
+    ],
   );
 
   const handleEventMapClick = useCallback(
@@ -191,12 +214,69 @@ function CalendarPage() {
     }
   }, [handleEventMapClick, events, eventId, isFirstLoad]);
 
-  const theme = useTheme();
-  const calendarMatchesSm = useMediaQuery(theme.breakpoints.up("sm"));
-  const calendarMatchesLg = useMediaQuery(theme.breakpoints.up("lg"));
+  const castlesModal =
+    eventsCastlesModalOpen != null &&
+    eventsCastles &&
+    eventsCastles[eventsCastlesModalOpen];
+  const castlesPublishedModal = castlesModal
+    ? castlesModal.filter((castle: any) => castle.is_published)
+    : undefined;
 
   const content = (
     <>
+      {castlesPublishedModal && castlesPublishedModal.length > 0 && (
+        <Modal
+          open={eventsCastlesModalOpen != null}
+          onClose={handleEventCastlesClick}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box className={styles.modalBox}>
+            <Tabs
+              value={castlePinya}
+              onChange={handleCastlePinyaChange}
+              variant="scrollable"
+              scrollButtons={false}
+              allowScrollButtonsMobile
+              indicatorColor="primary"
+              TabIndicatorProps={{
+                style: { display: "none" },
+              }}
+              className={styles.modelTabs}
+              sx={{
+                ".Mui-selected": {
+                  backgroundColor: "var(--mui-palette-primary-main)",
+                  color: "var(--mui-palette-primary-contrastText) !important",
+                },
+              }}
+            >
+              {castlesPublishedModal.map((castle: any) => (
+                <Tab label={castle.name} className={styles.modalTabLabel} />
+              ))}
+              <Button
+                variant="contained"
+                type="submit"
+                color="primary"
+                disableElevation
+                className={styles.modalClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEventCastlesClick(eventsCastlesModalOpen);
+                }}
+              >
+                <IconClose />
+              </Button>
+            </Tabs>
+            <Box className={styles.modalTabContent}>
+              {castlesPublishedModal.map((castle: any, ix: number) => (
+                <TabPanel value={castlePinya} index={ix}>
+                  <PinyatorIframe castle={castle} autoResize={false} />
+                </TabPanel>
+              ))}
+            </Box>
+          </Box>
+        </Modal>
+      )}
       <Typography
         variant="h4"
         fontWeight="700"

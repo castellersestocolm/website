@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import Box from "@mui/material/Box";
 
-export default function PinyatorIframe({ castle }: any) {
+export default function PinyatorIframe({ castle, autoResize = true }: any) {
   const PINYATOR_BASE_URL = new URL(process.env.REACT_APP_PINYATOR_BASE_URL);
 
   const refIframe = React.useRef(null);
@@ -11,9 +11,6 @@ export default function PinyatorIframe({ castle }: any) {
   React.useEffect(() => {
     function handleResize() {
       if (refIframe.current) {
-        console.log("resized to: ", window.innerWidth, "x", window.innerHeight);
-        console.log(refIframe);
-
         const width = refIframe.current.getBoundingClientRect().width;
         setHeight(width / 1.8);
       }
@@ -30,7 +27,7 @@ export default function PinyatorIframe({ castle }: any) {
         src={PINYATOR_BASE_URL + "/Castell_Imatge.php?id=" + castle.external_id}
         title={"Pinya " + castle.name}
         className={styles.iframeCastle}
-        style={{ height: height }}
+        style={{ height: autoResize ? height : "unset" }}
         scrolling="no"
       />
     </Box>
