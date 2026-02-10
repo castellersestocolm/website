@@ -11,6 +11,7 @@ import notify.tasks
 from django.utils.translation import gettext_lazy as _
 
 from activity.models import ProgramCourse
+from event.enums import EventStatus
 from event.models import (
     Location,
     Event,
@@ -134,6 +135,13 @@ class EventForm(forms.ModelForm):
         ).order_by("-date_from", "-date_to")
 
 
+@admin.action(description=_("Publish selected events"))
+def publish_events(modeladmin, request, queryset):
+    for event_obj in queryset:
+        event_obj.status = EventStatus.PUBLISHED
+        event_obj.save(update_fields=("status",))
+
+
 @admin.register(Event)
 class EventAdmin(
     inline_actions.admin.InlineActionsModelAdminMixin, nested_admin.NestedModelAdmin
@@ -157,6 +165,7 @@ class EventAdmin(
         AgendaItemInline,
         RegistrationInline,
     )
+    actions = (publish_events,)
     readonly_fields = ("google_event", "google_album")
     raw_id_fields = ("course",)
     form = EventForm
