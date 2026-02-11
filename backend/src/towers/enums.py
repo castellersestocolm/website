@@ -20,3 +20,4 @@ class PositionType(IntEnum):
     POM_DOS = 160
     POM_ACOTXADOR = 170
     POM_ENXANETA = 180
+    CANALLA = 200

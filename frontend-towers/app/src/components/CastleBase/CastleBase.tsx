@@ -11,35 +11,36 @@ import { Switch } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 const COLOUR_BG_BY_POSITION_TYPE: any = {
-  10: "#8080ff",
-  20: "#9cff9c",
-  30: "#ff0",
-  40: "#a448ff",
-  50: "#ffd1a3",
-  60: "#a3d5ff",
-  70: "#a3d5ff",
-  80: "#ffaeae",
-  90: "#c1ffc1",
+  10: "#3c3c3c",
+  20: "#f9b900",
+  30: "#008546",
+  40: "#f1f1f1",
+  50: "#844f91",
+  60: "#0a82c6",
+  70: "#b75945",
+  80: "#e3233d",
+  90: "#bebebe",
   100: "#cfcfcf",
   110: "#cfcfcf",
   120: "#cfcfcf",
   130: "#cfcfcf",
   140: "#cfcfcf",
   150: "#cfcfcf",
-  160: "#e5a4d9",
-  170: "#e5a4d9",
-  180: "#e5a4d9",
+  160: "#ef62a1",
+  170: "#ef62a1",
+  180: "#ef62a1",
+  200: "#ef62a1",
 };
 
 const COLOUR_TEXT_BY_POSITION_TYPE: any = {
   10: "#fff",
   20: "#1d1d1d",
-  30: "#1d1d1d",
-  40: "#fff",
-  50: "#1d1d1d",
-  60: "#1d1d1d",
-  70: "#1d1d1d",
-  80: "#1d1d1d",
+  30: "#fff",
+  40: "#1d1d1d",
+  50: "#fff",
+  60: "#fff",
+  70: "#fff",
+  80: "#fff",
   90: "#1d1d1d",
   100: "#1d1d1d",
   110: "#1d1d1d",
@@ -47,9 +48,10 @@ const COLOUR_TEXT_BY_POSITION_TYPE: any = {
   130: "#1d1d1d",
   140: "#1d1d1d",
   150: "#1d1d1d",
-  160: "#1d1d1d",
-  170: "#1d1d1d",
-  180: "#1d1d1d",
+  160: "#fff",
+  170: "#fff",
+  180: "#fff",
+  200: "#fff",
 };
 
 export default function CastleBase({ castle }: any) {
@@ -162,9 +164,9 @@ export default function CastleBase({ castle }: any) {
           {currentCastlePlaces.map((castlePlace: any) => {
             const isUserOrFamily = castlePlace.is_user || castlePlace.is_family;
             const labelWidth =
-              castlePlace.size.width - (isUserOrFamily ? 2 : 0);
+              castlePlace.size.width - (isUserOrFamily ? 2 : 1);
             const labelHeight =
-              castlePlace.size.height - (isUserOrFamily ? 2 : 0);
+              castlePlace.size.height - (isUserOrFamily ? 2 : 1);
             const labelX = castlePlace.placement.x + (isUserOrFamily ? 1 : 0.5);
             const labelY = castlePlace.placement.y + (isUserOrFamily ? 1 : 0.5);
             return (
@@ -187,10 +189,11 @@ export default function CastleBase({ castle }: any) {
                     stroke={
                       isUserOrFamily
                         ? COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
-                        : "#757575"
+                        : "#1d1d1d"
                     }
-                    strokeWidth={isUserOrFamily ? 3 : 0.5}
-                    cornerRadius={4}
+                    strokeWidth={isUserOrFamily ? 3 : 1}
+                    dash={isUserOrFamily && [5, 2]}
+                    cornerRadius={8}
                   />
                   <Text
                     text={

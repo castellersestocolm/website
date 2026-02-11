@@ -12,7 +12,7 @@ PINYATOR_POSITION_TO_POSITION_TYPE = {
     "1Baixos": PositionType.BAIX,
     "Altres": None,
     "Gralles": None,
-    "Canalla": None,
+    "Canalla": PositionType.CANALLA,
     "Tap": PositionType.TAP,
     "Crosa Folre": PositionType.CROSSA,
     "Contrafort Folre": PositionType.CONTRAFORT,
