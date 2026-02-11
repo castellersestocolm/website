@@ -54,6 +54,7 @@ class PlaceSlimSerializer(s.Serializer):
     extra = PlaceExtraSerializer(read_only=True)
 
     external_id = s.IntegerField(read_only=True)
+    external_link_id = s.IntegerField(required=False, read_only=True)
 
 
 class PlaceSerializer(PlaceSlimSerializer):

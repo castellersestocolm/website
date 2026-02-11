@@ -173,6 +173,12 @@
   right: 0;
   top: 0;
   bottom: 0;
+
+  > div {
+    flex-grow: 1;
+    align-content: center;
+    overflow-y: scroll;
+  }
 }
 
 .modalTabContent {
@@ -199,6 +205,7 @@
 
 .modelTabs {
   border-bottom: 1px solid var(--mui-palette-divider);
+  flex-grow: unset !important;
 }
 
 .modalTabLabel {

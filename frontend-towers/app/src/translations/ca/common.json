@@ -195,6 +195,7 @@
   "pages.calendar.section.agenda.event.attendance-not-attending": "No hi participo",
   "pages.calendar.section.agenda.event.castles-show": "Veure pinyes",
   "pages.calendar.section.agenda.event.castles-hide": "Tanca pinyes",
+  "pages.calendar.section.agenda.event.castles-troncs": "Mostra el tronc",
   "pages.calendar.agenda.attendance": "Assistència",
   "pages.calendar.registration.form.success": "Assistència actualitzada.",
   "pages.calendar.registration.form.button-cancel": "No assisteixo",

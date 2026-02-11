@@ -267,13 +267,13 @@ function CalendarPage() {
                 <IconClose />
               </Button>
             </Tabs>
-            <Box className={styles.modalTabContent}>
-              {castlesPublishedModal.map((castle: any, ix: number) => (
-                <TabPanel value={castlePinya} index={ix}>
+            {castlesPublishedModal.map((castle: any, ix: number) => (
+              <TabPanel value={castlePinya} index={ix}>
+                <Box className={styles.modalTabContent}>
                   <CastleBase castle={castle} />
-                </TabPanel>
-              ))}
-            </Box>
+                </Box>
+              </TabPanel>
+            ))}
           </Box>
         </Modal>
       )}

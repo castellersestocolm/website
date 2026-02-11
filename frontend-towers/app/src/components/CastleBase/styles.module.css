@@ -1,11 +1,19 @@
 .containerCastle {
   width: 100%;
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.iframeCastle {
-  border: 0;
-  display: block;
-  width: 100%;
-  height: 500px;
+.stageCastle {
+  display: flex;
+  justify-content: center;
+}
+
+.optionsCastleSwitch {
+  margin-top: 16px;
+  margin-left: 0 !important;
+  margin-right: 8px !important;
+  display: flex;
+  justify-content: center;
 }

@@ -53,6 +53,7 @@ class Place:
     extra: PlaceExtra
 
     external_id: int
+    external_link_id: int | None = None
 
     is_user: bool = False
     is_family: bool = False
@@ -64,6 +65,7 @@ class Place:
         size: Size,
         extra: PlaceExtra,
         external_id: int,
+        external_link_id: int | None = None,
         user_obj: User | None = None,
         is_user: bool = False,
         is_family: bool = False,
@@ -75,6 +77,7 @@ class Place:
         self.extra = extra
 
         self.external_id = external_id
+        self.external_link_id = external_link_id
 
         self.is_user = is_user
         self.is_family = is_family

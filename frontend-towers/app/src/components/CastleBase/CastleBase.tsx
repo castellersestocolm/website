@@ -2,9 +2,13 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { Stage, Layer, Rect, Label, Text } from "react-konva";
-import { PositionType } from "../../enums";
-import { useAppContext } from "../AppContext/AppContext";
 import { useEffect, useRef, useState } from "react";
+import { PositionType } from "../../enums";
+import { compareTowerPlaceWithPositionObjects } from "../../utils/sort";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { Switch } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const COLOUR_BG_BY_POSITION_TYPE: any = {
   10: "#8080ff",
@@ -49,26 +53,69 @@ const COLOUR_TEXT_BY_POSITION_TYPE: any = {
 };
 
 export default function CastleBase({ castle }: any) {
+  const { t } = useTranslation("common");
+
   const castlePlaces =
     castle &&
     castle.places.filter(
       (castlePlace: any) => castlePlace.position.type != null,
     );
 
+  const castlePlacesPinya =
+    castlePlaces &&
+    castlePlaces.filter((castlePlace: any) => {
+      const castleLinkedPlaces = castlePlaces
+        .filter(
+          (castleLinkedPlace: any) =>
+            castleLinkedPlace.external_id === castlePlace.external_link_id ||
+            castleLinkedPlace.external_id === castlePlace.external_id,
+        )
+        .sort(compareTowerPlaceWithPositionObjects);
+      return (
+        castlePlace.position.type < PositionType.TRONC_SEGON &&
+        (castlePlace.position.type !== PositionType.BAIX ||
+          (castleLinkedPlaces.length > 0 &&
+            castleLinkedPlaces[0].external_id === castlePlace.external_id))
+      );
+    });
+  const castlePlacesTronc =
+    castlePlaces &&
+    castlePlaces.filter((castlePlace: any) => {
+      const castleLinkedPlaces = castlePlaces
+        .filter(
+          (castleLinkedPlace: any) =>
+            castleLinkedPlace.external_id === castlePlace.external_link_id ||
+            castleLinkedPlace.external_id === castlePlace.external_id,
+        )
+        .sort(compareTowerPlaceWithPositionObjects);
+      return (
+        castlePlace.position.type >= PositionType.TRONC_SEGON ||
+        (castlePlace.position.type === PositionType.BAIX &&
+          castleLinkedPlaces.length > 0 &&
+          castleLinkedPlaces[0].external_id !== castlePlace.external_id)
+      );
+    });
+
+  const [displayTronc, setDisplayTronc] = useState(false);
+
+  const currentCastlePlaces = displayTronc
+    ? castlePlacesTronc
+    : castlePlacesPinya;
+
   const minX = Math.min(
-    ...castlePlaces.map((castlePlace: any) => castlePlace.placement.x),
+    ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.x),
   );
   const minY = Math.min(
-    ...castlePlaces.map((castlePlace: any) => castlePlace.placement.y),
+    ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.y),
   );
   const maxX = Math.max(
-    ...castlePlaces.map((castlePlace: any) => castlePlace.placement.x),
+    ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.x),
   );
   const maxY = Math.max(
-    ...castlePlaces.map((castlePlace: any) => castlePlace.placement.y),
+    ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.y),
   );
 
-  const sceneWidth = maxX - minX + 200;
+  const sceneWidth = maxX - minX + 150;
   const sceneHeight = maxY - minY + 50;
 
   const [stageSize, setStageSize] = useState({
@@ -84,7 +131,7 @@ export default function CastleBase({ castle }: any) {
 
     const containerWidth = containerRef.current.offsetWidth;
 
-    const scale = containerWidth / sceneWidth;
+    const scale = Math.min(containerWidth / sceneWidth, 1.25);
 
     setStageSize({
       width: sceneWidth * scale,
@@ -109,21 +156,22 @@ export default function CastleBase({ castle }: any) {
         height={stageSize.height}
         scaleX={stageSize.scale}
         scaleY={stageSize.scale}
+        className={styles.stageCastle}
       >
         <Layer>
-          {castlePlaces.map((castlePlace: any) => {
+          {currentCastlePlaces.map((castlePlace: any) => {
             const isUserOrFamily = castlePlace.is_user || castlePlace.is_family;
             const labelWidth =
               castlePlace.size.width - (isUserOrFamily ? 2 : 0);
             const labelHeight =
               castlePlace.size.height - (isUserOrFamily ? 2 : 0);
-            const labelX = castlePlace.placement.x + (isUserOrFamily ? 1 : 0);
-            const labelY = castlePlace.placement.y + (isUserOrFamily ? 1 : 0);
+            const labelX = castlePlace.placement.x + (isUserOrFamily ? 1 : 0.5);
+            const labelY = castlePlace.placement.y + (isUserOrFamily ? 1 : 0.5);
             return (
               <>
                 <Label
-                  x={labelX - minX + 100}
-                  y={labelY - minY + 25}
+                  x={labelX - minX + (displayTronc ? 35 : 75)}
+                  y={labelY - minY + (displayTronc ? 10 : 15)}
                   width={labelWidth}
                   height={labelHeight}
                   rotation={castlePlace.placement.angle}
@@ -137,10 +185,12 @@ export default function CastleBase({ castle }: any) {
                         : COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
                     }
                     stroke={
-                      COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
+                      isUserOrFamily
+                        ? COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
+                        : "#757575"
                     }
-                    strokeWidth={3}
-                    strokeEnabled={isUserOrFamily}
+                    strokeWidth={isUserOrFamily ? 3 : 0.5}
+                    cornerRadius={4}
                   />
                   <Text
                     text={
@@ -176,6 +226,17 @@ export default function CastleBase({ castle }: any) {
           })}
         </Layer>
       </Stage>
+      <FormGroup>
+        <FormControlLabel
+          className={styles.optionsCastleSwitch}
+          control={
+            <Switch
+              onChange={(event) => setDisplayTronc(event.target.checked)}
+            />
+          }
+          label={t("pages.calendar.section.agenda.event.castles-troncs")}
+        />
+      </FormGroup>
     </Box>
   );
 }
