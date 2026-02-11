@@ -480,7 +480,9 @@ export const apiEventList = async (
         page_size: pageSize ? pageSize : API_EVENTS_LIST_PAGE_SIZE,
         page: page ? page : 1,
         token: token,
-        date_from: "2025-12-01",
+        date_from: dateFrom
+          ? dateFrom
+          : new Date().toISOString().substring(0, 10),
         date_to: dateTo,
         with_counts: withCounts,
         for_musicians: forMusicians,
