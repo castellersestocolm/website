@@ -267,3 +267,14 @@ export enum PositionType {
   POM_ENXANETA = 180,
   CANALLA = 200,
 }
+
+export enum PositionRelativePlacement {
+  IN_FRONT = 10,
+  BEHIND = 20,
+  ON_LEFT = 30,
+  ON_RIGHT = 40,
+  IN_LINE = 50,
+  ON_TOP = 60,
+  BELOW = 70,
+  CLOSE = 80,
+}

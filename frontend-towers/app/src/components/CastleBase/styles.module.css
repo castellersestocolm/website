@@ -1,6 +1,6 @@
 .containerCastle {
-  width: 100%;
-  margin: 0;
+  margin: calc(-2 * var(--mui-spacing));
+  width: calc(100% + 4 * var(--mui-spacing));
   display: flex;
   flex-direction: column;
 }
@@ -8,12 +8,18 @@
 .stageCastle {
   display: flex;
   justify-content: center;
+  padding: calc(2 * var(--mui-spacing));
 }
 
 .optionsCastleSwitch {
-  margin-top: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   margin-left: 0 !important;
   margin-right: 8px !important;
   display: flex;
   justify-content: center;
+}
+
+.optionsCastlePositions {
+  width: 100%;
 }

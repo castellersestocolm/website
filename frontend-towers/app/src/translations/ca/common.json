@@ -196,6 +196,7 @@
   "pages.calendar.section.agenda.event.castles-show": "Veure pinyes",
   "pages.calendar.section.agenda.event.castles-hide": "Tanca pinyes",
   "pages.calendar.section.agenda.event.castles-troncs": "Mostra el tronc",
+  "pages.calendar.section.agenda.event.castles-layer": "Cordó",
   "pages.calendar.agenda.attendance": "Assistència",
   "pages.calendar.registration.form.success": "Assistència actualitzada.",
   "pages.calendar.registration.form.button-cancel": "No assisteixo",
@@ -340,6 +341,7 @@
   "pages.contact.success": "El teu missatge s'ha enviat correctament.",
   "swish.payment.membership": "Quota",
   "swish.payment.order": "Comanda",
+  "general.words.and": "i",
   "enums.module.10": "Les Quatre Barres",
   "enums.module.20": "Castellers d'Estocolm",
   "enums.membership-status.0": "Sol·licitada",
@@ -414,5 +416,14 @@
   "enums.towers-position-type.150": "Sisè",
   "enums.towers-position-type.160": "Dos",
   "enums.towers-position-type.170": "Acotxador",
-  "enums.towers-position-type.180": "Enxaneta"
+  "enums.towers-position-type.180": "Enxaneta",
+  "enums.towers-position-type.200": "Canalla",
+  "enums.towers-position-relative-placement.10": "Davant de",
+  "enums.towers-position-relative-placement.20": "Darrere de",
+  "enums.towers-position-relative-placement.30": "A l'esquerra de",
+  "enums.towers-position-relative-placement.40": "A la dreta de",
+  "enums.towers-position-relative-placement.50": "En línia amb",
+  "enums.towers-position-relative-placement.60": "A sobre de",
+  "enums.towers-position-relative-placement.70": "A sota de",
+  "enums.towers-position-relative-placement.80": "Prop de"
 }

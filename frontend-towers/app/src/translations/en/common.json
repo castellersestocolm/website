@@ -195,6 +195,7 @@
   "pages.calendar.section.agenda.event.castles-show": "Show pinyes",
   "pages.calendar.section.agenda.event.castles-hide": "Close pinyes",
   "pages.calendar.section.agenda.event.castles-troncs": "Show the trunk",
+  "pages.calendar.section.agenda.event.castles-layer": "Layer",
   "pages.calendar.agenda.attendance": "Attendance",
   "pages.calendar.registration.form.success": "Attendance updated.",
   "pages.calendar.registration.form.button-cancel": "Not attending",
@@ -388,6 +389,7 @@
   "pages.contact.success": "Your message has been sent successfully.",
   "swish.payment.membership": "Membership",
   "swish.payment.order": "Order",
+  "general.words.and": "and",
   "enums.module.10": "Les Quatre Barres",
   "enums.module.20": "Castellers d'Estocolm",
   "enums.membership-status.0": "Requested",
@@ -462,5 +464,14 @@
   "enums.towers-position-type.150": "Sisè",
   "enums.towers-position-type.160": "Dos",
   "enums.towers-position-type.170": "Acotxador",
-  "enums.towers-position-type.180": "Enxaneta"
+  "enums.towers-position-type.180": "Enxaneta",
+  "enums.towers-position-type.200": "Kids",
+  "enums.towers-position-relative-placement.10": "In front of",
+  "enums.towers-position-relative-placement.20": "Behind of",
+  "enums.towers-position-relative-placement.30": "To the left of",
+  "enums.towers-position-relative-placement.40": "To the right of",
+  "enums.towers-position-relative-placement.50": "In line with",
+  "enums.towers-position-relative-placement.60": "On top of",
+  "enums.towers-position-relative-placement.70": "Below",
+  "enums.towers-position-relative-placement.80": "Close to"
 }

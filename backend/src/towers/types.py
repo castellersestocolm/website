@@ -52,7 +52,10 @@ class Place:
     size: Size
     extra: PlaceExtra
 
+    layer: int
+
     external_id: int
+    external_next_id: int | None = None
     external_link_id: int | None = None
 
     is_user: bool = False
@@ -64,7 +67,9 @@ class Place:
         placement: Placement,
         size: Size,
         extra: PlaceExtra,
+        layer: int,
         external_id: int,
+        external_next_id: int | None = None,
         external_link_id: int | None = None,
         user_obj: User | None = None,
         is_user: bool = False,
@@ -76,7 +81,10 @@ class Place:
         self.size = size
         self.extra = extra
 
+        self.layer = layer
+
         self.external_id = external_id
+        self.external_next_id = external_next_id
         self.external_link_id = external_link_id
 
         self.is_user = is_user

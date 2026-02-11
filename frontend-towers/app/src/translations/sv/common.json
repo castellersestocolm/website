@@ -195,6 +195,7 @@
   "pages.calendar.section.agenda.event.castles-show": "Visa pinyes",
   "pages.calendar.section.agenda.event.castles-hide": "Dölj pinyes",
   "pages.calendar.section.agenda.event.castles-troncs": "Visa stammen",
+  "pages.calendar.section.agenda.event.castles-layer": "Lager",
   "pages.calendar.agenda.attendance": "Deltagande",
   "pages.calendar.registration.form.success": "Närvaro uppdaterad.",
   "pages.calendar.registration.form.button-cancel": "Deltar inte",
@@ -388,6 +389,7 @@
   "pages.contact.success": "Ditt meddelande har skickats.",
   "swish.payment.membership": "Medlemskap",
   "swish.payment.order": "Beställning",
+  "general.words.and": "och",
   "enums.module.10": "Les Quatre Barres",
   "enums.module.20": "Castellers d'Estocolm",
   "enums.membership-status.0": "Begärt",
@@ -462,5 +464,14 @@
   "enums.towers-position-type.150": "Sisè",
   "enums.towers-position-type.160": "Dos",
   "enums.towers-position-type.170": "Acotxador",
-  "enums.towers-position-type.180": "Enxaneta"
+  "enums.towers-position-type.180": "Enxaneta",
+  "enums.towers-position-type.200": "Barn",
+  "enums.towers-position-relative-placement.10": "Framför",
+  "enums.towers-position-relative-placement.20": "Bakom",
+  "enums.towers-position-relative-placement.30": "Till vänster om",
+  "enums.towers-position-relative-placement.40": "Till höger om",
+  "enums.towers-position-relative-placement.50": "I rad med",
+  "enums.towers-position-relative-placement.60": "Ovanpå",
+  "enums.towers-position-relative-placement.70": "Nedan",
+  "enums.towers-position-relative-placement.80": "Nära till"
 }
