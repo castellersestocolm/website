@@ -9,7 +9,8 @@ from event.models import Event, AgendaItem, Registration
 from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS
 from towers.enums import PositionType
 from towers.types import Tower, Position, Place, Placement, Size, PlaceExtra
-from user.models import User
+from user.enums import FamilyMemberStatus
+from user.models import User, FamilyMember
 
 from django.db import connections, transaction
 
@@ -186,6 +187,18 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
         str(user_obj.id): user_obj for user_obj in User.objects.select_related("towers")
     }
 
+    user_ids = list(
+        {user_id}
+        | {
+            family_member_obj.user_id
+            # TODO: Review this as it could be wrong
+            for family_member_obj in FamilyMember.objects.filter(
+                family__members__user_id=user_id,
+                status=FamilyMemberStatus.ACTIVE,
+            )
+        }
+    )
+
     cursor = connections["pinyator"].cursor()
 
     exists = cursor.execute(f"SELECT EVENT_ID FROM EVENT WHERE Codi='{event_id}'") > 0
@@ -244,6 +257,7 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
                         ),
                         external_id=pinyator_place_id,
                         is_user=position_user_id == str(user_id),
+                        is_family=position_user_id in [str(u_id) for u_id in user_ids],
                     )
                     for pinyator_place_id, pinyator_position_id, position_name, position_user_id, cordo_n, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text, extra_height in pinyator_positions[
                         pinyator_tower_id

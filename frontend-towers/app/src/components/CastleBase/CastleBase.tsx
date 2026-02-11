@@ -1,7 +1,7 @@
 import styles from "./styles.module.css";
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { Stage, Layer, Rect, Text } from "react-konva";
+import { Stage, Layer, Rect, Label, Text } from "react-konva";
 import { PositionType } from "../../enums";
 import { useAppContext } from "../AppContext/AppContext";
 import { useEffect, useRef, useState } from "react";
@@ -12,7 +12,7 @@ const COLOUR_BG_BY_POSITION_TYPE: any = {
   30: "#ff0",
   40: "#a448ff",
   50: "#ffd1a3",
-  60: "#ffaeae",
+  60: "#a3d5ff",
   70: "#a3d5ff",
   80: "#ffaeae",
   90: "#c1ffc1",
@@ -112,50 +112,65 @@ export default function CastleBase({ castle }: any) {
       >
         <Layer>
           {castlePlaces.map((castlePlace: any) => {
-            const castlePlaceText = (
-              <Text
-                text={
-                  castlePlace.user &&
-                  castlePlace.user.towers &&
-                  castlePlace.user.towers.alias
-                    ? castlePlace.user.towers.alias
-                    : castlePlace.extra.text
-                }
-                align="center"
-                fontSize={16}
-                fontFamily="DM Sans,Roboto,Arial,sans-serif"
-                x={castlePlace.placement.x - minX + 100}
-                y={
-                  castlePlace.placement.y -
-                  minY +
-                  25 +
-                  castlePlace.size.height / 2 -
-                  8
-                }
-                width={castlePlace.size.width}
-                rotation={castlePlace.placement.angle}
-                fill={
-                  castlePlace.is_user
-                    ? "white"
-                    : COLOUR_TEXT_BY_POSITION_TYPE[castlePlace.position.type]
-                }
-              />
-            );
+            const isUserOrFamily = castlePlace.is_user || castlePlace.is_family;
+            const labelWidth =
+              castlePlace.size.width - (isUserOrFamily ? 2 : 0);
+            const labelHeight =
+              castlePlace.size.height - (isUserOrFamily ? 2 : 0);
+            const labelX = castlePlace.placement.x + (isUserOrFamily ? 1 : 0);
+            const labelY = castlePlace.placement.y + (isUserOrFamily ? 1 : 0);
             return (
               <>
-                <Rect
-                  x={castlePlace.placement.x - minX + 100}
-                  y={castlePlace.placement.y - minY + 25}
-                  width={castlePlace.size.width}
-                  height={castlePlace.size.height}
+                <Label
+                  x={labelX - minX + 100}
+                  y={labelY - minY + 25}
+                  width={labelWidth}
+                  height={labelHeight}
                   rotation={castlePlace.placement.angle}
-                  fill={
-                    castlePlace.is_user
-                      ? "black"
-                      : COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
-                  }
-                />
-                {castlePlaceText}
+                >
+                  <Rect
+                    width={labelWidth}
+                    height={labelHeight}
+                    fill={
+                      isUserOrFamily
+                        ? "black"
+                        : COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
+                    }
+                    stroke={
+                      COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
+                    }
+                    strokeWidth={3}
+                    strokeEnabled={isUserOrFamily}
+                  />
+                  <Text
+                    text={
+                      castlePlace.user &&
+                      castlePlace.user.towers &&
+                      castlePlace.user.towers.alias
+                        ? castlePlace.user.towers.alias.toUpperCase()
+                        : castlePlace.extra.text.toUpperCase()
+                    }
+                    fontFamily="DM Sans"
+                    fontSize={Math.round(
+                      Math.sqrt(
+                        Math.pow(labelWidth, 2) + Math.pow(labelHeight, 2),
+                      ) / 5.5,
+                    )}
+                    fontStyle={isUserOrFamily ? "bold" : "normal"}
+                    align="center"
+                    padding={2}
+                    verticalAlign="middle"
+                    fill={
+                      isUserOrFamily
+                        ? "white"
+                        : COLOUR_TEXT_BY_POSITION_TYPE[
+                            castlePlace.position.type
+                          ]
+                    }
+                    width={labelWidth}
+                    height={labelHeight}
+                  />
+                </Label>
               </>
             );
           })}
