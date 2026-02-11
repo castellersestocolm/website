@@ -130,17 +130,17 @@ def get_entity_by_key(
         defaults={
             "user_id": user_obj.id if user_obj else None,
             **(
-                {"firstname": user_obj.firstname or firstname}
+                {"firstname": user_obj and user_obj.firstname or firstname}
                 if user_obj or firstname is not None
                 else {}
             ),
             **(
-                {"lastname": user_obj.lastname or lastname}
+                {"lastname": user_obj and user_obj.lastname or lastname}
                 if user_obj or lastname is not None
                 else {}
             ),
             **(
-                {"phone": user_obj.phone or phone}
+                {"phone": user_obj and user_obj.phone or phone}
                 if user_obj or phone is not None
                 else {}
             ),
