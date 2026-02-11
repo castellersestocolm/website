@@ -181,16 +181,8 @@ export default function CastleBase({ castle }: any) {
                   <Rect
                     width={labelWidth}
                     height={labelHeight}
-                    fill={
-                      isUserOrFamily
-                        ? "#757575"
-                        : COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
-                    }
-                    stroke={
-                      isUserOrFamily
-                        ? COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
-                        : "#1d1d1d"
-                    }
+                    fill={COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]}
+                    stroke={"#1d1d1d"}
                     strokeWidth={isUserOrFamily ? 3 : 1}
                     dash={isUserOrFamily && [5, 2]}
                     cornerRadius={8}
@@ -214,11 +206,7 @@ export default function CastleBase({ castle }: any) {
                     padding={2}
                     verticalAlign="middle"
                     fill={
-                      isUserOrFamily
-                        ? "white"
-                        : COLOUR_TEXT_BY_POSITION_TYPE[
-                            castlePlace.position.type
-                          ]
+                      COLOUR_TEXT_BY_POSITION_TYPE[castlePlace.position.type]
                     }
                     width={labelWidth}
                     height={labelHeight}
