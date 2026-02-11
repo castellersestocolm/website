@@ -133,7 +133,7 @@ export default function CastleBase({ castle }: any) {
                     height={labelHeight}
                     fill={
                       isUserOrFamily
-                        ? "black"
+                        ? "#757575"
                         : COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
                     }
                     stroke={
