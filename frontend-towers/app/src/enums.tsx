@@ -277,4 +277,5 @@ export enum PositionRelativePlacement {
   ON_TOP = 60,
   BELOW = 70,
   CLOSE = 80,
+  IN_BETWEEN = 90,
 }

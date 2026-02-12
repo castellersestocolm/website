@@ -1,29 +1,22 @@
 import styles from "./styles.module.css";
 import * as React from "react";
-import Box from "@mui/material/Box";
-import { Stage, Layer, Rect, Label, Text } from "react-konva";
 import { useEffect, useRef, useState } from "react";
-import { PositionRelativePlacement, PositionType } from "../../enums";
+import Box from "@mui/material/Box";
+import { Label, Layer, Rect, Stage, Text } from "react-konva";
+import {
+  getEnumLabel,
+  PositionRelativePlacement,
+  PositionType,
+} from "../../enums";
 import { compareTowerPlaceWithPositionObjects } from "../../utils/sort";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {
-  Chip,
-  Divider,
-  Switch,
-  Typography,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+import { Chip, Divider, Switch, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { getEnumLabel } from "../../enums";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 const COLOUR_BG_BY_POSITION_TYPE: any = {
@@ -94,9 +87,13 @@ const COLOUR_BORDER_BY_POSITION_TYPE: any = {
 
 const POSITION_TYPES_RELATIVE_TO_TYPE: any = {
   10: [
-    2,
-    [30, 40],
-    [PositionRelativePlacement.IN_FRONT, PositionRelativePlacement.IN_FRONT],
+    3,
+    [30, 40, 110],
+    [
+      PositionRelativePlacement.IN_FRONT,
+      PositionRelativePlacement.IN_FRONT,
+      PositionRelativePlacement.BELOW,
+    ],
   ],
   20: [1, [10], [undefined]],
   30: [1, [10], [PositionRelativePlacement.IN_FRONT]],
@@ -115,11 +112,31 @@ const POSITION_TYPES_RELATIVE_TO_TYPE: any = {
     [50, 60, 70, 80, 90, 100],
     [undefined, undefined, undefined, undefined, undefined],
   ],
-  110: [1, [10], [PositionRelativePlacement.ON_TOP]],
-  120: [1, [110], [PositionRelativePlacement.ON_TOP]],
-  130: [1, [120], [PositionRelativePlacement.ON_TOP]],
-  140: [1, [130], [PositionRelativePlacement.ON_TOP]],
-  150: [1, [140], [PositionRelativePlacement.ON_TOP]],
+  110: [
+    1,
+    [10, 120],
+    [PositionRelativePlacement.ON_TOP, PositionRelativePlacement.BELOW],
+  ],
+  120: [
+    1,
+    [110, 130],
+    [PositionRelativePlacement.ON_TOP, PositionRelativePlacement.BELOW],
+  ],
+  130: [
+    1,
+    [120, 140],
+    [PositionRelativePlacement.ON_TOP, PositionRelativePlacement.BELOW],
+  ],
+  140: [
+    1,
+    [130, 150],
+    [PositionRelativePlacement.ON_TOP, PositionRelativePlacement.BELOW],
+  ],
+  150: [
+    1,
+    [140, 160],
+    [PositionRelativePlacement.ON_TOP, PositionRelativePlacement.BELOW],
+  ],
   160: [
     1,
     [110, 120, 130, 140, 150],
@@ -210,71 +227,103 @@ export default function CastleBase({ castle }: any) {
       );
     });
 
-  const castlePlacesFamily =
+  const castlePlacesFamilyInit =
     castlePlaces &&
     castlePlaces.filter(
       (castlePlace: any) => castlePlace.is_user || castlePlace.is_family,
     );
 
+  const castlePlacesFamilyExternalIds =
+    castlePlacesFamilyInit &&
+    castlePlacesFamilyInit
+      .filter(
+        (castlePlace: any) =>
+          !castlePlace.external_link_id ||
+          castlePlace.external_id <= castlePlace.external_link_id,
+      )
+      .map((castlePlace: any) => castlePlace.external_id);
+
+  const castlePlacesFamily =
+    castlePlacesFamilyInit &&
+    castlePlacesFamilyInit.filter(
+      (castlePlace: any) =>
+        !castlePlacesFamilyExternalIds.includes(castlePlace.external_link_id),
+    );
+
   const castlePlacesFamilyInstructions =
     castlePlacesFamily &&
-    castlePlacesFamily.map((castlePlace: any) => {
-      const otherCastlePlaces = castlePlaces.filter(
-        (otherCastlePlace: any) =>
-          (otherCastlePlace.external_next_id === castlePlace.external_id ||
-            otherCastlePlace.external_id === castlePlace.external_next_id) &&
-          otherCastlePlace.external_id !== castlePlace.external_id,
-      );
+    castlePlacesFamily
+      .map((castlePlace: any) => {
+        const otherCastlePlaces = castlePlaces.filter(
+          (otherCastlePlace: any) =>
+            (otherCastlePlace.external_next_id === castlePlace.external_id ||
+              otherCastlePlace.external_id === castlePlace.external_next_id) &&
+            otherCastlePlace.external_id !== castlePlace.external_id,
+        );
 
-      if (otherCastlePlaces.length > 0) {
-        return [
-          castlePlace,
-          otherCastlePlaces.map((otherCastlePlace: any) => [
-            PositionRelativePlacement.IN_FRONT,
-            otherCastlePlace,
-          ]),
-        ];
-      }
+        if (otherCastlePlaces.length > 0) {
+          return [
+            castlePlace,
+            [
+              [
+                otherCastlePlaces.length === 1
+                  ? otherCastlePlaces[0].external_id ===
+                    castlePlace.external_next_id
+                    ? PositionRelativePlacement.IN_FRONT
+                    : PositionRelativePlacement.BEHIND
+                  : PositionRelativePlacement.IN_BETWEEN,
+                otherCastlePlaces,
+              ],
+            ],
+          ];
+        }
 
-      const maxRelatives =
-        POSITION_TYPES_RELATIVE_TO_TYPE[castlePlace.position.type][0];
-      const relativeTypes =
-        POSITION_TYPES_RELATIVE_TO_TYPE[castlePlace.position.type][1];
-      const relativeRelatives =
-        POSITION_TYPES_RELATIVE_TO_TYPE[castlePlace.position.type][2];
+        const maxRelatives =
+          POSITION_TYPES_RELATIVE_TO_TYPE[castlePlace.position.type][0];
+        const relativeTypes =
+          POSITION_TYPES_RELATIVE_TO_TYPE[castlePlace.position.type][1];
+        const relativeRelatives =
+          POSITION_TYPES_RELATIVE_TO_TYPE[castlePlace.position.type][2];
 
-      const relativeCastlePlaces = castlePlaces.filter(
-        (relativeCastlePlace: any) =>
-          relativeCastlePlace.layer === castlePlace.layer &&
-          relativeTypes.includes(relativeCastlePlace.position.type),
-      );
+        const relativeCastlePlaces = castlePlaces.filter(
+          (relativeCastlePlace: any) =>
+            relativeCastlePlace.layer === castlePlace.layer &&
+            relativeTypes.includes(relativeCastlePlace.position.type),
+        );
 
-      if (relativeCastlePlaces.length > 0) {
-        return [
-          castlePlace,
-          relativeCastlePlaces
-            .map((relativeCastlePlace: any) => {
-              const defaultRelative =
-                relativeRelatives[
-                  relativeTypes.indexOf(relativeCastlePlace.position.type)
+        if (relativeCastlePlaces.length > 0) {
+          return [
+            castlePlace,
+            relativeCastlePlaces
+              .map((relativeCastlePlace: any) => {
+                const defaultRelative =
+                  relativeRelatives[
+                    relativeTypes.indexOf(relativeCastlePlace.position.type)
+                  ];
+                return [
+                  defaultRelative
+                    ? defaultRelative
+                    : PositionRelativePlacement.CLOSE,
+                  [relativeCastlePlace],
                 ];
-              return [
-                defaultRelative
-                  ? defaultRelative
-                  : PositionRelativePlacement.CLOSE,
-                relativeCastlePlace,
-              ];
-            })
-            .slice(0, maxRelatives),
-        ];
-      }
+              })
+              .slice(0, maxRelatives),
+          ];
+        }
 
-      return [castlePlace, []];
-    });
+        return [castlePlace, []];
+      })
+      .filter(
+        ([castlePlace, relativePositions]: any) =>
+          relativePositions && relativePositions.length > 0,
+      );
 
   const [displayTronc, setDisplayTronc] = useState(false);
 
-  const currentCastlePlaces = displayTronc
+  const actualDisplayTronc =
+    displayTronc || !castlePlacesPinya || castlePlacesPinya.length === 0;
+
+  const currentCastlePlaces = actualDisplayTronc
     ? castlePlacesTronc
     : castlePlacesPinya;
 
@@ -343,11 +392,12 @@ export default function CastleBase({ castle }: any) {
               castlePlace.size.height - (isUserOrFamily ? 2 : 1);
             const labelX = castlePlace.placement.x + (isUserOrFamily ? 1 : 0.5);
             const labelY = castlePlace.placement.y + (isUserOrFamily ? 1 : 0.5);
+
             return (
               <>
                 <Label
-                  x={labelX - minX + (displayTronc ? 35 : 75)}
-                  y={labelY - minY + (displayTronc ? 10 : 15)}
+                  x={labelX - minX + (actualDisplayTronc ? 35 : 75)}
+                  y={labelY - minY + (actualDisplayTronc ? 10 : 15)}
                   width={labelWidth}
                   height={labelHeight}
                   rotation={castlePlace.placement.angle}
@@ -410,17 +460,19 @@ export default function CastleBase({ castle }: any) {
           })}
         </Layer>
       </Stage>
-      <FormGroup>
-        <FormControlLabel
-          className={styles.optionsCastleSwitch}
-          control={
-            <Switch
-              onChange={(event) => setDisplayTronc(event.target.checked)}
-            />
-          }
-          label={t("pages.calendar.section.agenda.event.castles-troncs")}
-        />
-      </FormGroup>
+      {castlePlacesPinya && castlePlacesPinya.length > 0 && (
+        <FormGroup>
+          <FormControlLabel
+            className={styles.optionsCastleSwitch}
+            control={
+              <Switch
+                onChange={(event) => setDisplayTronc(event.target.checked)}
+              />
+            }
+            label={t("pages.calendar.section.agenda.event.castles-troncs")}
+          />
+        </FormGroup>
+      )}
       {castlePlacesFamilyInstructions &&
         castlePlacesFamilyInstructions.length > 0 && (
           <Box className={styles.optionsCastlePositions}>
@@ -470,7 +522,7 @@ export default function CastleBase({ castle }: any) {
                           <Typography variant="body1">
                             {relativePositions.map(
                               (
-                                [relativePosition, castlePlaceRelative]: any,
+                                [relativePosition, castlePlaceRelatives]: any,
                                 ix: number,
                               ) => {
                                 const positionLabel = getEnumLabel(
@@ -489,28 +541,50 @@ export default function CastleBase({ castle }: any) {
                                         ? " " + t("general.words.and") + " "
                                         : ", ")}
                                     {positionLabelText}{" "}
-                                    <Chip
-                                      label={
-                                        castlePlaceRelative.user &&
-                                        castlePlaceRelative.user.towers &&
-                                        castlePlaceRelative.user.towers.alias
-                                          ? castlePlaceRelative.user.towers.alias.toUpperCase()
-                                          : castlePlaceRelative.extra.text.toUpperCase()
-                                      }
-                                      variant="filled"
-                                      size="small"
-                                      sx={{
-                                        backgroundColor:
-                                          COLOUR_BG_BY_POSITION_TYPE[
-                                            castlePlaceRelative.position.type
-                                          ],
-                                        color:
-                                          COLOUR_TEXT_BY_POSITION_TYPE[
-                                            castlePlaceRelative.position.type
-                                          ],
-                                        borderRadius: "8px",
-                                      }}
-                                    />
+                                    {castlePlaceRelatives.map(
+                                      (
+                                        castlePlaceRelative: any,
+                                        jx: number,
+                                      ) => {
+                                        return (
+                                          <>
+                                            {jx > 0 &&
+                                              (jx >=
+                                              castlePlaceRelatives.length - 1
+                                                ? " " +
+                                                  t("general.words.and") +
+                                                  " "
+                                                : ", ")}
+                                            <Chip
+                                              label={
+                                                castlePlaceRelative.user &&
+                                                castlePlaceRelative.user
+                                                  .towers &&
+                                                castlePlaceRelative.user.towers
+                                                  .alias
+                                                  ? castlePlaceRelative.user.towers.alias.toUpperCase()
+                                                  : castlePlaceRelative.extra.text.toUpperCase()
+                                              }
+                                              variant="filled"
+                                              size="small"
+                                              sx={{
+                                                backgroundColor:
+                                                  COLOUR_BG_BY_POSITION_TYPE[
+                                                    castlePlaceRelative.position
+                                                      .type
+                                                  ],
+                                                color:
+                                                  COLOUR_TEXT_BY_POSITION_TYPE[
+                                                    castlePlaceRelative.position
+                                                      .type
+                                                  ],
+                                                borderRadius: "8px",
+                                              }}
+                                            />
+                                          </>
+                                        );
+                                      },
+                                    )}
                                   </Typography>
                                 );
                               },

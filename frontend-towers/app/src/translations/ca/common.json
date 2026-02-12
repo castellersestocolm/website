@@ -425,5 +425,6 @@
   "enums.towers-position-relative-placement.50": "En línia amb",
   "enums.towers-position-relative-placement.60": "A sobre de",
   "enums.towers-position-relative-placement.70": "A sota de",
-  "enums.towers-position-relative-placement.80": "Prop de"
+  "enums.towers-position-relative-placement.80": "Prop de",
+  "enums.towers-position-relative-placement.90": "Entremig de"
 }

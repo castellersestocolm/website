@@ -473,5 +473,6 @@
   "enums.towers-position-relative-placement.50": "In line with",
   "enums.towers-position-relative-placement.60": "On top of",
   "enums.towers-position-relative-placement.70": "Below",
-  "enums.towers-position-relative-placement.80": "Close to"
+  "enums.towers-position-relative-placement.80": "Close to",
+  "enums.towers-position-relative-placement.90": "Between"
 }
