@@ -31,7 +31,7 @@ class TowersCastleAPI(
         query_serializer=ListTowerSerializer(),
         responses={200: TowerWithPlacesAliasSerializer(many=True)},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     def list(self, request):
         serializer = ListTowerSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
