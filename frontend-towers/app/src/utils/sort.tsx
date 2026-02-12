@@ -13,3 +13,16 @@ export function compareTowerPlaceWithPositionObjects(a: any, b: any) {
   }
   return 0;
 }
+
+export function compareTowerPlaceFamilyObjects(a: any, b: any) {
+  const aText =
+    a[0].user && a[0].user.towers && a[0].user.towers.alias
+      ? a[0].user.towers.alias.toUpperCase()
+      : a[0].extra.text.toUpperCase();
+  const bText =
+    b[0].user && b[0].user.towers && b[0].user.towers.alias
+      ? b[0].user.towers.alias.toUpperCase()
+      : b[0].extra.text.toUpperCase();
+
+  return aText >= bText;
+}

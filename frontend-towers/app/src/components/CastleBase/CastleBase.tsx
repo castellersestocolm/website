@@ -8,7 +8,10 @@ import {
   PositionRelativePlacement,
   PositionType,
 } from "../../enums";
-import { compareTowerPlaceWithPositionObjects } from "../../utils/sort";
+import {
+  compareTowerPlaceFamilyObjects,
+  compareTowerPlaceWithPositionObjects,
+} from "../../utils/sort";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { Chip, Divider, Switch, Typography } from "@mui/material";
@@ -39,6 +42,10 @@ const COLOUR_BG_BY_POSITION_TYPE: any = {
   170: "#ef62a1",
   180: "#ef62a1",
   200: "#ef62a1",
+};
+
+const COLOR_BG_BY_POSITION_TYPE_AND_RING: any = {
+  50: [[2, "#ef62a1"]],
 };
 
 const COLOUR_TEXT_BY_POSITION_TYPE: any = {
@@ -83,6 +90,10 @@ const COLOUR_BORDER_BY_POSITION_TYPE: any = {
   170: "#ef62a1",
   180: "#ef62a1",
   200: "#ef62a1",
+};
+
+const COLOR_BORDER_BY_POSITION_TYPE_AND_RING: any = {
+  50: [[2, "#ef62a1"]],
 };
 
 const POSITION_TYPES_RELATIVE_TO_TYPE: any = {
@@ -316,7 +327,8 @@ export default function CastleBase({ castle }: any) {
       .filter(
         ([castlePlace, relativePositions]: any) =>
           relativePositions && relativePositions.length > 0,
-      );
+      )
+      .sort(compareTowerPlaceFamilyObjects);
 
   const [displayTronc, setDisplayTronc] = useState(false);
 
@@ -393,6 +405,38 @@ export default function CastleBase({ castle }: any) {
             const labelX = castlePlace.placement.x + (isUserOrFamily ? 1 : 0.5);
             const labelY = castlePlace.placement.y + (isUserOrFamily ? 1 : 0.5);
 
+            const colourBg =
+              castlePlace.position.type in COLOR_BG_BY_POSITION_TYPE_AND_RING
+                ? COLOR_BG_BY_POSITION_TYPE_AND_RING[castlePlace.position.type]
+                    .filter(
+                      ([minRing, colour]: any) => castlePlace.ring >= minRing,
+                    )
+                    .concat([
+                      [
+                        0,
+                        COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type],
+                      ],
+                    ])[0][1]
+                : COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type];
+            const colourBorder =
+              castlePlace.position.type in
+              COLOR_BORDER_BY_POSITION_TYPE_AND_RING
+                ? COLOR_BORDER_BY_POSITION_TYPE_AND_RING[
+                    castlePlace.position.type
+                  ]
+                    .filter(
+                      ([minRing, colour]: any) => castlePlace.ring >= minRing,
+                    )
+                    .concat([
+                      [
+                        0,
+                        COLOUR_BORDER_BY_POSITION_TYPE[
+                          castlePlace.position.type
+                        ],
+                      ],
+                    ])[0][1]
+                : COLOUR_BORDER_BY_POSITION_TYPE[castlePlace.position.type];
+
             return (
               <>
                 <Label
@@ -405,21 +449,13 @@ export default function CastleBase({ castle }: any) {
                   <Rect
                     width={labelWidth}
                     height={labelHeight}
-                    fill={
-                      isUserOrFamily
-                        ? "white"
-                        : COLOUR_BG_BY_POSITION_TYPE[castlePlace.position.type]
-                    }
+                    fill={isUserOrFamily ? "white" : colourBg}
                     stroke={
                       isUserOrFamily
                         ? castlePlace.position.type in
                           COLOUR_BORDER_BY_POSITION_TYPE
-                          ? COLOUR_BORDER_BY_POSITION_TYPE[
-                              castlePlace.position.type
-                            ]
-                          : COLOUR_BG_BY_POSITION_TYPE[
-                              castlePlace.position.type
-                            ]
+                          ? colourBorder
+                          : colourBg
                         : "#1d1d1d"
                     }
                     strokeWidth={isUserOrFamily ? 3 : 1}

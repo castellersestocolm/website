@@ -53,6 +53,7 @@ class Place:
     extra: PlaceExtra
 
     layer: int
+    ring: int
 
     external_id: int
     external_next_id: int | None = None
@@ -68,6 +69,7 @@ class Place:
         size: Size,
         extra: PlaceExtra,
         layer: int,
+        ring: int,
         external_id: int,
         external_next_id: int | None = None,
         external_link_id: int | None = None,
@@ -82,6 +84,7 @@ class Place:
         self.extra = extra
 
         self.layer = layer
+        self.ring = ring
 
         self.external_id = external_id
         self.external_next_id = external_next_id

@@ -54,6 +54,7 @@ class PlaceSlimSerializer(s.Serializer):
     extra = PlaceExtraSerializer(read_only=True)
 
     layer = s.IntegerField(read_only=True)
+    ring = s.IntegerField(read_only=True)
 
     external_id = s.IntegerField(read_only=True)
     external_next_id = s.IntegerField(required=False, read_only=True)
