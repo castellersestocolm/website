@@ -300,18 +300,18 @@ function UserDashboardPage() {
       recentEventsPage,
       undefined,
       undefined,
-      new Date(Date.now() - 14 * 24 * 3600 * 1000)
-        .toISOString()
-        .substring(0, 10),
+      null,
       new Date().toISOString().substring(0, 10),
+      undefined,
+      undefined,
+      undefined,
+      ["-time_from"],
     ).then((response) => {
       if (response.status === 200) {
         setRecentEvents(response.data);
       }
     });
   }, [i18n.resolvedLanguage, setRecentEvents, recentEventsPage]);
-
-  console.log(recentEvents);
 
   React.useEffect(() => {
     if (user) {
@@ -1208,43 +1208,53 @@ function UserDashboardPage() {
                                   </>
                                 }
                               />
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                marginLeft={{ xs: "0", lg: "16px" }}
-                                marginTop={{ xs: "8px", lg: "0" }}
-                                marginBottom={{ xs: "8px", lg: "0" }}
-                                whiteSpace="nowrap"
-                              >
-                                <Button
-                                  variant="contained"
-                                  type="submit"
-                                  style={{ width: "auto" }}
-                                  target={"_blank"}
-                                  disableElevation
-                                  disabled={
-                                    !recentEvent.google_album ||
-                                    !recentEvent.google_album.external_shared_id
-                                  }
-                                  href={
-                                    recentEvent.google_album &&
-                                    recentEvent.google_album
-                                      .external_shared_id &&
-                                    GOOGLE_PHOTOS_URL +
+                              {recentEvent.google_album &&
+                                recentEvent.google_album.external_shared_id && (
+                                  <Stack
+                                    direction="row"
+                                    spacing={2}
+                                    marginLeft={{ xs: "0", lg: "16px" }}
+                                    marginTop={{ xs: "8px", lg: "0" }}
+                                    marginBottom={{ xs: "8px", lg: "0" }}
+                                    whiteSpace="nowrap"
+                                  >
+                                    {recentEvent.google_album &&
                                       recentEvent.google_album
-                                        .external_shared_id
-                                  }
-                                >
-                                  {t(
-                                    "pages.user-dashboard.section.events.show-album",
-                                  )}
-                                  <IconArrowOutward
-                                    className={styles.externalIcon}
-                                  />
-                                </Button>
-                              </Stack>
+                                        .external_shared_id && (
+                                        <Button
+                                          variant="contained"
+                                          type="submit"
+                                          style={{ width: "auto" }}
+                                          target={"_blank"}
+                                          disableElevation
+                                          disabled={
+                                            !recentEvent.google_album ||
+                                            !recentEvent.google_album
+                                              .external_shared_id
+                                          }
+                                          href={
+                                            recentEvent.google_album &&
+                                            recentEvent.google_album
+                                              .external_shared_id &&
+                                            GOOGLE_PHOTOS_URL +
+                                              recentEvent.google_album
+                                                .external_shared_id
+                                          }
+                                        >
+                                          {t(
+                                            "pages.user-dashboard.section.events.show-album",
+                                          )}
+                                          <IconArrowOutward
+                                            className={styles.externalIcon}
+                                          />
+                                        </Button>
+                                      )}
+                                  </Stack>
+                                )}
                             </Box>
                           </ListItemButton>
+
+                          {i + 1 < row.length && <Divider />}
                         </Box>
                       ),
                     )}

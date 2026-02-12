@@ -443,11 +443,15 @@ class ListEventSerializer(s.Serializer):
     with_counts = s.BooleanField(required=False)
     token = s.CharField(required=False)
     filter_types = s.ListSerializer(child=IntEnumField(EventType), required=False)
+    order_by = s.ListSerializer(child=s.CharField(), required=False)
 
     def to_internal_value(self, data):
         data = {k: v for k, v in data.items()}
         data["filter_types"] = (
             data["filter_types"].split(",") if data.get("filter_types", False) else []
+        )
+        data["order_by"] = (
+            data["order_by"].split(",") if data.get("order_by", False) else []
         )
         data = super().to_internal_value(data)
         return data

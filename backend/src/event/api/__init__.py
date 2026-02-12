@@ -42,6 +42,7 @@ def get_list(
     with_counts: bool = False,
     for_musicians: bool | None = None,
     filter_types: list[EventType] | None = None,
+    order_by: list[str] | None = None,
 ) -> List[Event]:
     if request_user_id:
         family_user_ids = [
@@ -219,7 +220,20 @@ def get_list(
             ),
         )
 
-    return list(event_qs)
+    return sorted(
+        list(event_qs),
+        key=lambda event_obj: (
+            [
+                getattr(event_obj, order_by_attr.lstrip("-"))
+                for order_by_attr in order_by
+            ]
+            if order_by
+            else event_obj.time_from
+        ),
+        # TODO: Fix this per attribute
+        reverse=order_by
+        and any([order_by_attr.startswith("-") for order_by_attr in order_by]),
+    )
 
 
 def get(

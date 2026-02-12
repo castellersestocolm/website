@@ -473,6 +473,7 @@ export const apiEventList = async (
   withCounts: boolean = undefined,
   forMusicians: boolean = undefined,
   filterTypes: number[] = undefined,
+  orderBy: string[] = undefined,
 ) => {
   try {
     return await instance.get("/event/", {
@@ -480,13 +481,15 @@ export const apiEventList = async (
         page_size: pageSize ? pageSize : API_EVENTS_LIST_PAGE_SIZE,
         page: page ? page : 1,
         token: token,
-        date_from: dateFrom
-          ? dateFrom
-          : new Date().toISOString().substring(0, 10),
+        date_from:
+          dateFrom !== undefined
+            ? dateFrom
+            : new Date().toISOString().substring(0, 10),
         date_to: dateTo,
         with_counts: withCounts,
         for_musicians: forMusicians,
         filter_types: filterTypes && filterTypes.join(","),
+        order_by: orderBy && orderBy.join(","),
       },
     });
   } catch (error) {
