@@ -233,7 +233,7 @@ class GoogleEventAdmin(admin.ModelAdmin):
 
 @admin.register(GoogleAlbum)
 class GoogleEventAdmin(admin.ModelAdmin):
-    search_fields = ("id", "external_id")
-    list_display = ("event", "google_integration", "external_id")
+    search_fields = ("id", "external_id", "external_shared_id")
+    list_display = ("event", "google_integration", "external_id", "external_shared_id")
     ordering = ("-event__time_from",)
     raw_id_fields = ("event",)

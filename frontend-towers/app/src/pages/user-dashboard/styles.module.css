@@ -206,3 +206,10 @@
   height: calc(100% - 56px - 48px);
   padding: 24px;
 }
+
+.externalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
+  height: 20px !important;
+  width: 20px !important;
+}

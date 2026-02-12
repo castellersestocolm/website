@@ -9,6 +9,7 @@ GOOGLE_PHOTOS_SCOPES = [
     "https://www.googleapis.com/auth/photoslibrary.appendonly",
     "https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata",
     "https://www.googleapis.com/auth/photoslibrary.edit.appcreateddata",
+    "https://www.googleapis.com/auth/photoslibrary.sharing",
 ]
 
 REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS = {

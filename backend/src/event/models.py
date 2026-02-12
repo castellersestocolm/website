@@ -472,9 +472,20 @@ class GoogleAlbum(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
     external_id = models.CharField(max_length=255, unique=True)
+    external_shared_id = models.CharField(
+        max_length=255, blank=True, null=True, unique=True
+    )
 
     def __str__(self) -> str:
         return f"{Module(self.google_integration.module).name} - {self.external_id}"
+
+    def save(self, *args, **kwargs):
+        if self.external_shared_id:
+            self.external_shared_id = self.external_shared_id.split("/")[-1].split("?")[
+                0
+            ]
+
+        super().save(*args, **kwargs)
 
 
 @receiver(pre_delete, sender=GoogleAlbum)

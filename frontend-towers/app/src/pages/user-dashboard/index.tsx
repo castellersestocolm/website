@@ -94,10 +94,12 @@ import QRCode from "qrcode";
 import { get_event_icon, getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
+import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const GOOGLE_PHOTOS_URL = "https://photos.app.goo.gl/";
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
@@ -161,6 +163,8 @@ function UserDashboardPage() {
   const [expensePage, setExpensePage] = React.useState(1);
   const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
+  const [recentEventsPage, setRecentEventsPage] = React.useState(1);
+  const [recentEvents, setRecentEvents] = React.useState(undefined);
   const [membershipRenewOptions, setMembershipRenewOptions] =
     React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
@@ -290,6 +294,24 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setPayments, paymentPage]);
+
+  React.useEffect(() => {
+    apiEventList(
+      recentEventsPage,
+      undefined,
+      undefined,
+      new Date(Date.now() - 14 * 24 * 3600 * 1000)
+        .toISOString()
+        .substring(0, 10),
+      new Date().toISOString().substring(0, 10),
+    ).then((response) => {
+      if (response.status === 200) {
+        setRecentEvents(response.data);
+      }
+    });
+  }, [i18n.resolvedLanguage, setRecentEvents, recentEventsPage]);
+
+  console.log(recentEvents);
 
   React.useEffect(() => {
     if (user) {
@@ -1111,6 +1133,125 @@ function UserDashboardPage() {
                 </List>
               </Box>
             </Card>
+          </Grid>
+        )}
+
+        {recentEvents && recentEvents.results.length > 0 && (
+          <Grid>
+            <Grid container spacing={2} direction="column">
+              <Card variant="outlined">
+                <Box className={styles.userTopBox}>
+                  <Typography variant="h6" fontWeight="600" component="div">
+                    {t("pages.user-dashboard.section.events.title")}
+                  </Typography>
+                </Box>
+                <Divider />
+                <Box className={styles.userFamilyBox}>
+                  <List className={styles.userFamilyList}>
+                    {recentEvents.results.map(
+                      (recentEvent: any, i: number, row: any) => (
+                        <Box key={recentEvent.id}>
+                          <ListItemButton disableTouchRipple dense>
+                            <ListItemIcon>
+                              {get_event_icon(
+                                recentEvent.type,
+                                recentEvent.modules,
+                              )}
+                            </ListItemIcon>
+                            <Box
+                              className={styles.userFamilyListInner}
+                              flexDirection={{ xs: "column", lg: "row" }}
+                              alignItems={{ xs: "start", lg: "center" }}
+                            >
+                              <ListItemText
+                                className={styles.userFamilyListItem}
+                                disableTypography
+                                primary={
+                                  <Typography variant="body2">
+                                    {recentEvent.title +
+                                      ((recentEvent.type ===
+                                        EventType.REHEARSAL ||
+                                        recentEvent.type ===
+                                          EventType.WORKSHOP) &&
+                                      recentEvent.location !== null
+                                        ? " — " + recentEvent.location.name
+                                        : "")}
+                                  </Typography>
+                                }
+                                secondary={
+                                  <>
+                                    <Typography
+                                      variant="body2"
+                                      color="textSecondary"
+                                    >
+                                      {capitalizeFirstLetter(
+                                        new Date(
+                                          recentEvent.time_from,
+                                        ).toLocaleDateString(
+                                          i18n.resolvedLanguage,
+                                          {
+                                            day: "numeric",
+                                            month: "long",
+                                            year: "numeric",
+                                          },
+                                        ),
+                                      ) +
+                                        " " +
+                                        new Date(recentEvent.time_from)
+                                          .toTimeString()
+                                          .slice(0, 5) +
+                                        " → " +
+                                        new Date(recentEvent.time_to)
+                                          .toTimeString()
+                                          .slice(0, 5)}
+                                    </Typography>
+                                  </>
+                                }
+                              />
+                              <Stack
+                                direction="row"
+                                spacing={2}
+                                marginLeft={{ xs: "0", lg: "16px" }}
+                                marginTop={{ xs: "8px", lg: "0" }}
+                                marginBottom={{ xs: "8px", lg: "0" }}
+                                whiteSpace="nowrap"
+                              >
+                                <Button
+                                  variant="contained"
+                                  type="submit"
+                                  style={{ width: "auto" }}
+                                  target={"_blank"}
+                                  disableElevation
+                                  disabled={
+                                    !recentEvent.google_album ||
+                                    !recentEvent.google_album.external_shared_id
+                                  }
+                                  href={
+                                    recentEvent.google_album &&
+                                    recentEvent.google_album
+                                      .external_shared_id &&
+                                    GOOGLE_PHOTOS_URL +
+                                      recentEvent.google_album
+                                        .external_shared_id
+                                  }
+                                >
+                                  {t(
+                                    "pages.user-dashboard.section.events.show-album",
+                                  )}
+                                  <IconArrowOutward
+                                    className={styles.externalIcon}
+                                  />
+                                </Button>
+                              </Stack>
+                            </Box>
+                          </ListItemButton>
+                        </Box>
+                      ),
+                    )}
+                  </List>
+                </Box>
+              </Card>
+            </Grid>
           </Grid>
         )}
 

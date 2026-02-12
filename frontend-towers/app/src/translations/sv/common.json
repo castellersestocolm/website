@@ -121,6 +121,8 @@
   "pages.user-dashboard.section.profile.title": "Min profil",
   "pages.user-dashboard.section.emails.title": "Sekundära e-postadresser",
   "pages.user-dashboard.section.emails.description": "Du kan begära att ändra din huvudsakliga e-postadress via",
+  "pages.user-dashboard.section.events.title": "Senaste evenemang",
+  "pages.user-dashboard.section.events.show-album": "Fotoalbum",
   "pages.user-dashboard.section.payments.title": "Betalningar",
   "pages.user-dashboard.section.payments.empty": "Du har inga registrerade betalningar.",
   "pages.user-dashboard.section.orders.title": "Beställningar",

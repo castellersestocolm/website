@@ -123,6 +123,8 @@
   "pages.user-dashboard.section.emails.description": "You can request to change your main email via",
   "pages.user-dashboard.section.family.title": "Family management",
   "pages.user-dashboard.section.family-requests.title": "Family requests",
+  "pages.user-dashboard.section.events.title": "Recent events",
+  "pages.user-dashboard.section.events.show-album": "Photo album",
   "pages.user-dashboard.section.payments.title": "Payments",
   "pages.user-dashboard.section.payments.empty": "You don't have any registered payment.",
   "pages.user-dashboard.section.orders.title": "Orders",

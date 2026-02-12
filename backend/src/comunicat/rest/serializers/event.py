@@ -16,6 +16,7 @@ from event.models import (
     EventModule,
     GoogleEvent,
     GoogleCalendar,
+    GoogleAlbum,
 )
 from integration.models import GoogleIntegration
 
@@ -92,16 +93,18 @@ class GoogleAlbumSerializer(s.ModelSerializer):
     google_integration = GoogleIntegrationSerializer(read_only=True)
 
     class Meta:
-        model = GoogleEvent
+        model = GoogleAlbum
         fields = (
             "id",
             "google_integration",
             "external_id",
+            "external_shared_id",
         )
         read_only_fields = (
             "id",
             "google_integration",
             "external_id",
+            "external_shared_id",
         )
 
 
