@@ -71,6 +71,7 @@ import {
   RegistrationStatus,
   OrderStatus,
   ORDER_STATUS_ICON,
+  REGISTRATION_STATUS_ICON,
 } from "../../enums";
 import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
@@ -81,6 +82,7 @@ import IconAttachFile from "@mui/icons-material/AttachFile";
 import IconDowload from "@mui/icons-material/Download";
 import Pagination from "@mui/material/Pagination";
 import {
+  API_EVENTS_RECENT_LIST_PAGE_SIZE,
   API_EXPENSES_LIST_PAGE_SIZE,
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
@@ -1149,118 +1151,214 @@ function UserDashboardPage() {
                 <Box className={styles.userFamilyBox}>
                   <List className={styles.userFamilyList}>
                     {recentEvents.results.map(
-                      (recentEvent: any, i: number, row: any) => (
-                        <Box key={recentEvent.id}>
-                          <ListItemButton disableTouchRipple dense>
-                            <ListItemIcon>
-                              {get_event_icon(
-                                recentEvent.type,
-                                recentEvent.modules,
-                              )}
-                            </ListItemIcon>
-                            <Box
-                              className={styles.userFamilyListInner}
-                              flexDirection={{ xs: "column", lg: "row" }}
-                              alignItems={{ xs: "start", lg: "center" }}
-                            >
-                              <ListItemText
-                                className={styles.userFamilyListItem}
-                                disableTypography
-                                primary={
-                                  <Typography variant="body2">
-                                    {recentEvent.title +
-                                      ((recentEvent.type ===
-                                        EventType.REHEARSAL ||
-                                        recentEvent.type ===
-                                          EventType.WORKSHOP) &&
-                                      recentEvent.location !== null
-                                        ? " — " + recentEvent.location.name
-                                        : "")}
-                                  </Typography>
-                                }
-                                secondary={
-                                  <>
-                                    <Typography
-                                      variant="body2"
-                                      color="textSecondary"
-                                    >
-                                      {capitalizeFirstLetter(
-                                        new Date(
-                                          recentEvent.time_from,
-                                        ).toLocaleDateString(
-                                          i18n.resolvedLanguage,
-                                          {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric",
-                                          },
-                                        ),
-                                      ) +
-                                        " " +
-                                        new Date(recentEvent.time_from)
-                                          .toTimeString()
-                                          .slice(0, 5) +
-                                        " → " +
-                                        new Date(recentEvent.time_to)
-                                          .toTimeString()
-                                          .slice(0, 5)}
-                                    </Typography>
-                                  </>
-                                }
-                              />
-                              {recentEvent.google_album &&
-                                recentEvent.google_album.external_shared_id && (
-                                  <Stack
-                                    direction="row"
-                                    spacing={2}
-                                    marginLeft={{ xs: "0", lg: "16px" }}
-                                    marginTop={{ xs: "8px", lg: "0" }}
-                                    marginBottom={{ xs: "8px", lg: "0" }}
-                                    whiteSpace="nowrap"
-                                  >
-                                    {recentEvent.google_album &&
-                                      recentEvent.google_album
-                                        .external_shared_id && (
-                                        <Button
-                                          variant="contained"
-                                          type="submit"
-                                          style={{ width: "auto" }}
-                                          target={"_blank"}
-                                          disableElevation
-                                          disabled={
-                                            !recentEvent.google_album ||
-                                            !recentEvent.google_album
-                                              .external_shared_id
-                                          }
-                                          href={
-                                            recentEvent.google_album &&
-                                            recentEvent.google_album
-                                              .external_shared_id &&
-                                            GOOGLE_PHOTOS_URL +
-                                              recentEvent.google_album
-                                                .external_shared_id
-                                          }
-                                        >
-                                          {t(
-                                            "pages.user-dashboard.section.events.show-album",
-                                          )}
-                                          <IconArrowOutward
-                                            className={styles.externalIcon}
-                                          />
-                                        </Button>
-                                      )}
-                                  </Stack>
-                                )}
-                            </Box>
-                          </ListItemButton>
+                      (recentEvent: any, i: number, row: any) => {
+                        const eventUsers =
+                          user &&
+                          user.family &&
+                          getEventUsers(
+                            recentEvent,
+                            user.family.members.map(
+                              (member: any) => member.user,
+                            ),
+                          );
 
-                          {i + 1 < row.length && <Divider />}
-                        </Box>
-                      ),
+                        const registrationByUserId = Object.fromEntries(
+                          recentEvent.registrations.map((registration: any) => [
+                            registration.user.id,
+                            registration,
+                          ]),
+                        );
+
+                        return (
+                          <Box key={recentEvent.id}>
+                            <ListItemButton disableTouchRipple dense>
+                              <ListItemIcon>
+                                {get_event_icon(
+                                  recentEvent.type,
+                                  recentEvent.modules,
+                                )}
+                              </ListItemIcon>
+                              <Box
+                                className={styles.userFamilyListInner}
+                                flexDirection={{ xs: "column", lg: "row" }}
+                                alignItems={{ xs: "start", lg: "center" }}
+                              >
+                                <ListItemText
+                                  className={styles.userFamilyListItem}
+                                  disableTypography
+                                  primary={
+                                    <Typography variant="body2">
+                                      {recentEvent.title +
+                                        ((recentEvent.type ===
+                                          EventType.REHEARSAL ||
+                                          recentEvent.type ===
+                                            EventType.WORKSHOP) &&
+                                        recentEvent.location !== null
+                                          ? " — " + recentEvent.location.name
+                                          : "")}
+                                    </Typography>
+                                  }
+                                  secondary={
+                                    <>
+                                      <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                      >
+                                        {capitalizeFirstLetter(
+                                          new Date(
+                                            recentEvent.time_from,
+                                          ).toLocaleDateString(
+                                            i18n.resolvedLanguage,
+                                            {
+                                              day: "numeric",
+                                              month: "long",
+                                              year: "numeric",
+                                            },
+                                          ),
+                                        ) +
+                                          " " +
+                                          new Date(recentEvent.time_from)
+                                            .toTimeString()
+                                            .slice(0, 5) +
+                                          " → " +
+                                          new Date(recentEvent.time_to)
+                                            .toTimeString()
+                                            .slice(0, 5)}
+                                      </Typography>
+                                      {eventUsers &&
+                                        eventUsers.length > 0 &&
+                                        recentEvent.require_signup && (
+                                          <Box
+                                            className={
+                                              styles.eventRegistrationsBox
+                                            }
+                                          >
+                                            {eventUsers.map(
+                                              (eventUser: any) => {
+                                                const registration =
+                                                  registrationByUserId[
+                                                    eventUser.id
+                                                  ];
+                                                return (
+                                                  <Box
+                                                    key={eventUser.id}
+                                                    className={
+                                                      styles.eventRegistrationBox
+                                                    }
+                                                    style={{
+                                                      color: registration
+                                                        ? registration.status ===
+                                                          RegistrationStatus.ACTIVE
+                                                          ? "var(--mui-palette-success-main)"
+                                                          : "var(--mui-palette-error-main)"
+                                                        : "var(--mui-palette-error-main)",
+                                                      whiteSpace: "nowrap",
+                                                    }}
+                                                  >
+                                                    {
+                                                      REGISTRATION_STATUS_ICON[
+                                                        registration
+                                                          ? registration.status
+                                                          : RegistrationStatus.CANCELLED
+                                                      ]
+                                                    }
+                                                    <Typography variant="body2">
+                                                      {user.family.members
+                                                        .length > 1
+                                                        ? eventUser.lastname
+                                                          ? eventUser.firstname +
+                                                            " " +
+                                                            eventUser.lastname
+                                                          : eventUser.firstname
+                                                        : registration &&
+                                                            registration.status ===
+                                                              RegistrationStatus.ACTIVE
+                                                          ? t(
+                                                              "pages.calendar.section.agenda.event.attendance-attended",
+                                                            )
+                                                          : t(
+                                                              "pages.calendar.section.agenda.event.attendance-not-attended",
+                                                            )}
+                                                    </Typography>
+                                                  </Box>
+                                                );
+                                              },
+                                            )}
+                                          </Box>
+                                        )}
+                                    </>
+                                  }
+                                />
+                                {recentEvent.google_album &&
+                                  recentEvent.google_album
+                                    .external_shared_id && (
+                                    <Stack
+                                      direction="row"
+                                      spacing={2}
+                                      marginLeft={{ xs: "0", lg: "16px" }}
+                                      marginTop={{ xs: "8px", lg: "0" }}
+                                      marginBottom={{ xs: "8px", lg: "0" }}
+                                      whiteSpace="nowrap"
+                                    >
+                                      {recentEvent.google_album &&
+                                        recentEvent.google_album
+                                          .external_shared_id && (
+                                          <Button
+                                            variant="contained"
+                                            type="submit"
+                                            style={{ width: "auto" }}
+                                            target={"_blank"}
+                                            disableElevation
+                                            disabled={
+                                              !recentEvent.google_album ||
+                                              !recentEvent.google_album
+                                                .external_shared_id
+                                            }
+                                            href={
+                                              recentEvent.google_album &&
+                                              recentEvent.google_album
+                                                .external_shared_id &&
+                                              GOOGLE_PHOTOS_URL +
+                                                recentEvent.google_album
+                                                  .external_shared_id
+                                            }
+                                          >
+                                            {t(
+                                              "pages.user-dashboard.section.events.show-album",
+                                            )}
+                                            <IconArrowOutward
+                                              className={styles.externalIcon}
+                                            />
+                                          </Button>
+                                        )}
+                                    </Stack>
+                                  )}
+                              </Box>
+                            </ListItemButton>
+
+                            {i + 1 < row.length && <Divider />}
+                          </Box>
+                        );
+                      },
                     )}
                   </List>
                 </Box>
               </Card>
+              {recentEvents &&
+                recentEvents.results.length > 0 &&
+                (recentEventsPage !== 1 ||
+                  recentEvents.count > recentEvents.results.length) && (
+                  <Stack alignItems="center">
+                    <Pagination
+                      count={Math.ceil(
+                        recentEvents.count / API_EVENTS_RECENT_LIST_PAGE_SIZE,
+                      )}
+                      onChange={(e: any, value: number) =>
+                        setRecentEventsPage(value)
+                      }
+                    />
+                  </Stack>
+                )}
             </Grid>
           </Grid>
         )}
