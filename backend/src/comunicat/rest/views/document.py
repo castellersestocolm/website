@@ -5,7 +5,6 @@ from django.views.decorators.cache import cache_page, cache_control
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
-from sentry_sdk.integrations.django import is_authenticated
 
 import document.api
 

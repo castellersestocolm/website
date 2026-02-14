@@ -1,5 +1,5 @@
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, cache_control
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
@@ -32,6 +32,7 @@ class TowersCastleAPI(
         responses={200: TowerWithPlacesAliasSerializer(many=True)},
     )
     @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         serializer = ListTowerSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
