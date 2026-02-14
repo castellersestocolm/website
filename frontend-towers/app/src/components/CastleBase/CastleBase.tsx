@@ -605,10 +605,34 @@ export default function CastleBase({ castle }: any) {
                                               size="small"
                                               sx={{
                                                 backgroundColor:
-                                                  COLOUR_BG_BY_POSITION_TYPE[
-                                                    castlePlaceRelative.position
-                                                      .type
-                                                  ],
+                                                  castlePlaceRelative.position
+                                                    .type in
+                                                  COLOR_BG_BY_POSITION_TYPE_AND_RING
+                                                    ? COLOR_BG_BY_POSITION_TYPE_AND_RING[
+                                                        castlePlaceRelative
+                                                          .position.type
+                                                      ]
+                                                        .filter(
+                                                          ([
+                                                            minRing,
+                                                            colour,
+                                                          ]: any) =>
+                                                            castlePlaceRelative.ring >=
+                                                            minRing,
+                                                        )
+                                                        .concat([
+                                                          [
+                                                            0,
+                                                            COLOUR_BG_BY_POSITION_TYPE[
+                                                              castlePlaceRelative
+                                                                .position.type
+                                                            ],
+                                                          ],
+                                                        ])[0][1]
+                                                    : COLOUR_BG_BY_POSITION_TYPE[
+                                                        castlePlaceRelative
+                                                          .position.type
+                                                      ],
                                                 color:
                                                   COLOUR_TEXT_BY_POSITION_TYPE[
                                                     castlePlaceRelative.position
