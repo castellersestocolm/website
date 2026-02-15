@@ -8,7 +8,15 @@ from event.enums import EventType, RegistrationStatus
 from event.models import Event, AgendaItem, Registration
 from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS
 from towers.enums import PositionType
-from towers.types import Tower, Position, Place, Placement, Size, PlaceExtra
+from towers.types import (
+    Tower,
+    Position,
+    Place,
+    Placement,
+    Size,
+    PlaceExtra,
+    Responsible,
+)
 from user.enums import FamilyMemberStatus
 from user.models import User, FamilyMember
 
@@ -235,6 +243,34 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
             order=order,
             is_published=bool.from_bytes(is_published),
             external_id=pinyator_tower_id,
+            responsible=(
+                [
+                    Responsible(
+                        user_obj=position_user_id and user_by_id.get(position_user_id),
+                        extra=PlaceExtra(
+                            text=extra_text if extra_text else None,
+                            height=extra_height if extra_height else None,
+                        ),
+                    )
+                    for __, __, position_name, position_user_id, __, __, __, __, __, __, __, __, __, __, extra_text, extra_height in pinyator_positions[
+                        pinyator_tower_id
+                    ]
+                    if position_name.lower() == "altres"
+                ]
+                + [
+                    Responsible(
+                        extra=PlaceExtra(
+                            text=extra_text if extra_text else None,
+                            height=extra_height if extra_height else None,
+                        ),
+                    )
+                    for __, __, position_name, __, __, __, __, __, __, __, __, __, __, extra_text, extra_height in pinyator_positions_extra[
+                        pinyator_tower_id
+                    ]
+                    if position_name.lower() == "altres"
+                ]
+                + [None]
+            )[0],
             places=(
                 [
                     Place(

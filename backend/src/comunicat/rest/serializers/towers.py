@@ -1,8 +1,24 @@
+from os import readv
+
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField
 from towers.enums import PositionType
+
+
+class PlaceExtraSerializer(s.Serializer):
+    text = s.CharField(required=False, read_only=True)
+    height = s.IntegerField(required=False, read_only=True)
+
+
+class TowerUserSlimSerializer(s.Serializer):
+    id = s.UUIDField(read_only=True)
+
+
+class ResponsibleSerializer(s.Serializer):
+    user = TowerUserSlimSerializer(read_only=True)
+    extra = PlaceExtraSerializer(read_only=True)
 
 
 class TowerSerializer(s.Serializer):
@@ -12,9 +28,7 @@ class TowerSerializer(s.Serializer):
 
     external_id = s.IntegerField(read_only=True)
 
-
-class TowerUserSlimSerializer(s.Serializer):
-    id = s.UUIDField(read_only=True)
+    responsible = ResponsibleSerializer(required=False, read_only=True)
 
 
 class TowerUserTowersSerializer(s.Serializer):
@@ -40,11 +54,6 @@ class PlacementSerializer(s.Serializer):
 class SizeSerializer(s.Serializer):
     width = s.IntegerField(read_only=True)
     height = s.IntegerField(read_only=True)
-
-
-class PlaceExtraSerializer(s.Serializer):
-    text = s.CharField(required=False, read_only=True)
-    height = s.IntegerField(required=False, read_only=True)
 
 
 class PlaceSlimSerializer(s.Serializer):

@@ -45,6 +45,19 @@ class PlaceExtra:
         self.height = height
 
 
+class Responsible:
+    user: User | None = None
+    extra: PlaceExtra
+
+    def __init__(
+        self,
+        extra: PlaceExtra,
+        user_obj: User | None = None,
+    ) -> None:
+        self.user_obj = user_obj
+        self.extra = extra
+
+
 class Place:
     user: User | None = None
     position: Position
@@ -98,6 +111,7 @@ class Tower:
     name: str
     order: int
     places: list[Place]
+    responsible: Responsible | None = None
 
     external_id: int
 
@@ -108,6 +122,7 @@ class Tower:
         is_published: bool,
         places: list[Place],
         external_id: int,
+        responsible: Responsible | None = None,
     ) -> None:
         self.name = name
         self.order = order
@@ -115,3 +130,5 @@ class Tower:
         self.places = places
 
         self.external_id = external_id
+
+        self.responsible = responsible
