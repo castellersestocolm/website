@@ -16,8 +16,16 @@ class TowerUserSlimSerializer(s.Serializer):
     id = s.UUIDField(read_only=True)
 
 
+class TowerUserTowersSerializer(s.Serializer):
+    alias = s.CharField(required=False, read_only=True)
+
+
+class TowerUserAliasSerializer(s.Serializer):
+    towers = TowerUserTowersSerializer(required=False, read_only=True)
+
+
 class ResponsibleSerializer(s.Serializer):
-    user = TowerUserSlimSerializer(read_only=True)
+    user = TowerUserAliasSerializer(read_only=True)
     extra = PlaceExtraSerializer(read_only=True)
 
 
@@ -29,14 +37,6 @@ class TowerSerializer(s.Serializer):
     external_id = s.IntegerField(read_only=True)
 
     responsible = ResponsibleSerializer(required=False, read_only=True)
-
-
-class TowerUserTowersSerializer(s.Serializer):
-    alias = s.CharField(required=False, read_only=True)
-
-
-class TowerUserAliasSerializer(s.Serializer):
-    towers = TowerUserTowersSerializer(required=False, read_only=True)
 
 
 class PositionSerializer(s.Serializer):

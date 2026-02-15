@@ -26,3 +26,16 @@ export function compareTowerPlaceFamilyObjects(a: any, b: any) {
 
   return aText >= bText;
 }
+
+export function compareTowerPlaceCloseObjects(a: any, c: any) {
+  // const aDistance = Math.sqrt(Math.pow(c.placement.x - a.placement.x, 2) + Math.pow(c.placement.y - a.placement.y, 2));
+  // const bDistance = Math.sqrt(Math.pow(c.placement.x - b.placement.x, 2) + Math.pow(c.placement.y - b.placement.y, 2));
+  // if ((a.extra.text === "BAIX 4" || a.extra.text === "BAIX 5") && (b.extra.text === "BAIX 4" || b.extra.text === "BAIX 5")){
+  //   console.log(c.user, a.extra.text, aDistance, b.extra.text, bDistance);
+  // }
+
+  return Math.sqrt(
+    Math.pow(c.placement.x - a.placement.x, 2) +
+      Math.pow(c.placement.y - a.placement.y, 2),
+  );
+}

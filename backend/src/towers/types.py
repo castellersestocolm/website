@@ -54,7 +54,7 @@ class Responsible:
         extra: PlaceExtra,
         user_obj: User | None = None,
     ) -> None:
-        self.user_obj = user_obj
+        self.user = user_obj
         self.extra = extra
 
 

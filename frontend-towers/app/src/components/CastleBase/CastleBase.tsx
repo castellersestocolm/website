@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-import { Label, Layer, Rect, Stage, Text } from "react-konva";
+import { Stage, Label, Layer, Rect, Text } from "react-konva";
 import {
   getEnumLabel,
   PositionRelativePlacement,
@@ -299,6 +299,8 @@ export default function CastleBase({ castle }: any) {
         const relativeCastlePlaces = castlePlaces.filter(
           (relativeCastlePlace: any) =>
             relativeCastlePlace.layer === castlePlace.layer &&
+            (relativeCastlePlace.position.type === castlePlace.position.type ||
+              castlePlace.position.type < PositionType.PRIMER) &&
             relativeTypes.includes(relativeCastlePlace.position.type),
         );
 
@@ -321,6 +323,31 @@ export default function CastleBase({ castle }: any) {
               .slice(0, maxRelatives),
           ];
         }
+
+        /* const relativeCloseCastlePlaces = castlePlaces.filter(
+          (relativeCloseCastlePlace: any) =>
+            relativeTypes.includes(relativeCloseCastlePlace.position.type),
+        ).sort((a: any, b: any) => compareTowerPlaceCloseObjects(a, castlePlace));
+
+        if (relativeCloseCastlePlaces.length > 0) {
+          return [
+            castlePlace,
+            relativeCloseCastlePlaces
+              .map((relativeCloseCastlePlace: any) => {
+                const defaultRelative =
+                  relativeRelatives[
+                    relativeTypes.indexOf(relativeCloseCastlePlace.position.type)
+                  ];
+                return [
+                  defaultRelative
+                    ? defaultRelative
+                    : PositionRelativePlacement.CLOSE,
+                  [relativeCloseCastlePlace],
+                ];
+              })
+              .slice(0, maxRelatives),
+          ];
+        } */
 
         return [castlePlace, []];
       })
@@ -388,6 +415,24 @@ export default function CastleBase({ castle }: any) {
 
   return (
     <Box className={styles.containerCastle} ref={containerRef}>
+      {castle &&
+        castle.responsible &&
+        (castle.responsible.user ||
+          (castle.responsible.extra && castle.responsible.extra.text)) && (
+          <Box className={styles.optionsCastleResponsible}>
+            <Typography variant="body1">
+              {t("pages.calendar.section.agenda.event.castles-responsible")}
+              {": "}
+              <strong>
+                {castle.responsible.user &&
+                castle.responsible.user.towers &&
+                castle.responsible.user.towers.alias
+                  ? castle.responsible.user.towers.alias.toUpperCase()
+                  : castle.responsible.extra.text.toUpperCase()}
+              </strong>
+            </Typography>
+          </Box>
+        )}
       <Stage
         width={stageSize.width}
         height={stageSize.height}
