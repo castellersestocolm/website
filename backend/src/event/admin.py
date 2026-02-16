@@ -234,6 +234,20 @@ class GoogleEventAdmin(admin.ModelAdmin):
 @admin.register(GoogleAlbum)
 class GoogleEventAdmin(admin.ModelAdmin):
     search_fields = ("id", "external_id", "external_shared_id")
-    list_display = ("event", "google_integration", "external_id", "external_shared_id")
+    list_display = (
+        "event",
+        "time_from",
+        "google_integration",
+        "external_id",
+        "external_shared_id",
+    )
     ordering = ("-event__time_from",)
     raw_id_fields = ("event",)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("event")
+
+    def time_from(self, obj):
+        return obj.event.time_from
+
+    time_from.short_description = _("time from")
