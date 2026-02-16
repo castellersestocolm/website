@@ -462,6 +462,7 @@ def event_on_delete(sender, instance, using, **kwargs):
     event.api.google_calendar.delete_google_event(google_event_id=instance.id)
 
 
+# TODO: Perhaps move this to its own app
 class GoogleAlbum(StandardModel, Timestamps):
     event = models.OneToOneField(
         Event, related_name="google_album", on_delete=models.CASCADE
