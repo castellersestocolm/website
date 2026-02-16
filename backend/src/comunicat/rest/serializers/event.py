@@ -17,6 +17,7 @@ from event.models import (
     GoogleEvent,
     GoogleCalendar,
     GoogleAlbum,
+    GooglePhotosAlbum,
 )
 from integration.models import GoogleIntegration
 
@@ -54,7 +55,7 @@ class GoogleIntegrationSerializer(s.ModelSerializer):
 
 
 class GoogleCalendarSerializer(s.ModelSerializer):
-    google_integration = GoogleIntegrationSerializer(read_only=True)
+    integration = GoogleIntegrationSerializer(read_only=True)
 
     class Meta:
         model = GoogleCalendar
@@ -62,13 +63,13 @@ class GoogleCalendarSerializer(s.ModelSerializer):
             "id",
             "name",
             "external_id",
-            "google_integration",
+            "integration",
         )
         read_only_fields = (
             "id",
             "name",
             "external_id",
-            "google_integration",
+            "integration",
         )
 
 
@@ -89,22 +90,52 @@ class GoogleEventSerializer(s.ModelSerializer):
         )
 
 
+class GooglePhotosAlbumSerializer(s.ModelSerializer):
+    class Meta:
+        model = GooglePhotosAlbum
+        fields = (
+            "id",
+            "external_id",
+        )
+        read_only_fields = (
+            "id",
+            "external_id",
+        )
+
+
+class GoogleDriveAlbumSerializer(s.ModelSerializer):
+    class Meta:
+        model = GooglePhotosAlbum
+        fields = (
+            "id",
+            "external_id",
+        )
+        read_only_fields = (
+            "id",
+            "external_id",
+        )
+
+
 class GoogleAlbumSerializer(s.ModelSerializer):
-    google_integration = GoogleIntegrationSerializer(read_only=True)
+    integration = GoogleIntegrationSerializer(read_only=True)
+    photos_album = GooglePhotosAlbumSerializer(required=False, read_only=True)
+    drive_album = GoogleDriveAlbumSerializer(required=False, read_only=True)
 
     class Meta:
         model = GoogleAlbum
         fields = (
             "id",
-            "google_integration",
+            "integration",
             "external_id",
-            "external_shared_id",
+            "photos_album",
+            "drive_album",
         )
         read_only_fields = (
             "id",
-            "google_integration",
+            "integration",
             "external_id",
-            "external_shared_id",
+            "photos_album",
+            "drive_album",
         )
 
 

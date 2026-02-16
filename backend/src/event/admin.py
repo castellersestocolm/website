@@ -26,6 +26,8 @@ from event.models import (
     Connection,
     GoogleAlbum,
     EventModulePrice,
+    GooglePhotosAlbum,
+    GoogleDriveAlbum,
 )
 from notify.enums import EmailType
 
@@ -231,18 +233,28 @@ class GoogleEventAdmin(admin.ModelAdmin):
     raw_id_fields = ("event",)
 
 
+class GooglePhotosAlbumInline(admin.TabularInline):
+    model = GooglePhotosAlbum
+    extra = 0
+
+
+class GoogleDriveAlbumInline(admin.TabularInline):
+    model = GoogleDriveAlbum
+    extra = 0
+
+
 @admin.register(GoogleAlbum)
 class GoogleEventAdmin(admin.ModelAdmin):
-    search_fields = ("id", "external_id", "external_shared_id")
+    search_fields = ("id", "external_id")
     list_display = (
         "event",
         "time_from",
         "google_integration",
         "external_id",
-        "external_shared_id",
     )
     ordering = ("-event__time_from",)
     raw_id_fields = ("event",)
+    inlines = (GooglePhotosAlbumInline, GoogleDriveAlbumInline)
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("event")

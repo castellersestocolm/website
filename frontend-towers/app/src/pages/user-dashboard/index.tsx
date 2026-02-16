@@ -102,6 +102,7 @@ const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 const GOOGLE_PHOTOS_URL = "https://photos.app.goo.gl/";
+const GOOGLE_DRIVE_URL = "https://drive.google.com/drive/u/1/folders/";
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
@@ -1290,8 +1291,9 @@ function UserDashboardPage() {
                                   }
                                 />
                                 {recentEvent.google_album &&
-                                  recentEvent.google_album
-                                    .external_shared_id && (
+                                  recentEvent.google_album &&
+                                  (recentEvent.google_album.photos_album ||
+                                    recentEvent.google_album.drive_album) && (
                                     <Stack
                                       direction="row"
                                       spacing={2}
@@ -1302,7 +1304,7 @@ function UserDashboardPage() {
                                     >
                                       {recentEvent.google_album &&
                                         recentEvent.google_album
-                                          .external_shared_id && (
+                                          .photos_album && (
                                           <Button
                                             variant="contained"
                                             type="submit"
@@ -1312,19 +1314,50 @@ function UserDashboardPage() {
                                             disabled={
                                               !recentEvent.google_album ||
                                               !recentEvent.google_album
-                                                .external_shared_id
+                                                .photos_album
                                             }
                                             href={
                                               recentEvent.google_album &&
                                               recentEvent.google_album
-                                                .external_shared_id &&
+                                                .photos_album &&
                                               GOOGLE_PHOTOS_URL +
                                                 recentEvent.google_album
-                                                  .external_shared_id
+                                                  .photos_album.external_id
                                             }
                                           >
                                             {t(
-                                              "pages.user-dashboard.section.events.show-album",
+                                              "pages.user-dashboard.section.events.show-photos-album",
+                                            )}
+                                            <IconArrowOutward
+                                              className={styles.externalIcon}
+                                            />
+                                          </Button>
+                                        )}
+                                      {recentEvent.google_album &&
+                                        recentEvent.google_album
+                                          .drive_album && (
+                                          <Button
+                                            variant="contained"
+                                            type="submit"
+                                            style={{ width: "auto" }}
+                                            target={"_blank"}
+                                            disableElevation
+                                            disabled={
+                                              !recentEvent.google_album ||
+                                              !recentEvent.google_album
+                                                .drive_album
+                                            }
+                                            href={
+                                              recentEvent.google_album &&
+                                              recentEvent.google_album
+                                                .drive_album &&
+                                              GOOGLE_DRIVE_URL +
+                                                recentEvent.google_album
+                                                  .drive_album.external_id
+                                            }
+                                          >
+                                            {t(
+                                              "pages.user-dashboard.section.events.show-drive-album",
                                             )}
                                             <IconArrowOutward
                                               className={styles.externalIcon}
