@@ -118,7 +118,7 @@ class GoogleDriveAlbumSerializer(s.ModelSerializer):
 
 class GoogleAlbumSerializer(s.ModelSerializer):
     integration = GoogleIntegrationSerializer(read_only=True)
-    photos_album = GooglePhotosAlbumSerializer(required=False, read_only=True)
+    photos_album = s.SerializerMethodField(required=False, read_only=True)
     drive_album = GoogleDriveAlbumSerializer(required=False, read_only=True)
 
     class Meta:
@@ -137,6 +137,15 @@ class GoogleAlbumSerializer(s.ModelSerializer):
             "photos_album",
             "drive_album",
         )
+
+    @swagger_serializer_method(
+        serializer_or_field=GooglePhotosAlbumSerializer(required=False, read_only=True)
+    )
+    def get_photos_album(self, obj):
+        if not hasattr(obj, "photos_album") or hasattr(obj, "drive_album"):
+            return None
+
+        return GooglePhotosAlbumSerializer(obj.photos_album).data
 
 
 class LocationSerializer(s.ModelSerializer):
