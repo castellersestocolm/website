@@ -74,15 +74,8 @@ class PaymentQuerySet(QuerySet):
                                 else {"payment__transaction__isnull": True}
                             ),
                         )
+                        .with_actual_amount()
                         .annotate(
-                            actual_amount=Case(
-                                When(
-                                    payment__type=PaymentType.CREDIT,
-                                    then=-F("amount"),
-                                ),
-                                default=F("amount"),
-                                output_field=MoneyOutput(),
-                            ),
                             balance=Func("actual_amount", function="Sum"),
                         )
                         .values("balance")[:1]
@@ -96,8 +89,20 @@ class PaymentQuerySet(QuerySet):
         )
 
     def with_amount(self):
+        PaymentLine = apps.get_model("payment", "PaymentLine")
+
         return self.annotate(
-            amount=Coalesce(Sum("lines__amount"), Value(0), output_field=MoneyOutput())
+            amount=Coalesce(
+                Subquery(
+                    PaymentLine.objects.filter(payment_id=OuterRef("id"))
+                    .with_actual_amount()
+                    .values("payment")
+                    .annotate(sum=Sum("actual_amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
         )
 
     def with_description(self):
@@ -253,6 +258,18 @@ class PaymentLineQuerySet(QuerySet):
             ),
         )
 
+    def with_actual_amount(self):
+        return self.annotate(
+            actual_amount=Case(
+                When(
+                    payment__type=PaymentType.CREDIT,
+                    then=-F("amount"),
+                ),
+                default=F("amount"),
+                output_field=MoneyOutput(),
+            ),
+        )
+
     def with_balance(self):
         PaymentLine = apps.get_model("payment", "PaymentLine")
         Source = apps.get_model("payment", "Source")
@@ -276,15 +293,8 @@ class PaymentLineQuerySet(QuerySet):
                                 else {"payment__transaction__isnull": True}
                             ),
                         )
+                        .with_actual_amount()
                         .annotate(
-                            actual_amount=Case(
-                                When(
-                                    payment__type=PaymentType.CREDIT,
-                                    then=-F("amount"),
-                                ),
-                                default=F("amount"),
-                                output_field=MoneyOutput(),
-                            ),
                             balance=Func("actual_amount", function="Sum"),
                         )
                         .values("balance")[:1]

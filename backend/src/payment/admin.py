@@ -7,7 +7,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import JSONField, Q
 from django.forms import BaseInlineFormSet
+from django.urls import reverse
 from django.utils import timezone, translation
+from django.utils.safestring import mark_safe
 
 import payment.api.entity
 import payment.tasks
@@ -18,7 +20,7 @@ from event.models import Registration
 from notify.enums import EmailType
 from order.models import Order
 from payment.consts import PAYMENT_LINE_CONTENT_TYPES
-from payment.enums import PaymentType
+from payment.enums import PaymentType, PaymentStatus
 
 import notify.tasks
 
@@ -57,6 +59,7 @@ class PaymentLineForPaymentFormset(BaseInlineFormSet):
                 .with_amount()
                 .values_list("amount", flat=True)
             )
+
             for form in self.forms:
                 if "amount" not in form.cleaned_data:
                     continue
@@ -87,10 +90,41 @@ class PaymentLineForPaymentFormset(BaseInlineFormSet):
                 )
             ]
         )
-        print(current_amount, self.instance.transaction.amount)
         if current_amount < self.instance.transaction.amount:
             amount_left = self.instance.transaction.amount - current_amount
             PaymentLine.objects.create(payment=self.instance, amount=amount_left)
+
+    def save_new_objects(self, commit=True):
+        for i, form in enumerate(self.extra_forms):
+            if not form.has_changed() or (
+                self.can_delete and self._should_delete_form(form)
+            ):
+                continue
+
+            forms_deleted = 0
+
+            if form.instance.amount.amount < 0:
+                payment_new_obj = Payment.objects.create(
+                    entity=form.instance.payment.entity,
+                    type=(
+                        PaymentType.DEBIT
+                        if form.instance.payment.type == PaymentType.CREDIT
+                        else PaymentType.CREDIT
+                    ),
+                    status=form.instance.payment.status,
+                    method=form.instance.payment.method,
+                    transaction=form.instance.payment.transaction,
+                    debit_payment=form.instance.payment,
+                )
+                PaymentLine.objects.create(
+                    payment=payment_new_obj,
+                    amount=abs(form.instance.amount),
+                )
+
+                self.forms.pop(self.initial_form_count() + i - forms_deleted)
+                forms_deleted += 1
+
+        return super().save_new_objects(commit=commit)
 
 
 class PaymentLineForPaymentForm(forms.ModelForm):
@@ -214,6 +248,7 @@ class PaymentAdmin(admin.ModelAdmin):
     raw_id_fields = (
         "entity",
         "transaction",
+        "debit_payment",
     )
     inlines = (PaymentLineForPaymentInline, PaymentLogInline)
     actions = (send_paid_email,)
@@ -382,7 +417,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
 class PaymentInline(admin.TabularInline):
     model = Payment
     ordering = ("-created_at",)
-    readonly_fields = ("amount", "transaction", "debit_payment")
+    readonly_fields = ("payment_link", "amount", "transaction", "debit_payment")
     extra = 0
 
     def get_queryset(self, request):
@@ -391,7 +426,12 @@ class PaymentInline(admin.TabularInline):
     def amount(self, obj):
         return obj.amount
 
+    def payment_link(self, obj):
+        payment_link = reverse("admin:payment_payment_change", args=(obj.id,))
+        return mark_safe(f'<a href="{payment_link}">{obj}</a>')
+
     amount.short_description = _("amount")
+    payment_link.short_description = _("payment")
 
 
 class AccountInline(admin.TabularInline):
