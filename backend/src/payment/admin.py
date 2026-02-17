@@ -192,9 +192,9 @@ def send_paid_email(modeladmin, request, queryset):
             paymeny_line_objs = list(payment_obj.lines.all())
 
             registration_objs = list(
-                Registration.objects.filter(line__in=paymeny_line_objs).select_related(
-                    "event"
-                )
+                Registration.objects.filter(line__in=paymeny_line_objs)
+                .select_related("event")
+                .distinct()
             )
             if registration_objs:
                 for event_obj, event_registration_objs in itertools.groupby(
@@ -210,7 +210,7 @@ def send_paid_email(modeladmin, request, queryset):
                     )
 
             order_objs = list(
-                Order.objects.filter(products__line__in=paymeny_line_objs)
+                Order.objects.filter(products__line__in=paymeny_line_objs).distinct()
             )
             for order_obj in order_objs:
                 notify.tasks.send_order_email.delay(
