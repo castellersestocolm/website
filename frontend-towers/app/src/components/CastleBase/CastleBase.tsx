@@ -363,7 +363,11 @@ export default function CastleBase({ castle }: any) {
   const [displayTronc, setDisplayTronc] = useState(false);
 
   const actualDisplayTronc =
-    displayTronc || !castlePlacesPinya || castlePlacesPinya.length === 0;
+    displayTronc ||
+    !castlePlacesPinya ||
+    castlePlacesPinya.filter(
+      (castlePlace: any) => castlePlace.position.type !== PositionType.BAIX,
+    ).length === 0;
 
   const currentCastlePlaces = actualDisplayTronc
     ? castlePlacesTronc
