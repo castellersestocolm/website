@@ -23,8 +23,10 @@ import {
 import Box from "@mui/material/Box";
 import IconClose from "@mui/icons-material/Close";
 import IconAttachFile from "@mui/icons-material/AttachFile";
+import IconVisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   EventType,
+  PermissionLevel,
   REGISTRATION_STATUS_ICON,
   RegistrationStatus,
 } from "../../enums";
@@ -219,7 +221,11 @@ function CalendarPage() {
     eventsCastles &&
     eventsCastles[eventsCastlesModalOpen];
   const castlesPublishedModal = castlesModal
-    ? castlesModal.filter((castle: any) => castle.is_published)
+    ? castlesModal.filter(
+        (castle: any) =>
+          castle.is_published ||
+          (user && user.permission_level >= PermissionLevel.ADMIN),
+      )
     : undefined;
 
   const content = (
@@ -305,7 +311,12 @@ function CalendarPage() {
                 {events.results.map((event: any, i: number, row: any) => {
                   const castles = eventsCastles[event.id];
                   const castlesPublished = castles
-                    ? castles.filter((castle: any) => castle.is_published)
+                    ? castles.filter(
+                        (castle: any) =>
+                          castle.is_published ||
+                          (user &&
+                            user.permission_level >= PermissionLevel.ADMIN),
+                      )
                     : undefined;
 
                   const registrationByUserId = Object.fromEntries(
@@ -412,10 +423,17 @@ function CalendarPage() {
                                               key={i}
                                             >
                                               <span>{castle.name}</span>
-                                              {castle.is_published && (
+                                              {(castle.is_published ||
+                                                (user &&
+                                                  user.permission_level >=
+                                                    PermissionLevel.ADMIN)) && (
                                                 <>
                                                   {" ("}
-                                                  <IconAttachFile />
+                                                  {castle.is_published ? (
+                                                    <IconAttachFile />
+                                                  ) : (
+                                                    <IconVisibilityOff />
+                                                  )}
                                                   {")"}
                                                 </>
                                               )}
@@ -624,7 +642,20 @@ function CalendarPage() {
                                 }}
                               >
                                 {castlesPublished.map((castle: any) => (
-                                  <Tab label={castle.name} />
+                                  <Tab
+                                    label={
+                                      <Typography
+                                        variant="body2"
+                                        component="div"
+                                        className={styles.tabLabelText}
+                                      >
+                                        {castle.name}
+                                        {!castle.is_published && (
+                                          <IconVisibilityOff />
+                                        )}
+                                      </Typography>
+                                    }
+                                  />
                                 ))}
                               </Tabs>
                               <Divider />

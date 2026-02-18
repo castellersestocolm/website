@@ -107,11 +107,33 @@ class Place:
         self.is_family = is_family
 
 
+class Text:
+    placement: Placement
+    size: Size
+    text: str
+
+    external_id: int
+
+    def __init__(
+        self,
+        placement: Placement,
+        size: Size,
+        text: str,
+        external_id: int,
+    ) -> None:
+        self.placement = placement
+        self.size = size
+        self.text = text
+
+        self.external_id = external_id
+
+
 class Tower:
     name: str
     order: int
     places: list[Place]
     responsible: Responsible | None = None
+    texts: list[Text] | None = None
 
     external_id: int
 
@@ -123,6 +145,7 @@ class Tower:
         places: list[Place],
         external_id: int,
         responsible: Responsible | None = None,
+        texts: list[Text] | None = None,
     ) -> None:
         self.name = name
         self.order = order
@@ -132,3 +155,4 @@ class Tower:
         self.external_id = external_id
 
         self.responsible = responsible
+        self.texts = texts

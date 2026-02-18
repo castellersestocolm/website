@@ -41,3 +41,5 @@ POSITION_TYPE_TO_PINYATOR_POSITIONS = {
     ]
     for position_type in PositionType
 }
+
+TEXT_CONTENTS = ["plena", "rengla", "buida"]

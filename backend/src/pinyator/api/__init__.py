@@ -1,3 +1,4 @@
+import re
 from uuid import UUID
 
 from django.db.models import Prefetch
@@ -6,7 +7,7 @@ from django.utils import timezone
 from comunicat.enums import Module
 from event.enums import EventType, RegistrationStatus
 from event.models import Event, AgendaItem, Registration
-from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS
+from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS, TEXT_CONTENTS
 from towers.enums import PositionType
 from towers.types import (
     Tower,
@@ -16,6 +17,7 @@ from towers.types import (
     Size,
     PlaceExtra,
     Responsible,
+    Text,
 )
 from user.enums import FamilyMemberStatus
 from user.models import User, FamilyMember
@@ -224,6 +226,7 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
 
     pinyator_positions = {}
     pinyator_positions_extra = {}
+    pinyator_texts = {}
 
     for pinyator_tower_id, __, __, __ in pinyator_castles:
         cursor.execute(
@@ -236,6 +239,48 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
             f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, ps.Cordo, ps.Seguent, ps.Linkat, ps.Cordo, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text, ps.Altura_Extra FROM CASTELL_POSICIO AS ps JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0' AND ps.text != '' AND ps.Forma != 6"
         )
         pinyator_positions_extra[pinyator_tower_id] = cursor.fetchall()
+
+    for pinyator_tower_id, __, __, __ in pinyator_castles:
+        cursor.execute(
+            f"SELECT DISTINCT ps.CASELLA_ID, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text FROM CASTELL_POSICIO AS ps WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID = '0' AND ps.text != '' AND ps.Forma = 6"
+        )
+        pinyator_texts[pinyator_tower_id] = cursor.fetchall()
+
+    height_by_tower_and_external_id = {}
+    for pinyator_tower_id, __, __, __ in pinyator_castles:
+        for (
+            pinyator_place_id,
+            __,
+            __,
+            position_user_id,
+            __,
+            __,
+            __,
+            __,
+            __,
+            __,
+            __,
+            __,
+            __,
+            __,
+            __,
+            extra_height,
+        ) in pinyator_positions[pinyator_tower_id]:
+            if not position_user_id or position_user_id not in user_by_id:
+                continue
+
+            user_obj = user_by_id.get(position_user_id)
+
+            if (
+                not hasattr(user_obj, "towers")
+                or not user_obj.towers.height_shoulders
+                or user_obj.towers.height_shoulders <= 1
+            ):
+                continue
+
+            height_by_tower_and_external_id[(pinyator_tower_id, pinyator_place_id)] = (
+                user_obj.towers.height_shoulders
+            )
 
     return [
         Tower(
@@ -332,6 +377,43 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
                     ]
                 ]
             ),
+            texts=[
+                Text(
+                    placement=Placement(
+                        x=pos_x,
+                        y=pos_y,
+                        angle=pos_angle,
+                    ),
+                    size=Size(
+                        width=size_w,
+                        height=size_h,
+                    ),
+                    text=(
+                        sum(
+                            [
+                                height_by_tower_and_external_id.get(
+                                    (pinyator_tower_id, int(external_id)), 0
+                                )
+                                for external_id in (
+                                    re.match(r"SUM\((.+)\)", extra_text).group(1) or []
+                                )
+                                .replace(";", ",")
+                                .split(",")
+                            ]
+                        )
+                        if extra_text.startswith("SUM(")
+                        else extra_text
+                    ),
+                    external_id=pinyator_place_id,
+                )
+                for pinyator_place_id, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text in pinyator_texts[
+                    pinyator_tower_id
+                ]
+                if extra_text
+                and (
+                    extra_text.lower() in TEXT_CONTENTS or extra_text.startswith("SUM(")
+                )
+            ],
         )
         for pinyator_tower_id, name, order, is_published in pinyator_castles
     ]

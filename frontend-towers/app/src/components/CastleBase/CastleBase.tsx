@@ -203,6 +203,9 @@ export default function CastleBase({ castle }: any) {
       (castlePlace: any) => castlePlace.position.type != null,
     );
 
+  const castleTexts =
+    castle && castle.texts.filter((castleText: any) => castleText.text);
+
   const castlePlacesPinya =
     castlePlaces &&
     castlePlaces.filter((castlePlace: any) => {
@@ -368,15 +371,27 @@ export default function CastleBase({ castle }: any) {
 
   const minX = Math.min(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.x),
+    ...(castleTexts
+      ? castleTexts.map((castleText: any) => castleText.placement.x)
+      : []),
   );
   const minY = Math.min(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.y),
+    ...(castleTexts
+      ? castleTexts.map((castleText: any) => castleText.placement.y)
+      : []),
   );
   const maxX = Math.max(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.x),
+    ...(castleTexts
+      ? castleTexts.map((castleText: any) => castleText.placement.x)
+      : []),
   );
   const maxY = Math.max(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.y),
+    ...(castleTexts
+      ? castleTexts.map((castleText: any) => castleText.placement.y)
+      : []),
   );
 
   const sceneWidth = maxX - minX + 150;
@@ -539,6 +554,46 @@ export default function CastleBase({ castle }: any) {
               </>
             );
           })}
+          {castleTexts &&
+            castleTexts.map((castleText: any) => {
+              return (
+                <>
+                  <Label
+                    x={
+                      castleText.placement.x -
+                      minX +
+                      (actualDisplayTronc ? 35 : 75)
+                    }
+                    y={
+                      castleText.placement.y -
+                      minY +
+                      (actualDisplayTronc ? 10 : 15)
+                    }
+                    width={castleText.size.width}
+                    height={castleText.size.height}
+                    rotation={castleText.placement.angle}
+                  >
+                    <Text
+                      text={castleText.text}
+                      fontFamily="DM Sans"
+                      fontSize={Math.round(
+                        Math.sqrt(
+                          Math.pow(castleText.size.width, 2) +
+                            Math.pow(castleText.size.height, 2),
+                        ) / 5.5,
+                      )}
+                      fontStyle={"bold"}
+                      align="center"
+                      padding={2}
+                      verticalAlign="middle"
+                      fill={"#1d1d1d"}
+                      width={castleText.size.width}
+                      height={castleText.size.height}
+                    />
+                  </Label>
+                </>
+              );
+            })}
         </Layer>
       </Stage>
       {castlePlacesPinya && castlePlacesPinya.length > 0 && (

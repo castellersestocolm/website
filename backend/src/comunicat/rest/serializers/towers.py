@@ -1,6 +1,3 @@
-from os import readv
-
-from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField
@@ -29,22 +26,6 @@ class ResponsibleSerializer(s.Serializer):
     extra = PlaceExtraSerializer(read_only=True)
 
 
-class TowerSerializer(s.Serializer):
-    name = s.CharField(read_only=True)
-    order = s.IntegerField(read_only=True)
-    is_published = s.BooleanField(read_only=True)
-
-    external_id = s.IntegerField(read_only=True)
-
-    responsible = ResponsibleSerializer(required=False, read_only=True)
-
-
-class PositionSerializer(s.Serializer):
-    type = IntEnumField(enum=PositionType, read_only=True)
-
-    external_id = s.IntegerField(read_only=True)
-
-
 class PlacementSerializer(s.Serializer):
     x = s.IntegerField(read_only=True)
     y = s.IntegerField(read_only=True)
@@ -54,6 +35,32 @@ class PlacementSerializer(s.Serializer):
 class SizeSerializer(s.Serializer):
     width = s.IntegerField(read_only=True)
     height = s.IntegerField(read_only=True)
+
+
+class TextSerializer(s.Serializer):
+    placement = PlacementSerializer(read_only=True)
+    size = SizeSerializer(read_only=True)
+    text = s.CharField(required=False, read_only=True)
+
+    external_id = s.IntegerField(read_only=True)
+
+
+class TowerSerializer(s.Serializer):
+    name = s.CharField(read_only=True)
+    order = s.IntegerField(read_only=True)
+    is_published = s.BooleanField(read_only=True)
+
+    external_id = s.IntegerField(read_only=True)
+
+    responsible = ResponsibleSerializer(required=False, read_only=True)
+
+    texts = TextSerializer(read_only=True, many=True)
+
+
+class PositionSerializer(s.Serializer):
+    type = IntEnumField(enum=PositionType, read_only=True)
+
+    external_id = s.IntegerField(read_only=True)
 
 
 class PlaceSlimSerializer(s.Serializer):
