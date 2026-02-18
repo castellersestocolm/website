@@ -1,0 +1,240 @@
+.dashboard {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+}
+
+.dashboardTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+}
+
+.dashboardTemporary {
+  margin-bottom: 8px !important;
+}
+
+.link {
+  display: inline-flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.iconEast {
+  margin-top: -2px;
+  margin-left: 4px;
+}
+
+.dashboardGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.eventGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.eventCard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.eventCardIcon {
+  min-width: 42px !important;
+}
+
+.eventCardInner {
+  display: flex;
+  flex: 1;
+}
+
+.eventCardListItem {
+  flex: 1;
+}
+
+.eventCastlesBox {
+  margin-top: 8px;
+  white-space: break-spaces;
+}
+
+.eventCastleBox {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+
+  svg {
+    font-size: 0.875rem;
+    margin: 0 -2px;
+  }
+}
+
+.eventRegistrationsBox {
+  margin-top: 8px;
+}
+
+.eventRegistrationBox {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 16px;
+  margin-bottom: 2px;
+
+  svg {
+    font-size: 0.875rem;
+    margin-right: 4px;
+  }
+}
+
+.eventRegistrationActive {
+  color: var(--mui-palette-success-main);
+}
+
+.eventRegistrationNotActive {
+  color: var(--mui-palette-error-main);
+}
+
+.userFamilyList {
+  width: 100%;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  div:first-of-type {
+    min-width: 36px !important;
+  }
+}
+
+.userFamilyListActionButtons {
+  align-self: stretch;
+  align-items: center;
+  display: flex;
+  margin: -4px 0;
+}
+
+.userFamilyMemberUpdate {
+  padding: 12px 16px 16px 16px;
+}
+
+.calendarAttendanceUpdate {
+  padding: 8px 16px;
+}
+
+.userFamilyEmpty {
+  padding: 12px 16px 16px 16px;
+}
+
+.userTopBox {
+  padding: 12px 16px;
+  background-color: var(--mui-palette-primary-main);
+}
+
+.userDetailsBox {
+  padding: 8px 16px;
+  flex: 1 1 auto;
+}
+
+.userMembershipInfoBox {
+  padding: 12px 16px 16px 16px;
+}
+
+.userList {
+  li {
+    padding: 0 !important;
+    div {
+      min-width: 36px !important;
+    }
+  }
+}
+
+.dashboardMembershipModule {
+  display: block;
+}
+
+.paymentRefundIcon {
+  margin-bottom: -2px;
+}
+
+.tabLabelText {
+  display: flex;
+  align-items: center;
+  & svg {
+    font-size: 0.875rem;
+    margin-left: 4px;
+  }
+}
+
+.calendarMap {
+  height: 300px;
+}
+
+.modalBox {
+  background-color: var(--mui-palette-common-white);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  > div {
+    flex-grow: 1;
+    align-content: center;
+    overflow-y: scroll;
+  }
+}
+
+.modalTabContent {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  overflow-y: visible;
+  overflow-x: visible;
+  > * {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > * {
+      width: 100%;
+      height: 100%;
+      padding: 0 !important;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.modelTabs {
+  border-bottom: 1px solid var(--mui-palette-divider);
+  flex-grow: unset !important;
+}
+
+.modalTabLabel {
+  min-width: 48px !important;
+}
+
+.modalClose {
+  padding: 12px 16px !important;
+  margin-left: auto !important;
+  border-radius: 0 !important;
+  min-width: unset !important;
+  svg {
+    opacity: 0.9;
+    color: var(--mui-palette-primary-contrastText) !important;
+  }
+}
+
+.externalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
+  height: 20px !important;
+  width: 20px !important;
+}

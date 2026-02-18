@@ -71,7 +71,6 @@ import {
   RegistrationStatus,
   OrderStatus,
   ORDER_STATUS_ICON,
-  REGISTRATION_STATUS_ICON,
 } from "../../enums";
 import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
@@ -82,7 +81,6 @@ import IconAttachFile from "@mui/icons-material/AttachFile";
 import IconDowload from "@mui/icons-material/Download";
 import Pagination from "@mui/material/Pagination";
 import {
-  API_EVENTS_RECENT_LIST_PAGE_SIZE,
   API_EXPENSES_LIST_PAGE_SIZE,
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
@@ -96,13 +94,11 @@ import QRCode from "qrcode";
 import { get_event_icon, getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
-import IconArrowOutward from "@mui/icons-material/ArrowOutward";
+import EventAgenda from "../../components/EventAgenda/EventAgenda";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
-const GOOGLE_PHOTOS_URL = "https://photos.app.goo.gl/";
-const GOOGLE_DRIVE_URL = "https://drive.google.com/drive/u/1/folders/";
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
@@ -166,8 +162,6 @@ function UserDashboardPage() {
   const [expensePage, setExpensePage] = React.useState(1);
   const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
-  const [recentEventsPage, setRecentEventsPage] = React.useState(1);
-  const [recentEvents, setRecentEvents] = React.useState(undefined);
   const [membershipRenewOptions, setMembershipRenewOptions] =
     React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
@@ -297,24 +291,6 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setPayments, paymentPage]);
-
-  React.useEffect(() => {
-    apiEventList(
-      recentEventsPage,
-      undefined,
-      undefined,
-      null,
-      new Date().toISOString().substring(0, 10),
-      undefined,
-      undefined,
-      undefined,
-      ["-time_from"],
-    ).then((response) => {
-      if (response.status === 200) {
-        setRecentEvents(response.data);
-      }
-    });
-  }, [i18n.resolvedLanguage, setRecentEvents, recentEventsPage]);
 
   React.useEffect(() => {
     if (user) {
@@ -1139,262 +1115,7 @@ function UserDashboardPage() {
           </Grid>
         )}
 
-        {recentEvents && recentEvents.results.length > 0 && (
-          <Grid>
-            <Grid container spacing={2} direction="column">
-              <Card variant="outlined">
-                <Box className={styles.userTopBox}>
-                  <Typography variant="h6" fontWeight="600" component="div">
-                    {t("pages.user-dashboard.section.events.title")}
-                  </Typography>
-                </Box>
-                <Divider />
-                <Box className={styles.userFamilyBox}>
-                  <List className={styles.userFamilyList}>
-                    {recentEvents.results.map(
-                      (recentEvent: any, i: number, row: any) => {
-                        const eventUsers =
-                          user &&
-                          user.family &&
-                          getEventUsers(
-                            recentEvent,
-                            user.family.members.map(
-                              (member: any) => member.user,
-                            ),
-                          );
-
-                        const registrationByUserId = Object.fromEntries(
-                          recentEvent.registrations.map((registration: any) => [
-                            registration.user.id,
-                            registration,
-                          ]),
-                        );
-
-                        return (
-                          <Box key={recentEvent.id}>
-                            <ListItemButton disableTouchRipple dense>
-                              <ListItemIcon>
-                                {get_event_icon(
-                                  recentEvent.type,
-                                  recentEvent.modules,
-                                )}
-                              </ListItemIcon>
-                              <Box
-                                className={styles.userFamilyListInner}
-                                flexDirection={{ xs: "column", lg: "row" }}
-                                alignItems={{ xs: "start", lg: "center" }}
-                              >
-                                <ListItemText
-                                  className={styles.userFamilyListItem}
-                                  disableTypography
-                                  primary={
-                                    <Typography variant="body2">
-                                      {recentEvent.title +
-                                        ((recentEvent.type ===
-                                          EventType.REHEARSAL ||
-                                          recentEvent.type ===
-                                            EventType.WORKSHOP) &&
-                                        recentEvent.location !== null
-                                          ? " — " + recentEvent.location.name
-                                          : "")}
-                                    </Typography>
-                                  }
-                                  secondary={
-                                    <>
-                                      <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                      >
-                                        {capitalizeFirstLetter(
-                                          new Date(
-                                            recentEvent.time_from,
-                                          ).toLocaleDateString(
-                                            i18n.resolvedLanguage,
-                                            {
-                                              day: "numeric",
-                                              month: "long",
-                                              year: "numeric",
-                                            },
-                                          ),
-                                        ) +
-                                          " " +
-                                          new Date(recentEvent.time_from)
-                                            .toTimeString()
-                                            .slice(0, 5) +
-                                          " → " +
-                                          new Date(recentEvent.time_to)
-                                            .toTimeString()
-                                            .slice(0, 5)}
-                                      </Typography>
-                                      {eventUsers &&
-                                        eventUsers.length > 0 &&
-                                        recentEvent.require_signup && (
-                                          <Box
-                                            className={
-                                              styles.eventRegistrationsBox
-                                            }
-                                          >
-                                            {eventUsers.map(
-                                              (eventUser: any) => {
-                                                const registration =
-                                                  registrationByUserId[
-                                                    eventUser.id
-                                                  ];
-                                                return (
-                                                  <Box
-                                                    key={eventUser.id}
-                                                    className={
-                                                      styles.eventRegistrationBox
-                                                    }
-                                                    style={{
-                                                      color: registration
-                                                        ? registration.status ===
-                                                          RegistrationStatus.ACTIVE
-                                                          ? "var(--mui-palette-success-main)"
-                                                          : "var(--mui-palette-error-main)"
-                                                        : "var(--mui-palette-error-main)",
-                                                      whiteSpace: "nowrap",
-                                                    }}
-                                                  >
-                                                    {
-                                                      REGISTRATION_STATUS_ICON[
-                                                        registration
-                                                          ? registration.status
-                                                          : RegistrationStatus.CANCELLED
-                                                      ]
-                                                    }
-                                                    <Typography variant="body2">
-                                                      {user.family.members
-                                                        .length > 1
-                                                        ? eventUser.lastname
-                                                          ? eventUser.firstname +
-                                                            " " +
-                                                            eventUser.lastname
-                                                          : eventUser.firstname
-                                                        : registration &&
-                                                            registration.status ===
-                                                              RegistrationStatus.ACTIVE
-                                                          ? t(
-                                                              "pages.calendar.section.agenda.event.attendance-attended",
-                                                            )
-                                                          : t(
-                                                              "pages.calendar.section.agenda.event.attendance-not-attended",
-                                                            )}
-                                                    </Typography>
-                                                  </Box>
-                                                );
-                                              },
-                                            )}
-                                          </Box>
-                                        )}
-                                    </>
-                                  }
-                                />
-                                {recentEvent.google_album &&
-                                  recentEvent.google_album &&
-                                  (recentEvent.google_album.photos_album ||
-                                    recentEvent.google_album.drive_album) && (
-                                    <Stack
-                                      direction="row"
-                                      spacing={2}
-                                      marginLeft={{ xs: "0", lg: "16px" }}
-                                      marginTop={{ xs: "8px", lg: "0" }}
-                                      marginBottom={{ xs: "8px", lg: "0" }}
-                                      whiteSpace="nowrap"
-                                    >
-                                      {recentEvent.google_album &&
-                                        recentEvent.google_album
-                                          .photos_album && (
-                                          <Button
-                                            variant="contained"
-                                            type="submit"
-                                            style={{ width: "auto" }}
-                                            target={"_blank"}
-                                            disableElevation
-                                            disabled={
-                                              !recentEvent.google_album ||
-                                              !recentEvent.google_album
-                                                .photos_album
-                                            }
-                                            href={
-                                              recentEvent.google_album &&
-                                              recentEvent.google_album
-                                                .photos_album &&
-                                              GOOGLE_PHOTOS_URL +
-                                                recentEvent.google_album
-                                                  .photos_album.external_id
-                                            }
-                                          >
-                                            {t(
-                                              "pages.user-dashboard.section.events.show-photos-album",
-                                            )}
-                                            <IconArrowOutward
-                                              className={styles.externalIcon}
-                                            />
-                                          </Button>
-                                        )}
-                                      {recentEvent.google_album &&
-                                        recentEvent.google_album
-                                          .drive_album && (
-                                          <Button
-                                            variant="contained"
-                                            type="submit"
-                                            style={{ width: "auto" }}
-                                            target={"_blank"}
-                                            disableElevation
-                                            disabled={
-                                              !recentEvent.google_album ||
-                                              !recentEvent.google_album
-                                                .drive_album
-                                            }
-                                            href={
-                                              recentEvent.google_album &&
-                                              recentEvent.google_album
-                                                .drive_album &&
-                                              GOOGLE_DRIVE_URL +
-                                                recentEvent.google_album
-                                                  .drive_album.external_id
-                                            }
-                                          >
-                                            {t(
-                                              "pages.user-dashboard.section.events.show-drive-album",
-                                            )}
-                                            <IconArrowOutward
-                                              className={styles.externalIcon}
-                                            />
-                                          </Button>
-                                        )}
-                                    </Stack>
-                                  )}
-                              </Box>
-                            </ListItemButton>
-
-                            {i + 1 < row.length && <Divider />}
-                          </Box>
-                        );
-                      },
-                    )}
-                  </List>
-                </Box>
-              </Card>
-              {recentEvents &&
-                recentEvents.results.length > 0 &&
-                (recentEventsPage !== 1 ||
-                  recentEvents.count > recentEvents.results.length) && (
-                  <Stack alignItems="center">
-                    <Pagination
-                      count={Math.ceil(
-                        recentEvents.count / API_EVENTS_RECENT_LIST_PAGE_SIZE,
-                      )}
-                      onChange={(e: any, value: number) =>
-                        setRecentEventsPage(value)
-                      }
-                    />
-                  </Stack>
-                )}
-            </Grid>
-          </Grid>
-        )}
+        <EventAgenda isPast={true} asList={true} asCard={true} />
 
         <Grid
           container
