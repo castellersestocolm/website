@@ -600,19 +600,22 @@ export default function CastleBase({ castle }: any) {
             })}
         </Layer>
       </Stage>
-      {castlePlacesPinya && castlePlacesPinya.length > 0 && (
-        <FormGroup>
-          <FormControlLabel
-            className={styles.optionsCastleSwitch}
-            control={
-              <Switch
-                onChange={(event) => setDisplayTronc(event.target.checked)}
-              />
-            }
-            label={t("pages.calendar.section.agenda.event.castles-troncs")}
-          />
-        </FormGroup>
-      )}
+      {castlePlacesPinya &&
+        castlePlacesPinya.filter(
+          (castlePlace: any) => castlePlace.position.type !== PositionType.BAIX,
+        ).length > 0 && (
+          <FormGroup>
+            <FormControlLabel
+              className={styles.optionsCastleSwitch}
+              control={
+                <Switch
+                  onChange={(event) => setDisplayTronc(event.target.checked)}
+                />
+              }
+              label={t("pages.calendar.section.agenda.event.castles-troncs")}
+            />
+          </FormGroup>
+        )}
       {castlePlacesFamilyInstructions &&
         castlePlacesFamilyInstructions.length > 0 && (
           <Box className={styles.optionsCastlePositions}>
