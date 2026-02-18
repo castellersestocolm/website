@@ -88,7 +88,7 @@ function EventsBox({ content, asCard = false }: any) {
   if (asCard) {
     return (
       <Grid>
-        <Grid container spacing={2} direction="column">
+        <Grid container spacing={2} direction="column" flexWrap="nowrap">
           <Card variant="outlined">
             <Box className={styles.userTopBox}>
               <Typography variant="h6" fontWeight="600" component="div">
