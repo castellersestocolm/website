@@ -87,20 +87,18 @@ function EventsBox({ content, asCard = false }: any) {
 
   if (asCard) {
     return (
-      <Grid>
-        <Grid container spacing={2} direction="column" flexWrap="nowrap">
-          <Card variant="outlined">
-            <Box className={styles.userTopBox}>
-              <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.user-dashboard.section.events.title")}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box>
-              <List className={styles.userFamilyList}>{content}</List>
-            </Box>
-          </Card>
-        </Grid>
+      <Grid container spacing={2} direction="column" flexWrap="nowrap">
+        <Card variant="outlined">
+          <Box className={styles.userTopBox}>
+            <Typography variant="h6" fontWeight="600" component="div">
+              {t("pages.user-dashboard.section.events.title")}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box>
+            <List className={styles.userFamilyList}>{content}</List>
+          </Box>
+        </Card>
       </Grid>
     );
   }
@@ -752,7 +750,13 @@ export default function EventAgenda({
         </Modal>
       )}
       {events && events.count > 0 && (
-        <Grid container spacing={2} width="100%" direction="column">
+        <Grid
+          container
+          spacing={2}
+          width="100%"
+          direction="column"
+          flexWrap="nowrap"
+        >
           <EventsBox content={eventsContent} asCard={asCard} />
           {events &&
             events.results.length > 0 &&

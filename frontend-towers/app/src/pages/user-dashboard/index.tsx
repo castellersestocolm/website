@@ -1188,7 +1188,7 @@ function UserDashboardPage() {
                                       }
                                       component="span"
                                     >
-                                      {payment.amount.amount}{" "}
+                                      {Math.abs(payment.amount.amount)}{" "}
                                       {payment.amount.currency}
                                       {payment.type === PaymentType.CREDIT && (
                                         <>
