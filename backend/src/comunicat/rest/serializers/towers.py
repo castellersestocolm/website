@@ -24,7 +24,10 @@ class TowerUserTowersSerializer(s.Serializer):
         serializer_or_field=s.IntegerField(required=False, read_only=True)
     )
     def get_height_shoulders(self, obj):
-        if self.context["user"].permission_level >= PermissionLevel.ADMIN:
+        if (
+            "user" in self.context
+            and self.context["user"].permission_level >= PermissionLevel.ADMIN
+        ):
             return obj.height_shoulders
 
         return None
@@ -33,7 +36,10 @@ class TowerUserTowersSerializer(s.Serializer):
         serializer_or_field=s.IntegerField(required=False, read_only=True)
     )
     def get_height_arms(self, obj):
-        if self.context["user"].permission_level >= PermissionLevel.ADMIN:
+        if (
+            "user" in self.context
+            and self.context["user"].permission_level >= PermissionLevel.ADMIN
+        ):
             return obj.height_arms
 
         return None
