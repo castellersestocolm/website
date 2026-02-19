@@ -285,10 +285,10 @@ def send_registration_message(registration_id: UUID) -> MessageSlack | None:
         settings, f"SLACK_{Module(registration_obj.event.module).name}_ATTENDANCE_TIME"
     )
 
-    if not attendance_hours or not (
+    if attendance_hours is None or not (
         registration_obj.event.time_from - timezone.timedelta(hours=attendance_hours)
-        >= timezone.localtime()
-        >= registration_obj.event.time_to
+        <= timezone.localtime()
+        <= registration_obj.event.time_to
     ):
         return None
 
