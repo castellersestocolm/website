@@ -38,8 +38,19 @@ class SlackAPIClient(SlackClient):
             token=getattr(settings, f"SLACK_{Module(module).name}_BOT_TOKEN")
         )
 
-    def chat_post_message(self, channel: str, blocks: list[dict]) -> SlackResponse:
-        return self.slack.chat_postMessage(channel=channel, blocks=blocks)
+    def chat_post_message(
+        self,
+        channel: str,
+        blocks: list[dict],
+        unfurl_links: bool = True,
+        unfurl_media: bool = True,
+    ) -> SlackResponse:
+        return self.slack.chat_postMessage(
+            channel=channel,
+            blocks=blocks,
+            unfurl_links=unfurl_links,
+            unfurl_media=unfurl_media,
+        )
 
 
 def get_client(module: Module) -> Union[SlackDummyClient, SlackAPIClient]:

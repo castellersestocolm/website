@@ -22,10 +22,21 @@ from order.models import Order, OrderProduct, OrderLog
 from product.models import ProductSize
 
 
-def post_message(channel_id: str, blocks: list[dict], module: Module) -> Optional[str]:
+def post_message(
+    channel_id: str,
+    blocks: list[dict],
+    module: Module,
+    unfurl_links: bool = True,
+    unfurl_media: bool = True,
+) -> Optional[str]:
     client = get_client(module=module)
 
-    response_message = client.chat_post_message(channel=channel_id, blocks=blocks)
+    response_message = client.chat_post_message(
+        channel=channel_id,
+        blocks=blocks,
+        unfurl_links=unfurl_links,
+        unfurl_media=unfurl_media,
+    )
 
     if response_message["ok"]:
         return response_message["ts"]
@@ -336,7 +347,11 @@ def send_registration_message(registration_id: UUID) -> MessageSlack | None:
     ]
 
     message_id = post_message(
-        channel_id=channel_id, blocks=blocks, module=registration_obj.event.module
+        channel_id=channel_id,
+        blocks=blocks,
+        module=registration_obj.event.module,
+        unfurl_links=False,
+        unfurl_media=False,
     )
 
     return MessageSlack.objects.create(
