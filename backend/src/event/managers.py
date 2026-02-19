@@ -97,3 +97,10 @@ class RegistrationQuerySet(QuerySet):
 
     def filter_with_user(self):
         return self.filter(entity__user__isnull=False)
+
+    def with_event_title(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            event_title_locale=F(f"event__title__{locale}"),
+        )

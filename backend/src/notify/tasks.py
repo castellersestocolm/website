@@ -4,7 +4,11 @@ from celery import shared_task
 
 from comunicat.enums import Module
 from notify.api.email import send_email
-from notify.api.slack.chat import send_order_message, send_contact_message
+from notify.api.slack.chat import (
+    send_order_message,
+    send_contact_message,
+    send_registration_message,
+)
 from notify.api.template import (
     get_generic_email_render,
     get_registration_email_renders,
@@ -256,3 +260,10 @@ def send_contact_message_slack(
     contact_message_id: UUID,
 ) -> None:
     send_contact_message(contact_message_id=contact_message_id)
+
+
+@shared_task
+def send_registration_message_slack(
+    registration_id: UUID,
+) -> None:
+    send_registration_message(registration_id=registration_id)

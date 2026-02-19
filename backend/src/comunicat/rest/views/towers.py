@@ -45,6 +45,8 @@ class TowersCastleAPI(
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(event_towers, request)
         serializer = self.serializer_class(
-            result_page, context={"module": self.module, "user": request.user}, many=True
+            result_page,
+            context={"module": self.module, "user": request.user},
+            many=True,
         )
         return paginator.get_paginated_response(serializer.data)

@@ -25,8 +25,11 @@ from user.models import User
 
 
 @register.simple_tag
-def full_url(path: str):
-    return urljoin(f"{settings.HTTP_PROTOCOL}://{settings.DOMAIN}/", path)
+def full_url(path: str, module: Module | None = None):
+    return urljoin(
+        f"{settings.HTTP_PROTOCOL}://{getattr(settings, f"MODULE_{Module(module).name}_DOMAIN")if module is not None else settings.DOMAIN}/",
+        path,
+    )
 
 
 @register.simple_tag

@@ -8,6 +8,8 @@ from event.models import Registration, Event
 from event.utils.event import get_registration_initial_status
 from user.models import FamilyMember
 
+import notify.tasks
+
 
 def get_list(
     event_id: UUID,
@@ -50,6 +52,10 @@ def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> bool
 
     registration_obj.status = RegistrationStatus.CANCELLED
     registration_obj.save(update_fields=("status",))
+
+    notify.tasks.send_registration_message_slack.delay(
+        registration_id=registration_obj.id,
+    )
 
     return True
 
@@ -97,5 +103,9 @@ def create(
         registration_obj = Registration.objects.create(
             entity=entity_obj, event_id=event_id, status=registration_status
         )
+
+    notify.tasks.send_registration_message_slack.delay(
+        registration_id=registration_obj.id,
+    )
 
     return registration_obj

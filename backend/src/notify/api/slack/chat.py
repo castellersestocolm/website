@@ -9,6 +9,8 @@ from drf_yasg.openapi import Contact
 
 from comunicat.enums import Module
 from comunicat.template_tags.comunicat_tags import full_url, full_media
+from event.enums import RegistrationStatus
+from event.models import Registration
 from notify.api.slack import get_client
 
 from django.utils.translation import gettext_lazy as _
@@ -31,7 +33,7 @@ def post_message(channel_id: str, blocks: list[dict], module: Module) -> Optiona
     return None
 
 
-def send_order_message(order_id: UUID) -> MessageSlack:
+def send_order_message(order_id: UUID) -> MessageSlack | None:
     order_obj = (
         Order.objects.filter(id=order_id)
         .select_related(
@@ -60,6 +62,16 @@ def send_order_message(order_id: UUID) -> MessageSlack:
         .order_by("-created_at")
         .first()
     )
+
+    if not order_obj:
+        return None
+
+    channel_id = getattr(
+        settings, f"SLACK_{Module(order_obj.origin_module).name}_CHANNEL_ORDERS"
+    )
+
+    if not channel_id:
+        return None
 
     product_size_obj_by_id = {
         product_size_obj.id: product_size_obj
@@ -153,10 +165,6 @@ def send_order_message(order_id: UUID) -> MessageSlack:
         },
     ]
 
-    channel_id = getattr(
-        settings, f"SLACK_{Module(order_obj.origin_module).name}_CHANNEL_ORDERS"
-    )
-
     message_id = post_message(
         channel_id=channel_id, blocks=blocks, module=order_obj.origin_module
     )
@@ -171,7 +179,7 @@ def send_order_message(order_id: UUID) -> MessageSlack:
     )
 
 
-def send_contact_message(contact_message_id: UUID) -> MessageSlack:
+def send_contact_message(contact_message_id: UUID) -> MessageSlack | None:
     contact_message_obj = (
         ContactMessage.objects.filter(id=contact_message_id)
         .select_related(
@@ -179,6 +187,16 @@ def send_contact_message(contact_message_id: UUID) -> MessageSlack:
         )
         .first()
     )
+
+    if not contact_message_obj:
+        return None
+
+    channel_id = getattr(
+        settings, f"SLACK_{Module(contact_message_obj.module).name}_CHANNEL_CONTACT"
+    )
+
+    if not channel_id:
+        return None
 
     blocks = [
         {
@@ -230,10 +248,6 @@ def send_contact_message(contact_message_id: UUID) -> MessageSlack:
         },
     ]
 
-    channel_id = getattr(
-        settings, f"SLACK_{Module(contact_message_obj.module).name}_CHANNEL_CONTACT"
-    )
-
     message_id = post_message(
         channel_id=channel_id, blocks=blocks, module=contact_message_obj.module
     )
@@ -243,6 +257,93 @@ def send_contact_message(contact_message_id: UUID) -> MessageSlack:
         message_id=message_id,
         type=MessageSlackType.CONTACT_MESSAGE_CREATED,
         module=contact_message_obj.module,
+        locale=translation.get_language(),
+        blocks=blocks,
+    )
+
+
+def send_registration_message(registration_id: UUID) -> MessageSlack | None:
+    registration_obj = (
+        Registration.objects.filter(id=registration_id, event__module__isnull=False)
+        .select_related("entity", "entity__user", "event")
+        .with_event_title()
+        .first()
+    )
+
+    if not registration_obj:
+        return None
+
+    channel_id = getattr(
+        settings,
+        f"SLACK_{Module(registration_obj.event.module).name}_CHANNEL_ATTENDANCE",
+    )
+
+    if not channel_id:
+        return None
+
+    attendance_hours = getattr(
+        settings, f"SLACK_{Module(registration_obj.event.module).name}_ATTENDANCE_TIME"
+    )
+
+    if not attendance_hours or not (
+        registration_obj.event.time_from - timezone.timedelta(hours=attendance_hours)
+        >= timezone.localtime()
+        >= registration_obj.event.time_to
+    ):
+        return None
+
+    blocks = [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{_('A registration for an upcoming event has just changed!')}\n*<{full_url(
+                        path="admin/attendance",
+                        module=registration_obj.event.module,
+                    )}|{registration_obj.event_title_locale} — {timezone.localtime(registration_obj.event.time_from).strftime('%Y-%m-%d %H:%M')}>*",
+            },
+        },
+        {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*User*\n{registration_obj.entity.full_name}",
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Status*\n{RegistrationStatus(registration_obj.status).name.capitalize()}",
+                },
+            ],
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": str(_("View attendance")),
+                        "emoji": True,
+                    },
+                    "url": full_url(
+                        path="admin/attendance",
+                        module=registration_obj.event.module,
+                    ),
+                }
+            ],
+        },
+    ]
+
+    message_id = post_message(
+        channel_id=channel_id, blocks=blocks, module=registration_obj.event.module
+    )
+
+    return MessageSlack.objects.create(
+        channel_id=channel_id,
+        message_id=message_id,
+        type=MessageSlackType.REGISTRATION_UPDATED,
+        module=registration_obj.event.module,
         locale=translation.get_language(),
         blocks=blocks,
     )
