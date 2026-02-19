@@ -11,9 +11,14 @@
   padding: calc(2 * var(--mui-spacing));
 }
 
-.optionsCastleSwitch {
+.optionsCastleSwitches {
   margin-top: 8px;
   margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.optionsCastleSwitch {
   margin-left: 0 !important;
   margin-right: 16px !important;
   display: flex;

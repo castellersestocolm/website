@@ -1,6 +1,8 @@
+from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField
+from legal.enums import PermissionLevel
 from towers.enums import PositionType
 
 
@@ -15,6 +17,22 @@ class TowerUserSlimSerializer(s.Serializer):
 
 class TowerUserTowersSerializer(s.Serializer):
     alias = s.CharField(required=False, read_only=True)
+    height_shoulders = s.SerializerMethodField(required=False, read_only=True)
+    height_arms =  s.SerializerMethodField(required=False, read_only=True)
+
+    @swagger_serializer_method(serializer_or_field=s.IntegerField(required=False, read_only=True))
+    def get_height_shoulders(self, obj):
+        if self.context["user"].permission_level >= PermissionLevel.ADMIN:
+            return obj.height_shoulders
+
+        return None
+
+    @swagger_serializer_method(serializer_or_field=s.IntegerField(required=False, read_only=True))
+    def get_height_arms(self, obj):
+        if self.context["user"].permission_level >= PermissionLevel.ADMIN:
+            return obj.height_arms
+
+        return None
 
 
 class TowerUserAliasSerializer(s.Serializer):

@@ -31,8 +31,8 @@ class TowersCastleAPI(
         query_serializer=ListTowerSerializer(),
         responses={200: TowerWithPlacesAliasSerializer(many=True)},
     )
-    @method_decorator(cache_page(60))
-    @method_decorator(cache_control(private=True))
+    # @method_decorator(cache_page(60))
+    # @method_decorator(cache_control(private=True))
     def list(self, request):
         serializer = ListTowerSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -45,6 +45,6 @@ class TowersCastleAPI(
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(event_towers, request)
         serializer = self.serializer_class(
-            result_page, context={"module": self.module}, many=True
+            result_page, context={"module": self.module, "user": request.user}, many=True
         )
         return paginator.get_paginated_response(serializer.data)

@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import { Stage, Label, Layer, Rect, Text } from "react-konva";
 import {
   getEnumLabel,
+  PermissionLevel,
   PositionRelativePlacement,
   PositionType,
 } from "../../enums";
@@ -21,6 +22,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import { useAppContext } from "../AppContext/AppContext";
 
 const COLOUR_BG_BY_POSITION_TYPE: any = {
   10: "#3c3c3c",
@@ -196,6 +198,7 @@ const POSITION_TYPES_RELATIVE_TO_TYPE: any = {
 
 export default function CastleBase({ castle }: any) {
   const { t } = useTranslation("common");
+  const { user } = useAppContext();
 
   const castlePlaces =
     castle &&
@@ -361,6 +364,7 @@ export default function CastleBase({ castle }: any) {
       .sort(compareTowerPlaceFamilyObjects);
 
   const [displayTronc, setDisplayTronc] = useState(false);
+  const [displayHeights, setDisplayHeights] = useState(false);
 
   const actualDisplayTronc =
     displayTronc ||
@@ -375,25 +379,25 @@ export default function CastleBase({ castle }: any) {
 
   const minX = Math.min(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.x),
-    ...(castleTexts
+    ...(castleTexts && actualDisplayTronc
       ? castleTexts.map((castleText: any) => castleText.placement.x)
       : []),
   );
   const minY = Math.min(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.y),
-    ...(castleTexts
+    ...(castleTexts && actualDisplayTronc
       ? castleTexts.map((castleText: any) => castleText.placement.y)
       : []),
   );
   const maxX = Math.max(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.x),
-    ...(castleTexts
+    ...(castleTexts && actualDisplayTronc
       ? castleTexts.map((castleText: any) => castleText.placement.x)
       : []),
   );
   const maxY = Math.max(
     ...currentCastlePlaces.map((castlePlace: any) => castlePlace.placement.y),
-    ...(castleTexts
+    ...(castleTexts && actualDisplayTronc
       ? castleTexts.map((castleText: any) => castleText.placement.y)
       : []),
   );
@@ -528,11 +532,17 @@ export default function CastleBase({ castle }: any) {
                   />
                   <Text
                     text={
+                      displayHeights &&
                       castlePlace.user &&
                       castlePlace.user.towers &&
-                      castlePlace.user.towers.alias
-                        ? castlePlace.user.towers.alias.toUpperCase()
-                        : castlePlace.extra.text.toUpperCase()
+                      castlePlace.user.towers.height_shoulders &&
+                      castlePlace.user.towers.height_shoulders > 1
+                        ? castlePlace.user.towers.height_shoulders
+                        : castlePlace.user &&
+                            castlePlace.user.towers &&
+                            castlePlace.user.towers.alias
+                          ? castlePlace.user.towers.alias.toUpperCase()
+                          : castlePlace.extra.text.toUpperCase()
                     }
                     fontFamily="DM Sans"
                     fontSize={Math.round(
@@ -558,7 +568,8 @@ export default function CastleBase({ castle }: any) {
               </>
             );
           })}
-          {castleTexts &&
+          {actualDisplayTronc &&
+            castleTexts &&
             castleTexts.map((castleText: any) => {
               return (
                 <>
@@ -600,22 +611,41 @@ export default function CastleBase({ castle }: any) {
             })}
         </Layer>
       </Stage>
-      {castlePlacesPinya &&
+
+      {((castlePlacesPinya &&
         castlePlacesPinya.filter(
           (castlePlace: any) => castlePlace.position.type !== PositionType.BAIX,
-        ).length > 0 && (
-          <FormGroup>
+        ).length > 0) ||
+        (user && user.permission_level >= PermissionLevel.ADMIN)) && (
+        <FormGroup className={styles.optionsCastleSwitches}>
+          {castlePlacesPinya &&
+            castlePlacesPinya.filter(
+              (castlePlace: any) =>
+                castlePlace.position.type !== PositionType.BAIX,
+            ).length > 0 && (
+              <FormControlLabel
+                className={styles.optionsCastleSwitch}
+                control={
+                  <Switch
+                    onChange={(event) => setDisplayTronc(event.target.checked)}
+                  />
+                }
+                label={t("pages.calendar.section.agenda.event.castles-troncs")}
+              />
+            )}
+          {user && user.permission_level >= PermissionLevel.ADMIN && (
             <FormControlLabel
               className={styles.optionsCastleSwitch}
               control={
                 <Switch
-                  onChange={(event) => setDisplayTronc(event.target.checked)}
+                  onChange={(event) => setDisplayHeights(event.target.checked)}
                 />
               }
-              label={t("pages.calendar.section.agenda.event.castles-troncs")}
+              label={t("pages.calendar.section.agenda.event.castles-heights")}
             />
-          </FormGroup>
-        )}
+          )}
+        </FormGroup>
+      )}
       {castlePlacesFamilyInstructions &&
         castlePlacesFamilyInstructions.length > 0 && (
           <Box className={styles.optionsCastlePositions}>
@@ -650,13 +680,30 @@ export default function CastleBase({ castle }: any) {
                                 borderRadius: "8px",
                                 borderColor:
                                   castlePlace.position.type in
-                                  COLOUR_BORDER_BY_POSITION_TYPE
-                                    ? COLOUR_BORDER_BY_POSITION_TYPE[
+                                  COLOR_BORDER_BY_POSITION_TYPE_AND_RING
+                                    ? COLOR_BORDER_BY_POSITION_TYPE_AND_RING[
                                         castlePlace.position.type
                                       ]
-                                    : COLOUR_BG_BY_POSITION_TYPE[
-                                        castlePlace.position.type
-                                      ],
+                                        .filter(
+                                          ([minRing, colour]: any) =>
+                                            castlePlace.ring >= minRing,
+                                        )
+                                        .concat([
+                                          [
+                                            0,
+                                            COLOUR_BORDER_BY_POSITION_TYPE[
+                                              castlePlace.position.type
+                                            ],
+                                          ],
+                                        ])[0][1]
+                                    : castlePlace.position.type in
+                                        COLOUR_BORDER_BY_POSITION_TYPE
+                                      ? COLOUR_BORDER_BY_POSITION_TYPE[
+                                          castlePlace.position.type
+                                        ]
+                                      : COLOUR_BG_BY_POSITION_TYPE[
+                                          castlePlace.position.type
+                                        ],
                               }}
                             />
                           </Typography>
