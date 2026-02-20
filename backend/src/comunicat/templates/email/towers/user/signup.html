@@ -2,8 +2,13 @@
 {% load i18n comunicat_tags %}
 
 {% block email_message_pre %}
-    <p>{% trans "We have some upcoming events, please make sure to update your attendance as soon as you can!" %}</p>
-    <h4 style="margin-bottom: 24px;">{% trans "Next events and rehearsals" %}</h4>
+    {% if event_types and event_types|length == 1 and event_types.0 == 60 %}
+        <p>{% trans "We have some upcoming performances, please make sure to update your attendance as soon as you can!" %}</p>
+        <h4 style="margin-bottom: 24px;">{% trans "Next performances" %}</h4>
+    {% else %}
+        <p>{% trans "We have some upcoming events, please make sure to update your attendance as soon as you can!" %}</p>
+        <h4 style="margin-bottom: 24px;">{% trans "Next events and rehearsals" %}</h4>
+    {% endif %}
     <div style="margin-bottom: 12px;">
         {% for event_obj in event_objs %}
             {% with event_obj.id|stringformat:"s" as event_id %}

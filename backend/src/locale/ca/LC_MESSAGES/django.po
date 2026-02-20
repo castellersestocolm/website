@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-27 16:41+0100\n"
+"POT-Creation-Date: 2026-02-20 18:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,8 +19,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: activity/admin.py:59 activity/admin.py:144 data/admin.py:39 data/admin.py:70
-#: data/admin.py:94 legal/admin.py:40 legal/admin.py:64 order/admin.py:255
-#: payment/admin.py:502 payment/admin.py:754 product/admin.py:88
+#: data/admin.py:94 legal/admin.py:31 legal/admin.py:76 legal/admin.py:100
+#: order/admin.py:255 payment/admin.py:539 payment/admin.py:791
+#: product/admin.py:88
 msgid "name"
 msgstr "nom"
 
@@ -516,7 +517,19 @@ msgstr ""
 msgid "Confirm email"
 msgstr "Confirma el teu correu"
 
-#: comunicat/templates/email/towers/user/signup.html:5
+#: comunicat/templates/email/towers/user/signup.html:6
+msgid ""
+"We have some upcoming performances, please make sure to update your "
+"attendance as soon as you can!"
+msgstr ""
+"Tenim actuacions properes, assegura't d'actualitzar la teva assistència tan "
+"aviat com puguis!"
+
+#: comunicat/templates/email/towers/user/signup.html:7
+msgid "Next performances"
+msgstr "Properes actuacions"
+
+#: comunicat/templates/email/towers/user/signup.html:9
 msgid ""
 "We have some upcoming events, please make sure to update your attendance as "
 "soon as you can!"
@@ -524,23 +537,23 @@ msgstr ""
 "Tenim alguns esdeveniments propers, assegura't d'actualitzar la teva "
 "assistència tan aviat com puguis!"
 
-#: comunicat/templates/email/towers/user/signup.html:6
+#: comunicat/templates/email/towers/user/signup.html:10
 msgid "Next events and rehearsals"
 msgstr "Propers esdeveniments i assajos"
 
-#: comunicat/templates/email/towers/user/signup.html:25
+#: comunicat/templates/email/towers/user/signup.html:30
 msgid "Attending"
 msgstr "Hi participo"
 
-#: comunicat/templates/email/towers/user/signup.html:30
+#: comunicat/templates/email/towers/user/signup.html:35
 msgid "Not attending"
 msgstr "No hi participo"
 
-#: comunicat/templates/email/towers/user/signup.html:36
+#: comunicat/templates/email/towers/user/signup.html:41
 msgid "Unanswered"
 msgstr "Sense respondre"
 
-#: comunicat/templates/email/towers/user/signup.html:56
+#: comunicat/templates/email/towers/user/signup.html:61
 msgid "Change attendance"
 msgstr "Canvia l'assistència"
 
@@ -575,31 +588,43 @@ msgstr ""
 msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
-#: event/admin.py:87 payment/admin.py:201
+#: event/admin.py:90 payment/admin.py:235
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:89 order/admin.py:93 payment/admin.py:154
+#: event/admin.py:92 order/admin.py:93 payment/admin.py:188
 msgid "Send paid email"
 msgstr ""
 
-#: event/models.py:139
+#: event/admin.py:140
+msgid "Publish selected events"
+msgstr ""
+
+#: event/admin.py:185 history/admin.py:32 media/admin.py:36
+msgid "title"
+msgstr "títol"
+
+#: event/admin.py:265
+msgid "time from"
+msgstr ""
+
+#: event/models.py:158
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The end time must be greater than start time."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: event/models.py:144
+#: event/models.py:163
 msgid "The module must match the course program module."
 msgstr ""
 
-#: event/models.py:152
+#: event/models.py:171
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The start time must be within the course dates."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:234 product/models.py:138 product/models.py:143
+#: event/models.py:263 product/models.py:138 product/models.py:143
 msgid "Team's module must match module."
 msgstr ""
 
@@ -615,15 +640,23 @@ msgstr "Assaig"
 msgid "Musicians rehearsal"
 msgstr "Assaig de músics"
 
-#: media/admin.py:36
-msgid "title"
-msgstr "títol"
+#: legal/models.py:78
+#, fuzzy
+#| msgid "The family member must be below %s to create."
+msgid "The from date must be within the team's dates."
+msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
+
+#: legal/models.py:85
+#, fuzzy
+#| msgid "The family member must be below %s to create."
+msgid "The to date must be within the team's dates."
+msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
 #: membership/admin.py:111
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:112 user/admin.py:319
+#: membership/admin.py:112 user/admin.py:325
 msgid "family"
 msgstr "família"
 
@@ -645,15 +678,23 @@ msgstr ""
 msgid "subject"
 msgstr ""
 
-#: notify/api/slack/chat.py:145
+#: notify/api/slack/chat.py:168
 msgid "View order"
 msgstr ""
 
-#: notify/api/slack/chat.py:219
+#: notify/api/slack/chat.py:248
 msgid "View message"
 msgstr ""
 
-#: notify/api/template.py:396
+#: notify/api/slack/chat.py:337
+msgid "View attendance"
+msgstr "Mostra l'assistència"
+
+#: notify/api/template.py:247
+msgid "Sign-up for the upcoming performances"
+msgstr "Confirma l'assistència al les properes actuacions"
+
+#: notify/api/template.py:413
 msgid "receipt"
 msgstr "rebut"
 
@@ -747,63 +788,63 @@ msgstr "Hi participo"
 msgid "delivery"
 msgstr ""
 
-#: order/admin.py:176
+#: order/admin.py:176 payment/admin.py:434
 #, fuzzy
 #| msgid "Payment"
 msgid "payment"
 msgstr "Pagament"
 
-#: order/api/__init__.py:282
+#: order/api/__init__.py:285
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
-#: order/models.py:213
+#: order/models.py:257
 msgid "The quantity given must be equal or lower than the ordered quantity."
 msgstr ""
 
-#: order/models.py:308
+#: order/models.py:355
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:125 payment/admin.py:315
+#: payment/admin.py:159 payment/admin.py:347
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:281 payment/admin.py:379
+#: payment/admin.py:313 payment/admin.py:411
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:282 payment/admin.py:381
+#: payment/admin.py:314 payment/admin.py:413
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:283 payment/admin.py:382 payment/admin.py:499
-#: payment/admin.py:609
+#: payment/admin.py:315 payment/admin.py:414 payment/admin.py:536
+#: payment/admin.py:646
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:380 user/admin.py:318
+#: payment/admin.py:412 user/admin.py:324
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:397
+#: payment/admin.py:433
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Quantitat"
 
-#: payment/admin.py:500 payment/admin.py:501 payment/admin.py:610
-#: payment/admin.py:611
+#: payment/admin.py:537 payment/admin.py:538 payment/admin.py:647
+#: payment/admin.py:648
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:608
+#: payment/admin.py:645
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:665
+#: payment/admin.py:702
 msgid "file"
 msgstr "fitxer"
 
@@ -815,27 +856,27 @@ msgstr "Pagaments"
 msgid "Receipts"
 msgstr "Rebuts"
 
-#: payment/managers.py:138 payment/managers.py:356
+#: payment/managers.py:143 payment/managers.py:366
 msgid "Membership update"
 msgstr "Actualització quota"
 
-#: payment/managers.py:144 payment/managers.py:358
+#: payment/managers.py:149 payment/managers.py:368
 msgid "Membership"
 msgstr "Quota"
 
-#: payment/managers.py:153
+#: payment/managers.py:158
 msgid "Payment"
 msgstr "Pagament"
 
-#: payment/managers.py:391
+#: payment/managers.py:406
 msgid "Unspecified"
 msgstr "Sense especificar"
 
-#: payment/managers.py:423
+#: payment/managers.py:438
 msgid "(and more)"
 msgstr "(i més)"
 
-#: payment/managers.py:426
+#: payment/managers.py:441
 msgid "Expense"
 msgstr "Despesa"
 
@@ -845,11 +886,11 @@ msgstr "Despesa"
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:136
+#: payment/models.py:139
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: payment/models.py:392
+#: payment/models.py:402
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
@@ -861,7 +902,7 @@ msgstr ""
 msgid "Product size must match product."
 msgstr ""
 
-#: user/admin.py:153
+#: user/admin.py:159
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 
@@ -893,7 +934,7 @@ msgstr "personal"
 msgid "active"
 msgstr "actiu"
 
-#: user/models.py:175
+#: user/models.py:178
 #, fuzzy, python-format
 #| msgid "Category must be set for accounts with parent."
 msgid "Order must be set for source %s."

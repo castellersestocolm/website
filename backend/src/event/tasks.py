@@ -7,6 +7,7 @@ import event.api
 import event.api.google_calendar
 import event.api.google_album
 from comunicat.enums import Module
+from event.enums import EventType
 
 
 @shared_task
@@ -19,6 +20,18 @@ def send_events_signup(
     user_ids: List[UUID] | None = None, module: Module | None = None
 ) -> None:
     event.api.send_events_signup(user_ids=user_ids, module=module)
+
+
+@shared_task
+def send_event_performances_signup(
+    user_ids: List[UUID] | None = None, module: Module | None = None
+) -> None:
+    event.api.send_events_signup(
+        user_ids=user_ids,
+        event_types=[EventType.PERFORMANCE],
+        range_days=(0, 2 * 365),
+        module=module,
+    )
 
 
 @shared_task

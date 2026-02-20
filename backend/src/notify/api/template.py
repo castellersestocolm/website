@@ -9,6 +9,7 @@ from activity.models import ProgramCourseRegistration
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
+from event.enums import EventType
 from event.models import Registration, EventModule
 from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipModule
@@ -241,6 +242,12 @@ def get_user_email_render(
         from_email = EMAIL_BY_MODULE[module]
         body = render_to_string(template["html"], context_full)
         subject = str(template["subject"])
+
+        if (
+            email_type == EmailType.EVENT_SIGNUP
+            and (context.get("event_types", []) + [None])[0] == EventType.PERFORMANCE
+        ):
+            subject = str(_("Sign-up for the upcoming performances"))
 
     attachments = []
     for email_attachment_obj in (

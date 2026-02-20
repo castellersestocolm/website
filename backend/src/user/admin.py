@@ -59,6 +59,13 @@ def send_signup_email(modeladmin, request, queryset):
     )
 
 
+@admin.action(description="Send performance sign-up email")
+def send_signup_performances_email(modeladmin, request, queryset):
+    event.tasks.send_event_performances_signup.delay(
+        user_ids=list(queryset.values_list("id", flat=True))
+    )
+
+
 @admin.action(description="Send verification email")
 def send_verification_email(modeladmin, request, queryset):
     for user_obj in queryset:
@@ -209,6 +216,7 @@ class UserAdmin(admin.ModelAdmin):
         send_welcome_email,
         send_imported_email,
         send_signup_email,
+        send_signup_performances_email,
         send_membership_paid_email,
         send_membership_renew_email,
         send_membership_expired_email,

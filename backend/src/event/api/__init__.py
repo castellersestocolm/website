@@ -254,20 +254,33 @@ def get(
 
 
 def send_events_signup(
-    user_ids: List[UUID] | None = None, module: Module | None = None
+    user_ids: List[UUID] | None = None,
+    event_types: list[EventType] | None = None,
+    range_days: tuple[int, int] | None = None,
+    module: Module | None = None,
 ) -> None:
     time_now = timezone.now()
     modules = [m for m in Module] if module is None else [module]
 
     for m in modules:
-        days_from, days_to = getattr(
-            settings, f"MODULE_{m.name}_NOTIFY_EVENT_SIGNUP_RANGE_DAYS"
-        )
+        if range_days is not None:
+            days_from, days_to = range_days
+        else:
+            days_from, days_to = getattr(
+                settings, f"MODULE_{m.name}_NOTIFY_EVENT_SIGNUP_RANGE_DAYS"
+            )
+
         time_from = time_now + timezone.timedelta(days=days_from)
         time_to = time_now + timezone.timedelta(days=days_to)
 
+        event_filter = Q()
+
+        if event_types is not None:
+            event_filter &= Q(type__in=event_types)
+
         future_event_objs = list(
             Event.objects.filter(
+                event_filter,
                 time_from__gte=time_from,
                 time_from__lte=time_to,
                 modules__module=m,
@@ -357,6 +370,7 @@ def send_events_signup(
                         if hasattr(user_obj, "family_member")
                         else [str(user_obj.id)]
                     ),
+                    "event_types": event_types,
                     "token": token,
                 },
             )
