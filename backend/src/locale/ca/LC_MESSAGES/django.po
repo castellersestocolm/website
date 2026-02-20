@@ -692,7 +692,7 @@ msgstr "Mostra l'assistència"
 
 #: notify/api/template.py:247
 msgid "Sign-up for the upcoming performances"
-msgstr "Confirma l'assistència al les properes actuacions"
+msgstr "Confirma l'assistència a les properes actuacions"
 
 #: notify/api/template.py:413
 msgid "receipt"
