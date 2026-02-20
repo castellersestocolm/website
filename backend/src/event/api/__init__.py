@@ -323,6 +323,7 @@ def send_events_signup(
                 if any(
                     [
                         event_module_obj.module == m
+                        and event_module_obj.require_signup
                         and (
                             (
                                 not event_module_obj.team
