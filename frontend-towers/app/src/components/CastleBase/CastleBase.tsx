@@ -196,6 +196,28 @@ const POSITION_TYPES_RELATIVE_TO_TYPE: any = {
   ],
 };
 
+const HEIGHT_FIELD_BY_POSITION_TYPE: any = {
+  10: "height_shoulders",
+  20: "height_shoulders",
+  30: "height_arms",
+  40: "height_shoulders",
+  50: "height_arms",
+  60: "height_arms",
+  70: "height_arms",
+  80: "height_arms",
+  90: "height_shoulders",
+  100: "height_shoulders",
+  110: "height_shoulders",
+  120: "height_shoulders",
+  130: "height_shoulders",
+  140: "height_shoulders",
+  150: "height_shoulders",
+  160: "height_shoulders",
+  170: "height_shoulders",
+  180: "height_shoulders",
+  200: "height_shoulders",
+};
+
 export default function CastleBase({ castle }: any) {
   const { t } = useTranslation("common");
   const { user } = useAppContext();
@@ -434,7 +456,7 @@ export default function CastleBase({ castle }: any) {
     return () => {
       window.removeEventListener("resize", updateSize);
     };
-  }, [updateSize]);
+  });
 
   return (
     <Box className={styles.containerCastle} ref={containerRef}>
@@ -505,6 +527,9 @@ export default function CastleBase({ castle }: any) {
                     ])[0][1]
                 : COLOUR_BORDER_BY_POSITION_TYPE[castlePlace.position.type];
 
+            const heightField =
+              HEIGHT_FIELD_BY_POSITION_TYPE[castlePlace.position.type];
+
             return (
               <>
                 <Label
@@ -535,9 +560,10 @@ export default function CastleBase({ castle }: any) {
                       displayHeights &&
                       castlePlace.user &&
                       castlePlace.user.towers &&
-                      castlePlace.user.towers.height_shoulders &&
-                      castlePlace.user.towers.height_shoulders > 1
-                        ? castlePlace.user.towers.height_shoulders
+                      castlePlace.user.towers[heightField] &&
+                      castlePlace.user.towers[heightField] > 1
+                        ? (heightField.includes("arms") ? "↑ " : "") +
+                          castlePlace.user.towers[heightField]
                         : castlePlace.user &&
                             castlePlace.user.towers &&
                             castlePlace.user.towers.alias
@@ -612,40 +638,49 @@ export default function CastleBase({ castle }: any) {
         </Layer>
       </Stage>
 
-      {((castlePlacesPinya &&
-        castlePlacesPinya.filter(
-          (castlePlace: any) => castlePlace.position.type !== PositionType.BAIX,
-        ).length > 0) ||
-        (user && user.permission_level >= PermissionLevel.ADMIN)) && (
-        <FormGroup className={styles.optionsCastleSwitches}>
-          {castlePlacesPinya &&
-            castlePlacesPinya.filter(
-              (castlePlace: any) =>
-                castlePlace.position.type !== PositionType.BAIX,
-            ).length > 0 && (
+      {castlePlaces &&
+        castlePlaces.length > 0 &&
+        ((castlePlacesPinya &&
+          castlePlacesPinya.filter(
+            (castlePlace: any) =>
+              castlePlace.position.type !== PositionType.BAIX,
+          ).length > 0) ||
+          (user && user.permission_level >= PermissionLevel.ADMIN)) && (
+          <FormGroup className={styles.optionsCastleSwitches}>
+            {castlePlacesPinya &&
+              castlePlacesPinya.filter(
+                (castlePlace: any) =>
+                  castlePlace.position.type !== PositionType.BAIX,
+              ).length > 0 && (
+                <FormControlLabel
+                  className={styles.optionsCastleSwitch}
+                  control={
+                    <Switch
+                      onChange={(event) =>
+                        setDisplayTronc(event.target.checked)
+                      }
+                    />
+                  }
+                  label={t(
+                    "pages.calendar.section.agenda.event.castles-troncs",
+                  )}
+                />
+              )}
+            {user && user.permission_level >= PermissionLevel.ADMIN && (
               <FormControlLabel
                 className={styles.optionsCastleSwitch}
                 control={
                   <Switch
-                    onChange={(event) => setDisplayTronc(event.target.checked)}
+                    onChange={(event) =>
+                      setDisplayHeights(event.target.checked)
+                    }
                   />
                 }
-                label={t("pages.calendar.section.agenda.event.castles-troncs")}
+                label={t("pages.calendar.section.agenda.event.castles-heights")}
               />
             )}
-          {user && user.permission_level >= PermissionLevel.ADMIN && (
-            <FormControlLabel
-              className={styles.optionsCastleSwitch}
-              control={
-                <Switch
-                  onChange={(event) => setDisplayHeights(event.target.checked)}
-                />
-              }
-              label={t("pages.calendar.section.agenda.event.castles-heights")}
-            />
-          )}
-        </FormGroup>
-      )}
+          </FormGroup>
+        )}
       {castlePlacesFamilyInstructions &&
         castlePlacesFamilyInstructions.length > 0 && (
           <Box className={styles.optionsCastlePositions}>
