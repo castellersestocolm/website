@@ -13,6 +13,7 @@ from django.utils.safestring import mark_safe
 
 import payment.api.entity
 import payment.tasks
+from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from comunicat.utils.admin import DynamicColumn, FIELD_LOCALE
@@ -207,6 +208,28 @@ def send_paid_email(modeladmin, request, queryset):
                         ],
                         email_type=EmailType.REGISTRATION_PAID,
                         module=event_obj.module,
+                    )
+
+            course_registration_objs = list(
+                ProgramCourseRegistration.objects.filter(line__in=paymeny_line_objs)
+                .select_related("course", "course__program")
+                .distinct()
+            )
+            if course_registration_objs:
+                for (
+                    program_course_obj,
+                    program_course_registration_objs,
+                ) in itertools.groupby(
+                    course_registration_objs,
+                    lambda course_registration_obj: course_registration_obj.course,
+                ):
+                    notify.tasks.send_program_course_registration_email.delay(
+                        program_course_registration_ids=[
+                            program_course_registration_obj.id
+                            for program_course_registration_obj in program_course_registration_objs
+                        ],
+                        email_type=EmailType.COURSE_REGISTRATION_PAID,
+                        module=program_course_obj.program.module,
                     )
 
             order_objs = list(

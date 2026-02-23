@@ -5,7 +5,7 @@ from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
 from django.utils import translation, timezone
 
-from activity.models import ProgramCourseRegistration
+from activity.models import ProgramCourseRegistration, ProgramCourse
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
@@ -508,6 +508,123 @@ def get_registration_email_renders(
                 subject = str(template["subject"]) % (registration_obj.event.title,)
             else:
                 subject = str(template["subject"])
+
+        entity_obj = payment.api.entity.get_entity_by_key(email=current_email)
+
+        email_renders.append(
+            EmailRender(
+                subject=subject,
+                body=body,
+                to_email=current_email,
+                from_email=from_email,
+                context=context,
+                module=module,
+                locale=current_locale,
+                entity_obj=entity_obj,
+            )
+        )
+
+    return email_renders
+
+
+def get_program_course_registration_email_renders(
+    program_course_registration_ids: list[UUID],
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> list[EmailRender]:
+    program_course_registration_objs = list(
+        ProgramCourseRegistration.objects.filter(id__in=program_course_registration_ids)
+        .select_related("entity", "entity__user", "course", "course__program", "line")
+        .order_by(
+            "-line__amount",
+            "entity__user__firstname",
+            "entity__user__lastname",
+            "entity__firstname",
+            "entity__lastname",
+        )
+    )
+
+    # Registrations must belong to the same program course
+    assert (
+        len(
+            {
+                program_course_registration_obj.course_id
+                for program_course_registration_obj in program_course_registration_objs
+            }
+        )
+        == 1
+    )
+
+    program_course_obj = (
+        ProgramCourse.objects.filter(id=program_course_registration_objs[0].course_id)
+        .with_program_name()
+        .first()
+    )
+
+    # TODO: Fix this, also allow to split emails per groups or families
+    entity_objs = list(
+        {
+            family_member_obj.user.entity
+            # TODO: Review this as it could be wrong
+            for family_member_obj in FamilyMember.objects.filter(
+                family__members__user__entity_id__in=[
+                    program_course_registration_obj.entity_id
+                    for program_course_registration_obj in program_course_registration_objs
+                ],
+                status=FamilyMemberStatus.ACTIVE,
+            )
+            if family_member_obj.user.can_manage
+        }
+    )
+
+    email_renders = []
+
+    for entity_i, entity_obj in enumerate(entity_objs):
+        user_obj = entity_obj.user
+
+        # TODO: This can be an issue with email_index if the first user on the list with index 0 is skipped
+        if user_obj and not user_obj.can_manage:
+            continue
+
+        current_email = email or user_obj.email if user_obj else entity_obj.email
+        current_locale = (
+            locale
+            or (user_obj.preferred_language if user_obj else None)
+            or (entity_obj.preferred_language if entity_obj else None)
+            or settings.LANGUAGE_CODE
+        )
+
+        if not current_email:
+            continue
+
+        with translation.override(current_locale):
+            context = {
+                **SETTINGS_BY_MODULE[module],
+                **(context or {}),
+                "email_index": entity_i,
+                "registration_ids": [
+                    str(current_program_course_registration_id)
+                    for current_program_course_registration_id in program_course_registration_ids
+                ],
+            }
+            context_full = {
+                **context,
+                "program_course_obj": program_course_obj,
+                "program_course_registration_objs": program_course_registration_objs,
+                "entity_obj": entity_obj,
+                "user_obj": user_obj,
+            }
+
+            template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
+            from_email = EMAIL_BY_MODULE[module]
+            body = render_to_string(template["html"], context_full)
+            # TODO: Cases for courses spanning less than a year
+            subject = str(template["subject"]) % (
+                f"{program_course_obj.program_name_locale} {program_course_obj.date_from.strftime('%Y')}",
+            )
 
         entity_obj = payment.api.entity.get_entity_by_key(email=current_email)
 

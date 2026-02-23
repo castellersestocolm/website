@@ -90,6 +90,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Your payment has been processed — %s"),
                 "html": "email/org/payment/paid.html",
             },
+            EmailType.COURSE_REGISTRATION_PAID: {
+                "subject": _("Your payment has been processed — %s"),
+                "html": "email/org/courseregistration/paid.html",
+            },
         }
     },
     Module.TOWERS: {
@@ -156,6 +160,10 @@ TEMPLATE_BY_MODULE = {
             EmailType.PAYMENT_PAID: {
                 "subject": _("Your payment has been processed — %s"),
                 "html": "email/towers/payment/paid.html",
+            },
+            EmailType.COURSE_REGISTRATION_PAID: {
+                "subject": _("Your payment has been processed — %s"),
+                "html": "email/towers/courseregistration/paid.html",
             },
         }
     },

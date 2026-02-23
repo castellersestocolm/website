@@ -16,6 +16,7 @@ from notify.api.template import (
     get_user_email_render,
     get_contact_message_email_render,
     get_payment_email_render,
+    get_program_course_registration_email_renders,
 )
 from notify.enums import EmailType, EmailStatus
 from notify.models import Email
@@ -158,6 +159,52 @@ def send_registration_email(
 ) -> list[Email]:
     email_renders = get_registration_email_renders(
         registration_ids=registration_ids,
+        email_type=email_type,
+        module=module,
+        email=email,
+        context=context,
+        locale=locale,
+    )
+    email_objs = []
+
+    for email_render in email_renders:
+        email_objs.append(
+            Email.objects.create(
+                entity=email_render.entity_obj,
+                type=email_type,
+                subject=email_render.subject,
+                context=email_render.context,
+                module=module,
+                locale=email_render.locale,
+                status=EmailStatus.SENT,
+            )
+        )
+
+        send_email(
+            subject=email_render.subject,
+            body=email_render.body,
+            from_email=email_render.from_email,
+            to=email_render.to_email,
+            reply_to=email_render.from_email,
+            attachments=[],
+            module=module,
+        )
+
+    return email_objs
+
+
+# TODO: Check here if registrations ever allow no-users (like entities)
+@shared_task
+def send_program_course_registration_email(
+    program_course_registration_ids: list[UUID],
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> list[Email]:
+    email_renders = get_program_course_registration_email_renders(
+        program_course_registration_ids=program_course_registration_ids,
         email_type=email_type,
         module=module,
         email=email,

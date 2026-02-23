@@ -1,0 +1,31 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_body %}
+    <p>{% trans "Your payment has been processed and it's on its way to you! You will find a summary right below." %}</p>
+    <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+</style>
+<h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
+<table class="tg" style="margin-bottom:20px;">
+                    {% for program_course_registration_obj in program_course_registration_objs %}
+    {% with "ProgramCourseRegistrationStatus"|enums_activity|get_attr:"ACTIVE" as enum_status_active %}
+  <tr style="{% if program_course_registration_obj.status != enum_status_active %}text-decoration: line-through; color: #888;{% endif %}">
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_registration_obj.course_program_name_locale }} — {{ program_course_registration_obj.entity.name }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_registration_obj.amount|format_money }}</p></td>
+  </tr>
+                    {% endwith %}
+                    {% endfor %}
+  <tr>
+      <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
+      {% with program_course_registration_objs|program_course_registrations_amount as program_course_registrations_total %}
+            <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ program_course_registrations_total|format_money }}</strong></p></td>
+      {% endwith %}
+  </tr>
+</table>
+{% endblock %}

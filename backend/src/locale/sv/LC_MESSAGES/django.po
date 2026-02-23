@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-20 18:46+0100\n"
+"POT-Creation-Date: 2026-02-23 09:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: activity/admin.py:59 activity/admin.py:144 data/admin.py:39 data/admin.py:70
 #: data/admin.py:94 legal/admin.py:31 legal/admin.py:76 legal/admin.py:100
-#: order/admin.py:255 payment/admin.py:539 payment/admin.py:791
+#: order/admin.py:255 payment/admin.py:558 payment/admin.py:810
 #: product/admin.py:88
 msgid "name"
 msgstr "namn"
@@ -142,6 +142,45 @@ msgstr "Skickat med"
 #: comunicat/templates/email/towers/base.html:66
 msgid "by"
 msgstr "av"
+
+#: comunicat/templates/email/org/courseregistration/paid.html:5
+#: comunicat/templates/email/org/payment/paid.html:5
+#: comunicat/templates/email/towers/courseregistration/paid.html:5
+#: comunicat/templates/email/towers/payment/paid.html:5
+msgid ""
+"Your payment has been processed and it's on its way to you! You will find a "
+"summary right below."
+msgstr ""
+"Din betalning har behandlats och är på väg till dig! Du hittar en "
+"sammanfattning nedan."
+
+#: comunicat/templates/email/org/courseregistration/paid.html:14
+#: comunicat/templates/email/org/membership/paid.html:14
+#: comunicat/templates/email/org/order/created.html:14
+#: comunicat/templates/email/org/payment/paid.html:14
+#: comunicat/templates/email/org/registration/paid.html:14
+#: comunicat/templates/email/towers/courseregistration/paid.html:14
+#: comunicat/templates/email/towers/membership/paid.html:14
+#: comunicat/templates/email/towers/order/created.html:14
+#: comunicat/templates/email/towers/order/paid.html:14
+#: comunicat/templates/email/towers/payment/paid.html:14
+#: comunicat/templates/email/towers/registration/paid.html:14
+msgid "Summary"
+msgstr "Översikt"
+
+#: comunicat/templates/email/org/courseregistration/paid.html:25
+#: comunicat/templates/email/org/membership/paid.html:31
+#: comunicat/templates/email/org/order/created.html:31
+#: comunicat/templates/email/org/payment/paid.html:23
+#: comunicat/templates/email/org/registration/paid.html:26
+#: comunicat/templates/email/towers/courseregistration/paid.html:25
+#: comunicat/templates/email/towers/membership/paid.html:31
+#: comunicat/templates/email/towers/order/created.html:31
+#: comunicat/templates/email/towers/order/paid.html:31
+#: comunicat/templates/email/towers/payment/paid.html:23
+#: comunicat/templates/email/towers/registration/paid.html:26
+msgid "Total"
+msgstr "Summa"
 
 #: comunicat/templates/email/org/membership/check.html:8
 #: comunicat/templates/email/towers/membership/check.html:8
@@ -273,30 +312,6 @@ msgid ""
 msgstr ""
 "Ditt medlemskap har markerats som betald! Du hittar en sammanfattning nedan."
 
-#: comunicat/templates/email/org/membership/paid.html:14
-#: comunicat/templates/email/org/order/created.html:14
-#: comunicat/templates/email/org/payment/paid.html:14
-#: comunicat/templates/email/org/registration/paid.html:14
-#: comunicat/templates/email/towers/membership/paid.html:14
-#: comunicat/templates/email/towers/order/created.html:14
-#: comunicat/templates/email/towers/order/paid.html:14
-#: comunicat/templates/email/towers/payment/paid.html:14
-#: comunicat/templates/email/towers/registration/paid.html:14
-msgid "Summary"
-msgstr "Översikt"
-
-#: comunicat/templates/email/org/membership/paid.html:31
-#: comunicat/templates/email/org/order/created.html:31
-#: comunicat/templates/email/org/payment/paid.html:23
-#: comunicat/templates/email/org/registration/paid.html:26
-#: comunicat/templates/email/towers/membership/paid.html:31
-#: comunicat/templates/email/towers/order/created.html:31
-#: comunicat/templates/email/towers/order/paid.html:31
-#: comunicat/templates/email/towers/payment/paid.html:23
-#: comunicat/templates/email/towers/registration/paid.html:26
-msgid "Total"
-msgstr "Summa"
-
 #: comunicat/templates/email/org/membership/renew.html:5
 #: comunicat/templates/email/towers/membership/renew.html:5
 msgid "Your membership will be expiring on"
@@ -340,15 +355,6 @@ msgstr ""
 #: comunicat/templates/email/towers/order/created.html:35
 msgid "Payment options"
 msgstr "Betalningsalternativ"
-
-#: comunicat/templates/email/org/payment/paid.html:5
-#: comunicat/templates/email/towers/payment/paid.html:5
-msgid ""
-"Your payment has been processed and it's on its way to you! You will find a "
-"summary right below."
-msgstr ""
-"Din betalning har behandlats och är på väg till dig! Du hittar en "
-"sammanfattning nedan."
 
 #: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
@@ -586,11 +592,11 @@ msgstr ""
 msgid "Join the community"
 msgstr "Gå med i gemenskapen"
 
-#: event/admin.py:90 payment/admin.py:235
+#: event/admin.py:90 payment/admin.py:254
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:92 order/admin.py:93 payment/admin.py:188
+#: event/admin.py:92 order/admin.py:93 payment/admin.py:189
 msgid "Send paid email"
 msgstr ""
 
@@ -654,7 +660,7 @@ msgstr "Familjemedlemmen måste vara under %s för att skapa."
 msgid "users"
 msgstr "användare"
 
-#: membership/admin.py:112 user/admin.py:325
+#: membership/admin.py:112 user/admin.py:326
 msgid "family"
 msgstr "familj"
 
@@ -688,19 +694,19 @@ msgstr ""
 msgid "View attendance"
 msgstr "Visa närvaro"
 
-#: notify/api/template.py:247
+#: notify/api/template.py:250
 msgid "Sign-up for the upcoming performances"
 msgstr "Registrera dig till kommande uppvisningar"
 
-#: notify/api/template.py:413
+#: notify/api/template.py:416
 msgid "receipt"
 msgstr "kvitto"
 
-#: notify/consts.py:34 notify/consts.py:101
+#: notify/consts.py:34 notify/consts.py:105
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
 
-#: notify/consts.py:38 notify/consts.py:105
+#: notify/consts.py:38 notify/consts.py:109
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
@@ -712,7 +718,7 @@ msgstr "Välkomen till Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:50 notify/consts.py:117
+#: notify/consts.py:50 notify/consts.py:121
 msgid "You have been invited to join a family"
 msgstr "Du har blivit inbjuden att gå med i en familj"
 
@@ -720,55 +726,56 @@ msgstr "Du har blivit inbjuden att gå med i en familj"
 msgid "Sign-up for the upcoming events"
 msgstr "Registrera dig till kommande evenemang"
 
-#: notify/consts.py:58 notify/consts.py:125
+#: notify/consts.py:58 notify/consts.py:129
 msgid "Time to renew your membership"
 msgstr "Dags att förnya ditt medlemskap"
 
-#: notify/consts.py:62 notify/consts.py:129
+#: notify/consts.py:62 notify/consts.py:133
 msgid "Your membership has expired"
 msgstr "Ditt medlemskap har löpt ut"
 
-#: notify/consts.py:66 notify/consts.py:133
+#: notify/consts.py:66 notify/consts.py:137
 msgid "Your membership is now paid"
 msgstr "Ditt medlemskap är nu betalt"
 
-#: notify/consts.py:70 notify/consts.py:137
+#: notify/consts.py:70 notify/consts.py:141
 msgid "Your membership status"
 msgstr "Ditt medlemskap status"
 
-#: notify/consts.py:74 notify/consts.py:141
+#: notify/consts.py:74 notify/consts.py:145
 msgid "Thank you for your order"
 msgstr "Tack för din beställning"
 
-#: notify/consts.py:78 notify/consts.py:145
+#: notify/consts.py:78 notify/consts.py:149
 #, python-format
 msgid "Your order %s is now paid"
 msgstr "Din beställning %s är nu betald"
 
-#: notify/consts.py:82 notify/consts.py:149
+#: notify/consts.py:82 notify/consts.py:153
 #, python-format
 msgid "Your registration for %s is now paid"
 msgstr "Din registrering för %s är nu betald"
 
-#: notify/consts.py:86 notify/consts.py:153
+#: notify/consts.py:86 notify/consts.py:157
 #, python-format
 msgid "Contact form — %s"
 msgstr "Kontaktformulär — %s"
 
-#: notify/consts.py:90 notify/consts.py:157
+#: notify/consts.py:90 notify/consts.py:94 notify/consts.py:161
+#: notify/consts.py:165
 #, python-format
 msgid "Your payment has been processed — %s"
 msgstr "Din betalning har behandlats — %s"
 
-#: notify/consts.py:109
+#: notify/consts.py:113
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Välkommen till Castellers d'Estocolm"
 
-#: notify/consts.py:113
+#: notify/consts.py:117
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:121
+#: notify/consts.py:125
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Registrera dig till kommande evenemang och repetitioner"
 
@@ -784,7 +791,7 @@ msgstr "väntande"
 msgid "delivery"
 msgstr "leverans"
 
-#: order/admin.py:176 payment/admin.py:434
+#: order/admin.py:176 payment/admin.py:453
 msgid "payment"
 msgstr "betalning"
 
@@ -800,45 +807,45 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:159 payment/admin.py:347
+#: payment/admin.py:160 payment/admin.py:366
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:313 payment/admin.py:411
+#: payment/admin.py:332 payment/admin.py:430
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:314 payment/admin.py:413
+#: payment/admin.py:333 payment/admin.py:432
 msgid "date"
 msgstr "datum"
 
-#: payment/admin.py:315 payment/admin.py:414 payment/admin.py:536
-#: payment/admin.py:646
+#: payment/admin.py:334 payment/admin.py:433 payment/admin.py:555
+#: payment/admin.py:665
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:412 user/admin.py:324
+#: payment/admin.py:431 user/admin.py:325
 msgid "entity"
 msgstr "enhet"
 
-#: payment/admin.py:433
+#: payment/admin.py:452
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Belopp"
 
-#: payment/admin.py:537 payment/admin.py:538 payment/admin.py:647
-#: payment/admin.py:648
+#: payment/admin.py:556 payment/admin.py:557 payment/admin.py:666
+#: payment/admin.py:667
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:645
+#: payment/admin.py:664
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:702
+#: payment/admin.py:721
 msgid "file"
 msgstr "fil"
 
