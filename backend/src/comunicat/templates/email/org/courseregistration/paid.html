@@ -1,4 +1,4 @@
-{% extends "email/towers/base.html" %}
+{% extends "email/org/base.html" %}
 {% load i18n comunicat_tags %}
 
 {% block email_body %}
@@ -16,7 +16,7 @@
                     {% for program_course_registration_obj in program_course_registration_objs %}
     {% with "ProgramCourseRegistrationStatus"|enums_activity|get_attr:"ACTIVE" as enum_status_active %}
   <tr style="{% if program_course_registration_obj.status != enum_status_active %}text-decoration: line-through; color: #888;{% endif %}">
-    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_registration_obj.course_program_name_locale }} — {{ program_course_registration_obj.entity.name }}</p></td>
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_obj.program_name_locale }} — {{ program_course_registration_obj.entity.name }}</p></td>
     <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_registration_obj.amount|format_money }}</p></td>
   </tr>
                     {% endwith %}

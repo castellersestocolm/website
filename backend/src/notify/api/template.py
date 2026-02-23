@@ -570,7 +570,7 @@ def get_program_course_registration_email_renders(
             family_member_obj.user.entity
             # TODO: Review this as it could be wrong
             for family_member_obj in FamilyMember.objects.filter(
-                family__members__user__entity_id__in=[
+                family__members__user__entity__id__in=[
                     program_course_registration_obj.entity_id
                     for program_course_registration_obj in program_course_registration_objs
                 ],

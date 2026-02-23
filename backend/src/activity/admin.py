@@ -104,19 +104,23 @@ class EventInline(admin.TabularInline):
     model = Event
     ordering = ("time_from", "time_to")
     fields = (
-        "title",
+        "title_locale",
         "time_from",
         "time_to",
-        # "description",
         "location",
         "status",
     )
+    readonly_fields = ("title_locale",)
     form = EventInlineForm
     extra = 0
 
-    # formfield_overrides = {
-    #     JSONField: {"widget": JSONEditor},
-    # }
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_title()
+
+    def title_locale(self, obj):
+        return obj.title_locale
+
+    title_locale.short_description = _("title")
 
 
 @admin.register(ProgramCourse)
