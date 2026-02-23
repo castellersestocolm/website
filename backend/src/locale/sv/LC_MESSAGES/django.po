@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-23 09:54+0100\n"
+"POT-Creation-Date: 2026-02-23 11:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +18,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: activity/admin.py:59 activity/admin.py:144 data/admin.py:39 data/admin.py:70
+#: activity/admin.py:59 activity/admin.py:148 data/admin.py:39 data/admin.py:70
 #: data/admin.py:94 legal/admin.py:31 legal/admin.py:76 legal/admin.py:100
-#: order/admin.py:255 payment/admin.py:558 payment/admin.py:810
+#: order/admin.py:255 payment/admin.py:562 payment/admin.py:814
 #: product/admin.py:88
 msgid "name"
 msgstr "namn"
+
+#: activity/admin.py:123 event/admin.py:185 history/admin.py:32
+#: media/admin.py:36
+msgid "title"
+msgstr "titel"
 
 #: activity/api/export.py:41 membership/api/export.py:13
 msgid "Registrations"
@@ -145,7 +150,6 @@ msgstr "av"
 
 #: comunicat/templates/email/org/courseregistration/paid.html:5
 #: comunicat/templates/email/org/payment/paid.html:5
-#: comunicat/templates/email/towers/courseregistration/paid.html:5
 #: comunicat/templates/email/towers/payment/paid.html:5
 msgid ""
 "Your payment has been processed and it's on its way to you! You will find a "
@@ -377,6 +381,14 @@ msgstr "E-post"
 msgid "Message"
 msgstr "Meddelande"
 
+#: comunicat/templates/email/towers/courseregistration/paid.html:5
+msgid ""
+"The following registrations have been marked as paid! You will find a "
+"summary right below."
+msgstr ""
+"Följande registreringar har markerats som betalda! Du hittar en sammanfattning "
+"nedan."
+
 #: comunicat/templates/email/towers/membership/check.html:20
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -592,7 +604,7 @@ msgstr ""
 msgid "Join the community"
 msgstr "Gå med i gemenskapen"
 
-#: event/admin.py:90 payment/admin.py:254
+#: event/admin.py:90 payment/admin.py:258
 msgid "Action succeeded."
 msgstr ""
 
@@ -603,10 +615,6 @@ msgstr ""
 #: event/admin.py:140
 msgid "Publish selected events"
 msgstr ""
-
-#: event/admin.py:185 history/admin.py:32 media/admin.py:36
-msgid "title"
-msgstr "titel"
 
 #: event/admin.py:265
 msgid "time from"
@@ -762,7 +770,6 @@ msgid "Contact form — %s"
 msgstr "Kontaktformulär — %s"
 
 #: notify/consts.py:90 notify/consts.py:94 notify/consts.py:161
-#: notify/consts.py:165
 #, python-format
 msgid "Your payment has been processed — %s"
 msgstr "Din betalning har behandlats — %s"
@@ -779,6 +786,10 @@ msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Registrera dig till kommande evenemang och repetitioner"
 
+#: notify/consts.py:165
+msgid "Your registration is now paid — %s"
+msgstr "Din registrering är nu betald — %s"
+
 #: order/admin.py:82
 msgid "Send created email"
 msgstr ""
@@ -791,7 +802,7 @@ msgstr "väntande"
 msgid "delivery"
 msgstr "leverans"
 
-#: order/admin.py:176 payment/admin.py:453
+#: order/admin.py:176 payment/admin.py:457
 msgid "payment"
 msgstr "betalning"
 
@@ -807,45 +818,45 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:160 payment/admin.py:366
+#: payment/admin.py:160 payment/admin.py:370
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:332 payment/admin.py:430
+#: payment/admin.py:336 payment/admin.py:434
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:333 payment/admin.py:432
+#: payment/admin.py:337 payment/admin.py:436
 msgid "date"
 msgstr "datum"
 
-#: payment/admin.py:334 payment/admin.py:433 payment/admin.py:555
-#: payment/admin.py:665
+#: payment/admin.py:338 payment/admin.py:437 payment/admin.py:559
+#: payment/admin.py:669
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:431 user/admin.py:325
+#: payment/admin.py:435 user/admin.py:325
 msgid "entity"
 msgstr "enhet"
 
-#: payment/admin.py:452
+#: payment/admin.py:456
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Belopp"
 
-#: payment/admin.py:556 payment/admin.py:557 payment/admin.py:666
-#: payment/admin.py:667
+#: payment/admin.py:560 payment/admin.py:561 payment/admin.py:670
+#: payment/admin.py:671
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:664
+#: payment/admin.py:668
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:721
+#: payment/admin.py:725
 msgid "file"
 msgstr "fil"
 
