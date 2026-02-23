@@ -76,6 +76,7 @@ echo "<img id='novell' src='icons/novell.png' style='display:none;'>";
 echo "<img id='peu_novell' src='icons/peu_novell.png' style='display:none;'>";
 echo "<img id='lesionat_novell' src='icons/lesionat_novell.png' style='display:none;'>";
 echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>";
+echo "<img id='comentari' src='icons/comment.png' style='display:none;'>";
 ?>
 	<div  class="sidenav" id="navlateral">
 		<h4><?php echo $titol ?></h4>
@@ -189,7 +190,7 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
         }
 		
 		$sql="SELECT C.CASTELLER_ID, MALNOM, P.NOM, P.POSICIO_ID, IFNULL(I.ESTAT,0) AS ESTAT,
-		IFNULL(".$altura.", 0) AS ALTURA, PORTAR_PEU, LESIONAT,
+		IFNULL(".$altura.", 0) AS ALTURA, PORTAR_PEU, LESIONAT, CP.COMENTARI,
 		IFNULL(IA.ESTAT,0) AS CAMISA, NOVELL,
 		(SELECT SUM(IF(IR.ESTAT>0,1,0)) AS RAT
 			FROM EVENT AS ERR 
@@ -204,6 +205,7 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 		LEFT JOIN CASTELL AS CT ON CT.CASTELL_ID=".$id."
 		INNER JOIN INSCRITS AS I ON CT.EVENT_ID=I.EVENT_ID AND I.CASTELLER_ID=C.CASTELLER_ID
 		LEFT JOIN EVENT AS E ON E.EVENT_ID=I.EVENT_ID
+		LEFT JOIN CASTELL_POSICIO AS CP ON CP.CASTELLER_ID=C.CASTELLER_ID AND CP.CASTELL_ID=".$id."
 		LEFT JOIN EVENT AS EA ON EA.EVENT_ID=".$eventActuacioid." AND EA.DATA >= E.DATA
 		LEFT JOIN INSCRITS AS IA ON IA.EVENT_ID=EA.EVENT_ID AND IA.CASTELLER_ID=C.CASTELLER_ID
 		/*WHERE (C.ESTAT = 1 OR I.ESTAT = 1)*/
@@ -256,7 +258,13 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 						$lesionat="<img id='lesionat".$row["CASTELLER_ID"]."' src='icons/lesionat_novell.png'>";
 					}
 				}
-				
+
+				$comentari = "";
+				if($row["COMENTARI"]!="")
+				{
+					$comentari="<img id='comentari".$row["CASTELLER_ID"]."' src='icons/comment.png'>";
+				}
+
 				$portarpeu = "";
 				if($row["PORTAR_PEU"]==0)
 				{
@@ -296,7 +304,7 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 				
 				$cstl="<font class='".$classFont."' id='lbl".$row["CASTELLER_ID"]."' title='".$row["MALNOM"]." - ".$row["ALTURA"]."'>".$row["MALNOM"]." - ".$row["ALTURA"]."</font>";
 				$info = "<a href='Casteller_Fitxa.php?id=".$row["CASTELLER_ID"]."' target='_blank'><img src='".$infoIcon."'></a>";
-				$text = $info." ".$cstl." ".$portarpeu.$lesionat.$camisa;
+				$text = $info." ".$cstl." ".$comentari.$portarpeu.$lesionat.$camisa;
 				
 				$text .= "<div id ='progress".$row["CASTELLER_ID"]."'><progress value='".$rating."' max='10' style='height:6px;' title='".round($rating)."'>
 						</progress></div>";						
@@ -422,10 +430,14 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 									<input type="checkbox" id="portarpeupopup" value=1 onchange="CanviPeu()">
 									<span class="slider round"></span>
 								</label>
+						<br>Comentari: <textarea id="popupComentari" style="width:190px; color:black;" rows="3" onchange="CanviComentari(this.value)" onfocus="focusComentari()" onblur="focusComentari()"></textarea>
 						<br>
-						<button class="boto" id="EditaPaleta" onClick="EditaMenu()">Edita</button>
-						<button class="boto boto_remove" id="EsborraPaleta" onClick="EsborraMenu()">Esborra</button>
-					</div> 
+                        <div class="popupcasella_botons">
+                            <button class="boto boto_add" id="DesaPaleta" onClick="DesaMenu()">Desa</button>
+                            <button class="boto" id="EditaPaleta" onClick="EditaMenu()">Nom</button>
+                            <button class="boto boto_remove" id="EsborraPaleta" onClick="EsborraMenu()">Esborra</button>
+                        </div>
+					</div>
 				</td>
 				</tr>
 			</table>
@@ -443,7 +455,7 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 	{		
 		$nucli = $troncs?"1=0":"P.ESNUCLI = 1";
 		
-		$sql="SELECT CP.CASELLA_ID,CTT.CASTELL_ID,CTT.NOM AS CASTELL_NOM,CORDO,CP.POSICIO_ID,
+		$sql="SELECT CP.CASELLA_ID,CP.COMENTARI,CTT.CASTELL_ID,CTT.NOM AS CASTELL_NOM,CORDO,CP.POSICIO_ID,
 		CP.CASTELLER_ID, CP.TEXT, IFNULL(C.MALNOM, 0) AS MALNOM, IFNULL(I.ESTAT,0) AS ESTAT,
 		IFNULL(".$altura.", 0) AS ALTURA,
 		IFNULL(C.PORTAR_PEU, 1) AS PORTAR_PEU, IFNULL(C.LESIONAT, 0) AS LESIONAT,
@@ -573,7 +585,7 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 				echo "addRect(".$x.",".$y.",".$w.",".$h.",".$row["CORDO"].",".$row["POSICIO_ID"].",0,
 				".$row["CASTELL_ID"].",".$row["CASELLA_ID"].",".$row["PESTANYA"].",".$forma.",'".$row["TEXT"]."',".$row["LINKAT"].",-1,".$castellId.",
 				".$row["CASTELLER_ID"].",'".$row["MALNOM"]."',".$row["ESTAT"].",".$row["ALTURA"].",".$row["PORTAR_PEU"].",
-				".$row["LESIONAT"].",".$row["CAMISA"].",".$row["NOVELL"].",".$row["ALTURA_EXTRA"].");\n";
+				".$row["LESIONAT"].",".$row["CAMISA"].",".$row["NOVELL"].",".$row["ALTURA_EXTRA"].",'".$row["COMENTARI"]."');\n";
 				
 				$linkat = $row["LINKAT"];
 				
@@ -613,7 +625,7 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 	}
 	else
 	{
-		$sql="SELECT CASELLA_ID,CORDO,CP.POSICIO_ID,CP.X,CP.Y,CP.H,CP.W,ANGLE,
+		$sql="SELECT CASELLA_ID,CORDO,CP.POSICIO_ID,CP.COMENTARI,CP.X,CP.Y,CP.H,CP.W,ANGLE,
 		FORMA,TEXT,SEGUENT,LINKAT,
 		CP.CASTELLER_ID,IFNULL(C.MALNOM, 0) AS MALNOM, IFNULL(I.ESTAT,0) AS ESTAT,
 		IFNULL(".$altura.", 0) AS ALTURA, PESTANYA,
@@ -648,7 +660,7 @@ echo "<img id='altura_extra' src='icons/altura_extra.png' style='display:none;'>
 			{
 				echo "addRect(".$row["X"].",".$row["Y"].",".$row["W"].",".$row["H"].",".$row["CORDO"].",".$row["POSICIO_ID"].",".$row["ANGLE"].",".$id.",".$row["CASELLA_ID"]."
 				,".$row["PESTANYA"].",".$row["FORMA"].",'".$row["TEXT"]."',".$row["LINKAT"].",".$row["SEGUENT"].",".$id.",".$row["CASTELLER_ID"].",'".$row["MALNOM"]."',".$row["ESTAT"].",".$row["ALTURA"]."
-				,".$row["PORTAR_PEU"].",".$row["LESIONAT"].",".$row["CAMISA"].",".$row["NOVELL"].",".$row["ALTURA_EXTRA"].",".$row["ULTIMCASTELLER"].");\n";
+				,".$row["PORTAR_PEU"].",".$row["LESIONAT"].",".$row["CAMISA"].",".$row["NOVELL"].",".$row["ALTURA_EXTRA"].",'".$row["COMENTARI"]."',".$row["ULTIMCASTELLER"].");\n";
 			}
 			echo " CollapsaTot();\n";
 			echo "</script>";

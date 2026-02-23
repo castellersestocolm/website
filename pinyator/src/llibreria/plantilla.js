@@ -381,7 +381,7 @@ function myDblClick(e)
 		var forma = ToInt(document.getElementById("forma").value);
 		var cordo = ToInt(document.getElementById("posiciocordo").value);
 		var posicio = ToInt(document.getElementById("posicioC").value);
-		addRect(mx - (width / 2), my - (height / 2), width, height, cordo, posicio, angle, plantilla_id, 0, pestanyaActual, forma, "", 0, 0);
+		addRect(mx - (width / 2), my - (height / 2), width, height, cordo, posicio, angle, plantilla_id, 0, pestanyaActual, forma, "", 0, "", 0);
 		Save();
 	}
 }

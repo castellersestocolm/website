@@ -40,6 +40,7 @@ function boxJSON()
   this.cnv=0;
   this.peu=0;
   this.les=0;
+  this.com = "";
 }
 
 
@@ -60,6 +61,7 @@ function init()
 var elementActualId=0;
 var activitat_castellId=0;
 var TeFocusAlturaExtra=false;
+var TeFocusComentari=false;
 var canShowPopup = false;
 
 
@@ -77,6 +79,7 @@ function ShowPopupCasella()
 			document.getElementById("popupAlturaExtra").value = mySel[0].alturaExtra;
 			document.getElementById("lesionatpopup").checked = mySel[0].lesionat == 1;
 			document.getElementById("portarpeupopup").checked = mySel[0].peu == 1;
+			document.getElementById("popupComentari").value = mySel[0].comentari;
 		}
 	}
 }
@@ -275,7 +278,8 @@ function myDown(e)
 					casteller.camisa=mySel[0].camisa;
 					casteller.novell=mySel[0].novell;
 					casteller.alturaExtra=mySel[0].alturaExtra;
-					
+					casteller.comentari=mySel[0].comentari;
+
 					ShowPopupCasella();
 				}
 				else if (EsCastellerNoLLista(mySel[0].castellerid))
@@ -327,6 +331,7 @@ function CopiaCastellermySel(mySelect, objCasteller)
 	mySelect.camisa=objCasteller.camisa;
 	mySelect.novell=objCasteller.novell;
 	mySelect.alturaExtra=objCasteller.alturaExtra;
+	mySelect.comentari=objCasteller.comentari;
 }
 
 function AfegeixCasellesLinkades(id, objCasteller, castellId)
@@ -382,7 +387,8 @@ function MouCastellers(casella, objCasteller)
 			casteller.camisa=casella.camisa;
 			casteller.novell=casella.novell;
 			casteller.alturaExtra=casella.alturaExtra;
-			
+			casteller.comentari=casella.comentari;
+
 			var mySelect = boxes[i];
 			mySel.push(mySelect);
 			
@@ -440,10 +446,15 @@ function myDblClick(e)
 	}	
 }
 
+function DesaMenu()
+{
+	CanviComentari(mySel[0].comentari);
+}
+
 function EditaMenu()
 {
 	document.getElementById("text").value = mySel[0].text;
-	ShowEditPopup();	
+	ShowEditPopup();
 }
 
 function EditaPopup()
@@ -544,6 +555,7 @@ function ResetmySel()
 			mySel[i].camisa=false;
 			mySel[i].novell=false;
 			mySel[i].alturaExtra=0;
+			mySel[i].comentari="";
 		}
 	}
 }
@@ -584,6 +596,7 @@ function getPosicio(obj, canviFitxa)
 		b.cnv = (canviFitxa==1)?1:0;
 		b.peu = obj[i].peu;
 		b.les = obj[i].lesionat;
+		b.com = obj[i].comentari != "" ? obj[i].comentari : null;
 
 		arry.push(b);	
 	}
@@ -656,6 +669,7 @@ function ResetCasteller()
 	casteller.camisa = false;
 	casteller.novell = false;
 	casteller.alturaExtra = 0;
+	casteller.comentari = "";
 }
 
 //function SetCasteller(elem, altura, peu, lesionat, camisa, novell)
@@ -673,6 +687,7 @@ function SetCasteller(elem)
 		casteller.camisa = ToInt(elem.getAttribute("camisa"));
 		casteller.novell = ToInt(elem.getAttribute("novell"));
 		casteller.alturaExtra = 0;
+		casteller.comentari = elem.getAttribute("comentari");
 		elem.classList.add("castellerSeleccionat");
 		elem.style.backgroundColor = "#81F781";
 		MarcaCastellerPinya();
@@ -965,6 +980,7 @@ function ModificaCasellesLinkades(id, objCasteller, castellId)
 			&& (objCasteller.id == boxes[i].castellerid)
 			&& (castellId == boxes[i].castellId)
 			&& ((objCasteller.alturaExtra != boxes[i].alturaExtra)
+			|| (objCasteller.comentari != boxes[i].comentari)
 			|| (objCasteller.peu != boxes[i].peu)
 			|| (objCasteller.lesionat != boxes[i].lesionat)))
 		{
@@ -975,6 +991,35 @@ function ModificaCasellesLinkades(id, objCasteller, castellId)
 			ModificaCasellesLinkades(mySelect.id, objCasteller, castellId);
 		}
 		i = i + 1;
+	}
+}
+
+function CanviComentari(t)
+{
+	if (mySel[0] != null)
+	{
+		if(t == '') t = null;
+		mySel[0].comentari = t;
+		casteller.comentari = t;
+		ModificaCasellesLinkades(mySel[0].id, casteller, mySel[0].castellId);
+		parentNode = document.getElementById(mySel[0].castellerid);
+		if (parentNode != null)
+		{
+			if (mySel[0].comentari != null && mySel[0].comentari != "")
+			{
+				newNode = document.createElement("img");
+				newNode.id = "comentari"+mySel[0].castellerid;
+				newNode.src = "icons/comment.png";
+				node = document.getElementById("progress"+mySel[0].castellerid);
+				parentNode.insertBefore(newNode, node);
+			}
+			else
+				document.getElementById("comentari"+mySel[0].castellerid).remove();
+
+			parentNode.setAttribute("comentari", mySel[0].comentari);
+		}
+		Save(1);
+		invalidate();
 	}
 }
 
@@ -1037,6 +1082,11 @@ function CanviLesionat()
 function focusAlturaExtra()
 {
 	TeFocusAlturaExtra = !TeFocusAlturaExtra;
+}
+
+function focusComentari()
+{
+	TeFocusComentari = !TeFocusComentari;
 }
 
 function NouId()

@@ -22,6 +22,7 @@ if (!empty($_GET["obj"]))
 		if (($obj->cnv == 1) and ($obj->ca > 0)) 
 		{
 			$sql=$sql."UPDATE CASTELLER SET PORTAR_PEU=".$obj->peu.", LESIONAT=".$obj->les." WHERE CASTELLER_ID = ".$obj->ca.";";
+			$sql=$sql."UPDATE CASTELL_POSICIO SET COMENTARI='".GetStrDB($obj->com)."' WHERE CASELLA_ID=".$obj->cs.";";
 		}
 		elseif ($obj->ca > 0)
 		{
@@ -29,18 +30,18 @@ if (!empty($_GET["obj"]))
 			$sql2="";
 			if($x==0)
 			{
-				$sql1="UPDATE CASTELL_POSICIO SET CASTELLER_ID=0, ALTURA_EXTRA = 0 WHERE CASTELL_ID = ".$obj->id." AND CASTELLER_ID=".$obj->ca.";";
+				$sql1="UPDATE CASTELL_POSICIO SET CASTELLER_ID=0, ALTURA_EXTRA = 0, COMENTARI='".GetStrDB($obj->com)."' WHERE CASTELL_ID = ".$obj->id." AND CASTELLER_ID=".$obj->ca.";";
 			}
-			$sql2="UPDATE CASTELL_POSICIO SET CASTELLER_ID=".$obj->ca.", ALTURA_EXTRA = ".$obj->alt." WHERE CASTELL_ID = ".$obj->id." AND CASELLA_ID=".$obj->cs." AND PESTANYA=".$obj->ps.";";
+			$sql2="UPDATE CASTELL_POSICIO SET CASTELLER_ID=".$obj->ca.", ALTURA_EXTRA = ".$obj->alt.", COMENTARI='".GetStrDB($obj->com)."' WHERE CASTELL_ID = ".$obj->id." AND CASELLA_ID=".$obj->cs." AND PESTANYA=".$obj->ps.";";
 			$sql=$sql.$sql1.$sql2;
 		}
 		elseif ($obj->ca <= -99)
 		{
-			$sql=$sql."UPDATE CASTELL_POSICIO SET CASTELLER_ID=".$obj->ca.", TEXT='".GetStrDB($obj->txt)."' WHERE CASTELL_ID = ".$obj->id." AND CASELLA_ID=".$obj->cs." AND PESTANYA=".$obj->ps.";";
+			$sql=$sql."UPDATE CASTELL_POSICIO SET CASTELLER_ID=".$obj->ca.", TEXT='".GetStrDB($obj->txt)."', COMENTARI='".GetStrDB($obj->com)."' WHERE CASTELL_ID = ".$obj->id." AND CASELLA_ID=".$obj->cs." AND PESTANYA=".$obj->ps.";";
 		}
 		else
 		{
-			$sql=$sql."UPDATE CASTELL_POSICIO SET CASTELLER_ID=0, TEXT='".GetStrDB($obj->txt)."' WHERE CASTELL_ID = ".$obj->id." AND CASELLA_ID=".$obj->cs." AND PESTANYA=".$obj->ps.";";
+			$sql=$sql."UPDATE CASTELL_POSICIO SET CASTELLER_ID=0, TEXT='".GetStrDB($obj->txt)."', COMENTARI='".GetStrDB($obj->com)."' WHERE CASTELL_ID = ".$obj->id." AND CASELLA_ID=".$obj->cs." AND PESTANYA=".$obj->ps.";";
 		}
 	}
 

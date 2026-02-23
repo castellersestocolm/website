@@ -49,6 +49,7 @@ function Box()
 	this.camisa=false;
 	this.novell=false;
 	this.alturaExtra=0;
+	this.comentari="";
 	this.ultimCasteller=0;
 }
 
@@ -63,12 +64,13 @@ function Casteller()
   this.camisa=false;
   this.novell=false;
   this.alturaExtra=0;
+  this.comentari="";
 }
 
 //Initialize a new Box, add it, and invalidate the canvas
 function addRect(x, y, w, h, cordo, posicio, angle, dibuixId, id, pestanya, 
 	forma, text, linkat, seguent, castellid, castellerid, malnom, inscrit, 
-	altura, peu, lesionat, camisa, novell, alturaExtra, ultimCasteller)
+	altura, peu, lesionat, camisa, novell, alturaExtra, comentari, ultimCasteller)
 {
 	var rect = new Box();
 	rect.x = x;
@@ -88,6 +90,7 @@ function addRect(x, y, w, h, cordo, posicio, angle, dibuixId, id, pestanya,
 	rect.castellId=castellid;
 	rect.castellerid=castellerid;
 	rect.ultimCasteller=ultimCasteller;
+	rect.comentari=comentari;
 	if (castellerid > 0)
 	{		
 		rect.malnom=malnom;
@@ -484,8 +487,15 @@ function DrawCustomShape(context, shape, filled)
 	{
 		var img=document.getElementById("peu"+shape.castellerid);
 		if (shape.novell==1)
-			img=document.getElementById("peu_novell");
+			img=document.getElementById("peu");
 		if (img != null)		
+			context.drawImage(img,0,0);
+	}
+
+	if((shape.comentari!="") && (!isDownloading))
+	{
+		var img=document.getElementById("comentari"+shape.castellerid);
+		if (img != null)
 			context.drawImage(img,0,0);
 	}
 	

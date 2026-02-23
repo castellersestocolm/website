@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS `CASTELL_POSICIO` (
   `Linkat` int(11) DEFAULT NULL,
   `Seguent` int(11) DEFAULT NULL,
   `Altura_Extra` int(11) DEFAULT NULL,
+  `Comentari` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`CASELLA_ID`,`Castell_ID`),
   KEY `CASTELL_POSICIO__CASTELL_ID` (`Castell_ID`)
 );
