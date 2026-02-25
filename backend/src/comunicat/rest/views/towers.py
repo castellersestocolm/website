@@ -7,10 +7,12 @@ from rest_framework.pagination import PageNumberPagination
 import towers.api
 from comunicat.rest.serializers.towers import (
     ListTowerSerializer,
+    TowerWithPlacesTechnicalSerializer,
     TowerWithPlacesAliasSerializer,
 )
 
 from comunicat.rest.viewsets import ComuniCatViewSet
+from legal.enums import PermissionLevel
 
 
 class TowersResultsSetPagination(PageNumberPagination):
@@ -22,17 +24,17 @@ class TowersResultsSetPagination(PageNumberPagination):
 class TowersCastleAPI(
     ComuniCatViewSet,
 ):
-    serializer_class = TowerWithPlacesAliasSerializer
+    serializer_class = TowerWithPlacesTechnicalSerializer
     permission_classes = (permissions.IsAuthenticated,)
     pagination_class = TowersResultsSetPagination
     lookup_field = "id"
 
     @swagger_auto_schema(
         query_serializer=ListTowerSerializer(),
-        responses={200: TowerWithPlacesAliasSerializer(many=True)},
+        responses={200: TowerWithPlacesTechnicalSerializer(many=True)},
     )
-    # @method_decorator(cache_page(60))
-    # @method_decorator(cache_control(private=True))
+    @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         serializer = ListTowerSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -42,9 +44,15 @@ class TowersCastleAPI(
             user_id=request.user.is_authenticated and request.user.id,
         )
 
+        serializer_class = (
+            TowerWithPlacesTechnicalSerializer
+            if request.user.permission_level >= PermissionLevel.ADMIN
+            else TowerWithPlacesAliasSerializer
+        )
+
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(event_towers, request)
-        serializer = self.serializer_class(
+        serializer = serializer_class(
             result_page,
             context={"module": self.module, "user": request.user},
             many=True,

@@ -289,6 +289,12 @@ export default function CastleBase({ castle }: any) {
         !castlePlacesFamilyExternalIds.includes(castlePlace.external_link_id),
     );
 
+  const castlePlacesWithComments =
+    castlePlaces &&
+    castlePlaces.filter(
+      (castlePlace: any) => castlePlace.comment && castlePlace.comment.text,
+    );
+
   const castlePlacesFamilyInstructions =
     castlePlacesFamily &&
     castlePlacesFamily
@@ -387,6 +393,7 @@ export default function CastleBase({ castle }: any) {
 
   const [displayTronc, setDisplayTronc] = useState(false);
   const [displayHeights, setDisplayHeights] = useState(false);
+  const [displayComments, setDisplayComments] = useState(false);
 
   const actualDisplayTronc =
     displayTronc ||
@@ -564,11 +571,14 @@ export default function CastleBase({ castle }: any) {
                       castlePlace.user.towers[heightField] > 1
                         ? (heightField.includes("arms") ? "↑ " : "") +
                           castlePlace.user.towers[heightField]
-                        : castlePlace.user &&
-                            castlePlace.user.towers &&
-                            castlePlace.user.towers.alias
-                          ? castlePlace.user.towers.alias.toUpperCase()
-                          : castlePlace.extra.text.toUpperCase()
+                        : (castlePlace.comment && castlePlace.comment.text
+                            ? "★ "
+                            : "") +
+                          (castlePlace.user &&
+                          castlePlace.user.towers &&
+                          castlePlace.user.towers.alias
+                            ? castlePlace.user.towers.alias.toUpperCase()
+                            : castlePlace.extra.text.toUpperCase())
                     }
                     fontFamily="DM Sans"
                     fontSize={Math.round(
@@ -667,21 +677,118 @@ export default function CastleBase({ castle }: any) {
                 />
               )}
             {user && user.permission_level >= PermissionLevel.ADMIN && (
-              <FormControlLabel
-                className={styles.optionsCastleSwitch}
-                control={
-                  <Switch
-                    onChange={(event) =>
-                      setDisplayHeights(event.target.checked)
-                    }
-                  />
-                }
-                label={t("pages.calendar.section.agenda.event.castles-heights")}
-              />
+              <>
+                <FormControlLabel
+                  className={styles.optionsCastleSwitch}
+                  control={
+                    <Switch
+                      onChange={(event) =>
+                        setDisplayHeights(event.target.checked)
+                      }
+                    />
+                  }
+                  label={t(
+                    "pages.calendar.section.agenda.event.castles-heights",
+                  )}
+                />
+                {castlePlacesWithComments &&
+                  castlePlacesWithComments.length > 0 && (
+                    <FormControlLabel
+                      className={styles.optionsCastleSwitch}
+                      control={
+                        <Switch
+                          onChange={(event) =>
+                            setDisplayComments(event.target.checked)
+                          }
+                        />
+                      }
+                      label={t(
+                        "pages.calendar.section.agenda.event.castles-comments",
+                      )}
+                    />
+                  )}
+              </>
             )}
           </FormGroup>
         )}
-      {castlePlacesFamilyInstructions &&
+      {user &&
+        user.permission_level >= PermissionLevel.ADMIN &&
+        displayComments &&
+        castlePlacesWithComments &&
+        castlePlacesWithComments.length > 0 && (
+          <Box className={styles.optionsCastlePositions}>
+            <Divider />
+
+            <TableContainer>
+              <Table size="small">
+                <TableBody>
+                  {castlePlacesWithComments.map((castlePlace: any) => (
+                    <TableRow
+                      key={castlePlace.external_id}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
+                    >
+                      <TableCell component="th" scope="row">
+                        <Typography variant="body1">
+                          <Chip
+                            label={
+                              castlePlace.user &&
+                              castlePlace.user.towers &&
+                              castlePlace.user.towers.alias
+                                ? castlePlace.user.towers.alias.toUpperCase()
+                                : castlePlace.extra.text.toUpperCase()
+                            }
+                            variant="outlined"
+                            size="small"
+                            sx={{
+                              fontWeight: 700,
+                              borderWidth: "3px",
+                              borderRadius: "8px",
+                              borderColor:
+                                castlePlace.position.type in
+                                COLOR_BORDER_BY_POSITION_TYPE_AND_RING
+                                  ? COLOR_BORDER_BY_POSITION_TYPE_AND_RING[
+                                      castlePlace.position.type
+                                    ]
+                                      .filter(
+                                        ([minRing, colour]: any) =>
+                                          castlePlace.ring >= minRing,
+                                      )
+                                      .concat([
+                                        [
+                                          0,
+                                          COLOUR_BORDER_BY_POSITION_TYPE[
+                                            castlePlace.position.type
+                                          ],
+                                        ],
+                                      ])[0][1]
+                                  : castlePlace.position.type in
+                                      COLOUR_BORDER_BY_POSITION_TYPE
+                                    ? COLOUR_BORDER_BY_POSITION_TYPE[
+                                        castlePlace.position.type
+                                      ]
+                                    : COLOUR_BG_BY_POSITION_TYPE[
+                                        castlePlace.position.type
+                                      ],
+                            }}
+                          />
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography variant="body1">
+                          {castlePlace.comment.text}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        )}
+      {!displayComments &&
+        castlePlacesFamilyInstructions &&
         castlePlacesFamilyInstructions.length > 0 && (
           <Box className={styles.optionsCastlePositions}>
             <Divider />

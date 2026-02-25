@@ -115,6 +115,18 @@ class PlaceWithUserAliasSerializer(PlaceSlimSerializer):
     is_family = s.BooleanField(read_only=True)
 
 
+class PlaceComment(s.Serializer):
+    text = s.CharField(required=False, read_only=True)
+
+
+class PlaceWithUserTechnicalSerializer(PlaceSlimSerializer):
+    user = TowerUserAliasSerializer(read_only=True)
+    is_user = s.BooleanField(read_only=True)
+    is_family = s.BooleanField(read_only=True)
+
+    comment = PlaceComment(required=False, read_only=True)
+
+
 class TowerWithPlacesSerializer(TowerSerializer):
     places = PlaceSerializer(read_only=True, many=True)
 
@@ -123,6 +135,12 @@ class TowerWithPlacesSerializer(TowerSerializer):
 
 class TowerWithPlacesAliasSerializer(TowerSerializer):
     places = PlaceWithUserAliasSerializer(read_only=True, many=True)
+
+    external_id = s.IntegerField(read_only=True)
+
+
+class TowerWithPlacesTechnicalSerializer(TowerSerializer):
+    places = PlaceWithUserTechnicalSerializer(read_only=True, many=True)
 
     external_id = s.IntegerField(read_only=True)
 

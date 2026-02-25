@@ -45,6 +45,13 @@ class PlaceExtra:
         self.height = height
 
 
+class PlaceComment:
+    text: str | None
+
+    def __init__(self, text: str | None = None) -> None:
+        self.text = text
+
+
 class Responsible:
     user: User | None = None
     extra: PlaceExtra
@@ -75,6 +82,8 @@ class Place:
     is_user: bool = False
     is_family: bool = False
 
+    comment: PlaceComment | None = None
+
     def __init__(
         self,
         position: Position,
@@ -89,6 +98,7 @@ class Place:
         user_obj: User | None = None,
         is_user: bool = False,
         is_family: bool = False,
+        comment: PlaceComment | None = None,
     ) -> None:
         self.user = user_obj
         self.position = position
@@ -105,6 +115,8 @@ class Place:
 
         self.is_user = is_user
         self.is_family = is_family
+
+        self.comment = comment
 
 
 class Text:

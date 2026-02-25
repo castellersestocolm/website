@@ -18,6 +18,7 @@ from towers.types import (
     PlaceExtra,
     Responsible,
     Text,
+    PlaceComment,
 )
 from user.enums import FamilyMemberStatus
 from user.models import User, FamilyMember
@@ -230,13 +231,13 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
 
     for pinyator_tower_id, __, __, __ in pinyator_castles:
         cursor.execute(
-            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, c.Codi, ps.Cordo, ps.Seguent, ps.Linkat, ps.Cordo, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text, ps.Altura_Extra FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0'"
+            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, c.Codi, ps.Cordo, ps.Seguent, ps.Linkat, ps.Cordo, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text, ps.Altura_Extra, ps.Comentari FROM CASTELL_POSICIO AS ps JOIN CASTELLER AS c ON c.Casteller_ID = ps.Casteller_ID JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0'"
         )
         pinyator_positions[pinyator_tower_id] = cursor.fetchall()
 
     for pinyator_tower_id, __, __, __ in pinyator_castles:
         cursor.execute(
-            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, ps.Cordo, ps.Seguent, ps.Linkat, ps.Cordo, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text, ps.Altura_Extra FROM CASTELL_POSICIO AS ps JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0' AND ps.text != '' AND ps.Forma != 6"
+            f"SELECT DISTINCT ps.CASELLA_ID, ps.Posicio_ID, p.Nom, ps.Cordo, ps.Seguent, ps.Linkat, ps.Cordo, ps.X, ps.Y, ps.W, ps.H, ps.Angle, ps.Forma, ps.text, ps.Altura_Extra, ps.Comentari FROM CASTELL_POSICIO AS ps JOIN POSICIO AS p ON p.Posicio_ID = ps.Posicio_ID WHERE ps.Castell_ID = '{pinyator_tower_id}' AND ps.Casteller_ID != '0' AND ps.text != '' AND ps.Forma != 6"
         )
         pinyator_positions_extra[pinyator_tower_id] = cursor.fetchall()
 
@@ -265,6 +266,7 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
             __,
             __,
             extra_height,
+            __,
         ) in pinyator_positions[pinyator_tower_id]:
             if not position_user_id or position_user_id not in user_by_id:
                 continue
@@ -297,7 +299,7 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
                             height=extra_height if extra_height else None,
                         ),
                     )
-                    for __, __, position_name, position_user_id, __, __, __, __, __, __, __, __, __, __, extra_text, extra_height in pinyator_positions[
+                    for __, __, position_name, position_user_id, __, __, __, __, __, __, __, __, __, __, extra_text, extra_height, __ in pinyator_positions[
                         pinyator_tower_id
                     ]
                     if position_name.lower() == "altres"
@@ -309,7 +311,7 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
                             height=extra_height if extra_height else None,
                         ),
                     )
-                    for __, __, position_name, __, __, __, __, __, __, __, __, __, __, extra_text, extra_height in pinyator_positions_extra[
+                    for __, __, position_name, __, __, __, __, __, __, __, __, __, __, extra_text, extra_height, __ in pinyator_positions_extra[
                         pinyator_tower_id
                     ]
                     if position_name.lower() == "altres"
@@ -343,8 +345,9 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
                         external_link_id=external_link_id,
                         is_user=position_user_id == str(user_id),
                         is_family=position_user_id in [str(u_id) for u_id in user_ids],
+                        comment=PlaceComment(text=comment) if comment else None,
                     )
-                    for pinyator_place_id, pinyator_position_id, position_name, position_user_id, cordo_n, external_next_id, external_link_id, layer, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text, extra_height in pinyator_positions[
+                    for pinyator_place_id, pinyator_position_id, position_name, position_user_id, cordo_n, external_next_id, external_link_id, layer, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text, extra_height, comment in pinyator_positions[
                         pinyator_tower_id
                     ]
                 ]
@@ -371,8 +374,9 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
                         external_id=pinyator_place_id,
                         external_next_id=external_next_id,
                         external_link_id=external_link_id,
+                        comment=PlaceComment(text=comment) if comment else None,
                     )
-                    for pinyator_place_id, pinyator_position_id, position_name, cordo_n, external_next_id, external_link_id, layer, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text, extra_height in pinyator_positions_extra[
+                    for pinyator_place_id, pinyator_position_id, position_name, cordo_n, external_next_id, external_link_id, layer, pos_x, pos_y, size_w, size_h, pos_angle, pos_shape, extra_text, extra_height, comment in pinyator_positions_extra[
                         pinyator_tower_id
                     ]
                 ]
