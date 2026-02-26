@@ -33,6 +33,7 @@ import {
   OrderStatus,
   PermissionLevel,
   RegistrationStatus,
+  UserProductSource,
 } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import IconKeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
@@ -398,29 +399,6 @@ function AdminPage() {
                                 products.results,
                                 userTeamIds,
                               ).map((product: any) => {
-                                const order =
-                                  user.orders &&
-                                  user.orders.find(
-                                    (order: any) =>
-                                      order.products.filter(
-                                        (orderProduct: any) =>
-                                          orderProduct.size.product.id ===
-                                          product.id,
-                                      ).length > 0,
-                                  );
-
-                                const orderProductGiven =
-                                  user.orders &&
-                                  user.orders.filter(
-                                    (order: any) =>
-                                      order.products.filter(
-                                        (orderProduct: any) =>
-                                          orderProduct.size.product.id ===
-                                            product.id &&
-                                          orderProduct.quantity_given > 0,
-                                      ).length > 0,
-                                  ).length > 0;
-
                                 const userProduct =
                                   user.products &&
                                   user.products.find(
@@ -429,10 +407,11 @@ function AdminPage() {
                                   );
 
                                 const orderStatus =
-                                  userProduct || orderProductGiven
+                                  userProduct &&
+                                  userProduct.source === UserProductSource.OWNED
                                     ? OrderStatus.COMPLETED
-                                    : order
-                                      ? order.status
+                                    : userProduct && userProduct.order
+                                      ? userProduct.order.status
                                       : OrderStatus.CANCELED;
 
                                 return (

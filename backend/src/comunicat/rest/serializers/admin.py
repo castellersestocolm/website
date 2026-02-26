@@ -4,7 +4,7 @@ from drf_yasg.utils import swagger_serializer_method
 from comunicat.enums import Module
 from comunicat.rest.serializers.event import EventModuleSerializer, LocationSerializer
 from comunicat.rest.serializers.legal import TeamSlimSerializer, RoleSerializer
-from comunicat.rest.serializers.order import OrderProductSerializer
+from comunicat.rest.serializers.order import OrderProductSerializer, OrderSlimSerializer
 from comunicat.rest.serializers.product import ProductSerializer
 from comunicat.rest.serializers.towers import TowerWithPlacesSerializer
 from comunicat.rest.serializers.user import (
@@ -23,7 +23,7 @@ from order.models import Order
 from payment.models import Entity
 from towers.enums import PositionType
 from user.enums import UserProductSource
-from user.models import User, TowersUser
+from user.models import User, TowersUser, UserProduct
 
 
 class AdminMembershipSerializer(s.Serializer):
@@ -105,9 +105,27 @@ class AdminOrderSerializer(AdminOrderSlimSerializer):
         )
 
 
-class AdminUserProductSerializer(s.Serializer):
+class AdminUserProductSerializer(s.ModelSerializer):
     product = ProductSerializer(read_only=True)
+    order = OrderSlimSerializer(required=False, read_only=True)
     source = IntEnumField(UserProductSource, read_only=True)
+
+    class Meta:
+        model = UserProduct
+        fields = (
+            "id",
+            "product",
+            "order",
+            "source",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "product",
+            "order",
+            "source",
+            "created_at",
+        )
 
 
 class AdminMemberSerializer(s.ModelSerializer):

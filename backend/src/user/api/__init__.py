@@ -27,6 +27,7 @@ from order.models import Order
 from user.enums import FamilyMemberStatus, FamilyMemberRole
 from user.models import User, TowersUser, FamilyMember, Family, UserEmail, UserProduct
 from user.utils import get_default_consent_pictures
+import payment.api.entity
 
 
 def get(user_id: UUID, module: Module | None = None) -> User:
@@ -297,6 +298,9 @@ def create(
 
     # Link existing requests to the newly created user
     user.api.family_member_request.link(email=email)
+
+    # Create the associated entity
+    payment.api.entity.get_entity_by_key(user_id=user_obj.id)
 
     return user_obj
 

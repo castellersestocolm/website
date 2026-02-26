@@ -180,6 +180,9 @@ class UserProduct(StandardModel, Timestamps):
                 }
             )
 
+    class Meta:
+        unique_together = ("user", "product", "order")
+
 
 class UserEmail(StandardModel, Timestamps):
     user = models.ForeignKey("User", related_name="emails", on_delete=models.CASCADE)

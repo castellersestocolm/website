@@ -23,6 +23,7 @@ import {
   MembershipStatus,
   OrderStatus,
   TeamType,
+  UserProductSource,
 } from "../../enums";
 import IconEdit from "@mui/icons-material/Edit";
 import IconSave from "@mui/icons-material/Save";
@@ -570,27 +571,6 @@ export const TableUsers = ({ isAdult, products }: any) => {
                 userProdcutIds
                   ? Object.fromEntries(
                       allProducts.map((product: any) => {
-                        const order =
-                          user.orders &&
-                          user.orders.find(
-                            (order: any) =>
-                              order.products.filter(
-                                (orderProduct: any) =>
-                                  orderProduct.size.product.id === product.id,
-                              ).length > 0,
-                          );
-
-                        const orderProductGiven =
-                          user.orders &&
-                          user.orders.filter(
-                            (order: any) =>
-                              order.products.filter(
-                                (orderProduct: any) =>
-                                  orderProduct.size.product.id === product.id &&
-                                  orderProduct.quantity_given > 0,
-                              ).length > 0,
-                          ).length > 0;
-
                         const userProduct =
                           user.products &&
                           user.products.find(
@@ -599,10 +579,11 @@ export const TableUsers = ({ isAdult, products }: any) => {
                           );
 
                         const orderStatus =
-                          userProduct || orderProductGiven
+                          userProduct &&
+                          userProduct.source === UserProductSource.OWNED
                             ? OrderStatus.COMPLETED
-                            : order
-                              ? order.status
+                            : userProduct && userProduct.order
+                              ? userProduct.order.status
                               : OrderStatus.CANCELED;
 
                         return [

@@ -6,11 +6,10 @@ from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import Family, FamilyMember, User
 
 from social_core.pipeline.partial import partial
-from social_core.exceptions import AuthAlreadyAssociated, AuthException, AuthForbidden
+from social_core.exceptions import AuthException
 
 import membership.api
-
-from django.conf import settings
+import payment.api.entity
 
 
 def module_data(backend, response, details, user, *args, **kwargs):
@@ -55,6 +54,12 @@ def module_data(backend, response, details, user, *args, **kwargs):
         )
 
     membership.api.create_or_update(user_id=user.id, modules=[origin_module])
+
+    # Link existing requests to the newly created user
+    user.api.family_member_request.link(email=user.email)
+
+    # Create the associated entity
+    payment.api.entity.get_entity_by_key(user_id=user.id)
 
 
 @partial

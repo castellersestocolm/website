@@ -15,6 +15,8 @@ from order.managers import OrderQuerySet, DeliveryPriceQuerySet, OrderProductQue
 
 from django.utils.translation import gettext_lazy as _
 
+from user.enums import UserProductSource
+
 
 class Order(StandardModel, Timestamps):
     entity = models.ForeignKey(
@@ -72,9 +74,20 @@ class Order(StandardModel, Timestamps):
             OrderLog.objects.create(order_id=self.id, status=self.status)
 
             if self.status == OrderStatus.COMPLETED:
-                OrderProduct.objects.filter(order_id=self.id).update(
-                    quantity_given=F("quantity")
-                )
+                order_product_objs = OrderProduct.objects.filter(order_id=self.id)
+                order_product_objs.update(quantity_given=F("quantity"))
+                order_product_objs = list(order_product_objs)
+
+                if self.entity.user:
+                    from user.models import UserProduct
+
+                    for order_product_obj in order_product_objs:
+                        UserProduct.objects.get_or_create(
+                            user=self.entity.user,
+                            product=order_product_obj.size.product,
+                            order=self,
+                            source=UserProductSource.FROM_ORDER,
+                        )
 
         super().save(*args, **kwargs)
 

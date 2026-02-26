@@ -279,3 +279,8 @@ export enum PositionRelativePlacement {
   CLOSE = 80,
   IN_BETWEEN = 90,
 }
+
+export enum UserProductSource {
+  OWNED = 10,
+  FROM_ORDER = 20,
+}

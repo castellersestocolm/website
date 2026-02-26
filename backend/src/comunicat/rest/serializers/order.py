@@ -218,8 +218,24 @@ class OrderLogSerializer(s.ModelSerializer):
         )
 
 
-class OrderSerializer(s.ModelSerializer):
+class OrderSlimSerializer(s.ModelSerializer):
     status = IntEnumField(OrderStatus, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+
+
+class OrderSerializer(OrderSlimSerializer):
     delivery = OrderDeliverySerializer(read_only=True)
     payment_order = PaymentOrderSerializer(read_only=True)
     amount = MoneyField(read_only=True)
