@@ -23,7 +23,7 @@ def get_event_title(
         ) in modules:
             return get_translated_string(text="Rehearsal with musicians")
         elif (Module.TOWERS, None) in modules:
-            return get_translated_string(text="Rehearsal with musicians")
+            return get_translated_string(text="Rehearsal")
         elif (Module.TOWERS, TeamType.MUSICIANS) in modules:
-            return get_translated_string(text="Rehearsal with musicians")
+            return get_translated_string(text="Musicians rehearsal")
     return event_title
