@@ -54,3 +54,47 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: #000000 !important;
   caret-color: #000000 !important;
 }
+
+.pricesSection {
+  margin: 24px 0;
+
+  h5 {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  p {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+}
+
+.pricesCard {
+  width: 100%;
+}
+
+.pricesTopBox {
+  padding: 12px 16px;
+  background-color: var(--mui-palette-primary-main);
+}
+
+.pricesItemIcon {
+  padding: initial;
+}
+
+.pricesList {
+  width: 100%;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  div:first-of-type {
+    min-width: 36px !important;
+  }
+}
+
+.pricesTableRowTotal {
+  th,
+  td {
+    font-weight: 700 !important;
+  }
+}

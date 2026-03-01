@@ -6,7 +6,20 @@ import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
-import { Button, FormHelperText, Link, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  Divider,
+  FormHelperText,
+  Link,
+  TableContainer,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Stack,
+  Typography,
+} from "@mui/material";
 import styles from "./styles.module.css";
 import IconGoogle from "@mui/icons-material/Google";
 import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
@@ -16,6 +29,7 @@ import { apiUserCreate } from "../../api";
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
+import { getEnumLabel, Module } from "../../enums";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -300,6 +314,139 @@ export default function FormJoin() {
                 </FormHelperText>
               )}
             </FormGrid>*/}
+            <FormGrid size={12} className={styles.pricesSection}>
+              <Typography variant="h5" fontWeight={600}>
+                {t("pages.user-join.prices.title")}
+              </Typography>
+              <Grid container justifyContent="center">
+                <Grid size={{ xs: 12, sm: 10, md: 8, lg: 6 }}>
+                  <Typography variant="body1">
+                    {t("pages.user-join.prices.description")}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container gap={3} justifyContent="center">
+                <Grid size={{ xs: 12, sm: 5, md: 4, lg: 3 }}>
+                  <Card variant="outlined" className={styles.pricesCard}>
+                    <Box className={styles.pricesTopBox}>
+                      <Typography variant="h6" fontWeight="600" component="div">
+                        {t("pages.user-join.prices.single.title")}
+                      </Typography>
+                    </Box>
+                    <Divider />
+
+                    <Box>
+                      <TableContainer>
+                        <Table size="small">
+                          <TableBody>
+                            <TableRow
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {getEnumLabel(t, "module", Module.ORG)}
+                              </TableCell>
+                              <TableCell align="right">{"150 SEK"}</TableCell>
+                            </TableRow>
+                            <TableRow
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {getEnumLabel(t, "module", Module.TOWERS)}
+                              </TableCell>
+                              <TableCell align="right">{"250 SEK"}</TableCell>
+                            </TableRow>
+                            <TableRow
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                              className={styles.pricesTableRowTotal}
+                            >
+                              <TableCell component="th" scope="row">
+                                {t("pages.user-join.prices.summary-total")}
+                              </TableCell>
+                              <TableCell align="right">
+                                {"400 SEK"}
+                                {"/"}
+                                {t("pages.user-join.prices.summary-year")}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  </Card>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 5, md: 4, lg: 3 }}>
+                  <Card variant="outlined" className={styles.pricesCard}>
+                    <Box className={styles.pricesTopBox}>
+                      <Typography variant="h6" fontWeight="600" component="div">
+                        {t("pages.user-join.prices.family.title")}
+                      </Typography>
+                    </Box>
+                    <Divider />
+                    <Box>
+                      <TableContainer>
+                        <Table size="small">
+                          <TableBody>
+                            <TableRow
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {getEnumLabel(t, "module", Module.ORG)}
+                              </TableCell>
+                              <TableCell align="right">{"250 SEK"}</TableCell>
+                            </TableRow>
+                            <TableRow
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {getEnumLabel(t, "module", Module.TOWERS)}
+                              </TableCell>
+                              <TableCell align="right">{"450 SEK"}</TableCell>
+                            </TableRow>
+                            <TableRow
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                              className={styles.pricesTableRowTotal}
+                            >
+                              <TableCell component="th" scope="row">
+                                {t("pages.user-join.prices.summary-total")}
+                              </TableCell>
+                              <TableCell align="right">
+                                {"700 SEK"}
+                                {"/"}
+                                {t("pages.user-join.prices.summary-year")}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Box>
+                  </Card>
+                </Grid>
+              </Grid>
+            </FormGrid>
             <FormGrid size={{ xs: 12 }}>
               <FormControlLabel
                 control={<Checkbox name="consent_pictures" value="yes" />}
