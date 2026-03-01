@@ -31,7 +31,7 @@ from event.enums import (
 from django.utils.translation import gettext_lazy as _
 
 from event.managers import EventQuerySet, RegistrationQuerySet, AgendaItemQuerySet
-from event.utils.event import get_event_name
+from event.utils.event import get_event_title
 
 
 # TODO: Split address into fields, add coordinates
@@ -272,7 +272,7 @@ class EventModule(StandardModel, Timestamps):
             )
             for event_module_obj in self.event.modules.all()
         ]
-        self.event.title = get_event_name(
+        self.event.title = get_event_title(
             event_title=self.event.title,
             event_type=self.event.type,
             modules=event_modules,

@@ -54,6 +54,7 @@ def module_data(backend, response, details, user, *args, **kwargs):
 
     membership.api.create_or_update(user_id=user.id, modules=[origin_module])
 
+
 @partial
 def associate_by_email(backend, details, user=None, *args, **kwargs):
     if user:
