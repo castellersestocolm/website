@@ -245,7 +245,8 @@ def get_user_email_render(
 
         if (
             email_type == EmailType.EVENT_SIGNUP
-            and (context.get("event_types", []) + [None])[0] == EventType.PERFORMANCE
+            and ((context.get("event_types") or []) + [None])[0]
+            == EventType.PERFORMANCE
         ):
             subject = str(_("Sign-up for the upcoming performances"))
 
