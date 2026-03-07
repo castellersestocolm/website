@@ -171,6 +171,16 @@ def membership_amount(membership_obj: Membership, only_active: bool = True) -> M
 
 
 @register.filter
+def membership_amount_active(membership_obj: Membership) -> Money:
+    return membership_amount(membership_obj=membership_obj, only_active=True)
+
+
+@register.filter
+def membership_amount_all(membership_obj: Membership) -> Money:
+    return membership_amount(membership_obj=membership_obj, only_active=False)
+
+
+@register.filter
 def program_course_registrations_amount(
     program_course_registration_objs: list[ProgramCourseRegistration],
     only_active: bool = True,
