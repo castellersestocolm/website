@@ -126,9 +126,9 @@ def get_entity_by_key(
         return user_obj.entity
 
     entity_obj, __ = Entity.objects.update_or_create(
-        email=email,
+        **({"email": email} if email else {"user_id": user_obj.id} if user_obj else {}),
         defaults={
-            "user_id": user_obj.id if user_obj else None,
+            **({"user_id": user_obj.id} if email and user_obj else {}),
             **(
                 {"firstname": user_obj and user_obj.firstname or firstname}
                 if user_obj or firstname is not None
