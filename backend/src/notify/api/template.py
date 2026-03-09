@@ -448,6 +448,7 @@ def get_registration_email_renders(
     registration_objs = list(
         Registration.objects.filter(id__in=registration_ids)
         .select_related("entity", "entity__user", "event", "line")
+        .with_event_title()
         .order_by(
             "-line__amount",
             "entity__user__firstname",
@@ -506,7 +507,7 @@ def get_registration_email_renders(
             body = render_to_string(template["html"], context_full)
 
             if email_type == EmailType.REGISTRATION_PAID:
-                subject = str(template["subject"]) % (registration_obj.event.title,)
+                subject = str(template["subject"]) % (registration_obj.event_title_locale,)
             else:
                 subject = str(template["subject"])
 
