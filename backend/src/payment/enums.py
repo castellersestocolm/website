@@ -47,6 +47,7 @@ class AccountCategory(IntEnum):
     LOSSES = 130
     SALES = 140
     INTEREST = 150
+    ERRORS = 160
 
 
 class TransactionImportStatus(IntEnum):
