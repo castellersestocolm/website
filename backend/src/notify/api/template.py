@@ -507,7 +507,9 @@ def get_registration_email_renders(
             body = render_to_string(template["html"], context_full)
 
             if email_type == EmailType.REGISTRATION_PAID:
-                subject = str(template["subject"]) % (registration_obj.event_title_locale,)
+                subject = str(template["subject"]) % (
+                    registration_obj.event_title_locale,
+                )
             else:
                 subject = str(template["subject"])
 

@@ -120,7 +120,9 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
             )
             reference = row.get("reference")
             external_id = row.get("external_id")
-            date_accounting = datetime.date.fromisoformat(row["date_accounting"])
+            date_accounting = datetime.date.fromisoformat(
+                row.get("date_accounting", row.get("date_interest"))
+            )
             date_interest = (
                 datetime.date.fromisoformat(row["date_interest"])
                 if "date_interest" in row
