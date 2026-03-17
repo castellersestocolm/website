@@ -91,12 +91,16 @@ def update_or_create_event(event_id: UUID) -> None:
     if not event_obj or event_obj.type not in (
         EventType.REHEARSAL,
         EventType.PERFORMANCE,
+        EventType.WORKSHOP,
     ):
         return
 
     cursor = connections["pinyator"].cursor()
 
-    if event_obj.type == EventType.REHEARSAL and event_obj.location:
+    if (
+        event_obj.type in (EventType.REHEARSAL, EventType.WORKSHOP)
+        and event_obj.location
+    ):
         event_title = f"{event_obj.title_locale} - {event_obj.location.name}"
     else:
         event_title = event_obj.title_locale

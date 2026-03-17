@@ -56,6 +56,12 @@ async function main() {
                             amount.pop();
                             transactionData["amount"] = amount.join(" ");
                             break;
+                        case "datumförkontohändelse":
+                            transactionData["date_accounting"] = transactionValue;
+                            break;
+                        case "önskatbetalningsdatum":
+                            transactionData["date_accounting"] = transactionValue;
+                            break;
                         case "bokföringsdag":
                             transactionData["date_accounting"] = transactionValue;
                             break;
