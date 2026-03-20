@@ -19,6 +19,14 @@
                 {% endif %}
                 <li>{% trans "Valid" %}: <strong>{{ membership_obj.date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_obj.date_to|date:"Y-m-d" }}</strong></li>
             </ul>
+            {% if membership_obj.all_membership_users %}
+                <p>{% trans "The following members are included in your membership." %}</p>
+                <ul>
+                    {% for membership_user in membership_obj.all_membership_users %}
+                        <li>{{ membership_user.user.name }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         {% else %}
             <p>{% trans "Your membership expired on" %} <strong>{{ membership_obj.date_to|date:"Y-m-d" }}</strong> {% trans "and therefore you aren't a member anymore." %}
             <p>{% trans "In your dashboard you can find instructions on how to renew your membership as well as the payment information." %}</p>

@@ -12,7 +12,7 @@ from document.models import EmailAttachment
 from event.enums import EventType
 from event.models import Registration, EventModule
 from membership.enums import MembershipStatus
-from membership.models import Membership, MembershipModule
+from membership.models import Membership, MembershipModule, MembershipUser
 from notify.consts import (
     SETTINGS_BY_MODULE,
     TEMPLATE_BY_MODULE,
@@ -103,7 +103,14 @@ def get_user_email_render(
                 "modules",
                 MembershipModule.objects.order_by("module"),
                 to_attr="all_modules",
-            )
+            ),
+            Prefetch(
+                "membership_users",
+                MembershipUser.objects.select_related("user")
+                .with_family_role()
+                .order_by("-family_role", "user__firstname", "user__lastname"),
+                to_attr="all_membership_users",
+            ),
         )
         .first()
     )

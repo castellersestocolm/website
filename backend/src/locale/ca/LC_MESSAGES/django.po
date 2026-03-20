@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-23 11:12+0100\n"
+"POT-Creation-Date: 2026-03-20 13:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,8 +42,8 @@ msgstr "create"
 msgid "updated"
 msgstr "actualitzat"
 
-#: comunicat/rest/serializers/order.py:319
-#: comunicat/rest/serializers/order.py:324
+#: comunicat/rest/serializers/order.py:335
+#: comunicat/rest/serializers/order.py:340
 msgid "This field is required."
 msgstr ""
 
@@ -226,33 +226,40 @@ msgid ""
 "is awaiting for payment. When the process is over you will be a member of"
 msgstr "està pendent de pagament. Quan s'acabi el procés, seràs membre de"
 
-#: comunicat/templates/email/org/membership/check.html:15
+#: comunicat/templates/email/org/membership/check.html:16
+#: comunicat/templates/email/org/membership/check.html:18
 #: comunicat/templates/email/org/membership/renew.html:7
-#: comunicat/templates/email/towers/membership/check.html:15
+#: comunicat/templates/email/towers/membership/check.html:16
+#: comunicat/templates/email/towers/membership/check.html:18
 #: comunicat/templates/email/towers/membership/renew.html:7
 msgid "Amount"
 msgstr "Quantitat"
 
-#: comunicat/templates/email/org/membership/check.html:16
+#: comunicat/templates/email/org/membership/check.html:20
 #: comunicat/templates/email/org/membership/renew.html:8
-#: comunicat/templates/email/towers/membership/check.html:16
+#: comunicat/templates/email/towers/membership/check.html:20
 #: comunicat/templates/email/towers/membership/renew.html:8
 msgid "Valid"
 msgstr "Validesa"
 
-#: comunicat/templates/email/org/membership/check.html:19
-#: comunicat/templates/email/towers/membership/check.html:19
+#: comunicat/templates/email/org/membership/check.html:23
+#: comunicat/templates/email/towers/membership/check.html:23
+msgid "The following members are included in your membership."
+msgstr "Els membres següents formen part de la teva quota."
+
+#: comunicat/templates/email/org/membership/check.html:31
+#: comunicat/templates/email/towers/membership/check.html:31
 msgid "Your membership expired on"
 msgstr "La teva quota va caducar el"
 
-#: comunicat/templates/email/org/membership/check.html:19
-#: comunicat/templates/email/towers/membership/check.html:19
+#: comunicat/templates/email/org/membership/check.html:31
+#: comunicat/templates/email/towers/membership/check.html:31
 msgid "and therefore you aren't a member anymore."
 msgstr "i per tant ja no ets membre."
 
-#: comunicat/templates/email/org/membership/check.html:20
-#: comunicat/templates/email/org/membership/check.html:24
-#: comunicat/templates/email/towers/membership/check.html:24
+#: comunicat/templates/email/org/membership/check.html:32
+#: comunicat/templates/email/org/membership/check.html:36
+#: comunicat/templates/email/towers/membership/check.html:36
 msgid ""
 "However, not all is lost! You can become a member easily, head to our "
 "website to join."
@@ -260,8 +267,8 @@ msgstr ""
 "Tanmateix, no tot està perdut! Et pots fer membre fàcilment visitant la "
 "nostra pàgina web."
 
-#: comunicat/templates/email/org/membership/check.html:23
-#: comunicat/templates/email/towers/membership/check.html:23
+#: comunicat/templates/email/org/membership/check.html:35
+#: comunicat/templates/email/towers/membership/check.html:35
 msgid ""
 "You don't have an active membership registered with this email and therefore "
 "aren't a member."
@@ -269,16 +276,16 @@ msgstr ""
 "No tens cap quota activa registrada amb aquest correu electrònic i, per "
 "tant, no ets membre."
 
-#: comunicat/templates/email/org/membership/check.html:37
+#: comunicat/templates/email/org/membership/check.html:49
 #: comunicat/templates/email/org/membership/renew.html:16
-#: comunicat/templates/email/towers/membership/check.html:37
+#: comunicat/templates/email/towers/membership/check.html:49
 #: comunicat/templates/email/towers/membership/expired.html:10
 #: comunicat/templates/email/towers/membership/renew.html:15
 msgid "Renew membership"
 msgstr "Renova la quota"
 
-#: comunicat/templates/email/org/membership/check.html:37
-#: comunicat/templates/email/towers/membership/check.html:37
+#: comunicat/templates/email/org/membership/check.html:49
+#: comunicat/templates/email/towers/membership/check.html:49
 msgid "Join us"
 msgstr "Uneix-te"
 
@@ -390,7 +397,7 @@ msgstr ""
 "Les següents inscripcions s'han marcat com a pagades! En trobaràs un resum a "
 "continuació."
 
-#: comunicat/templates/email/towers/membership/check.html:20
+#: comunicat/templates/email/towers/membership/check.html:32
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
 "In your dashboard you can find instructions on how to renew your membership "
@@ -642,18 +649,6 @@ msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/utils/event.py:25
-msgid "Rehearsal with musicians"
-msgstr "Assaig amb músics"
-
-#: event/utils/event.py:27
-msgid "Rehearsal"
-msgstr "Assaig"
-
-#: event/utils/event.py:29
-msgid "Musicians rehearsal"
-msgstr "Assaig de músics"
-
 #: legal/models.py:78
 #, fuzzy
 #| msgid "The family member must be below %s to create."
@@ -704,11 +699,11 @@ msgstr ""
 msgid "View attendance"
 msgstr "Mostra l'assistència"
 
-#: notify/api/template.py:250
+#: notify/api/template.py:258
 msgid "Sign-up for the upcoming performances"
 msgstr "Confirma l'assistència a les properes actuacions"
 
-#: notify/api/template.py:416
+#: notify/api/template.py:424
 msgid "receipt"
 msgstr "rebut"
 
@@ -789,6 +784,7 @@ msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
 #: notify/consts.py:165
+#, python-format
 msgid "Your registration is now paid — %s"
 msgstr "La teva inscripció s'ha pagat — %s"
 
@@ -816,11 +812,11 @@ msgstr "Pagament"
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
-#: order/models.py:257
+#: order/models.py:270
 msgid "The quantity given must be equal or lower than the ordered quantity."
 msgstr ""
 
-#: order/models.py:355
+#: order/models.py:368
 msgid "Region's country must match country."
 msgstr ""
 
@@ -957,6 +953,15 @@ msgstr "actiu"
 #| msgid "Category must be set for accounts with parent."
 msgid "Order must be set for source %s."
 msgstr "La categoria és obligatòria per comptes amb matrius."
+
+#~ msgid "Rehearsal with musicians"
+#~ msgstr "Assaig amb músics"
+
+#~ msgid "Rehearsal"
+#~ msgstr "Assaig"
+
+#~ msgid "Musicians rehearsal"
+#~ msgstr "Assaig de músics"
 
 #~ msgid ""
 #~ "Your membership is expired and therefore you are not currently a member of"

@@ -65,6 +65,9 @@ async function main() {
                         case "bokföringsdag":
                             transactionData["date_accounting"] = transactionValue;
                             break;
+                        case "datum":
+                            transactionData["date_accounting"] = transactionValue;
+                            break;
                         case "räntedag":
                             transactionData["date_interest"] = transactionValue;
                             break;
