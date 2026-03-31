@@ -42,11 +42,14 @@ from payment.models import (
     PaymentProvider,
     PaymentOrder,
     PaymentOrderProviderLog,
+    EntityAlias,
 )
 
 from jsoneditor.forms import JSONEditor
 
 from django.utils.translation import gettext_lazy as _
+
+from payment.utils.admin import EntityHasPaymentFilter
 
 
 class PaymentLineForPaymentFormset(BaseInlineFormSet):
@@ -457,6 +460,12 @@ class PaymentInline(admin.TabularInline):
     payment_link.short_description = _("payment")
 
 
+class EntityAliasInline(admin.TabularInline):
+    model = EntityAlias
+    ordering = ("alias",)
+    extra = 0
+
+
 class AccountInline(admin.TabularInline):
     model = Account
     ordering = ("code",)
@@ -589,8 +598,12 @@ class EntityAdmin(admin.ModelAdmin):
         "created_at",
     )
     ordering = ("firstname", "lastname", "email", "-created_at")
+    list_filter = (EntityHasPaymentFilter,)
     raw_id_fields = ("user",)
-    inlines = (PaymentInline,)
+    inlines = (
+        EntityAliasInline,
+        PaymentInline,
+    )
     actions = (merge_entities,)
     form = EntityAdminForm
 

@@ -183,6 +183,23 @@ class Entity(StandardModel, Timestamps):
         ]
 
 
+class EntityAlias(StandardModel, Timestamps):
+    entity = models.ForeignKey(
+        "Entity",
+        related_name="aliases",
+        on_delete=models.CASCADE,
+    )
+    alias = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "entity alias"
+        verbose_name_plural = "entity aliases"
+
+        unique_together = (("entity", "alias"),)
+
+        indexes = [models.Index(fields=("alias",))]
+
+
 def get_expense_file_name(instance, filename):
     return os.path.join(
         "payment/expense/file/", str(instance.id) + "." + filename.split(".")[-1]

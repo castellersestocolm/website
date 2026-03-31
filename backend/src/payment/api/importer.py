@@ -32,6 +32,7 @@ from payment.models import (
     Payment,
     PaymentLine,
     Account,
+    EntityAlias,
 )
 
 from django.conf import settings
@@ -80,6 +81,17 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                 entity_obj,
             )
             for entity_obj in Entity.objects.order_by("id")
+        ]
+    )
+    entity_by_alias = OrderedDict(
+        [
+            (
+                (entity_alias_obj.id, entity_alias_obj.alias),
+                entity_alias_obj.entity,
+            )
+            for entity_alias_obj in EntityAlias.objects.select_related(
+                "entity"
+            ).order_by("id")
         ]
     )
 
@@ -156,6 +168,16 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                 for entity_name, entity_obj in entity_by_name.items():
                     current_score = difflib.SequenceMatcher(
                         None, sender.lower(), entity_name.lower()
+                    ).ratio()
+                    if current_score >= EDIT_DISTANCE_NAME_THRESHOLD and (
+                        entity_score is None or current_score > entity_score
+                    ):
+                        found_entity_obj = entity_obj
+                        entity_score = current_score
+
+                for (__, entity_alias), entity_obj in entity_by_alias.items():
+                    current_score = difflib.SequenceMatcher(
+                        None, sender.lower(), entity_alias.lower()
                     ).ratio()
                     if current_score >= EDIT_DISTANCE_NAME_THRESHOLD and (
                         entity_score is None or current_score > entity_score
