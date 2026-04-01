@@ -1,4 +1,5 @@
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const ORG_BASE_URL = process.env.REACT_APP_ORG_BASE_URL;
 
 export const ROUTES = {
   home: {
@@ -23,7 +24,7 @@ export const ROUTES = {
     path:
       API_BASE_URL +
       "/user/login/google-oauth2/?next=" +
-      API_BASE_URL +
+      ORG_BASE_URL +
       "/user/dashboard",
   },
 };
