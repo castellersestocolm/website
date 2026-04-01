@@ -21,7 +21,10 @@ GOOGLE_DRIVE_FOLDER_ID = settings.MODULE_ALL_GOOGLE_DRIVE["payment"]["folder_id"
 
 PAYMENT_METHOD_FIELDS = {
     PaymentMethod.CASH: None,
-    PaymentMethod.TRANSFER: ("bank", "iban",),
+    PaymentMethod.TRANSFER: (
+        "bank",
+        "iban",
+    ),
     PaymentMethod.CARD: None,
     PaymentMethod.PAYPAL: None,
     PaymentMethod.SE_SWISH: None,

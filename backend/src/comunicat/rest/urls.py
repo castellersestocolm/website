@@ -61,6 +61,9 @@ router.register("history/event", history.HistoryEventAPI, "history_event")
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
 router.register("admin/order", admin.AdminOrderAPI, "admin_order")
 router.register("admin/event", admin.AdminEventAPI, "admin_event")
+router.register(
+    "admin/event/registration", admin.AdminRegistrationAPI, "admin_event_registration"
+)
 router.register("admin/towers/event", admin.AdminTowersEventAPI, "admin_towers_event")
 router.register("admin/towers/stats", admin.AdminTowersStatsAPI, "admin_towers_stats")
 router.register(

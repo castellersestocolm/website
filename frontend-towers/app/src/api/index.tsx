@@ -16,6 +16,8 @@ import {
   API_LEGAL_GROUP_LIST_PAGE_SIZE,
   API_HISTORY_EVENT_LIST_PAGE_SIZE,
   API_ADMIN_HISTORY_EVENT_PAGE_SIZE,
+  API_ADMIN_REGISTRATION_LIST_PAGE_SIZE,
+  API_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, RegistrationStatus } from "../enums";
 
@@ -565,15 +567,12 @@ export const apiEventRegistrationDelete = async (
   }
 };
 
-export const apiEventRegistrationList = async (
-  eventId: string,
-  forAdmin: boolean = undefined,
-) => {
+export const apiEventRegistrationList = async (page: number = undefined) => {
   try {
     return await instance.get("/event/registration/", {
       params: {
-        event_id: eventId,
-        for_admin: forAdmin,
+        page_size: API_REGISTRATIONS_LIST_PAGE_SIZE,
+        page: page,
       },
     });
   } catch (error) {
@@ -814,6 +813,26 @@ export const apiAdminEventList = async (
         date_from: dateFrom,
         date_to: dateTo,
         for_musicians: forMusicians,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventRegistrationList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+  eventId: string,
+) => {
+  try {
+    return await instance.get("/admin/event/registration/", {
+      params: {
+        page_size: pageSize ? pageSize : API_ADMIN_REGISTRATION_LIST_PAGE_SIZE,
+        page: page,
+        event_id: eventId,
       },
     });
   } catch (error) {

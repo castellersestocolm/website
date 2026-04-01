@@ -5,6 +5,7 @@ import {
   API_EXPENSES_LIST_PAGE_SIZE,
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
+  API_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../consts";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -180,6 +181,21 @@ export const apiUserRequestPassword = async (email: string) => {
 export const apiUserMe = async () => {
   try {
     return await instance.get("/user/me/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiEventRegistrationList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/event/registration/", {
+      params: {
+        page_size: API_REGISTRATIONS_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

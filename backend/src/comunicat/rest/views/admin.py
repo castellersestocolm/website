@@ -12,6 +12,7 @@ import user.api.family_member
 import user.api.family_member_request
 import order.api
 import event.api
+import event.api.registration
 import towers.api
 import towers.api.statistics
 import history.api.history_event
@@ -27,6 +28,8 @@ from comunicat.rest.serializers.admin import (
     AdminTowersStatsPositionSerializer,
     AdminHistoryEventSerializer,
     AdminHistoryEventUpdateSerializer,
+    AdminRegistrationSerializer,
+    AdminListRegistrationSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import TeamType
@@ -45,6 +48,12 @@ class AdminOrderResultsSetPagination(PageNumberPagination):
 
 
 class AdminEventResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class AdminRegistrationResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -211,6 +220,36 @@ class AdminEventAPI(ComuniCatViewSet):
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(event_objs, request)
+        serializer = self.serializer_class(
+            result_page, context={"module": self.module}, many=True
+        )
+        return paginator.get_paginated_response(serializer.data)
+
+
+class AdminRegistrationAPI(ComuniCatViewSet):
+    serializer_class = AdminRegistrationSerializer
+    permission_classes = (AllowLevelAdmin,)
+    pagination_class = AdminRegistrationResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        query_serializer=AdminListRegistrationSerializer,
+        responses={200: AdminRegistrationSerializer(many=True), 403: Serializer()},
+    )
+    @method_decorator(cache_page(1))
+    def list(self, request):
+        serializer = AdminListRegistrationSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        registration_objs = event.api.registration.get_list(
+            event_ids=[serializer.validated_data["event_id"]],
+            module=self.module,
+            user_id=request.user.id,
+            for_admin=True,
+        )
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(registration_objs, request)
         serializer = self.serializer_class(
             result_page, context={"module": self.module}, many=True
         )

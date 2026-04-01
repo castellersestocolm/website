@@ -23,6 +23,7 @@ import {
   apiOrderList,
   apiPaymentList,
   apiUserLogout,
+  apiEventRegistrationList,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
@@ -39,6 +40,7 @@ import IconWorkspaces from "@mui/icons-material/Workspaces";
 import IconLanguage from "@mui/icons-material/Language";
 import IconReplay from "@mui/icons-material/Replay";
 import IconChevronRight from "@mui/icons-material/KeyboardDoubleArrowRight";
+import IconHowToReg from "@mui/icons-material/HowToReg";
 import PageBase from "../../components/PageBase/PageBase";
 import {
   EXPENSE_STATUS_ICON,
@@ -60,6 +62,7 @@ import {
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
   PAYMENT_SWISH_NUMBER,
+  API_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
 import ImageIconSwish from "../../assets/images/icons/swish.png";
@@ -68,7 +71,7 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 import QRCode from "qrcode";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
-import { dateToString } from "../../utils/datetime";
+import { dateToString, datetimeToString } from "../../utils/datetime";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
@@ -92,6 +95,10 @@ function UserDashboardPage() {
     navigate(ROUTES["user-login"].path);
   }
 
+  const [registrationsOpen, setRegistrationsOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [paymentsOpen, setPaymentsOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
@@ -104,6 +111,8 @@ function UserDashboardPage() {
     [key: string]: boolean;
   }>({});
 
+  const [registrationPage, setRegistrationPage] = React.useState(1);
+  const [registrations, setRegistrations] = React.useState(undefined);
   const [paymentPage, setPaymentPage] = React.useState(1);
   const [payments, setPayments] = React.useState(undefined);
   const [orderPage, setOrderPage] = React.useState(1);
@@ -119,6 +128,15 @@ function UserDashboardPage() {
         Object.entries(paymentsOpen).map(([k, v], i) => [k, false]),
       ),
       [paymentId]: !paymentsOpen[paymentId],
+    });
+  };
+
+  const handleRegistrationClick = (registrationId: string) => {
+    setRegistrationsOpen({
+      ...Object.fromEntries(
+        Object.entries(registrationsOpen).map(([k, v], i) => [k, false]),
+      ),
+      [registrationId]: !paymentsOpen[registrationId],
     });
   };
 
@@ -183,6 +201,16 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setMembership, t]);
+
+  React.useEffect(() => {
+    if (user) {
+      apiEventRegistrationList(registrationPage).then((response) => {
+        if (response.status === 200) {
+          setRegistrations(response.data);
+        }
+      });
+    }
+  }, [user, i18n.resolvedLanguage, setRegistrations, registrationPage]);
 
   React.useEffect(() => {
     if (user) {
@@ -485,6 +513,97 @@ function UserDashboardPage() {
           {contentSidebarProfile}
           {contentSidebarEmails}
           {contentSidebarMembership}
+        </Grid>
+
+        <Grid>
+          <Grid container spacing={2} direction="column">
+            <Card variant="outlined">
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.user-dashboard.section.registrations.title")}
+                </Typography>
+              </Box>
+              <Divider />
+
+              {registrations ? (
+                <Box className={styles.userFamilyBox}>
+                  {registrations.results.length > 0 ? (
+                    <List className={styles.userFamilyList}>
+                      {registrations.results.map(
+                        (registration: any, i: number, row: any) => (
+                          <Box key={registration.id}>
+                            <ListItemButton
+                              onClick={() =>
+                                handleRegistrationClick(registration.id)
+                              }
+                              disableTouchRipple
+                              dense
+                            >
+                              <ListItemIcon>
+                                <IconHowToReg />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  registration.event.title +
+                                  " — " +
+                                  datetimeToString(
+                                    i18n.resolvedLanguage,
+                                    registration.event.time_from,
+                                  )
+                                }
+                                secondary={
+                                  t(
+                                    "pages.user-registrations.registration.updated",
+                                  ) +
+                                  " " +
+                                  t(
+                                    "pages.user-registrations.registration.date",
+                                  ) +
+                                  " " +
+                                  dateToString(
+                                    i18n.resolvedLanguage,
+                                    registration.updated_at
+                                      ? registration.updated_at
+                                      : registration.created_at,
+                                  )
+                                }
+                              />
+                            </ListItemButton>
+                            {i + 1 < row.length && <Divider />}
+                          </Box>
+                        ),
+                      )}
+                    </List>
+                  ) : (
+                    <Box className={styles.userFamilyEmpty}>
+                      <Typography component="div">
+                        {t("pages.user-dashboard.section.registrations.empty")}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Box className={styles.loader}>
+                  <LoaderClip />
+                </Box>
+              )}
+            </Card>
+            {registrations &&
+              registrations.results.length > 0 &&
+              (registrationPage !== 1 ||
+                registrations.count > registrations.results.length) && (
+                <Stack alignItems="center">
+                  <Pagination
+                    count={Math.ceil(
+                      registrations.count / API_REGISTRATIONS_LIST_PAGE_SIZE,
+                    )}
+                    onChange={(e: any, value: number) =>
+                      setRegistrationPage(value)
+                    }
+                  />
+                </Stack>
+              )}
+          </Grid>
         </Grid>
 
         <Grid>

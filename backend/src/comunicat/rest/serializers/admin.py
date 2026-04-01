@@ -14,7 +14,7 @@ from comunicat.rest.serializers.user import (
 from rest_framework import serializers as s
 
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
-from event.models import Event
+from event.models import Event, Registration
 from history.models import HistoryEvent
 from legal.models import Member
 from membership.enums import MembershipStatus
@@ -269,6 +269,29 @@ class AdminEventSerializer(s.ModelSerializer):
     @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
     def get_title(self, obj):
         return obj.title.get(translation.get_language())
+
+
+class AdminListRegistrationSerializer(s.Serializer):
+    event_id = s.UUIDField(required=True)
+
+
+class AdminRegistrationSerializer(s.ModelSerializer):
+    user = UserSuperSlimSerializer(read_only=True, source="entity.user")
+
+    class Meta:
+        model = Registration
+        fields = (
+            "id",
+            "user",
+            "status",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "user",
+            "status",
+            "created_at",
+        )
 
 
 class AdminTowersEventSerializer(s.Serializer):

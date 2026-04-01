@@ -5,9 +5,9 @@ import Grid from "@mui/material/Grid";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { getEnumLabel, RegistrationStatus, TeamType } from "../../enums";
 import {
-  apiEventRegistrationList,
   apiAdminUserList,
   apiAdminEventList,
+  apiAdminEventRegistrationList,
 } from "../../api";
 import {
   Accordion,
@@ -24,7 +24,7 @@ import IconArrowDownward from "@mui/icons-material/ArrowDownward";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import {datetimeToString} from "../../utils/datetime";
+import { datetimeToString } from "../../utils/datetime";
 
 function AdminAttendancePage() {
   const [t, i18n] = useTranslation("common");
@@ -153,12 +153,13 @@ function AdminAttendancePage() {
     if (userEvents && userEvents.results.length > 0) {
       for (let i = 0; i < userEvents.results.length; i++) {
         const event = userEvents.results[i];
-        apiEventRegistrationList(event.id, true).then((response) => {
+        // TODO: Fix the pagination
+        apiAdminEventRegistrationList(1, 50, event.id).then((response) => {
           if (response.status === 200) {
             setRegistrations((registrations: any) => ({
               ...registrations,
               [event.id]: Object.fromEntries(
-                response.data.map((registration: any) => [
+                response.data.results.map((registration: any) => [
                   registration.user.id,
                   registration,
                 ]),
@@ -174,12 +175,13 @@ function AdminAttendancePage() {
     if (userEventsMusicians && userEventsMusicians.results.length > 0) {
       for (let i = 0; i < userEventsMusicians.results.length; i++) {
         const event = userEventsMusicians.results[i];
-        apiEventRegistrationList(event.id, true).then((response) => {
+        // TODO: Fix the pagination
+        apiAdminEventRegistrationList(1, 50, event.id).then((response) => {
           if (response.status === 200) {
             setRegistrationsMusicians((registrations: any) => ({
               ...registrations,
               [event.id]: Object.fromEntries(
-                response.data.map((registration: any) => [
+                response.data.results.map((registration: any) => [
                   registration.user.id,
                   registration,
                 ]),
@@ -281,8 +283,10 @@ function AdminAttendancePage() {
           .map((event: any) => {
             return {
               field: "event-" + event.id,
-              headerName:
-                datetimeToString(i18n.resolvedLanguage, event.time_from),
+              headerName: datetimeToString(
+                i18n.resolvedLanguage,
+                event.time_from,
+              ),
               sortable: false,
               flex: 1,
               minWidth: 200,
@@ -358,8 +362,10 @@ function AdminAttendancePage() {
           .map((event: any) => {
             return {
               field: "event-" + event.id,
-              headerName:
-                datetimeToString(i18n.resolvedLanguage, event.time_from),
+              headerName: datetimeToString(
+                i18n.resolvedLanguage,
+                event.time_from,
+              ),
               sortable: false,
               flex: 1,
               minWidth: 200,
@@ -445,8 +451,10 @@ function AdminAttendancePage() {
           .map((event: any) => {
             return {
               field: "event-" + event.id,
-              headerName:
-                datetimeToString(i18n.resolvedLanguage, event.time_from),
+              headerName: datetimeToString(
+                i18n.resolvedLanguage,
+                event.time_from,
+              ),
               sortable: false,
               flex: 1,
               minWidth: 200,
@@ -630,7 +638,10 @@ function AdminAttendancePage() {
                         label={
                           event.title +
                           " — " +
-                          datetimeToString(i18n.resolvedLanguage, event.time_from)
+                          datetimeToString(
+                            i18n.resolvedLanguage,
+                            event.time_from,
+                          )
                         }
                       />
                     );
@@ -726,7 +737,10 @@ function AdminAttendancePage() {
                         label={
                           event.title +
                           " — " +
-                          datetimeToString(i18n.resolvedLanguage, event.time_from)
+                          datetimeToString(
+                            i18n.resolvedLanguage,
+                            event.time_from,
+                          )
                         }
                       />
                     );

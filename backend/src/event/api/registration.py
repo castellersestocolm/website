@@ -1,6 +1,8 @@
 from typing import List
 from uuid import UUID
 
+from django.db.models import Q
+
 import payment.api.entity
 from comunicat.enums import Module
 from event.enums import RegistrationStatus
@@ -12,23 +14,28 @@ import notify.tasks
 
 
 def get_list(
-    event_id: UUID,
     user_id: UUID,
     module: Module,
+    event_ids: list[UUID] | None = None,
     for_admin: bool = False,
 ) -> List[Registration]:
-    registration_qs = (
-        # TODO: Allow non-user registrations but add support for entity on serializer instead before
-        Registration.objects.filter(event_id=event_id)
-        .filter_with_user()
-        .select_related("event", "entity", "entity__user")
-        .order_by("entity__user__firstname", "entity__user__lastname", "created_at")
-    )
+    registration_filter = Q()
+
+    if event_ids:
+        registration_filter &= Q(event_id__in=event_ids)
 
     if not for_admin:
-        registration_qs = registration_qs.filter(user_id=user_id)
+        registration_filter &= Q(
+            entity__user_id=user_id, status=RegistrationStatus.ACTIVE
+        )
 
-    return list(registration_qs)
+    return list(
+        # TODO: Allow non-user registrations but add support for entity on serializer instead before
+        Registration.objects.filter(registration_filter)
+        .filter_with_user()
+        .select_related("event", "entity", "entity__user")
+        .order_by("-event__time_from", "created_at")
+    )
 
 
 def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> bool:

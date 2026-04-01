@@ -34,6 +34,7 @@ import {
   apiUserFamilyMemberRequestReject,
   apiUserLogout,
   apiUserMe,
+  apiEventRegistrationList,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
@@ -85,8 +86,10 @@ import {
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
   PAYMENT_SWISH_NUMBER,
+  API_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
+import IconHowToReg from "@mui/icons-material/HowToReg";
 import ImageIconSwish from "../../assets/images/icons/swish.png";
 
 // @ts-ignore
@@ -95,7 +98,7 @@ import { get_event_icon, getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import EventAgenda from "../../components/EventAgenda/EventAgenda";
-import {datetimeToString, dateToString} from "../../utils/datetime";
+import { datetimeToString, dateToString } from "../../utils/datetime";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
@@ -137,6 +140,10 @@ function UserDashboardPage() {
     [key: string]: boolean;
   }>({});
 
+  const [registrationsOpen, setRegistrationsOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [paymentsOpen, setPaymentsOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
@@ -156,6 +163,8 @@ function UserDashboardPage() {
   );
 
   // const [memberships, setMemberships] = React.useState(undefined);
+  const [registrationPage, setRegistrationPage] = React.useState(1);
+  const [registrations, setRegistrations] = React.useState(undefined);
   const [paymentPage, setPaymentPage] = React.useState(1);
   const [payments, setPayments] = React.useState(undefined);
   const [orderPage, setOrderPage] = React.useState(1);
@@ -174,6 +183,15 @@ function UserDashboardPage() {
         Object.entries(familyMembersOpen).map(([k, v], i) => [k, false]),
       ),
       [memberId]: !familyMembersOpen[memberId],
+    });
+  };
+
+  const handleRegistrationClick = (registrationId: string) => {
+    setRegistrationsOpen({
+      ...Object.fromEntries(
+        Object.entries(registrationsOpen).map(([k, v], i) => [k, false]),
+      ),
+      [registrationId]: !paymentsOpen[registrationId],
     });
   };
 
@@ -282,6 +300,16 @@ function UserDashboardPage() {
     // setMemberships
     t,
   ]);
+
+  React.useEffect(() => {
+    if (user) {
+      apiEventRegistrationList(registrationPage).then((response) => {
+        if (response.status === 200) {
+          setRegistrations(response.data);
+        }
+      });
+    }
+  }, [user, i18n.resolvedLanguage, setRegistrations, registrationPage]);
 
   React.useEffect(() => {
     if (user) {
@@ -1135,6 +1163,97 @@ function UserDashboardPage() {
             <Card variant="outlined">
               <Box className={styles.userTopBox}>
                 <Typography variant="h6" fontWeight="600" component="div">
+                  {t("pages.user-dashboard.section.registrations.title")}
+                </Typography>
+              </Box>
+              <Divider />
+
+              {registrations ? (
+                <Box className={styles.userFamilyBox}>
+                  {registrations.results.length > 0 ? (
+                    <List className={styles.userFamilyList}>
+                      {registrations.results.map(
+                        (registration: any, i: number, row: any) => (
+                          <Box key={registration.id}>
+                            <ListItemButton
+                              onClick={() =>
+                                handleRegistrationClick(registration.id)
+                              }
+                              disableTouchRipple
+                              dense
+                            >
+                              <ListItemIcon>
+                                <IconHowToReg />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
+                                  registration.event.title +
+                                  " — " +
+                                  datetimeToString(
+                                    i18n.resolvedLanguage,
+                                    registration.event.time_from,
+                                  )
+                                }
+                                secondary={
+                                  t(
+                                    "pages.user-registrations.registration.updated",
+                                  ) +
+                                  " " +
+                                  t(
+                                    "pages.user-registrations.registration.date",
+                                  ) +
+                                  " " +
+                                  dateToString(
+                                    i18n.resolvedLanguage,
+                                    registration.updated_at
+                                      ? registration.updated_at
+                                      : registration.created_at,
+                                  )
+                                }
+                              />
+                            </ListItemButton>
+                            {i + 1 < row.length && <Divider />}
+                          </Box>
+                        ),
+                      )}
+                    </List>
+                  ) : (
+                    <Box className={styles.userFamilyEmpty}>
+                      <Typography component="div">
+                        {t("pages.user-dashboard.section.registrations.empty")}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Box className={styles.loader}>
+                  <LoaderClip />
+                </Box>
+              )}
+            </Card>
+            {registrations &&
+              registrations.results.length > 0 &&
+              (registrationPage !== 1 ||
+                registrations.count > registrations.results.length) && (
+                <Stack alignItems="center">
+                  <Pagination
+                    count={Math.ceil(
+                      registrations.count / API_REGISTRATIONS_LIST_PAGE_SIZE,
+                    )}
+                    onChange={(e: any, value: number) =>
+                      setRegistrationPage(value)
+                    }
+                  />
+                </Stack>
+              )}
+          </Grid>
+        </Grid>
+
+        <Grid>
+          <Grid container spacing={2} direction="column">
+            <Card variant="outlined">
+              <Box className={styles.userTopBox}>
+                <Typography variant="h6" fontWeight="600" component="div">
                   {t("pages.user-dashboard.section.payments.title")}
                 </Typography>
               </Box>
@@ -1216,7 +1335,8 @@ function UserDashboardPage() {
                                         "pages.user-payments.payment.date-doing",
                                       )) +
                                   " " +
-                                  dateToString(i18n.resolvedLanguage,
+                                  dateToString(
+                                    i18n.resolvedLanguage,
                                     payment.transaction
                                       ? payment.transaction.date_accounting
                                       : payment.logs && payment.logs.length > 0
@@ -1386,7 +1506,8 @@ function UserDashboardPage() {
                                         "pages.user-payments.payment.date-doing",
                                       )) +
                                   " " +
-                                  dateToString(i18n.resolvedLanguage,
+                                  dateToString(
+                                    i18n.resolvedLanguage,
                                     order.logs && order.logs.length > 0
                                       ? order.logs[0].created_at
                                       : order.created_at,
@@ -1575,7 +1696,8 @@ function UserDashboardPage() {
                                           "pages.user-payments.payment.date-doing",
                                         )) +
                                     " " +
-                                    dateToString(i18n.resolvedLanguage,
+                                    dateToString(
+                                      i18n.resolvedLanguage,
                                       expense.logs && expense.logs.length > 0
                                         ? expense.logs[0].created_at
                                         : expense.created_at,
@@ -1807,7 +1929,10 @@ function UserDashboardPage() {
                                   {t("pages.user-family.request.received")}
                                   &nbsp;
                                 </Box>
-                                {datetimeToString(i18n.resolvedLanguage, request.created_at)}
+                                {datetimeToString(
+                                  i18n.resolvedLanguage,
+                                  request.created_at,
+                                )}
                               </>
                             }
                           />
@@ -1862,7 +1987,10 @@ function UserDashboardPage() {
                                 >
                                   {t("pages.user-family.request.sent")}&nbsp;
                                 </Box>
-                                {datetimeToString(i18n.resolvedLanguage, request.created_at)}
+                                {datetimeToString(
+                                  i18n.resolvedLanguage,
+                                  request.created_at,
+                                )}
                               </>
                             }
                           />

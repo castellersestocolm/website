@@ -12,7 +12,6 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 import user.api.event
-from comunicat.consts import PERMISSIONS_BY_LEVEL
 from comunicat.rest.serializers.event import (
     EventSerializer,
     RegistrationSerializer,
@@ -20,7 +19,6 @@ from comunicat.rest.serializers.event import (
     ListEventSerializer,
     DestroyRegistrationSerializer,
     ListEventCalendarSerializer,
-    ListRegistrationSerializer,
     RegistrationSlimSerializer,
     EventWithCountsSerializer,
     PageEventSerializer,
@@ -32,6 +30,12 @@ import event.api.registration
 
 
 class EventResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class RegistrationResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -182,6 +186,7 @@ class CalendarAPI(ComuniCatViewSet):
 class RegistrationAPI(ComuniCatViewSet):
     serializer_class = RegistrationSerializer
     permission_classes = (permissions.AllowAny,)
+    pagination_class = RegistrationResultsSetPagination
     lookup_field = "id"
 
     def get_throttles(self):
@@ -257,30 +262,20 @@ class RegistrationAPI(ComuniCatViewSet):
         return Response(status=204)
 
     @swagger_auto_schema(
-        query_serializer=ListRegistrationSerializer,
         responses={200: RegistrationSlimSerializer(many=True), 400: Serializer()},
     )
     def list(self, request):
-        serializer = ListRegistrationSerializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-
         if not request.user.is_authenticated:
             return Response(status=400)
 
-        for_admin = (
-            serializer.validated_data.get("for_admin", False)
-            and request.user.permission_level
-            >= PERMISSIONS_BY_LEVEL["event"]["registration"]["list"]
-        )
-
         registration_objs = event.api.registration.get_list(
-            event_id=serializer.validated_data["event_id"],
             module=self.module,
             user_id=request.user.id,
-            for_admin=for_admin,
         )
 
-        serializer = RegistrationSlimSerializer(
-            registration_objs, context={"module": self.module}, many=True
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(registration_objs, request)
+        serializer = self.serializer_class(
+            result_page, context={"module": self.module}, many=True
         )
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
