@@ -11,7 +11,7 @@ from social_core.exceptions import AuthException
 import membership.api
 
 
-def module_data(backend, response, details, user, *args, **kwargs):
+def module_data(backend, details, user, response, *args, **kwargs):
     request = response.get("request")
 
     # TODO: Fix this, for now set it from TOWERS
@@ -83,3 +83,4 @@ def associate_by_email(backend, details, user=None, *args, **kwargs):
             )
         else:
             return {"user": active_users[0], "is_new": False}
+    return None
