@@ -15,7 +15,7 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
-import IconFitnessCenter from "@mui/icons-material/FitnessCenter";
+import {datetimeToString} from "../../utils/datetime";
 
 function OrderReceiptPage() {
   const [t, i18n] = useTranslation("common");
@@ -91,9 +91,7 @@ function OrderReceiptPage() {
                     {getEnumLabel(t, "order-status", orderLog.status)}
                   </Typography>
                   <Typography variant="body2">
-                    {new Date(orderLog.created_at).toISOString().slice(0, 10) +
-                      " " +
-                      new Date(orderLog.created_at).toTimeString().slice(0, 8)}
+                    {datetimeToString(i18n.resolvedLanguage, orderLog.created_at)}
                   </Typography>
                 </TimelineContent>
               </TimelineItem>

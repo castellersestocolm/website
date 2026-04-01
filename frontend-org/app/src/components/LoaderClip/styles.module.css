@@ -1,0 +1,30 @@
+.loaderBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  border-width: 6px !important;
+  -webkit-animation: spin 1s linear infinite !important;
+  -moz-animation: spin 1s linear infinite !important;
+  animation: spin 1s linear infinite !important;
+}
+
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

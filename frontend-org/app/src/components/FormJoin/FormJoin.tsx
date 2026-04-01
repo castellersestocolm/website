@@ -76,7 +76,15 @@ export default function FormJoin() {
     apiActivityProgramList().then((response) => {
       if (response.status === 200) {
         setActivityies(response.data);
-        setCourseAmounts(Object.fromEntries(response.data.results.map((program: any) => program.courses.map((course: any) => [course.id, []])).flat()));
+        setCourseAmounts(
+          Object.fromEntries(
+            response.data.results
+              .map((program: any) =>
+                program.courses.map((course: any) => [course.id, []]),
+              )
+              .flat(),
+          ),
+        );
       }
     });
   }, [setActivityies, setCourseAmounts, i18n.resolvedLanguage]);
@@ -105,11 +113,22 @@ export default function FormJoin() {
     courseId: string,
     kidId: string,
   ) => {
-    if (kidId in courseChildPriceById && courseChildPriceById[kidId].amount.amount !== 0){
+    if (
+      kidId in courseChildPriceById &&
+      courseChildPriceById[kidId].amount.amount !== 0
+    ) {
       if (event.target.checked) {
-        setCourseAmounts({ ...courseAmounts, [courseId]: [...courseAmounts[courseId], kidId] });
+        setCourseAmounts({
+          ...courseAmounts,
+          [courseId]: [...courseAmounts[courseId], kidId],
+        });
       } else {
-        setCourseAmounts({ ...courseAmounts, [courseId]: courseAmounts[courseId].filter((courseKidId: string) => courseKidId !== kidId) });
+        setCourseAmounts({
+          ...courseAmounts,
+          [courseId]: courseAmounts[courseId].filter(
+            (courseKidId: string) => courseKidId !== kidId,
+          ),
+        });
       }
     }
   };
@@ -620,110 +639,129 @@ export default function FormJoin() {
                                 </FormHelperText>
                               )}
                           </FormGrid>
-                          {activities && activities.results.length > 0 && courseAmounts && (
-                            <FormGrid size={12}>
-                              {activities.results.map((activity: any) => {
-                                return (
-                                  <Box>
-                                    <Typography
-                                      variant="body1"
-                                      paddingBottom={1}
-                                    >
-                                      {activity.name}
-                                    </Typography>
-                                    <Stack direction="column" spacing={1}>
-                                      {activity.courses.map((course: any) => {
-                                        const isCoursePast =
-                                          course.signup_until &&
-                                          new Date(course.signup_until) <
-                                            new Date();
-                                        const childAge = getAge(
-                                          childrenBirthdays[ix],
-                                        );
-                                        const kidId = ix.toString() + "-" + course.id;
-                                        const kidAmountsIndex = courseAmounts[course.id].indexOf(kidId);
-                                        const coursePrice = course.prices
-                                          .sort(compareAmountObjects)
-                                          .find(
-                                            (coursePrice: any) =>
-                                              (!coursePrice.age_from ||
-                                                (childAge &&
-                                                  childAge >=
-                                                    coursePrice.age_from)) &&
-                                              (!coursePrice.age_to ||
-                                                (childAge &&
-                                                  childAge <=
-                                                    coursePrice.age_to)) && (kidAmountsIndex >= coursePrice.min_registrations || (kidAmountsIndex === -1 && courseAmounts[course.id].length >= coursePrice.min_registrations)),
+                          {activities &&
+                            activities.results.length > 0 &&
+                            courseAmounts && (
+                              <FormGrid size={12}>
+                                {activities.results.map((activity: any) => {
+                                  return (
+                                    <Box>
+                                      <Typography
+                                        variant="body1"
+                                        paddingBottom={1}
+                                      >
+                                        {activity.name}
+                                      </Typography>
+                                      <Stack direction="column" spacing={1}>
+                                        {activity.courses.map((course: any) => {
+                                          const isCoursePast =
+                                            course.signup_until &&
+                                            new Date(course.signup_until) <
+                                              new Date();
+                                          const childAge = getAge(
+                                            childrenBirthdays[ix],
                                           );
-                                        courseChildPriceById[kidId] = coursePrice;
-                                        return (
-                                          <FormControlLabel
-                                            control={
-                                              <Checkbox
-                                                name={
-                                                  "activity-" +
-                                                  ix +
-                                                  "-" +
-                                                  course.id
-                                                }
-                                                value="yes"
-                                                className={
-                                                  styles.checkboxActivity
-                                                }
-                                                disabled={
-                                                  isCoursePast || !coursePrice
-                                                }
-                                                onChange={(e) => handleCourseCheckbox(e, course.id, kidId)}
-                                              />
-                                            }
-                                            label={
-                                              <>
-                                                <Typography variant="body2">
-                                                  {course.date_from}
-                                                  {" - "}
-                                                  {course.date_to}
-                                                </Typography>
-                                                {course.signup_until &&
-                                                  !isCoursePast && (
-                                                    <Typography
-                                                      variant="body2"
-                                                      color="textSecondary"
-                                                    >
-                                                      {t(
-                                                        "pages.user-join.form.activity.signup-until",
-                                                      )}
-                                                      {": "}
-                                                      {course.signup_until}
-                                                    </Typography>
-                                                  )}
-                                                {!isCoursePast &&
-                                                  coursePrice && (
-                                                    <Typography
-                                                      variant="body2"
-                                                      fontWeight={600}
-                                                    >
-                                                      {
-                                                        coursePrice.amount
-                                                          .amount
-                                                      }{" "}
-                                                      {
-                                                        coursePrice.amount
-                                                          .currency
-                                                      }
-                                                    </Typography>
-                                                  )}
-                                              </>
-                                            }
-                                            required={false}
-                                          />
-                                        );
-                                      })}
-                                    </Stack>
-                                  </Box>
-                                );
-                              })}
-                            </FormGrid>
-                          )}
+                                          const kidId =
+                                            ix.toString() + "-" + course.id;
+                                          const kidAmountsIndex =
+                                            courseAmounts[course.id].indexOf(
+                                              kidId,
+                                            );
+                                          const coursePrice = course.prices
+                                            .sort(compareAmountObjects)
+                                            .find(
+                                              (coursePrice: any) =>
+                                                (!coursePrice.age_from ||
+                                                  (childAge &&
+                                                    childAge >=
+                                                      coursePrice.age_from)) &&
+                                                (!coursePrice.age_to ||
+                                                  (childAge &&
+                                                    childAge <=
+                                                      coursePrice.age_to)) &&
+                                                (kidAmountsIndex >=
+                                                  coursePrice.min_registrations ||
+                                                  (kidAmountsIndex === -1 &&
+                                                    courseAmounts[course.id]
+                                                      .length >=
+                                                      coursePrice.min_registrations)),
+                                            );
+                                          courseChildPriceById[kidId] =
+                                            coursePrice;
+                                          return (
+                                            <FormControlLabel
+                                              control={
+                                                <Checkbox
+                                                  name={
+                                                    "activity-" +
+                                                    ix +
+                                                    "-" +
+                                                    course.id
+                                                  }
+                                                  value="yes"
+                                                  className={
+                                                    styles.checkboxActivity
+                                                  }
+                                                  disabled={
+                                                    isCoursePast || !coursePrice
+                                                  }
+                                                  onChange={(e) =>
+                                                    handleCourseCheckbox(
+                                                      e,
+                                                      course.id,
+                                                      kidId,
+                                                    )
+                                                  }
+                                                />
+                                              }
+                                              label={
+                                                <>
+                                                  <Typography variant="body2">
+                                                    {course.date_from}
+                                                    {" - "}
+                                                    {course.date_to}
+                                                  </Typography>
+                                                  {course.signup_until &&
+                                                    !isCoursePast && (
+                                                      <Typography
+                                                        variant="body2"
+                                                        color="textSecondary"
+                                                      >
+                                                        {t(
+                                                          "pages.user-join.form.activity.signup-until",
+                                                        )}
+                                                        {": "}
+                                                        {course.signup_until}
+                                                      </Typography>
+                                                    )}
+                                                  {!isCoursePast &&
+                                                    coursePrice && (
+                                                      <Typography
+                                                        variant="body2"
+                                                        fontWeight={600}
+                                                      >
+                                                        {
+                                                          coursePrice.amount
+                                                            .amount
+                                                        }{" "}
+                                                        {
+                                                          coursePrice.amount
+                                                            .currency
+                                                        }
+                                                      </Typography>
+                                                    )}
+                                                </>
+                                              }
+                                              required={false}
+                                            />
+                                          );
+                                        })}
+                                      </Stack>
+                                    </Box>
+                                  );
+                                })}
+                              </FormGrid>
+                            )}
                         </Grid>
                       </Box>
                     ))}

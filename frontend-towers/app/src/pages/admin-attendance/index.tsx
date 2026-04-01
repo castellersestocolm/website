@@ -17,7 +17,6 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
-import { capitalizeFirstLetter } from "../../utils/string";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { getEventsCount } from "../../utils/admin";
@@ -25,9 +24,10 @@ import IconArrowDownward from "@mui/icons-material/ArrowDownward";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import {datetimeToString} from "../../utils/datetime";
 
 function AdminAttendancePage() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
 
   const [events, setEvents] = React.useState(undefined);
   const [eventMusicians, setEventMusicians] = React.useState(undefined);
@@ -282,11 +282,7 @@ function AdminAttendancePage() {
             return {
               field: "event-" + event.id,
               headerName:
-                capitalizeFirstLetter(
-                  new Date(event.time_from).toISOString().slice(0, 10),
-                ) +
-                " " +
-                new Date(event.time_from).toTimeString().slice(0, 5),
+                datetimeToString(i18n.resolvedLanguage, event.time_from),
               sortable: false,
               flex: 1,
               minWidth: 200,
@@ -298,11 +294,7 @@ function AdminAttendancePage() {
                     {event.title}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {capitalizeFirstLetter(
-                      new Date(event.time_from).toISOString().slice(0, 10),
-                    ) +
-                      " " +
-                      new Date(event.time_from).toTimeString().slice(0, 5)}
+                    {datetimeToString(i18n.resolvedLanguage, event.time_from)}
                   </Typography>
                   {eventsCountAdults && event.id in eventsCountAdults && (
                     <Typography variant="body2" color="textSecondary">
@@ -367,11 +359,7 @@ function AdminAttendancePage() {
             return {
               field: "event-" + event.id,
               headerName:
-                capitalizeFirstLetter(
-                  new Date(event.time_from).toISOString().slice(0, 10),
-                ) +
-                " " +
-                new Date(event.time_from).toTimeString().slice(0, 5),
+                datetimeToString(i18n.resolvedLanguage, event.time_from),
               sortable: false,
               flex: 1,
               minWidth: 200,
@@ -383,11 +371,7 @@ function AdminAttendancePage() {
                     {event.title}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {capitalizeFirstLetter(
-                      new Date(event.time_from).toISOString().slice(0, 10),
-                    ) +
-                      " " +
-                      new Date(event.time_from).toTimeString().slice(0, 5)}
+                    {datetimeToString(i18n.resolvedLanguage, event.time_from)}
                   </Typography>
                   {eventsCountMusicians && event.id in eventsCountMusicians && (
                     <Typography variant="body2" color="textSecondary">
@@ -462,11 +446,7 @@ function AdminAttendancePage() {
             return {
               field: "event-" + event.id,
               headerName:
-                capitalizeFirstLetter(
-                  new Date(event.time_from).toISOString().slice(0, 10),
-                ) +
-                " " +
-                new Date(event.time_from).toTimeString().slice(0, 5),
+                datetimeToString(i18n.resolvedLanguage, event.time_from),
               sortable: false,
               flex: 1,
               minWidth: 200,
@@ -478,11 +458,7 @@ function AdminAttendancePage() {
                     {event.title}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {capitalizeFirstLetter(
-                      new Date(event.time_from).toISOString().slice(0, 10),
-                    ) +
-                      " " +
-                      new Date(event.time_from).toTimeString().slice(0, 5)}
+                    {datetimeToString(i18n.resolvedLanguage, event.time_from)}
                   </Typography>
                   {eventsCountChildren && event.id in eventsCountChildren && (
                     <Typography variant="body2" color="textSecondary">
@@ -654,13 +630,7 @@ function AdminAttendancePage() {
                         label={
                           event.title +
                           " — " +
-                          capitalizeFirstLetter(
-                            new Date(event.time_from)
-                              .toISOString()
-                              .slice(0, 10),
-                          ) +
-                          " " +
-                          new Date(event.time_from).toTimeString().slice(0, 5)
+                          datetimeToString(i18n.resolvedLanguage, event.time_from)
                         }
                       />
                     );
@@ -756,13 +726,7 @@ function AdminAttendancePage() {
                         label={
                           event.title +
                           " — " +
-                          capitalizeFirstLetter(
-                            new Date(event.time_from)
-                              .toISOString()
-                              .slice(0, 10),
-                          ) +
-                          " " +
-                          new Date(event.time_from).toTimeString().slice(0, 5)
+                          datetimeToString(i18n.resolvedLanguage, event.time_from)
                         }
                       />
                     );

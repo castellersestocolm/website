@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
-import PageBase from "../../components/PageBase/PageBase";
+import PageOrg from "../../components/PageOrg/PageOrg";
 import FormJoin from "../../components/FormJoin/FormJoin";
 import { Typography, Link } from "@mui/material";
 import IconEast from "@mui/icons-material/East";
@@ -36,7 +36,7 @@ function HomePage() {
   );
 
   return (
-    <PageBase
+    <PageOrg
       title={t("pages.home.title")}
       subtitle={t("pages.home.subtitle")}
       content={content}

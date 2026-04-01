@@ -3,7 +3,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
   Card,
   Collapse,
   Divider,
@@ -19,28 +18,17 @@ import {
 import IconEast from "@mui/icons-material/East";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import {
-  apiEventList,
   apiMembershipList,
-  apiMembershipRenewCreate,
-  apiMembershipRenewList,
   apiPaymentExpenseList,
   apiOrderList,
   apiPaymentList,
-  apiTowersCastleList,
-  apiUserFamilyMemberRequestAccept,
-  apiUserFamilyMemberRequestCancel,
-  apiUserFamilyMemberRequestList,
-  apiUserFamilyMemberRequestReceivedList,
-  apiUserFamilyMemberRequestReject,
   apiUserLogout,
-  apiUserMe,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
 import Grid from "@mui/material/Grid";
 import IconCall from "@mui/icons-material/Call";
 import IconMail from "@mui/icons-material/Mail";
-import IconHeight from "@mui/icons-material/Height";
 import IconAccountCircle from "@mui/icons-material/AccountCircle";
 import IconExpandMore from "@mui/icons-material/ExpandMore";
 import IconExpandLess from "@mui/icons-material/ExpandLess";
@@ -48,36 +36,23 @@ import IconCalendarMonth from "@mui/icons-material/CalendarMonth";
 import IconEventRepeat from "@mui/icons-material/EventRepeat";
 import IconPayment from "@mui/icons-material/Payment";
 import IconWorkspaces from "@mui/icons-material/Workspaces";
-import IconPersonAdd from "@mui/icons-material/PersonAdd";
-import IconPersonSearch from "@mui/icons-material/PersonSearch";
 import IconLanguage from "@mui/icons-material/Language";
 import IconReplay from "@mui/icons-material/Replay";
 import IconChevronRight from "@mui/icons-material/KeyboardDoubleArrowRight";
-import FormMemberUpdate from "../../components/FormMemberUpdate/FormMemberUpdate";
-import FormMemberCreate from "../../components/FormMemberCreate/FormMemberCreate";
 import PageBase from "../../components/PageBase/PageBase";
 import {
-  EventType,
   EXPENSE_STATUS_ICON,
   ExpenseStatus,
-  FamilyMemberRequestStatus,
   getEnumLabel,
   MEMBERSHIP_STATUS_ICON,
   MembershipStatus,
   PAYMENT_STATUS_ICON,
   PaymentStatus,
   PaymentType,
-  PermissionLevel,
-  RegistrationStatus,
   OrderStatus,
   ORDER_STATUS_ICON,
 } from "../../enums";
-import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
-import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
-import markdown from "@wcj/markdown-to-html";
-import FormCalendarRegistrationCreate from "../../components/FormCalendarRegistrationCreate/FormCalendarRegistrationCreate";
 import { capitalizeFirstLetter, lowerFirstLetter } from "../../utils/string";
-import IconAttachFile from "@mui/icons-material/AttachFile";
 import IconDowload from "@mui/icons-material/Download";
 import Pagination from "@mui/material/Pagination";
 import {
@@ -91,14 +66,11 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 
 // @ts-ignore
 import QRCode from "qrcode";
-import { get_event_icon, getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
-import EventAgenda from "../../components/EventAgenda/EventAgenda";
-import {datetimeToString, dateToString} from "../../utils/datetime";
+import { dateToString } from "../../utils/datetime";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
-const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
 function UserDashboardPage() {
@@ -107,16 +79,7 @@ function UserDashboardPage() {
   const { setUser } = useAppContext();
   let navigate = useNavigate();
 
-  const {
-    user,
-    setMessages,
-    familyMemberRequests,
-    setFamilyMemberRequests,
-    familyMemberRequestsReceived,
-    setFamilyMemberRequestsReceived,
-    rehearsal,
-    setRehearsal,
-  } = useAppContext();
+  const { user } = useAppContext();
 
   function handleLogoutSubmit() {
     apiUserLogout().then((response) => {
@@ -125,17 +88,11 @@ function UserDashboardPage() {
     });
   }
 
-  function handleAdminSubmit() {
-    navigate(ROUTES.admin.path);
-  }
-
   if (user === null) {
-    navigate(ROUTES["user-login"].path);
+    //TODO: FIX ME
+    // navigate(ROUTES["user-login"].path);
+    navigate(ROUTES.home.path);
   }
-
-  const [familyMembersOpen, setFamilyMembersOpen] = React.useState<{
-    [key: string]: boolean;
-  }>({});
 
   const [paymentsOpen, setPaymentsOpen] = React.useState<{
     [key: string]: boolean;
@@ -149,13 +106,6 @@ function UserDashboardPage() {
     [key: string]: boolean;
   }>({});
 
-  const [updateOpen, setUpdateOpen] = React.useState(false);
-  const [attendanceOpen, setAttendanceOpen] = React.useState(false);
-  const [lastChangedAttendance, setLastChangedAttendance] = React.useState(
-    Date.now(),
-  );
-
-  // const [memberships, setMemberships] = React.useState(undefined);
   const [paymentPage, setPaymentPage] = React.useState(1);
   const [payments, setPayments] = React.useState(undefined);
   const [orderPage, setOrderPage] = React.useState(1);
@@ -163,19 +113,7 @@ function UserDashboardPage() {
   const [expensePage, setExpensePage] = React.useState(1);
   const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
-  const [membershipRenewOptions, setMembershipRenewOptions] =
-    React.useState(undefined);
-  const [castles, setCastles] = React.useState(undefined);
   const [paymentSvg, setPaymentSvg] = React.useState(undefined);
-
-  const handleFamilyClick = (memberId: string) => {
-    setFamilyMembersOpen({
-      ...Object.fromEntries(
-        Object.entries(familyMembersOpen).map(([k, v], i) => [k, false]),
-      ),
-      [memberId]: !familyMembersOpen[memberId],
-    });
-  };
 
   const handlePaymentClick = (paymentId: string) => {
     setPaymentsOpen({
@@ -243,45 +181,10 @@ function UserDashboardPage() {
                 .catch((err: any) => {});
             }
           }
-
-          if (!currentMembership || currentMembership.can_renew) {
-            apiMembershipRenewList().then((response) => {
-              if (response.status === 200) {
-                setMembershipRenewOptions(response.data);
-              }
-            });
-          }
-        }
-      });
-      apiUserFamilyMemberRequestList().then((response) => {
-        if (response.status === 200) {
-          setFamilyMemberRequests(
-            response.data.filter((request: any) => {
-              return request.status === FamilyMemberRequestStatus.REQUESTED;
-            }),
-          );
-        }
-      });
-      apiUserFamilyMemberRequestReceivedList().then((response) => {
-        if (response.status === 200) {
-          setFamilyMemberRequestsReceived(
-            response.data.filter((request: any) => {
-              return request.status === FamilyMemberRequestStatus.REQUESTED;
-            }),
-          );
         }
       });
     }
-  }, [
-    user,
-    i18n.resolvedLanguage,
-    setFamilyMemberRequests,
-    setFamilyMemberRequestsReceived,
-    setMembership,
-    setMembershipRenewOptions,
-    // setMemberships
-    t,
-  ]);
+  }, [user, i18n.resolvedLanguage, setMembership, t]);
 
   React.useEffect(() => {
     if (user) {
@@ -312,198 +215,6 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setExpenses, expensePage]);
-
-  React.useEffect(() => {
-    apiEventList().then((response) => {
-      if (response.status === 200) {
-        const event = response.data.results.find((event: any) => {
-          const eventUsers =
-            user &&
-            user.family &&
-            getEventUsers(
-              event,
-              user.family.members.map((familyMember: any) => familyMember.user),
-            );
-          return (
-            (event.type === EventType.REHEARSAL ||
-              event.type === EventType.PERFORMANCE ||
-              event.type === EventType.WORKSHOP) &&
-            new Date(event.time_to) >= new Date() &&
-            eventUsers &&
-            eventUsers.length > 0
-          );
-        });
-        setRehearsal(event);
-        if (event) {
-          apiTowersCastleList(event.id).then((response) => {
-            if (response.status === 200) {
-              setCastles(response.data.results);
-            }
-          });
-        }
-      }
-    });
-  }, [
-    setRehearsal,
-    i18n.resolvedLanguage,
-    setCastles,
-    lastChangedAttendance,
-    user,
-  ]);
-
-  function handleRequestCancelSubmit(id: string) {
-    apiUserFamilyMemberRequestCancel(id).then((response) => {
-      if (response.status === 204) {
-        apiUserFamilyMemberRequestList().then((response) => {
-          if (response.status === 200) {
-            setFamilyMemberRequests(
-              response.data.filter((request: any) => {
-                return request.status === FamilyMemberRequestStatus.REQUESTED;
-              }),
-            );
-          }
-        });
-        setMessages([
-          {
-            message: t("pages.user-family.request.cancel.success"),
-            type: "success",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      } else {
-        setMessages([
-          {
-            message: t("pages.user-family.request.cancel.error"),
-            type: "error",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      }
-    });
-  }
-
-  function handleRequestRejectSubmit(id: string) {
-    apiUserFamilyMemberRequestReject(id).then((response) => {
-      if (response.status === 204) {
-        apiUserFamilyMemberRequestReceivedList().then((response) => {
-          if (response.status === 200) {
-            setFamilyMemberRequestsReceived(
-              response.data.filter((request: any) => {
-                return request.status === FamilyMemberRequestStatus.REQUESTED;
-              }),
-            );
-          }
-        });
-        setMessages([
-          {
-            message: t("pages.user-family.request.reject.success"),
-            type: "success",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      } else {
-        setMessages([
-          {
-            message: t("pages.user-family.request.reject.error"),
-            type: "error",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      }
-    });
-  }
-
-  function handleRequestAcceptSubmit(id: string) {
-    apiUserFamilyMemberRequestAccept(id).then((response) => {
-      if (response.status === 204) {
-        apiUserFamilyMemberRequestReceivedList().then((response) => {
-          if (response.status === 200) {
-            setFamilyMemberRequestsReceived(
-              response.data.filter((request: any) => {
-                return request.status === FamilyMemberRequestStatus.REQUESTED;
-              }),
-            );
-          }
-        });
-        apiUserMe().then((response) => {
-          if (response.status === 200 || response.status === 204) {
-            setUser(response.data);
-          }
-        });
-        setMessages([
-          {
-            message: t("pages.user-family.request.accept.success"),
-            type: "success",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      } else {
-        setMessages([
-          {
-            message: t("pages.user-family.request.accept.error"),
-            type: "error",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      }
-    });
-  }
-
-  function handleRenewSubmit(modules: number[]) {
-    apiMembershipRenewCreate(modules).then((response) => {
-      if (response.status === 200) {
-        const currentMembership = response.data;
-        setMembership(currentMembership);
-        setMembershipRenewOptions(undefined);
-
-        const membershipText =
-          t("swish.payment.membership") +
-          " " +
-          currentMembership.date_from.slice(0, 4) +
-          " - " +
-          (user.lastname
-            ? user.firstname + " " + user.lastname
-            : user.firstname);
-
-        if (currentMembership.status < MembershipStatus.PROCESSING) {
-          QRCode.toDataURL(
-            "C" +
-              PAYMENT_SWISH_NUMBER.replaceAll(" ", "") +
-              ";" +
-              currentMembership.amount.amount +
-              ";" +
-              membershipText +
-              ";0",
-            { width: 500, margin: 0 },
-          )
-            .then((url: string) => {
-              setPaymentSvg(url);
-            })
-            .catch((err: any) => {});
-        }
-
-        setMessages([
-          {
-            message: t(
-              "pages.user-dashboard.section.membership-renew.renew.success",
-            ),
-            type: "success",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      } else {
-        setMessages([
-          {
-            message: t(
-              "pages.user-dashboard.section.membership-renew.renew.error",
-            ),
-            type: "error",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
-      }
-    });
-  }
 
   const contentSidebarProfile = user && (
     <Grid>
@@ -562,57 +273,8 @@ function UserDashboardPage() {
                 />
               </ListItem>
             )}
-            {user.towers &&
-              user.towers.height_shoulders &&
-              user.towers.height_arms && (
-                <ListItem>
-                  <ListItemIcon>
-                    <IconHeight />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      user.towers.height_shoulders +
-                      " / " +
-                      user.towers.height_arms +
-                      " m"
-                    }
-                  />
-                </ListItem>
-              )}
           </List>
         </Box>
-        <Divider />
-        <Box>
-          <ListItemButton onClick={() => setUpdateOpen(!updateOpen)}>
-            <ListItemText
-              primary={t("pages.user-details.update.title")}
-              secondary={t("pages.user-details.update.subtitle")}
-            />
-            {updateOpen ? <IconExpandLess /> : <IconExpandMore />}
-          </ListItemButton>
-          <Collapse in={updateOpen} timeout="auto" unmountOnExit>
-            <Box className={styles.userFamilyMemberUpdate}>
-              <FormDashboardUpdate />
-            </Box>
-          </Collapse>
-        </Box>
-        {user.permission_level >= PermissionLevel.ADMIN && (
-          <>
-            <Divider />
-            <Box className={styles.userLogoutBox}>
-              <Link
-                color="secondary"
-                underline="none"
-                component="button"
-                onClick={handleAdminSubmit}
-                className={styles.link}
-              >
-                {t("pages.user-dashboard.link-admin")}
-                <IconEast className={styles.iconEast} />
-              </Link>
-            </Box>
-          </>
-        )}
         <Divider />
         <Box className={styles.userLogoutBox}>
           <Link
@@ -647,8 +309,8 @@ function UserDashboardPage() {
           <Box className={styles.userMembershipInfoBox}>
             <Typography variant="body2" component="span">
               {t("pages.user-dashboard.section.emails.description") + " "}
-              <Link color="textSecondary" href={"mailto:" + TOWERS_INFO_EMAIL}>
-                {TOWERS_INFO_EMAIL}
+              <Link color="textSecondary" href={"mailto:" + ORG_INFO_EMAIL}>
+                {ORG_INFO_EMAIL}
               </Link>
               {"."}
             </Typography>
@@ -659,7 +321,7 @@ function UserDashboardPage() {
 
   const contentSidebarMembership = user && (
     <Grid>
-      {(membership || membershipRenewOptions) && (
+      {membership && (
         <Card variant="outlined">
           <Box className={styles.userTopBox}>
             <Typography variant="h6" fontWeight="600" component="div">
@@ -792,81 +454,6 @@ function UserDashboardPage() {
               <Divider />
             </>
           )}
-          {membershipRenewOptions && (
-            <>
-              <List className={styles.userFamilyList}>
-                {membershipRenewOptions.map(
-                  (option: any, i: number, row: any) => (
-                    <Box key={i}>
-                      <ListItemButton disableTouchRipple dense>
-                        <ListItemIcon>
-                          <IconWorkspaces />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={option.modules.map(
-                            (membershipModule: any) => {
-                              return (
-                                <span
-                                  className={styles.dashboardMembershipModule}
-                                >
-                                  {getEnumLabel(
-                                    t,
-                                    "module",
-                                    membershipModule.module,
-                                  )}
-                                </span>
-                              );
-                            },
-                          )}
-                          secondary={
-                            <>
-                              <Typography variant="body2" component="span">
-                                {option.date_to}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="textSecondary"
-                                component="span"
-                              >
-                                {" — "}
-                              </Typography>
-                              <Typography variant="body2" component="span">
-                                {option.amount.amount} {option.amount.currency}
-                              </Typography>
-                            </>
-                          }
-                        />
-                        <Stack
-                          direction="row"
-                          spacing={2}
-                          style={{ marginLeft: "16px" }}
-                        >
-                          <Button
-                            variant="contained"
-                            type="button"
-                            disableElevation
-                            onClick={() =>
-                              handleRenewSubmit(
-                                option.modules.map(
-                                  (moduleOption: any) => moduleOption.module,
-                                ),
-                              )
-                            }
-                          >
-                            {t(
-                              "pages.user-dashboard.section.membership-renew.renew",
-                            )}
-                          </Button>
-                        </Stack>
-                      </ListItemButton>
-                      {i + 1 < row.length && <Divider />}
-                    </Box>
-                  ),
-                )}
-              </List>
-              <Divider />
-            </>
-          )}
           <Box className={styles.userMembershipInfoBox}>
             <Typography variant="body2" component="span">
               {t("pages.user-dashboard.section.membership.description") + " "}
@@ -881,15 +468,6 @@ function UserDashboardPage() {
     </Grid>
   );
 
-  const rehearsalUsers =
-    user &&
-    user.family &&
-    rehearsal &&
-    getEventUsers(
-      rehearsal,
-      user.family.members.map((familyMember: any) => familyMember.user),
-    );
-
   const content = user && (
     <Grid container spacing={4} className={styles.dashboardGrid}>
       <Grid
@@ -899,225 +477,6 @@ function UserDashboardPage() {
         spacing={4}
         direction="column"
       >
-        {rehearsal && (
-          <Grid>
-            <Card variant="outlined">
-              <Box className={styles.userTopBox}>
-                <Typography variant="h6" fontWeight="600" component="div">
-                  {t("pages.user-dashboard.section.rehearsal.title")}
-                </Typography>
-              </Box>
-              <Divider />
-
-              <Box className={styles.userFamilyBox}>
-                <List className={styles.userFamilyList}>
-                  <ListItemButton disableTouchRipple dense>
-                    <ListItemIcon>
-                      {get_event_icon(rehearsal.type, rehearsal.modules)}
-                    </ListItemIcon>
-                    <Box
-                      className={styles.userFamilyListInner}
-                      flexDirection={{ xs: "column", lg: "row" }}
-                      alignItems={{ xs: "start", lg: "center" }}
-                    >
-                      <ListItemText
-                        className={styles.userFamilyListItem}
-                        disableTypography
-                        primary={
-                          <Typography variant="body2">
-                            {rehearsal.title +
-                              ((rehearsal.type === EventType.REHEARSAL ||
-                                rehearsal.type === EventType.WORKSHOP) &&
-                              rehearsal.location !== null
-                                ? " — " + rehearsal.location.name
-                                : "")}
-                          </Typography>
-                        }
-                        secondary={
-                          <>
-                            <Typography variant="body2" color="textSecondary">
-                              {capitalizeFirstLetter(
-                                new Date(
-                                  rehearsal.time_from,
-                                ).toLocaleDateString(i18n.resolvedLanguage, {
-                                  day: "numeric",
-                                  month: "long",
-                                  year: "numeric",
-                                }),
-                              ) +
-                                " " +
-                                new Date(rehearsal.time_from)
-                                  .toTimeString()
-                                  .slice(0, 5) +
-                                " → " +
-                                new Date(rehearsal.time_to)
-                                  .toTimeString()
-                                  .slice(0, 5)}
-                            </Typography>
-                            {castles && castles.length > 0 && (
-                              <Box className={styles.eventCastlesBox}>
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                >
-                                  {t("pages.calendar.section.agenda.castles")}
-                                  {": "}
-                                  {castles.map(
-                                    (castle: any, i: number, row: any) => {
-                                      return (
-                                        <Typography
-                                          variant="body2"
-                                          color="textSecondary"
-                                          className={styles.eventCastleBox}
-                                          component="span"
-                                        >
-                                          {castle.name}
-                                          {castle.is_published && (
-                                            <>
-                                              {" ("}
-                                              <IconAttachFile />
-                                              {")"}
-                                            </>
-                                          )}
-                                          {i + 1 < row.length && ", "}
-                                        </Typography>
-                                      );
-                                    },
-                                  )}
-                                </Typography>
-                              </Box>
-                            )}
-                          </>
-                        }
-                      />
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        marginLeft={{ xs: "0", lg: "16px" }}
-                        marginTop={{ xs: "8px", lg: "0" }}
-                        marginBottom={{ xs: "8px", lg: "0" }}
-                        whiteSpace="nowrap"
-                      >
-                        <Button
-                          variant="contained"
-                          type="submit"
-                          style={{ width: "auto" }}
-                          disableElevation
-                          href={
-                            ROUTES.calendar.path + "?eventId=" + rehearsal.id
-                          }
-                        >
-                          {t("pages.user-rehearsal.rehearsal.show")}
-                        </Button>
-                      </Stack>
-                    </Box>
-                  </ListItemButton>
-                  <Divider />
-                  <Box>
-                    <ListItemButton
-                      onClick={() => setAttendanceOpen(!attendanceOpen)}
-                    >
-                      <ListItemText
-                        primary={t("pages.user-rehearsal.rehearsal.attending")}
-                        secondary={
-                          rehearsal.registrations.filter(
-                            (registration: any) =>
-                              registration.status === RegistrationStatus.ACTIVE,
-                          ).length > 0
-                            ? t(
-                                "pages.user-rehearsal.rehearsal.attending-list",
-                              ) +
-                              ": " +
-                              rehearsal.registrations
-                                .filter(
-                                  (registration: any) =>
-                                    registration.status ===
-                                      RegistrationStatus.ACTIVE &&
-                                    rehearsalUsers &&
-                                    rehearsalUsers.filter(
-                                      (rehearsalUser: any) =>
-                                        rehearsalUser.id ===
-                                        registration.user.id,
-                                    ).length > 0,
-                                )
-                                .map((registration: any) =>
-                                  registration.user.lastname
-                                    ? registration.user.firstname +
-                                      " " +
-                                      registration.user.lastname
-                                    : registration.user.firstname,
-                                )
-                                .join(", ")
-                            : t(
-                                "pages.user-rehearsal.rehearsal.attending-empty",
-                              )
-                        }
-                      />
-                      {attendanceOpen ? <IconExpandLess /> : <IconExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={attendanceOpen} timeout="auto" unmountOnExit>
-                      <Box className={styles.userAttendanceUpdate}>
-                        <FormCalendarRegistrationCreate
-                          event={rehearsal}
-                          users={rehearsalUsers}
-                          setLastChanged={setLastChangedAttendance}
-                        />
-                      </Box>
-                    </Collapse>
-                  </Box>
-                  {rehearsal.registrations.length > 0 &&
-                    rehearsal.agenda_items.length > 0 && (
-                      <>
-                        <Divider />
-                        <Box className={styles.userInsideBox}>
-                          <Typography
-                            variant="body1"
-                            fontWeight="600"
-                            component="div"
-                          >
-                            {t("pages.user-dashboard.section.agenda.title")}
-                          </Typography>
-                        </Box>
-                        <Divider />
-                        <List className={styles.userFamilyList}>
-                          {rehearsal.agenda_items.map((agendaItem: any) => (
-                            <ListItemButton dense={true}>
-                              <ListItemText
-                                className={styles.rehearsalAgendaItem}
-                                primary={
-                                  new Date(
-                                    agendaItem.time_from,
-                                  ).toLocaleTimeString(i18n.resolvedLanguage, {
-                                    hour12: false,
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  }) +
-                                  " — " +
-                                  agendaItem.name
-                                }
-                                secondary={
-                                  <div
-                                    dangerouslySetInnerHTML={{
-                                      __html: markdown(
-                                        agendaItem.description,
-                                      ).toString(),
-                                    }}
-                                  ></div>
-                                }
-                              />
-                            </ListItemButton>
-                          ))}
-                        </List>
-                      </>
-                    )}
-                </List>
-              </Box>
-            </Card>
-          </Grid>
-        )}
-
-        <EventAgenda isPast={true} asList={true} asCard={true} />
-
         <Grid
           container
           size={12}
@@ -1216,7 +575,8 @@ function UserDashboardPage() {
                                         "pages.user-payments.payment.date-doing",
                                       )) +
                                   " " +
-                                  dateToString(i18n.resolvedLanguage,
+                                  dateToString(
+                                    i18n.resolvedLanguage,
                                     payment.transaction
                                       ? payment.transaction.date_accounting
                                       : payment.logs && payment.logs.length > 0
@@ -1386,7 +746,8 @@ function UserDashboardPage() {
                                         "pages.user-payments.payment.date-doing",
                                       )) +
                                   " " +
-                                  dateToString(i18n.resolvedLanguage,
+                                  dateToString(
+                                    i18n.resolvedLanguage,
                                     order.logs && order.logs.length > 0
                                       ? order.logs[0].created_at
                                       : order.created_at,
@@ -1575,7 +936,8 @@ function UserDashboardPage() {
                                           "pages.user-payments.payment.date-doing",
                                         )) +
                                     " " +
-                                    dateToString(i18n.resolvedLanguage,
+                                    dateToString(
+                                      i18n.resolvedLanguage,
                                       expense.logs && expense.logs.length > 0
                                         ? expense.logs[0].created_at
                                         : expense.created_at,
@@ -1684,235 +1046,6 @@ function UserDashboardPage() {
                 </Stack>
               )}
           </Grid>
-        </Grid>
-
-        <Grid>
-          <Card variant="outlined">
-            <Box className={styles.userTopBox}>
-              <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.user-dashboard.section.family.title")}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box className={styles.userFamilyBox}>
-              <List className={styles.userFamilyList}>
-                {user.family &&
-                  user.family.members.map(
-                    (member: any, i: number, row: any) => (
-                      <Box key={member.id}>
-                        <ListItemButton
-                          onClick={() => handleFamilyClick(member.id)}
-                          disableTouchRipple={member.user.can_manage}
-                          dense
-                        >
-                          <ListItemIcon>
-                            <IconAccountCircle />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              member.user.lastname
-                                ? member.user.firstname +
-                                  " " +
-                                  member.user.lastname
-                                : member.user.firstname
-                            }
-                            secondary={
-                              member.user.can_manage
-                                ? member.user.email
-                                : t("pages.user-family.list.underage")
-                            }
-                          />
-                          {!member.user.can_manage &&
-                            (familyMembersOpen[member.id] ? (
-                              <IconExpandLess />
-                            ) : (
-                              <IconExpandMore />
-                            ))}
-                        </ListItemButton>
-                        {!member.user.can_manage && (
-                          <Collapse
-                            in={familyMembersOpen[member.id]}
-                            timeout="auto"
-                            unmountOnExit
-                          >
-                            <Box className={styles.userFamilyMemberUpdate}>
-                              <FormMemberUpdate member={member} />
-                            </Box>
-                          </Collapse>
-                        )}
-
-                        {(i + 1 < row.length || true) && <Divider />}
-                      </Box>
-                    ),
-                  )}
-                <Box>
-                  <ListItemButton onClick={() => handleFamilyClick("new")}>
-                    <ListItemText
-                      primary={t("pages.user-family.create.title")}
-                      secondary={t("pages.user-family.create.subtitle")}
-                    />
-                    {familyMembersOpen["new"] ? (
-                      <IconExpandLess />
-                    ) : (
-                      <IconExpandMore />
-                    )}
-                  </ListItemButton>
-                  <Collapse
-                    in={familyMembersOpen["new"]}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    <Box className={styles.userFamilyMemberUpdate}>
-                      <FormMemberCreate />
-                    </Box>
-                  </Collapse>
-                </Box>
-              </List>
-            </Box>
-          </Card>
-        </Grid>
-        <Grid>
-          <Card variant="outlined">
-            <Box className={styles.userTopBox}>
-              <Typography variant="h6" fontWeight="600" component="div">
-                {t("pages.user-dashboard.section.family-requests.title")}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box className={styles.userFamilyBox}>
-              <List className={styles.userFamilyList}>
-                {familyMemberRequestsReceived &&
-                  familyMemberRequestsReceived.map(
-                    (request: any, i: number, row: any) => (
-                      <Box key={request.id}>
-                        <ListItemButton dense={true} disableTouchRipple>
-                          <ListItemIcon>
-                            <IconPersonAdd />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              request.user_sender.lastname
-                                ? request.user_sender.firstname +
-                                  " " +
-                                  request.user_sender.lastname
-                                : request.user_sender.firstname
-                            }
-                            secondary={
-                              <>
-                                <Box
-                                  sx={{
-                                    display: { xs: "none", md: "inline-block" },
-                                  }}
-                                >
-                                  {t("pages.user-family.request.received")}
-                                  &nbsp;
-                                </Box>
-                                {datetimeToString(i18n.resolvedLanguage, request.created_at)}
-                              </>
-                            }
-                          />
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            style={{ marginLeft: "16px" }}
-                          >
-                            <Button
-                              variant="contained"
-                              type="submit"
-                              disableElevation
-                              onClick={() =>
-                                handleRequestAcceptSubmit(request.id)
-                              }
-                            >
-                              {t("pages.user-family.request.accept")}
-                            </Button>
-                            <Button
-                              variant="contained"
-                              type="submit"
-                              color="error"
-                              disableElevation
-                              onClick={() =>
-                                handleRequestRejectSubmit(request.id)
-                              }
-                            >
-                              {t("pages.user-family.request.reject")}
-                            </Button>
-                          </Stack>
-                        </ListItemButton>
-                        {(i + 1 < row.length || true) && <Divider />}
-                      </Box>
-                    ),
-                  )}
-                {familyMemberRequests &&
-                  familyMemberRequests.map(
-                    (request: any, i: number, row: any) => (
-                      <Box key={request.id}>
-                        <ListItemButton dense={true} disableTouchRipple>
-                          <ListItemIcon>
-                            <IconPersonSearch />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={request.email_receiver}
-                            secondary={
-                              <>
-                                <Box
-                                  sx={{
-                                    display: { xs: "none", md: "inline-block" },
-                                  }}
-                                >
-                                  {t("pages.user-family.request.sent")}&nbsp;
-                                </Box>
-                                {datetimeToString(i18n.resolvedLanguage, request.created_at)}
-                              </>
-                            }
-                          />
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            style={{ marginLeft: "16px" }}
-                          >
-                            <Button
-                              variant="contained"
-                              type="submit"
-                              color="info"
-                              disableElevation
-                              onClick={() =>
-                                handleRequestCancelSubmit(request.id)
-                              }
-                            >
-                              {t("pages.user-family.request.cancel")}
-                            </Button>
-                          </Stack>
-                        </ListItemButton>
-                        {(i + 1 < row.length || true) && <Divider />}
-                      </Box>
-                    ),
-                  )}
-                <Box>
-                  <ListItemButton onClick={() => handleFamilyClick("request")}>
-                    <ListItemText
-                      primary={t("pages.user-family.request.title")}
-                      secondary={t("pages.user-family.request.subtitle")}
-                    />
-                    {familyMembersOpen["request"] ? (
-                      <IconExpandLess />
-                    ) : (
-                      <IconExpandMore />
-                    )}
-                  </ListItemButton>
-                  <Collapse
-                    in={familyMembersOpen["request"]}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    <Box className={styles.userFamilyMemberUpdate}>
-                      <FormMemberRequest />
-                    </Box>
-                  </Collapse>
-                </Box>
-              </List>
-            </Box>
-          </Card>
         </Grid>
       </Grid>
       <Grid

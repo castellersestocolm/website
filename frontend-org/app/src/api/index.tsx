@@ -1,12 +1,17 @@
 import axios from "axios";
 import i18n from "i18next";
 import { getCookie } from "typescript-cookie";
+import {
+  API_EXPENSES_LIST_PAGE_SIZE,
+  API_ORDERS_LIST_PAGE_SIZE,
+  API_PAYMENTS_LIST_PAGE_SIZE,
+} from "../consts";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const instance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 5000,
+  timeout: 10000,
   withCredentials: true,
   xsrfCookieName: "csrftoken",
   xsrfHeaderName: "X-CSRFToken",
@@ -59,6 +64,81 @@ export const apiOrgCheck = async (email: string) => {
 export const apiActivityProgramList = async () => {
   try {
     return await instance.get("/activity/program/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiMembershipList = async () => {
+  try {
+    return await instance.get("/membership/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiPaymentExpenseList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/payment/expense/", {
+      params: {
+        page_size: API_EXPENSES_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/order/", {
+      params: {
+        page_size: API_ORDERS_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiPaymentList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/payment/", {
+      params: {
+        page_size: API_PAYMENTS_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserLogout = async () => {
+  try {
+    return await instance.post("/user/logout/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserMe = async () => {
+  try {
+    return await instance.get("/user/me/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

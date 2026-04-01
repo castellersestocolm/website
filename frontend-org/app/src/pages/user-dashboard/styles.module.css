@@ -1,0 +1,232 @@
+.dashboard {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+}
+
+.dashboardTitle {
+  text-align: center;
+  color: #1d1d1d;
+  font-size: 42px !important;
+}
+
+.dashboardTemporary {
+  margin-bottom: 8px !important;
+}
+
+.link {
+  display: inline-flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.iconEast {
+  margin-top: -2px;
+  margin-left: 4px;
+}
+
+.dashboardGrid {
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.rehearsalAgendaItem {
+  p {
+    margin: 0 !important;
+  }
+}
+
+.userFamilyBox {
+}
+
+.userFamilyList {
+  width: 100%;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  div:first-of-type {
+    min-width: 36px !important;
+  }
+}
+
+.userFamilyListInner {
+  display: flex;
+  flex: 1;
+}
+
+.userFamilyListItem {
+  flex: 1;
+}
+
+.userFamilyListActionButtons {
+  align-self: stretch;
+  align-items: center;
+  display: flex;
+  margin: -4px 0;
+}
+
+.userAttendanceUpdate {
+  padding: 4px 16px 8px 16px;
+}
+
+.userFamilyMemberUpdate {
+  padding: 12px 16px 16px 16px;
+}
+
+.userFormEmails {
+  padding: 0;
+}
+
+.userFamilyEmpty {
+  padding: 12px 16px 16px 16px;
+}
+
+.userTopBox {
+  padding: 12px 16px;
+  background-color: var(--mui-palette-primary-main);
+}
+
+.userInsideBox {
+  padding: 8px 16px;
+  background-color: var(--mui-palette-primary-light);
+}
+
+.userDetailsBox {
+  padding: 8px 16px;
+  flex: 1 1 auto;
+}
+
+.userPaymentBox {
+  padding: 12px 16px 16px 16px;
+  flex: 1 1 auto;
+}
+
+.userLogoutBox {
+  padding: 16px 16px 12px 16px;
+}
+
+.userMembershipPaymentBox {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.userMembershipPaymentSwish {
+  min-width: 50%;
+  max-width: 150px;
+  margin: 16px 8px 4px 8px;
+}
+
+.userMembershipPaymentIconSwish {
+  z-index: 500;
+  position: absolute;
+  width: 10%;
+  aspect-ratio: 1 / 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--mui-palette-common-white);
+  padding: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+}
+
+.userMembershipInfoBox {
+  padding: 12px 16px 16px 16px;
+}
+
+.userList {
+  li {
+    padding: 0 !important;
+    div {
+      min-width: 36px !important;
+    }
+  }
+}
+
+.dashboardMembershipModule {
+  display: block;
+}
+
+.paymentRefundIcon {
+  margin-bottom: -2px;
+}
+
+.eventCastlesBox {
+}
+
+.eventCastleBox {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  width: max-content;
+  white-space: pre;
+
+  svg {
+    font-size: 0.875rem;
+    margin: 0 -2px;
+  }
+}
+
+.expenseFileIcon {
+  margin-left: -4px !important;
+  margin-right: 0 !important;
+  padding: 4px !important;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+.receiptFileIcon {
+  margin-left: 8px !important;
+  margin-right: -8px !important;
+  padding: 4px !important;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.eventCardIcon {
+  min-width: 42px !important;
+}
+
+.eventCardImage {
+  width: 1.5em;
+  max-height: 1.5em;
+}
+
+.loader {
+  height: calc(100% - 56px - 48px);
+  padding: 24px;
+}
+
+.externalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
+  height: 20px !important;
+  width: 20px !important;
+}
+
+.eventRegistrationsBox {
+  margin-top: 8px;
+}
+
+.eventRegistrationBox {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 16px;
+  margin-bottom: 2px;
+
+  svg {
+    font-size: 0.875rem;
+    margin-right: 4px;
+  }
+}

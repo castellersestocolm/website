@@ -28,7 +28,7 @@ const instance = axios.create({
   xsrfCookieName: "csrftoken",
   xsrfHeaderName: "X-CSRFToken",
   withXSRFToken: true,
-  validateStatus: (status) => {
+  validateStatus: (status: number) => {
     return status >= 200 && status < 500;
   },
 });

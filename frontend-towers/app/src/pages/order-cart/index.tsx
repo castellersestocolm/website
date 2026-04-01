@@ -47,6 +47,7 @@ import { TransitionGroup } from "react-transition-group";
 import { capitalizeFirstLetter } from "../../utils/string";
 import { amountToString } from "../../utils/money";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
+import {datetimeToString} from "../../utils/datetime";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -1411,15 +1412,7 @@ function OrderCartPage() {
                                             <MenuItem key={i} value={event.id}>
                                               {event.title +
                                                 " — " +
-                                                capitalizeFirstLetter(
-                                                  new Date(event.time_from)
-                                                    .toISOString()
-                                                    .slice(0, 10),
-                                                ) +
-                                                " " +
-                                                new Date(event.time_from)
-                                                  .toTimeString()
-                                                  .slice(0, 5)}
+                                                datetimeToString(i18n.resolvedLanguage, event.time_from)}
                                             </MenuItem>
                                           );
                                         },

@@ -11,7 +11,7 @@ import {
 import styles from "../../pages/user-dashboard/styles.module.css";
 import Box from "@mui/material/Box";
 import IconMail from "@mui/icons-material/Mail";
-import {datetimeToString} from "../../utils/datetime";
+import { datetimeToString } from "../../utils/datetime";
 
 export default function FormDashboardEmails() {
   const [t, i18n] = useTranslation("common");
@@ -36,7 +36,10 @@ export default function FormDashboardEmails() {
                       secondary={
                         t("pages.user-dashboard.form-emails.created") +
                         " " +
-                        datetimeToString(i18n.resolvedLanguage, userEmail.created_at)
+                        datetimeToString(
+                          i18n.resolvedLanguage,
+                          userEmail.created_at,
+                        )
                       }
                     />
                   </ListItemButton>

@@ -5,4 +5,7 @@ export const ROUTES = {
   status: {
     path: "/status",
   },
+  "user-dashboard": {
+    path: "/user/dashboard",
+  },
 };
