@@ -136,6 +136,47 @@ export const apiUserLogout = async () => {
   }
 };
 
+export const apiUserLogin = async (email: string, password: string) => {
+  try {
+    return await instance.post("/user/login/", {
+      email: email,
+      password: password,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserPassword = async (
+  token: string,
+  password: string,
+  password2: string,
+) => {
+  try {
+    return await instance.post("/user/password/", {
+      token: token,
+      password: password,
+      password2: password2,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserRequestPassword = async (email: string) => {
+  try {
+    return await instance.post("/user/request-password/", { email: email });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiUserMe = async () => {
   try {
     return await instance.get("/user/me/");

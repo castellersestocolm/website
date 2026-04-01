@@ -15,6 +15,8 @@ import StatusPage from "./pages/status";
 import { useState } from "react";
 import UserDashboardPage from "./pages/user-dashboard";
 import { apiUserMe } from "./api";
+import UserLoginPage from "./pages/user-login";
+import UserPasswordPage from "./pages/user-password";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -68,6 +70,14 @@ const App = () => {
               <Routes>
                 <Route path={ROUTES.home.path} element={<HomePage />} />
                 <Route path={ROUTES.status.path} element={<StatusPage />} />
+                <Route
+                  path={ROUTES["user-login"].path}
+                  element={<UserLoginPage />}
+                />
+                <Route
+                  path={ROUTES["user-password"].path}
+                  element={<UserPasswordPage />}
+                />
                 <Route
                   path={ROUTES["user-dashboard"].path}
                   element={<UserDashboardPage />}

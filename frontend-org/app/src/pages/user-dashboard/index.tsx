@@ -89,9 +89,7 @@ function UserDashboardPage() {
   }
 
   if (user === null) {
-    //TODO: FIX ME
-    // navigate(ROUTES["user-login"].path);
-    navigate(ROUTES.home.path);
+    navigate(ROUTES["user-login"].path);
   }
 
   const [paymentsOpen, setPaymentsOpen] = React.useState<{
