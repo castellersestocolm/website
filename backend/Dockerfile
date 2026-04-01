@@ -72,6 +72,8 @@ ENV APT_GDAL_VERSION 3.2.2*
 ENV APT_LIB_MYSQL_CLIENT_DEV 8.0.41-*
 ENV APT_BUILD_ESSENTIAL 12.9*
 ENV APT_DEFAULT_LIB_MYSQL_CLIENT_DEV 1.0.7*
+ENV APT_LIBPANGO_VERSION 1.46.2-3
+ENV APT_LIBPANGOFT2_VERSION 1.46.2-3
 ENV APT_PKG_CONFIG 0.29.2-*
 ENV APT_WGET 1.21-*
 
@@ -96,6 +98,8 @@ RUN set -x && apt-get update && apt-get install --no-install-recommends -y \
     gdal-bin=$APT_GDAL_VERSION \
     build-essential=$APT_BUILD_ESSENTIAL \
     default-libmysqlclient-dev=$APT_DEFAULT_LIB_MYSQL_CLIENT_DEV \
+    libpango-1.0-0=$APT_LIBPANGO_VERSION \
+    libpangoft2-1.0-0=$APT_LIBPANGOFT2_VERSION \
     pkg-config=$APT_PKG_CONFIG \
     wget=$APT_WGET \
     && apt-get clean \

@@ -1,15 +1,21 @@
 import itertools
+import tempfile
+from uuid import UUID
 
 from django import forms
 from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db.models import JSONField, Q
+from django.db.models import JSONField, Q, Prefetch
 from django.forms import BaseInlineFormSet
-from django.urls import reverse
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.urls import reverse, path
 from django.utils import timezone, translation
 from django.utils.safestring import mark_safe
+
+from weasyprint import HTML
 
 import payment.api.entity
 import payment.tasks
@@ -21,7 +27,7 @@ from event.models import Registration
 from notify.enums import EmailType
 from order.models import Order
 from payment.consts import PAYMENT_LINE_CONTENT_TYPES
-from payment.enums import PaymentType, PaymentStatus
+from payment.enums import PaymentType
 
 import notify.tasks
 
@@ -43,6 +49,7 @@ from payment.models import (
     PaymentOrder,
     PaymentOrderProviderLog,
     EntityAlias,
+    EntityPaymentMethod,
 )
 
 from jsoneditor.forms import JSONEditor
@@ -466,6 +473,16 @@ class EntityAliasInline(admin.TabularInline):
     extra = 0
 
 
+class EntityPaymentMethodInline(admin.StackedInline):
+    model = EntityPaymentMethod
+    ordering = ("-is_primary", "method", "created_at")
+    extra = 0
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+
 class AccountInline(admin.TabularInline):
     model = Account
     ordering = ("code",)
@@ -602,6 +619,7 @@ class EntityAdmin(admin.ModelAdmin):
     raw_id_fields = ("user",)
     inlines = (
         EntityAliasInline,
+        EntityPaymentMethodInline,
         PaymentInline,
     )
     actions = (merge_entities,)
@@ -774,6 +792,60 @@ class ExpenseAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     raw_id_fields = ("entity",)
     inlines = (ReceiptInline, ExpenseLogInline)
+
+    def get_urls(self):
+        urls = super().get_urls()
+
+        return [
+            path(
+                "<path:object_id>/print/",
+                self.print,
+                name="payment_expense_print",
+            )
+        ] + urls
+
+    def print(self, request, object_id: UUID):
+        response = HttpResponse(content_type="aplication/pdf")
+        response["Content-Disposition"] = (
+            f"attachment; filename=Expense_{object_id}.pdf"
+        )
+        response["Content-Transfer-Encoding"] = "binary"
+
+        expense_obj = (
+            Expense.objects.filter(id=object_id)
+            .select_related("entity")
+            .prefetch_related(
+                Prefetch(
+                    "receipts",
+                    Receipt.objects.select_related("entity").order_by(
+                        "date", "-amount", "description"
+                    ),
+                    to_attr="all_receipts",
+                ),
+                Prefetch(
+                    "entity__payment_methods",
+                    EntityPaymentMethod.objects.order_by("-is_primary", "method"),
+                    to_attr="all_payment_methods",
+                ),
+            )
+            .first()
+        )
+
+        context = {"expense_obj": expense_obj}
+        html_string = render_to_string(
+            template_name="pdf/towers/base.html", context=context
+        )
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+
+        with tempfile.NamedTemporaryFile(delete=True) as output:
+            output.write(result)
+            output.flush()
+
+            output = open(output.name, "rb")
+            response.write(output.read())
+
+        return response
 
 
 @admin.action(description="Sync statements to Google Drive")

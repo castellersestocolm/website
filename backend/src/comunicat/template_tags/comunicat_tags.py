@@ -21,6 +21,8 @@ from membership.enums import MembershipStatus
 from membership.models import Membership
 from notify.consts import SETTINGS_BY_MODULE
 from order.models import Order
+from payment.consts import PAYMENT_METHOD_FIELD_LABELS, PAYMENT_METHOD_FIELDS
+from payment.models import EntityPaymentMethod
 from user.models import User
 
 
@@ -208,8 +210,44 @@ def membership_module_names(membership_obj: Membership) -> list[str]:
 
 
 @register.filter
+def payment_entity_payment_method_data_sorted(
+    entity_payment_method_obj: EntityPaymentMethod,
+) -> list[tuple[str, str]]:
+    return (
+        [
+            (field, entity_payment_method_obj.data.get(field, ""))
+            for field in PAYMENT_METHOD_FIELDS[entity_payment_method_obj.method]
+        ]
+        if PAYMENT_METHOD_FIELDS.get(entity_payment_method_obj.method)
+        else []
+    )
+
+
+@register.filter
+def payment_entity_payment_method_field_label(
+    field: str, locale: str | None = None
+) -> str:
+    field_str = (
+        PAYMENT_METHOD_FIELD_LABELS[field]
+        if field in PAYMENT_METHOD_FIELD_LABELS
+        else field.capitalize()
+    )
+
+    if locale is not None:
+        with translation.override(language=locale):
+            field_str = str(field_str)
+
+    return field_str
+
+
+@register.filter
 def format_money(amount: Money) -> str:
-    return f"{'{:,}'.format(int(amount.amount)).replace(',', ' ')} {amount.currency}"
+    return f"{'{:,}'.format(int(amount.amount)).replace(',', ' ').replace('.', ',')} {amount.currency}"
+
+
+@register.filter
+def format_money_2f(amount: Money) -> str:
+    return f"{"{0:.2f}".format(amount.amount).replace(',', ' ').replace('.', ',')} {amount.currency}"
 
 
 @register.filter
