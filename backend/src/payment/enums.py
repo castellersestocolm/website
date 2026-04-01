@@ -25,6 +25,8 @@ class PaymentMethod(IntEnum):
     # https://www.iso.org/obp/ui/#iso:code:3166:SE
     SE_SWISH = 75201
     SE_PLUSGIRO = 75202
+    SE_BANKGIRO = 75203
+    SE_TRANSFER = 75204
 
 
 class SourceType(IntEnum):

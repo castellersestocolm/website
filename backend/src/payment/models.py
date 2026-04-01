@@ -5,7 +5,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
-from django.db.models import JSONField
+from django.db.models import JSONField, UniqueConstraint, Q
 from django.utils import translation
 from djmoney.models.fields import MoneyField
 from phonenumber_field.phonenumber import PhoneNumber
@@ -18,6 +18,7 @@ from django.db import models
 from comunicat.enums import Module
 from comunicat.storage import signed_storage
 from comunicat.utils.models import language_field_default
+from payment.consts import PAYMENT_METHOD_FIELDS
 from payment.enums import (
     PaymentType,
     PaymentMethod,
@@ -198,6 +199,52 @@ class EntityAlias(StandardModel, Timestamps):
         unique_together = (("entity", "alias"),)
 
         indexes = [models.Index(fields=("alias",))]
+
+
+class EntityPaymentMethod(StandardModel, Timestamps):
+    entity = models.ForeignKey(
+        "Entity",
+        related_name="payment_methods",
+        on_delete=models.CASCADE,
+    )
+    is_primary = models.BooleanField(default=False)
+
+    method = models.PositiveIntegerField(
+        choices=((pm.value, pm.name) for pm in PaymentMethod),
+        default=PaymentMethod.TRANSFER,
+    )
+
+    data = models.JSONField(default=dict, blank=True)
+
+    def clean(self):
+        validation_errors = {}
+        if self.data and any(
+            [field not in self.data for field in PAYMENT_METHOD_FIELDS[self.method]]
+        ):
+            validation_errors["data"] = _(
+                "The data field doesn't contain the required keys."
+            )
+
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+    def save(self, *args, **kwargs):
+        if not self.data and PAYMENT_METHOD_FIELDS[self.method] is not None:
+            self.data = {field: "" for field in PAYMENT_METHOD_FIELDS[self.method]}
+
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "entity payment method"
+        verbose_name_plural = "entity payment methods"
+
+        constraints = [
+            UniqueConstraint(
+                fields=["entity", "is_primary"],
+                condition=Q(is_primary=True),
+                name="payment_entitypaymentmethod_is_primary_uniq",
+            )
+        ]
 
 
 def get_expense_file_name(instance, filename):

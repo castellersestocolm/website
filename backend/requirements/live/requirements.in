@@ -58,3 +58,4 @@ slack-sdk ~= 3.36.0
 
 # PDF
 PyMuPDF ~= 1.26.5
+weasyprint ~= 68.1

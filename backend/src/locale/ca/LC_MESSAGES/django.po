@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 13:10+0100\n"
+"POT-Creation-Date: 2026-04-01 15:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: activity/admin.py:59 activity/admin.py:148 data/admin.py:39 data/admin.py:70
 #: data/admin.py:94 legal/admin.py:31 legal/admin.py:76 legal/admin.py:100
-#: order/admin.py:255 payment/admin.py:562 payment/admin.py:814
+#: order/admin.py:255 payment/admin.py:587 payment/admin.py:887
 #: product/admin.py:88
 msgid "name"
 msgstr "nom"
@@ -108,6 +108,38 @@ msgstr "Manca la quantitat o la divisa."
 #: comunicat/rest/views/org.py:111
 msgid "The amount of children you entered is incorrect."
 msgstr "El nombre de nens que has introduït és incorrecte."
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:5
+msgid "Save"
+msgstr ""
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:6
+msgid "Save as new"
+msgstr ""
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:7
+msgid "Save and add another"
+msgstr ""
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:8
+msgid "Save and continue editing"
+msgstr ""
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:8
+msgid "Save and view"
+msgstr ""
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:10
+msgid "Print file"
+msgstr ""
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:14
+msgid "Close"
+msgstr ""
+
+#: comunicat/templates/admin/payment/expense/submit_line.html:18
+msgid "Delete"
+msgstr ""
 
 #: comunicat/templates/email/org/base.html:31
 #: comunicat/templates/email/org/base.html:33
@@ -371,10 +403,11 @@ msgstr "Com pagar"
 #: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
 msgid ""
-"Your registration has been marked as paid! You will find a summary right below."
+"Your registration has been marked as paid! You will find a summary right "
+"below."
 msgstr ""
-"La teva inscripció s'ha marcat com a pagada! En trobaràs un resum de la "
-"a continuació."
+"La teva inscripció s'ha marcat com a pagada! En trobaràs un resum de la a "
+"continuació."
 
 #: comunicat/templates/email/towers/contact/message.html:18
 msgid "Name"
@@ -612,11 +645,11 @@ msgstr ""
 msgid "Join the community"
 msgstr "Uneix-te a la comunitat"
 
-#: event/admin.py:90 payment/admin.py:258
+#: event/admin.py:90 payment/admin.py:267
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:92 order/admin.py:93 payment/admin.py:189
+#: event/admin.py:92 order/admin.py:93 payment/admin.py:198
 msgid "Send paid email"
 msgstr ""
 
@@ -801,7 +834,7 @@ msgstr "Hi participo"
 msgid "delivery"
 msgstr ""
 
-#: order/admin.py:176 payment/admin.py:457
+#: order/admin.py:176 payment/admin.py:466
 #, fuzzy
 #| msgid "Payment"
 msgid "payment"
@@ -819,45 +852,45 @@ msgstr ""
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:160 payment/admin.py:370
+#: payment/admin.py:169 payment/admin.py:379
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:336 payment/admin.py:434
+#: payment/admin.py:345 payment/admin.py:443
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:337 payment/admin.py:436
+#: payment/admin.py:346 payment/admin.py:445
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:338 payment/admin.py:437 payment/admin.py:559
-#: payment/admin.py:669
+#: payment/admin.py:347 payment/admin.py:446 payment/admin.py:584
+#: payment/admin.py:699
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:435 user/admin.py:325
+#: payment/admin.py:444 user/admin.py:325
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:456
+#: payment/admin.py:465
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Quantitat"
 
-#: payment/admin.py:560 payment/admin.py:561 payment/admin.py:670
-#: payment/admin.py:671
+#: payment/admin.py:585 payment/admin.py:586 payment/admin.py:700
+#: payment/admin.py:701
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:668
+#: payment/admin.py:698
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:725
+#: payment/admin.py:755
 msgid "file"
 msgstr "fitxer"
 
@@ -868,6 +901,22 @@ msgstr "Pagaments"
 #: payment/api/google_drive.py:72
 msgid "Receipts"
 msgstr "Rebuts"
+
+#: payment/consts.py:34
+msgid "IBAN"
+msgstr "IBAN"
+
+#: payment/consts.py:35
+msgid "Bank"
+msgstr "Banc"
+
+#: payment/consts.py:36
+msgid "Account number"
+msgstr "Número de compte"
+
+#: payment/consts.py:37
+msgid "Clearing number"
+msgstr "Número d’autorització"
 
 #: payment/managers.py:143 payment/managers.py:366
 msgid "Membership update"
@@ -893,19 +942,37 @@ msgstr "(i més)"
 msgid "Expense"
 msgstr "Despesa"
 
-#: payment/models.py:103
+#: payment/models.py:104
 #, fuzzy
 #| msgid "Category must be set for accounts with parent."
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:139
+#: payment/models.py:140
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: payment/models.py:402
+#: payment/models.py:223
+msgid "The data field doesn't contain the required keys."
+msgstr ""
+
+#: payment/models.py:466
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
+
+#: payment/utils/admin.py:10
+#, fuzzy
+#| msgid "Payment"
+msgid "has payment"
+msgstr "Pagament"
+
+#: payment/utils/admin.py:15
+msgid "Yes"
+msgstr ""
+
+#: payment/utils/admin.py:16
+msgid "No"
+msgstr ""
 
 #: product/admin.py:31 product/admin.py:89
 msgid "stock"
