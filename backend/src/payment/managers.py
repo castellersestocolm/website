@@ -310,6 +310,9 @@ class PaymentLineQuerySet(QuerySet):
     def with_description(self):
         PaymentLine = apps.get_model("payment", "PaymentLine")
         Registration = apps.get_model("event", "Registration")
+        ProgramCourseRegistration = apps.get_model(
+            "activity", "ProgramCourseRegistration"
+        )
         OrderProduct = apps.get_model("order", "OrderProduct")
 
         locale = translation.get_language()
@@ -324,6 +327,82 @@ class PaymentLineQuerySet(QuerySet):
                 )
             ),
             item_uuid=Cast(F("item_id"), output_field=UUIDField()),
+            entity_name=Case(
+                When(
+                    Q(
+                        payment__entity__isnull=False,
+                        payment__entity__user__isnull=False,
+                    ),
+                    then=Concat(
+                        F("payment__entity__user__firstname"),
+                        Value(" "),
+                        F("payment__entity__user__lastname"),
+                    ),
+                ),
+                When(
+                    Q(
+                        payment__entity__isnull=False,
+                        payment__entity__firstname__isnull=False,
+                        payment__entity__lastname__isnull=False,
+                    ),
+                    then=Concat(
+                        F("payment__entity__firstname"),
+                        Value(" "),
+                        F("payment__entity__lastname"),
+                    ),
+                ),
+                When(
+                    Q(
+                        payment__entity__isnull=False,
+                        payment__entity__firstname__isnull=False,
+                    ),
+                    then=F("payment__entity__firstname"),
+                ),
+                default=Value(None),
+                output_field=CharField(),
+            ),
+            event_title_locale=Case(
+                When(
+                    Q(
+                        item_type__app_label="event",
+                        item_type__model="registration",
+                    ),
+                    then=Subquery(
+                        Registration.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(
+                            event_title_locale=Cast(
+                                KeyTextTransform(locale, "event__title"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("event_title_locale", flat=True)[:1]
+                    ),
+                ),
+                default=Value(None),
+                output_field=CharField(),
+            ),
+            program_name_locale=Case(
+                When(
+                    Q(
+                        item_type__app_label="activity",
+                        item_type__model="programcourseregistration",
+                    ),
+                    then=Subquery(
+                        ProgramCourseRegistration.objects.filter(
+                            id=OuterRef("item_uuid")
+                        )
+                        .annotate(
+                            program_name_locale=Cast(
+                                KeyTextTransform(locale, "course__program__name"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("program_name_locale", flat=True)[:1]
+                    ),
+                ),
+                default=Value(None),
+                output_field=CharField(),
+            ),
             description=Case(
                 When(
                     Q(
@@ -374,15 +453,31 @@ class PaymentLineQuerySet(QuerySet):
                         item_type__app_label="event",
                         item_type__model="registration",
                     ),
-                    then=Subquery(
-                        Registration.objects.filter(id=OuterRef("item_uuid"))
-                        .annotate(
-                            event_title_locale=Cast(
-                                KeyTextTransform(locale, "event__title"),
-                                output_field=CharField(),
-                            )
-                        )
-                        .values_list("event_title_locale", flat=True)[:1]
+                    then=Case(
+                        When(
+                            entity_name__isnull=False,
+                            then=Concat(
+                                F("event_title_locale"), Value(" — "), F("entity_name")
+                            ),
+                        ),
+                        default=F("event_title_locale"),
+                        output_field=CharField(),
+                    ),
+                ),
+                When(
+                    Q(
+                        item_type__app_label="activity",
+                        item_type__model="programcourseregistration",
+                    ),
+                    then=Case(
+                        When(
+                            entity_name__isnull=False,
+                            then=Concat(
+                                F("program_name_locale"), Value(" — "), F("entity_name")
+                            ),
+                        ),
+                        default=F("program_name_locale"),
+                        output_field=CharField(),
                     ),
                 ),
                 When(
