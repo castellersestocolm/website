@@ -190,6 +190,8 @@
   "pages.user-payments.payment.date-done": "on",
   "pages.user-registrations.registration.updated": "Updated",
   "pages.user-registrations.registration.date": "on",
+  "pages.user-registrations.registration.attending-list": "Registrations",
+  "pages.user-registrations.registration.attending-empty": "Not registered",
   "pages.user-rehearsal.rehearsal.castles": "Scheduled towers",
   "pages.user-rehearsal.rehearsal.attending": "Change attendance",
   "pages.user-rehearsal.rehearsal.attending-list": "Attending",

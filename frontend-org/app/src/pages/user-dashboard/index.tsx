@@ -23,7 +23,7 @@ import {
   apiOrderList,
   apiPaymentList,
   apiUserLogout,
-  apiEventRegistrationList,
+  apiEventList,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
@@ -53,6 +53,8 @@ import {
   PaymentType,
   OrderStatus,
   ORDER_STATUS_ICON,
+  EventType,
+  RegistrationStatus,
 } from "../../enums";
 import { capitalizeFirstLetter, lowerFirstLetter } from "../../utils/string";
 import IconDowload from "@mui/icons-material/Download";
@@ -62,13 +64,14 @@ import {
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
   PAYMENT_SWISH_NUMBER,
-  API_REGISTRATIONS_LIST_PAGE_SIZE,
+  API_EVENTS_LIST_PAGE_SIZE,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
 import ImageIconSwish from "../../assets/images/icons/swish.png";
 
 // @ts-ignore
 import QRCode from "qrcode";
+import { getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import { dateToString, datetimeToString } from "../../utils/datetime";
@@ -95,7 +98,7 @@ function UserDashboardPage() {
     navigate(ROUTES["user-login"].path);
   }
 
-  const [registrationsOpen, setRegistrationsOpen] = React.useState<{
+  const [eventsOpen, setEventsOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
 
@@ -111,8 +114,8 @@ function UserDashboardPage() {
     [key: string]: boolean;
   }>({});
 
-  const [registrationPage, setRegistrationPage] = React.useState(1);
-  const [registrations, setRegistrations] = React.useState(undefined);
+  const [eventPage, setEventPage] = React.useState(1);
+  const [events, setEvents] = React.useState(undefined);
   const [paymentPage, setPaymentPage] = React.useState(1);
   const [payments, setPayments] = React.useState(undefined);
   const [orderPage, setOrderPage] = React.useState(1);
@@ -131,12 +134,12 @@ function UserDashboardPage() {
     });
   };
 
-  const handleRegistrationClick = (registrationId: string) => {
-    setRegistrationsOpen({
+  const handleEventClick = (eventId: string) => {
+    setEventsOpen({
       ...Object.fromEntries(
-        Object.entries(registrationsOpen).map(([k, v], i) => [k, false]),
+        Object.entries(eventsOpen).map(([k, v], i) => [k, false]),
       ),
-      [registrationId]: !paymentsOpen[registrationId],
+      [eventId]: !eventsOpen[eventId],
     });
   };
 
@@ -204,13 +207,30 @@ function UserDashboardPage() {
 
   React.useEffect(() => {
     if (user) {
-      apiEventRegistrationList(registrationPage).then((response) => {
+      apiEventList(
+        eventPage,
+        API_EVENTS_LIST_PAGE_SIZE,
+        undefined,
+        null,
+        undefined,
+        undefined,
+        undefined,
+        [
+          EventType.GENERAL,
+          EventType.TALK,
+          EventType.GATHERING,
+          EventType.COURSE,
+          EventType.WORKSHOP,
+        ],
+        true,
+        ["-time_from"],
+      ).then((response) => {
         if (response.status === 200) {
-          setRegistrations(response.data);
+          setEvents(response.data);
         }
       });
     }
-  }, [user, i18n.resolvedLanguage, setRegistrations, registrationPage]);
+  }, [user, i18n.resolvedLanguage, setEvents, eventPage]);
 
   React.useEffect(() => {
     if (user) {
@@ -525,18 +545,29 @@ function UserDashboardPage() {
               </Box>
               <Divider />
 
-              {registrations ? (
+              {events ? (
                 <Box className={styles.userFamilyBox}>
-                  {registrations.results.length > 0 ? (
+                  {events.results.length > 0 ? (
                     <List className={styles.userFamilyList}>
-                      {registrations.results.map(
-                        (registration: any, i: number, row: any) => (
-                          <Box key={registration.id}>
+                      {events.results.map((event: any, i: number, row: any) => {
+                        const eventUsers =
+                          user &&
+                          user.family &&
+                          getEventUsers(
+                            event,
+                            user.family.members.map(
+                              (familyMember: any) => familyMember.user,
+                            ),
+                          );
+
+                        return (
+                          <Box key={event.id}>
                             <ListItemButton
-                              onClick={() =>
-                                handleRegistrationClick(registration.id)
+                              onClick={() => handleEventClick(event.id)}
+                              disableTouchRipple={
+                                !event.registrations ||
+                                !(event.registrations.length > 0)
                               }
-                              disableTouchRipple
                               dense
                             >
                               <ListItemIcon>
@@ -544,35 +575,96 @@ function UserDashboardPage() {
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  registration.event.title +
+                                  event.title +
                                   " — " +
                                   datetimeToString(
                                     i18n.resolvedLanguage,
-                                    registration.event.time_from,
+                                    event.time_from,
                                   )
                                 }
                                 secondary={
-                                  t(
-                                    "pages.user-registrations.registration.updated",
-                                  ) +
-                                  " " +
-                                  t(
-                                    "pages.user-registrations.registration.date",
-                                  ) +
-                                  " " +
-                                  dateToString(
-                                    i18n.resolvedLanguage,
-                                    registration.updated_at
-                                      ? registration.updated_at
-                                      : registration.created_at,
-                                  )
+                                  event.registrations.filter(
+                                    (registration: any) =>
+                                      registration.status ===
+                                      RegistrationStatus.ACTIVE,
+                                  ).length > 0
+                                    ? t(
+                                        "pages.user-registrations.registration.attending-list",
+                                      ) +
+                                      ": " +
+                                      event.registrations
+                                        .filter(
+                                          (registration: any) =>
+                                            registration.status ===
+                                              RegistrationStatus.ACTIVE &&
+                                            eventUsers &&
+                                            eventUsers.filter(
+                                              (eventUser: any) =>
+                                                eventUser.id ===
+                                                registration.user.id,
+                                            ).length > 0,
+                                        )
+                                        .map((registration: any) =>
+                                          registration.user.lastname
+                                            ? registration.user.firstname +
+                                              " " +
+                                              registration.user.lastname
+                                            : registration.user.firstname,
+                                        )
+                                        .join(", ")
+                                    : t(
+                                        "pages.user-registrations.registration.attending-empty",
+                                      )
                                 }
                               />
+                              {event.registrations &&
+                                event.registrations.length > 0 &&
+                                (eventsOpen[event.id] ? (
+                                  <IconExpandLess />
+                                ) : (
+                                  <IconExpandMore />
+                                ))}
                             </ListItemButton>
+                            {event.registrations &&
+                              event.registrations.length > 0 && (
+                                <Collapse
+                                  in={eventsOpen[event.id]}
+                                  timeout="auto"
+                                  unmountOnExit
+                                >
+                                  <List className={styles.userFamilyList}>
+                                    {event.registrations.map(
+                                      (
+                                        registration: any,
+                                        i: number,
+                                        row: any,
+                                      ) => (
+                                        <Box key={registration.id}>
+                                          <ListItemButton
+                                            disableTouchRipple
+                                            dense
+                                          >
+                                            <ListItemText
+                                              primary={
+                                                registration.user.lastname
+                                                  ? registration.user
+                                                      .firstname +
+                                                    " " +
+                                                    registration.user.lastname
+                                                  : registration.user.firstname
+                                              }
+                                            />
+                                          </ListItemButton>
+                                        </Box>
+                                      ),
+                                    )}
+                                  </List>
+                                </Collapse>
+                              )}
                             {i + 1 < row.length && <Divider />}
                           </Box>
-                        ),
-                      )}
+                        );
+                      })}
                     </List>
                   ) : (
                     <Box className={styles.userFamilyEmpty}>
@@ -588,18 +680,13 @@ function UserDashboardPage() {
                 </Box>
               )}
             </Card>
-            {registrations &&
-              registrations.results.length > 0 &&
-              (registrationPage !== 1 ||
-                registrations.count > registrations.results.length) && (
+            {events &&
+              events.results.length > 0 &&
+              (eventPage !== 1 || events.count > events.results.length) && (
                 <Stack alignItems="center">
                   <Pagination
-                    count={Math.ceil(
-                      registrations.count / API_REGISTRATIONS_LIST_PAGE_SIZE,
-                    )}
-                    onChange={(e: any, value: number) =>
-                      setRegistrationPage(value)
-                    }
+                    count={Math.ceil(events.count / API_EVENTS_LIST_PAGE_SIZE)}
+                    onChange={(e: any, value: number) => setEventPage(value)}
                   />
                 </Stack>
               )}

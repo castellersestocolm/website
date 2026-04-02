@@ -483,6 +483,7 @@ class ListEventSerializer(s.Serializer):
     with_counts = s.BooleanField(required=False)
     token = s.CharField(required=False)
     filter_types = s.ListSerializer(child=IntEnumField(EventType), required=False)
+    filter_is_registered = s.BooleanField(required=False)
     order_by = s.ListSerializer(child=s.CharField(), required=False)
 
     def to_internal_value(self, data):

@@ -65,8 +65,26 @@ export const ORDER_STATUS_ICON: any = {
   50: <IconDeleteForeverRounded />,
 };
 
+export enum EventType {
+  GENERAL = 10,
+  INTERNAL = 20,
+  TALK = 30,
+  GATHERING = 40,
+  REHEARSAL = 50,
+  PERFORMANCE = 60,
+  COURSE = 70,
+  WORKSHOP = 80,
+}
+
 export function getEnumLabel(t: any, enumName: string, value: any) {
   return t("enums." + enumName + "." + value);
+}
+
+export enum RegistrationStatus {
+  REQUESTED = 10,
+  ACTIVE = 20,
+  CANCELLED = 30,
+  TENTATIVE = 40,
 }
 
 export enum Weekday {

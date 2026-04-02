@@ -7,6 +7,7 @@ import common_sv from "./translations/sv/common.json";
 import common_ca from "./translations/ca/common.json";
 import LngDetector from "i18next-browser-languagedetector";
 import AppContext from "./components/AppContext/AppContext";
+import NavBar from "./components/NavBar/NavBar";
 import Box from "@mui/material/Box";
 import * as React from "react";
 import { ROUTES } from "./routes";
@@ -67,22 +68,25 @@ const App = () => {
                 overflowX: "hidden",
               }}
             >
-              <Routes>
-                <Route path={ROUTES.home.path} element={<HomePage />} />
-                <Route path={ROUTES.status.path} element={<StatusPage />} />
-                <Route
-                  path={ROUTES["user-login"].path}
-                  element={<UserLoginPage />}
-                />
-                <Route
-                  path={ROUTES["user-password"].path}
-                  element={<UserPasswordPage />}
-                />
-                <Route
-                  path={ROUTES["user-dashboard"].path}
-                  element={<UserDashboardPage />}
-                />
-              </Routes>
+              <NavBar />
+              <Box style={{ flexGrow: 1, position: "relative" }}>
+                <Routes>
+                  <Route path={ROUTES.home.path} element={<HomePage />} />
+                  <Route path={ROUTES.status.path} element={<StatusPage />} />
+                  <Route
+                    path={ROUTES["user-login"].path}
+                    element={<UserLoginPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-password"].path}
+                    element={<UserPasswordPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-dashboard"].path}
+                    element={<UserDashboardPage />}
+                  />
+                </Routes>
+              </Box>
             </Box>
           </BrowserRouter>
         </I18nextProvider>

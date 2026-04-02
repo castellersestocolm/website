@@ -1,4 +1,6 @@
 {
+  "components.navbar-menu.home": "Inici",
+  "components.navbar-menu.login": "Entra",
   "pages.home.title": "Casal català Les Quatre Barres",
   "pages.home.subtitle": "Formulari d'inscripció o renovació",
   "pages.home.unsure-member": "No recordes si has pagat la quota? Fes clic aquí per comprovar-ho",
@@ -60,6 +62,8 @@
   "pages.user-payments.payment.date-done": "el",
   "pages.user-registrations.registration.updated": "Actualitzat",
   "pages.user-registrations.registration.date": "el",
+  "pages.user-registrations.registration.attending-list": "Inscripcions",
+  "pages.user-registrations.registration.attending-empty": "No hi estic inscrit",
   "pages.user-dashboard.section.membership.title": "Quota",
   "pages.user-dashboard.section.membership.renew-date": "Es pot renovar a partir de",
   "pages.user-dashboard.section.membership.renew-now": "S'ha de renovar abans de",

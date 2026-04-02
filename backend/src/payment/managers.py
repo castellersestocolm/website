@@ -317,6 +317,47 @@ class PaymentLineQuerySet(QuerySet):
 
         locale = translation.get_language()
 
+        entity_name_annotation = Case(
+            When(
+                Q(
+                    entity__user__isnull=False,
+                    entity__user__firstname__isnull=False,
+                    entity__user__lastname__isnull=False,
+                ),
+                then=Concat(
+                    F("entity__user__firstname"),
+                    Value(" "),
+                    F("entity__user__lastname"),
+                ),
+            ),
+            When(
+                Q(
+                    entity__user__isnull=False,
+                    entity__user__firstname__isnull=False,
+                ),
+                then=F("entity__user__firstname"),
+            ),
+            When(
+                Q(
+                    entity__firstname__isnull=False,
+                    entity__lastname__isnull=False,
+                ),
+                then=Concat(
+                    F("entity__firstname"),
+                    Value(" "),
+                    F("entity__lastname"),
+                ),
+            ),
+            When(
+                Q(
+                    entity__firstname__isnull=False,
+                ),
+                then=F("entity__firstname"),
+            ),
+            default=Value(None),
+            output_field=CharField(),
+        )
+
         return self.annotate(
             is_update=Exists(
                 PaymentLine.objects.filter(
@@ -330,33 +371,27 @@ class PaymentLineQuerySet(QuerySet):
             entity_name=Case(
                 When(
                     Q(
-                        payment__entity__isnull=False,
-                        payment__entity__user__isnull=False,
+                        item_type__app_label="event",
+                        item_type__model="registration",
                     ),
-                    then=Concat(
-                        F("payment__entity__user__firstname"),
-                        Value(" "),
-                        F("payment__entity__user__lastname"),
-                    ),
-                ),
-                When(
-                    Q(
-                        payment__entity__isnull=False,
-                        payment__entity__firstname__isnull=False,
-                        payment__entity__lastname__isnull=False,
-                    ),
-                    then=Concat(
-                        F("payment__entity__firstname"),
-                        Value(" "),
-                        F("payment__entity__lastname"),
+                    then=Subquery(
+                        Registration.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(entity_name=entity_name_annotation)
+                        .values_list("entity_name", flat=True)[:1]
                     ),
                 ),
                 When(
                     Q(
-                        payment__entity__isnull=False,
-                        payment__entity__firstname__isnull=False,
+                        item_type__app_label="activity",
+                        item_type__model="programcourseregistration",
                     ),
-                    then=F("payment__entity__firstname"),
+                    then=Subquery(
+                        ProgramCourseRegistration.objects.filter(
+                            id=OuterRef("item_uuid")
+                        )
+                        .annotate(entity_name=entity_name_annotation)
+                        .values_list("entity_name", flat=True)[:1]
+                    ),
                 ),
                 default=Value(None),
                 output_field=CharField(),

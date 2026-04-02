@@ -42,3 +42,9 @@
   margin-right: auto;
   margin-bottom: 24px;
 }
+
+.pageLoader {
+  align-content: center;
+  flex: 1;
+  display: flex;
+}

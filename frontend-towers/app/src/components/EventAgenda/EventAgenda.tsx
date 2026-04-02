@@ -231,6 +231,7 @@ export default function EventAgenda({
       undefined,
       undefined,
       undefined,
+      undefined,
       [isPast ? "-time_from" : "time_from"],
     ).then((response) => {
       if (response.status === 200) {

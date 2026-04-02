@@ -191,6 +191,8 @@
   "pages.user-payments.payment.date-done": "el",
   "pages.user-registrations.registration.updated": "Actualitzat",
   "pages.user-registrations.registration.date": "el",
+  "pages.user-registrations.registration.attending-list": "Inscripcions",
+  "pages.user-registrations.registration.attending-empty": "No hi estic inscrit",
   "pages.user-rehearsal.rehearsal.castles": "Castells programats",
   "pages.user-rehearsal.rehearsal.attending": "Canvia l'assistència",
   "pages.user-rehearsal.rehearsal.attending-list": "Assistiran",

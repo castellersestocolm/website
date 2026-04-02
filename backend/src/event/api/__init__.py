@@ -41,6 +41,7 @@ def get_list(
     date_to: datetime.date | None = None,
     with_counts: bool = False,
     for_musicians: bool | None = None,
+    filter_is_registered: bool | None = None,
     filter_types: list[EventType] | None = None,
     order_by: list[str] | None = None,
 ) -> List[Event]:
@@ -57,6 +58,7 @@ def get_list(
         family_user_ids = []
 
     event_filter = Q()
+    event_filter_post = Q()
 
     if event_ids:
         event_filter &= Q(id__in=event_ids)
@@ -89,6 +91,13 @@ def get_list(
     if filter_types:
         event_filter &= Q(type__in=filter_types)
 
+    if filter_is_registered:
+        event_filter &= (
+            Q(registrations__entity__user_id__in=family_user_ids)
+            if filter_is_registered
+            else ~Q(registrations__entity__user_id__in=family_user_ids)
+        )
+
     event_qs = (
         Event.objects.filter(
             event_filter,
@@ -117,6 +126,11 @@ def get_list(
                 (
                     Registration.objects.filter(
                         entity__user_id__in=family_user_ids,
+                        **(
+                            {"status": RegistrationStatus.ACTIVE}
+                            if filter_is_registered
+                            else {}
+                        ),
                     ).select_related("entity", "entity__user")
                     if request_user_id
                     else Registration.objects.none()

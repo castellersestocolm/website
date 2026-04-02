@@ -190,6 +190,8 @@
   "pages.user-payments.payment.date-done": "den",
   "pages.user-registrations.registration.updated": "Uppdaterad",
   "pages.user-registrations.registration.date": "den",
+  "pages.user-registrations.registration.attending-list": "Registreringar",
+  "pages.user-registrations.registration.attending-empty": "Ej registrerad",
   "pages.user-rehearsal.rehearsal.castles": "Planerade torn",
   "pages.user-rehearsal.rehearsal.attending": "Ändra deltagande",
   "pages.user-rehearsal.rehearsal.attending-list": "Deltar",

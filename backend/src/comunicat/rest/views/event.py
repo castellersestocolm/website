@@ -73,6 +73,9 @@ class EventAPI(ComuniCatViewSet):
         )
 
         with_counts = serializer.validated_data.get("with_counts", False)
+        filter_is_registered = serializer.validated_data.get(
+            "filter_is_registered", None
+        )
         filter_types = serializer.validated_data.get("filter_types", None)
         order_by = serializer.validated_data.get("order_by", None)
 
@@ -84,6 +87,7 @@ class EventAPI(ComuniCatViewSet):
             with_counts=with_counts,
             for_musicians=for_musicians,
             filter_types=filter_types,
+            filter_is_registered=filter_is_registered,
             order_by=order_by,
         )
 

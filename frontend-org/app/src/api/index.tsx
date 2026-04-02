@@ -2,6 +2,7 @@ import axios from "axios";
 import i18n from "i18next";
 import { getCookie } from "typescript-cookie";
 import {
+  API_EVENTS_LIST_PAGE_SIZE,
   API_EXPENSES_LIST_PAGE_SIZE,
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
@@ -194,6 +195,43 @@ export const apiEventRegistrationList = async (page: number = undefined) => {
       params: {
         page_size: API_REGISTRATIONS_LIST_PAGE_SIZE,
         page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiEventList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+  token: string = undefined,
+  dateFrom: string = undefined,
+  dateTo: string = undefined,
+  withCounts: boolean = undefined,
+  forMusicians: boolean = undefined,
+  filterTypes: number[] = undefined,
+  filterIsRegistered: boolean = undefined,
+  orderBy: string[] = undefined,
+) => {
+  try {
+    return await instance.get("/event/", {
+      params: {
+        page_size: pageSize ? pageSize : API_EVENTS_LIST_PAGE_SIZE,
+        page: page ? page : 1,
+        token: token,
+        date_from:
+          dateFrom !== undefined
+            ? dateFrom
+            : new Date().toISOString().substring(0, 10),
+        date_to: dateTo,
+        with_counts: withCounts,
+        for_musicians: forMusicians,
+        filter_types: filterTypes && filterTypes.join(","),
+        filter_is_registered: filterIsRegistered,
+        order_by: orderBy && orderBy.join(","),
       },
     });
   } catch (error) {

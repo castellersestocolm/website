@@ -475,6 +475,7 @@ export const apiEventList = async (
   withCounts: boolean = undefined,
   forMusicians: boolean = undefined,
   filterTypes: number[] = undefined,
+  filterIsRegistered: boolean = undefined,
   orderBy: string[] = undefined,
 ) => {
   try {
@@ -491,6 +492,7 @@ export const apiEventList = async (
         with_counts: withCounts,
         for_musicians: forMusicians,
         filter_types: filterTypes && filterTypes.join(","),
+        filter_is_registered: filterIsRegistered,
         order_by: orderBy && orderBy.join(","),
       },
     });
