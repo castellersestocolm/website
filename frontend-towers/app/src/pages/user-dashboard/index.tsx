@@ -1189,16 +1189,6 @@ function UserDashboardPage() {
                   {events.results.length > 0 ? (
                     <List className={styles.userFamilyList}>
                       {events.results.map((event: any, i: number, row: any) => {
-                        const eventUsers =
-                          user &&
-                          user.family &&
-                          getEventUsers(
-                            event,
-                            user.family.members.map(
-                              (familyMember: any) => familyMember.user,
-                            ),
-                          );
-
                         return (
                           <Box key={event.id}>
                             <ListItemButton
@@ -1232,17 +1222,6 @@ function UserDashboardPage() {
                                       ) +
                                       ": " +
                                       event.registrations
-                                        .filter(
-                                          (registration: any) =>
-                                            registration.status ===
-                                              RegistrationStatus.ACTIVE &&
-                                            eventUsers &&
-                                            eventUsers.filter(
-                                              (eventUser: any) =>
-                                                eventUser.id ===
-                                                registration.user.id,
-                                            ).length > 0,
-                                        )
                                         .map((registration: any) =>
                                           registration.user.lastname
                                             ? registration.user.firstname +

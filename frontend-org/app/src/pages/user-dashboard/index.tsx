@@ -71,7 +71,6 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 
 // @ts-ignore
 import QRCode from "qrcode";
-import { getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import { dateToString, datetimeToString } from "../../utils/datetime";
@@ -550,16 +549,6 @@ function UserDashboardPage() {
                   {events.results.length > 0 ? (
                     <List className={styles.userFamilyList}>
                       {events.results.map((event: any, i: number, row: any) => {
-                        const eventUsers =
-                          user &&
-                          user.family &&
-                          getEventUsers(
-                            event,
-                            user.family.members.map(
-                              (familyMember: any) => familyMember.user,
-                            ),
-                          );
-
                         return (
                           <Box key={event.id}>
                             <ListItemButton
@@ -593,17 +582,6 @@ function UserDashboardPage() {
                                       ) +
                                       ": " +
                                       event.registrations
-                                        .filter(
-                                          (registration: any) =>
-                                            registration.status ===
-                                              RegistrationStatus.ACTIVE &&
-                                            eventUsers &&
-                                            eventUsers.filter(
-                                              (eventUser: any) =>
-                                                eventUser.id ===
-                                                registration.user.id,
-                                            ).length > 0,
-                                        )
                                         .map((registration: any) =>
                                           registration.user.lastname
                                             ? registration.user.firstname +
