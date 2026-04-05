@@ -625,6 +625,52 @@ class EntityAdmin(admin.ModelAdmin):
     actions = (merge_entities,)
     form = EntityAdminForm
 
+    def get_urls(self):
+        urls = super().get_urls()
+
+        return [
+            path(
+                "<path:object_id>/print/",
+                self.print,
+                name="payment_entity_print",
+            )
+        ] + urls
+
+    def print(self, request, object_id: UUID):
+        response = HttpResponse(content_type="aplication/pdf")
+        response["Content-Disposition"] = (
+            f"attachment; filename=Expense_{object_id}.pdf"
+        )
+        response["Content-Transfer-Encoding"] = "binary"
+
+        entity_obj = (
+            Entity.objects.filter(id=object_id)
+            .prefetch_related(
+                Prefetch(
+                    "payment_methods",
+                    EntityPaymentMethod.objects.order_by("-is_primary", "method"),
+                    to_attr="all_payment_methods",
+                ),
+            )
+            .first()
+        )
+
+        context = {"entity_obj": entity_obj}
+        html_string = render_to_string(
+            template_name="pdf/expense.html", context=context
+        )
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+
+        with tempfile.NamedTemporaryFile(delete=True) as output:
+            output.write(result)
+            output.flush()
+
+            output = open(output.name, "rb")
+            response.write(output.read())
+
+        return response
+
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
@@ -831,9 +877,9 @@ class ExpenseAdmin(admin.ModelAdmin):
             .first()
         )
 
-        context = {"expense_obj": expense_obj}
+        context = {"expense_obj": expense_obj, "entity_obj": expense_obj.entity}
         html_string = render_to_string(
-            template_name="pdf/towers/base.html", context=context
+            template_name="pdf/expense.html", context=context
         )
         html = HTML(string=html_string)
         result = html.write_pdf()

@@ -1,76 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <style>
-      @font-face {
-  font-family: "Lexend";
-  src: url({% full_static "org/font/Lexend-VariableFont_wght.ttf" %}) format("truetype");
-        font-weight: 100 900;
-}
-      @font-face {
-  font-family: "IBMPlexMono";
-  src: url({% full_static "org/font/IBMPlexMono-Regular.ttf" %}) format("truetype");
-        font-weight: 400;
-}
-      @font-face {
-  font-family: "IBMPlexMono";
-  src: url({% full_static "org/font/IBMPlexMono-Medium.ttf" %}) format("truetype");
-        font-weight: 500;
-}
+{% extends "pdf/base.html" %}
 
-      @page {
-  size: A4;
-  font-family: "Lexend", sans-serif;
-        margin: 12.7mm 25.4mm 25.4mm 25.4mm;
-        @bottom-center{
-        content: counter(page) "/" counter(pages);
-      font-family: "Lexend", sans-serif;
-          font-size: 10pt;
-          margin-bottom: 32px;
-    }
-}
-
-section {
-  font-family: "Lexend", sans-serif;
-}
-
-section#header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 56px;
-}
-
-section#header p {
-  text-align: left;
-  margin: 0;
-}
-
-section .header-p1 {
-  font-weight: 600;
-  font-size: 8pt;
-  line-height: 10pt;
-}
-
-section .header-p2 {
-  font-weight: 400;
-  font-size: 8pt;
-  line-height: 10pt;
-}
-
-section .header-p3 {
-  font-weight: 200;
-  font-size: 8pt;
-  line-height: 10pt;
-}
-
-section#header table td {
-  padding: 0 6px;
-}
-
-section#header table td img {
-  height: 56px;
-}
-
+{% block styles %}
 h1 {
   font-size: 16pt;
   margin: 0;
@@ -165,7 +95,7 @@ section#data table th {
 
 section .data-th0,
 section .data-td0 {
-width: calc(2 * 100%/22);
+width: calc(100%/22);
 }
 
 section .data-th1,
@@ -175,7 +105,7 @@ width: calc(5 * 100%/22);
 
 section .data-th3,
 section .data-td3 {
-width: calc(10 * 100%/22);
+width: calc(11 * 100%/22);
 }
 
 section .data-t1 {
@@ -262,25 +192,9 @@ section .sign-d3 {
 section .sign-row2 {
   padding-top: 8px !important;
 }
+{% endblock %}
 
-    </style>
-  </head>
-  <body>
-    <section id="header">
-      <table>
-          <tr>
-            <td>
-              <img src="{% full_static "org/img/logo_250.png" %}" alt="{{ name }}"/>
-            </td>
-            <td>
-              <p class="header-p1">Katalanska Kulturföreningen Les Quatre Barres</p>
-              <p class="header-p2">info@lesquatrebarres.org</p>
-              <p class="header-p3">802008-9929</p>
-            </td>
-          </tr>
-      </table>
-    </section>
-
+{% block content %}
     <section id="info">
       <h1>Full de despeses</h1>
       <h2>Betalningsblankett</h2>
@@ -298,18 +212,18 @@ section .sign-row2 {
           </tr>
           <tr>
             <td class="info-td1">
-              <p class="info-t3">{{ expense_obj.entity.name }}</p>
+              <p class="info-t3">{% if entity_obj.name %}{{ entity_obj.name }}{% else %}&nbsp;{% endif %}</p>
             </td>
             <td class="info-td2" colspan="2">
-              <p class="info-t3">{{ expense_obj.entity.email }}</p>
+              <p class="info-t3">{% if entity_obj.email %}{{ entity_obj.email }}{% else %}&nbsp;{% endif %}</p>
             </td>
           </tr>
       </table>
 
       <table class="info-table2">
-          {% if expense_obj.entity.all_payment_methods %}
+          {% if entity_obj.all_payment_methods %}
             <tr>
-              {% for field, __ in expense_obj.entity.all_payment_methods.0|payment_entity_payment_method_data_sorted %}
+              {% for field, __ in entity_obj.all_payment_methods.0|payment_entity_payment_method_data_sorted %}
                 <th class="info-th0">
                   <p class="info-t1">{{ field|payment_entity_payment_method_field_label:"ca" }}</p>
                   <p class="info-t2">{{ field|payment_entity_payment_method_field_label:"sv" }}</p>
@@ -317,9 +231,9 @@ section .sign-row2 {
               {% endfor %}
             </tr>
             <tr>
-              {% for __, value in expense_obj.entity.all_payment_methods.0|payment_entity_payment_method_data_sorted %}
+              {% for __, value in entity_obj.all_payment_methods.0|payment_entity_payment_method_data_sorted %}
                 <td class="info-td0">
-                  <p class="info-t3">{{ value }}</p>
+                  <p class="info-t3">{% if value %}{{ value }}{% else %}&nbsp;{% endif %}</p>
                 </td>
               {% endfor %}
             </tr>
@@ -378,22 +292,41 @@ section .sign-row2 {
               <p class="data-t2">Belopp</p>
             </th>
           </tr>
-          {% for receipt_obj in expense_obj.all_receipts %}
-            <tr>
-              <td class="data-td0{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
-                <p class="data-t3">{{ forloop.counter }}</p>
-              </td>
-              <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
-                <p class="data-t3">{{ receipt_obj.date|date:"Y-m-d" }}</p>
-              </td>
-              <td class="data-td3{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
-                <p class="data-t3">{{ receipt_obj.description }}</p>
-              </td>
-              <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
-                <p class="data-t4">{{ receipt_obj.amount|format_money_2f }}</p>
-              </td>
-            </tr>
-          {% endfor %}
+          {% if expense_obj.all_receipts %}
+            {% for receipt_obj in expense_obj.all_receipts %}
+              <tr>
+                <td class="data-td0{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ forloop.counter }}</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ receipt_obj.date|date:"Y-m-d" }}</p>
+                </td>
+                <td class="data-td3{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ receipt_obj.description }}</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t4">{{ receipt_obj.amount|format_money_2f }}</p>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            {% for __ in "01234" %}
+              <tr>
+                <td class="data-td0{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ forloop.counter }}</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">&nbsp;</p>
+                </td>
+                <td class="data-td3{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">&nbsp;</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t4">&nbsp;</p>
+                </td>
+              </tr>
+            {% endfor %}
+          {% endif %}
       </table>
     </section>
 
@@ -419,5 +352,4 @@ section .sign-row2 {
           </tr>
       </table>
     </section>
-  </body>
-</html>
+{% endblock %}

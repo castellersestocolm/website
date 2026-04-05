@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      @font-face {
+  font-family: "Lexend";
+  src: url({% full_static "org/font/Lexend-VariableFont_wght.ttf" %}) format("truetype");
+        font-weight: 100 900;
+}
+      @font-face {
+  font-family: "IBMPlexMono";
+  src: url({% full_static "org/font/IBMPlexMono-Regular.ttf" %}) format("truetype");
+        font-weight: 400;
+}
+      @font-face {
+  font-family: "IBMPlexMono";
+  src: url({% full_static "org/font/IBMPlexMono-Medium.ttf" %}) format("truetype");
+        font-weight: 500;
+}
+
+      @page {
+  size: A4;
+  font-family: "Lexend", sans-serif;
+        margin: 12.7mm 25.4mm 25.4mm 25.4mm;
+        @bottom-center{
+        content: counter(page) "/" counter(pages);
+      font-family: "Lexend", sans-serif;
+          font-size: 10pt;
+          margin-bottom: 32px;
+    }
+}
+
+section {
+  font-family: "Lexend", sans-serif;
+}
+
+section#header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 56px;
+}
+
+section#header p {
+  text-align: left;
+  margin: 0;
+}
+
+section .header-p1 {
+  font-weight: 600;
+  font-size: 8pt;
+  line-height: 10pt;
+}
+
+section .header-p2 {
+  font-weight: 400;
+  font-size: 8pt;
+  line-height: 10pt;
+}
+
+section .header-p3 {
+  font-weight: 200;
+  font-size: 8pt;
+  line-height: 10pt;
+}
+
+section#header table td {
+  padding: 0 6px;
+}
+
+section#header table td img {
+  height: 56px;
+}
+
+      {% block styles %}
+      {% endblock %}
+    </style>
+  </head>
+  <body>
+    {% block header %}
+      <section id="header">
+        <table>
+            <tr>
+              <td>
+                <img src="{% full_static "org/img/logo_250.png" %}" alt="{{ name }}"/>
+              </td>
+              <td>
+                <p class="header-p1">Katalanska Kulturföreningen Les Quatre Barres</p>
+                <p class="header-p2">info@lesquatrebarres.org</p>
+                <p class="header-p3">802008-9929</p>
+              </td>
+            </tr>
+        </table>
+      </section>
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>
