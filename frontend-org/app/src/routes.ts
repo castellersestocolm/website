@@ -27,4 +27,7 @@ export const ROUTES = {
       ORG_BASE_URL +
       "/user/dashboard",
   },
+  "external-website": {
+    path: "https://lesquatrebarres.org",
+  },
 };

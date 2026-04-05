@@ -36,6 +36,11 @@ export default function NavBar() {
       path: ROUTES.home.path,
       target: "_self",
     },
+    {
+      name: t("components.navbar-menu.website"),
+      path: ROUTES["external-website"].path,
+      target: "_self",
+    },
   ];
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -61,7 +66,7 @@ export default function NavBar() {
                         {" — "}
                         {childrenPage.name}
                       </Typography>
-                      {childrenPage.target === "_blank" && (
+                      {childrenPage.path.startsWith("http") && (
                         <IconArrowOutward className={styles.externalIcon} />
                       )}
                     </ListItem>
@@ -75,7 +80,7 @@ export default function NavBar() {
                     className={styles.drawerItem}
                   >
                     <Typography>{page.name}</Typography>
-                    {page.target === "_blank" && (
+                    {page.path.startsWith("http") && (
                       <IconArrowOutward className={styles.externalIcon} />
                     )}
                   </ListItem>
@@ -133,7 +138,7 @@ export default function NavBar() {
                                 <Typography fontWeight={600}>
                                   {childrenPage.name}
                                 </Typography>
-                                {childrenPage.target === "_blank" && (
+                                {childrenPage.path.startsWith("http") && (
                                   <IconArrowOutward
                                     className={styles.externalIcon}
                                   />
@@ -155,7 +160,7 @@ export default function NavBar() {
                       sx={{ display: { xs: "none", md: "flex" } }}
                     >
                       <Typography fontWeight={600}>{page.name}</Typography>
-                      {page.target === "_blank" && (
+                      {page.path.startsWith("http") && (
                         <IconArrowOutward className={styles.externalIcon} />
                       )}
                     </MenuItem>

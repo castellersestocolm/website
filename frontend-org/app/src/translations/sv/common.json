@@ -1,5 +1,6 @@
 {
   "components.navbar-menu.home": "Start",
+  "components.navbar-menu.website": "Hemsida",
   "components.navbar-menu.login": "Logga in",
   "pages.home.title": "Katanakska kulturföreningen Les Quatre Barres",
   "pages.home.subtitle": "Registrerings- eller förnyelseformulär",

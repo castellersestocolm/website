@@ -231,7 +231,7 @@ export default function NavBar() {
                             />
                           )}
                         </Typography>
-                        {childrenPage.target === "_blank" && (
+                        {childrenPage.path.startsWith("http") && (
                           <IconArrowOutward className={styles.externalIcon} />
                         )}
                       </ListItem>
@@ -250,7 +250,7 @@ export default function NavBar() {
                           <LanguageChip language={page.language} size="small" />
                         )}
                       </Typography>
-                      {page.target === "_blank" && (
+                      {page.path.startsWith("http") && (
                         <IconArrowOutward className={styles.externalIcon} />
                       )}
                     </ListItem>
@@ -328,7 +328,7 @@ export default function NavBar() {
                                       />
                                     )}
                                   </Typography>
-                                  {childrenPage.target === "_blank" && (
+                                  {childrenPage.path.startsWith("http") && (
                                     <IconArrowOutward
                                       className={styles.externalIcon}
                                     />
@@ -350,7 +350,7 @@ export default function NavBar() {
                         sx={{ display: { xs: "none", md: "flex" } }}
                       >
                         <Typography fontWeight={600}>{page.name}</Typography>
-                        {page.target === "_blank" && (
+                        {page.path.startsWith("http") && (
                           <IconArrowOutward className={styles.externalIcon} />
                         )}
                       </MenuItem>

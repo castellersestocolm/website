@@ -1,5 +1,6 @@
 {
   "components.navbar-menu.home": "Inici",
+  "components.navbar-menu.website": "Pàgina web",
   "components.navbar-menu.login": "Entra",
   "pages.home.title": "Casal català Les Quatre Barres",
   "pages.home.subtitle": "Formulari d'inscripció o renovació",
