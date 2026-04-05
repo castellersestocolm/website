@@ -1272,6 +1272,15 @@ function UserDashboardPage() {
                                                   : registration.user.firstname
                                               }
                                             />
+                                            {registration.amount && (
+                                              <Typography
+                                                variant="body2"
+                                                component="span"
+                                              >
+                                                {registration.amount.amount}{" "}
+                                                {registration.amount.currency}
+                                              </Typography>
+                                            )}
                                           </ListItemButton>
                                         </Box>
                                       ),

@@ -5,7 +5,7 @@ from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from comunicat.rest.serializers.legal import TeamSerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
-from comunicat.rest.utils.fields import IntEnumField
+from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.enums import RegistrationStatus, EventType
 from event.models import (
     Event,
@@ -199,6 +199,27 @@ class RegistrationSlimSerializer(s.ModelSerializer):
         )
 
 
+class RegistrationWithAmountSerializer(RegistrationSlimSerializer):
+    amount = MoneyField(required=False, read_only=True)
+
+    class Meta:
+        model = Registration
+        fields = (
+            "id",
+            "user",
+            "status",
+            "amount",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "user",
+            "status",
+            "amount",
+            "created_at",
+        )
+
+
 class AgendaItemSerializer(s.ModelSerializer):
     name = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
@@ -292,7 +313,7 @@ class EventSerializer(EventSlimSerializer):
     location = LocationSerializer(read_only=True)
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
-    registrations = RegistrationSlimSerializer(many=True, read_only=True)
+    registrations = RegistrationWithAmountSerializer(many=True, read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
     agenda_items = AgendaItemSerializer(many=True, read_only=True)
     poster = VersatileImageFieldSerializer(

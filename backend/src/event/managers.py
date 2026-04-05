@@ -11,11 +11,14 @@ from django.db.models import (
     Case,
     When,
     F,
+    Sum,
+    UUIDField,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Cast
 from django.utils import timezone, translation
 
 from comunicat.enums import Module
+from comunicat.utils.managers import MoneyOutput
 
 
 class EventQuerySet(QuerySet):
@@ -103,4 +106,27 @@ class RegistrationQuerySet(QuerySet):
 
         return self.annotate(
             event_title_locale=F(f"event__title__{locale}"),
+        )
+
+    def with_amount(self):
+        PaymentLine = apps.get_model("payment", "PaymentLine")
+
+        return self.annotate(
+            amount=Coalesce(
+                Subquery(
+                    PaymentLine.objects.filter(
+                        item_type__app_label="event",
+                        item_type__model="registration",
+                    )
+                    .annotate(item_uuid=Cast(F("item_id"), output_field=UUIDField()))
+                    .filter(
+                        item_uuid=OuterRef("id"),
+                    )
+                    .values("item_id")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            )
         )

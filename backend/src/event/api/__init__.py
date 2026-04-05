@@ -131,7 +131,9 @@ def get_list(
                             if filter_is_registered
                             else {}
                         ),
-                    ).select_related("entity", "entity__user")
+                    )
+                    .select_related("entity", "entity__user")
+                    .with_amount()
                     if request_user_id
                     else Registration.objects.none()
                 ),
