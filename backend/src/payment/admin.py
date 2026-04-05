@@ -853,7 +853,7 @@ class ExpenseAdmin(admin.ModelAdmin):
     def print(self, request, object_id: UUID):
         response = HttpResponse(content_type="aplication/pdf")
         response["Content-Disposition"] = (
-            f"attachment; filename=Expense_{object_id}.pdf"
+            f"attachment; filename=Expense_Entity_{object_id}.pdf"
         )
         response["Content-Transfer-Encoding"] = "binary"
 
