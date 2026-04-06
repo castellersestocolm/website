@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.db.models import Exists, OuterRef
 
 from grant.models import Grant, GrantArea, GrantAreaAccount
 from payment.enums import PaymentType
@@ -33,12 +34,23 @@ class GrantAreaAccountForm(forms.ModelForm):
         model = GrantAreaAccount
         fields = "__all__"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, parent_obj: GrantArea, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["account"].queryset = Account.objects.filter(
-            type=PaymentType.CREDIT,
-            allow_transactions=True,
-        ).order_by("code")
+        self.fields["account"].queryset = (
+            Account.objects.annotate(
+                is_already_granted=Exists(
+                    GrantAreaAccount.objects.filter(
+                        area__grant_id=parent_obj.grant_id, account_id=OuterRef("id")
+                    ).exclude(area_id=parent_obj.id)
+                )
+            )
+            .filter(
+                is_already_granted=False,
+                type=PaymentType.CREDIT,
+                allow_transactions=True,
+            )
+            .order_by("code")
+        )
 
 
 class GrantAreaAccountInline(admin.TabularInline):
@@ -47,6 +59,19 @@ class GrantAreaAccountInline(admin.TabularInline):
     extra = 0
 
     form = GrantAreaAccountForm
+
+    def get_formset(self, request, obj=None, **kwargs):
+        BaseFormSet = kwargs.pop("formset", self.formset)
+
+        # Now make a custom subclass with an overridden “get_form_kwargs()”
+        class WithParentFormSet(BaseFormSet):
+            def get_form_kwargs(self, index):
+                kwargs = super().get_form_kwargs(index)
+                kwargs["parent_obj"] = obj
+                return kwargs
+
+        kwargs["formset"] = WithParentFormSet
+        return super().get_formset(request, obj, **kwargs)
 
 
 @admin.register(GrantArea)
