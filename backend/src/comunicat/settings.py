@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     "integration",
     "event",
     "payment",
+    "grant",
     "product",
     "order",
     "membership",
