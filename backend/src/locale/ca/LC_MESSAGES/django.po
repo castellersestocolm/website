@@ -406,7 +406,7 @@ msgid ""
 "Your registration has been marked as paid! You will find a summary right "
 "below."
 msgstr ""
-"La teva inscripció s'ha marcat com a pagada! En trobaràs un resum de la a "
+"La teva inscripció s'ha marcat com a pagada! En trobaràs un resum a "
 "continuació."
 
 #: comunicat/templates/email/towers/contact/message.html:18
