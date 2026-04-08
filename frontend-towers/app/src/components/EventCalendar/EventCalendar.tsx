@@ -4,12 +4,7 @@ import Box from "@mui/material/Box";
 import { Divider, Icon, Link, Typography } from "@mui/material";
 import styles from "./styles.module.css";
 import Grid from "@mui/material/Grid";
-import {
-  EVENT_TYPE_ICON,
-  getEnumLabel,
-  RegistrationStatus,
-  Weekday,
-} from "../../enums";
+import { getEnumLabel, RegistrationStatus, Weekday } from "../../enums";
 import { useCallback } from "react";
 import IconChevronLeft from "@mui/icons-material/ChevronLeft";
 import IconChevronRight from "@mui/icons-material/ChevronRight";
@@ -18,7 +13,11 @@ import { apiEventCalendarList } from "../../api";
 import { useAppContext } from "../AppContext/AppContext";
 import { get_event_icon, getEventUsers } from "../../utils/event";
 
-export default function EventCalendar({ compact, lastChanged }: any) {
+export default function EventCalendar({
+  compact,
+  sharedDateFrom = undefined,
+  setSharedDateFrom = undefined,
+}: any) {
   const [t, i18n] = useTranslation("common");
 
   const { user } = useAppContext();
@@ -28,6 +27,15 @@ export default function EventCalendar({ compact, lastChanged }: any) {
   const [dateFrom, setDateFrom] = React.useState(undefined);
   const [dateTo, setDateTo] = React.useState(undefined);
   const [events, setEvents] = React.useState(undefined);
+
+  React.useEffect(() => {
+    if (sharedDateFrom !== undefined) {
+      if (sharedDateFrom.month !== month && sharedDateFrom.year !== year) {
+        setMonth(sharedDateFrom.getMonth() + 1);
+        setYear(sharedDateFrom.getFullYear());
+      }
+    }
+  }, [sharedDateFrom, month, year, setMonth, setYear]);
 
   const handlePreviousMonth = useCallback(() => {
     if (month <= 1) {
@@ -102,7 +110,7 @@ export default function EventCalendar({ compact, lastChanged }: any) {
         }
       });
     }
-  }, [setEvents, lastChanged, dateFrom, dateTo]);
+  }, [setEvents, dateFrom, dateTo]);
 
   return (
     <Box key={i18n.resolvedLanguage} sx={{ flexGrow: 1 }}>

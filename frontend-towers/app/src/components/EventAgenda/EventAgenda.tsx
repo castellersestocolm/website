@@ -114,6 +114,8 @@ export default function EventAgenda({
   isPast = false,
   asCard = false,
   asList = false,
+  sharedDateFrom = undefined,
+  setSharedDateFrom = undefined,
 }: any) {
   const [t, i18n] = useTranslation("common");
   const { token } = useParams();
@@ -236,9 +238,20 @@ export default function EventAgenda({
     ).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
+        if (
+          setSharedDateFrom &&
+          response.data &&
+          response.data.results &&
+          response.data.results.length > 0
+        ) {
+          const firstDate = new Date(response.data.results[0].time_from);
+          if (sharedDateFrom === undefined || sharedDateFrom !== firstDate) {
+            setSharedDateFrom(firstDate);
+          }
+        }
       }
     });
-  }, [setEvents, i18n.resolvedLanguage, lastChanged, eventPage, token]);
+  }, [isPast, setEvents, i18n.resolvedLanguage, lastChanged, eventPage, token]);
 
   React.useEffect(() => {
     if (user && events && events.count > 0) {
