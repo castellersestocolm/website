@@ -13,6 +13,9 @@ function CalendarPage() {
   const { t } = useTranslation("common");
 
   const [sharedDateFrom, setSharedDateFrom] = React.useState(undefined);
+  const [sharedRegistrations, setSharedRegistrations] = React.useState<{
+    [key: string]: any;
+  }>({});
 
   const content = (
     <>
@@ -41,6 +44,8 @@ function CalendarPage() {
           <EventAgenda
             sharedDateFrom={sharedDateFrom}
             setSharedDateFrom={setSharedDateFrom}
+            sharedRegistrations={sharedRegistrations}
+            setSharedRegistrations={setSharedRegistrations}
           />
         </Grid>
         <Grid
@@ -66,6 +71,8 @@ function CalendarPage() {
                   compact={false}
                   sharedDateFrom={sharedDateFrom}
                   setSharedDateFrom={setSharedDateFrom}
+                  sharedRegistrations={sharedRegistrations}
+                  setSharedRegistrations={setSharedRegistrations}
                 />
               </Box>
             </Card>

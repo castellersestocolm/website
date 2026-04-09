@@ -17,6 +17,8 @@ export default function EventCalendar({
   compact,
   sharedDateFrom = undefined,
   setSharedDateFrom = undefined,
+  sharedRegistrations = undefined,
+  setSharedRegistrations = undefined,
 }: any) {
   const [t, i18n] = useTranslation("common");
 
@@ -27,15 +29,31 @@ export default function EventCalendar({
   const [dateFrom, setDateFrom] = React.useState(undefined);
   const [dateTo, setDateTo] = React.useState(undefined);
   const [events, setEvents] = React.useState(undefined);
+  const [localDateFrom, setLocalDateFrom] = React.useState(undefined);
 
   React.useEffect(() => {
-    if (sharedDateFrom !== undefined) {
-      if (sharedDateFrom.month !== month && sharedDateFrom.year !== year) {
+    if (sharedDateFrom !== undefined && sharedDateFrom !== localDateFrom) {
+      if (
+        sharedDateFrom.getMonth() + 1 !== month ||
+        sharedDateFrom.getFullYear() !== year
+      ) {
         setMonth(sharedDateFrom.getMonth() + 1);
         setYear(sharedDateFrom.getFullYear());
+        setLocalDateFrom(sharedDateFrom);
+      }
+      if (localDateFrom === undefined) {
+        setLocalDateFrom(sharedDateFrom);
       }
     }
-  }, [sharedDateFrom, month, year, setMonth, setYear]);
+  }, [
+    sharedDateFrom,
+    localDateFrom,
+    setLocalDateFrom,
+    month,
+    year,
+    setMonth,
+    setYear,
+  ]);
 
   const handlePreviousMonth = useCallback(() => {
     if (month <= 1) {
@@ -196,21 +214,38 @@ export default function EventCalendar({
                             );
                           const isUserAttending =
                             user &&
-                            event.registrations.filter(
+                            (event.registrations.filter(
                               (registration: any) =>
                                 registration.user.id === user.id &&
                                 registration.status ===
                                   RegistrationStatus.ACTIVE,
-                            ).length > 0;
+                            ).length > 0 ||
+                              (sharedRegistrations &&
+                                sharedRegistrations[
+                                  event.id + "-" + user.id
+                                ] === RegistrationStatus.ACTIVE));
                           const isOtherFamilyAllAttending =
                             eventUsers && eventUsers.length > 0
-                              ? event.registrations.filter(
-                                  (registration: any) =>
-                                    registration.user.id !== user.id &&
-                                    registration.status ===
-                                      RegistrationStatus.ACTIVE,
+                              ? eventUsers.filter(
+                                  (eventUser: any) =>
+                                    eventUser.id !== user.id &&
+                                    (sharedRegistrations &&
+                                    event.id + "-" + eventUser.id in
+                                      sharedRegistrations
+                                      ? sharedRegistrations[
+                                          event.id + "-" + eventUser.id
+                                        ] === RegistrationStatus.ACTIVE
+                                      : event.registrations.filter(
+                                          (registration: any) =>
+                                            registration.user.id ===
+                                              eventUser.id &&
+                                            registration.status ===
+                                              RegistrationStatus.ACTIVE,
+                                        ).length > 0),
                                 ).length >=
-                                eventUsers.length - 1
+                                eventUsers.filter(
+                                  (eventUser: any) => eventUser.id !== user.id,
+                                ).length
                               : true;
 
                           return (

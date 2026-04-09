@@ -41,6 +41,7 @@ import Map from "../../components/Map/Map";
 import { get_event_icon, getEventUsers } from "../../utils/event";
 import CastleBase from "../../components/CastleBase/CastleBase";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
+import { LoaderClip } from "../LoaderClip/LoaderClip";
 
 const GOOGLE_PHOTOS_URL = "https://photos.app.goo.gl/";
 const GOOGLE_DRIVE_URL = "https://drive.google.com/drive/u/1/folders/";
@@ -116,6 +117,8 @@ export default function EventAgenda({
   asList = false,
   sharedDateFrom = undefined,
   setSharedDateFrom = undefined,
+  sharedRegistrations = undefined,
+  setSharedRegistrations = undefined,
 }: any) {
   const [t, i18n] = useTranslation("common");
   const { token } = useParams();
@@ -228,8 +231,8 @@ export default function EventAgenda({
       eventPage,
       undefined,
       token,
-      isPast ? null : new Date().toISOString().substring(0, 10),
-      isPast ? new Date().toISOString().substring(0, 10) : null,
+      isPast ? null : new Date().toISOString().slice(0, 10),
+      isPast ? new Date().toISOString().slice(0, 10) : null,
       undefined,
       undefined,
       undefined,
@@ -245,13 +248,26 @@ export default function EventAgenda({
           response.data.results.length > 0
         ) {
           const firstDate = new Date(response.data.results[0].time_from);
-          if (sharedDateFrom === undefined || sharedDateFrom !== firstDate) {
+          if (
+            sharedDateFrom === undefined ||
+            sharedDateFrom.toISOString() !== firstDate.toISOString()
+          ) {
             setSharedDateFrom(firstDate);
           }
         }
       }
     });
-  }, [isPast, setEvents, i18n.resolvedLanguage, lastChanged, eventPage, token]);
+  }, [
+    isPast,
+    setEvents,
+    setEventPage,
+    i18n.resolvedLanguage,
+    lastChanged,
+    eventPage,
+    token,
+    setSharedDateFrom,
+    sharedDateFrom,
+  ]);
 
   React.useEffect(() => {
     if (user && events && events.count > 0) {
@@ -630,6 +646,8 @@ export default function EventAgenda({
                   users={eventUsers}
                   token={token}
                   setLastChanged={setLastChanged}
+                  sharedRegistrations={sharedRegistrations}
+                  setSharedRegistrations={setSharedRegistrations}
                 />
               </Box>
             </Collapse>
@@ -710,79 +728,90 @@ export default function EventAgenda({
 
   return (
     <>
-      {castlesPublishedModal && castlesPublishedModal.length > 0 && (
-        <Modal
-          open={eventsCastlesModalOpen != null}
-          onClose={handleEventCastlesClick}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box className={styles.modalBox}>
-            <Tabs
-              value={castlePinya}
-              onChange={handleCastlePinyaChange}
-              variant="scrollable"
-              scrollButtons={false}
-              allowScrollButtonsMobile
-              indicatorColor="primary"
-              TabIndicatorProps={{
-                style: { display: "none" },
-              }}
-              className={styles.modelTabs}
-              sx={{
-                ".Mui-selected": {
-                  backgroundColor: "var(--mui-palette-primary-main)",
-                  color: "var(--mui-palette-primary-contrastText) !important",
-                },
-              }}
+      {events ? (
+        <>
+          {castlesPublishedModal && castlesPublishedModal.length > 0 && (
+            <Modal
+              open={eventsCastlesModalOpen != null}
+              onClose={handleEventCastlesClick}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
             >
-              {castlesPublishedModal.map((castle: any) => (
-                <Tab label={castle.name} className={styles.modalTabLabel} />
-              ))}
-              <Button
-                variant="contained"
-                type="submit"
-                color="primary"
-                disableElevation
-                className={styles.modalClose}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEventCastlesClick(eventsCastlesModalOpen);
-                }}
-              >
-                <IconClose />
-              </Button>
-            </Tabs>
-            {castlesPublishedModal.map((castle: any, ix: number) => (
-              <TabPanel value={castlePinya} index={ix}>
-                <Box className={styles.modalTabContent}>
-                  <CastleBase castle={castle} />
-                </Box>
-              </TabPanel>
-            ))}
-          </Box>
-        </Modal>
-      )}
-      {events && events.count > 0 && (
-        <Grid
-          container
-          spacing={2}
-          width="100%"
-          direction="column"
-          flexWrap="nowrap"
-        >
-          <EventsBox content={eventsContent} asCard={asCard} />
-          {events &&
-            events.results.length > 0 &&
-            (eventPage !== 1 || events.count > events.results.length) && (
-              <Stack alignItems="center">
-                <Pagination
-                  count={Math.ceil(events.count / API_EVENTS_LIST_PAGE_SIZE)}
-                  onChange={(e: any, value: number) => setEventPage(value)}
-                />
-              </Stack>
-            )}
-        </Grid>
+              <Box className={styles.modalBox}>
+                <Tabs
+                  value={castlePinya}
+                  onChange={handleCastlePinyaChange}
+                  variant="scrollable"
+                  scrollButtons={false}
+                  allowScrollButtonsMobile
+                  indicatorColor="primary"
+                  TabIndicatorProps={{
+                    style: { display: "none" },
+                  }}
+                  className={styles.modelTabs}
+                  sx={{
+                    ".Mui-selected": {
+                      backgroundColor: "var(--mui-palette-primary-main)",
+                      color:
+                        "var(--mui-palette-primary-contrastText) !important",
+                    },
+                  }}
+                >
+                  {castlesPublishedModal.map((castle: any) => (
+                    <Tab label={castle.name} className={styles.modalTabLabel} />
+                  ))}
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    color="primary"
+                    disableElevation
+                    className={styles.modalClose}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEventCastlesClick(eventsCastlesModalOpen);
+                    }}
+                  >
+                    <IconClose />
+                  </Button>
+                </Tabs>
+                {castlesPublishedModal.map((castle: any, ix: number) => (
+                  <TabPanel value={castlePinya} index={ix}>
+                    <Box className={styles.modalTabContent}>
+                      <CastleBase castle={castle} />
+                    </Box>
+                  </TabPanel>
+                ))}
+              </Box>
+            </Modal>
+          )}
+          {events && events.count > 0 && (
+            <Grid
+              container
+              spacing={2}
+              width="100%"
+              direction="column"
+              flexWrap="nowrap"
+            >
+              <EventsBox content={eventsContent} asCard={asCard} />
+              {events &&
+                events.results.length > 0 &&
+                (eventPage !== 1 || events.count > events.results.length) && (
+                  <Stack alignItems="center">
+                    <Pagination
+                      count={Math.ceil(
+                        events.count / API_EVENTS_LIST_PAGE_SIZE,
+                      )}
+                      onChange={(e: any, value: number) => setEventPage(value)}
+                    />
+                  </Stack>
+                )}
+            </Grid>
+          )}
+        </>
+      ) : (
+        <Box className={styles.pageLoader}>
+          <LoaderClip />
+        </Box>
       )}
     </>
   );

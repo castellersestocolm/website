@@ -39,6 +39,8 @@ export default function FormCalendarRegistrationCreate({
   users: eventUsers,
   token: eventToken,
   setLastChanged: setEventLastChanged,
+  sharedRegistrations = undefined,
+  setSharedRegistrations = undefined,
 }: any) {
   const { t } = useTranslation("common");
 
@@ -82,6 +84,13 @@ export default function FormCalendarRegistrationCreate({
               ...formRegistration,
               [userId]: RegistrationStatus.CANCELLED,
             });
+            if (setSharedRegistrations !== undefined) {
+              setSharedRegistrations({
+                ...sharedRegistrations,
+                [scheduledEvent.id + "-" + userId]:
+                  RegistrationStatus.CANCELLED,
+              });
+            }
             setEventLastChanged(Date.now());
             setTimeout(() => setDeleted(false), 5000);
           } else if (response.status === 429) {
@@ -104,6 +113,12 @@ export default function FormCalendarRegistrationCreate({
             ...formRegistration,
             [userId]: RegistrationStatus.CANCELLED,
           });
+          if (setSharedRegistrations !== undefined) {
+            setSharedRegistrations({
+              ...sharedRegistrations,
+              [scheduledEvent.id + "-" + userId]: RegistrationStatus.CANCELLED,
+            });
+          }
           setEventLastChanged(Date.now());
           setTimeout(() => setDeleted(false), 5000);
         } else if (response.status === 429) {
@@ -124,6 +139,12 @@ export default function FormCalendarRegistrationCreate({
             ...formRegistration,
             [userId]: response.data.status,
           });
+          if (setSharedRegistrations !== undefined) {
+            setSharedRegistrations({
+              ...sharedRegistrations,
+              [scheduledEvent.id + "-" + userId]: response.data.status,
+            });
+          }
           setEventLastChanged(Date.now());
           setTimeout(() => setCreated(false), 5000);
         } else if (response.status === 429) {

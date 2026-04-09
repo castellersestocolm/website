@@ -238,3 +238,9 @@
   height: 20px !important;
   width: 20px !important;
 }
+
+.pageLoader {
+  align-content: center;
+  flex: 1;
+  display: flex;
+}
