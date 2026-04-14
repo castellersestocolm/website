@@ -152,7 +152,7 @@ class Entity(StandardModel, Timestamps):
         )
 
     def __str__(self) -> str:
-        end_str = f"<{self.email}>" if self.email else ""
+        end_str = f" <{self.email}>" if self.email else ""
         if self.user:
             return str(self.user)
         if self.firstname:

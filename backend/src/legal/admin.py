@@ -118,6 +118,7 @@ class MemberAdmin(admin.ModelAdmin):
     )
     list_filter = ("team", "role", "created_at")
     ordering = ("-created_at",)
+    raw_id_fields = ("user",)
 
 
 @admin.register(Bylaws)
