@@ -98,7 +98,7 @@ section .data-t4 {
                 <p class="data-t3">{% if registration_obj.entity.user %}{{ registration_obj.entity.user.lastname }}{% else %}{{ registration_obj.entity.lastname }}{% endif %}</p>
               </td>
               <td class="data-td1">
-                <p class="data-t3">{% if registration_obj.entity.user %}{{ registration_obj.entity.user.phone|format_phone }}{% else %}{{ registration_obj.entity.phone|format_phone }}{% endif %}</p>
+                <p class="data-t3">{% if registration_obj.entity.user %}{{ registration_obj.entity.user.phone|format_phone }}{% elif registration_obj.entity.phone %}{{ registration_obj.entity.phone|format_phone }}{% else %}{% endif %}</p>
               </td>
               <td class="data-td1">
                 <p class="data-t3">{{ "RegistrationStatus"|labels_event|get_value:registration_obj.status }}</p>
