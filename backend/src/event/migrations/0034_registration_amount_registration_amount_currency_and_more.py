@@ -72,7 +72,7 @@ def update_registrations(apps, schema_editor):
 
     if registration_updates:
         Registration.objects.bulk_create(
-            registration_updates, update_fields=("price", "amount")
+            registration_updates, update_fields=("price",)
         )
 
 
@@ -83,17 +83,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name="registration",
-            name="amount_currency",
-            field=djmoney.models.fields.CurrencyField(
-                choices=[("EUR", "Euro"), ("SEK", "Swedish Krona")],
-                default="SEK",
-                editable=False,
-                max_length=3,
-                null=True,
-            ),
-        ),
         migrations.AlterField(
             model_name="googlephotosalbum",
             name="album",
