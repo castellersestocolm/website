@@ -302,7 +302,10 @@ class EventPrice(StandardModel, Timestamps):
     )
 
     def __str__(self) -> str:
-        return f"{Module(self.module).name} - {self.event} - {self.amount}"
+        if self.module:
+            return f"{Module(self.module).name} - {self.event} - {self.amount}"
+
+        return f"{self.event} - {self.amount}"
 
 
 # TODO: Multilanguage support
