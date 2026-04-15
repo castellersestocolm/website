@@ -242,12 +242,12 @@ def payment_entity_payment_method_field_label(
 
 @register.filter
 def format_money(amount: Money) -> str:
-    return f"{'{:,}'.format(int(amount.amount)).replace(',', ' ').replace('.', ',')} {amount.currency}"
+    return f"{'{:,}'.format(int(amount.amount)).replace(',', ' ')} {amount.currency}"
 
 
 @register.filter
 def format_money_2f(amount: Money) -> str:
-    return f"{"{0:.2f}".format(amount.amount).replace(',', ' ').replace('.', ',')} {amount.currency}"
+    return f"{"{0:,.2f}".format(amount.amount).replace(',', ' ').replace('.', ',')} {amount.currency}"
 
 
 @register.filter
