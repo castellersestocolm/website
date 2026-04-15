@@ -1,0 +1,201 @@
+{% extends "towers/base.html" %}
+
+{% block styles %}
+h1 {
+  font-size: 16pt;
+  margin: 0;
+  text-align: center;
+}
+
+h2 {
+  font-size: 14pt;
+  color: #999999;
+  margin: 0;
+  text-align: center;
+}
+
+section#info table {
+  margin-top: 32px;
+  width: 100%;
+}
+
+section#info table td,
+section#info table th {
+  padding: 0 6px;
+}
+
+section .info-th1,
+section .info-td1 {
+width: calc(100%/3);
+}
+
+section .info-th2,
+section .info-td2 {
+width: calc(2 * 100%/3);
+}
+
+section .info-t1 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+}
+
+section .info-t2 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+}
+
+section .info-t3 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #000000;
+}
+
+section .info-table2 {
+  margin-top: 16px !important;
+}
+
+section .info-text {
+margin-top: 32px;
+}
+
+section .info-text-p1 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0 0 8px 0;
+  text-align: center !important;
+}
+
+section .info-text-p2 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+  text-align: center !important;
+}
+
+section#data table {
+  margin-top: 32px;
+  width: 100%;
+}
+
+section#data table td,
+section#data table th {
+  padding: 0 6px;
+}
+
+section .data-th0,
+section .data-td0 {
+width: calc(100%/22);
+}
+
+section .data-th1,
+section .data-td1 {
+width: calc(5 * 100%/22);
+}
+
+section .data-th3,
+section .data-td3 {
+width: calc(11 * 100%/22);
+}
+
+section .data-t1 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+}
+
+section .data-t2 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+}
+
+section .data-t3 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #000000;
+}
+
+section .data-t4 {
+  font-weight: 500;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #000000;
+  text-align: right;
+  font-family: "IBMPlexMono", "Lexend", "sans-serif";
+}
+
+section#sign {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-bottom: 48px;
+}
+
+section#sign table {
+  margin-top: 32px;
+  width: 100%;
+}
+
+section#sign table td,
+section#sign table th {
+  padding: 0 6px;
+}
+
+section .sign-th1,
+section .sign-td1 {
+width: calc(100%/2);
+}
+
+section .sign-t1 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  text-align: center;
+}
+
+section .sign-t2 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+  text-align: center;
+}
+
+section .sign-d3 {
+  width: 100%;
+  height: 96px;
+  border-bottom: 1px solid #000000;
+}
+
+section .sign-row2 {
+  padding-top: 8px !important;
+}
+{% endblock %}
+
+{% block content %}
+    <section id="info">
+      <h1>{{ event_obj.title_locale }} — {{ event_obj.time_from|date:"Y-m-d H:i" }}</h1>
+    </section>
+{% endblock %}

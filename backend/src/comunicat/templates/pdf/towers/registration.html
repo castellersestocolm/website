@@ -1,0 +1,355 @@
+{% extends "pdf/base.html" %}
+
+{% block styles %}
+h1 {
+  font-size: 16pt;
+  margin: 0;
+  text-align: center;
+}
+
+h2 {
+  font-size: 14pt;
+  color: #999999;
+  margin: 0;
+  text-align: center;
+}
+
+section#info table {
+  margin-top: 32px;
+  width: 100%;
+}
+
+section#info table td,
+section#info table th {
+  padding: 0 6px;
+}
+
+section .info-th1,
+section .info-td1 {
+width: calc(100%/3);
+}
+
+section .info-th2,
+section .info-td2 {
+width: calc(2 * 100%/3);
+}
+
+section .info-t1 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+}
+
+section .info-t2 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+}
+
+section .info-t3 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #000000;
+}
+
+section .info-table2 {
+  margin-top: 16px !important;
+}
+
+section .info-text {
+margin-top: 32px;
+}
+
+section .info-text-p1 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0 0 8px 0;
+  text-align: center !important;
+}
+
+section .info-text-p2 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+  text-align: center !important;
+}
+
+section#data table {
+  margin-top: 32px;
+  width: 100%;
+}
+
+section#data table td,
+section#data table th {
+  padding: 0 6px;
+}
+
+section .data-th0,
+section .data-td0 {
+width: calc(100%/22);
+}
+
+section .data-th1,
+section .data-td1 {
+width: calc(5 * 100%/22);
+}
+
+section .data-th3,
+section .data-td3 {
+width: calc(11 * 100%/22);
+}
+
+section .data-t1 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+}
+
+section .data-t2 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+}
+
+section .data-t3 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #000000;
+}
+
+section .data-t4 {
+  font-weight: 500;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #000000;
+  text-align: right;
+  font-family: "IBMPlexMono", "Lexend", "sans-serif";
+}
+
+section#sign {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-bottom: 48px;
+}
+
+section#sign table {
+  margin-top: 32px;
+  width: 100%;
+}
+
+section#sign table td,
+section#sign table th {
+  padding: 0 6px;
+}
+
+section .sign-th1,
+section .sign-td1 {
+width: calc(100%/2);
+}
+
+section .sign-t1 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  text-align: center;
+}
+
+section .sign-t2 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+  text-align: center;
+}
+
+section .sign-d3 {
+  width: 100%;
+  height: 96px;
+  border-bottom: 1px solid #000000;
+}
+
+section .sign-row2 {
+  padding-top: 8px !important;
+}
+{% endblock %}
+
+{% block content %}
+    <section id="info">
+      <h1>Full de despeses</h1>
+      <h2>Betalningsblankett</h2>
+
+      <table>
+          <tr>
+            <th class="info-th1">
+              <p class="info-t1">Nom complet</p>
+              <p class="info-t2">Fullständigt namn</p>
+            </th>
+            <th class="info-th2" colspan="2">
+              <p class="info-t1">Correu electrònic</p>
+              <p class="info-t2">E-post</p>
+            </th>
+          </tr>
+          <tr>
+            <td class="info-td1">
+              <p class="info-t3">{% if entity_obj.name %}{{ entity_obj.name }}{% else %}&nbsp;{% endif %}</p>
+            </td>
+            <td class="info-td2" colspan="2">
+              <p class="info-t3">{% if entity_obj.email %}{{ entity_obj.email }}{% else %}&nbsp;{% endif %}</p>
+            </td>
+          </tr>
+      </table>
+
+      <table class="info-table2">
+          {% if entity_obj.all_payment_methods %}
+            <tr>
+              {% for field, __ in entity_obj.all_payment_methods.0|payment_entity_payment_method_data_sorted %}
+                <th class="info-th0">
+                  <p class="info-t1">{{ field|payment_entity_payment_method_field_label:"ca" }}</p>
+                  <p class="info-t2">{{ field|payment_entity_payment_method_field_label:"sv" }}</p>
+                </th>
+              {% endfor %}
+            </tr>
+            <tr>
+              {% for __, value in entity_obj.all_payment_methods.0|payment_entity_payment_method_data_sorted %}
+                <td class="info-td0">
+                  <p class="info-t3">{% if value %}{{ value }}{% else %}&nbsp;{% endif %}</p>
+                </td>
+              {% endfor %}
+            </tr>
+          {% else %}
+            <tr>
+              <th class="info-th1 info-row2">
+                <p class="info-t1">Banc</p>
+                <p class="info-t2">Bank</p>
+              </th>
+              <th class="info-th1 info-row2">
+                <p class="info-t1">Número d’autorització</p>
+                <p class="info-t2">Clearingnummer</p>
+              </th>
+              <th class="info-th1 info-row2">
+                <p class="info-t1">Número de compte</p>
+                <p class="info-t2">Kontonummer</p>
+              </th>
+            </tr>
+            <tr>
+              <td class="info-td1">
+                <p class="info-t3">&nbsp;</p>
+              </td>
+              <td class="info-td1">
+                <p class="info-t3">&nbsp;</p>
+              </td>
+              <td class="info-td1">
+                <p class="info-t3">&nbsp;</p>
+              </td>
+            </tr>
+          {% endif %}
+      </table>
+
+      <div class="info-text">
+        <p class="info-text-p1">Els rebuts originals s’han d’adjuntar en aquest document i han d’anar marcats amb el número de rebut corresponent a la següent taula.</p>
+        <p class="info-text-p2">Kvitton måste bifogas tillsammans med blanketten och måste markeras med motsvarande kvittonummer i följande tabell.</p>
+      </div>
+    </section>
+
+    <section id="data">
+      <table>
+          <tr>
+            <th class="data-th0">
+              <p class="data-t1">#</p>
+              <p class="data-t2"></p>
+            </th>
+            <th class="data-th1">
+              <p class="data-t1">Data del rebut</p>
+              <p class="data-t2">Kvittodatum</p>
+            </th>
+            <th class="data-th3">
+              <p class="data-t1">Descripció</p>
+              <p class="data-t2">Beskrivning</p>
+            </th>
+            <th class="data-th1">
+              <p class="data-t1">Quantitat</p>
+              <p class="data-t2">Belopp</p>
+            </th>
+          </tr>
+          {% if expense_obj.all_receipts %}
+            {% for receipt_obj in expense_obj.all_receipts %}
+              <tr>
+                <td class="data-td0{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ forloop.counter }}</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ receipt_obj.date|date:"Y-m-d" }}</p>
+                </td>
+                <td class="data-td3{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ receipt_obj.description }}</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t4">{{ receipt_obj.amount|format_money_2f }}</p>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            {% for __ in "01234" %}
+              <tr>
+                <td class="data-td0{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">{{ forloop.counter }}</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">&nbsp;</p>
+                </td>
+                <td class="data-td3{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t3">&nbsp;</p>
+                </td>
+                <td class="data-td1{% if forloop.counter0 > 0 %} sign-row2{% endif %}">
+                  <p class="data-t4">&nbsp;</p>
+                </td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+      </table>
+    </section>
+
+    <section id="sign">
+      <table>
+          <tr>
+            <th class="sign-th1">
+              <p class="sign-t1">Signatura del reclamant</p>
+              <p class="sign-t2">Betalarens underskrift</p>
+            </th>
+            <th class="data-th1">
+              <p class="sign-t1">Signatura del tresorer</p>
+              <p class="sign-t2">Kassörens underskrift</p>
+            </th>
+          </tr>
+          <tr>
+            <td class="sign-td1">
+              <div class="sign-d3"></div>
+            </td>
+            <td class="sign-td1">
+              <div class="sign-d3"></div>
+            </td>
+          </tr>
+      </table>
+    </section>
+{% endblock %}
