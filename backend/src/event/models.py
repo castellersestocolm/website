@@ -283,19 +283,26 @@ class EventModule(StandardModel, Timestamps):
         unique_together = ("event", "module", "team")
 
 
-class EventModulePrice(StandardModel, Timestamps):
-    module = models.ForeignKey(
-        EventModule, related_name="prices", on_delete=models.CASCADE
+class EventPrice(StandardModel, Timestamps):
+    event = models.ForeignKey(Event, related_name="prices", on_delete=models.PROTECT)
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+        null=True,
+        blank=True,
     )
 
-    is_over_minimum_age = models.BooleanField(default=False)
+    age_from = models.PositiveSmallIntegerField(blank=True, null=True)
+    age_to = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    min_registrations = models.PositiveSmallIntegerField(default=0)
 
     amount = MoneyField(
         max_digits=7, decimal_places=2, null=True, blank=True, default_currency="SEK"
     )
 
-    class Meta:
-        unique_together = ("module", "is_over_minimum_age")
+    def __str__(self) -> str:
+        return f"{Module(self.module).name} - {self.event} - {self.amount}"
 
 
 # TODO: Multilanguage support
@@ -331,6 +338,14 @@ class Registration(StandardModel, Timestamps):
         related_name="registration",
         blank=True,
         null=True,
+        on_delete=models.PROTECT,
+    )
+
+    price = models.ForeignKey(
+        EventPrice,
+        blank=True,
+        null=True,
+        related_name="registrations",
         on_delete=models.PROTECT,
     )
 

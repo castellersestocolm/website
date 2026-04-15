@@ -34,9 +34,9 @@ from event.models import (
     GoogleEvent,
     Connection,
     GoogleAlbum,
-    EventModulePrice,
     GooglePhotosAlbum,
     GoogleDriveAlbum,
+    EventPrice,
 )
 from notify.enums import EmailType
 
@@ -69,9 +69,19 @@ class LocationAdmin(admin.ModelAdmin):
 #         self.fields["line"].queryset = PaymentLine.objects.filter(payment__entity__user_id=self.instance.user_id).order_by("-created_at") if self.instance else PaymentLine.objects.none()
 
 
-class RegistrationInline(
-    inline_actions.admin.InlineActionsMixin, nested_admin.NestedTabularInline
-):
+class RegistrationInlineForm(forms.ModelForm):
+    class Meta:
+        model = EventPrice
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["price"].queryset = EventPrice.objects.filter(
+            (Q(event=self.instance.event) if hasattr(self.instance, "event") else Q()),
+        ).order_by("module", "amount")
+
+
+class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularInline):
     model = Registration
     ordering = (
         "entity__firstname",
@@ -79,7 +89,7 @@ class RegistrationInline(
         "-created_at",
     )
     raw_id_fields = ("entity", "line")
-    # form = RegistrationInlineFormAdmin
+    form = RegistrationInlineForm
     extra = 0
 
     inline_actions = []
@@ -101,27 +111,36 @@ class RegistrationInline(
     action_send_paid_email.short_description = _("Send paid email")
 
 
-class EventModulePriceInline(nested_admin.NestedTabularInline):
-    model = EventModulePrice
-    ordering = ("-created_at",)
-    extra = 0
-
-
-class EventModuleInline(nested_admin.NestedTabularInline):
+class EventModuleInline(admin.TabularInline):
     model = EventModule
     ordering = ("module",)
-    inlines = (EventModulePriceInline,)
     extra = 0
 
 
-class EventRequirementInline(nested_admin.NestedTabularInline):
+class EventPriceInline(admin.TabularInline):
+    model = EventPrice
+    ordering = (
+        "module",
+        "min_registrations",
+        "age_from",
+        "age_to",
+        "amount",
+    )
+    extra = 0
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+
+class EventRequirementInline(admin.TabularInline):
     model = EventRequirement
     ordering = ("name",)
     sortable_field_name = "name"
     extra = 0
 
 
-class AgendaItemInline(nested_admin.NestedTabularInline):
+class AgendaItemInline(admin.TabularInline):
     model = AgendaItem
     ordering = ("time_from",)
     extra = 0
@@ -154,9 +173,7 @@ def publish_events(modeladmin, request, queryset):
 
 
 @admin.register(Event)
-class EventAdmin(
-    inline_actions.admin.InlineActionsModelAdminMixin, nested_admin.NestedModelAdmin
-):
+class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelAdmin):
     search_fields = ("id", "title")
     list_display = (
         "title_locale",
@@ -172,6 +189,7 @@ class EventAdmin(
     ordering = ("-time_from",)
     inlines = (
         EventModuleInline,
+        EventPriceInline,
         EventRequirementInline,
         AgendaItemInline,
         RegistrationInline,
