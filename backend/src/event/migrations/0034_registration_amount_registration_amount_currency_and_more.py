@@ -72,7 +72,7 @@ def update_registrations(apps, schema_editor):
 
     if registration_updates:
         Registration.objects.bulk_update(
-            registration_updates, update_fields=("price",)
+            registration_updates, fields=("price",)
         )
 
 
