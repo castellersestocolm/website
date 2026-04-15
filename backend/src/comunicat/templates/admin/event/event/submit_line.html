@@ -7,7 +7,7 @@
 {% if show_save_and_add_another %}<input type="submit" value="{% translate 'Save and add another' %}" name="_addanother">{% endif %}
 {% if show_save_and_continue %}<input type="submit" value="{% if can_change %}{% translate 'Save and continue editing' %}{% else %}{% translate 'Save and view' %}{% endif %}" name="_continue">{% endif %}
     {% if original %}
-        <a class="button changelink" style="display: inline-block; line-height: 15px; padding: 0.625rem 0.9375rem;" href="{% url 'admin:payment_entity_print' original.pk %}">{% trans "Print expense file" %}</a>
+        <a class="button changelink" style="display: inline-block; line-height: 15px; padding: 0.625rem 0.9375rem;" href="{% url 'admin:event_event_print' original.pk %}">{% trans "Print attendance file" %}</a>
     {% endif %}
 {% if show_close %}
     {% url opts|admin_urlname:'changelist' as changelist_url %}

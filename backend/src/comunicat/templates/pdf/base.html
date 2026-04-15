@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <style>
+    {% block styles %}
       @font-face {
   font-family: "Lexend";
   src: url({% full_static "org/font/Lexend-VariableFont_wght.ttf" %}) format("truetype");
@@ -71,7 +72,6 @@ section#header table td img {
   height: 56px;
 }
 
-      {% block styles %}
       {% endblock %}
     </style>
   </head>
@@ -81,7 +81,7 @@ section#header table td img {
         <table>
             <tr>
               <td>
-                <img src="{% full_static "org/img/logo_250.png" %}" alt="{{ name }}"/>
+                <img src="{% full_static "org/img/logo_250.png" %}" alt="Les Quatre Barres"/>
               </td>
               <td>
                 <p class="header-p1">Katalanska Kulturföreningen Les Quatre Barres</p>

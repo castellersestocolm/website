@@ -1,1 +1,85 @@
-{% extends "base.html" %}
+{% extends "pdf/base.html" %}
+
+{% block styles %}
+      @font-face {
+  font-family: "DM Sans";
+  src: url({% full_static "towers/font/DMSans-VariableFont_opsz,wght.ttf" %}) format("truetype");
+        font-weight: 100 900;
+}
+      @font-face {
+  font-family: "IBMPlexMono";
+  src: url({% full_static "org/font/IBMPlexMono-Regular.ttf" %}) format("truetype");
+        font-weight: 400;
+}
+      @font-face {
+  font-family: "IBMPlexMono";
+  src: url({% full_static "org/font/IBMPlexMono-Medium.ttf" %}) format("truetype");
+        font-weight: 500;
+}
+
+      @page {
+  size: A4;
+  font-family: "DM Sans", sans-serif;
+        margin: 12.7mm 25.4mm 25.4mm 25.4mm;
+        @bottom-center{
+        content: counter(page) "/" counter(pages);
+      font-family: "Lexend", sans-serif;
+          font-size: 10pt;
+          margin-bottom: 32px;
+    }
+}
+
+section {
+  font-family: "DM Sans", sans-serif;
+}
+
+section#header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 56px;
+}
+
+section#header p {
+  text-align: left;
+  margin: 0;
+}
+
+section .header-p1 {
+  font-weight: 600;
+  font-size: 8pt;
+  line-height: 10pt;
+}
+
+section .header-p2 {
+  font-weight: 400;
+  font-size: 8pt;
+  line-height: 10pt;
+}
+
+section .header-p3 {
+  font-weight: 200;
+  font-size: 8pt;
+  line-height: 10pt;
+}
+
+section#header table td {
+  padding: 0 6px;
+}
+
+section#header table td img {
+  height: 56px;
+}
+
+      {% endblock %}
+
+{% block header %}
+  <section id="header">
+    <table>
+        <tr>
+          <td>
+            <img src="{% full_static "towers/img/logo.png" %}" alt="Castellers d'Estocolm"/>
+          </td>
+        </tr>
+    </table>
+  </section>
+{% endblock %}

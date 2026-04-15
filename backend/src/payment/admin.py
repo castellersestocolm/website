@@ -20,8 +20,8 @@ from weasyprint import HTML
 import payment.api.entity
 import payment.tasks
 from activity.models import ProgramCourseRegistration
-from comunicat.consts import ZERO_MONEY
-from comunicat.enums import Module
+from comunicat.consts import ZERO_MONEY, TEMPLATE_PDF_BY_MODULE
+from comunicat.enums import Module, PDFType
 from comunicat.utils.admin import DynamicColumn, FIELD_LOCALE
 from event.models import Registration
 from notify.enums import EmailType
@@ -657,7 +657,8 @@ class EntityAdmin(admin.ModelAdmin):
 
         context = {"entity_obj": entity_obj}
         html_string = render_to_string(
-            template_name="pdf/expense.html", context=context
+            template_name=TEMPLATE_PDF_BY_MODULE[Module.ORG][PDFType.EXPENSE]["pdf"],
+            context=context,
         )
         html = HTML(string=html_string)
         result = html.write_pdf()
@@ -879,7 +880,8 @@ class ExpenseAdmin(admin.ModelAdmin):
 
         context = {"expense_obj": expense_obj, "entity_obj": expense_obj.entity}
         html_string = render_to_string(
-            template_name="pdf/expense.html", context=context
+            template_name=TEMPLATE_PDF_BY_MODULE[Module.ORG][PDFType.EXPENSE]["pdf"],
+            context=context,
         )
         html = HTML(string=html_string)
         result = html.write_pdf()

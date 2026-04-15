@@ -8,8 +8,11 @@ from django.utils import timezone, translation
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from djmoney.money import Money
+from phonenumber_field.serializerfields import PhoneNumberField
+from rest_framework.exceptions import ValidationError
 
 import activity.enums
+import event.enums
 import membership.enums
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
@@ -80,8 +83,13 @@ def settings_value(name: str):
 
 
 @register.filter
-def get_attr(object: Any, name: str):
-    return getattr(object, name, "")
+def get_attr(obj: Any, name: str):
+    return getattr(obj, name, "")
+
+
+@register.filter
+def get_value(data: dict, value: Any):
+    return data.get(value, "")
 
 
 @register.filter
@@ -92,6 +100,16 @@ def enums_membership(name: str):
 @register.filter
 def enums_activity(name: str):
     return getattr(activity.enums, name, "")
+
+
+@register.filter
+def enums_event(name: str):
+    return getattr(event.enums, name, "")
+
+
+@register.filter
+def labels_event(name: str):
+    return getattr(event.enums, name, "").labels
 
 
 @register.filter
@@ -262,3 +280,16 @@ def format_text(text: str) -> str:
     return mark_safe(
         format_html("".join([f"<p>{text_line}</p>" for text_line in text.split("\n")]))
     )
+
+
+@register.filter
+def format_phone(phone: str) -> str:
+    try:
+        phone_field = PhoneNumberField().to_internal_value(phone)
+    except ValidationError:
+        return phone
+
+    if str(phone_field.country_code) == settings.MODULE_ALL_PHONE_COUNTRY_CODE:
+        return phone_field.as_national
+
+    return phone_field.as_international

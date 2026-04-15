@@ -1,6 +1,7 @@
 {% extends "pdf/base.html" %}
 
 {% block styles %}
+{{ block.super }}
 h1 {
   font-size: 16pt;
   margin: 0;
@@ -141,6 +142,23 @@ section .data-t4 {
   border-bottom: 1px solid #000000;
   text-align: right;
   font-family: "IBMPlexMono", "Lexend", "sans-serif";
+}
+
+section .data-t5 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  margin: 0;
+  text-align: right;
+}
+
+section .data-t6 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: #999999;
+  margin: 0;
+  text-align: right;
 }
 
 section#sign {
@@ -288,8 +306,8 @@ section .sign-row2 {
               <p class="data-t2">Beskrivning</p>
             </th>
             <th class="data-th1">
-              <p class="data-t1">Quantitat</p>
-              <p class="data-t2">Belopp</p>
+              <p class="data-t5">Quantitat</p>
+              <p class="data-t6">Belopp</p>
             </th>
           </tr>
           {% if expense_obj.all_receipts %}

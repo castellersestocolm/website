@@ -1,6 +1,6 @@
 from djmoney.money import Money
 
-from comunicat.enums import Module
+from comunicat.enums import Module, PDFType
 
 from django.conf import settings
 
@@ -611,3 +611,22 @@ REGION_BY_COUNTRY_AND_CODE = {
 }
 
 ZERO_MONEY = Money("0", settings.MODULE_ALL_CURRENCY)
+
+TEMPLATE_PDF_BY_MODULE = {
+    Module.ORG: {
+        PDFType.EXPENSE: {
+            "pdf": "pdf/expense.html",
+        },
+        PDFType.REGISTRATION: {
+            "pdf": "pdf/org/registration.html",
+        },
+    },
+    Module.TOWERS: {
+        PDFType.EXPENSE: {
+            "pdf": "pdf/expense.html",
+        },
+        PDFType.REGISTRATION: {
+            "pdf": "pdf/towers/registration.html",
+        },
+    },
+}

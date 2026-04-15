@@ -1,17 +1,26 @@
+import tempfile
+from uuid import UUID
+
 from django import forms
 from django.contrib import admin, messages
-from django.db.models import JSONField, Q
+from django.db.models import JSONField, Q, Prefetch
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.urls import path
 from jsoneditor.forms import JSONEditor
 import nested_admin
 
 import inline_actions.admin
+from weasyprint import HTML
 
 import notify.tasks
 
 from django.utils.translation import gettext_lazy as _
 
 from activity.models import ProgramCourse
-from event.enums import EventStatus
+from comunicat.consts import TEMPLATE_PDF_BY_MODULE
+from comunicat.enums import PDFType
+from event.enums import EventStatus, RegistrationStatus
 from event.models import (
     Location,
     Event,
@@ -181,6 +190,58 @@ class EventAdmin(
 
     def title_locale(self, obj):
         return obj.title_locale
+
+    def get_urls(self):
+        urls = super().get_urls()
+
+        return [
+            path(
+                "<path:object_id>/print/",
+                self.print,
+                name="event_event_print",
+            )
+        ] + urls
+
+    def print(self, request, object_id: UUID):
+        response = HttpResponse(content_type="aplication/pdf")
+        response["Content-Disposition"] = f"attachment; filename=Event_{object_id}.pdf"
+        response["Content-Transfer-Encoding"] = "binary"
+
+        event_obj = (
+            Event.objects.filter(id=object_id)
+            .prefetch_related(
+                Prefetch(
+                    "registrations",
+                    Registration.objects.select_related("entity", "entity__user")
+                    .with_amount()
+                    .order_by(
+                        "status", "entity__lastname", "entity__firstname", "-created_at"
+                    ),
+                    to_attr="all_registrations",
+                ),
+            )
+            .with_title()
+            .first()
+        )
+
+        context = {"event_obj": event_obj}
+        html_string = render_to_string(
+            template_name=TEMPLATE_PDF_BY_MODULE[event_obj.module][
+                PDFType.REGISTRATION
+            ]["pdf"],
+            context=context,
+        )
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+
+        with tempfile.NamedTemporaryFile(delete=True) as output:
+            output.write(result)
+            output.flush()
+
+            output = open(output.name, "rb")
+            response.write(output.read())
+
+        return response
 
     title_locale.short_description = _("title")
 

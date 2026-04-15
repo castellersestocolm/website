@@ -1,5 +1,7 @@
 import enum
 
+from django.utils.translation import gettext_lazy as _
+
 
 class EventType(enum.IntEnum):
     GENERAL = 10
@@ -27,6 +29,14 @@ class RegistrationStatus(enum.IntEnum):
     ACTIVE = 20
     CANCELLED = 30
     TENTATIVE = 40
+
+
+RegistrationStatus.labels = {
+    RegistrationStatus.REQUESTED: _("Requested"),
+    RegistrationStatus.ACTIVE: _("Active"),
+    RegistrationStatus.CANCELLED: _("Cancelled"),
+    RegistrationStatus.TENTATIVE: _("Tentative"),
+}
 
 
 class TransportMode(enum.IntEnum):
