@@ -17,14 +17,14 @@
     {% with "ProgramCourseRegistrationStatus"|enums_activity|get_attr:"ACTIVE" as enum_status_active %}
   <tr style="{% if program_course_registration_obj.status != enum_status_active %}text-decoration: line-through; color: #888;{% endif %}">
     <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_obj.program_name_locale }} — {{ program_course_registration_obj.entity.name }}</p></td>
-    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_registration_obj.amount|format_money }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;{% if program_course_registration_obj.status != enum_status_active %}color: #888;{% endif %}">{{ program_course_registration_obj.amount|format_money_2f }}</p></td>
   </tr>
                     {% endwith %}
                     {% endfor %}
   <tr>
       <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
       {% with program_course_registration_objs|program_course_registrations_amount as program_course_registrations_total %}
-            <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ program_course_registrations_total|format_money }}</strong></p></td>
+            <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ program_course_registrations_total|format_money_2f }}</strong></p></td>
       {% endwith %}
   </tr>
 </table>

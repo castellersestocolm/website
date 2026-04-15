@@ -29,12 +29,12 @@
                 {% if type %}
                 <td class="field-summary_type">{{ "payment.enums.PaymentType"|format_enum:type|lower|capfirst }}</td>
                 {% for module, balance in balances.items %}
-                <td class="field-summary_balance">{{ balance|format_money }}</td>
+                <td class="field-summary_balance">{{ balance|format_money_2f }}</td>
                 {% endfor %}
                 {% else %}
                 <th class="field-summary_type">Total</th>
                 {% for module, balance in balances.items %}
-                <th class="field-summary_balance">{{ balance|format_money }}</th>
+                <th class="field-summary_balance">{{ balance|format_money_2f }}</th>
                 {% endfor %}
                 {% endif %}
             </tr>

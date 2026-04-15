@@ -19,12 +19,12 @@
                     {% for registration_obj in registration_objs %}
   <tr>
     <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{% if registration_obj.entity.user %}{{ registration_obj.entity.user.name }}{% else %}{{ registration_obj.entity.name }}{% endif %}</p></td>
-    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ registration_obj.line.amount|format_money }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ registration_obj.line.amount|format_money_2f }}</p></td>
   </tr>
                     {% endfor %}
   <tr>
       <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
-      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ registration_objs|registrations_amount|format_money }}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ registration_objs|registrations_amount|format_money_2f }}</strong></p></td>
   </tr>
 </table>
 {% endblock %}

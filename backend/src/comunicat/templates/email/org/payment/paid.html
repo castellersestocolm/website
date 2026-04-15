@@ -16,12 +16,12 @@
                     {% for payment_line_obj in payment_obj.lines.all %}
   <tr>
     <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ payment_line_obj.description }}</p></td>
-    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ payment_line_obj.amount|format_money }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ payment_line_obj.amount|format_money_2f }}</p></td>
   </tr>
                     {% endfor %}
   <tr>
       <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
-      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ payment_obj.amount|format_money }}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ payment_obj.amount|format_money_2f }}</strong></p></td>
   </tr>
 </table>
 {% endblock %}

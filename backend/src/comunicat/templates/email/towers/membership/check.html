@@ -13,9 +13,9 @@
             {% endif %}
             <ul>
                 {% if membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"ACTIVE" %}
-                    <li>{% trans "Amount" %}: <strong>{{ membership_obj|membership_amount_active|format_money }}</strong></li>
+                    <li>{% trans "Amount" %}: <strong>{{ membership_obj|membership_amount_active|format_money_2f }}</strong></li>
                 {% else %}
-                    <li>{% trans "Amount" %}: <strong>{{ membership_obj|membership_amount_all|format_money }}</strong></li>
+                    <li>{% trans "Amount" %}: <strong>{{ membership_obj|membership_amount_all|format_money_2f }}</strong></li>
                 {% endif %}
                 <li>{% trans "Valid" %}: <strong>{{ membership_obj.date_from|date_add_days:1|date:"Y-m-d" }} → {{ membership_obj.date_to|date:"Y-m-d" }}</strong></li>
             </ul>
