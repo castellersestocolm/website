@@ -28,46 +28,55 @@ function CalendarEventPage() {
     });
   }, [setEvent, year, month, day, code, i18n.resolvedLanguage]);
 
-  const eventSubtitle =
-    event &&
-    capitalizeFirstLetter(
-      new Date(event.time_from).toLocaleDateString(i18n.resolvedLanguage, {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    );
+  const eventSubtitle = event && (
+    <>
+      <Typography
+        variant="h6"
+        fontWeight={700}
+        align="center"
+        color="white"
+        mb={event.location ? 0 : 3}
+      >
+        {capitalizeFirstLetter(
+          new Date(event.time_from).toLocaleDateString(i18n.resolvedLanguage, {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        )}
+      </Typography>
+      {event.location && (
+        <Typography
+          variant="h6"
+          fontWeight={700}
+          color="white"
+          align="center"
+          mb={3}
+        >
+          <Link
+            color="white"
+            underline="none"
+            href={
+              "http://google.com/maps/place/" +
+              event.location.coordinate_lat +
+              "," +
+              event.location.coordinate_lon
+            }
+            target="_blank"
+          >
+            {event.location.name}
+          </Link>
+        </Typography>
+      )}
+    </>
+  );
 
   const content = (
     <>
       {event && (
-        <Box className={styles.pressContainerBox} mt={3}>
-          {event.location && (
-            <Typography
-              variant="h6"
-              fontWeight={700}
-              color="textSecondary"
-              align="center"
-              mb={3}
-            >
-              <Link
-                color="textSecondary"
-                underline="none"
-                href={
-                  "http://google.com/maps/place/" +
-                  event.location.coordinate_lat +
-                  "," +
-                  event.location.coordinate_lon
-                }
-                target="_blank"
-              >
-                {event.location.name}
-              </Link>
-            </Typography>
-          )}
-
+        <Box className={styles.pressContainerBox}>
           {(event.description ||
             (event.agenda_items && event.agenda_items.length > 0)) && (
             <Box mb={3}>
