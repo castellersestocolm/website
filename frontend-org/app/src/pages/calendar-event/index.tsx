@@ -1,12 +1,5 @@
 import styles from "./styles.module.css";
-import {
-  Typography,
-  Link,
-  ListItem,
-  List,
-  ListItemText,
-  CardContent,
-} from "@mui/material";
+import { Typography, Link, ListItem, List, ListItemText } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { apiEventPage } from "../../api";
@@ -17,7 +10,6 @@ import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Map from "../../components/Map/Map";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
 
@@ -150,27 +142,6 @@ function CalendarEventPage() {
                       alt="poster"
                     />
                   </Link>
-                </Grid>
-              )}
-              {event.location && (
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: event.poster && event.poster.large ? 6 : 12,
-                    md: event.poster && event.poster.large ? 8 : 12,
-                  }}
-                >
-                  <CardContent className={styles.mapCard}>
-                    <Map
-                      location={event.location}
-                      coordinates={[
-                        event.location.coordinate_lat,
-                        event.location.coordinate_lon,
-                      ]}
-                      connections={event.location.connections}
-                      zoom={16}
-                    />
-                  </CardContent>
                 </Grid>
               )}
             </Grid>

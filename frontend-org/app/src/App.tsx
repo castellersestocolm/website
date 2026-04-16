@@ -18,6 +18,7 @@ import UserDashboardPage from "./pages/user-dashboard";
 import { apiUserMe } from "./api";
 import UserLoginPage from "./pages/user-login";
 import UserPasswordPage from "./pages/user-password";
+import CalendarEventPage from "./pages/calendar-event";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -84,6 +85,10 @@ const App = () => {
                   <Route
                     path={ROUTES["user-dashboard"].path}
                     element={<UserDashboardPage />}
+                  />
+                  <Route
+                    path={ROUTES["calendar-event"].path}
+                    element={<CalendarEventPage />}
                   />
                 </Routes>
               </Box>

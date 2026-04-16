@@ -240,3 +240,18 @@ export const apiEventList = async (
     throw error;
   }
 };
+
+export const apiEventPage = async (date: string, code: string) => {
+  try {
+    return await instance.get("/event/page/", {
+      params: {
+        date: date,
+        code: code,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

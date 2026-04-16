@@ -10,6 +10,7 @@ from djmoney.models.fields import MoneyField
 from comunicat.enums import Module
 from comunicat.rest.utils.helpers import generate_reference
 from comunicat.utils.models import language_field_default
+from event.enums import RegistrationStatus
 from order.enums import OrderDeliveryType, OrderStatus
 from order.managers import (
     OrderQuerySet,
@@ -81,6 +82,13 @@ class Order(StandardModel, Timestamps):
             OrderLog.objects.create(order_id=self.id, status=self.status)
 
             if self.status == OrderStatus.COMPLETED:
+                from event.models import Registration
+
+                registration_objs = Registration.objects.filter(
+                    order_registration__order_id=self.id
+                )
+                registration_objs.update(status=RegistrationStatus.ACTIVE)
+
                 order_product_objs = OrderProduct.objects.filter(order_id=self.id)
                 order_product_objs.update(quantity_given=F("quantity"))
                 order_product_objs = list(order_product_objs)

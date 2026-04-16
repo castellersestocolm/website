@@ -20,6 +20,9 @@ export const ROUTES = {
   "user-set-password": {
     path: "/user/password/:token",
   },
+  "calendar-event": {
+    path: "/calendar/event/:year/:month/:day/:code",
+  },
   "external-login-google": {
     path:
       API_BASE_URL +
