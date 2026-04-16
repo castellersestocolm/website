@@ -425,6 +425,7 @@
   "enums.payment-status.30": "Slutfört",
   "enums.payment-status.40": "Avbruten",
   "enums.order-status.10": "I väntan",
+  "enums.order-status.15": "Begärde",
   "enums.order-status.20": "Bearbetas",
   "enums.order-status.30": "Slutfört",
   "enums.order-status.40": "Avbruten",

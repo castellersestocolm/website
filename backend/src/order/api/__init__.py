@@ -21,6 +21,7 @@ from order.models import (
     OrderDelivery,
     OrderDeliveryAddress,
     DeliveryProvider,
+    OrderRegistration,
 )
 from order.utils.delivery import get_delivery_price
 from payment.enums import PaymentStatus
@@ -114,6 +115,20 @@ def get_list(
                     "size__product__modules__exclude_teams",
                 )
                 .with_name(),
+            ),
+            Prefetch(
+                "registrations",
+                OrderRegistration.objects.order_by(
+                    "registration__event__time_from",
+                    "amount",
+                    "registration__entity__firstname",
+                    "registration__entity__lastname",
+                ).select_related(
+                    "registration",
+                    "registration__event",
+                    "registration__entity",
+                    "registration__entity__user",
+                ),
             ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )

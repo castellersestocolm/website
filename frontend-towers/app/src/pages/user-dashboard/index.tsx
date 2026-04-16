@@ -1223,11 +1223,11 @@ function UserDashboardPage() {
                                       ": " +
                                       event.registrations
                                         .map((registration: any) =>
-                                          registration.user.lastname
-                                            ? registration.user.firstname +
+                                          registration.entity.lastname
+                                            ? registration.entity.firstname +
                                               " " +
-                                              registration.user.lastname
-                                            : registration.user.firstname,
+                                              registration.entity.lastname
+                                            : registration.entity.firstname,
                                         )
                                         .join(", ")
                                     : t(
@@ -1508,7 +1508,9 @@ function UserDashboardPage() {
                       {orders.results
                         .filter(
                           (order: any) =>
-                            order.products && order.products.length > 0,
+                            (order.products && order.products.length > 0) ||
+                            (order.registrations &&
+                              order.registrations.length > 0),
                         )
                         .map((order: any, i: number, row: any) => (
                           <Box key={order.id}>
@@ -1526,19 +1528,33 @@ function UserDashboardPage() {
                                       variant="body2"
                                       component="span"
                                     >
-                                      {capitalizeFirstLetter(
-                                        Array.from(
-                                          new Set(
-                                            order.products.map(
-                                              (orderProduct: any) =>
-                                                lowerFirstLetter(
-                                                  orderProduct.size.product
-                                                    .name,
+                                      {"#"}
+                                      {order.reference}
+                                      {" — "}
+                                      {order.products &&
+                                      order.products.length > 0
+                                        ? capitalizeFirstLetter(
+                                            Array.from(
+                                              new Set(
+                                                order.products.map(
+                                                  (orderProduct: any) =>
+                                                    lowerFirstLetter(
+                                                      orderProduct.size.product
+                                                        .name,
+                                                    ),
                                                 ),
+                                              ),
+                                            ).join(", "),
+                                          )
+                                        : Array.from(
+                                            new Set(
+                                              order.registrations.map(
+                                                (orderRegistration: any) =>
+                                                  orderRegistration.registration
+                                                    .event.title,
+                                              ),
                                             ),
-                                          ),
-                                        ).join(", "),
-                                      )}
+                                          ).join(", ")}
                                     </Typography>
                                     <Typography
                                       variant="body2"
@@ -1571,7 +1587,8 @@ function UserDashboardPage() {
                                     order.status,
                                   ) +
                                   " " +
-                                  (order.status >= OrderStatus.COMPLETED
+                                  (order.status >= OrderStatus.COMPLETED ||
+                                  order.status === OrderStatus.REQUESTED
                                     ? t("pages.user-payments.payment.date-done")
                                     : t(
                                         "pages.user-payments.payment.date-doing",
@@ -1597,51 +1614,98 @@ function UserDashboardPage() {
                               unmountOnExit
                             >
                               <List className={styles.userFamilyList}>
-                                {order.products.map(
-                                  (orderProduct: any, i: number, row: any) => (
-                                    <Box key={orderProduct.id}>
-                                      <ListItemButton disableTouchRipple dense>
-                                        <ListItemIcon
-                                          className={styles.eventCardIcon}
+                                {order.products &&
+                                  order.products.length > 0 &&
+                                  order.products.map(
+                                    (
+                                      orderProduct: any,
+                                      i: number,
+                                      row: any,
+                                    ) => (
+                                      <Box key={orderProduct.id}>
+                                        <ListItemButton
+                                          disableTouchRipple
+                                          dense
                                         >
-                                          {orderProduct.size.product.images &&
-                                            orderProduct.size.product.images
-                                              .length > 0 && (
-                                              <img
-                                                src={
-                                                  BACKEND_BASE_URL +
-                                                  orderProduct.size.product
-                                                    .images[0].picture
-                                                }
-                                                alt={
-                                                  orderProduct.size.product.name
-                                                }
-                                                className={
-                                                  styles.eventCardImage
-                                                }
-                                              />
-                                            )}
-                                        </ListItemIcon>
-                                        <ListItemText
-                                          primary={
-                                            orderProduct.quantity +
-                                            " x " +
-                                            orderProduct.size.product.name +
-                                            " — " +
-                                            orderProduct.size.size
-                                          }
-                                        />
-                                        <Typography
-                                          variant="body2"
-                                          component="span"
+                                          <ListItemIcon
+                                            className={styles.eventCardIcon}
+                                          >
+                                            {orderProduct.size.product.images &&
+                                              orderProduct.size.product.images
+                                                .length > 0 && (
+                                                <img
+                                                  src={
+                                                    BACKEND_BASE_URL +
+                                                    orderProduct.size.product
+                                                      .images[0].picture
+                                                  }
+                                                  alt={
+                                                    orderProduct.size.product
+                                                      .name
+                                                  }
+                                                  className={
+                                                    styles.eventCardImage
+                                                  }
+                                                />
+                                              )}
+                                          </ListItemIcon>
+                                          <ListItemText
+                                            primary={
+                                              orderProduct.quantity +
+                                              " x " +
+                                              orderProduct.size.product.name +
+                                              " — " +
+                                              orderProduct.size.size
+                                            }
+                                          />
+                                          <Typography
+                                            variant="body2"
+                                            component="span"
+                                          >
+                                            {orderProduct.amount.amount}{" "}
+                                            {orderProduct.amount.currency}
+                                          </Typography>
+                                        </ListItemButton>
+                                      </Box>
+                                    ),
+                                  )}
+                                {order.registrations &&
+                                  order.registrations.length > 0 &&
+                                  order.registrations.map(
+                                    (
+                                      orderRegistration: any,
+                                      i: number,
+                                      row: any,
+                                    ) => (
+                                      <Box key={orderRegistration.id}>
+                                        <ListItemButton
+                                          disableTouchRipple
+                                          dense
                                         >
-                                          {orderProduct.amount.amount}{" "}
-                                          {orderProduct.amount.currency}
-                                        </Typography>
-                                      </ListItemButton>
-                                    </Box>
-                                  ),
-                                )}
+                                          <ListItemText
+                                            primary={
+                                              orderRegistration.registration
+                                                .entity.lastname
+                                                ? orderRegistration.registration
+                                                    .entity.firstname +
+                                                  " " +
+                                                  orderRegistration.registration
+                                                    .entity.lastname
+                                                : orderRegistration.registration
+                                                    .entity.firstname
+                                            }
+                                          />
+                                          <Typography
+                                            variant="body2"
+                                            component="span"
+                                          >
+                                            {orderRegistration.amount.amount}{" "}
+                                            {orderRegistration.amount.currency}
+                                          </Typography>
+                                        </ListItemButton>
+                                      </Box>
+                                    ),
+                                  )}
                               </List>
                             </Collapse>
 

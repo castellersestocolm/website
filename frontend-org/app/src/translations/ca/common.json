@@ -90,6 +90,7 @@
   "enums.payment-status.30": "Completat",
   "enums.payment-status.40": "Cancel·lat",
   "enums.order-status.10": "Creada",
+  "enums.order-status.15": "Sol·licitat",
   "enums.order-status.20": "Processant",
   "enums.order-status.30": "Completada",
   "enums.order-status.40": "Cancel·lada",

@@ -283,3 +283,20 @@ class RegistrationAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        query_serializer=CreateRegistrationSerializer,
+        responses={200: RegistrationSerializer(many=True)},
+    )
+    @action(methods=["get"], detail=False, url_path="request", url_name="request")
+    @method_decorator(cache_page(60))
+    def request(self, request):
+        serializer = PageEventSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        registration_objs = []
+
+        serializer = self.serializer_class(
+            registration_objs, many=True, context={"module": self.module}
+        )
+        return Response(serializer.data)

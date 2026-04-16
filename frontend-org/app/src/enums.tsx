@@ -51,6 +51,7 @@ export const PAYMENT_STATUS_ICON: any = {
 
 export enum OrderStatus {
   CREATED = 10,
+  REQUESTED = 15,
   PROCESSING = 20,
   COMPLETED = 30,
   CANCELED = 40,
@@ -59,6 +60,7 @@ export enum OrderStatus {
 
 export const ORDER_STATUS_ICON: any = {
   10: <IconPending />,
+  15: <IconPending />,
   20: <IconChangeCircle />,
   30: <IconCheckCircle />,
   40: <IconCancel />,

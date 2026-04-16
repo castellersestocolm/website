@@ -3,6 +3,7 @@ from enum import IntEnum
 
 class OrderStatus(IntEnum):
     CREATED = 10
+    REQUESTED = 15
     PROCESSING = 20
     COMPLETED = 30
     CANCELLED = 40

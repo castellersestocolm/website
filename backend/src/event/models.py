@@ -362,6 +362,9 @@ class Registration(StandardModel, Timestamps):
         self.__status = self.status
         self.__line = self.line
 
+    def __str__(self) -> str:
+        return f"{self.event} - {self.entity}"
+
     def save(self, *args, **kwargs):
         if self.pk:
             if self.status != self.__status:

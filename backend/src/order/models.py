@@ -11,7 +11,12 @@ from comunicat.enums import Module
 from comunicat.rest.utils.helpers import generate_reference
 from comunicat.utils.models import language_field_default
 from order.enums import OrderDeliveryType, OrderStatus
-from order.managers import OrderQuerySet, DeliveryPriceQuerySet, OrderProductQuerySet
+from order.managers import (
+    OrderQuerySet,
+    DeliveryPriceQuerySet,
+    OrderProductQuerySet,
+    OrderRegistrationQuerySet,
+)
 
 from django.utils.translation import gettext_lazy as _
 
@@ -28,14 +33,16 @@ class Order(StandardModel, Timestamps):
     )
     delivery = models.OneToOneField(
         "OrderDelivery",
+        null=True,
+        blank=True,
         related_name="order",
         on_delete=models.PROTECT,
     )
     payment_order = models.OneToOneField(
         "payment.PaymentOrder",
-        related_name="order",
         blank=True,
         null=True,
+        related_name="order",
         on_delete=models.PROTECT,
     )
 
@@ -271,6 +278,68 @@ class OrderProduct(StandardModel, Timestamps):
                     )
                 }
             )
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            if self.line != self.__line:
+                if self.line:
+                    self.line.item = self
+                    self.line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+                if self.__line:
+                    self.__line.item = None
+                    self.__line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+
+        super().save(*args, **kwargs)
+
+
+class OrderRegistration(StandardModel, Timestamps):
+    order = models.ForeignKey(
+        "Order",
+        related_name="registrations",
+        on_delete=models.CASCADE,
+    )
+
+    registration = models.OneToOneField(
+        "event.Registration",
+        related_name="order_registration",
+        on_delete=models.PROTECT,
+    )
+
+    line = models.OneToOneField(
+        "payment.PaymentLine",
+        related_name="order_registration",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    __line = None
+
+    objects = OrderRegistrationQuerySet.as_manager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__line = self.line
+
+    def __str__(self) -> str:
+        return f"{str(self.order)} - {str(self.registration)}"
 
     def save(self, *args, **kwargs):
         if self.pk:

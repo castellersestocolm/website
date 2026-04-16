@@ -13,6 +13,7 @@ from comunicat.rest.serializers.data import (
     RegionSerializer,
     ZoneSerializer,
 )
+from comunicat.rest.serializers.event import RegistrationWithEventSerializer
 from comunicat.rest.serializers.payment import (
     PaymentLineSerializer,
     PaymentOrderSerializer,
@@ -28,6 +29,7 @@ from order.models import (
     DeliveryProvider,
     DeliveryPrice,
     DeliveryDate,
+    OrderRegistration,
 )
 
 from django.utils.translation import gettext_lazy as _
@@ -203,6 +205,29 @@ class OrderProductSerializer(s.ModelSerializer):
         )
 
 
+class OrderRegistrationSerializer(s.ModelSerializer):
+    registration = RegistrationWithEventSerializer(read_only=True)
+    line = PaymentLineSerializer(read_only=True)
+    amount = MoneyField(read_only=True)
+
+    class Meta:
+        model = OrderRegistration
+        fields = (
+            "id",
+            "registration",
+            "line",
+            "amount",
+            "vat",
+        )
+        read_only_fields = (
+            "id",
+            "registration",
+            "line",
+            "amount",
+            "vat",
+        )
+
+
 class OrderLogSerializer(s.ModelSerializer):
     class Meta:
         model = OrderLog
@@ -241,6 +266,7 @@ class OrderSerializer(OrderSlimSerializer):
     amount = MoneyField(read_only=True)
     amount_vat = MoneyField(read_only=True)
     products = OrderProductSerializer(many=True, read_only=True)
+    registrations = OrderRegistrationSerializer(many=True, read_only=True)
     logs = OrderLogSerializer(many=True, read_only=True)
 
     class Meta:
@@ -254,6 +280,7 @@ class OrderSerializer(OrderSlimSerializer):
             "amount",
             "amount_vat",
             "products",
+            "registrations",
             "logs",
             "created_at",
         )
@@ -266,6 +293,7 @@ class OrderSerializer(OrderSlimSerializer):
             "amount",
             "amount_vat",
             "products",
+            "registrations",
             "logs",
             "created_at",
         )

@@ -71,9 +71,7 @@ def update_registrations(apps, schema_editor):
         registration_updates.append(registration_obj)
 
     if registration_updates:
-        Registration.objects.bulk_update(
-            registration_updates, fields=("price",)
-        )
+        Registration.objects.bulk_update(registration_updates, fields=("price",))
 
 
 class Migration(migrations.Migration):

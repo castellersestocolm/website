@@ -425,6 +425,7 @@
   "enums.payment-status.30": "Completed",
   "enums.payment-status.40": "Cancelled",
   "enums.order-status.10": "Pending",
+  "enums.order-status.15": "Requested",
   "enums.order-status.20": "Processing",
   "enums.order-status.30": "Completed",
   "enums.order-status.40": "Cancelled",

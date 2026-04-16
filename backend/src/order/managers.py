@@ -15,11 +15,13 @@ from django.db.models.functions import Coalesce, Concat, Cast
 from django.utils import translation
 
 from comunicat.utils.managers import MoneyOutput
+from event.enums import RegistrationStatus
 
 
 class OrderQuerySet(QuerySet):
     def with_amount(self):
         OrderProduct = apps.get_model("order", "OrderProduct")
+        OrderRegistration = apps.get_model("order", "OrderRegistration")
 
         return self.annotate(
             amount_products=Coalesce(
@@ -28,6 +30,20 @@ class OrderQuerySet(QuerySet):
             amount_products_vat=Coalesce(
                 Subquery(
                     OrderProduct.objects.filter(order_id=OuterRef("id"))
+                    .with_amount()
+                    .values("order_id")
+                    .annotate(amount_vat=Sum("amount_vat"))
+                    .values("amount_vat")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            amount_registrations=Coalesce(
+                Sum("registrations__amount"), Value(0), output_field=MoneyOutput()
+            ),
+            amount_registrations_vat=Coalesce(
+                Subquery(
+                    OrderRegistration.objects.filter(order_id=OuterRef("id"))
                     .with_amount()
                     .values("order_id")
                     .annotate(amount_vat=Sum("amount_vat"))
@@ -45,10 +61,13 @@ class OrderQuerySet(QuerySet):
                 output_field=MoneyOutput(),
             ),
             amount=Cast(
-                F("amount_products") + F("amount_delivery"), output_field=MoneyOutput()
+                F("amount_products") + F("amount_registrations") + F("amount_delivery"),
+                output_field=MoneyOutput(),
             ),
             amount_vat=Cast(
-                F("amount_products_vat") + F("amount_delivery_vat"),
+                F("amount_products_vat")
+                + F("amount_registrations_vat")
+                + F("amount_delivery_vat"),
                 output_field=MoneyOutput(),
             ),
         )
@@ -65,6 +84,31 @@ class OrderQuerySet(QuerySet):
                 .select_related("size", "size__product")
                 .order_by("size__product__type", "size__product__created_at"),
                 to_attr="products_pending",
+            ),
+        )
+
+    def with_registrations_pending(self):
+        OrderRegistration = apps.get_model("order", "OrderRegistration")
+
+        return self.prefetch_related(
+            Prefetch(
+                "registrations",
+                OrderRegistration.objects.exclude(
+                    registration__status=RegistrationStatus.ACTIVE,
+                )
+                .select_related(
+                    "registration",
+                    "registration__event",
+                    "registration__entity",
+                    "registration__entity__user",
+                )
+                .order_by(
+                    "registration__event__time_from",
+                    "amount",
+                    "registration__entity__firstname",
+                    "registration__entity__lastname",
+                ),
+                to_attr="registrations_pending",
             ),
         )
 
@@ -86,6 +130,11 @@ class OrderProductQuerySet(QuerySet):
         return self.annotate(
             description_locale=F(f"size__product__description__{locale}"),
         )
+
+
+class OrderRegistrationQuerySet(QuerySet):
+    def with_amount(self):
+        return self.annotate(amount_vat=F("vat") * F("amount") / 100)
 
 
 class DeliveryPriceQuerySet(QuerySet):

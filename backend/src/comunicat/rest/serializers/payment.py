@@ -51,9 +51,35 @@ class CreateEntitySerializer(s.Serializer):
         return value
 
 
-class EntitySlimSerializer(s.ModelSerializer):
+class EntitySuperSlimSerializer(s.ModelSerializer):
     firstname = s.SerializerMethodField(read_only=True)
     lastname = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Entity
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "created_at",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_firstname(self, obj):
+        return obj.user.firstname if obj.user else obj.firstname
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_lastname(self, obj):
+        return obj.user.lastname if obj.user else obj.lastname
+
+
+class EntitySlimSerializer(EntitySuperSlimSerializer):
     email = s.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -72,14 +98,6 @@ class EntitySlimSerializer(s.ModelSerializer):
             "email",
             "created_at",
         )
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_firstname(self, obj):
-        return obj.user.firstname if obj.user else obj.firstname
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_lastname(self, obj):
-        return obj.user.lastname if obj.user else obj.lastname
 
     @swagger_serializer_method(serializer_or_field=s.EmailField(read_only=True))
     def get_email(self, obj):

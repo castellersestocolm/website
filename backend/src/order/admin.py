@@ -17,6 +17,7 @@ from order.models import (
     DeliveryPrice,
     OrderDeliveryAddress,
     DeliveryDate,
+    OrderRegistration,
 )
 
 import notify.tasks
@@ -50,6 +51,39 @@ class OrderProductInline(admin.TabularInline):
             .select_related(
                 "size",
                 "size__product",
+            )
+        )
+
+    def has_add_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_change_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_delete_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+
+class OrderRegistrationInline(admin.TabularInline):
+    model = OrderRegistration
+    raw_id_fields = ("registration", "line")
+    # form = OrderProductInlineFormAdmin
+    extra = 0
+    ordering = (
+        "registration__event__time_from",
+        "amount",
+        "registration__entity__firstname",
+        "registration__entity__lastname",
+    )
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "registration",
+                "registration__entity",
+                "registration__entity__user",
             )
         )
 
@@ -102,7 +136,7 @@ def send_paid_email(modeladmin, request, queryset):
 
 
 class OrderAdminForm(forms.ModelForm):
-    preferred_language = FIELD_LOCALE(required=False)
+    origin_language = FIELD_LOCALE(required=False)
 
     class Meta:
         model = Order
@@ -129,10 +163,10 @@ class OrderAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("status", "created_at")
-    raw_id_fields = ("entity",)
+    raw_id_fields = ("entity", "delivery", "payment_order")
     ordering = ("-created_at",)
     form = OrderAdminForm
-    inlines = (OrderProductInline, OrderLogInline)
+    inlines = (OrderProductInline, OrderRegistrationInline, OrderLogInline)
     actions = (send_created_email, send_paid_email)
 
     def get_queryset(self, request):

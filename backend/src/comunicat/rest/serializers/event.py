@@ -4,6 +4,7 @@ from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from comunicat.rest.serializers.legal import TeamSerializer
+from comunicat.rest.serializers.payment import EntitySuperSlimSerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.enums import RegistrationStatus, EventType
@@ -18,6 +19,7 @@ from event.models import (
     GoogleCalendar,
     GoogleAlbum,
     GooglePhotosAlbum,
+    EventPrice,
 )
 from integration.models import GoogleIntegration
 
@@ -181,18 +183,22 @@ class LocationSerializer(s.ModelSerializer):
 
 
 class RegistrationSlimSerializer(s.ModelSerializer):
+    entity = EntitySuperSlimSerializer(read_only=True)
+    # TODO: Should deprecate this
     user = UserSuperSlimSerializer(read_only=True, source="entity.user")
 
     class Meta:
         model = Registration
         fields = (
             "id",
+            "entity",
             "user",
             "status",
             "created_at",
         )
         read_only_fields = (
             "id",
+            "entity",
             "user",
             "status",
             "created_at",
@@ -206,6 +212,7 @@ class RegistrationWithAmountSerializer(RegistrationSlimSerializer):
         model = Registration
         fields = (
             "id",
+            "entity",
             "user",
             "status",
             "amount",
@@ -213,6 +220,7 @@ class RegistrationWithAmountSerializer(RegistrationSlimSerializer):
         )
         read_only_fields = (
             "id",
+            "entity",
             "user",
             "status",
             "amount",
@@ -271,6 +279,29 @@ class EventModuleSerializer(s.ModelSerializer):
         )
 
 
+class EventPriceSerializer(s.ModelSerializer):
+    amount = MoneyField(read_only=True)
+
+    class Meta:
+        model = EventPrice
+        fields = (
+            "id",
+            "module",
+            "age_from",
+            "age_to",
+            "min_registrations",
+            "amount",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+            "age_from",
+            "age_to",
+            "min_registrations",
+            "amount",
+        )
+
+
 class EventSlimSerializer(s.ModelSerializer):
     title = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
@@ -315,6 +346,7 @@ class EventSerializer(EventSlimSerializer):
     require_approve = s.BooleanField(read_only=True)
     registrations = RegistrationWithAmountSerializer(many=True, read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
+    prices = EventPriceSerializer(read_only=True, many=True)
     agenda_items = AgendaItemSerializer(many=True, read_only=True)
     poster = VersatileImageFieldSerializer(
         allow_null=True,
@@ -359,6 +391,7 @@ class EventSerializer(EventSlimSerializer):
             "require_approve",
             "registrations",
             "modules",
+            "prices",
             "agenda_items",
             "poster",
             "picture",
@@ -376,6 +409,7 @@ class EventSerializer(EventSlimSerializer):
             "description",
             "type",
             "module",
+            "prices",
             "require_signup",
             "require_approve",
             "registrations",
@@ -469,8 +503,10 @@ class CreateRegistrationSerializer(s.Serializer):
     token = s.CharField(required=False)
 
 
-class RegistrationSerializer(RegistrationSlimSerializer):
-    event = EventSerializer(read_only=True)
+class RegistrationWithEventSerializer(RegistrationSlimSerializer):
+    event = EventSlimSerializer(read_only=True)
+    entity = EntitySuperSlimSerializer(read_only=True)
+    # TODO: Should deprecate this
     user = UserSuperSlimSerializer(read_only=True, source="entity.user")
 
     class Meta:
@@ -478,6 +514,7 @@ class RegistrationSerializer(RegistrationSlimSerializer):
         fields = (
             "id",
             "event",
+            "entity",
             "user",
             "status",
             "created_at",
@@ -485,6 +522,33 @@ class RegistrationSerializer(RegistrationSlimSerializer):
         read_only_fields = (
             "id",
             "event",
+            "entity",
+            "user",
+            "status",
+            "created_at",
+        )
+
+
+class RegistrationSerializer(RegistrationSlimSerializer):
+    event = EventSerializer(read_only=True)
+    entity = EntitySuperSlimSerializer(read_only=True)
+    # TODO: Should deprecate this
+    user = UserSuperSlimSerializer(read_only=True, source="entity.user")
+
+    class Meta:
+        model = Registration
+        fields = (
+            "id",
+            "event",
+            "entity",
+            "user",
+            "status",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "event",
+            "entity",
             "user",
             "status",
             "created_at",

@@ -18,7 +18,14 @@ from django.utils import timezone, translation
 import legal.api.team
 from comunicat.enums import Module
 from event.enums import EventStatus, RegistrationStatus, EventType
-from event.models import Event, Registration, AgendaItem, Connection, EventModule
+from event.models import (
+    Event,
+    Registration,
+    AgendaItem,
+    Connection,
+    EventModule,
+    EventPrice,
+)
 from legal.enums import TeamType
 from notify.enums import EmailType
 from user.enums import FamilyMemberStatus
@@ -118,6 +125,18 @@ def get_list(
                 (
                     EventModule.objects.select_related("team").order_by(
                         "module", "team__type"
+                    )
+                ),
+            ),
+            Prefetch(
+                "prices",
+                (
+                    EventPrice.objects.order_by(
+                        "module",
+                        "min_registrations",
+                        "age_from",
+                        "age_to",
+                        "amount",
                     )
                 ),
             ),
