@@ -19,6 +19,7 @@ def create_orders_for_registrations(apps, schema_editor):
             status=RegistrationStatus.ACTIVE,
             event__modules__require_approve=True,
             line__isnull=False,
+            price__isnull=False,
         )
         .select_related(
             "event", "line", "price", "line__payment", "line__payment__entity"
