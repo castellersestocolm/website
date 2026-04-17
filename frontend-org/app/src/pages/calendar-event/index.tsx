@@ -7,6 +7,7 @@ import markdown from "@wcj/markdown-to-html";
 import { capitalizeFirstLetter } from "../../utils/string";
 import PageBase from "../../components/PageBase/PageBase";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
+import FormEventRegister from "../../components/FormEventRegister/FormEventRegister";
 import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -154,6 +155,20 @@ function CalendarEventPage() {
                 </Grid>
               )}
             </Grid>
+          )}
+
+          {event.require_signup && (
+            <Box mt={5}>
+              <Typography
+                variant="h4"
+                fontWeight="700"
+                align="center"
+                marginBottom="48px"
+              >
+                {t("pages.calendar-event.register")}
+              </Typography>
+              <FormEventRegister event={event} />
+            </Box>
           )}
         </Box>
       )}

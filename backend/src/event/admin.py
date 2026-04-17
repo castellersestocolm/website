@@ -7,8 +7,8 @@ from django.db.models import JSONField, Q, Prefetch
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path
+from django.utils.safestring import mark_safe
 from jsoneditor.forms import JSONEditor
-import nested_admin
 
 import inline_actions.admin
 from weasyprint import HTML
@@ -20,7 +20,8 @@ from django.utils.translation import gettext_lazy as _
 from activity.models import ProgramCourse
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
-from event.enums import EventStatus, RegistrationStatus
+from comunicat.utils.admin import beautify_dict
+from event.enums import EventStatus
 from event.models import (
     Location,
     Event,
@@ -37,6 +38,8 @@ from event.models import (
     GooglePhotosAlbum,
     GoogleDriveAlbum,
     EventPrice,
+    EventQuestion,
+    EventSignup,
 )
 from notify.enums import EmailType
 
@@ -88,11 +91,19 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
         "entity__lastname",
         "-created_at",
     )
+    readonly_fields = ("data_nice",)
     raw_id_fields = ("entity", "line")
+    exclude = ("data",)
     form = RegistrationInlineForm
     extra = 0
 
     inline_actions = []
+
+    def data_nice(self, obj):
+        if not obj.data:
+            return "-"
+
+        return mark_safe(beautify_dict(data=obj.data))
 
     def get_inline_actions(self, request, obj=None):
         actions = super().get_inline_actions(request, obj=None)
@@ -108,6 +119,7 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
         )
         messages.success(request, _("Action succeeded."))
 
+    data_nice.short_description = _("Data")
     action_send_paid_email.short_description = _("Send paid email")
 
 
@@ -121,11 +133,31 @@ class EventPriceInline(admin.TabularInline):
     model = EventPrice
     ordering = (
         "module",
+        "-amount",
         "min_registrations",
         "age_from",
         "age_to",
-        "amount",
     )
+    extra = 0
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+
+class EventSignupInline(admin.TabularInline):
+    model = EventSignup
+    ordering = ("module",)
+    extra = 0
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+
+class EventQuestionInline(admin.StackedInline):
+    model = EventQuestion
+    ordering = ("order",)
     extra = 0
 
     formfield_overrides = {
@@ -189,8 +221,10 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
     ordering = ("-time_from",)
     inlines = (
         EventModuleInline,
+        EventSignupInline,
         EventPriceInline,
         EventRequirementInline,
+        EventQuestionInline,
         AgendaItemInline,
         RegistrationInline,
     )

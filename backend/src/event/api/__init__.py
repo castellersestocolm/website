@@ -25,6 +25,7 @@ from event.models import (
     Connection,
     EventModule,
     EventPrice,
+    EventQuestion,
 )
 from legal.enums import TeamType
 from notify.enums import EmailType
@@ -133,10 +134,18 @@ def get_list(
                 (
                     EventPrice.objects.order_by(
                         "module",
+                        "-amount",
                         "min_registrations",
                         "age_from",
                         "age_to",
-                        "amount",
+                    )
+                ),
+            ),
+            Prefetch(
+                "questions",
+                (
+                    EventQuestion.objects.order_by(
+                        "order",
                     )
                 ),
             ),

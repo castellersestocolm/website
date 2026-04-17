@@ -1,4 +1,4 @@
-from django.utils import translation
+from django.utils import translation, timezone
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
@@ -20,6 +20,8 @@ from event.models import (
     GoogleAlbum,
     GooglePhotosAlbum,
     EventPrice,
+    EventQuestion,
+    EventSignup,
 )
 from integration.models import GoogleIntegration
 
@@ -279,6 +281,35 @@ class EventModuleSerializer(s.ModelSerializer):
         )
 
 
+class EventSignupSerializer(s.ModelSerializer):
+    is_open = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = EventSignup
+        fields = (
+            "id",
+            "module",
+            "time_from",
+            "time_to",
+            "is_open",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+            "time_from",
+            "time_to",
+            "is_open",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
+    def get_is_open(self, obj):
+        # TODO: Add check for registrations limit here too
+        # TODO: Perhaps also regarding user membership
+        return (not obj.time_from or timezone.localtime() >= obj.time_from) and (
+            not obj.time_to or timezone.localtime() < obj.time_to
+        )
+
+
 class EventPriceSerializer(s.ModelSerializer):
     amount = MoneyField(read_only=True)
 
@@ -300,6 +331,31 @@ class EventPriceSerializer(s.ModelSerializer):
             "min_registrations",
             "amount",
         )
+
+
+class EventQuestionSerializer(s.ModelSerializer):
+    title = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = EventQuestion
+        fields = (
+            "id",
+            "title",
+            "type",
+            "order",
+            "data",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "type",
+            "order",
+            "data",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_title(self, obj):
+        return obj.title.get(translation.get_language())
 
 
 class EventSlimSerializer(s.ModelSerializer):
@@ -346,7 +402,9 @@ class EventSerializer(EventSlimSerializer):
     require_approve = s.BooleanField(read_only=True)
     registrations = RegistrationWithAmountSerializer(many=True, read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
+    signups = EventSignupSerializer(read_only=True, many=True)
     prices = EventPriceSerializer(read_only=True, many=True)
+    questions = EventQuestionSerializer(read_only=True, many=True)
     agenda_items = AgendaItemSerializer(many=True, read_only=True)
     poster = VersatileImageFieldSerializer(
         allow_null=True,
@@ -391,7 +449,9 @@ class EventSerializer(EventSlimSerializer):
             "require_approve",
             "registrations",
             "modules",
+            "signups",
             "prices",
+            "questions",
             "agenda_items",
             "poster",
             "picture",
@@ -409,9 +469,11 @@ class EventSerializer(EventSlimSerializer):
             "description",
             "type",
             "module",
-            "prices",
             "require_signup",
             "require_approve",
+            "signups",
+            "prices",
+            "questions",
             "registrations",
             "modules",
             "agenda_items",

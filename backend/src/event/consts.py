@@ -1,4 +1,5 @@
-from event.enums import RegistrationStatus
+from event.enums import RegistrationStatus, EventQuestionType
+from django.utils.translation import gettext_lazy as _
 
 GOOGLE_CALENDAR_SCOPES = [
     "https://www.googleapis.com/auth/calendar.readonly",
@@ -30,3 +31,14 @@ GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS = {
 # GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS = {
 #     v: k for k, v in REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS.items()
 # }
+
+EVENT_QUESTION_TYPE_FIELDS = {
+    EventQuestionType.SHORT: None,
+    EventQuestionType.LONG: None,
+    EventQuestionType.BOOLEAN: None,
+    EventQuestionType.CHOICE: ("choices",),
+}
+
+PAYMENT_METHOD_TYPE_FIELD_LABELS = {
+    "choices": _("Choices"),
+}

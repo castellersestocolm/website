@@ -20,12 +20,14 @@ from django.db import models, transaction
 
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
+from event.consts import EVENT_QUESTION_TYPE_FIELDS
 from event.enums import (
     EventType,
     EventRequirementType,
     RegistrationStatus,
     TransportMode,
     EventStatus,
+    EventQuestionType,
 )
 
 from django.utils.translation import gettext_lazy as _
@@ -307,6 +309,74 @@ class EventPrice(StandardModel, Timestamps):
 
         return f"{self.event} - {self.amount}"
 
+    class Meta:
+        unique_together = ("event", "module", "age_from", "age_to")
+
+
+class EventQuestion(StandardModel, Timestamps):
+    event = models.ForeignKey(Event, related_name="questions", on_delete=models.PROTECT)
+
+    title = JSONField(default=language_field_default)
+    type = models.PositiveSmallIntegerField(
+        choices=((eqt.value, eqt.name) for eqt in EventQuestionType),
+        default=EventQuestionType.SHORT,
+    )
+
+    order = models.PositiveSmallIntegerField(default=0)
+
+    data = models.JSONField(default=dict, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.event} - {self.title.get(translation.get_language()) or list(self.title.values())[0]}"
+
+    def clean(self):
+        validation_errors = {}
+        if self.data and any(
+            [field not in self.data for field in EVENT_QUESTION_TYPE_FIELDS[self.type]]
+        ):
+            validation_errors["data"] = _(
+                "The data field doesn't contain the required keys."
+            )
+
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+    def save(self, *args, **kwargs):
+        if not self.data and EVENT_QUESTION_TYPE_FIELDS[self.type] is not None:
+            self.data = {
+                field: language_field_default(value=[])
+                for field in EVENT_QUESTION_TYPE_FIELDS[self.type]
+            }
+
+        super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ("event", "order")
+
+
+class EventSignup(StandardModel, Timestamps):
+    event = models.ForeignKey(Event, related_name="signups", on_delete=models.PROTECT)
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+        null=True,
+        blank=True,
+    )
+
+    time_from = models.DateTimeField(blank=True, null=True)
+    time_to = models.DateTimeField(blank=True, null=True)
+
+    max_registrations = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        if self.module:
+            return f"{Module(self.module).name} - {self.event}"
+
+        return str(self.event)
+
+    class Meta:
+        unique_together = ("event", "module")
+
 
 # TODO: Multilanguage support
 class EventRequirement(StandardModel, Timestamps):
@@ -351,6 +421,8 @@ class Registration(StandardModel, Timestamps):
         related_name="registrations",
         on_delete=models.PROTECT,
     )
+
+    data = models.JSONField(default=dict, blank=True)
 
     __status = None
     __line = None

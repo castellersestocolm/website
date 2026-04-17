@@ -20,6 +20,13 @@ class EventStatus(enum.IntEnum):
     CANCELLED = 30
 
 
+class EventQuestionType(enum.IntEnum):
+    SHORT = 10
+    LONG = 20
+    BOOLEAN = 30
+    CHOICE = 40
+
+
 class EventRequirementType(enum.IntEnum):
     TO_BRING = 10
 
