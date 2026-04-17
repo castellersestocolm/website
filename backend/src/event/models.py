@@ -331,7 +331,7 @@ class EventQuestion(StandardModel, Timestamps):
 
     def clean(self):
         validation_errors = {}
-        if self.data and any(
+        if self.data and EVENT_QUESTION_TYPE_FIELDS[self.type] is not None and any(
             [field not in self.data for field in EVENT_QUESTION_TYPE_FIELDS[self.type]]
         ):
             validation_errors["data"] = _(

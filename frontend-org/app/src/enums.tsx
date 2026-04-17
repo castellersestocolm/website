@@ -129,3 +129,10 @@ export const EXPENSE_STATUS_ICON: any = {
   40: <IconCancel />,
   50: <IconCancel />,
 };
+
+export enum EventQuestionType {
+  SHORT = 10,
+  LONG = 20,
+  BOOLEAN = 30,
+  CHOICE = 40,
+}

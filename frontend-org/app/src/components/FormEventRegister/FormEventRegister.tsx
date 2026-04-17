@@ -17,12 +17,14 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
 import styles from "./styles.module.css";
 import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
-import { getEnumLabel } from "../../enums";
+import { EventQuestionType, getEnumLabel } from "../../enums";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -83,6 +85,13 @@ export default function FormEventRegister({ event }: any) {
       }
     });*/
   }
+
+  const eventPriceModules =
+    event &&
+    event.prices &&
+    Array.from(
+      new Set(event.prices.map((eventPrice: any) => eventPrice.module)),
+    );
 
   return (
     <>
@@ -188,6 +197,74 @@ export default function FormEventRegister({ event }: any) {
                 </FormHelperText>
               )}
             </FormGrid>
+            {event.questions &&
+              event.questions.length > 0 &&
+              event.questions.map((eventQuestion: any) => {
+                return (
+                  <FormGrid size={{ xs: 12, md: 6 }}>
+                    <FormLabel htmlFor="phone" required>
+                      {eventQuestion.title}
+                    </FormLabel>
+                    {eventQuestion.type === EventQuestionType.SHORT && (
+                      <OutlinedInput
+                        id={"question-" + eventQuestion.order}
+                        name={"question-" + eventQuestion.order}
+                        type="text"
+                        size="small"
+                        error={
+                          validationErrors &&
+                          validationErrors["question-" + eventQuestion.order] &&
+                          validationErrors["question-" + eventQuestion.order][0]
+                            .detail
+                        }
+                      />
+                    )}
+                    {eventQuestion.type === EventQuestionType.LONG && (
+                      <OutlinedInput
+                        id={"question-" + eventQuestion.order}
+                        name={"question-" + eventQuestion.order}
+                        type="text"
+                        size="small"
+                        error={
+                          validationErrors &&
+                          validationErrors["question-" + eventQuestion.order] &&
+                          validationErrors["question-" + eventQuestion.order][0]
+                            .detail
+                        }
+                      />
+                    )}
+                    {eventQuestion.type === EventQuestionType.BOOLEAN && (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            name={"question-" + eventQuestion.order}
+                            value="yes"
+                          />
+                        }
+                        label={t("pages.calendar-event.register.form.yes")}
+                      />
+                    )}
+                    {eventQuestion.type === EventQuestionType.CHOICE && (
+                      <RadioGroup name={"question-" + eventQuestion.order}>
+                        {eventQuestion.data.choices.ca.map(
+                          (dataChoice: string, ix: number) => (
+                            <FormControlLabel
+                              value={ix}
+                              control={<Radio />}
+                              label={dataChoice}
+                            />
+                          ),
+                        )}
+                      </RadioGroup>
+                    )}
+                    {validationErrors && validationErrors.phone && (
+                      <FormHelperText error>
+                        {validationErrors.phone[0].detail}
+                      </FormHelperText>
+                    )}
+                  </FormGrid>
+                );
+              })}
             {event.prices && event.prices.length > 0 && (
               <FormGrid size={12} className={styles.pricesSection}>
                 <Typography variant="h5" fontWeight={600}>
@@ -201,11 +278,7 @@ export default function FormEventRegister({ event }: any) {
                   </Grid>
                 </Grid>
                 <Grid container gap={3} justifyContent="center">
-                  {Array.from(
-                    new Set(
-                      event.prices.map((eventPrice: any) => eventPrice.module),
-                    ),
-                  ).map((module: any) => {
+                  {eventPriceModules.map((module: any) => {
                     return (
                       <Grid size={{ xs: 12, sm: 5, md: 4, lg: 3 }}>
                         <Card variant="outlined" className={styles.pricesCard}>
@@ -217,9 +290,13 @@ export default function FormEventRegister({ event }: any) {
                             >
                               {module
                                 ? getEnumLabel(t, "module", module)
-                                : t(
-                                    "pages.calendar-event.register.prices.non-members",
-                                  )}
+                                : eventPriceModules.length === 0
+                                  ? t(
+                                      "pages.calendar-event.register.prices.all",
+                                    )
+                                  : t(
+                                      "pages.calendar-event.register.prices.non-members",
+                                    )}
                             </Typography>
                           </Box>
                           <Divider />
