@@ -623,7 +623,7 @@ if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:
     SOCIAL_AUTH_URL_NAMESPACE = "user_social"
     SOCIAL_AUTH_USER_MODEL = "user.GoogleUser"
     SOCIAL_AUTH_JSONFIELD_ENABLED = True
-    SOCIAL_AUTH_SANITIZE_REDIRECTS = True
+    SOCIAL_AUTH_SANITIZE_REDIRECTS = False
     SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = (
         list(
             filter(None, os.getenv("SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS", "").split(","))
@@ -654,8 +654,7 @@ if SOCIAL_AUTH_GOOGLE_OAUTH2_KEY and SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:
         "social_core.pipeline.social_auth.auth_allowed",
         "social_core.pipeline.social_auth.social_user",
         "social_core.pipeline.user.get_username",
-        "social_core.pipeline.social_auth.associate_by_email",
-        # "comunicat.pipeline.user.associate_by_email",
+        "comunicat.pipeline.user.associate_by_email",
         "social_core.pipeline.user.create_user",
         "social_core.pipeline.social_auth.associate_user",
         "social_core.pipeline.social_auth.load_extra_data",
