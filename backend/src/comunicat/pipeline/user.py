@@ -11,9 +11,7 @@ from social_core.exceptions import AuthException
 import membership.api
 
 
-def module_data(backend, details, user, response, *args, **kwargs):
-    request = response.get("request")
-
+def module_data(details, user, request, **kwargs):
     # TODO: Fix this, for now set it from TOWERS
     origin_module = get_module_from_request(request=request) or Module.TOWERS
 
@@ -40,11 +38,8 @@ def module_data(backend, details, user, response, *args, **kwargs):
 
     user.save(update_fields=update_fields)
 
-    if hasattr(user, "family_member"):
-        family_id = user.family_member.family_id
-    else:
+    if not hasattr(user, "family_member"):
         family_obj = Family.objects.create()
-        family_id = family_obj.id
         FamilyMember.objects.create(
             user=user,
             family=family_obj,
@@ -52,7 +47,9 @@ def module_data(backend, details, user, response, *args, **kwargs):
             status=FamilyMemberStatus.ACTIVE,
         )
 
-    membership.api.create_or_update(user_id=user.id, modules=[origin_module])
+    # membership.api.create_or_update(user_id=user.id, modules=[origin_module])
+
+    return {"user": user}
 
 
 @partial
