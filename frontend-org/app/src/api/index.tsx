@@ -128,6 +128,33 @@ export const apiPaymentList = async (page: number = undefined) => {
   }
 };
 
+export const apiUserUpdate = async (
+  id: string,
+  firstname: string,
+  lastname: string,
+  phone: string,
+  birthday: string,
+  consent_pictures: boolean,
+  preferred_language: string,
+) => {
+  try {
+    return await instance.patch("/user/" + id + "/", {
+      firstname: firstname,
+      lastname: lastname,
+      phone: phone,
+      birthday: birthday,
+      consent_pictures: consent_pictures,
+      preferred_language: preferred_language,
+      towers: {},
+      organisation: {},
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiUserLogout = async () => {
   try {
     return await instance.post("/user/logout/");

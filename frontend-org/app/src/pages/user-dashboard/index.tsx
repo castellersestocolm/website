@@ -73,6 +73,7 @@ import ImageIconSwish from "../../assets/images/icons/swish.png";
 import QRCode from "qrcode";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
+import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
 import { dateToString, datetimeToString } from "../../utils/datetime";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
@@ -112,6 +113,8 @@ function UserDashboardPage() {
   const [expensesOpen, setExpensesOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
+
+  const [updateOpen, setUpdateOpen] = React.useState(false);
 
   const [eventPage, setEventPage] = React.useState(1);
   const [events, setEvents] = React.useState(undefined);
@@ -319,6 +322,21 @@ function UserDashboardPage() {
               </ListItem>
             )}
           </List>
+        </Box>
+        <Divider />
+        <Box>
+          <ListItemButton onClick={() => setUpdateOpen(!updateOpen)}>
+            <ListItemText
+              primary={t("pages.user-details.update.title")}
+              secondary={t("pages.user-details.update.subtitle")}
+            />
+            {updateOpen ? <IconExpandLess /> : <IconExpandMore />}
+          </ListItemButton>
+          <Collapse in={updateOpen} timeout="auto" unmountOnExit>
+            <Box className={styles.userFamilyMemberUpdate}>
+              <FormDashboardUpdate />
+            </Box>
+          </Collapse>
         </Box>
         <Divider />
         <Box className={styles.userLogoutBox}>

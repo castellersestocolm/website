@@ -1160,8 +1160,6 @@ function UserDashboardPage() {
           </Grid>
         )}
 
-        <EventAgenda isPast={true} asList={true} asCard={true} />
-
         <Grid
           container
           size={12}
@@ -1319,6 +1317,8 @@ function UserDashboardPage() {
               )}
           </Grid>
         </Grid>
+
+        <EventAgenda isPast={true} asList={true} asCard={true} />
 
         <Grid>
           <Grid container spacing={2} direction="column">
