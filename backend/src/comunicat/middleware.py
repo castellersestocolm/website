@@ -22,20 +22,20 @@ class SessionMiddlewareDynamicDomain(MiddlewareMixin):
         else:
             request.module = Module.ORG
 
-    def process_response(self, request, response):
-        for cookie in ("SESSION", "CSRF"):
-            cookie_name = getattr(settings, f"{cookie}_COOKIE_NAME")
-            if cookie_name is not None and cookie_name in response.cookies:
-                try:
-                    response.cookies[cookie_name][
-                        "domain"
-                    ] = f".{getattr(settings, f"MODULE_{Module(request.module).name}_DOMAIN") if hasattr(request, "module") else getattr(settings, f"{cookie}_COOKIE_DOMAIN") or settings.DOMAIN}"
-                except Exception as exc:
-                    logging.error(
-                        f"Crash updating domain for cookie {cookie_name} dynamically. Skipped. Error: {exc}"
-                    )
-
-        return response
+    # def process_response(self, request, response):
+    #     for cookie in ("SESSION", "CSRF"):
+    #         cookie_name = getattr(settings, f"{cookie}_COOKIE_NAME")
+    #         if cookie_name is not None and cookie_name in response.cookies:
+    #             try:
+    #                 response.cookies[cookie_name][
+    #                     "domain"
+    #                 ] = f".{getattr(settings, f"MODULE_{Module(request.module).name}_DOMAIN") if hasattr(request, "module") else getattr(settings, f"{cookie}_COOKIE_DOMAIN") or settings.DOMAIN}"
+    #             except Exception as exc:
+    #                 logging.error(
+    #                     f"Crash updating domain for cookie {cookie_name} dynamically. Skipped. Error: {exc}"
+    #                 )
+    #
+    #     return response
 
 
 class UserMiddlewarePermissionLevel(MiddlewareMixin):

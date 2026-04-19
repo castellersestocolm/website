@@ -103,7 +103,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # "comunicat.middleware.SessionMiddlewareDynamicDomain",
+    "comunicat.middleware.SessionMiddlewareDynamicDomain",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
