@@ -11,7 +11,7 @@ import { DocumentType } from "../../enums";
 import ImageHeroPress from "../../assets/images/heros/press.jpg";
 import { capitalizeFirstLetter } from "../../utils/string";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
 function PressArticlePage() {
   const [t, i18n] = useTranslation("common");

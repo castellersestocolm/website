@@ -49,7 +49,7 @@ import { amountToString } from "../../utils/money";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import { datetimeToString } from "../../utils/datetime";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",

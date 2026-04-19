@@ -9,7 +9,7 @@ import {
   API_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../consts";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_ORG_API_URL;
 
 const instance = axios.create({
   baseURL: API_BASE_URL,

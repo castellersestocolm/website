@@ -29,7 +29,7 @@ import { useAppContext } from "../../components/AppContext/AppContext";
 import { ROUTES } from "../../routes";
 import { getEnumLabel } from "../../enums";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
 function OrderPage() {
   const [t, i18n] = useTranslation("common");

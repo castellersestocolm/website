@@ -11,7 +11,7 @@ import Pagination from "@mui/material/Pagination";
 import { API_LEGAL_GROUP_LIST_PAGE_SIZE } from "../../consts";
 import { languageToLocale } from "../../utils/locale";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
 function AboutTeamPage() {
   const [t, i18n] = useTranslation("common");

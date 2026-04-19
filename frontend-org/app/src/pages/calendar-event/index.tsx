@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
 function CalendarEventPage() {
   const [t, i18n] = useTranslation("common");

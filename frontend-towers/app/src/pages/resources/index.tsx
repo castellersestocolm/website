@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 import LanguageChip from "../../components/LanguageChip/LanguageChip";
 import { DocumentType } from "../../enums";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
 function ResourcesPage() {
   const [t, i18n] = useTranslation("common");

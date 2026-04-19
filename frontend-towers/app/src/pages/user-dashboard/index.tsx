@@ -101,7 +101,7 @@ import { datetimeToString, dateToString } from "../../utils/datetime";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_API_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
