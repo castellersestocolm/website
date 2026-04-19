@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_ORG_API_URL;
 const ORG_BASE_URL = process.env.REACT_APP_ORG_BASE_URL;
 
 export const ROUTES = {
