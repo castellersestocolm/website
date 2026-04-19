@@ -41,23 +41,17 @@ if os.getenv("CSRF_TRUSTED_ORIGINS"):
     )
 
 CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN", None)
-CSRF_COOKIE_DOMAIN_DYNAMIC = list(
-    filter(None, os.getenv("CSRF_COOKIE_DOMAIN_DYNAMIC", "").split(","))
-)
 CSRF_COOKIE_SECURE = not DEBUG
 
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
-# SESSION_COOKIE_DOMAIN = os.getenv("SESSION_COOKIE_DOMAIN", None)
-SESSION_COOKIE_DOMAIN_DYNAMIC = list(
-    filter(None, os.getenv("SESSION_COOKIE_DOMAIN_DYNAMIC", "").split(","))
-)
+SESSION_COOKIE_DOMAIN = os.getenv("SESSION_COOKIE_DOMAIN", None)
 SESSION_COOKIE_AGE = os.getenv("SESSION_COOKIE_AGE", 60 * 60 * 24 * 14)
 SESSION_CACHE_ALIAS = os.getenv("SESSION_CACHE_ALIAS", "session")
 
 if not DEBUG:
-    CSRF_COOKIE_SAMESITE = "None"
-    SESSION_COOKIE_SAMESITE = "None"
+    CSRF_COOKIE_SAMESITE = "Strict"
+    SESSION_COOKIE_SAMESITE = "Strict"
 
 # TODO: Add some CSP
 X_FRAME_OPTIONS = f"ALLOW-FROM {DOMAIN}"
@@ -109,7 +103,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "comunicat.middleware.SessionMiddlewareDynamicDomain",
+    # "comunicat.middleware.SessionMiddlewareDynamicDomain",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
