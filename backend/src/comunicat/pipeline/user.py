@@ -8,8 +8,6 @@ from user.models import Family, FamilyMember, User
 from social_core.pipeline.partial import partial
 from social_core.exceptions import AuthException
 
-import membership.api
-
 
 def module_data(details, user, request, **kwargs):
     # TODO: Fix this, for now set it from TOWERS
