@@ -23,40 +23,17 @@ class SessionMiddlewareDynamicDomain(MiddlewareMixin):
             request.module = Module.ORG
 
     def process_response(self, request, response):
-        if settings.SESSION_COOKIE_NAME in response.cookies:
-            try:
-                domain_curr = response.cookies[settings.SESSION_COOKIE_NAME]["domain"]
-
-                request_domain = "." + ".".join(
-                    request.get_host().split(":")[0].split(".")[-2:]
-                )
-
-                if request_domain in settings.SESSION_COOKIE_DOMAIN_DYNAMIC:
-                    if domain_curr != request_domain:
-                        response.cookies[settings.SESSION_COOKIE_NAME][
-                            "domain"
-                        ] = request_domain
-            except Exception as exc:
-                logging.error(
-                    f"crash updating domain dynamically. Skipped. Error: {exc}"
-                )
-        if settings.CSRF_COOKIE_NAME in response.cookies:
-            try:
-                domain_curr = response.cookies[settings.CSRF_COOKIE_NAME]["domain"]
-
-                request_domain = "." + ".".join(
-                    request.get_host().split(":")[0].split(".")[-2:]
-                )
-
-                if request_domain in settings.CSRF_COOKIE_DOMAIN_DYNAMIC:
-                    if domain_curr != request_domain:
-                        response.cookies[settings.CSRF_COOKIE_NAME][
-                            "domain"
-                        ] = request_domain
-            except Exception as exc:
-                logging.error(
-                    f"crash updating domain dynamically. Skipped. Error: {exc}"
-                )
+        for cookie in ("SESSION", "CSRF"):
+            cookie_name = getattr(settings, f"{cookie}_COOKIE_NAME")
+            if cookie_name is not None and cookie_name in response.cookies:
+                try:
+                    response.cookies[cookie_name][
+                        "domain"
+                    ] = f".{getattr(settings, f"MODULE_{Module(request.module).name}_DOMAIN") if hasattr(request, "module") else getattr(settings, f"{cookie}_COOKIE_DOMAIN") or settings.DOMAIN}"
+                except Exception as exc:
+                    logging.error(
+                        f"Crash updating domain for cookie {cookie_name} dynamically. Skipped. Error: {exc}"
+                    )
 
         return response
 
