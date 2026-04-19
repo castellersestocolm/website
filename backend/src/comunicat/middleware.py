@@ -9,9 +9,6 @@ from user.models import User
 
 
 class SessionMiddlewareDynamicDomain(MiddlewareMixin):
-    def __init__(self, get_response):
-        super().__init__(get_response)
-
     def process_request(self, request):
         header_origin = request.headers.get("Origin")
 
@@ -64,10 +61,7 @@ class SessionMiddlewareDynamicDomain(MiddlewareMixin):
         return response
 
 
-class UserMiddlewarePermissionLevel:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
+class UserMiddlewarePermissionLevel(MiddlewareMixin):
     def __call__(self, request):
         if getattr(request, "user") and request.user.is_authenticated:
             request.user = (
@@ -78,4 +72,4 @@ class UserMiddlewarePermissionLevel:
                 .first()
             )
 
-        return self.get_response(request)
+        return super().__call__(request=request)
