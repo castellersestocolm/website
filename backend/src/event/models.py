@@ -1,6 +1,7 @@
 import os
 import re
 import unicodedata
+from functools import cached_property
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
@@ -148,10 +149,14 @@ class Event(StandardModel, Timestamps):
         self.__title = self.title
         self.__time_from = self.time_from
 
-    def __str__(self) -> str:
+    @cached_property
+    def title_locale(self) -> str:
         return (
             self.title.get(translation.get_language()) or list(self.title.values())[0]
         )
+
+    def __str__(self) -> str:
+        return f"{self.time_from.strftime('%Y-%m-%d')} - {self.title_locale}"
 
     def clean(self):
         validation_errors = {}

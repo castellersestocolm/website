@@ -153,8 +153,6 @@ class Entity(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         end_str = f" <{self.email}>" if self.email else ""
-        if self.user:
-            return str(self.user)
         if self.firstname:
             if self.lastname:
                 return f"{self.firstname} {self.lastname}{end_str}"
@@ -480,6 +478,32 @@ class AccountTag(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         return f"{str(self.account)} - {self.name}"
+
+
+# TODO: Perhaps add DB overlap constraint
+class AccountEvent(StandardModel, Timestamps):
+    account = models.ForeignKey(
+        "Account", related_name="events", on_delete=models.CASCADE
+    )
+    event = models.ForeignKey(
+        "event.Event", related_name="accounts", on_delete=models.CASCADE
+    )
+
+    date_from = models.DateField(blank=True, null=True)
+    date_to = models.DateField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        dates_str = ""
+        if self.date_from or self.date_to:
+            if self.date_from:
+                dates_str = f"{dates_str} - {self.date_from.strftime('%Y-%m-%d')}"
+            if self.date_to:
+                if self.date_from:
+                    if self.date_to != self.date_from:
+                        dates_str = f"{dates_str} / {self.date_to.strftime('%Y-%m-%d')}"
+                else:
+                    dates_str = f"{dates_str} - {self.date_to.strftime('%Y-%m-%d')}"
+        return f"{self.account} - {self.event.title_locale}{dates_str}"
 
 
 class Source(StandardModel, Timestamps):

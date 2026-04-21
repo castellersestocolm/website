@@ -61,6 +61,7 @@ class UserQuerySet(QuerySet):
         with_expired: bool = False,
         date: datetime.date | None = None,
         modules: list[Module] | None = None,
+        only_check: bool = False,
     ):
         Membership = apps.get_model("membership", "Membership")
         MembershipModule = apps.get_model("membership", "MembershipModule")
@@ -83,19 +84,25 @@ class UserQuerySet(QuerySet):
 
         if with_expired:
             annotate_dict = {
-                "membership_current_id": Subquery(
-                    MembershipModule.objects.filter(
-                        module_filter,
-                        Q(membership__date_end__isnull=True)
-                        | Q(membership__date_end__gte=date),
-                        status__in=status,
-                        membership__status__in=status,
-                        membership__date_from__lte=date,
-                        membership__date_to__gte=date,
-                        membership__membership_users__user_id=OuterRef("id"),
-                    )
-                    .order_by("-membership__date_to")
-                    .values_list("membership_id", flat=True)[:1]
+                **(
+                    {
+                        "membership_current_id": Subquery(
+                            MembershipModule.objects.filter(
+                                module_filter,
+                                Q(membership__date_end__isnull=True)
+                                | Q(membership__date_end__gte=date),
+                                status__in=status,
+                                membership__status__in=status,
+                                membership__date_from__lte=date,
+                                membership__date_to__gte=date,
+                                membership__membership_users__user_id=OuterRef("id"),
+                            )
+                            .order_by("-membership__date_to")
+                            .values_list("membership_id", flat=True)[:1]
+                        )
+                    }
+                    if not only_check
+                    else {}
                 ),
                 "membership_id": Case(
                     When(
@@ -138,40 +145,46 @@ class UserQuerySet(QuerySet):
 
         return self.annotate(
             **annotate_dict,
-            membership_status=Subquery(
-                Membership.objects.filter(
-                    id=OuterRef("membership_id"),
-                ).values_list(
-                    "status", flat=True
-                )[:1]
-            ),
-            membership_date_to=Subquery(
-                Membership.objects.filter(
-                    id=OuterRef("membership_id"),
-                ).values_list(
-                    "date_to", flat=True
-                )[:1]
+            **(
+                {
+                    "membership_status": Subquery(
+                        Membership.objects.filter(
+                            id=OuterRef("membership_id"),
+                        ).values_list("status", flat=True)[:1]
+                    ),
+                    "membership_date_to": Subquery(
+                        Membership.objects.filter(
+                            id=OuterRef("membership_id"),
+                        ).values_list("date_to", flat=True)[:1]
+                    ),
+                }
+                if not only_check
+                else {}
             ),
             has_active_membership=ExpressionWrapper(
                 Q(membership_id__isnull=False), output_field=BooleanField()
             ),
-            **{
-                f"membership_{module}": Exists(
-                    MembershipModule.objects.filter(
-                        Q(membership__date_end__isnull=True)
-                        | Q(membership__date_end__gte=date),
-                        module=module,
-                        status__in=status,
-                        membership__status__in=status,
-                        membership__date_from__lte=date,
-                        membership__date_to__gte=date,
-                        membership__membership_users__user_id=OuterRef("id"),
+            **(
+                {
+                    f"membership_{module}": Exists(
+                        MembershipModule.objects.filter(
+                            Q(membership__date_end__isnull=True)
+                            | Q(membership__date_end__gte=date),
+                            module=module,
+                            status__in=status,
+                            membership__status__in=status,
+                            membership__date_from__lte=date,
+                            membership__date_to__gte=date,
+                            membership__membership_users__user_id=OuterRef("id"),
+                        )
+                        .order_by("-membership__date_to")
+                        .values_list("membership_id", flat=True)[:1]
                     )
-                    .order_by("-membership__date_to")
-                    .values_list("membership_id", flat=True)[:1]
-                )
-                for module in Module
-            },
+                    for module in Module
+                }
+                if not only_check
+                else {}
+            ),
         )
 
     def with_has_active_role(
@@ -238,23 +251,21 @@ class UserQuerySet(QuerySet):
         team_types: list[TeamType] = settings.MODULE_ALL_ADMIN_TEAM_TYPES,
         modules: list[Module] | None = None,
     ):
-        return (
-            self.with_has_active_membership(modules=modules)
-            .with_has_active_role(date=date, team_types=team_types, modules=modules)
-            .annotate(
-                permission_level=Case(
-                    When(
-                        Q(is_superuser=True),
-                        then=Value(PermissionLevel.SUPERADMIN),
-                    ),
-                    When(
-                        Q(has_active_role=True),
-                        then=Value(PermissionLevel.ADMIN),
-                    ),
-                    default=Value(PermissionLevel.USER),
-                    output_field=IntegerField(),
+        return self.with_has_active_role(
+            date=date, team_types=team_types, modules=modules
+        ).annotate(
+            permission_level=Case(
+                When(
+                    Q(is_superuser=True),
+                    then=Value(PermissionLevel.SUPERADMIN),
                 ),
-            )
+                When(
+                    Q(has_active_role=True),
+                    then=Value(PermissionLevel.ADMIN),
+                ),
+                default=Value(PermissionLevel.USER),
+                output_field=IntegerField(),
+            ),
         )
 
     def with_is_adult(self):
@@ -302,12 +313,14 @@ class UserManager(BaseUserManager):
         with_expired: bool = False,
         date: datetime.date | None = None,
         modules: list[Module] | None = None,
+        only_check: bool = False,
     ):
         return self.get_queryset().with_has_active_membership(
             with_pending=with_pending,
             with_expired=with_expired,
             date=date,
             modules=modules,
+            only_check=only_check,
         )
 
     def with_has_active_role(

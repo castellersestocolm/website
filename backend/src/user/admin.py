@@ -96,7 +96,7 @@ def send_imported_email(modeladmin, request, queryset):
 
 @admin.action(description="Send membership paid email")
 def send_membership_paid_email(modeladmin, request, queryset):
-    for user_obj in queryset.with_has_active_membership().filter(
+    for user_obj in queryset.with_has_active_membership(only_check=True).filter(
         has_active_membership=True
     ):
         notify.tasks.send_user_email.delay(
@@ -108,7 +108,7 @@ def send_membership_paid_email(modeladmin, request, queryset):
 
 @admin.action(description="Send membership renew email")
 def send_membership_renew_email(modeladmin, request, queryset):
-    for user_obj in queryset.with_has_active_membership().filter(
+    for user_obj in queryset.with_has_active_membership(only_check=True).filter(
         has_active_membership=True
     ):
         notify.tasks.send_user_email.delay(
@@ -120,7 +120,7 @@ def send_membership_renew_email(modeladmin, request, queryset):
 
 @admin.action(description="Send membership expired email")
 def send_membership_expired_email(modeladmin, request, queryset):
-    for user_obj in queryset.with_has_active_membership().filter(
+    for user_obj in queryset.with_has_active_membership(only_check=True).filter(
         has_active_membership=False
     ):
         notify.tasks.send_user_email.delay(

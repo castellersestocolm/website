@@ -99,6 +99,9 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
 
     inline_actions = []
 
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("entity", "event")
+
     def data_nice(self, obj):
         if not obj.data:
             return "-"
@@ -128,6 +131,9 @@ class EventModuleInline(admin.TabularInline):
     ordering = ("module",)
     extra = 0
 
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("event")
+
 
 class EventPriceInline(admin.TabularInline):
     model = EventPrice
@@ -144,6 +150,9 @@ class EventPriceInline(admin.TabularInline):
         JSONField: {"widget": JSONEditor},
     }
 
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("event")
+
 
 class EventSignupInline(admin.TabularInline):
     model = EventSignup
@@ -153,6 +162,9 @@ class EventSignupInline(admin.TabularInline):
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},
     }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("event")
 
 
 class EventQuestionInline(admin.StackedInline):
@@ -164,12 +176,18 @@ class EventQuestionInline(admin.StackedInline):
         JSONField: {"widget": JSONEditor},
     }
 
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("event")
+
 
 class EventRequirementInline(admin.TabularInline):
     model = EventRequirement
     ordering = ("name",)
     sortable_field_name = "name"
     extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("event")
 
 
 class AgendaItemInline(admin.TabularInline):
@@ -180,6 +198,9 @@ class AgendaItemInline(admin.TabularInline):
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},
     }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("event")
 
 
 class EventForm(forms.ModelForm):

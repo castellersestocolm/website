@@ -75,7 +75,7 @@ def import_events() -> None:
                     else payment.api.entity.get_entity_by_key(email=user_obj.email)
                 )
                 for user_obj in User.objects.with_has_active_membership(
-                    modules=[google_integration_obj.module]
+                    modules=[google_integration_obj.module], only_check=True
                 )
                 .filter(has_active_membership=True)
                 .select_related("entity")
@@ -359,7 +359,7 @@ def create_or_update_event(
     user_objs = [
         user_obj
         for user_obj in User.objects.with_has_active_membership(
-            modules=event_modules
+            modules=event_modules, only_check=True
         ).filter(has_active_membership=True)
         if user_obj.can_manage
     ]

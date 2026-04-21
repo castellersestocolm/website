@@ -194,6 +194,7 @@ def get_list(
             User.objects.with_has_active_membership(
                 with_pending=True,
                 modules=[module],
+                only_check=True,
             )
             .filter(
                 has_active_membership=True,

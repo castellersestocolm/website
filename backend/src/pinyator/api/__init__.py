@@ -41,7 +41,7 @@ def select_table(table_name: str) -> tuple[tuple]:
 def update_or_create_user(user_id: UUID) -> None:
     user_obj = (
         User.objects.with_has_active_membership(
-            with_pending=True, modules=[Module.TOWERS]
+            with_pending=True, modules=[Module.TOWERS], only_check=True
         )
         .filter(id=user_id)
         .select_related("towers")

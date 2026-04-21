@@ -50,6 +50,7 @@ from payment.models import (
     PaymentOrderProviderLog,
     EntityAlias,
     EntityPaymentMethod,
+    AccountEvent,
 )
 
 from jsoneditor.forms import JSONEditor
@@ -179,6 +180,13 @@ class PaymentLineForPaymentInline(admin.TabularInline):
     form = PaymentLineForPaymentForm
     formset = PaymentLineForPaymentFormset
 
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request=request)
+            .select_related("payment", "payment__entity")
+        )
+
 
 class PaymentLogInline(admin.TabularInline):
     model = PaymentLog
@@ -287,15 +295,21 @@ class PaymentAdmin(admin.ModelAdmin):
     actions = (send_paid_email,)
 
     def get_queryset(self, request):
-        return (
+        qs = (
             super()
             .get_queryset(request)
-            .with_balance()
-            .with_amount()
-            .select_related("transaction")
+            .select_related("transaction", "entity")
             .prefetch_related("lines")
-            .order_by("-date_accounting", "-date_interest", "-created_at")
         )
+
+        if request.resolver_match.func.__name__ == "changelist_view":
+            qs = (
+                qs.with_balance()
+                .with_amount()
+                .order_by("-date_accounting", "-date_interest", "-created_at")
+            )
+
+        return qs
 
     def get_list_display(self, request):
         list_display = [
@@ -393,6 +407,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
     # TODO: Unused, if used limit to "allow_transactions"
     # list_editable = ("account",)
     list_filter = ("vat",)
+    raw_id_fields = ("receipt", "debit_line")
     list_per_page = 25
     form = PaymentLineForm
 
@@ -417,14 +432,19 @@ class PaymentLineAdmin(admin.ModelAdmin):
         return list_display
 
     def get_queryset(self, request):
-        return (
+        qs = (
             super()
             .get_queryset(request)
-            .with_balance()
             .select_related("payment", "payment__entity", "payment__transaction")
             .prefetch_related("payment__lines")
-            .order_by("-date_accounting", "-date_interest", "-created_at")
         )
+
+        if request.resolver_match.func.__name__ == "changelist_view":
+            qs = qs.with_balance().order_by(
+                "-date_accounting", "-date_interest", "-created_at"
+            )
+
+        return qs
 
     @admin.display(ordering="payment__text")
     def text_short(self, obj):
@@ -495,11 +515,25 @@ class AccountTagInline(admin.TabularInline):
     extra = 0
 
 
+class AccountEventInline(admin.TabularInline):
+    model = AccountEvent
+    ordering = ("event__time_from",)
+    raw_id_fields = ("event",)
+    extra = 0
+
+
 class PaymentLineForAccountInline(admin.TabularInline):
     model = PaymentLine
     ordering = ("-created_at",)
     readonly_fields = ("payment", "debit_line")
     extra = 0
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request=request)
+            .select_related("payment", "payment__entity")
+        )
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -536,19 +570,23 @@ class AccountAdmin(admin.ModelAdmin):
     inlines = (
         AccountInline,
         AccountTagInline,
+        AccountEventInline,
         PaymentLineForAccountInline,
     )
     form = AccountForm
 
     def get_queryset(self, request):
-        year = timezone.localdate().year
-        return (
-            super()
-            .get_queryset(request)
-            .with_amount(year=year, with_parent=True)
-            .with_amount(year=year - 1, with_parent=True)
-            .with_amount(year=year - 2, with_parent=True)
-        )
+        qs = super().get_queryset(request)
+
+        if request.resolver_match.func.__name__ == "changelist_view":
+            year = timezone.localdate().year
+            qs = (
+                qs.with_amount(year=year, with_parent=True)
+                .with_amount(year=year - 1, with_parent=True)
+                .with_amount(year=year - 2, with_parent=True)
+            )
+
+        return qs
 
     def changelist_view(self, request, extra_context=None):
         year = timezone.localdate().year
