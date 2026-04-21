@@ -681,7 +681,7 @@ if not DEBUG and SENTRY_DSN:
 
 # Debug toolbar
 
-DEBUG_TOOLBAR = os.getenv("DEBUG_TOOLBAR", "true").lower() == "true"
+DEBUG_TOOLBAR = os.getenv("DEBUG_TOOLBAR", "false").lower() == "true"
 if DEBUG and DEBUG_TOOLBAR:
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
@@ -695,7 +695,7 @@ if DEBUG and DEBUG_TOOLBAR:
 
 # Silk
 
-DEBUG_SILK = os.getenv("DEBUG_SILK", "true").lower() == "true"
+DEBUG_SILK = os.getenv("DEBUG_SILK", "false").lower() == "true"
 if DEBUG and DEBUG_SILK:
     INSTALLED_APPS += ["silk"]
     MIDDLEWARE = ["silk.middleware.SilkyMiddleware"] + MIDDLEWARE
