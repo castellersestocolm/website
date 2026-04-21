@@ -9,6 +9,8 @@ async function main() {
 
     let data = [];
 
+    await sleep(1000);
+
     var h3Titles = document.getElementsByTagName("h3");
     var tableDiv;
 
@@ -88,7 +90,7 @@ async function main() {
     const objUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", objUrl);
-    link.setAttribute("download", 'nordea.csv');
+    link.setAttribute("download", 'sbab.csv');
     document.querySelector('body').append(link);
     link.click();
 }

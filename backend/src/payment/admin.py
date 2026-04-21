@@ -771,7 +771,7 @@ class TransactionReadOnlyInline(TransactionInline):
 class TransactionImportAdmin(admin.ModelAdmin):
     search_fields = ("id",)
     list_display = ("id", "source", "date_from", "date_to", "status", "created_at")
-    list_filter = ("date_from", "date_to", "status")
+    list_filter = ("date_from", "date_to", "status", "source")
     readonly_fields = ("status", "created_at")
     ordering = ("-created_at",)
     inlines = (TransactionReadOnlyInline,)

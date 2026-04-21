@@ -7,7 +7,7 @@ from activity.models import ProgramCourseRegistration
 from event.models import Registration
 from notify.models import Email, ContactMessage
 from order.models import Order
-from payment.models import Entity, Payment, Expense, Receipt
+from payment.models import Entity, Payment, Expense, Receipt, EntityAlias
 from product.models import StockOrder
 from user.models import User
 
@@ -44,6 +44,11 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
                 return None
         else:
             entity_obj.user = duplicate_entity_obj.user
+
+    # Update all aliases to the remaining entity
+    EntityAlias.objects.filter(entity_id__in=entity_ids).exclude(
+        entity=entity_obj
+    ).update(entity=entity_obj)
 
     # Update all payments to the remaining entity
     Payment.objects.filter(entity_id__in=entity_ids).exclude(entity=entity_obj).update(
