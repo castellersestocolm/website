@@ -538,6 +538,12 @@ class PaymentLineForAccountInline(admin.TabularInline):
     def has_add_permission(self, request, obj=None):
         return False
 
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class AccountForm(forms.ModelForm):
     class Meta:
