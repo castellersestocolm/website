@@ -6,6 +6,7 @@ import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
+import { useAppContext } from "../AppContext/AppContext";
 import {
   Card,
   Divider,
@@ -25,6 +26,7 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import { EventQuestionType, getEnumLabel } from "../../enums";
+import { eventPriceToTitle } from "../../utils/event";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -52,6 +54,8 @@ interface CreateFormElement extends HTMLFormElement {
 
 export default function FormEventRegister({ event }: any) {
   const [t, i18n] = useTranslation("common");
+
+  const { user } = useAppContext();
 
   const [validationErrors, setValidationErrors] = useState(undefined);
   const [submitted, setSubmitted] = useState(false);
@@ -93,6 +97,13 @@ export default function FormEventRegister({ event }: any) {
       new Set(event.prices.map((eventPrice: any) => eventPrice.module)),
     );
 
+  const eventPricesAll =
+    event && event.prices && event.prices.length > 0 && event.prices;
+  const eventPricesAvailable =
+    eventPricesAll &&
+    eventPricesAll.filter((eventPrice: any) => eventPrice.module == null);
+  const isFormAvailable = eventPricesAvailable;
+
   return (
     <>
       {submitted ? (
@@ -102,169 +113,236 @@ export default function FormEventRegister({ event }: any) {
             {t("pages.home-join.success")}
           </Typography>
         </Box>
-      ) : (
+      ) : isFormAvailable ? (
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="firstname" required>
-                {t("pages.user-join.form.first-name")}
-              </FormLabel>
-              <OutlinedInput
-                id="firstname"
-                name="firstname"
-                type="text"
-                placeholder="Namn"
-                autoComplete="first name"
-                required
-                size="small"
-                error={validationErrors && validationErrors.firstname}
-              />
-              {validationErrors && validationErrors.firstname && (
-                <FormHelperText error>
-                  {validationErrors.firstname[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="lastname" required>
-                {t("pages.user-join.form.last-name")}
-              </FormLabel>
-              <OutlinedInput
-                id="lastname"
-                name="lastname"
-                type="text"
-                placeholder="Namnsson"
-                autoComplete="last name"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.lastname &&
-                  validationErrors.lastname[0].detail
-                }
-              />
-              {validationErrors && validationErrors.lastname && (
-                <FormHelperText error>
-                  {validationErrors.lastname[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="email" required>
-                {t("pages.user-join.form.email")}
-              </FormLabel>
-              <OutlinedInput
-                id="email"
-                name="email"
-                type="email"
-                placeholder="namn@namnsson.se"
-                autoComplete="email"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.email &&
-                  validationErrors.email[0].detail
-                }
-              />
-              {validationErrors && validationErrors.email && (
-                <FormHelperText error>
-                  {validationErrors.email[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="phone" required>
-                {t("pages.user-join.form.phone")}
-              </FormLabel>
-              <OutlinedInput
-                id="phone"
-                name="phone"
-                type="phone"
-                placeholder="+4687461000"
-                autoComplete="phone"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.phone &&
-                  validationErrors.phone[0].detail
-                }
-              />
-              {validationErrors && validationErrors.phone && (
-                <FormHelperText error>
-                  {validationErrors.phone[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            {event.questions &&
-              event.questions.length > 0 &&
-              event.questions.map((eventQuestion: any) => {
-                return (
-                  <FormGrid size={{ xs: 12, md: 6 }}>
-                    <FormLabel htmlFor="phone" required>
-                      {eventQuestion.title}
+          <Grid container spacing={3} justifyContent="center">
+            <Grid container spacing={3} size={{ xs: 12, md: 4 }}>
+              <Card variant="outlined" className={styles.registrationCard}>
+                <Box className={styles.registrationTopBoxTitle}>
+                  <Typography variant="h6" fontWeight="600" component="div">
+                    {t("pages.calendar-event.register.form.title")}
+                  </Typography>
+                  {/*<IconKeyboardArrowRight className={styles.adminTitleIcon} />*/}
+                </Box>
+                <Grid container spacing={2} p={3}>
+                  <FormGrid size={12}>
+                    <FormLabel htmlFor="firstname" required>
+                      {t("pages.user-join.form.first-name")}
                     </FormLabel>
-                    {eventQuestion.type === EventQuestionType.SHORT && (
-                      <OutlinedInput
-                        id={"question-" + eventQuestion.order}
-                        name={"question-" + eventQuestion.order}
-                        type="text"
-                        size="small"
-                        error={
-                          validationErrors &&
-                          validationErrors["question-" + eventQuestion.order] &&
-                          validationErrors["question-" + eventQuestion.order][0]
-                            .detail
-                        }
-                      />
+                    <OutlinedInput
+                      id="firstname"
+                      name="firstname"
+                      type="text"
+                      placeholder="Namn"
+                      autoComplete="first name"
+                      required
+                      size="small"
+                      error={validationErrors && validationErrors.firstname}
+                    />
+                    {validationErrors && validationErrors.firstname && (
+                      <FormHelperText error>
+                        {validationErrors.firstname[0].detail}
+                      </FormHelperText>
                     )}
-                    {eventQuestion.type === EventQuestionType.LONG && (
-                      <OutlinedInput
-                        id={"question-" + eventQuestion.order}
-                        name={"question-" + eventQuestion.order}
-                        type="text"
-                        size="small"
-                        error={
-                          validationErrors &&
-                          validationErrors["question-" + eventQuestion.order] &&
-                          validationErrors["question-" + eventQuestion.order][0]
-                            .detail
-                        }
-                      />
+                  </FormGrid>
+                  <FormGrid size={12}>
+                    <FormLabel htmlFor="lastname" required>
+                      {t("pages.user-join.form.last-name")}
+                    </FormLabel>
+                    <OutlinedInput
+                      id="lastname"
+                      name="lastname"
+                      type="text"
+                      placeholder="Namnsson"
+                      autoComplete="last name"
+                      required
+                      size="small"
+                      error={
+                        validationErrors &&
+                        validationErrors.lastname &&
+                        validationErrors.lastname[0].detail
+                      }
+                    />
+                    {validationErrors && validationErrors.lastname && (
+                      <FormHelperText error>
+                        {validationErrors.lastname[0].detail}
+                      </FormHelperText>
                     )}
-                    {eventQuestion.type === EventQuestionType.BOOLEAN && (
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            name={"question-" + eventQuestion.order}
-                            value="yes"
-                          />
-                        }
-                        label={t("pages.calendar-event.register.form.yes")}
-                      />
+                  </FormGrid>
+                  <FormGrid size={12}>
+                    <FormLabel htmlFor="email" required>
+                      {t("pages.user-join.form.email")}
+                    </FormLabel>
+                    <OutlinedInput
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="namn@namnsson.se"
+                      autoComplete="email"
+                      required
+                      size="small"
+                      error={
+                        validationErrors &&
+                        validationErrors.email &&
+                        validationErrors.email[0].detail
+                      }
+                    />
+                    {validationErrors && validationErrors.email && (
+                      <FormHelperText error>
+                        {validationErrors.email[0].detail}
+                      </FormHelperText>
                     )}
-                    {eventQuestion.type === EventQuestionType.CHOICE && (
-                      <RadioGroup name={"question-" + eventQuestion.order}>
-                        {eventQuestion.data.choices.ca.map(
-                          (dataChoice: string, ix: number) => (
-                            <FormControlLabel
-                              value={ix}
-                              control={<Radio />}
-                              label={dataChoice}
-                            />
-                          ),
-                        )}
-                      </RadioGroup>
-                    )}
+                  </FormGrid>
+                  <FormGrid size={12}>
+                    <FormLabel htmlFor="phone" required>
+                      {t("pages.user-join.form.phone")}
+                    </FormLabel>
+                    <OutlinedInput
+                      id="phone"
+                      name="phone"
+                      type="phone"
+                      placeholder="+4687461000"
+                      autoComplete="phone"
+                      required
+                      size="small"
+                      error={
+                        validationErrors &&
+                        validationErrors.phone &&
+                        validationErrors.phone[0].detail
+                      }
+                    />
                     {validationErrors && validationErrors.phone && (
                       <FormHelperText error>
                         {validationErrors.phone[0].detail}
                       </FormHelperText>
                     )}
                   </FormGrid>
-                );
-              })}
+                  <FormGrid size={12}>
+                    <FormLabel htmlFor="phone" required>
+                      {t("pages.calendar-event.register.form.price")}
+                    </FormLabel>
+                    {eventPricesAll.length > eventPricesAvailable.length &&
+                      eventPricesAvailable.filter(
+                        (eventPrice: any) => eventPrice.module != null,
+                      ).length === 0 &&
+                      !user && (
+                        <Typography variant="caption">
+                          {t("pages.calendar-event.register.form.price-login")}
+                        </Typography>
+                      )}
+                    <RadioGroup name="price">
+                      {eventPricesAvailable.map((eventPrice: any) => (
+                        <FormControlLabel
+                          key={eventPrice.id}
+                          value={eventPrice.id}
+                          control={<Radio />}
+                          label={
+                            eventPriceToTitle(t, eventPrice) +
+                            " — " +
+                            eventPrice.amount.amount +
+                            " " +
+                            eventPrice.amount.currency
+                          }
+                        />
+                      ))}
+                    </RadioGroup>
+                    {validationErrors && validationErrors.phone && (
+                      <FormHelperText error>
+                        {validationErrors.phone[0].detail}
+                      </FormHelperText>
+                    )}
+                  </FormGrid>
+                  {event.questions &&
+                    event.questions.length > 0 &&
+                    event.questions.map((eventQuestion: any) => {
+                      return (
+                        <FormGrid size={12}>
+                          <FormLabel
+                            htmlFor="phone"
+                            required={eventQuestion.is_required}
+                          >
+                            {eventQuestion.title}
+                          </FormLabel>
+                          {eventQuestion.type === EventQuestionType.SHORT && (
+                            <OutlinedInput
+                              id={"question-" + eventQuestion.order}
+                              name={"question-" + eventQuestion.order}
+                              type="text"
+                              size="small"
+                              error={
+                                validationErrors &&
+                                validationErrors[
+                                  "question-" + eventQuestion.order
+                                ] &&
+                                validationErrors[
+                                  "question-" + eventQuestion.order
+                                ][0].detail
+                              }
+                            />
+                          )}
+                          {eventQuestion.type === EventQuestionType.LONG && (
+                            <OutlinedInput
+                              id={"question-" + eventQuestion.order}
+                              name={"question-" + eventQuestion.order}
+                              type="text"
+                              size="small"
+                              error={
+                                validationErrors &&
+                                validationErrors[
+                                  "question-" + eventQuestion.order
+                                ] &&
+                                validationErrors[
+                                  "question-" + eventQuestion.order
+                                ][0].detail
+                              }
+                            />
+                          )}
+                          {eventQuestion.type === EventQuestionType.BOOLEAN && (
+                            <RadioGroup
+                              name={"question-" + eventQuestion.order}
+                            >
+                              <FormControlLabel
+                                value={"yes"}
+                                control={<Radio />}
+                                label={t(
+                                  "pages.calendar-event.register.form.yes",
+                                )}
+                              />
+                              <FormControlLabel
+                                value={"no"}
+                                control={<Radio />}
+                                label={t(
+                                  "pages.calendar-event.register.form.no",
+                                )}
+                              />
+                            </RadioGroup>
+                          )}
+                          {eventQuestion.type === EventQuestionType.CHOICE && (
+                            <RadioGroup
+                              name={"question-" + eventQuestion.order}
+                            >
+                              {eventQuestion.data.choices.ca.map(
+                                (dataChoice: string, ix: number) => (
+                                  <FormControlLabel
+                                    value={ix}
+                                    control={<Radio />}
+                                    label={dataChoice}
+                                  />
+                                ),
+                              )}
+                            </RadioGroup>
+                          )}
+                          {validationErrors && validationErrors.phone && (
+                            <FormHelperText error>
+                              {validationErrors.phone[0].detail}
+                            </FormHelperText>
+                          )}
+                        </FormGrid>
+                      );
+                    })}
+                </Grid>
+              </Card>
+            </Grid>
             {event.prices && event.prices.length > 0 && (
               <FormGrid size={12} className={styles.pricesSection}>
                 <Typography variant="h5" fontWeight={600}>
@@ -321,46 +399,7 @@ export default function FormEventRegister({ event }: any) {
                                           }}
                                         >
                                           <TableCell component="th" scope="row">
-                                            {eventPrice.age_from &&
-                                            eventPrice.age_to
-                                              ? t(
-                                                  "pages.calendar-event.register.prices.between",
-                                                ) +
-                                                " " +
-                                                eventPrice.age_from +
-                                                " " +
-                                                t(
-                                                  "pages.calendar-event.register.prices.and",
-                                                ) +
-                                                " " +
-                                                eventPrice.age_to +
-                                                " " +
-                                                t(
-                                                  "pages.calendar-event.register.prices.years",
-                                                )
-                                              : eventPrice.age_from
-                                                ? t(
-                                                    "pages.calendar-event.register.prices.above",
-                                                  ) +
-                                                  " " +
-                                                  eventPrice.age_from +
-                                                  " " +
-                                                  t(
-                                                    "pages.calendar-event.register.prices.years",
-                                                  )
-                                                : eventPrice.age_to
-                                                  ? t(
-                                                      "pages.calendar-event.register.prices.under",
-                                                    ) +
-                                                    " " +
-                                                    eventPrice.age_to +
-                                                    " " +
-                                                    t(
-                                                      "pages.calendar-event.register.prices.years",
-                                                    )
-                                                  : t(
-                                                      "pages.calendar-event.register.prices.general-admission",
-                                                    )}
+                                            {eventPriceToTitle(t, eventPrice)}
                                           </TableCell>
                                           <TableCell align="right">
                                             {eventPrice.amount.amount}{" "}
@@ -419,6 +458,8 @@ export default function FormEventRegister({ event }: any) {
             )}
           </Grid>
         </form>
+      ) : (
+        "TODO"
       )}
     </>
   );

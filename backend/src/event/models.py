@@ -327,6 +327,8 @@ class EventQuestion(StandardModel, Timestamps):
         default=EventQuestionType.SHORT,
     )
 
+    is_required = models.BooleanField(default=True)
+
     order = models.PositiveSmallIntegerField(default=0)
 
     data = models.JSONField(default=dict, blank=True)

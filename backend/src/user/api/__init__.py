@@ -70,6 +70,7 @@ def get(user_id: UUID, module: Module | None = None) -> User:
                 UserEmail.objects.filter().order_by("email"),
             ),
         )
+        .with_has_active_membership(modules=[module])
         .with_permission_level(modules=[module])
         .first()
     )

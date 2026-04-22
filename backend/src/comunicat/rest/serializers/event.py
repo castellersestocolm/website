@@ -342,6 +342,7 @@ class EventQuestionSerializer(s.ModelSerializer):
             "id",
             "title",
             "type",
+            "is_required",
             "order",
             "data",
         )
@@ -349,6 +350,7 @@ class EventQuestionSerializer(s.ModelSerializer):
             "id",
             "title",
             "type",
+            "is_required",
             "order",
             "data",
         )
