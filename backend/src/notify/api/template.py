@@ -200,6 +200,7 @@ def get_user_email_render(
                 program_course_registration_objs = list(
                     ProgramCourseRegistration.objects.filter(
                         entity__user__id__in=user_ids,
+                        course__date_to__gte=timezone.localdate(),
                     )
                     .select_related("course", "course__program")
                     .with_course_program_name()
