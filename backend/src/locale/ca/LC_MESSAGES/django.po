@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-22 23:14+0200\n"
+"POT-Creation-Date: 2026-04-23 00:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -284,9 +284,11 @@ msgstr "està pendent de pagament. Quan s'acabi el procés, seràs membre de"
 
 #: comunicat/templates/email/org/membership/check.html:16
 #: comunicat/templates/email/org/membership/check.html:18
+#: comunicat/templates/email/org/membership/check.html:38
 #: comunicat/templates/email/org/membership/renew.html:7
 #: comunicat/templates/email/towers/membership/check.html:16
 #: comunicat/templates/email/towers/membership/check.html:18
+#: comunicat/templates/email/towers/membership/check.html:38
 #: comunicat/templates/email/towers/membership/renew.html:7
 #: comunicat/templates/pdf/org/registration.html:89
 #: comunicat/templates/pdf/towers/registration.html:89
@@ -306,22 +308,33 @@ msgid "The following members are included in your membership."
 msgstr "Els membres següents formen part de la teva quota."
 
 #: comunicat/templates/email/org/membership/check.html:31
-msgid "The following courses are linked to your membership."
-msgstr "Els següents cursos estan vinculats a la teva quota."
-
-#: comunicat/templates/email/org/membership/check.html:42
 #: comunicat/templates/email/towers/membership/check.html:31
+msgid "The following courses are linked to your membership."
+msgstr "Els cursos següents estan vinculats a la teva quota."
+
+#: comunicat/templates/email/org/membership/check.html:37
+#: comunicat/templates/email/towers/membership/check.html:37
+msgid "Course"
+msgstr "Curs"
+
+#: comunicat/templates/email/org/membership/check.html:39
+#: comunicat/templates/email/towers/membership/check.html:39
+msgid "Duration"
+msgstr "Durada"
+
+#: comunicat/templates/email/org/membership/check.html:47
+#: comunicat/templates/email/towers/membership/check.html:47
 msgid "Your membership expired on"
 msgstr "La teva quota va caducar el"
 
-#: comunicat/templates/email/org/membership/check.html:42
-#: comunicat/templates/email/towers/membership/check.html:31
+#: comunicat/templates/email/org/membership/check.html:47
+#: comunicat/templates/email/towers/membership/check.html:47
 msgid "and therefore you aren't a member anymore."
 msgstr "i per tant ja no ets membre."
 
-#: comunicat/templates/email/org/membership/check.html:43
-#: comunicat/templates/email/org/membership/check.html:47
-#: comunicat/templates/email/towers/membership/check.html:36
+#: comunicat/templates/email/org/membership/check.html:48
+#: comunicat/templates/email/org/membership/check.html:52
+#: comunicat/templates/email/towers/membership/check.html:52
 msgid ""
 "However, not all is lost! You can become a member easily, head to our "
 "website to join."
@@ -329,8 +342,8 @@ msgstr ""
 "Tanmateix, no tot està perdut! Et pots fer membre fàcilment visitant la "
 "nostra pàgina web."
 
-#: comunicat/templates/email/org/membership/check.html:46
-#: comunicat/templates/email/towers/membership/check.html:35
+#: comunicat/templates/email/org/membership/check.html:51
+#: comunicat/templates/email/towers/membership/check.html:51
 msgid ""
 "You don't have an active membership registered with this email and therefore "
 "aren't a member."
@@ -338,16 +351,16 @@ msgstr ""
 "No tens cap quota activa registrada amb aquest correu electrònic i, per "
 "tant, no ets membre."
 
-#: comunicat/templates/email/org/membership/check.html:60
+#: comunicat/templates/email/org/membership/check.html:65
 #: comunicat/templates/email/org/membership/renew.html:16
-#: comunicat/templates/email/towers/membership/check.html:49
+#: comunicat/templates/email/towers/membership/check.html:65
 #: comunicat/templates/email/towers/membership/expired.html:10
 #: comunicat/templates/email/towers/membership/renew.html:15
 msgid "Renew membership"
 msgstr "Renova la quota"
 
-#: comunicat/templates/email/org/membership/check.html:60
-#: comunicat/templates/email/towers/membership/check.html:49
+#: comunicat/templates/email/org/membership/check.html:65
+#: comunicat/templates/email/towers/membership/check.html:65
 msgid "Join us"
 msgstr "Uneix-te"
 
@@ -487,7 +500,7 @@ msgstr ""
 "Les següents inscripcions s'han marcat com a pagades! En trobaràs un resum a "
 "continuació."
 
-#: comunicat/templates/email/towers/membership/check.html:32
+#: comunicat/templates/email/towers/membership/check.html:48
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
 "In your dashboard you can find instructions on how to renew your membership "
@@ -819,11 +832,11 @@ msgstr ""
 msgid "View attendance"
 msgstr "Mostra l'assistència"
 
-#: notify/api/template.py:259
+#: notify/api/template.py:262
 msgid "Sign-up for the upcoming performances"
 msgstr "Confirma l'assistència a les properes actuacions"
 
-#: notify/api/template.py:425
+#: notify/api/template.py:428
 msgid "receipt"
 msgstr "rebut"
 
