@@ -184,17 +184,20 @@ def get_user_email_render(
         ):
             context_full["membership_obj"] = membership_obj
 
-            user_ids = list(
-                {user_id}
-                | {
-                    family_member_obj.user_id
-                    # TODO: Review this as it could be wrong
-                    for family_member_obj in FamilyMember.objects.filter(
-                        family__members__user_id=user_id,
-                        status=FamilyMemberStatus.ACTIVE,
-                    )
-                }
-            )
+            if user_obj:
+                user_ids = list(
+                    {user_obj.id}
+                    | {
+                        family_member_obj.user_id
+                        # TODO: Review this as it could be wrong
+                        for family_member_obj in FamilyMember.objects.filter(
+                            family__members__user_id=user_obj.id,
+                            status=FamilyMemberStatus.ACTIVE,
+                        )
+                    }
+                )
+            else:
+                user_ids = []
 
             if email_type in (EmailType.MEMBERSHIP_PAID, EmailType.MEMBERSHIP_CHECK):
                 program_course_registration_objs = list(
