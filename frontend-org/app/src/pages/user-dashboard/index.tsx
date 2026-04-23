@@ -496,7 +496,15 @@ function UserDashboardPage() {
                     </ListItemIcon>
                     <ListItemText
                       primary={
-                        membership.date_from + " → " + membership.date_to
+                        datetimeToString(
+                          i18n.resolvedLanguage,
+                          membership.date_from,
+                        ) +
+                        " → " +
+                        datetimeToString(
+                          i18n.resolvedLanguage,
+                          membership.date_to,
+                        )
                       }
                     />
                   </ListItem>
