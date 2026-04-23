@@ -78,6 +78,7 @@ class ProgramCourseRegistrationAPI(ComuniCatViewSet):
             activity.api.program_course_registration.get_list(
                 module=self.module,
                 user_id=request.user.id,
+                for_family=True,
             )
         )
 
