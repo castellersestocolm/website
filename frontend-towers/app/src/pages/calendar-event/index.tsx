@@ -169,7 +169,15 @@ function CalendarEventPage() {
                     md: event.poster && event.poster.large ? 8 : 12,
                   }}
                 >
-                  <CardContent className={styles.mapCard}>
+                  <CardContent
+                    className={styles.mapCard}
+                    sx={{
+                      minHeight:
+                        event.poster && event.poster.large
+                          ? "300px"
+                          : "500px !important",
+                    }}
+                  >
                     <Map
                       location={event.location}
                       coordinates={[

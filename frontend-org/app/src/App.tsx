@@ -8,6 +8,7 @@ import common_ca from "./translations/ca/common.json";
 import LngDetector from "i18next-browser-languagedetector";
 import AppContext from "./components/AppContext/AppContext";
 import NavBar from "./components/NavBar/NavBar";
+import Footer from "./components/Footer/Footer";
 import Box from "@mui/material/Box";
 import * as React from "react";
 import { ROUTES } from "./routes";
@@ -92,6 +93,7 @@ const App = () => {
                   />
                 </Routes>
               </Box>
+              <Footer />
             </Box>
           </BrowserRouter>
         </I18nextProvider>
