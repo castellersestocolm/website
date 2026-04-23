@@ -32,7 +32,8 @@ def get_list(
 
     return list(
         # TODO: Allow non-user registrations but add support for entity on serializer instead before
-        ProgramCourseRegistration.objects.all()
+        ProgramCourseRegistration.objects.filter(registration_filter)
+        .filter_with_user()
         .select_related("course", "course__program", "entity", "entity__user")
         .order_by("-course__date_from", "created_at")
     )
