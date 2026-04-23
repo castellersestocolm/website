@@ -126,7 +126,6 @@ def get_list(
             with_pending=with_pending_membership,
             with_expired=with_expired_membership,
             modules=modules,
-            only_check=True,
         ).filter(has_active_membership=with_active_membership)
 
     if team_ids:
