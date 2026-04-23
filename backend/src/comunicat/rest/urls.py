@@ -55,6 +55,11 @@ router.register("data/location", data.LocationAPI, "data_location")
 router.register("media/release", media.ReleaseAPI, "media_release")
 router.register("document", document.DocumentAPI, "document")
 router.register("activity/program", activity.ProgramAPI, "activity_program")
+router.register(
+    "activity/program/course/registration",
+    activity.ProgramCourseRegistrationAPI,
+    "activity_program_course_registration",
+)
 router.register("contact/message", notify.ContactMessageAPI, "contact_message")
 router.register("history/event", history.HistoryEventAPI, "history_event")
 

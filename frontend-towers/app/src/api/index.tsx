@@ -18,6 +18,7 @@ import {
   API_ADMIN_HISTORY_EVENT_PAGE_SIZE,
   API_ADMIN_REGISTRATION_LIST_PAGE_SIZE,
   API_REGISTRATIONS_LIST_PAGE_SIZE,
+  API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, RegistrationStatus } from "../enums";
 
@@ -1009,6 +1010,26 @@ export const apiHistoryEventGroupList = async (page: number = undefined) => {
     return await instance.get("/history/event/", {
       params: {
         page_size: API_HISTORY_EVENT_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiActivityProgramCourseRegistrationList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+) => {
+  try {
+    return await instance.get("/activity/program/course/registration/", {
+      params: {
+        page_size: pageSize
+          ? pageSize
+          : API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
         page: page,
       },
     });

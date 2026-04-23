@@ -24,6 +24,7 @@ import {
   apiPaymentList,
   apiUserLogout,
   apiEventList,
+  apiActivityProgramCourseRegistrationList,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
@@ -65,6 +66,7 @@ import {
   API_PAYMENTS_LIST_PAGE_SIZE,
   PAYMENT_SWISH_NUMBER,
   API_EVENTS_LIST_PAGE_SIZE,
+  API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
 import ImageIconSwish from "../../assets/images/icons/swish.png";
@@ -106,6 +108,10 @@ function UserDashboardPage() {
     [key: string]: boolean;
   }>({});
 
+  const [coursesOpen, setCoursesOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
   const [ordersOpen, setOrdersOpen] = React.useState<{
     [key: string]: boolean;
   }>({});
@@ -125,6 +131,8 @@ function UserDashboardPage() {
   const [expensePage, setExpensePage] = React.useState(1);
   const [expenses, setExpenses] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
+  const [programCourseRegistrations, setProgramCourseRegistrations] =
+    React.useState(undefined);
   const [paymentSvg, setPaymentSvg] = React.useState(undefined);
 
   const handlePaymentClick = (paymentId: string) => {
@@ -142,6 +150,15 @@ function UserDashboardPage() {
         Object.entries(eventsOpen).map(([k, v], i) => [k, false]),
       ),
       [eventId]: !eventsOpen[eventId],
+    });
+  };
+
+  const handleCourseClick = (courseId: string) => {
+    setCoursesOpen({
+      ...Object.fromEntries(
+        Object.entries(coursesOpen).map(([k, v], i) => [k, false]),
+      ),
+      [courseId]: !coursesOpen[courseId],
     });
   };
 
@@ -206,6 +223,20 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setMembership, t]);
+
+  React.useEffect(() => {
+    if (user) {
+      // TODO: Missing pagination means if over 10 registrations some aren't visible
+      apiActivityProgramCourseRegistrationList(
+        undefined,
+        API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
+      ).then((response) => {
+        if (response.status === 200) {
+          setProgramCourseRegistrations(response.data);
+        }
+      });
+    }
+  }, [user, i18n.resolvedLanguage, setProgramCourseRegistrations]);
 
   React.useEffect(() => {
     if (user) {
@@ -382,6 +413,23 @@ function UserDashboardPage() {
       </Grid>
     );
 
+  const programCourses =
+    programCourseRegistrations &&
+    programCourseRegistrations.results.length > 0 &&
+    Object.values(
+      Object.fromEntries(
+        programCourseRegistrations.results
+          .filter(
+            (programCourseRegistration: any) =>
+              new Date(programCourseRegistration.course.date_to) >= new Date(),
+          )
+          .map((programCourseRegistration: any) => [
+            programCourseRegistration.course.id,
+            programCourseRegistration.course,
+          ]),
+      ),
+    );
+
   const contentSidebarMembership = user && (
     <Grid>
       {membership && (
@@ -514,6 +562,104 @@ function UserDashboardPage() {
                   </Box>
                 </>
               )}
+              <Divider />
+            </>
+          )}
+          {programCourses && (
+            <>
+              <List className={styles.userFamilyList}>
+                {programCourses.map(
+                  (programCourse: any, i: number, row: any) => (
+                    <Box key={programCourse.id}>
+                      <ListItemButton
+                        onClick={() => handleCourseClick(programCourse.id)}
+                        dense
+                      >
+                        <ListItemText
+                          primary={
+                            <Typography variant="body1">
+                              {programCourse.program.name}
+                            </Typography>
+                          }
+                          secondary={
+                            dateToString(
+                              i18n.resolvedLanguage,
+                              programCourse.date_from,
+                            ) +
+                            " → " +
+                            dateToString(
+                              i18n.resolvedLanguage,
+                              programCourse.date_to,
+                            )
+                          }
+                        />
+                        {coursesOpen[programCourse.id] ? (
+                          <IconExpandLess />
+                        ) : (
+                          <IconExpandMore />
+                        )}
+                      </ListItemButton>
+                      <Collapse
+                        in={coursesOpen[programCourse.id]}
+                        timeout="auto"
+                        unmountOnExit
+                      >
+                        <List className={styles.userFamilyList}>
+                          {programCourseRegistrations &&
+                            programCourseRegistrations.results
+                              .filter(
+                                (programCourseRegistration: any) =>
+                                  programCourseRegistration.course.id ===
+                                  programCourse.id,
+                              )
+                              .map(
+                                (
+                                  programCourseRegistration: any,
+                                  i: number,
+                                  row: any,
+                                ) => (
+                                  <Box key={programCourseRegistration.id}>
+                                    <ListItemButton disableTouchRipple dense>
+                                      <ListItemText
+                                        primary={
+                                          programCourseRegistration.entity
+                                            .lastname
+                                            ? programCourseRegistration.entity
+                                                .firstname +
+                                              " " +
+                                              programCourseRegistration.entity
+                                                .lastname
+                                            : programCourseRegistration.entity
+                                                .firstname
+                                        }
+                                      />
+                                      {programCourseRegistration.amount && (
+                                        <Typography
+                                          variant="body2"
+                                          component="span"
+                                        >
+                                          {
+                                            programCourseRegistration.amount
+                                              .amount
+                                          }{" "}
+                                          {
+                                            programCourseRegistration.amount
+                                              .currency
+                                          }
+                                        </Typography>
+                                      )}
+                                    </ListItemButton>
+                                  </Box>
+                                ),
+                              )}
+                        </List>
+                      </Collapse>
+
+                      {i + 1 < row.length && <Divider />}
+                    </Box>
+                  ),
+                )}
+              </List>
               <Divider />
             </>
           )}

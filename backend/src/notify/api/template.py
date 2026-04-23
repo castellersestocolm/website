@@ -26,6 +26,7 @@ from django.utils.translation import gettext_lazy as _
 
 import membership.utils
 import payment.api.entity
+import user.api.family
 from order.models import Order, OrderProduct, OrderLog
 from payment.models import Entity, Payment, PaymentLine
 from user.enums import FamilyMemberStatus
@@ -185,17 +186,7 @@ def get_user_email_render(
             context_full["membership_obj"] = membership_obj
 
             if user_obj:
-                user_ids = list(
-                    {user_obj.id}
-                    | {
-                        family_member_obj.user_id
-                        # TODO: Review this as it could be wrong
-                        for family_member_obj in FamilyMember.objects.filter(
-                            family__members__user_id=user_obj.id,
-                            status=FamilyMemberStatus.ACTIVE,
-                        )
-                    }
-                )
+                user_ids = user.api.family.get_user_ids(user_id=user_obj.id)
             else:
                 user_ids = []
 

@@ -1,4 +1,3 @@
-from typing import List
 from uuid import UUID
 
 from django.db.models import Q
@@ -18,7 +17,7 @@ def get_list(
     module: Module,
     event_ids: list[UUID] | None = None,
     for_admin: bool = False,
-) -> List[Registration]:
+) -> list[Registration]:
     registration_filter = Q()
 
     if event_ids:
@@ -73,7 +72,7 @@ def create(
     event_id: UUID,
     module: Module,
     status: RegistrationStatus | None = None,
-) -> List[Registration]:
+) -> list[Registration]:
     event_obj = (
         Event.objects.filter(id=event_id).with_module_information(module=module).first()
     )

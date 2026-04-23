@@ -8,6 +8,24 @@ from user.enums import FamilyMemberStatus, FamilyMemberRole
 from user.models import FamilyMember, Family
 
 
+def get_user_ids(user_id: UUID, only_active: bool = True) -> list[UUID]:
+    return list(
+        {user_id}
+        | {
+            family_member_obj.user_id
+            # TODO: Review this as it could be wrong
+            for family_member_obj in FamilyMember.objects.filter(
+                family__members__user_id=user_id,
+                status__in=(
+                    (FamilyMemberStatus.ACTIVE,)
+                    if only_active
+                    else (FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
+                ),
+            )
+        }
+    )
+
+
 def get_for_user(user_id: UUID, module: Module | None = None) -> Family | None:
     family_obj = (
         Family.objects.filter(members__user_id=user_id)
