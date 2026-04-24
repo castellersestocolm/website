@@ -8,7 +8,9 @@ import {
   API_PAYMENTS_LIST_PAGE_SIZE,
   API_REGISTRATIONS_LIST_PAGE_SIZE,
   API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
+  API_LEGAL_GROUP_LIST_PAGE_SIZE,
 } from "../consts";
+import { ContactMessageType } from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_ORG_API_URL;
 
@@ -296,6 +298,49 @@ export const apiActivityProgramCourseRegistrationList = async (
           : API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
         page: page,
       },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiLegalBylawsList = async () => {
+  try {
+    return await instance.get("/legal/bylaws/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiLegalGroupList = async (page: number = undefined) => {
+  try {
+    return await instance.get("/legal/group/", {
+      params: {
+        page_size: API_LEGAL_GROUP_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiContactMessageCreate = async (
+  entity: { firstname: string; lastname: string; email: string },
+  type: ContactMessageType,
+  message: string,
+) => {
+  try {
+    return await instance.post("/contact/message/", {
+      entity: entity,
+      type: type,
+      message: message,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

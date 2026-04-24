@@ -4,12 +4,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
 
-export default function PageBase({
-  title,
-  subtitle,
-  content,
-  loading = false,
-}: any) {
+export default function PageBase({ title, content, loading = false }: any) {
   return (
     <>
       <Box

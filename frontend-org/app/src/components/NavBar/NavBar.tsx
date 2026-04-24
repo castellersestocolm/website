@@ -41,6 +41,31 @@ export default function NavBar() {
       path: ROUTES["external-website"].path,
       target: "_self",
     },
+    !user && {
+      name: t("components.navbar-menu.membership"),
+      path: ROUTES["user-join"].path,
+      target: "_self",
+    },
+    {
+      name: t("components.navbar-menu.about"),
+      children: [
+        {
+          name: t("components.navbar-menu.about.team"),
+          path: ROUTES["about-team"].path,
+          target: "_self",
+        },
+        {
+          name: t("components.navbar-menu.about.bylaws"),
+          path: ROUTES["about-bylaws"].path,
+          target: "_self",
+        },
+        {
+          name: t("components.navbar-menu.about.contact"),
+          path: ROUTES["about-contact"].path,
+          target: "_self",
+        },
+      ],
+    },
   ];
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

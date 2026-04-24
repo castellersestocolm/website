@@ -1,3 +1,80 @@
+.hero {
+  background-color: var(--mui-palette-primary-light);
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+}
+
+.heroInner {
+  display: flex;
+  flex-basis: 0;
+  flex-grow: 1;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.heroGrid {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  svg {
+    height: 150px;
+    width: fit-content;
+  }
+}
+
+.heroImageBox {
+  position: relative;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-position: center;
+  background-size: cover;
+  transition:
+    visibility 0s,
+    opacity 1s linear;
+}
+
+.heroTextBox {
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroLogo {
+  svg {
+    border: 4px solid var(--mui-palette-secondary-main);
+  }
+}
+
+.heroTitle {
+  color: var(--mui-palette-text-primary);
+  font-size: 48px !important;
+  margin: 24px 0 16px 0 !important;
+}
+
+.heroSubtitle {
+  font-size: 16px !important;
+  color: var(--mui-palette-text-primary);
+}
+
+.heroButton {
+  margin-top: 16px !important;
+  color: var(--mui-palette-text-primary) !important;
+  border: 1px solid var(--mui-palette-text-primary) !important;
+}
+
 .homeGrid {
   width: 100%;
   display: flex;
@@ -15,4 +92,31 @@
 .iconEast {
   margin-left: 4px;
   margin-top: 6px;
+}
+
+.postsGrid {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+  padding: 32px 0;
+}
+
+.postsInnerGrid {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.postsTitle {
+  text-align: center;
+  color: var(--mui-palette-secondary-main);
+}
+
+.postCard {
+  display: flex;
+  border: var(--mui-palette-divider) solid 1px;
+  border-radius: 4px;
+}
+
+.postCardContent {
+  padding: 20px 24px 8px 24px !important;
 }

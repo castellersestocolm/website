@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
-import PageOrg from "../../components/PageOrg/PageOrg";
+import PageBase from "../../components/PageBase/PageBase";
 import FormStatus from "../../components/FormStatus/FormStatus";
 import { Link, Typography } from "@mui/material";
 import { ROUTES } from "../../routes";
@@ -19,7 +19,7 @@ function StatusPage() {
         <Grid size={12} textAlign="center">
           <Typography variant="h6">
             <Link
-              onClick={() => navigate(ROUTES.home.path)}
+              onClick={() => navigate(ROUTES["user-join"].path)}
               color="secondary"
               underline="none"
               target="_blank"
@@ -35,13 +35,7 @@ function StatusPage() {
     </>
   );
 
-  return (
-    <PageOrg
-      title={t("pages.home.title")}
-      subtitle={t("pages.status.subtitle")}
-      content={content}
-    />
-  );
+  return <PageBase title={t("pages.status.subtitle")} content={content} />;
 }
 
 export default StatusPage;

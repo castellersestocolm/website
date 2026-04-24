@@ -1,4 +1,4 @@
-import { Container, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import FormJoin from "../../components/FormJoin/FormJoin";
@@ -18,7 +18,7 @@ function UserJoinPage() {
     if (user) {
       navigate(ROUTES["user-dashboard"].path);
     }
-  }, [user]);
+  }, [user, navigate]);
 
   const content = (
     <>

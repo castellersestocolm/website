@@ -4,13 +4,13 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { apiEventPage } from "../../api";
 import markdown from "@wcj/markdown-to-html";
-import { capitalizeFirstLetter } from "../../utils/string";
 import PageBase from "../../components/PageBase/PageBase";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import FormEventRegister from "../../components/FormEventRegister/FormEventRegister";
 import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import { datetimeToLongString } from "../../utils/datetime";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
@@ -38,15 +38,7 @@ function CalendarEventPage() {
         color="white"
         mb={event.location ? 0 : 3}
       >
-        {capitalizeFirstLetter(
-          new Date(event.time_from).toLocaleDateString(i18n.resolvedLanguage, {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        )}
+        {datetimeToLongString(i18n.resolvedLanguage, event.time_from)}
       </Typography>
       {event.location && (
         <Typography

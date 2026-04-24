@@ -136,3 +136,16 @@ export enum EventQuestionType {
   BOOLEAN = 30,
   CHOICE = 40,
 }
+
+export enum TeamType {
+  BOARD = 10,
+  TECHNICAL = 20,
+  MUSICIANS = 30,
+  COMMISSION = 40,
+}
+
+export enum ContactMessageType {
+  CONTACT = 10,
+  BUSINESS_WORKSHOP = 20,
+  BUSINESS_PERFORMANCE = 21,
+}

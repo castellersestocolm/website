@@ -11,6 +11,9 @@ export const ROUTES = {
   "user-login": {
     path: "/user/login",
   },
+  "user-join": {
+    path: "/user/join",
+  },
   "user-dashboard": {
     path: "/user/dashboard",
   },
@@ -22,6 +25,15 @@ export const ROUTES = {
   },
   "calendar-event": {
     path: "/calendar/event/:year/:month/:day/:code",
+  },
+  "about-bylaws": {
+    path: "/about/bylaws",
+  },
+  "about-team": {
+    path: "/about/team",
+  },
+  "about-contact": {
+    path: "/about/contact",
   },
   "external-login-google": {
     path:

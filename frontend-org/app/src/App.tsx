@@ -18,8 +18,12 @@ import { useState } from "react";
 import UserDashboardPage from "./pages/user-dashboard";
 import { apiUserMe } from "./api";
 import UserLoginPage from "./pages/user-login";
+import UserJoinPage from "./pages/user-join";
 import UserPasswordPage from "./pages/user-password";
 import CalendarEventPage from "./pages/calendar-event";
+import AboutBylawsPage from "./pages/about-bylaws";
+import AboutTeamPage from "./pages/about-team";
+import AboutContactPage from "./pages/about-contact";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -80,6 +84,10 @@ const App = () => {
                     element={<UserLoginPage />}
                   />
                   <Route
+                    path={ROUTES["user-join"].path}
+                    element={<UserJoinPage />}
+                  />
+                  <Route
                     path={ROUTES["user-password"].path}
                     element={<UserPasswordPage />}
                   />
@@ -90,6 +98,18 @@ const App = () => {
                   <Route
                     path={ROUTES["calendar-event"].path}
                     element={<CalendarEventPage />}
+                  />
+                  <Route
+                    path={ROUTES["about-bylaws"].path}
+                    element={<AboutBylawsPage />}
+                  />
+                  <Route
+                    path={ROUTES["about-team"].path}
+                    element={<AboutTeamPage />}
+                  />
+                  <Route
+                    path={ROUTES["about-contact"].path}
+                    element={<AboutContactPage />}
                   />
                 </Routes>
               </Box>
