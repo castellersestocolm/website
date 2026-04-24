@@ -49,6 +49,11 @@ jobs:
         react_app_towers_base_url: ${{ vars.REACT_APP_TOWERS_BASE_URL }}
         react_app_towers_info_email: ${{ vars.REACT_APP_TOWERS_INFO_EMAIL }}
         react_app_pinyator_base_url: ${{ vars.REACT_APP_PINYATOR_BASE_URL }}
+        react_app_org_wp_api_base_url: ${{ vars.REACT_APP_ORG_WP_API_BASE_URL }}
+        react_app_org_wp_api_username: ${{ vars.REACT_APP_ORG_WP_API_USERNAME }}
+        react_app_org_wp_api_password: ${{ vars.REACT_APP_ORG_WP_API_PASSWORD }}
+        react_app_org_wp_categories_ca: ${{ vars.REACT_APP_ORG_WP_CATEGORIES_CA }}
+        react_app_org_wp_categories_sv: ${{ vars.REACT_APP_ORG_WP_CATEGORIES_SV }}
 
   build-frontend-towers:
     runs-on: ubuntu-latest

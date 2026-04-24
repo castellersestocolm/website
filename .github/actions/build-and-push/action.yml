@@ -39,6 +39,21 @@ inputs:
   react_app_pinyator_base_url:
     description: The base URL for the pinyator site
     required: false
+  react_app_org_wp_api_base_url:
+    description: The base URL for the WordPress API
+    required: false
+  react_app_org_wp_api_username:
+    description: The username for the WordPress API
+    required: false
+  react_app_org_wp_api_password:
+    description: The password for the WordPress API
+    required: false
+  react_app_org_wp_categories_ca:
+    description: The categories list [ca] for the WordPress API
+    required: false
+  react_app_org_wp_categories_sv:
+    description: The categories list [sv] for the WordPress API
+    required: false
   react_app_payment_provider_paypal_client_id:
     description: The client ID for the PayPal payment provider
     required: false
