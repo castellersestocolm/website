@@ -24,11 +24,6 @@ instance.interceptors.response.use(
   },
 );
 
-instance.interceptors.request.use(async (config: any) => {
-  config.headers["Accept-Language"] = i18n.resolvedLanguage;
-  return config;
-});
-
 export const wpApiPostList = async (
   language: string,
   page: number = undefined,
