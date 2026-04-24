@@ -79,8 +79,13 @@ runs:
         --build-arg REACT_APP_ORG_INFO_EMAIL=${{ inputs.react_app_org_info_email }} \
         --build-arg REACT_APP_TOWERS_API_URL=${{ inputs.react_app_towers_api_url }} \
         --build-arg REACT_APP_TOWERS_BASE_URL=${{ inputs.react_app_towers_base_url }} \
-        --build-arg REACT_APP_PINYATOR_BASE_URL=${{ inputs.react_app_pinyator_base_url }} \
         --build-arg REACT_APP_TOWERS_INFO_EMAIL=${{ inputs.react_app_towers_info_email }} \
+        --build-arg REACT_APP_PINYATOR_BASE_URL=${{ inputs.react_app_pinyator_base_url }} \
+        --build-arg REACT_APP_ORG_WP_API_BASE_URL=${{ inputs.react_app_org_wp_api_base_url }} \
+        --build-arg REACT_APP_ORG_WP_API_USERNAME=${{ inputs.react_app_org_wp_api_username }} \
+        --build-arg REACT_APP_ORG_WP_API_PASSWORD=${{ inputs.react_app_org_wp_api_password }} \
+        --build-arg REACT_APP_ORG_WP_CATEGORIES_CA=${{ inputs.react_app_org_wp_categories_ca }} \
+        --build-arg REACT_APP_ORG_WP_CATEGORIES_SV=${{ inputs.react_app_org_wp_categories_sv }} \
         --build-arg REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID=${{ inputs.react_app_payment_provider_paypal_client_id }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }} \
