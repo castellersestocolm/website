@@ -9,6 +9,8 @@
   "components.navbar-menu.about.team": "L'equip",
   "components.navbar-menu.about.bylaws": "Estatuts",
   "components.navbar-menu.about.contact": "Contacte",
+  "components.navbar-menu.policy.privacy": "Política de privadesa",
+  "pages.policy-privacy.title": "Política de privadesa",
   "pages.about-team.title": "Coneix l'equip",
   "pages.about-bylaws.title": "Estatuts vigents",
   "pages.about-contact.title": "Contacta amb nostraltres",

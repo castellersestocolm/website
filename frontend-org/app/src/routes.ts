@@ -23,6 +23,9 @@ export const ROUTES = {
   "user-set-password": {
     path: "/user/password/:token",
   },
+  "policy-privacy": {
+    path: "/policy/privacy",
+  },
   calendar: {
     path: "/calendar",
   },

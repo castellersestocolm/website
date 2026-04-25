@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
-import { Button, FormHelperText, Link, Stack } from "@mui/material";
+import { Button, FormHelperText, Link, Stack, Typography } from "@mui/material";
 import IconGoogle from "@mui/icons-material/Google";
 import IconEast from "@mui/icons-material/East";
 import styles from "./styles.module.css";
@@ -96,7 +96,9 @@ export default function FormLogin() {
               underline="none"
               className={styles.link}
             >
-              {t("pages.user-login.form.link-no-account")}
+              <Typography variant="body1" component="span">
+                {t("pages.user-login.form.link-no-account")}
+              </Typography>
               <IconEast className={styles.iconEast} />
             </Link>
             <Link
@@ -105,7 +107,9 @@ export default function FormLogin() {
               underline="none"
               className={styles.link}
             >
-              {t("pages.user-login.form.link-forgot-password")}
+              <Typography variant="body1" component="span">
+                {t("pages.user-login.form.link-forgot-password")}
+              </Typography>
               <IconEast className={styles.iconEast} />
             </Link>
           </Stack>

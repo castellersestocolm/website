@@ -26,6 +26,11 @@ export default function Footer() {
       path: ROUTES["external-towers"].path,
       target: "_blank",
     },
+    /*{
+      name: t("components.navbar-menu.policy.privacy"),
+      path: ROUTES["policy-privacy"].path,
+      target: "_self",
+    },*/
     {
       name: t("components.navbar-menu.about.contact"),
       path: ROUTES["about-contact"].path,

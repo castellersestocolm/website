@@ -70,7 +70,9 @@ function NewsPostPage() {
               className={styles.link}
             >
               <IconWest className={styles.iconWest} />
-              {t("pages.news-post.link-back")}
+              <Typography variant="body1" component="span">
+                {t("pages.news-post.link-back")}
+              </Typography>
             </Link>
           </Stack>
         </Box>

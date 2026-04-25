@@ -96,7 +96,9 @@ export default function FormPassword() {
               underline="none"
               className={styles.link}
             >
-              {t("pages.user-password.form.link-login")}
+              <Typography variant="body1" component="span">
+                {t("pages.user-password.form.link-login")}
+              </Typography>
               <IconEast className={styles.iconEast} />
             </Link>
           </Stack>

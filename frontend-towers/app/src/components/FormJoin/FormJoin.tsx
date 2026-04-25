@@ -476,7 +476,9 @@ export default function FormJoin() {
                   underline="none"
                   className={styles.link}
                 >
-                  {t("pages.user-join.form.link-already-account")}
+                  <Typography variant="body1" component="span">
+                    {t("pages.user-join.form.link-already-account")}
+                  </Typography>
                   <IconEast className={styles.iconEast} />
                 </Link>
               </Stack>

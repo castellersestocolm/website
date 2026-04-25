@@ -169,6 +169,7 @@ export default function FormContactMessage({ type }: any) {
                 multiline
                 minRows={4}
                 maxRows={8}
+                className={styles.textField}
               />
             </FormGrid>
             <FormGrid size={{ xs: 12 }}>

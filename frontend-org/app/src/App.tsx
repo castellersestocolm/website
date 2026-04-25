@@ -26,6 +26,7 @@ import AboutBylawsPage from "./pages/about-bylaws";
 import AboutTeamPage from "./pages/about-team";
 import AboutContactPage from "./pages/about-contact";
 import NewsPostPage from "./pages/news-post";
+import PolicyPrivacyPage from "./pages/policy-privacy";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -120,6 +121,10 @@ const App = () => {
                   <Route
                     path={ROUTES["news-post"].path}
                     element={<NewsPostPage />}
+                  />
+                  <Route
+                    path={ROUTES["policy-privacy"].path}
+                    element={<PolicyPrivacyPage />}
                   />
                 </Routes>
               </Box>

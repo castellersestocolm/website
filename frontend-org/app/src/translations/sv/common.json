@@ -9,6 +9,8 @@
   "components.navbar-menu.about.team": "Teamet",
   "components.navbar-menu.about.bylaws": "Stadgar",
   "components.navbar-menu.about.contact": "Kontakt",
+  "components.navbar-menu.policy.privacy": "Integritetspolicy",
+  "pages.policy-privacy.title": "Integritetspolicy",
   "pages.about-team.title": "Möt teamet",
   "pages.about-bylaws.title": "Gällande stadgar",
   "pages.about-contact.title": "Kontakta oss",
