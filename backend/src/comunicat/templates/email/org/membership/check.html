@@ -60,7 +60,7 @@
 {% endblock %}
 
 {% if membership_obj and not membership_obj.date_to|date_is_future or membership_obj and membership_obj.status == "MembershipStatus"|enums_membership|get_attr:"EXPIRED" or not membership_obj %}
-    {% block email_button_url %}https://membres.lesquatrebarres.org?email={{ email }}{% endblock %}
+    {% block email_button_url %}{% full_towers_url %}?email={{ email }}{% endblock %}
 
     {% block email_button_text %}{% if membership_obj %}{% trans "Renew membership" %}{% else %}{% trans "Join us" %}{% endif %}{% endblock %}
 {% endif %}

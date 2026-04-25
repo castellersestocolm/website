@@ -131,7 +131,7 @@ export const ROUTES = {
     path: "https://lesquatrebarres.org",
   },
   "external-casal-form-membership": {
-    path: "https://membres.lesquatrebarres.org",
+    path: "https://lesquatrebarres.org/user/join",
   },
   "external-berlin-diada-2025": {
     path: "https://castellers.berlin/international-diada-castellera-berlin-2025/",
