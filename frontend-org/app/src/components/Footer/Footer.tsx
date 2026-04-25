@@ -22,8 +22,13 @@ export default function Footer() {
       target: "_self",
     },
     {
-      name: t("components.navbar-menu.website"),
-      path: ROUTES["external-website"].path,
+      name: t("components.navbar-menu.towers"),
+      path: ROUTES["external-towers"].path,
+      target: "_blank",
+    },
+    {
+      name: t("components.navbar-menu.about.contact"),
+      path: ROUTES["about-contact"].path,
       target: "_self",
     },
   ];
@@ -54,6 +59,7 @@ export default function Footer() {
                     className={styles.footerMenuItem}
                     component={Link}
                     href={page.path}
+                    target={page.target}
                   >
                     <Typography fontWeight={600}>{page.name}</Typography>
                     {page.path.startsWith("http") && (

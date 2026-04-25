@@ -221,8 +221,6 @@ export default function NavBar() {
                         className={styles.drawerItem}
                       >
                         <Typography>
-                          {page.name}
-                          {" — "}
                           {childrenPage.name}
                           {childrenPage.language && (
                             <LanguageChip

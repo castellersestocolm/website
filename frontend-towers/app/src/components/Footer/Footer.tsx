@@ -87,6 +87,7 @@ export default function Footer() {
                     className={styles.footerMenuItem}
                     component={Link}
                     href={page.path}
+                    target={page.target}
                   >
                     <Typography fontWeight={600}>
                       {page.name}

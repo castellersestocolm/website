@@ -59,13 +59,11 @@
 }
 
 .heroTitle {
-  color: var(--mui-palette-text-primary);
-  font-size: 48px !important;
+  color: var(--mui-palette-secondary-main);
   margin: 24px 0 16px 0 !important;
 }
 
 .heroSubtitle {
-  font-size: 16px !important;
   color: var(--mui-palette-text-primary);
 }
 
@@ -102,13 +100,13 @@
 }
 
 .postsInnerGrid {
-  margin-top: 32px;
   margin-bottom: 32px;
 }
 
 .postsTitle {
   text-align: center;
   color: var(--mui-palette-secondary-main);
+  margin-bottom: 32px !important;
 }
 
 .postCard {
@@ -119,4 +117,10 @@
 
 .postCardContent {
   padding: 20px 24px 8px 24px !important;
+}
+
+.pageLoader {
+  align-content: center;
+  flex: 1;
+  display: flex;
 }

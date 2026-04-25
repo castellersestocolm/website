@@ -36,15 +36,20 @@ export default function NavBar() {
       path: ROUTES.home.path,
       target: "_self",
     },
-    {
-      name: t("components.navbar-menu.website"),
-      path: ROUTES["external-website"].path,
-      target: "_self",
-    },
     !user && {
       name: t("components.navbar-menu.membership"),
       path: ROUTES["user-join"].path,
       target: "_self",
+    },
+    {
+      name: t("components.navbar-menu.calendar"),
+      path: ROUTES["calendar"].path,
+      target: "_self",
+    },
+    {
+      name: t("components.navbar-menu.towers"),
+      path: ROUTES["external-towers"].path,
+      target: "_blank",
     },
     {
       name: t("components.navbar-menu.about"),
@@ -86,11 +91,7 @@ export default function NavBar() {
                       target={childrenPage.target}
                       className={styles.drawerItem}
                     >
-                      <Typography>
-                        {page.name}
-                        {" — "}
-                        {childrenPage.name}
-                      </Typography>
+                      <Typography>{childrenPage.name}</Typography>
                       {childrenPage.path.startsWith("http") && (
                         <IconArrowOutward className={styles.externalIcon} />
                       )}

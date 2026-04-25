@@ -23,6 +23,9 @@ export const ROUTES = {
   "user-set-password": {
     path: "/user/password/:token",
   },
+  calendar: {
+    path: "/calendar",
+  },
   "calendar-event": {
     path: "/calendar/event/:year/:month/:day/:code",
   },
@@ -35,6 +38,9 @@ export const ROUTES = {
   "about-contact": {
     path: "/about/contact",
   },
+  "news-post": {
+    path: "/news/:year/:month/:slug",
+  },
   "external-login-google": {
     path:
       API_BASE_URL +
@@ -44,5 +50,8 @@ export const ROUTES = {
   },
   "external-website": {
     path: "https://lesquatrebarres.org",
+  },
+  "external-towers": {
+    path: "https://castellersestocolm.se",
   },
 };

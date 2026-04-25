@@ -21,9 +21,11 @@ import UserLoginPage from "./pages/user-login";
 import UserJoinPage from "./pages/user-join";
 import UserPasswordPage from "./pages/user-password";
 import CalendarEventPage from "./pages/calendar-event";
+import CalendarPage from "./pages/calendar";
 import AboutBylawsPage from "./pages/about-bylaws";
 import AboutTeamPage from "./pages/about-team";
 import AboutContactPage from "./pages/about-contact";
+import NewsPostPage from "./pages/news-post";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -96,6 +98,10 @@ const App = () => {
                     element={<UserDashboardPage />}
                   />
                   <Route
+                    path={ROUTES["calendar"].path}
+                    element={<CalendarPage />}
+                  />
+                  <Route
                     path={ROUTES["calendar-event"].path}
                     element={<CalendarEventPage />}
                   />
@@ -110,6 +116,10 @@ const App = () => {
                   <Route
                     path={ROUTES["about-contact"].path}
                     element={<AboutContactPage />}
+                  />
+                  <Route
+                    path={ROUTES["news-post"].path}
+                    element={<NewsPostPage />}
                   />
                 </Routes>
               </Box>

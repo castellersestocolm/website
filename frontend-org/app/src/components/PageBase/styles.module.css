@@ -4,16 +4,18 @@
   align-items: center;
 }
 
-.pageTitle {
+.pageHeader {
   text-align: center;
+  padding-bottom: 32px;
+}
+
+.pageTitle {
   color: var(--mui-palette-secondary-main);
   font-size: 42px !important;
-  padding-bottom: 32px;
 }
 
 .pageSubtitle {
   padding-top: 16px;
-  text-align: center;
 }
 
 .pageTitleBox {

@@ -4,7 +4,12 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
 
-export default function PageBase({ title, content, loading = false }: any) {
+export default function PageBase({
+  title,
+  subtitle = undefined,
+  content,
+  loading = false,
+}: any) {
   return (
     <>
       <Box
@@ -42,13 +47,24 @@ export default function PageBase({ title, content, loading = false }: any) {
               : {}),
           }}
         >
-          <Typography
-            variant="h3"
-            fontWeight="700"
-            className={styles.pageTitle}
-          >
-            {title}
-          </Typography>
+          <Box className={styles.pageHeader}>
+            <Typography
+              variant="h3"
+              fontWeight="700"
+              className={styles.pageTitle}
+            >
+              {title}
+            </Typography>
+            {subtitle && (
+              <Typography
+                variant="h6"
+                fontWeight="700"
+                className={styles.pageSubtitle}
+              >
+                {subtitle}
+              </Typography>
+            )}
+          </Box>
           {loading ? (
             <Box className={styles.pageLoader}>
               <LoaderClip />

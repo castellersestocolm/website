@@ -7,6 +7,7 @@ import Page from "../../components/Page/Page";
 import Alerts from "../../components/Alerts/Alerts";
 import IconLogo from "../../components/IconLogo/IconLogo.jsx";
 import Box from "@mui/material/Box";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Card,
@@ -30,11 +31,14 @@ import ImageHero6 from "../../assets/images/hero/hero6.jpg";
 import ImageHero7 from "../../assets/images/hero/hero7.jpg";
 import ImageHero8 from "../../assets/images/hero/hero8.jpg";
 import ImageHero9 from "../../assets/images/hero/hero9.jpg";
+import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
 
   const { user, messages } = useAppContext();
+
+  let navigate = useNavigate();
 
   const [wpPostsPage, setWpPostsPage] = React.useState(1);
   const [wpPosts, setWpPosts] = React.useState(undefined);
@@ -63,7 +67,16 @@ function HomePage() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [setSlideshowImageIndex]);
+  }, [setSlideshowImageIndex, slideshowImages.length]);
+
+  function handleWpPostClick(year: string, month: string, slug: string) {
+    navigate(
+      ROUTES["news-post"].path
+        .replace(":year", year)
+        .replace(":month", month)
+        .replace(":slug", slug),
+    );
+  }
 
   React.useEffect(() => {
     wpApiPostList(i18n.resolvedLanguage, wpPostsPage).then((response) => {
@@ -129,14 +142,18 @@ function HomePage() {
                 {t("pages.home-hero.title")}
               </Typography>
               <Typography
-                variant="h5"
+                variant="h6"
                 fontWeight="700"
                 className={styles.heroSubtitle}
               >
                 {t("pages.home-hero.subtitle")}
               </Typography>
               <Typography variant="h6" className={styles.heroSubtitle}>
-                {t("pages.home-hero.subtitle2")}
+                {user
+                  ? t("pages.home-hero.subtitle3") +
+                    (user.firstname ? ", " + user.firstname : "") +
+                    "!"
+                  : t("pages.home-hero.subtitle2")}
               </Typography>
               {!user && (
                 <Button
@@ -185,79 +202,97 @@ function HomePage() {
 
   const content = (
     <>
-      {wpPosts && (
-        <Box component="section" className={styles.postsGrid}>
-          <Container maxWidth="lg">
-            <Typography
-              variant="h4"
-              fontWeight="700"
-              className={styles.postsTitle}
-            >
-              {t("pages.home-posts.title")}
-            </Typography>
-            <Grid container spacing={4} className={styles.postsInnerGrid}>
-              {wpPosts &&
-                wpPosts.data &&
-                wpPosts.data.length > 0 &&
-                wpPosts.data.map((wpPost: any) => {
-                  return (
-                    <Grid size={{ xs: 12, md: 6 }}>
-                      <Card className={styles.postCard} elevation={0}>
-                        <CardActionArea>
-                          {wpMediaById &&
-                          wpPost.featured_media &&
-                          wpPost.featured_media in wpMediaById ? (
-                            <CardMedia
-                              component="img"
-                              height="300"
-                              image={
-                                wpMediaById[wpPost.featured_media].data
-                                  .source_url
-                              }
-                            />
-                          ) : undefined}
-                          <CardContent className={styles.postCardContent}>
-                            <Typography gutterBottom variant="h5" mb={0}>
-                              {wpPost.title.rendered}
-                            </Typography>
-                            <Typography gutterBottom variant="body2" mb={0}>
-                              {datetimeToLongString(
-                                i18n.resolvedLanguage,
-                                wpPost.date,
-                              )}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              sx={{ color: "text.secondary" }}
-                              component="div"
-                            >
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: wpPost.excerpt.rendered,
-                                }}
-                              ></div>
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
-                    </Grid>
-                  );
-                })}
-            </Grid>
-            {wpPosts.data.length > 0 &&
-              (wpPostsPage !== 1 ||
-                wpPosts.headers["x-wp-total"] > wpPosts.data.length) && (
-                <Stack alignItems="center">
-                  <Pagination
-                    page={wpPostsPage}
-                    count={wpPosts.headers["x-wp-totalpages"]}
-                    onChange={(e: any, value: number) => setWpPostsPage(value)}
-                  />
-                </Stack>
-              )}
-          </Container>
-        </Box>
-      )}
+      <Box component="section" className={styles.postsGrid}>
+        <Container maxWidth="lg">
+          <Typography
+            variant="h4"
+            fontWeight="700"
+            className={styles.postsTitle}
+          >
+            {t("pages.home-posts.title")}
+          </Typography>
+          {wpPosts ? (
+            <>
+              <Grid container spacing={4} className={styles.postsInnerGrid}>
+                {wpPosts &&
+                  wpPosts.data &&
+                  wpPosts.data.length > 0 &&
+                  wpPosts.data.map((wpPost: any) => {
+                    return (
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <Card
+                          className={styles.postCard}
+                          elevation={0}
+                          onClick={() =>
+                            handleWpPostClick(
+                              wpPost.date.slice(0, 4),
+                              wpPost.date.slice(5, 7),
+                              wpPost.slug,
+                            )
+                          }
+                        >
+                          <CardActionArea>
+                            {wpMediaById &&
+                            wpPost.featured_media &&
+                            wpPost.featured_media in wpMediaById ? (
+                              <CardMedia
+                                component="img"
+                                height="300"
+                                image={
+                                  wpMediaById[wpPost.featured_media].data
+                                    .source_url
+                                }
+                              />
+                            ) : undefined}
+                            <CardContent className={styles.postCardContent}>
+                              <Typography gutterBottom variant="h5" mb={0}>
+                                {wpPost.title.rendered}
+                              </Typography>
+                              <Typography gutterBottom variant="body2" mb={0}>
+                                {datetimeToLongString(
+                                  i18n.resolvedLanguage,
+                                  wpPost.date,
+                                )}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ color: "text.secondary" }}
+                                component="div"
+                              >
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: wpPost.excerpt.rendered,
+                                  }}
+                                ></div>
+                              </Typography>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      </Grid>
+                    );
+                  })}
+              </Grid>
+              {wpPosts.data.length > 0 &&
+                (wpPostsPage !== 1 ||
+                  wpPosts.headers["x-wp-total"] > wpPosts.data.length) && (
+                  <Stack alignItems="center">
+                    <Pagination
+                      page={wpPostsPage}
+                      count={wpPosts.headers["x-wp-totalpages"]}
+                      onChange={(e: any, value: number) =>
+                        setWpPostsPage(value)
+                      }
+                    />
+                  </Stack>
+                )}
+            </>
+          ) : (
+            <Box className={styles.pageLoader}>
+              <LoaderClip />
+            </Box>
+          )}
+        </Container>
+      </Box>
     </>
   );
 
