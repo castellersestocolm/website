@@ -1,54 +1,54 @@
-import styles from "./styles.module.css";
-import { Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import * as React from "react";
-import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
-import { apiLegalBylawsList } from "../../api";
-import markdown from "@wcj/markdown-to-html";
-import { capitalizeFirstLetter } from "../../utils/string";
 import PageBase from "../../components/PageBase/PageBase";
-import LanguageChip from "../../components/LanguageChip/LanguageChip";
+import { ROUTES } from "../../routes";
+
+const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 
 function PolicyPrivacyPage() {
-  const [t, i18n] = useTranslation("common");
-
-  const [bylaws, setBylaws] = React.useState(undefined);
-
-  React.useEffect(() => {
-    apiLegalBylawsList().then((response) => {
-      if (response.status === 200) {
-        setBylaws(response.data.results.find((bylaws: any) => true));
-      }
-    });
-  }, [setBylaws, i18n.resolvedLanguage]);
+  const { t } = useTranslation("common");
 
   const content = (
     <>
-      {bylaws && (
-        <Box className={styles.aboutBylawsContainerBox}>
-          <Typography variant="body1" component="div">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: markdown(bylaws.content).toString(),
-              }}
-            ></div>
-          </Typography>
-          <Typography
-            variant="h6"
-            fontWeight="700"
-            align="center"
-            marginTop="64px"
-          >
-            {capitalizeFirstLetter(
-              new Date(bylaws.date).toLocaleDateString(i18n.resolvedLanguage, {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              }),
-            )}
-          </Typography>
-        </Box>
-      )}
+      <Typography variant="body1" mb={1}>
+        {t("pages.policy-privacy.policy.text-1")}
+      </Typography>
+      <Typography variant="h5" fontWeight={700} mb={1} mt={2}>
+        {t("pages.policy-privacy.policy.section-1.title")}
+      </Typography>
+      <Typography variant="body1" mb={1}>
+        {t("pages.policy-privacy.policy.section-1.text-1")}
+      </Typography>
+      <Typography variant="body1" mb={1}>
+        {t("pages.policy-privacy.policy.section-1.text-2")}
+      </Typography>
+      <Typography variant="body1" mb={1}>
+        {t("pages.policy-privacy.policy.section-1.text-3")}
+      </Typography>
+      <Typography variant="h5" fontWeight={700} mb={1} mt={2}>
+        {t("pages.policy-privacy.policy.section-2.title")}
+      </Typography>
+      <Typography variant="body1" mb={1}>
+        {t("pages.policy-privacy.policy.section-2.text-1")}
+      </Typography>
+      <Typography variant="body1" mb={1}>
+        {t("pages.policy-privacy.policy.section-2.text-2")}
+      </Typography>
+      <Typography variant="h5" fontWeight={700} mb={1} mt={2}>
+        {t("pages.policy-privacy.policy.section-3.title")}
+      </Typography>
+      <Typography variant="body1" mb={1}>
+        {t("pages.policy-privacy.policy.section-3.text-1")}{" "}
+        <Link href={ROUTES["about-contact"].path} underline="none">
+          {t("pages.policy-privacy.policy.section-3.text-2")}
+        </Link>{" "}
+        {t("pages.policy-privacy.policy.section-3.text-3")}{" "}
+        <Link href={"mailto:" + ORG_INFO_EMAIL} underline="none">
+          {ORG_INFO_EMAIL}
+        </Link>
+        {"."}
+      </Typography>
     </>
   );
 

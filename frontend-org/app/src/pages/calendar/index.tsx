@@ -1,7 +1,8 @@
 import { Container, useTheme, useMediaQuery } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import PageBase from "../../components/PageBase/PageBase";
+import PageImageHero from "../../components/PageImageHero/PageImageHero";
+import ImageHeroCalendar from "../../assets/images/heros/calendar.jpeg";
 
 function CalendarPage() {
   const { t } = useTranslation("common");
@@ -31,7 +32,13 @@ function CalendarPage() {
     </Container>
   );
 
-  return <PageBase title={t("pages.calendar.title")} content={content} />;
+  return (
+    <PageImageHero
+      title={t("pages.calendar.title")}
+      content={content}
+      hero={ImageHeroCalendar}
+    />
+  );
 }
 
 export default CalendarPage;

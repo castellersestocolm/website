@@ -23,6 +23,9 @@ export const ROUTES = {
   "user-set-password": {
     path: "/user/password/:token",
   },
+  "activity-kids": {
+    path: "/activity/kids",
+  },
   "policy-privacy": {
     path: "/policy/privacy",
   },

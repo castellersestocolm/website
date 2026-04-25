@@ -47,6 +47,16 @@ export default function NavBar() {
       target: "_self",
     },
     {
+      name: t("components.navbar-menu.activity"),
+      children: [
+        {
+          name: t("components.navbar-menu.activity.kids"),
+          path: ROUTES["activity-kids"].path,
+          target: "_self",
+        },
+      ],
+    },
+    {
       name: t("components.navbar-menu.towers"),
       path: ROUTES["external-towers"].path,
       target: "_blank",
