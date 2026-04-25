@@ -18,6 +18,7 @@ import {
   Stack,
   Pagination,
   Button,
+  Link,
 } from "@mui/material";
 import { datetimeToLongString } from "../../utils/datetime";
 import { useAppContext } from "../../components/AppContext/AppContext";
@@ -32,6 +33,7 @@ import ImageHero7 from "../../assets/images/hero/hero7.jpg";
 import ImageHero8 from "../../assets/images/hero/hero8.jpg";
 import ImageHero9 from "../../assets/images/hero/hero9.jpg";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
+import IconEast from "@mui/icons-material/East";
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -245,7 +247,13 @@ function HomePage() {
                               />
                             ) : undefined}
                             <CardContent className={styles.postCardContent}>
-                              <Typography gutterBottom variant="h5" mb={0}>
+                              <Typography
+                                gutterBottom
+                                variant="h5"
+                                fontWeight={700}
+                                mb={1}
+                                lineHeight={1.2}
+                              >
                                 {wpPost.title.rendered}
                               </Typography>
                               <Typography gutterBottom variant="body2" mb={0}>
@@ -265,6 +273,25 @@ function HomePage() {
                                   }}
                                 ></div>
                               </Typography>
+                              <Stack direction="column" spacing={1} mb={1}>
+                                <Link
+                                  onClick={() =>
+                                    handleWpPostClick(
+                                      wpPost.date.slice(0, 4),
+                                      wpPost.date.slice(5, 7),
+                                      wpPost.slug,
+                                    )
+                                  }
+                                  color="secondary"
+                                  underline="none"
+                                  className={styles.link}
+                                >
+                                  <Typography variant="body1" component="span">
+                                    {t("pages.home-posts.link-more")}
+                                  </Typography>
+                                  <IconEast className={styles.iconEast} />
+                                </Link>
+                              </Stack>
                             </CardContent>
                           </CardActionArea>
                         </Card>

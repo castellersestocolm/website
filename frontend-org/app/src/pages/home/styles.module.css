@@ -83,13 +83,12 @@
 .link {
   display: inline-flex;
   align-content: center;
-  justify-content: center;
   cursor: pointer;
 }
 
 .iconEast {
   margin-left: 4px;
-  margin-top: 6px;
+  margin-top: 1px;
 }
 
 .postsGrid {
