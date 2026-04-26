@@ -85,7 +85,7 @@ function ResourcesNewslettersPage() {
           </Box>
           {(documentsPage !== 1 ||
             documents.count > documents.results.length) && (
-            <Stack alignItems="center" mt={3}>
+            <Stack alignItems="center" mt={4}>
               <Pagination
                 page={documentsPage}
                 count={Math.ceil(
