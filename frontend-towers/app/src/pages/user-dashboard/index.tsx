@@ -2288,7 +2288,7 @@ function UserDashboardPage() {
                             <Button
                               variant="contained"
                               type="submit"
-                              color="info"
+                              color="error"
                               disableElevation
                               onClick={() =>
                                 handleRequestCancelSubmit(request.id)
