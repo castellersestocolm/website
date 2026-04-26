@@ -6,6 +6,7 @@ class DocumentType(enum.IntEnum):
     GUIDE = 20
     RESOURCE = 30
     PRESS = 40
+    NEWSLETTER = 50
 
 
 class DocumentStatus(enum.IntEnum):
