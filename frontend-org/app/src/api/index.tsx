@@ -9,6 +9,7 @@ import {
   API_REGISTRATIONS_LIST_PAGE_SIZE,
   API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
   API_LEGAL_GROUP_LIST_PAGE_SIZE,
+  API_DOCUMENTS_LIST_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType } from "../enums";
 
@@ -493,6 +494,28 @@ export const apiUserFamilyMemberUpdate = async (
 export const apiUserFamilyMemberDelete = async (id: string) => {
   try {
     return await instance.delete("/user/family/member/" + id + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiDocumentList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+  filterTypes: number[] = undefined,
+  orderBy: string[] = undefined,
+) => {
+  try {
+    return await instance.get("/document/", {
+      params: {
+        page_size: pageSize ? pageSize : API_DOCUMENTS_LIST_PAGE_SIZE,
+        page: page,
+        filter_types: filterTypes && filterTypes.join(","),
+        order_by: orderBy && orderBy.join(","),
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

@@ -246,6 +246,7 @@ export enum DocumentType {
   GUIDE = 20,
   RESOURCE = 30,
   PRESS = 40,
+  NEWSLETTER = 50,
 }
 
 export enum PositionType {

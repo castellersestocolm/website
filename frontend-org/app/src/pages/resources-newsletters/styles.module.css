@@ -1,0 +1,39 @@
+.resourcesGrid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.resourcesGridItem {
+  background-color: var(--mui-palette-grey-100);
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 4px;
+  display: flex;
+
+  a {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.resourcesFileImage {
+  border-radius: 4px 4px 0 0;
+  width: 100%;
+  color: var(--mui-palette-text-primary) !important;
+  text-decoration: none !important;
+}
+
+.resourcesFileTitle {
+  border-radius: 0 0 4px 4px;
+  padding: 8px 12px;
+  flex: 1;
+  align-content: end;
+}
+
+.pressCardImageBox {
+  width: 100%;
+  padding-bottom: 100%;
+  background-size: cover;
+  background-position: center;
+}
