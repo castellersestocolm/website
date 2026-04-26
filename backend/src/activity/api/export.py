@@ -152,7 +152,7 @@ def export_program_course(course_id: UUID) -> BytesIO:
 
     ws.column_dimensions["A"].width = 40
 
-    for i in range(2, program_course_obj.events.count()):
+    for i in range(2, program_course_obj.events.count() + 2):
         ws.column_dimensions[get_column_letter(i)].width = 40
 
     for program_course_registration_obj in program_course_obj.registrations.all():
