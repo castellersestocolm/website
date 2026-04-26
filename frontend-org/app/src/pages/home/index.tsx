@@ -8,7 +8,6 @@ import Alerts from "../../components/Alerts/Alerts";
 import IconLogo from "../../components/IconLogo/IconLogo.jsx";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
-import { languageToLocale } from "../../utils/locale";
 import {
   Container,
   Card,
@@ -225,15 +224,9 @@ function HomePage() {
       {highligtedEvent && (
         <Hero
           title={highligtedEvent.title}
-          subtitle={new Date(highligtedEvent.time_from).toLocaleDateString(
-            languageToLocale(i18n.resolvedLanguage).code,
-            {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            },
+          subtitle={datetimeToLongString(
+            i18n.resolvedLanguage,
+            highligtedEvent.time_from,
           )}
           hero={
             highligtedEvent.picture &&
@@ -248,7 +241,7 @@ function HomePage() {
               >
                 {highligtedEvent.description}
               </Typography>
-              <Grid size={12} marginTop="24px">
+              {/*<Grid size={12} marginTop="24px">
                 <Stack
                   direction="row"
                   spacing={2}
@@ -266,7 +259,7 @@ function HomePage() {
                     {t("pages.home-highlight.button-info")}
                   </Button>
                 </Stack>
-              </Grid>
+              </Grid>*/}
             </Box>
           }
         />
