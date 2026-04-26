@@ -783,6 +783,13 @@ export default function FormJoin() {
             </FormGrid>
             <FormGrid size={{ xs: 12 }}>
               <FormControlLabel
+                control={<Checkbox name="consent_pictures" value="yes" />}
+                label={t("pages.user-join.form.checkbox-image")}
+                required={true}
+              />
+            </FormGrid>
+            <FormGrid size={{ xs: 12 }}>
+              <FormControlLabel
                 control={<Checkbox name="confirmCasal" value="yes" />}
                 label={t("pages.user-join.form.checkbox-processing")}
                 required={true}

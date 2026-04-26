@@ -86,6 +86,74 @@ export const apiMembershipList = async () => {
   }
 };
 
+export const apiUserFamilyMemberRequestCreate = async (email: string) => {
+  try {
+    return await instance.post("/user/family/member/request/", {
+      email: email,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberRequestList = async () => {
+  try {
+    return await instance.get("/user/family/member/request/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberRequestReceivedList = async () => {
+  try {
+    return await instance.get("/user/family/member/request/received/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberRequestCancel = async (id: string) => {
+  try {
+    return await instance.delete(
+      "/user/family/member/request/" + id + "/cancel/",
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberRequestReject = async (id: string) => {
+  try {
+    return await instance.delete(
+      "/user/family/member/request/" + id + "/reject/",
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberRequestAccept = async (id: string) => {
+  try {
+    return await instance.post(
+      "/user/family/member/request/" + id + "/accept/",
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiPaymentExpenseList = async (page: number = undefined) => {
   try {
     return await instance.get("/payment/expense/", {
@@ -342,6 +410,89 @@ export const apiContactMessageCreate = async (
       type: type,
       message: message,
     });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamily = async (token: string = undefined) => {
+  try {
+    return await instance.get("/user/family/", { params: { token: token } });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberCreate = async (
+  firstname: string,
+  lastname: string,
+  birthday: string,
+  /*
+    height_shoulders: number,
+    height_arms: number,
+  */
+  consent_pictures: boolean,
+) => {
+  try {
+    return await instance.post("/user/family/member/", {
+      firstname: firstname,
+      lastname: lastname,
+      birthday: birthday,
+      consent_pictures: consent_pictures,
+      towers: {
+        /*
+          height_shoulders: height_shoulders,
+          height_arms: height_arms,
+        */
+      },
+      organisation: {},
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberUpdate = async (
+  id: string,
+  firstname: string,
+  lastname: string,
+  birthday: string,
+  /*
+    height_shoulders: number,
+    height_arms: number,
+  */
+  consent_pictures: boolean,
+) => {
+  try {
+    return await instance.put("/user/family/member/" + id + "/", {
+      firstname: firstname,
+      lastname: lastname,
+      birthday: birthday,
+      consent_pictures: consent_pictures,
+      towers: {
+        /*
+          height_shoulders: height_shoulders,
+          height_arms: height_arms,
+        */
+      },
+      organisation: {},
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserFamilyMemberDelete = async (id: string) => {
+  try {
+    return await instance.delete("/user/family/member/" + id + "/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

@@ -46,6 +46,10 @@ i18next.use(LngDetector).init({
 const App = () => {
   const [user, setUser] = useState(undefined);
   const [messages, setMessages] = useState(undefined);
+  const [familyMemberRequests, setFamilyMemberRequests] =
+    React.useState(undefined);
+  const [familyMemberRequestsReceived, setFamilyMemberRequestsReceived] =
+    React.useState(undefined);
 
   React.useEffect(() => {
     apiUserMe().then((response) => {
@@ -64,6 +68,10 @@ const App = () => {
         setUser,
         messages,
         setMessages,
+        familyMemberRequests,
+        setFamilyMemberRequests,
+        familyMemberRequestsReceived,
+        setFamilyMemberRequestsReceived,
       }}
     >
       <ThemeProvider theme={appTheme}>

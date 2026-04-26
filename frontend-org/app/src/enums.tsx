@@ -30,6 +30,13 @@ export const MEMBERSHIP_STATUS_ICON: any = {
   3: <IconCancel />,
 };
 
+export enum FamilyMemberRequestStatus {
+  REQUESTED = 10,
+  ACCEPTED = 20,
+  DELETED = 30,
+  REJECTED = 40,
+}
+
 export enum PaymentType {
   DEBIT = 10,
   CREDIT = 20,

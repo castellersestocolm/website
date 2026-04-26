@@ -14,6 +14,7 @@ import {
   ListItemText,
   Stack,
   Typography,
+  Button,
 } from "@mui/material";
 import IconEast from "@mui/icons-material/East";
 import { useAppContext } from "../../components/AppContext/AppContext";
@@ -25,6 +26,12 @@ import {
   apiUserLogout,
   apiEventList,
   apiActivityProgramCourseRegistrationList,
+  apiUserFamilyMemberRequestList,
+  apiUserFamilyMemberRequestReceivedList,
+  apiUserFamilyMemberRequestCancel,
+  apiUserFamilyMemberRequestReject,
+  apiUserFamilyMemberRequestAccept,
+  apiUserMe,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
@@ -42,6 +49,11 @@ import IconLanguage from "@mui/icons-material/Language";
 import IconReplay from "@mui/icons-material/Replay";
 import IconChevronRight from "@mui/icons-material/KeyboardDoubleArrowRight";
 import IconHowToReg from "@mui/icons-material/HowToReg";
+import IconPersonAdd from "@mui/icons-material/PersonAdd";
+import IconPersonSearch from "@mui/icons-material/PersonSearch";
+import FormMemberUpdate from "../../components/FormMemberUpdate/FormMemberUpdate";
+import FormMemberCreate from "../../components/FormMemberCreate/FormMemberCreate";
+import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import PageBase from "../../components/PageBase/PageBase";
 import {
   EXPENSE_STATUS_ICON,
@@ -56,6 +68,7 @@ import {
   ORDER_STATUS_ICON,
   EventType,
   RegistrationStatus,
+  FamilyMemberRequestStatus,
 } from "../../enums";
 import { capitalizeFirstLetter, lowerFirstLetter } from "../../utils/string";
 import IconDowload from "@mui/icons-material/Download";
@@ -84,7 +97,14 @@ const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
 
-  const { setUser } = useAppContext();
+  const {
+    setUser,
+    setMessages,
+    familyMemberRequests,
+    setFamilyMemberRequests,
+    familyMemberRequestsReceived,
+    setFamilyMemberRequestsReceived,
+  } = useAppContext();
   let navigate = useNavigate();
 
   const { user } = useAppContext();
@@ -99,6 +119,10 @@ function UserDashboardPage() {
   if (user === null) {
     navigate(ROUTES["user-login"].path);
   }
+
+  const [familyMembersOpen, setFamilyMembersOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
 
   const [eventsOpen, setEventsOpen] = React.useState<{
     [key: string]: boolean;
@@ -134,6 +158,15 @@ function UserDashboardPage() {
   const [programCourseRegistrations, setProgramCourseRegistrations] =
     React.useState(undefined);
   const [paymentSvg, setPaymentSvg] = React.useState(undefined);
+
+  const handleFamilyClick = (memberId: string) => {
+    setFamilyMembersOpen({
+      ...Object.fromEntries(
+        Object.entries(familyMembersOpen).map(([k, v], i) => [k, false]),
+      ),
+      [memberId]: !familyMembersOpen[memberId],
+    });
+  };
 
   const handlePaymentClick = (paymentId: string) => {
     setPaymentsOpen({
@@ -180,6 +213,104 @@ function UserDashboardPage() {
     });
   };
 
+  function handleRequestCancelSubmit(id: string) {
+    apiUserFamilyMemberRequestCancel(id).then((response) => {
+      if (response.status === 204) {
+        apiUserFamilyMemberRequestList().then((response) => {
+          if (response.status === 200) {
+            setFamilyMemberRequests(
+              response.data.filter((request: any) => {
+                return request.status === FamilyMemberRequestStatus.REQUESTED;
+              }),
+            );
+          }
+        });
+        setMessages([
+          {
+            message: t("pages.user-family.request.cancel.success"),
+            type: "success",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      } else {
+        setMessages([
+          {
+            message: t("pages.user-family.request.cancel.error"),
+            type: "error",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      }
+    });
+  }
+
+  function handleRequestRejectSubmit(id: string) {
+    apiUserFamilyMemberRequestReject(id).then((response) => {
+      if (response.status === 204) {
+        apiUserFamilyMemberRequestReceivedList().then((response) => {
+          if (response.status === 200) {
+            setFamilyMemberRequestsReceived(
+              response.data.filter((request: any) => {
+                return request.status === FamilyMemberRequestStatus.REQUESTED;
+              }),
+            );
+          }
+        });
+        setMessages([
+          {
+            message: t("pages.user-family.request.reject.success"),
+            type: "success",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      } else {
+        setMessages([
+          {
+            message: t("pages.user-family.request.reject.error"),
+            type: "error",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      }
+    });
+  }
+
+  function handleRequestAcceptSubmit(id: string) {
+    apiUserFamilyMemberRequestAccept(id).then((response) => {
+      if (response.status === 204) {
+        apiUserFamilyMemberRequestReceivedList().then((response) => {
+          if (response.status === 200) {
+            setFamilyMemberRequestsReceived(
+              response.data.filter((request: any) => {
+                return request.status === FamilyMemberRequestStatus.REQUESTED;
+              }),
+            );
+          }
+        });
+        apiUserMe().then((response) => {
+          if (response.status === 200 || response.status === 204) {
+            setUser(response.data);
+          }
+        });
+        setMessages([
+          {
+            message: t("pages.user-family.request.accept.success"),
+            type: "success",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      } else {
+        setMessages([
+          {
+            message: t("pages.user-family.request.accept.error"),
+            type: "error",
+          },
+        ]);
+        setTimeout(() => setMessages(undefined), 5000);
+      }
+    });
+  }
+
   React.useEffect(() => {
     if (user) {
       apiMembershipList().then((response) => {
@@ -221,8 +352,33 @@ function UserDashboardPage() {
           }
         }
       });
+      apiUserFamilyMemberRequestList().then((response) => {
+        if (response.status === 200) {
+          setFamilyMemberRequests(
+            response.data.filter((request: any) => {
+              return request.status === FamilyMemberRequestStatus.REQUESTED;
+            }),
+          );
+        }
+      });
+      apiUserFamilyMemberRequestReceivedList().then((response) => {
+        if (response.status === 200) {
+          setFamilyMemberRequestsReceived(
+            response.data.filter((request: any) => {
+              return request.status === FamilyMemberRequestStatus.REQUESTED;
+            }),
+          );
+        }
+      });
     }
-  }, [user, i18n.resolvedLanguage, setMembership, t]);
+  }, [
+    user,
+    i18n.resolvedLanguage,
+    setFamilyMemberRequests,
+    setFamilyMemberRequestsReceived,
+    setMembership,
+    t,
+  ]);
 
   React.useEffect(() => {
     if (user) {
@@ -1475,7 +1631,243 @@ function UserDashboardPage() {
               )}
           </Grid>
         </Grid>
+
+        <Grid>
+          <Card variant="outlined">
+            <Box className={styles.userTopBox}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.user-dashboard.section.family.title")}
+              </Typography>
+            </Box>
+            <Divider />
+            <Box className={styles.userFamilyBox}>
+              <List className={styles.userFamilyList}>
+                {user.family &&
+                  user.family.members.map(
+                    (member: any, i: number, row: any) => (
+                      <Box key={member.id}>
+                        <ListItemButton
+                          onClick={() => handleFamilyClick(member.id)}
+                          disableTouchRipple={member.user.can_manage}
+                          dense
+                        >
+                          <ListItemIcon>
+                            <IconAccountCircle />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              member.user.lastname
+                                ? member.user.firstname +
+                                  " " +
+                                  member.user.lastname
+                                : member.user.firstname
+                            }
+                            secondary={
+                              member.user.can_manage
+                                ? member.user.email
+                                : t("pages.user-family.list.underage")
+                            }
+                          />
+                          {!member.user.can_manage &&
+                            (familyMembersOpen[member.id] ? (
+                              <IconExpandLess />
+                            ) : (
+                              <IconExpandMore />
+                            ))}
+                        </ListItemButton>
+                        {!member.user.can_manage && (
+                          <Collapse
+                            in={familyMembersOpen[member.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <Box className={styles.userFamilyMemberUpdate}>
+                              <FormMemberUpdate member={member} />
+                            </Box>
+                          </Collapse>
+                        )}
+
+                        {(i + 1 < row.length || true) && <Divider />}
+                      </Box>
+                    ),
+                  )}
+                <Box>
+                  <ListItemButton onClick={() => handleFamilyClick("new")}>
+                    <ListItemText
+                      primary={t("pages.user-family.create.title")}
+                      secondary={t("pages.user-family.create.subtitle")}
+                    />
+                    {familyMembersOpen["new"] ? (
+                      <IconExpandLess />
+                    ) : (
+                      <IconExpandMore />
+                    )}
+                  </ListItemButton>
+                  <Collapse
+                    in={familyMembersOpen["new"]}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <Box className={styles.userFamilyMemberUpdate}>
+                      <FormMemberCreate />
+                    </Box>
+                  </Collapse>
+                </Box>
+              </List>
+            </Box>
+          </Card>
+        </Grid>
+        <Grid>
+          <Card variant="outlined">
+            <Box className={styles.userTopBox}>
+              <Typography variant="h6" fontWeight="600" component="div">
+                {t("pages.user-dashboard.section.family-requests.title")}
+              </Typography>
+            </Box>
+            <Divider />
+            <Box className={styles.userFamilyBox}>
+              <List className={styles.userFamilyList}>
+                {familyMemberRequestsReceived &&
+                  familyMemberRequestsReceived.map(
+                    (request: any, i: number, row: any) => (
+                      <Box key={request.id}>
+                        <ListItemButton dense={true} disableTouchRipple>
+                          <ListItemIcon>
+                            <IconPersonAdd />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={
+                              request.user_sender.lastname
+                                ? request.user_sender.firstname +
+                                  " " +
+                                  request.user_sender.lastname
+                                : request.user_sender.firstname
+                            }
+                            secondary={
+                              <>
+                                <Box
+                                  sx={{
+                                    display: { xs: "none", md: "inline-block" },
+                                  }}
+                                >
+                                  {t("pages.user-family.request.received")}
+                                  &nbsp;
+                                </Box>
+                                {datetimeToString(
+                                  i18n.resolvedLanguage,
+                                  request.created_at,
+                                )}
+                              </>
+                            }
+                          />
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            style={{ marginLeft: "16px" }}
+                          >
+                            <Button
+                              variant="contained"
+                              type="submit"
+                              disableElevation
+                              onClick={() =>
+                                handleRequestAcceptSubmit(request.id)
+                              }
+                            >
+                              {t("pages.user-family.request.accept")}
+                            </Button>
+                            <Button
+                              variant="contained"
+                              type="submit"
+                              color="error"
+                              disableElevation
+                              onClick={() =>
+                                handleRequestRejectSubmit(request.id)
+                              }
+                            >
+                              {t("pages.user-family.request.reject")}
+                            </Button>
+                          </Stack>
+                        </ListItemButton>
+                        {(i + 1 < row.length || true) && <Divider />}
+                      </Box>
+                    ),
+                  )}
+                {familyMemberRequests &&
+                  familyMemberRequests.map(
+                    (request: any, i: number, row: any) => (
+                      <Box key={request.id}>
+                        <ListItemButton dense={true} disableTouchRipple>
+                          <ListItemIcon>
+                            <IconPersonSearch />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={request.email_receiver}
+                            secondary={
+                              <>
+                                <Box
+                                  sx={{
+                                    display: { xs: "none", md: "inline-block" },
+                                  }}
+                                >
+                                  {t("pages.user-family.request.sent")}&nbsp;
+                                </Box>
+                                {datetimeToString(
+                                  i18n.resolvedLanguage,
+                                  request.created_at,
+                                )}
+                              </>
+                            }
+                          />
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            style={{ marginLeft: "16px" }}
+                          >
+                            <Button
+                              variant="contained"
+                              type="submit"
+                              color="info"
+                              disableElevation
+                              onClick={() =>
+                                handleRequestCancelSubmit(request.id)
+                              }
+                            >
+                              {t("pages.user-family.request.cancel")}
+                            </Button>
+                          </Stack>
+                        </ListItemButton>
+                        {(i + 1 < row.length || true) && <Divider />}
+                      </Box>
+                    ),
+                  )}
+                <Box>
+                  <ListItemButton onClick={() => handleFamilyClick("request")}>
+                    <ListItemText
+                      primary={t("pages.user-family.request.title")}
+                      secondary={t("pages.user-family.request.subtitle")}
+                    />
+                    {familyMembersOpen["request"] ? (
+                      <IconExpandLess />
+                    ) : (
+                      <IconExpandMore />
+                    )}
+                  </ListItemButton>
+                  <Collapse
+                    in={familyMembersOpen["request"]}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <Box className={styles.userFamilyMemberUpdate}>
+                      <FormMemberRequest />
+                    </Box>
+                  </Collapse>
+                </Box>
+              </List>
+            </Box>
+          </Card>
+        </Grid>
       </Grid>
+
       <Grid
         container
         size={4}

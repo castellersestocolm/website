@@ -5,6 +5,10 @@ const AppContext = React.createContext({
   setUser: (user: any) => {},
   messages: [],
   setMessages: (messages: any) => {},
+  familyMemberRequests: [],
+  setFamilyMemberRequests: (requests: any) => {},
+  familyMemberRequestsReceived: [],
+  setFamilyMemberRequestsReceived: (requests: any) => {},
 } as any);
 
 export const useAppContext = () => React.useContext(AppContext);
