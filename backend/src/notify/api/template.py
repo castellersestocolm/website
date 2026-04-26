@@ -130,7 +130,9 @@ def get_user_email_render(
     else:
         modules = [module]
 
-    locale = locale or (user_obj and user_obj.preferred_language) or settings.LANGUAGE_CODE
+    locale = (
+        locale or (user_obj and user_obj.preferred_language) or settings.LANGUAGE_CODE
+    )
 
     with translation.override(locale):
         context = {**SETTINGS_BY_MODULE[module], **(context or {})}

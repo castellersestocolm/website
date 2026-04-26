@@ -10,6 +10,8 @@ from activity.models import ProgramCourse, ProgramCourseRegistration
 
 from django.utils.translation import gettext_lazy as _
 
+from event.enums import EventStatus
+from event.models import Event
 from user.enums import FamilyMemberStatus, FamilyMemberRole
 from user.models import FamilyMember
 
@@ -23,6 +25,13 @@ def export_program_course(course_id: UUID) -> BytesIO:
                 ProgramCourseRegistration.objects.select_related(
                     "entity", "entity__user"
                 ).order_by("entity__firstname", "entity__lastname"),
+            ),
+            Prefetch(
+                "events",
+                Event.objects.filter(status=EventStatus.PUBLISHED)
+                .with_title()
+                .select_related("location")
+                .order_by("time_from"),
             ),
             Prefetch(
                 "registrations__entity__user__family_member__family__members",
@@ -130,6 +139,37 @@ def export_program_course(course_id: UUID) -> BytesIO:
                 program_course_registration_obj.amount.amount,
             ]
         )
+
+    wb.create_sheet(title=str(_("Attendance")))
+    ws.append(
+        [
+            str(_("Name")),
+        ]
+        + [event_obj.title_locale for event_obj in program_course_obj.events.all()]
+    )
+
+    ws.column_dimensions["A"].width = 40
+
+    for program_course_registration_obj in program_course_obj.registrations.all():
+        firstname = (
+            program_course_registration_obj.entity.user.firstname
+            if program_course_registration_obj.entity.user
+            else program_course_registration_obj.entity.firstname
+        )
+        lastname = (
+            program_course_registration_obj.entity.user.lastname
+            if program_course_registration_obj.entity.user
+            else program_course_registration_obj.entity.lastname
+        )
+
+        ws.append(
+            [
+                f"{firstname} {lastname}" if lastname else firstname,
+            ]
+        )
+
+    for cell in ws["1:1"]:
+        cell.font = font_fold
 
     bytes_workbook = BytesIO()
     wb.save(bytes_workbook)

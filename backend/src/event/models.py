@@ -222,11 +222,22 @@ class Event(StandardModel, Timestamps):
         elif hasattr(self, "google_event"):
             transaction.on_commit(lambda: self.google_event.delete())
 
-        import pinyator.tasks
+        if self.course:
+            import activity.tasks
 
-        transaction.on_commit(
-            lambda: pinyator.tasks.update_or_create_event.delay(event_id=self.id)
-        )
+            # Sync program with Google Drive
+            transaction.on_commit(
+                lambda: activity.tasks.sync_program.delay(
+                    program_id=self.course.program_id
+                )
+            )
+
+        if self.module == Module.TOWERS:
+            import pinyator.tasks
+
+            transaction.on_commit(
+                lambda: pinyator.tasks.update_or_create_event.delay(event_id=self.id)
+            )
 
         super().save(*args, **kwargs)
 
