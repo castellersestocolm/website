@@ -2,6 +2,8 @@ from io import BytesIO
 from uuid import UUID
 
 from django.db.models import Prefetch
+from django.utils import timezone
+from openpyxl.utils import get_column_letter
 from openpyxl.workbook import Workbook
 from openpyxl.styles import numbers, Font
 
@@ -29,7 +31,6 @@ def export_program_course(course_id: UUID) -> BytesIO:
             Prefetch(
                 "events",
                 Event.objects.filter(status=EventStatus.PUBLISHED)
-                .with_title()
                 .select_related("location")
                 .order_by("time_from"),
             ),
@@ -146,10 +147,13 @@ def export_program_course(course_id: UUID) -> BytesIO:
         [
             str(_("Name")),
         ]
-        + [event_obj.title_locale for event_obj in program_course_obj.events.all()]
+        + [f"{timezone.localdate(event_obj.time_from).strftime('%Y-%m-%d')} — {event_obj.location.name}" for event_obj in program_course_obj.events.all()]
     )
 
     ws.column_dimensions["A"].width = 40
+
+    for i in range(2, program_course_obj.events.count()):
+        ws.column_dimensions[get_column_letter(i)].width = 40
 
     for program_course_registration_obj in program_course_obj.registrations.all():
         firstname = (
