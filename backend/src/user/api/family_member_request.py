@@ -118,6 +118,7 @@ def create(
         email=email,
         email_type=EmailType.FAMILY_INVITE,
         module=module,
+        locale=translation.get_language(),
         context={
             "user_sender_obj": {
                 "firstname": user_sender_obj.firstname,
