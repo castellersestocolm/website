@@ -20,7 +20,7 @@ export default function Hero({
         </Typography>
         {subtitle && (
           <Typography
-            variant="h4"
+            variant="h5"
             fontWeight="700"
             mt={1}
             className={styles.heroTitle}

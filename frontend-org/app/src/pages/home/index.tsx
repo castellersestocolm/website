@@ -8,6 +8,7 @@ import Alerts from "../../components/Alerts/Alerts";
 import IconLogo from "../../components/IconLogo/IconLogo.jsx";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
+import { languageToLocale } from "../../utils/locale";
 import {
   Container,
   Card,
@@ -34,6 +35,11 @@ import ImageHero8 from "../../assets/images/hero/hero8.jpg";
 import ImageHero9 from "../../assets/images/hero/hero9.jpg";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import IconEast from "@mui/icons-material/East";
+import { apiEventList } from "../../api";
+import { EventType } from "../../enums";
+import Hero from "../../components/Hero/Hero";
+
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -45,6 +51,8 @@ function HomePage() {
   const [wpPostsPage, setWpPostsPage] = React.useState(1);
   const [wpPosts, setWpPosts] = React.useState(undefined);
   const [wpMediaById, setWpMediaById] = React.useState<any>({});
+
+  const [highligtedEvent, setHighlightedEvent] = React.useState(undefined);
 
   const [slideshowImageIndex, setSlideshowImageIndex] = React.useState(0);
 
@@ -103,103 +111,167 @@ function HomePage() {
     });
   }, [setWpPosts, wpPostsPage, setWpMediaById, i18n.resolvedLanguage]);
 
+  React.useEffect(() => {
+    apiEventList(1, 1, undefined, undefined, undefined, undefined, undefined, [
+      EventType.GENERAL,
+      EventType.TALK,
+      EventType.GATHERING,
+      EventType.WORKSHOP,
+    ]).then((response) => {
+      if (response.status === 200 && response.data.results.length > 0) {
+        setHighlightedEvent(response.data.results[0]);
+      }
+    });
+  }, [setHighlightedEvent, i18n.resolvedLanguage]);
+
   const hero = (
-    <Box component="section" className={styles.hero}>
-      <Box
-        component="section"
-        className={styles.heroInner}
-        sx={{
-          marginTop: { xs: "56px", md: "65px" },
-          padding: {
-            xs: messages ? "32px 0 64px 0" : "64px 0",
-            md: messages ? "64px 0 132px 0" : "132px 0",
-          },
-        }}
-      >
-        <Container
-          maxWidth="xl"
+    <>
+      <Box component="section" className={styles.hero}>
+        <Box
+          component="section"
+          className={styles.heroInner}
           sx={{
-            position: "relative",
+            marginTop: { xs: "56px", md: "65px" },
+            padding: {
+              xs: messages ? "32px 0 64px 0" : "64px 0",
+              md: messages ? "64px 0 132px 0" : "132px 0",
+            },
           }}
         >
-          <Alerts />
-          <Grid
-            container
-            spacing={2}
-            sx={{ textAlign: { xs: "center", md: "left" } }}
-            className={styles.heroGrid}
+          <Container
+            maxWidth="xl"
+            sx={{
+              position: "relative",
+            }}
           >
+            <Alerts />
             <Grid
-              size={{ xs: 12, md: 6 }}
-              sx={{ marginBottom: { xs: "32px", md: "0" } }}
+              container
+              spacing={2}
+              sx={{ textAlign: { xs: "center", md: "left" } }}
+              className={styles.heroGrid}
             >
-              <Box className={styles.heroLogo}>
-                <IconLogo />
-              </Box>
-              <Typography
-                variant="h3"
-                fontWeight="700"
-                className={styles.heroTitle}
+              <Grid
+                size={{ xs: 12, md: 6 }}
+                sx={{ marginBottom: { xs: "32px", md: "0" } }}
               >
-                {t("pages.home-hero.title")}
-              </Typography>
-              <Typography
-                variant="h6"
-                fontWeight="700"
-                className={styles.heroSubtitle}
-              >
-                {t("pages.home-hero.subtitle")}
-              </Typography>
-              <Typography variant="h6" className={styles.heroSubtitle}>
-                {user
-                  ? t("pages.home-hero.subtitle3") +
-                    (user.firstname ? ", " + user.firstname : "") +
-                    "!"
-                  : t("pages.home-hero.subtitle2")}
-              </Typography>
-              {!user && (
-                <Button
-                  variant="outlined"
-                  href={ROUTES["user-join"].path}
-                  target={"_self"}
-                  className={styles.heroButton}
-                  disableElevation
+                <Box className={styles.heroLogo}>
+                  <IconLogo />
+                </Box>
+                <Typography
+                  variant="h3"
+                  fontWeight="700"
+                  className={styles.heroTitle}
                 >
-                  {t("pages.home-join.list.button-join")}
-                </Button>
-              )}
+                  {t("pages.home-hero.title")}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  fontWeight="700"
+                  className={styles.heroSubtitle}
+                >
+                  {t("pages.home-hero.subtitle")}
+                </Typography>
+                <Typography variant="h6" className={styles.heroSubtitle}>
+                  {user
+                    ? t("pages.home-hero.subtitle3") +
+                      (user.firstname ? ", " + user.firstname : "") +
+                      "!"
+                    : t("pages.home-hero.subtitle2")}
+                </Typography>
+                {!user && (
+                  <Button
+                    variant="outlined"
+                    href={ROUTES["user-join"].path}
+                    target={"_self"}
+                    className={styles.heroButton}
+                    disableElevation
+                  >
+                    {t("pages.home-join.list.button-join")}
+                  </Button>
+                )}
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Box
+                  sx={{ height: { xs: "300px", md: "500px" } }}
+                  className={styles.heroImageBox}
+                >
+                  {slideshowImages
+                    .concat(slideshowImages[0])
+                    .map((slideshowImage: any, idx: number) => {
+                      const isVisible =
+                        idx === slideshowImageIndex ||
+                        idx === slideshowImageIndex + 1 ||
+                        (slideshowImageIndex >= slideshowImages.length - 1
+                          ? idx === 0
+                          : false);
+                      return (
+                        <Box
+                          className={styles.heroImage}
+                          style={{
+                            backgroundImage: "url(" + slideshowImage + ")",
+                            visibility: isVisible ? "visible" : "hidden",
+                            opacity: isVisible ? 1 : 0,
+                          }}
+                        ></Box>
+                      );
+                    })}
+                </Box>
+              </Grid>
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Box
-                sx={{ height: { xs: "300px", md: "500px" } }}
-                className={styles.heroImageBox}
-              >
-                {slideshowImages
-                  .concat(slideshowImages[0])
-                  .map((slideshowImage: any, idx: number) => {
-                    const isVisible =
-                      idx === slideshowImageIndex ||
-                      idx === slideshowImageIndex + 1 ||
-                      (slideshowImageIndex >= slideshowImages.length - 1
-                        ? idx === 0
-                        : false);
-                    return (
-                      <Box
-                        className={styles.heroImage}
-                        style={{
-                          backgroundImage: "url(" + slideshowImage + ")",
-                          visibility: isVisible ? "visible" : "hidden",
-                          opacity: isVisible ? 1 : 0,
-                        }}
-                      ></Box>
-                    );
-                  })}
-              </Box>
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
+        </Box>
       </Box>
-    </Box>
+      {highligtedEvent && (
+        <Hero
+          title={highligtedEvent.title}
+          subtitle={new Date(highligtedEvent.time_from).toLocaleDateString(
+            languageToLocale(i18n.resolvedLanguage).code,
+            {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            },
+          )}
+          hero={
+            highligtedEvent.picture &&
+            BACKEND_BASE_URL + highligtedEvent.picture.medium
+          }
+          content={
+            <Box>
+              <Typography
+                variant="h4"
+                className={styles.heroSectionSubtitle}
+                marginTop="12px"
+              >
+                {highligtedEvent.description}
+              </Typography>
+              <Grid size={12} marginTop="24px">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  className={styles.joinButtons}
+                >
+                  <Button
+                    variant="contained"
+                    href={ROUTES["calendar-event"].path
+                      .replace(":year", highligtedEvent.time_from.slice(0, 4))
+                      .replace(":month", highligtedEvent.time_from.slice(5, 7))
+                      .replace(":day", highligtedEvent.time_from.slice(8, 10))
+                      .replace(":code", highligtedEvent.code)}
+                    disableElevation
+                  >
+                    {t("pages.home-highlight.button-info")}
+                  </Button>
+                </Stack>
+              </Grid>
+            </Box>
+          }
+        />
+      )}
+    </>
   );
 
   const content = (
