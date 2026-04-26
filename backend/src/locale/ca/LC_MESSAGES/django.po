@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-23 00:17+0200\n"
+"POT-Creation-Date: 2026-04-26 09:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -204,6 +204,21 @@ msgstr "Enviat amb"
 #: comunicat/templates/email/towers/base.html:66
 msgid "by"
 msgstr "per"
+
+#: comunicat/templates/email/org/contact/message.html:18
+#: comunicat/templates/email/towers/contact/message.html:18
+msgid "Name"
+msgstr "Nom"
+
+#: comunicat/templates/email/org/contact/message.html:22
+#: comunicat/templates/email/towers/contact/message.html:22
+msgid "Email"
+msgstr "Correu electrònic"
+
+#: comunicat/templates/email/org/contact/message.html:27
+#: comunicat/templates/email/towers/contact/message.html:27
+msgid "Message"
+msgstr "Missatge"
 
 #: comunicat/templates/email/org/courseregistration/paid.html:5
 #: comunicat/templates/email/org/payment/paid.html:5
@@ -452,6 +467,46 @@ msgstr ""
 "La teva inscripció s'ha marcat com a pagada! En trobaràs un resum a "
 "continuació."
 
+#: comunicat/templates/email/org/user/invite.html:5
+#: comunicat/templates/email/towers/user/invite.html:5
+msgid "You have been invited to join a family membership by"
+msgstr "Has estat convidat a formar part d'una família per"
+
+#: comunicat/templates/email/org/user/invite.html:7
+#: comunicat/templates/email/towers/user/invite.html:7
+msgid ""
+"As you are already a member the only thing you need to do is to accept the "
+"invitation if you wish to merge your families. You can do this by logging "
+"in, navigating to your dashboard and reviewing your invitations under "
+"\"Family requests\"."
+msgstr ""
+"Si ja ets membre l'única cosa que et cal fer és acceptar la invitació si "
+"vols combinar les vostres famílies. Pots fer-ho entrant a la web, navegant "
+"al teu perfil i revisant les invitacions a \"Peticions de família\"."
+
+#: comunicat/templates/email/org/user/invite.html:9
+#: comunicat/templates/email/towers/user/invite.html:9
+msgid ""
+"In order to accept this invitation you first need to become a member which "
+"you can do directly in our website. After having registered and confirmed "
+"your email you will be able to accept this invitation under \"Family requests"
+"\" on your dashboard."
+msgstr ""
+"Per tal d'acceptar aquesta invitació primer has de fer-te membre, ho pots "
+"fer directament a la nostra web. Una vegada registrat i confirmat el teu "
+"correu podràs acceptar aquesta invitació a \"Peticions de família\" al teu "
+"perfil."
+
+#: comunicat/templates/email/org/user/invite.html:15
+#: comunicat/templates/email/towers/user/invite.html:15
+msgid "Review the invitation"
+msgstr "Revisa la invitació"
+
+#: comunicat/templates/email/org/user/invite.html:15
+#: comunicat/templates/email/towers/user/invite.html:15
+msgid "Become a member"
+msgstr "Fes-te membre"
+
 #: comunicat/templates/email/org/user/password.html:5
 #: comunicat/templates/email/towers/user/password.html:5
 msgid ""
@@ -480,17 +535,44 @@ msgstr ""
 msgid "Confirm email"
 msgstr "Confirma el teu correu"
 
-#: comunicat/templates/email/towers/contact/message.html:18
-msgid "Name"
-msgstr "Nom"
+#: comunicat/templates/email/org/user/welcome.html:5
+msgid ""
+"You have now completed the registration process and are part of Les Quatre "
+"Barres, welcome!"
+msgstr ""
+"Has completat el procés de registre i ets part de les Quatre Barres, "
+"et donem la benvinguda!"
 
-#: comunicat/templates/email/towers/contact/message.html:22
-msgid "Email"
-msgstr "Correu electrònic"
+#: comunicat/templates/email/org/user/welcome.html:6
+#: comunicat/templates/email/towers/user/welcome.html:6
+msgid ""
+"In this email attached you will find some information with hopefully answers "
+"to all your questions. However, if you still want to reach out and ask us "
+"anything the best way is through the WhatsApp community. All active members "
+"are part of it as it's where we discuss and share rehearsal information, "
+"post pictures and much more. Please note that we only accept requests into "
+"some of the groups if your phone matches the one you used to register with "
+"us. If that's not the case please do let us know and we'll fix it for you!"
+msgstr ""
+"En aquest correu hi trobaràs adjunta informació que esperem que resolgui "
+"totes les teves preguntes. Tot i això, si no tens alguna cosa clara no "
+"dubtis en preguntar-nos el que vulguis a través de la nostra comunitat de "
+"WhatsApp. Tots els membres actius en són part i és on parlem i compartim "
+"informació dels assajos, pengem imatges i molt més. Si us plau, tingues en "
+"compte que només acceptem peticions a alguns dels grups si el teu telèfon "
+"coincideix amb el que tens registrat al teu compte. Si aquest no és el cas "
+"fes-nos-ho saber i ho arreglarem!"
 
-#: comunicat/templates/email/towers/contact/message.html:27
-msgid "Message"
-msgstr "Missatge"
+#: comunicat/templates/email/org/user/welcome.html:10
+#: comunicat/templates/email/towers/user/imported.html:27
+#: comunicat/templates/email/towers/user/welcome.html:10
+msgid "See you around!"
+msgstr "Ens veiem!"
+
+#: comunicat/templates/email/org/user/welcome.html:15
+#: comunicat/templates/email/towers/user/welcome.html:15
+msgid "Join the community"
+msgstr "Uneix-te a la comunitat"
 
 #: comunicat/templates/email/towers/courseregistration/paid.html:5
 msgid ""
@@ -581,46 +663,6 @@ msgstr "Més preguntes? No dubtis a enviar-nos un correu a"
 msgid "or reach out on WhatsApp!"
 msgstr "o enviar-nos un missatge per WhatsApp!"
 
-#: comunicat/templates/email/towers/user/imported.html:27
-#: comunicat/templates/email/towers/user/welcome.html:10
-msgid "See you around!"
-msgstr "Ens veiem!"
-
-#: comunicat/templates/email/towers/user/invite.html:5
-msgid "You have been invited to join a family membership by"
-msgstr "Has estat convidat a formar part d'una família per"
-
-#: comunicat/templates/email/towers/user/invite.html:7
-msgid ""
-"As you are already a member the only thing you need to do is to accept the "
-"invitation if you wish to merge your families. You can do this by logging "
-"in, navigating to your dashboard and reviewing your invitations under "
-"\"Family requests\"."
-msgstr ""
-"Si ja ets membre l'única cosa que et cal fer és acceptar la invitació si "
-"vols combinar les vostres famílies. Pots fer-ho entrant a la web, navegant "
-"al teu perfil i revisant les invitacions a \"Peticions de família\"."
-
-#: comunicat/templates/email/towers/user/invite.html:9
-msgid ""
-"In order to accept this invitation you first need to become a member which "
-"you can do directly in our website. After having registered and confirmed "
-"your email you will be able to accept this invitation under \"Family requests"
-"\" on your dashboard."
-msgstr ""
-"Per tal d'acceptar aquesta invitació primer has de fer-te membre, ho pots "
-"fer directament a la nostra web. Una vegada registrat i confirmat el teu "
-"correu podràs acceptar aquesta invitació a \"Peticions de família\" al teu "
-"perfil."
-
-#: comunicat/templates/email/towers/user/invite.html:15
-msgid "Review the invitation"
-msgstr "Revisa la invitació"
-
-#: comunicat/templates/email/towers/user/invite.html:15
-msgid "Become a member"
-msgstr "Fes-te membre"
-
 #: comunicat/templates/email/towers/user/signup.html:6
 msgid ""
 "We have some upcoming performances, please make sure to update your "
@@ -668,29 +710,6 @@ msgid ""
 msgstr ""
 "Has completat el procés de registre i ets part dels Castellers d'Estocolm, "
 "et donem la benvinguda!"
-
-#: comunicat/templates/email/towers/user/welcome.html:6
-msgid ""
-"In this email attached you will find some information with hopefully answers "
-"to all your questions. However, if you still want to reach out and ask us "
-"anything the best way is through the WhatsApp community. All active members "
-"are part of it as it's where we discuss and share rehearsal information, "
-"post pictures and much more. Please note that we only accept requests into "
-"some of the groups if your phone matches the one you used to register with "
-"us. If that's not the case please do let us know and we'll fix it for you!"
-msgstr ""
-"En aquest correu hi trobaràs adjunta informació que esperem que resolgui "
-"totes les teves preguntes. Tot i això, si no tens alguna cosa clara no "
-"dubtis en preguntar-nos el que vulguis a través de la nostra comunitat de "
-"WhatsApp. Tots els membres actius en són part i és on parlem i compartim "
-"informació dels assajos, pengem imatges i molt més. Si us plau, tingues en "
-"compte que només acceptem peticions a alguns dels grups si el teu telèfon "
-"coincideix amb el que tens registrat al teu compte. Si aquest no és el cas "
-"fes-nos-ho saber i ho arreglarem!"
-
-#: comunicat/templates/email/towers/user/welcome.html:15
-msgid "Join the community"
-msgstr "Uneix-te a la comunitat"
 
 #: comunicat/templates/pdf/org/registration.html:77
 #: comunicat/templates/pdf/towers/registration.html:77
@@ -832,11 +851,11 @@ msgstr ""
 msgid "View attendance"
 msgstr "Mostra l'assistència"
 
-#: notify/api/template.py:262
+#: notify/api/template.py:253
 msgid "Sign-up for the upcoming performances"
 msgstr "Confirma l'assistència a les properes actuacions"
 
-#: notify/api/template.py:428
+#: notify/api/template.py:419
 msgid "receipt"
 msgstr "rebut"
 

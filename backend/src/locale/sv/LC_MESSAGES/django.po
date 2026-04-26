@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-23 00:17+0200\n"
+"POT-Creation-Date: 2026-04-26 09:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -203,6 +203,21 @@ msgstr "Skickat med"
 #: comunicat/templates/email/towers/base.html:66
 msgid "by"
 msgstr "av"
+
+#: comunicat/templates/email/org/contact/message.html:18
+#: comunicat/templates/email/towers/contact/message.html:18
+msgid "Name"
+msgstr "Namn"
+
+#: comunicat/templates/email/org/contact/message.html:22
+#: comunicat/templates/email/towers/contact/message.html:22
+msgid "Email"
+msgstr "E-post"
+
+#: comunicat/templates/email/org/contact/message.html:27
+#: comunicat/templates/email/towers/contact/message.html:27
+msgid "Message"
+msgstr "Meddelande"
 
 #: comunicat/templates/email/org/courseregistration/paid.html:5
 #: comunicat/templates/email/org/payment/paid.html:5
@@ -450,6 +465,45 @@ msgid ""
 msgstr ""
 "Din registrering har markerats som betald! Du hittar en sammanfattning nedan."
 
+#: comunicat/templates/email/org/user/invite.html:5
+#: comunicat/templates/email/towers/user/invite.html:5
+msgid "You have been invited to join a family membership by"
+msgstr "Du har blivit inbjuden att gå med i ett familjemedlemskap av"
+
+#: comunicat/templates/email/org/user/invite.html:7
+#: comunicat/templates/email/towers/user/invite.html:7
+msgid ""
+"As you are already a member the only thing you need to do is to accept the "
+"invitation if you wish to merge your families. You can do this by logging "
+"in, navigating to your dashboard and reviewing your invitations under "
+"\"Family requests\"."
+msgstr ""
+"Eftersom du redan är medlem behöver du bara acceptera inbjudningen om du "
+"önskar förena din familj. Du kan göra det genom att logga in, navigera till "
+"din panel och titta på dina inbjudningar i \"Familje förfrågningar\"."
+
+#: comunicat/templates/email/org/user/invite.html:9
+#: comunicat/templates/email/towers/user/invite.html:9
+msgid ""
+"In order to accept this invitation you first need to become a member which "
+"you can do directly in our website. After having registered and confirmed "
+"your email you will be able to accept this invitation under \"Family requests"
+"\" on your dashboard."
+msgstr ""
+"För att kunna acceptera denna inbjudan måste du först bli medlem som du kan "
+"göra direkt på vår hemsida. Efter du gjort det kan du acceptera inbjudan i "
+"\"Familje förfrågningar\" i panelen."
+
+#: comunicat/templates/email/org/user/invite.html:15
+#: comunicat/templates/email/towers/user/invite.html:15
+msgid "Review the invitation"
+msgstr "Se över inbjudan"
+
+#: comunicat/templates/email/org/user/invite.html:15
+#: comunicat/templates/email/towers/user/invite.html:15
+msgid "Become a member"
+msgstr "Bli medlem"
+
 #: comunicat/templates/email/org/user/password.html:5
 #: comunicat/templates/email/towers/user/password.html:5
 msgid ""
@@ -479,17 +533,44 @@ msgstr ""
 msgid "Confirm email"
 msgstr "Bekräfta e-post"
 
-#: comunicat/templates/email/towers/contact/message.html:18
-msgid "Name"
-msgstr "Namn"
+#: comunicat/templates/email/org/user/welcome.html:5
+msgid ""
+"You have now completed the registration process and are part of Les Quatre "
+"Barres, welcome!"
+msgstr ""
+"Du har nu slutfört din registrering och är nu en del av Les Quatre Barres, "
+"hjärtligt välkommen!"
 
-#: comunicat/templates/email/towers/contact/message.html:22
-msgid "Email"
-msgstr "E-post"
+#: comunicat/templates/email/org/user/welcome.html:6
+#: comunicat/templates/email/towers/user/welcome.html:6
+msgid ""
+"In this email attached you will find some information with hopefully answers "
+"to all your questions. However, if you still want to reach out and ask us "
+"anything the best way is through the WhatsApp community. All active members "
+"are part of it as it's where we discuss and share rehearsal information, "
+"post pictures and much more. Please note that we only accept requests into "
+"some of the groups if your phone matches the one you used to register with "
+"us. If that's not the case please do let us know and we'll fix it for you!"
+msgstr ""
+"I medföljande mejlet finner du information och förhoppningsvis svar till "
+"alla dina frågor. Men, om du fortfarande skulle ha några tvivel eller frågor "
+"kan du kontakta oss enklast genom Whatsapp gemenskapen. Alla aktiva "
+"medlemmar är där eftersom vi ofta diskuterar och delger varandra information "
+"om repetitioner, framträdanden, bilder, video och mycket annat. Märk att vi "
+"bara accepterar förfrågningar om tillträde till en del av grupperna om ditt "
+"nummer matchar det du har registrerat hos oss. Om inte så kan du kontakta "
+"oss så ordnar vi det åt dig!"
 
-#: comunicat/templates/email/towers/contact/message.html:27
-msgid "Message"
-msgstr "Meddelande"
+#: comunicat/templates/email/org/user/welcome.html:10
+#: comunicat/templates/email/towers/user/imported.html:27
+#: comunicat/templates/email/towers/user/welcome.html:10
+msgid "See you around!"
+msgstr "Vi syns!"
+
+#: comunicat/templates/email/org/user/welcome.html:15
+#: comunicat/templates/email/towers/user/welcome.html:15
+msgid "Join the community"
+msgstr "Gå med i gemenskapen"
 
 #: comunicat/templates/email/towers/courseregistration/paid.html:5
 msgid ""
@@ -579,45 +660,6 @@ msgstr "Har du fler frågor? Skicka dem till oss via e-post"
 msgid "or reach out on WhatsApp!"
 msgstr "eller skriv till oss på Whatsapp!"
 
-#: comunicat/templates/email/towers/user/imported.html:27
-#: comunicat/templates/email/towers/user/welcome.html:10
-msgid "See you around!"
-msgstr "Vi syns!"
-
-#: comunicat/templates/email/towers/user/invite.html:5
-msgid "You have been invited to join a family membership by"
-msgstr "Du har blivit inbjuden att gå med i ett familjemedlemskap av"
-
-#: comunicat/templates/email/towers/user/invite.html:7
-msgid ""
-"As you are already a member the only thing you need to do is to accept the "
-"invitation if you wish to merge your families. You can do this by logging "
-"in, navigating to your dashboard and reviewing your invitations under "
-"\"Family requests\"."
-msgstr ""
-"Eftersom du redan är medlem behöver du bara acceptera inbjudningen om du "
-"önskar förena din familj. Du kan göra det genom att logga in, navigera till "
-"din panel och titta på dina inbjudningar i \"Familje förfrågningar\"."
-
-#: comunicat/templates/email/towers/user/invite.html:9
-msgid ""
-"In order to accept this invitation you first need to become a member which "
-"you can do directly in our website. After having registered and confirmed "
-"your email you will be able to accept this invitation under \"Family requests"
-"\" on your dashboard."
-msgstr ""
-"För att kunna acceptera denna inbjudan måste du först bli medlem som du kan "
-"göra direkt på vår hemsida. Efter du gjort det kan du acceptera inbjudan i "
-"\"Familje förfrågningar\" i panelen."
-
-#: comunicat/templates/email/towers/user/invite.html:15
-msgid "Review the invitation"
-msgstr "Se över inbjudan"
-
-#: comunicat/templates/email/towers/user/invite.html:15
-msgid "Become a member"
-msgstr "Bli medlem"
-
 #: comunicat/templates/email/towers/user/signup.html:6
 msgid ""
 "We have some upcoming performances, please make sure to update your "
@@ -665,29 +707,6 @@ msgid ""
 msgstr ""
 "Du har nu slutfört din registrering och är nu en del av Castellers "
 "d'Estocolm, hjärtligt välkommen!"
-
-#: comunicat/templates/email/towers/user/welcome.html:6
-msgid ""
-"In this email attached you will find some information with hopefully answers "
-"to all your questions. However, if you still want to reach out and ask us "
-"anything the best way is through the WhatsApp community. All active members "
-"are part of it as it's where we discuss and share rehearsal information, "
-"post pictures and much more. Please note that we only accept requests into "
-"some of the groups if your phone matches the one you used to register with "
-"us. If that's not the case please do let us know and we'll fix it for you!"
-msgstr ""
-"I medföljande mejlet finner du information och förhoppningsvis svar till "
-"alla dina frågor. Men, om du fortfarande skulle ha några tvivel eller frågor "
-"kan du kontakta oss enklast genom Whatsapp gemenskapen. Alla aktiva "
-"medlemmar är där eftersom vi ofta diskuterar och delger varandra information "
-"om repetitioner, framträdanden, bilder, video och mycket annat. Märk att vi "
-"bara accepterar förfrågningar om tillträde till en del av grupperna om ditt "
-"nummer matchar det du har registrerat hos oss. Om inte så kan du kontakta "
-"oss så ordnar vi det åt dig!"
-
-#: comunicat/templates/email/towers/user/welcome.html:15
-msgid "Join the community"
-msgstr "Gå med i gemenskapen"
 
 #: comunicat/templates/pdf/org/registration.html:77
 #: comunicat/templates/pdf/towers/registration.html:77
@@ -829,11 +848,11 @@ msgstr ""
 msgid "View attendance"
 msgstr "Visa närvaro"
 
-#: notify/api/template.py:262
+#: notify/api/template.py:253
 msgid "Sign-up for the upcoming performances"
 msgstr "Registrera dig till kommande uppvisningar"
 
-#: notify/api/template.py:428
+#: notify/api/template.py:419
 msgid "receipt"
 msgstr "kvitto"
 

@@ -1,0 +1,10 @@
+{% extends "email/towers/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "You have now completed the registration process and are part of Les Quatre Barres, welcome!" %}</p>
+{% endblock %}
+
+{% block email_closing %}
+    <p style="margin:0;">{% trans "See you around!" %}</p>
+{% endblock %}
