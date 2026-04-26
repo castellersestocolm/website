@@ -140,7 +140,8 @@ def export_program_course(course_id: UUID) -> BytesIO:
             ]
         )
 
-    wb.create_sheet(title=str(_("Attendance")))
+    ws = wb.create_sheet(title=str(_("Attendance")))
+
     ws.append(
         [
             str(_("Name")),
