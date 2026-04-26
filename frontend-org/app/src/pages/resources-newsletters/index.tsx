@@ -20,7 +20,7 @@ function ResourcesNewslettersPage() {
   const [documents, setDocuments] = React.useState(undefined);
 
   React.useEffect(() => {
-    apiDocumentList(documentsPage, undefined, [DocumentType.NEWSLETTER]).then(
+    apiDocumentList(documentsPage, undefined, [DocumentType.NEWSLETTER], ["date"]).then(
       (response) => {
         if (response.status === 200) {
           setDocuments(response.data);
