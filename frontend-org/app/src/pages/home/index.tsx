@@ -234,13 +234,29 @@ function HomePage() {
           }
           content={
             <Box>
-              <Typography
-                variant="h4"
-                className={styles.heroSectionSubtitle}
-                marginTop="12px"
-              >
-                {highligtedEvent.description}
-              </Typography>
+              {highligtedEvent.location && (
+                <Typography
+                  variant="h6"
+                  fontWeight={700}
+                  color="white"
+                  align="center"
+                  mt={1}
+                >
+                  <Link
+                    color="white"
+                    underline="none"
+                    href={
+                      "http://google.com/maps/place/" +
+                      highligtedEvent.location.coordinate_lat +
+                      "," +
+                      highligtedEvent.location.coordinate_lon
+                    }
+                    target="_blank"
+                  >
+                    {highligtedEvent.location.name}
+                  </Link>
+                </Typography>
+              )}
               {/*<Grid size={12} marginTop="24px">
                 <Stack
                   direction="row"

@@ -37,3 +37,9 @@
   background-size: cover;
   background-position: center;
 }
+
+.pageLoader {
+  align-content: center;
+  flex: 1;
+  display: flex;
+}
