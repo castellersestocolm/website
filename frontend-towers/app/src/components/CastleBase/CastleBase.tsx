@@ -2,7 +2,7 @@ import styles from "./styles.module.css";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
-import { Stage, Label, Layer, Rect, Text } from "react-konva";
+import { Stage, Label, Layer, Rect, Text, RegularPolygon } from "react-konva";
 import {
   getEnumLabel,
   PermissionLevel,
@@ -559,6 +559,28 @@ export default function CastleBase({ castle }: any) {
                   height={labelHeight}
                   rotation={castlePlace.placement.angle}
                 >
+                  {isAgullaAlone && (
+                    <>
+                      <RegularPolygon
+                        sides={3}
+                        radius={0}
+                        fill={"#1d1d1d"}
+                        width={15}
+                        height={rectHeight / 2.5}
+                        x={10}
+                        y={rectHeight / 2}
+                      />
+                      <RegularPolygon
+                        sides={3}
+                        radius={0}
+                        fill={"#1d1d1d"}
+                        width={15}
+                        height={rectHeight / 2.5}
+                        x={rectWidth + 30}
+                        y={rectHeight / 2}
+                      />
+                    </>
+                  )}
                   <Rect
                     width={rectWidth}
                     height={rectHeight}
@@ -615,41 +637,6 @@ export default function CastleBase({ castle }: any) {
                     height={rectHeight}
                     x={isAgullaAlone ? 20 : 0}
                   />
-                  {isAgullaAlone && (
-                    <>
-                      <Text
-                        text="⇡"
-                        fontFamily="DM Sans"
-                        fontSize={Math.round(
-                          Math.sqrt(
-                            Math.pow(rectWidth, 2) + Math.pow(rectHeight, 2),
-                          ) / 4,
-                        )}
-                        fontStyle="normal"
-                        align="center"
-                        verticalAlign="middle"
-                        fill="#1d1d1d"
-                        width={20}
-                        height={rectHeight}
-                      />
-                      <Text
-                        text="⇡"
-                        fontFamily="DM Sans"
-                        fontSize={Math.round(
-                          Math.sqrt(
-                            Math.pow(rectWidth, 2) + Math.pow(rectHeight, 2),
-                          ) / 4,
-                        )}
-                        fontStyle="normal"
-                        align="center"
-                        verticalAlign="middle"
-                        fill="#1d1d1d"
-                        width={20}
-                        x={rectWidth + 20}
-                        height={rectHeight}
-                      />
-                    </>
-                  )}
                 </Label>
               </>
             );
