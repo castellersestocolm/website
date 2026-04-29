@@ -1,3 +1,5 @@
+import random
+
 from django.db.models import Case, When, Value, IntegerField, Q
 from django.utils import translation
 
@@ -23,25 +25,37 @@ def get_list(
     if filter_types is not None:
         document_filter &= Q(type__in=filter_types)
 
-    return sorted(
-        list(
-            Document.objects.filter(
-                document_filter, status=DocumentStatus.PUBLISHED, module=module
-            )
-            .exclude(document_exclude)
-            .with_language_match()
-            .order_by("code", "language_match", "-version")
-            .distinct("code")
-        ),
-        key=lambda document_obj: (
-            [
-                getattr(document_obj, order_by_attr.lstrip("-"))
-                for order_by_attr in order_by
-            ]
-            if order_by
-            else document_obj.order
-        ),
-        # TODO: Fix this per attribute
-        reverse=order_by
-        and any([order_by_attr.startswith("-") for order_by_attr in order_by]),
+    document_objs = list(
+        Document.objects.filter(
+            document_filter, status=DocumentStatus.PUBLISHED, module=module
+        )
+        .exclude(document_exclude)
+        .with_language_match()
+        .order_by("code", "language_match", "-version")
+        .distinct("code")
     )
+
+    if order_by is not None:
+        if "?" in order_by:
+            random.shuffle(document_objs)
+        else:
+            document_objs = sorted(
+                document_objs,
+                key=lambda document_obj: (
+                    [
+                        getattr(document_obj, order_by_attr.lstrip("-"))
+                        for order_by_attr in order_by
+                    ]
+                    if order_by
+                    else document_obj.order
+                ),
+                # TODO: Fix this per attribute
+                reverse=order_by
+                and any([order_by_attr.startswith("-") for order_by_attr in order_by]),
+            )
+    else:
+        document_objs = sorted(
+            document_objs, key=lambda document_obj: document_obj.order
+        )
+
+    return document_objs

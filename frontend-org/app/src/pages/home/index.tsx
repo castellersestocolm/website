@@ -32,10 +32,11 @@ import ImageHero6 from "../../assets/images/hero/hero6.jpg";
 import ImageHero7 from "../../assets/images/hero/hero7.jpg";
 import ImageHero8 from "../../assets/images/hero/hero8.jpg";
 import ImageHero9 from "../../assets/images/hero/hero9.jpg";
+import ImageHeroNewsletters from "../../assets/images/heros/newsletters.jpg";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import IconEast from "@mui/icons-material/East";
-import { apiEventList } from "../../api";
-import { EventType } from "../../enums";
+import { apiDocumentList, apiEventList } from "../../api";
+import { DocumentType, EventType } from "../../enums";
 import Hero from "../../components/Hero/Hero";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
@@ -283,6 +284,31 @@ function HomePage() {
     </>
   );
 
+  const footer = (
+    <>
+      <Hero
+        title={t("pages.home-newsletters.title")}
+        subtitle={t("pages.home-newsletters.subtitle")}
+        hero={ImageHeroNewsletters}
+        content={
+          <Box>
+            <Grid size={12} marginTop="24px">
+              <Stack direction="row" spacing={2} className={styles.joinButtons}>
+                <Button
+                  variant="contained"
+                  href={ROUTES["resources-newsletters"].path}
+                  disableElevation
+                >
+                  {t("pages.home-newsletters.button-read")}
+                </Button>
+              </Stack>
+            </Grid>
+          </Box>
+        }
+      />
+    </>
+  );
+
   const content = (
     <>
       <Box component="section" className={styles.postsGrid}>
@@ -404,7 +430,9 @@ function HomePage() {
     </>
   );
 
-  return <Page hero={hero} content={content} loading={!wpPosts} />;
+  return (
+    <Page hero={hero} content={content} footer={footer} loading={!wpPosts} />
+  );
 }
 
 export default HomePage;

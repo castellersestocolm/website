@@ -7,6 +7,7 @@ import { LoaderClip } from "../LoaderClip/LoaderClip";
 export default function Page({
   content,
   hero = undefined,
+  footer = undefined,
   loading = false,
 }: any) {
   return (
@@ -56,6 +57,7 @@ export default function Page({
           )}
         </Container>
       </Box>
+      {footer}
     </>
   );
 }

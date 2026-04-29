@@ -147,7 +147,10 @@ def export_program_course(course_id: UUID) -> BytesIO:
         [
             str(_("Name")),
         ]
-        + [f"{timezone.localdate(event_obj.time_from).strftime('%Y-%m-%d')} — {event_obj.location.name}" for event_obj in program_course_obj.events.all()]
+        + [
+            f"{timezone.localdate(event_obj.time_from).strftime('%Y-%m-%d')} — {event_obj.location.name}"
+            for event_obj in program_course_obj.events.all()
+        ]
     )
 
     ws.column_dimensions["A"].width = 40

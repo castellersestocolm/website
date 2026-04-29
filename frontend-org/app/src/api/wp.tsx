@@ -39,7 +39,7 @@ export const wpApiPostList = async (
             : language === "ca"
               ? WP_CATEGORIES_CA
               : null,
-        page_size: pageSize ? pageSize : WP_API_POSTS_LIST_PAGE_SIZE,
+        per_page: pageSize ? pageSize : WP_API_POSTS_LIST_PAGE_SIZE,
         page: page,
         slug: slug ? slug : null,
       },
