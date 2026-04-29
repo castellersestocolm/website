@@ -494,12 +494,25 @@ export default function CastleBase({ castle }: any) {
       >
         <Layer>
           {currentCastlePlaces.map((castlePlace: any) => {
+            const isAgullaAlone =
+              castlePlace.position.type === PositionType.AGULLA &&
+              currentCastlePlaces.filter(
+                (otherCastlePlace: any) =>
+                  otherCastlePlace.position.type === PositionType.AGULLA,
+              ).length === 1;
             const isUserOrFamily = castlePlace.is_user || castlePlace.is_family;
             const labelWidth =
-              castlePlace.size.width - (isUserOrFamily ? 2 : 1);
+              castlePlace.size.width -
+              (isUserOrFamily ? 2 : 1) +
+              (isAgullaAlone ? 40 : 0);
             const labelHeight =
               castlePlace.size.height - (isUserOrFamily ? 2 : 1);
-            const labelX = castlePlace.placement.x + (isUserOrFamily ? 1 : 0.5);
+            const rectWidth = castlePlace.size.width - (isUserOrFamily ? 2 : 1);
+            const rectHeight = labelHeight;
+            const labelX =
+              castlePlace.placement.x +
+              (isUserOrFamily ? 1 : 0.5) -
+              (isAgullaAlone ? 20 : 0);
             const labelY = castlePlace.placement.y + (isUserOrFamily ? 1 : 0.5);
 
             const colourBg =
@@ -547,8 +560,8 @@ export default function CastleBase({ castle }: any) {
                   rotation={castlePlace.placement.angle}
                 >
                   <Rect
-                    width={labelWidth}
-                    height={labelHeight}
+                    width={rectWidth}
+                    height={rectHeight}
                     fill={isUserOrFamily ? "white" : colourBg}
                     stroke={
                       isUserOrFamily
@@ -561,6 +574,7 @@ export default function CastleBase({ castle }: any) {
                     strokeWidth={isUserOrFamily ? 3 : 1}
                     dash={isUserOrFamily && [5, 2]}
                     cornerRadius={8}
+                    x={isAgullaAlone ? 20 : 0}
                   />
                   <Text
                     text={
@@ -583,7 +597,7 @@ export default function CastleBase({ castle }: any) {
                     fontFamily="DM Sans"
                     fontSize={Math.round(
                       Math.sqrt(
-                        Math.pow(labelWidth, 2) + Math.pow(labelHeight, 2),
+                        Math.pow(rectWidth, 2) + Math.pow(rectHeight, 2),
                       ) / 5.5,
                     )}
                     fontStyle={isUserOrFamily ? "bold" : "normal"}
@@ -597,9 +611,45 @@ export default function CastleBase({ castle }: any) {
                             castlePlace.position.type
                           ]
                     }
-                    width={labelWidth}
-                    height={labelHeight}
+                    width={rectWidth}
+                    height={rectHeight}
+                    x={isAgullaAlone ? 20 : 0}
                   />
+                  {isAgullaAlone && (
+                    <>
+                      <Text
+                        text="⇡"
+                        fontFamily="DM Sans"
+                        fontSize={Math.round(
+                          Math.sqrt(
+                            Math.pow(rectWidth, 2) + Math.pow(rectHeight, 2),
+                          ) / 4,
+                        )}
+                        fontStyle="normal"
+                        align="center"
+                        verticalAlign="middle"
+                        fill="#1d1d1d"
+                        width={20}
+                        height={rectHeight}
+                      />
+                      <Text
+                        text="⇡"
+                        fontFamily="DM Sans"
+                        fontSize={Math.round(
+                          Math.sqrt(
+                            Math.pow(rectWidth, 2) + Math.pow(rectHeight, 2),
+                          ) / 4,
+                        )}
+                        fontStyle="normal"
+                        align="center"
+                        verticalAlign="middle"
+                        fill="#1d1d1d"
+                        width={20}
+                        x={rectWidth + 20}
+                        height={rectHeight}
+                      />
+                    </>
+                  )}
                 </Label>
               </>
             );
