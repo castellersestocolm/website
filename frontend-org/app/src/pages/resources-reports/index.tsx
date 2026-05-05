@@ -4,18 +4,17 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
 import { apiDocumentList } from "../../api";
-import PageImageHero from "../../components/PageImageHero/PageImageHero";
+import PageBase from "../../components/PageBase/PageBase";
 import Box from "@mui/material/Box";
 import LanguageChip from "../../components/LanguageChip/LanguageChip";
 import { DocumentType } from "../../enums";
 import Pagination from "@mui/material/Pagination";
 import { API_DOCUMENTS_LIST_PAGE_SIZE } from "../../consts";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
-import ImageHeroNewsletters from "../../assets/images/heros/newsletters.jpg";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
-function ResourcesNewslettersPage() {
+function ResourcesReportsPage() {
   const [t, i18n] = useTranslation("common");
 
   const [documentsPage, setDocumentsPage] = React.useState(1);
@@ -27,7 +26,7 @@ function ResourcesNewslettersPage() {
     apiDocumentList(
       documentsPage,
       undefined,
-      [DocumentType.NEWSLETTER],
+      [DocumentType.REPORT],
       ["date"],
     ).then((response) => {
       if (response.status === 200) {
@@ -43,10 +42,7 @@ function ResourcesNewslettersPage() {
   }
 
   const content = (
-    <>
-      <Typography variant="body1" mb={5}>
-        {t("pages.resources-newsletters.text-1")}
-      </Typography>
+    <Box mt={3}>
       {documents && documents.results.length > 0 && (
         <>
           {!isReady ? (
@@ -122,17 +118,16 @@ function ResourcesNewslettersPage() {
           )}
         </>
       )}
-    </>
+    </Box>
   );
 
   return (
-    <PageImageHero
-      title={t("pages.resources-newsletters.title")}
+    <PageBase
+      title={t("pages.resources-reports.title")}
       content={content}
-      hero={ImageHeroNewsletters}
       loading={!documents}
     />
   );
 }
 
-export default ResourcesNewslettersPage;
+export default ResourcesReportsPage;

@@ -35,8 +35,8 @@ import ImageHero9 from "../../assets/images/hero/hero9.jpg";
 import ImageHeroNewsletters from "../../assets/images/heros/newsletters.jpg";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import IconEast from "@mui/icons-material/East";
-import { apiDocumentList, apiEventList } from "../../api";
-import { DocumentType, EventType } from "../../enums";
+import { apiEventList } from "../../api";
+import { EventType } from "../../enums";
 import Hero from "../../components/Hero/Hero";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;

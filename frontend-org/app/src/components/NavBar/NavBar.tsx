@@ -65,6 +65,11 @@ export default function NavBar() {
       name: t("components.navbar-menu.resources"),
       children: [
         {
+          name: t("components.navbar-menu.resources.reports"),
+          path: ROUTES["resources-reports"].path,
+          target: "_self",
+        },
+        {
           name: t("components.navbar-menu.resources.newsletters"),
           path: ROUTES["resources-newsletters"].path,
           target: "_self",

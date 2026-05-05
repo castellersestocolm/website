@@ -51,14 +51,21 @@ function ResourcesPage() {
                     alt={document.name}
                   />
                   <Box className={styles.resourcesFileTitle}>
-                    <Typography
-                      variant="body2"
-                      fontWeight="600"
-                      component="span"
-                    >
-                      {document.name}
-                      <LanguageChip language={document.language} size="small" />
-                    </Typography>
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        fontWeight="600"
+                        component="span"
+                        paddingRight="8px"
+                      >
+                        {document.name}
+                      </Typography>
+                      <LanguageChip
+                        language={document.language}
+                        size="small"
+                        marginLeft={0}
+                      />
+                    </Box>
                   </Box>
                 </Link>
               </Grid>

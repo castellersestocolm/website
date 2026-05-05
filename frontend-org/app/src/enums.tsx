@@ -163,4 +163,5 @@ export enum DocumentType {
   RESOURCE = 30,
   PRESS = 40,
   NEWSLETTER = 50,
+  REPORT = 60,
 }

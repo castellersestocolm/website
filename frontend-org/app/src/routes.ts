@@ -47,6 +47,9 @@ export const ROUTES = {
   "resources-newsletters": {
     path: "/resources/newsletters",
   },
+  "resources-reports": {
+    path: "/resources/reports",
+  },
   "news-post": {
     path: "/news/:year/:month/:slug",
   },
