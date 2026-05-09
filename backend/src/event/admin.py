@@ -7,6 +7,7 @@ from django.db.models import JSONField, Q, Prefetch
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from jsoneditor.forms import JSONEditor
 
@@ -42,6 +43,7 @@ from event.models import (
     EventSignup,
 )
 from notify.enums import EmailType
+from payment.models import AccountEvent
 
 
 class ConnectionInline(admin.TabularInline):
@@ -98,6 +100,10 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
     extra = 0
 
     inline_actions = []
+
+    # TODO: For now make old event registrations "read only"
+    def has_change_permission(self, request, obj=None):
+        return not obj or obj.time_to <= timezone.now() + timezone.timedelta(days=7)
 
     def get_queryset(self, request):
         return super().get_queryset(request=request).select_related("entity", "event")
@@ -190,6 +196,13 @@ class EventRequirementInline(admin.TabularInline):
         return super().get_queryset(request=request).select_related("event")
 
 
+class AccountEventInline(admin.TabularInline):
+    model = AccountEvent
+    ordering = ("event__time_from",)
+    raw_id_fields = ("event",)
+    extra = 0
+
+
 class AgendaItemInline(admin.TabularInline):
     model = AgendaItem
     ordering = ("time_from",)
@@ -247,6 +260,7 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
         EventRequirementInline,
         EventQuestionInline,
         AgendaItemInline,
+        AccountEventInline,
         RegistrationInline,
     )
     actions = (publish_events,)
