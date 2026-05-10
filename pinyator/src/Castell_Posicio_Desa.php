@@ -22,7 +22,7 @@ if (!empty($_GET["obj"]))
 		if (($obj->cnv == 1) and ($obj->ca > 0)) 
 		{
 			$sql=$sql."UPDATE CASTELLER SET PORTAR_PEU=".$obj->peu.", LESIONAT=".$obj->les." WHERE CASTELLER_ID = ".$obj->ca.";";
-			$sql=$sql."UPDATE CASTELL_POSICIO SET COMENTARI='".GetStrDB($obj->com)."' WHERE CASELLA_ID=".$obj->cs.";";
+			$sql=$sql."UPDATE CASTELL_POSICIO SET COMENTARI='".GetStrDB($obj->com)."' WHERE CASTELL_ID=".$obj->id." AND CASTELLER_ID=".$obj->ca." AND CASELLA_ID=".$obj->cs.";";
 		}
 		elseif ($obj->ca > 0)
 		{
