@@ -63,7 +63,9 @@ class Member(StandardModel, Timestamps):
     date_from = models.DateField(null=True, blank=True)
     date_to = models.DateField(null=True, blank=True)
 
-    picture = VersatileImageField("Image", upload_to="legal/member/picture/")
+    picture = VersatileImageField(
+        "Image", blank=True, null=True, upload_to="legal/member/picture/"
+    )
 
     def __str__(self) -> str:
         return f"{self.user.name} - {self.role} - {self.team}"
