@@ -15,7 +15,7 @@
 .footerIcon {
   float: left;
   svg {
-    height: 48px;
+    height: 36px;
     width: fit-content;
   }
 }

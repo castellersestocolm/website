@@ -70,6 +70,11 @@ export default function NavBar() {
           target: "_self",
         },
         {
+          name: t("components.navbar-menu.resources.transparency"),
+          path: ROUTES["resources-transparency"].path,
+          target: "_self",
+        },
+        {
           name: t("components.navbar-menu.resources.newsletters"),
           path: ROUTES["resources-newsletters"].path,
           target: "_self",

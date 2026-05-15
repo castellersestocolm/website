@@ -50,6 +50,9 @@ export const ROUTES = {
   "resources-reports": {
     path: "/resources/reports",
   },
+  "resources-transparency": {
+    path: "/resources/transparency",
+  },
   "news-post": {
     path: "/news/:year/:month/:slug",
   },
