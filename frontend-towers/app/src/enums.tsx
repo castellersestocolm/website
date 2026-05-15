@@ -248,6 +248,7 @@ export enum DocumentType {
   PRESS = 40,
   NEWSLETTER = 50,
   REPORT = 60,
+  FINANCIAL = 70,
 }
 
 export enum PositionType {

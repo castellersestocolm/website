@@ -66,4 +66,7 @@ export const ROUTES = {
   "external-towers": {
     path: "https://castellersestocolm.se",
   },
+  "external-gencat": {
+    path: "https://gencat.cat",
+  },
 };

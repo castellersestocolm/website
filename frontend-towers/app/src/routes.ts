@@ -130,6 +130,9 @@ export const ROUTES = {
   "external-casal": {
     path: "https://lesquatrebarres.org",
   },
+  "external-gencat": {
+    path: "https://gencat.cat",
+  },
   "external-casal-form-membership": {
     path: "https://lesquatrebarres.org/user/join",
   },

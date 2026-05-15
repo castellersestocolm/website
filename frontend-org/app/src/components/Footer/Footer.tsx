@@ -2,7 +2,9 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { Container, Divider, Link, MenuItem, Typography } from "@mui/material";
 import styles from "./styles.module.css";
-import IconLogo from "../../components/IconLogo/IconLogo.jsx";
+import IconLogoGencatCa from "../../components/IconLogoGencatCa/IconLogoGencatCa.jsx";
+import IconLogoGencatEn from "../../components/IconLogoGencatEn/IconLogoGencatEn.jsx";
+import IconLogoGencatSv from "../../components/IconLogoGencatSv/IconLogoGencatSv.jsx";
 import { useTranslation } from "react-i18next";
 import IconFacebook from "@mui/icons-material/Facebook";
 import IconInstagram from "@mui/icons-material/Instagram";
@@ -13,7 +15,7 @@ import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 
 export default function Footer() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
 
   const pages: any = [
     {
@@ -48,8 +50,17 @@ export default function Footer() {
           sx={{ justifyContent: { xs: "center", md: "start" } }}
           className={styles.footerContainerBox1}
         >
-          <Box className={styles.footerIcon}>
+          {/*<Box className={styles.footerIcon}>
             <IconLogo />
+          </Box>*/}
+          <Box className={styles.footerIcon}>
+            {i18n.resolvedLanguage === "en" ? (
+              <IconLogoGencatEn />
+            ) : i18n.resolvedLanguage === "sv" ? (
+              <IconLogoGencatSv />
+            ) : (
+              <IconLogoGencatCa />
+            )}
           </Box>
           <Box
             sx={{ display: { xs: "none", md: "flex" } }}
@@ -81,6 +92,24 @@ export default function Footer() {
           sx={{ flexDirection: { xs: "column", md: "row" } }}
           className={styles.footerContainerBox2}
         >
+          <Box
+            sx={{ textAlign: { xs: "center", md: "left" } }}
+            className={styles.footerSupport}
+          >
+            <Typography variant="body2">
+              {t("components.footer.support-1")}{" "}
+              <Link
+                className={styles.footerTextSuport}
+                href={ROUTES["external-gencat"].path}
+                color="inherit"
+                fontWeight="600"
+                underline="none"
+              >
+                {t("components.footer.support-2")}
+              </Link>
+              {"."}
+            </Typography>
+          </Box>
           <Box
             sx={{
               justifyContent: { xs: "center", md: "end" },

@@ -8,6 +8,7 @@ class DocumentType(enum.IntEnum):
     PRESS = 40
     NEWSLETTER = 50
     REPORT = 60
+    FINANCIAL = 70
 
 
 class DocumentStatus(enum.IntEnum):

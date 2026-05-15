@@ -2,7 +2,9 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { Container, Divider, Link, MenuItem, Typography } from "@mui/material";
 import styles from "./styles.module.css";
-import IconLogoLong from "../../components/IconLogoLong/IconLogoLong.jsx";
+import IconLogoGencatCa from "../../components/IconLogoGencatCa/IconLogoGencatCa.jsx";
+import IconLogoGencatEn from "../../components/IconLogoGencatEn/IconLogoGencatEn.jsx";
+import IconLogoGencatSv from "../../components/IconLogoGencatSv/IconLogoGencatSv.jsx";
 import { useTranslation } from "react-i18next";
 import IconFacebook from "@mui/icons-material/Facebook";
 import IconInstagram from "@mui/icons-material/Instagram";
@@ -16,7 +18,7 @@ import LanguageChip from "../LanguageChip/LanguageChip";
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 
 export default function Footer() {
-  const { t } = useTranslation("common");
+  const [t, i18n] = useTranslation("common");
 
   const { user } = useAppContext();
 
@@ -71,8 +73,17 @@ export default function Footer() {
           sx={{ justifyContent: { xs: "center", md: "start" } }}
           className={styles.footerContainerBox1}
         >
-          <Box className={styles.footerIcon}>
+          {/*<Box className={styles.footerIcon}>
             <IconLogoLong />
+          </Box>*/}
+          <Box className={styles.footerIcon}>
+            {i18n.resolvedLanguage === "en" ? (
+              <IconLogoGencatEn />
+            ) : i18n.resolvedLanguage === "sv" ? (
+              <IconLogoGencatSv />
+            ) : (
+              <IconLogoGencatCa />
+            )}
           </Box>
           <Box
             sx={{ display: { xs: "none", md: "flex" } }}
@@ -123,6 +134,16 @@ export default function Footer() {
                 underline="none"
               >
                 {t("components.footer.support-2")}
+              </Link>{" "}
+              {t("components.footer.support-3")}{" "}
+              <Link
+                className={styles.footerTextSuport}
+                href={ROUTES["external-gencat"].path}
+                color="inherit"
+                fontWeight="600"
+                underline="none"
+              >
+                {t("components.footer.support-4")}
               </Link>
               {"."}
             </Typography>

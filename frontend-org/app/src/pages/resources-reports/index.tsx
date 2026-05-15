@@ -26,7 +26,7 @@ function ResourcesReportsPage() {
     apiDocumentList(
       documentsPage,
       undefined,
-      [DocumentType.REPORT],
+      [DocumentType.REPORT, DocumentType.FINANCIAL],
       ["date"],
     ).then((response) => {
       if (response.status === 200) {
