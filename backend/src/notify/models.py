@@ -116,7 +116,7 @@ class Newsletter(StandardModel, Timestamps):
     )
 
     google_group = models.ForeignKey(
-        "user.GoogleGroupUser",
+        "user.GoogleGroup",
         related_name="newsletters",
         blank=True,
         null=True,
