@@ -44,6 +44,9 @@ export const ROUTES = {
   "about-contact": {
     path: "/about/contact",
   },
+  "about-newsletter": {
+    path: "/about/newsletter",
+  },
   "resources-newsletters": {
     path: "/resources/newsletters",
   },

@@ -250,6 +250,6 @@ class NewsletterAdmin(admin.ModelAdmin):
         return super().get_queryset(request).with_name()
 
     def name_locale(self, obj):
-        return obj.subject_locale
+        return obj.name_locale
 
     name_locale.short_description = _("name")

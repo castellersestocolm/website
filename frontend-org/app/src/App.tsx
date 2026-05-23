@@ -25,6 +25,7 @@ import CalendarPage from "./pages/calendar";
 import AboutBylawsPage from "./pages/about-bylaws";
 import AboutTeamPage from "./pages/about-team";
 import AboutContactPage from "./pages/about-contact";
+import AboutNewsletterPage from "./pages/about-newsletter";
 import NewsPostPage from "./pages/news-post";
 import PolicyPrivacyPage from "./pages/policy-privacy";
 import ActivityKidsPage from "./pages/activity-kids";
@@ -129,6 +130,10 @@ const App = () => {
                   <Route
                     path={ROUTES["about-contact"].path}
                     element={<AboutContactPage />}
+                  />
+                  <Route
+                    path={ROUTES["about-newsletter"].path}
+                    element={<AboutNewsletterPage />}
                   />
                   <Route
                     path={ROUTES["news-post"].path}

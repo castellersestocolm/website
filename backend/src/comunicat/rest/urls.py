@@ -18,6 +18,7 @@ from comunicat.rest.views import (
     activity,
     notify,
     history,
+    consent,
 )
 from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
@@ -55,12 +56,14 @@ router.register("data/location", data.LocationAPI, "data_location")
 router.register("media/release", media.ReleaseAPI, "media_release")
 router.register("document", document.DocumentAPI, "document")
 router.register("activity/program", activity.ProgramAPI, "activity_program")
+router.register("consent/entity", consent.EntityConsentAPI, "consent_entity")
 router.register(
     "activity/program/course/registration",
     activity.ProgramCourseRegistrationAPI,
     "activity_program_course_registration",
 )
 router.register("contact/message", notify.ContactMessageAPI, "contact_message")
+router.register("notify/newsletter", notify.NewsletterAPI, "notify_newsletter")
 router.register("history/event", history.HistoryEventAPI, "history_event")
 
 router.register("admin/user", admin.AdminUserAPI, "admin_user")

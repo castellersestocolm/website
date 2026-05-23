@@ -1,15 +1,19 @@
 import logging
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+import notify.api.newsletter
 import payment.api.entity
 import notify.api.contact_message
 from comunicat.rest.serializers.notify import (
     ContactMessageSerializer,
     CreateContactMessageSerializer,
+    NewsletterSerializer,
 )
 
 from comunicat.rest.viewsets import ComuniCatViewSet
@@ -18,6 +22,12 @@ _log = logging.getLogger(__name__)
 
 
 class ContactMessageResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class NewsletterResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -70,3 +80,28 @@ class ContactMessageAPI(ComuniCatViewSet):
             contact_message_obj, context={"module": self.module}
         )
         return Response(serializer.data, status=201)
+
+
+class NewsletterAPI(
+    ComuniCatViewSet,
+):
+    serializer_class = NewsletterSerializer
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = NewsletterResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: NewsletterSerializer(many=True)},
+    )
+    @method_decorator(cache_page(60))
+    def list(self, request):
+        newsletter_objs = notify.api.newsletter.get_list(
+            module=self.module,
+        )
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(newsletter_objs, request)
+        serializer = self.serializer_class(
+            result_page, context={"module": self.module}, many=True
+        )
+        return paginator.get_paginated_response(serializer.data)

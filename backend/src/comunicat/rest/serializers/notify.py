@@ -6,7 +6,7 @@ from comunicat.rest.serializers.payment import (
     CreateEntitySerializer,
 )
 from comunicat.rest.utils.fields import IntEnumField
-from notify.enums import ContactMessageStatus, ContactMessageType
+from notify.enums import ContactMessageStatus, ContactMessageType, NewsletterType
 from notify.models import ContactMessage, Newsletter
 
 
@@ -60,3 +60,29 @@ class NewsletterSlimSerializer(s.ModelSerializer):
         if hasattr(obj, "name_locale"):
             return obj.name_locale
         return obj.name.get(translation.get_language())
+
+
+class NewsletterSerializer(NewsletterSlimSerializer):
+    description = s.SerializerMethodField(read_only=True)
+    type = IntEnumField(NewsletterType, read_only=True)
+
+    class Meta:
+        model = Newsletter
+        fields = (
+            "id",
+            "name",
+            "description",
+            "type",
+        )
+        read_only_fields = (
+            "id",
+            "name",
+            "description",
+            "type",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        if hasattr(obj, "description_locale"):
+            return obj.description_locale
+        return obj.description.get(translation.get_language())

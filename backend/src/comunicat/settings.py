@@ -304,6 +304,9 @@ REST_FRAMEWORK = {
         "notify-contact-message.create": os.getenv(
             "NOTIFY_CONTACT_MESSAGE_CREATE_THROTTLE_RATE", "5/minute"
         ),
+        "entity-consent.create": os.getenv(
+            "CONSENT_ENTITY_CONSENT_CREATE_THROTTLE_RATE", "5/minute"
+        ),
     },
     "EXCEPTION_HANDLER": "comunicat.utils.exceptions.full_details_exception_handler",
 }
