@@ -60,6 +60,7 @@ export default function FormDashboardUpdate() {
       user.birthday,
       user.consent_pictures,
       event.currentTarget.elements.preferred_language.value,
+      [],
       /*
         parseInt(event.currentTarget.elements.height_shoulders.value),
         parseInt(event.currentTarget.elements.height_arms.value),

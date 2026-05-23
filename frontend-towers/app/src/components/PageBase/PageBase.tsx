@@ -7,6 +7,7 @@ import { useAppContext } from "../AppContext/AppContext";
 import { useTranslation } from "react-i18next";
 import FormUpdate from "../FormUpdate/FormUpdate";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
+import { isRegistrationFinished } from "../../utils/user";
 
 export default function PageBase({
   title,
@@ -56,7 +57,7 @@ export default function PageBase({
           }}
         >
           <Alerts />
-          {finishedRegistration && user && !user.registration_finished ? (
+          {finishedRegistration && !isRegistrationFinished(user) ? (
             <>
               <Typography
                 variant="h3"
@@ -65,9 +66,15 @@ export default function PageBase({
               >
                 {t("pages.user-registration.title")}
               </Typography>
-              <Box className={styles.pageForm}>
-                <FormUpdate />
-              </Box>
+              {user ? (
+                <Box className={styles.pageForm}>
+                  <FormUpdate />
+                </Box>
+              ) : (
+                <Box className={styles.pageLoader}>
+                  <LoaderClip />
+                </Box>
+              )}
             </>
           ) : (
             <>

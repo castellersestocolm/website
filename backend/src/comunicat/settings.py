@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     "integration",
     "event",
     "payment",
+    "consent",
     "grant",
     "product",
     "order",
@@ -480,6 +481,9 @@ MODULE_ORG_GOOGLE_CALENDAR_ENABLED = (
 MODULE_ORG_GOOGLE_PHOTOS_ENABLED = (
     os.getenv("MODULE_ORG_GOOGLE_PHOTOS_ENABLED", "false").lower() == "true"
 )
+MODULE_ORG_MANDATORY_CONSENT_TYPES = list(
+    filter(None, os.getenv("MODULE_ORG_MANDATORY_CONSENT_TYPES", "").split(","))
+)
 
 MODULE_TOWERS_NAME = os.getenv("MODULE_TOWERS_NAME")
 MODULE_TOWERS_SHORT_NAME = os.getenv("MODULE_TOWERS_SHORT_NAME", MODULE_TOWERS_NAME)
@@ -541,6 +545,9 @@ MODULE_TOWERS_GOOGLE_CALENDAR_ENABLED = (
 )
 MODULE_TOWERS_GOOGLE_PHOTOS_ENABLED = (
     os.getenv("MODULE_TOWERS_GOOGLE_PHOTOS_ENABLED", "false").lower() == "true"
+)
+MODULE_TOWERS_MANDATORY_CONSENT_TYPES = list(
+    filter(None, os.getenv("MODULE_TOWERS_MANDATORY_CONSENT_TYPES", "").split(","))
 )
 
 # Payment providers

@@ -11,6 +11,7 @@ import styles from "./styles.module.css";
 import { apiUserMe, apiUserUpdate } from "../../api";
 import { useState } from "react";
 import { useAppContext } from "../AppContext/AppContext";
+import { ConsentType } from "../../enums";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -43,6 +44,25 @@ export default function FormUpdate() {
 
   const { user, setUser, setMessages } = useAppContext();
 
+  const consentGeneralChecked =
+    user &&
+    user.consents.filter(
+      (consent: any) =>
+        consent.type === ConsentType.GENERAL && !consent.deleted_at,
+    ).length > 0;
+  const consentMediaChecked =
+    user &&
+    user.consents.filter(
+      (consent: any) =>
+        consent.type === ConsentType.MEDIA && !consent.deleted_at,
+    ).length > 0;
+  const consentHealthChecked =
+    user &&
+    user.consents.filter(
+      (consent: any) =>
+        consent.type === ConsentType.HEALTH && !consent.deleted_at,
+    ).length > 0;
+
   function handleSubmit(event: React.FormEvent<CreateFormElement>) {
     event.preventDefault();
     apiUserUpdate(
@@ -53,6 +73,7 @@ export default function FormUpdate() {
       event.currentTarget.elements.birthday.value,
       event.currentTarget.elements.consent_pictures.checked,
       i18n.resolvedLanguage,
+      [ConsentType.GENERAL, ConsentType.MEDIA, ConsentType.HEALTH],
       /*
         parseInt(event.currentTarget.elements.height_shoulders.value),
         parseInt(event.currentTarget.elements.height_arms.value),
@@ -258,21 +279,39 @@ export default function FormUpdate() {
         </FormGrid>*/}
         <FormGrid size={{ xs: 12 }}>
           <FormControlLabel
-            control={<Checkbox name="consent_pictures" value="yes" />}
+            control={
+              <Checkbox
+                name="consent_pictures"
+                value="yes"
+                defaultChecked={consentMediaChecked}
+              />
+            }
             label={t("pages.user-join.form.checkbox-image")}
             required={true}
           />
         </FormGrid>
         <FormGrid size={{ xs: 12 }}>
           <FormControlLabel
-            control={<Checkbox name="confirmCasal" value="yes" />}
+            control={
+              <Checkbox
+                name="confirmCasal"
+                value="yes"
+                defaultChecked={consentHealthChecked}
+              />
+            }
             label={t("pages.user-join.form.checkbox-responsibility")}
             required={true}
           />
         </FormGrid>
         <FormGrid size={{ xs: 12 }}>
           <FormControlLabel
-            control={<Checkbox name="confirmCasal" value="yes" />}
+            control={
+              <Checkbox
+                name="confirmCasal"
+                value="yes"
+                defaultChecked={consentGeneralChecked}
+              />
+            }
             label={t("pages.user-join.form.checkbox-processing")}
             required={true}
           />

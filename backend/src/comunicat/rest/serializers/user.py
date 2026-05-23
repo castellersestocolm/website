@@ -7,8 +7,10 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 
+from comunicat.rest.serializers.consent import EntityConsentSerializer
 from comunicat.rest.serializers.legal import MemberWithTeamSerializer
 from comunicat.rest.utils.fields import IntEnumField, EnumField
+from consent.enums import ConsentType
 from legal.enums import PermissionLevel
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import (
@@ -206,6 +208,7 @@ class UserSerializer(UserSlimSerializer):
     )
     registration_finished = s.SerializerMethodField(read_only=True)
     permission_level = s.SerializerMethodField(read_only=True)
+    consents = s.SerializerMethodField(read_only=True)
 
     @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
     def get_registration_finished(self, obj):
@@ -220,6 +223,14 @@ class UserSerializer(UserSlimSerializer):
         if hasattr(obj, "permission_level"):
             return obj.permission_level
         return PermissionLevel.NONE
+
+    @swagger_serializer_method(
+        serializer_or_field=EntityConsentSerializer(many=True, read_only=True)
+    )
+    def get_consents(self, obj):
+        if not hasattr(obj, "entity"):
+            return []
+        return EntityConsentSerializer(obj.entity.consents.all(), many=True).data
 
     class Meta:
         model = User
@@ -239,6 +250,7 @@ class UserSerializer(UserSlimSerializer):
             "members",
             "registration_finished",
             "permission_level",
+            "consents",
             "created_at",
         )
         read_only_fields = (
@@ -257,6 +269,7 @@ class UserSerializer(UserSlimSerializer):
             "members",
             "registration_finished",
             "permission_level",
+            "consents",
             "created_at",
         )
 
@@ -343,6 +356,9 @@ class CreateSerializer(BaseSerializer):
     email = s.EmailField(required=True)
     password = s.CharField(required=True, min_length=8, trim_whitespace=False)
     password2 = s.CharField(required=True, min_length=8, trim_whitespace=False)
+    consent_types = s.ListSerializer(
+        child=IntEnumField(ConsentType, required=True), required=True
+    )
 
     def validate_email(self, value: str):
         email = BaseUserManager.normalize_email(value)
@@ -355,7 +371,9 @@ class CreateSerializer(BaseSerializer):
 
 
 class UpdateSerializer(BaseSerializer):
-    pass
+    consent_types = s.ListSerializer(
+        child=IntEnumField(ConsentType, required=True), required=True
+    )
 
 
 class UpdateFamilyMemberSerializer(s.Serializer):

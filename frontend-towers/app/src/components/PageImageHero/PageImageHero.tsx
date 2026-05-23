@@ -9,6 +9,7 @@ import FormUpdate from "../FormUpdate/FormUpdate";
 import Grid from "@mui/material/Grid";
 import Hero from "../Hero/Hero";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
+import { isRegistrationFinished } from "../../utils/user";
 
 export default function PageImageHero({
   title,
@@ -82,7 +83,7 @@ export default function PageImageHero({
               }}
             >
               <Alerts />
-              {finishedRegistration && user && !user.registration_finished ? (
+              {finishedRegistration && !isRegistrationFinished(user) ? (
                 <>
                   <Typography
                     variant="h4"
@@ -92,9 +93,15 @@ export default function PageImageHero({
                   >
                     {t("pages.user-registration.title")}
                   </Typography>
-                  <Box className={styles.pageForm}>
-                    <FormUpdate />
-                  </Box>
+                  {user ? (
+                    <Box className={styles.pageForm}>
+                      <FormUpdate />
+                    </Box>
+                  ) : (
+                    <Box className={styles.pageLoader}>
+                      <LoaderClip />
+                    </Box>
+                  )}
                 </>
               ) : loading ? (
                 <Box className={styles.pageLoader}>

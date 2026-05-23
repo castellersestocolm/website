@@ -33,3 +33,19 @@ class EmailTemplateQuerySet(QuerySet):
         return self.annotate(
             button_url_locale=F(f"button_url__{locale}"),
         )
+
+
+class NewsletterQuerySet(QuerySet):
+    def with_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            name_locale=F(f"name__{locale}"),
+        )
+
+    def with_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            description_locale=F(f"description__{locale}"),
+        )

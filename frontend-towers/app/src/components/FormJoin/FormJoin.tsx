@@ -29,7 +29,7 @@ import { apiUserCreate } from "../../api";
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
-import { getEnumLabel, Module } from "../../enums";
+import { ConsentType, getEnumLabel, Module } from "../../enums";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -74,6 +74,7 @@ export default function FormJoin() {
       event.currentTarget.elements.birthday.value,
       event.currentTarget.elements.consent_pictures.checked,
       i18n.resolvedLanguage,
+      [ConsentType.GENERAL, ConsentType.MEDIA, ConsentType.HEALTH],
       /*
         parseInt(event.currentTarget.elements.height_shoulders.value),
         parseInt(event.currentTarget.elements.height_arms.value),

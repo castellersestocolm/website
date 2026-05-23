@@ -1,3 +1,4 @@
+from click.types import convert_type
 from django.apps import apps
 from django.db.models import (
     QuerySet,
@@ -27,6 +28,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from comunicat.utils.managers import MoneyOutput
+from consent.enums import ConsentType
 from payment.enums import PaymentType, PaymentStatus
 
 
@@ -623,4 +625,22 @@ class PaymentProviderQuerySet(QuerySet):
 
         return self.annotate(
             name_locale=F(f"name__{locale}"),
+        )
+
+
+class EntityQuerySet(QuerySet):
+    def with_consent(self):
+        EntityConsent = apps.get_model("consent", "EntityConsent")
+
+        return self.annotate(
+            **{
+                f"consent_{consent_type.name.lower()}_given_at": Subquery(
+                    EntityConsent.objects.filter(
+                        entity_id=OuterRef("id"),
+                        type=consent_type,
+                        deleted_at__isnull=True,
+                    ).values_list("created_at", flat=True)[:1]
+                )
+                for consent_type in ConsentType
+            }
         )

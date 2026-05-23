@@ -37,6 +37,7 @@ from payment.managers import (
     ExpenseQuerySet,
     SourceQuerySet,
     PaymentProviderQuerySet,
+    EntityQuerySet,
 )
 
 from django.utils.translation import gettext_lazy as _
@@ -125,6 +126,8 @@ class Entity(StandardModel, Timestamps):
         "user.User", null=True, blank=True, on_delete=models.CASCADE
     )
 
+    objects = EntityQuerySet.as_manager()
+
     @cached_property
     def name(self) -> str:
         if self.user and self.user.name:
@@ -198,6 +201,9 @@ class EntityAlias(StandardModel, Timestamps):
 
         indexes = [models.Index(fields=("alias",))]
 
+    def __str__(self) -> str:
+        return f"{str(self.entity)} - {self.alias}"
+
 
 class EntityPaymentMethod(StandardModel, Timestamps):
     entity = models.ForeignKey(
@@ -231,6 +237,9 @@ class EntityPaymentMethod(StandardModel, Timestamps):
             self.data = {field: "" for field in PAYMENT_METHOD_FIELDS[self.method]}
 
         super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return f"{str(self.entity)} - {PaymentMethod(self.method).name}"
 
     class Meta:
         verbose_name = "entity payment method"

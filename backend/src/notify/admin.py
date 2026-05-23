@@ -20,7 +20,7 @@ from comunicat.utils.admin import FIELD_LOCALE
 from notify.api.template import get_email_render
 from notify.consts import TEMPLATE_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import EmailStatus, NotificationType, EmailType
-from notify.models import Email, EmailTemplate, ContactMessage
+from notify.models import Email, EmailTemplate, ContactMessage, Newsletter
 from payment.models import Entity
 
 
@@ -229,3 +229,27 @@ class ContactMessageAdmin(admin.ModelAdmin):
         readonly_fields += ["entity", "type", "module", "message", "context"]
 
         return readonly_fields
+
+
+@admin.register(Newsletter)
+class NewsletterAdmin(admin.ModelAdmin):
+    search_fields = (
+        "id",
+        "name",
+        "description",
+    )
+    list_display = ("name_locale", "type", "module", "created_at")
+    list_filter = ("type", "module")
+    ordering = ("-created_at",)
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_name()
+
+    def name_locale(self, obj):
+        return obj.subject_locale
+
+    name_locale.short_description = _("name")

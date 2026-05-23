@@ -23,6 +23,7 @@ from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY, TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import Module, PDFType
 from comunicat.utils.admin import DynamicColumn, FIELD_LOCALE
+from consent.models import EntityConsent
 from event.models import Registration
 from notify.enums import EmailType
 from order.models import Order
@@ -487,6 +488,30 @@ class PaymentInline(admin.TabularInline):
     payment_link.short_description = _("payment")
 
 
+class EntityConsentInline(admin.TabularInline):
+    model = EntityConsent
+    ordering = ("-created_at",)
+    extra = 0
+    readonly_fields = ("type", "created_at", "deleted_at")
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .order_by("type", "-created_at")
+            .distinct("type")
+        )
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 class EntityAliasInline(admin.TabularInline):
     model = EntityAlias
     ordering = ("alias",)
@@ -664,6 +689,7 @@ class EntityAdmin(admin.ModelAdmin):
     inlines = (
         EntityAliasInline,
         EntityPaymentMethodInline,
+        EntityConsentInline,
         PaymentInline,
     )
     actions = (merge_entities,)

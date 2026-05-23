@@ -40,9 +40,15 @@ class ContactMessageType(enum.IntEnum):
     CONTACT = 10
     BUSINESS_WORKSHOP = 20
     BUSINESS_PERFORMANCE = 21
+    SIGNUP_LIST = 30
 
 
 class ContactMessageStatus(enum.IntEnum):
     CREATED = 10
     REPLIED = 20
     DELETED = 30
+
+
+class NewsletterType(enum.IntEnum):
+    INTERNAL = 10
+    GOOGLE = 20

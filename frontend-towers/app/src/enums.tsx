@@ -289,3 +289,11 @@ export enum UserProductSource {
   OWNED = 10,
   FROM_ORDER = 20,
 }
+
+export enum ConsentType {
+  GENERAL = 10,
+  MEDIA = 20,
+  COMMUNICATION = 30,
+  NEWSLETTER = 40,
+  HEALTH = 50,
+}

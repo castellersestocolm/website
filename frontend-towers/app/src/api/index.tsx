@@ -84,6 +84,7 @@ export const apiUserCreate = async (
   birthday: string,
   consent_pictures: boolean,
   preferred_language: string,
+  consentTypes: number[],
   /*
     height_shoulders: number,
     height_arms: number,
@@ -107,6 +108,7 @@ export const apiUserCreate = async (
         */
       },
       organisation: {},
+      consent_types: consentTypes,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -123,6 +125,7 @@ export const apiUserUpdate = async (
   birthday: string,
   consent_pictures: boolean,
   preferred_language: string,
+  consentTypes: number[],
   /*
     height_shoulders: number,
     height_arms: number,
@@ -143,6 +146,7 @@ export const apiUserUpdate = async (
         */
       },
       organisation: {},
+      consent_types: consentTypes,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

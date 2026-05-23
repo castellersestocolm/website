@@ -1,7 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import JSONField
 from django.utils import translation
 
+from django.utils.translation import gettext_lazy as _
 from comunicat.db.mixins import Timestamps, StandardModel
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
@@ -11,8 +13,9 @@ from notify.enums import (
     EmailStatus,
     ContactMessageType,
     ContactMessageStatus,
+    NewsletterType,
 )
-from notify.managers import EmailTemplateQuerySet
+from notify.managers import EmailTemplateQuerySet, NewsletterQuerySet
 
 
 class EmailTemplate(StandardModel, Timestamps):
@@ -97,3 +100,43 @@ class ContactMessage(StandardModel, Timestamps):
     )
     message = models.TextField(max_length=1000)
     context = JSONField(default=dict)
+
+
+class Newsletter(StandardModel, Timestamps):
+    name = JSONField(default=language_field_default)
+    description = JSONField(default=language_field_default)
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+    )
+
+    type = models.PositiveSmallIntegerField(
+        choices=((nt.value, nt.name) for nt in NewsletterType),
+        default=NewsletterType.INTERNAL,
+    )
+
+    google_group = models.ForeignKey(
+        "user.GoogleGroupUser",
+        related_name="newsletters",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+
+    objects = NewsletterQuerySet.as_manager()
+
+    def clean(self):
+        validation_errors = {}
+        if self.type == NewsletterType.GOOGLE and not self.google_group:
+            validation_errors["google_group"] = _(
+                "The Google group is mandatory for Google newsletters."
+            )
+
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+    def __str__(self) -> str:
+        return f"{Module(self.module).name} - {
+        self.name.get(translation.get_language())
+        or list(self.name.values())[0]
+        }"

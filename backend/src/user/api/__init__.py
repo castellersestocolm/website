@@ -15,9 +15,12 @@ from django.http import HttpRequest
 from django.utils import translation, timezone
 from rest_framework.exceptions import AuthenticationFailed
 
+import consent.api
 import membership.api
 import user.api.family_member_request
 from comunicat.enums import Module
+from consent.enums import ConsentType
+from consent.models import EntityConsent
 from legal.enums import TeamType
 from legal.models import Member
 from notify.enums import EmailType
@@ -68,6 +71,13 @@ def get(user_id: UUID, module: Module | None = None) -> User:
             Prefetch(
                 "emails",
                 UserEmail.objects.filter().order_by("email"),
+            ),
+            Prefetch(
+                "entity__consents",
+                EntityConsent.objects.filter(deleted_at__isnull=True)
+                .select_related("newsletter")
+                .order_by("type", "-created_at")
+                .distinct("type"),
             ),
         )
         .with_has_active_membership(modules=[module])
@@ -259,6 +269,7 @@ def create(
     module: Module,
     towers: dict | None,
     organisation: dict | None,
+    consent_types: list[ConsentType] = list,
     preferred_language: str | None = None,
     with_family: bool = True,
 ) -> User:
@@ -301,7 +312,11 @@ def create(
     user.api.family_member_request.link(email=email)
 
     # Create the associated entity
-    payment.api.entity.get_entity_by_key(user_id=user_obj.id)
+    entity_obj = payment.api.entity.get_entity_by_key(user_id=user_obj.id)
+
+    if entity_obj:
+        # Create the associated consents
+        consent.api.add_consents(entity_id=entity_obj.id, consent_types=consent_types)
 
     return user_obj
 
@@ -318,6 +333,7 @@ def register(
     module: Module,
     towers: dict | None,
     organisation: dict | None,
+    consent_types: list[ConsentType] = list,
     with_family: bool = True,
     with_membership: bool = True,
     with_notify: bool = True,
@@ -335,6 +351,7 @@ def register(
             module=module,
             towers=towers,
             organisation=organisation,
+            consent_types=consent_types,
             with_family=with_family,
         )
 
@@ -361,8 +378,11 @@ def update(
     preferred_language: str | None = None,
     towers: dict | None = None,
     organisation: dict | None = None,
+    consent_types: list[ConsentType] = list,
 ) -> User:
-    user_obj = User.objects.filter(id=user_id).select_related("towers").first()
+    user_obj = (
+        User.objects.filter(id=user_id).select_related("towers", "entity").first()
+    )
 
     had_registration_finished = user_obj.registration_finished(module=module)
 
@@ -409,6 +429,12 @@ def update(
                     "height_arms", towers_user_obj and towers_user_obj.height_arms
                 ),
             },
+        )
+
+    if user_obj.entity:
+        # Create the associated consents
+        consent.api.add_consents(
+            entity_id=user_obj.entity.id, consent_types=consent_types
         )
 
     if not had_registration_finished and user_obj.registration_finished(module=module):
