@@ -436,14 +436,13 @@ export const apiUserFamilyMemberCreate = async (
     height_shoulders: number,
     height_arms: number,
   */
-  consent_pictures: boolean,
+  consentTypes: number[],
 ) => {
   try {
     return await instance.post("/user/family/member/", {
       firstname: firstname,
       lastname: lastname,
       birthday: birthday,
-      consent_pictures: consent_pictures,
       towers: {
         /*
           height_shoulders: height_shoulders,
@@ -451,6 +450,7 @@ export const apiUserFamilyMemberCreate = async (
         */
       },
       organisation: {},
+      consent_types: consentTypes,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -468,14 +468,13 @@ export const apiUserFamilyMemberUpdate = async (
     height_shoulders: number,
     height_arms: number,
   */
-  consent_pictures: boolean,
+  consentTypes: number[],
 ) => {
   try {
     return await instance.put("/user/family/member/" + id + "/", {
       firstname: firstname,
       lastname: lastname,
       birthday: birthday,
-      consent_pictures: consent_pictures,
       towers: {
         /*
           height_shoulders: height_shoulders,
@@ -483,6 +482,7 @@ export const apiUserFamilyMemberUpdate = async (
         */
       },
       organisation: {},
+      consent_types: consentTypes,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

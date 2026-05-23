@@ -62,6 +62,7 @@ class TowersUserSerializer(s.ModelSerializer):
 class UserExtraSlimSerializer(UserSuperSlimSerializer):
     towers = TowersUserSerializer(read_only=True)
     members = MemberWithTeamSerializer(many=True, read_only=True)
+    consents = s.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
@@ -72,6 +73,7 @@ class UserExtraSlimSerializer(UserSuperSlimSerializer):
             "can_manage",
             "members",
             "towers",
+            "consents",
         )
         read_only_fields = (
             "id",
@@ -80,7 +82,16 @@ class UserExtraSlimSerializer(UserSuperSlimSerializer):
             "can_manage",
             "members",
             "towers",
+            "consents",
         )
+
+    @swagger_serializer_method(
+        serializer_or_field=EntityConsentSerializer(many=True, read_only=True)
+    )
+    def get_consents(self, obj):
+        if not hasattr(obj, "entity"):
+            return []
+        return EntityConsentSerializer(obj.entity.consents.all(), many=True).data
 
 
 class FamilyMemberSlimSerializer(s.ModelSerializer):
@@ -149,6 +160,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "can_manage",
             "members",
             "towers",
+            "consents",
             "created_at",
         )
         read_only_fields = (
@@ -164,6 +176,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "can_manage",
             "members",
             "towers",
+            "consents",
             "created_at",
         )
 
@@ -208,7 +221,6 @@ class UserSerializer(UserSlimSerializer):
     )
     registration_finished = s.SerializerMethodField(read_only=True)
     permission_level = s.SerializerMethodField(read_only=True)
-    consents = s.SerializerMethodField(read_only=True)
 
     @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
     def get_registration_finished(self, obj):
@@ -223,14 +235,6 @@ class UserSerializer(UserSlimSerializer):
         if hasattr(obj, "permission_level"):
             return obj.permission_level
         return PermissionLevel.NONE
-
-    @swagger_serializer_method(
-        serializer_or_field=EntityConsentSerializer(many=True, read_only=True)
-    )
-    def get_consents(self, obj):
-        if not hasattr(obj, "entity"):
-            return []
-        return EntityConsentSerializer(obj.entity.consents.all(), many=True).data
 
     class Meta:
         model = User
@@ -380,7 +384,9 @@ class UpdateFamilyMemberSerializer(s.Serializer):
     firstname = s.CharField(required=True)
     lastname = s.CharField(required=True)
     birthday = s.DateField(required=True)
-    consent_pictures = s.BooleanField(required=True)
+    consent_types = s.ListSerializer(
+        child=IntEnumField(ConsentType, required=True), required=True
+    )
 
     organisation = CreateOrganisationSerializer()
     towers = CreateTowersSerializer()
@@ -404,10 +410,14 @@ class UpdateFamilyMemberSerializer(s.Serializer):
         return value
 
     def validate(self, data):
-        if not data["consent_pictures"] and is_over_minimum_age(date=data["birthday"]):
+        if (
+            not data["consent_types"]
+            and ConsentType.MEDIA not in data["consent_types"]
+            and is_over_minimum_age(date=data["birthday"])
+        ):
             raise ValidationError(
                 {
-                    "consent_pictures": _(
+                    "consent_types": _(
                         "Members over %s must consent in order to become members."
                     )
                     % settings.MODULE_ALL_USER_MINIMUM_AGE
@@ -420,7 +430,9 @@ class CreateFamilyMemberSerializer(s.Serializer):
     firstname = s.CharField(required=True)
     lastname = s.CharField(required=True)
     birthday = s.DateField(required=True)
-    consent_pictures = s.BooleanField(required=True)
+    consent_types = s.ListSerializer(
+        child=IntEnumField(ConsentType, required=True), required=True
+    )
 
     organisation = CreateOrganisationSerializer()
     towers = CreateTowersSerializer()
@@ -444,10 +456,14 @@ class CreateFamilyMemberSerializer(s.Serializer):
         return value
 
     def validate(self, data):
-        if not data["consent_pictures"] and is_over_minimum_age(date=data["birthday"]):
+        if (
+            not data["consent_types"]
+            and ConsentType.MEDIA not in data["consent_types"]
+            and is_over_minimum_age(date=data["birthday"])
+        ):
             raise ValidationError(
                 {
-                    "consent_pictures": _(
+                    "consent_types": _(
                         "Members over %s must consent in order to become members."
                     )
                     % settings.MODULE_ALL_USER_MINIMUM_AGE

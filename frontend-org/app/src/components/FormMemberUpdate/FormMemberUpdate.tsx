@@ -13,6 +13,7 @@ import {
   apiUserMe,
 } from "../../api";
 import { useState } from "react";
+import { ConsentType } from "../../enums";
 import Alert from "@mui/material/Alert";
 import { useAppContext } from "../AppContext/AppContext";
 import { TransitionGroup } from "react-transition-group";
@@ -45,8 +46,17 @@ export default function FormMemberUpdate({ member }: any) {
   const [submitted, setSubmitted] = useState(false);
   const { setUser } = useAppContext();
 
+  const hasConsentedPictures =
+    member &&
+    member.user &&
+    member.user.consents &&
+    member.user.consents.filter(
+      (consent: any) =>
+        consent.type === ConsentType.MEDIA && !consent.deleted_at,
+    ).length > 0;
+
   const [formData, setFormData] = useState({
-    consent_pictures: member.user.consent_pictures,
+    consent_pictures: hasConsentedPictures,
   });
 
   const infoChange = (e: any) => {
@@ -70,7 +80,9 @@ export default function FormMemberUpdate({ member }: any) {
         parseInt(event.currentTarget.elements.height_shoulders.value),
         parseInt(event.currentTarget.elements.height_arms.value),
       */
-      event.currentTarget.elements.consent_pictures.checked,
+      event.currentTarget.elements.consent_pictures.checked
+        ? [ConsentType.MEDIA]
+        : [],
     ).then((response) => {
       if (response.status === 202) {
         setValidationErrors(undefined);
@@ -241,6 +253,7 @@ export default function FormMemberUpdate({ member }: any) {
               control={<Checkbox name="consent_pictures" value="true" />}
               label={t("pages.user-join.form.checkbox-image-children")}
               checked={formData.consent_pictures}
+              disabled={hasConsentedPictures}
               onChange={infoChange}
             />
           </FormGrid>

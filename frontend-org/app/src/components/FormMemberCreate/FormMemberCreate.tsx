@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Collapse, FormHelperText, List, Stack } from "@mui/material";
 import styles from "./styles.module.css";
 import { apiUserFamilyMemberCreate, apiUserMe } from "../../api";
+import { ConsentType } from "../../enums";
 import { useState } from "react";
 import Alert from "@mui/material/Alert";
 import { useAppContext } from "../AppContext/AppContext";
@@ -72,7 +73,9 @@ export default function FormMemberCreate() {
         parseInt(event.currentTarget.elements.height_shoulders.value),
         parseInt(event.currentTarget.elements.height_arms.value),
       */
-      event.currentTarget.elements.consent_pictures.checked,
+      event.currentTarget.elements.consent_pictures.checked
+        ? [ConsentType.MEDIA]
+        : [],
     ).then((response) => {
       if (response.status === 201) {
         setValidationErrors(undefined);

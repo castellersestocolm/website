@@ -166,3 +166,11 @@ export enum DocumentType {
   REPORT = 60,
   FINANCIAL = 70,
 }
+
+export enum ConsentType {
+  GENERAL = 10,
+  MEDIA = 20,
+  COMMUNICATION = 30,
+  NEWSLETTER = 40,
+  HEALTH = 50,
+}

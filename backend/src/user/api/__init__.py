@@ -54,7 +54,14 @@ def get(user_id: UUID, module: Module | None = None) -> User:
                         )
                         .select_related("team")
                         .order_by("-role"),
-                    )
+                    ),
+                    Prefetch(
+                        "user__entity__consents",
+                        EntityConsent.objects.filter(deleted_at__isnull=True)
+                        .select_related("newsletter")
+                        .order_by("entity", "type", "-created_at")
+                        .distinct("entity", "type"),
+                    ),
                 )
                 .order_by("-role", "user__firstname", "user__lastname"),
             ),
@@ -76,8 +83,8 @@ def get(user_id: UUID, module: Module | None = None) -> User:
                 "entity__consents",
                 EntityConsent.objects.filter(deleted_at__isnull=True)
                 .select_related("newsletter")
-                .order_by("type", "-created_at")
-                .distinct("type"),
+                .order_by("entity", "type", "-created_at")
+                .distinct("entity", "type"),
             ),
         )
         .with_has_active_membership(modules=[module])

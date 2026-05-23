@@ -2,8 +2,10 @@ import datetime
 import uuid
 from uuid import UUID
 
+import consent.api
 import user.api
 from comunicat.enums import Module
+from consent.enums import ConsentType
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import FamilyMember, User, Family
 from user.utils import get_default_consent_pictures
@@ -16,10 +18,10 @@ def create(
     firstname: str,
     lastname: str,
     birthday: datetime.date,
-    consent_pictures: bool,
     module: Module,
     towers: dict | None,
     organisation: dict | None,
+    consent_types: list[ConsentType] = list,
     role: FamilyMemberRole = FamilyMemberRole.MEMBER,
     status: FamilyMemberStatus = FamilyMemberStatus.REQUESTED,
 ) -> FamilyMember | None:
@@ -54,10 +56,12 @@ def create(
         phone=user_obj.phone,
         password=None,
         birthday=birthday,
-        consent_pictures=consent_pictures,
+        consent_pictures=ConsentType.MEDIA in consent_types
+        or get_default_consent_pictures(birthday=birthday),
         towers=towers,
         organisation=organisation,
         module=module,
+        consent_types=consent_types,
         with_family=False,
     )
 
@@ -77,9 +81,9 @@ def update(
     firstname: str,
     lastname: str,
     birthday: datetime.date,
-    consent_pictures: bool,
     towers: dict | None,
     organisation: dict | None,
+    consent_types: list[ConsentType] = list,
 ) -> FamilyMember | None:
     user_obj = User.objects.filter(id=user_id).select_related("family_member").first()
 
@@ -100,12 +104,13 @@ def update(
     if not family_member_obj or family_member_obj.user.can_manage:
         return None
 
-    consent_pictures |= get_default_consent_pictures(birthday=birthday)
-
     family_member_obj.user.firstname = firstname
     family_member_obj.user.lastname = lastname
     family_member_obj.user.birthday = birthday
-    family_member_obj.user.consent_pictures = consent_pictures
+    family_member_obj.user.consent_pictures = (
+        ConsentType.MEDIA in consent_types
+        or get_default_consent_pictures(birthday=birthday)
+    )
     family_member_obj.user.save(
         update_fields=("firstname", "lastname", "birthday", "consent_pictures")
     )
@@ -115,6 +120,12 @@ def update(
     family_member_obj.user.towers.save(
         update_fields=("height_shoulders", "height_arms")
     )
+
+    if family_member_obj.user.entity:
+        # Create the associated consents
+        consent.api.add_consents(
+            entity_id=family_member_obj.user.entity.id, consent_types=consent_types
+        )
 
     return family_member_obj
 

@@ -498,8 +498,8 @@ class EntityConsentInline(admin.TabularInline):
         return (
             super()
             .get_queryset(request)
-            .order_by("type", "-created_at")
-            .distinct("type")
+            .order_by("entity", "type", "-created_at")
+            .distinct("entity", "type")
         )
 
     def has_add_permission(self, request, obj=None):
