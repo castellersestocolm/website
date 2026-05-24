@@ -15,7 +15,7 @@ import IconEast from "@mui/icons-material/East";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import IconDoneOutlined from '@mui/icons-material/DoneOutlined';
+import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -129,7 +129,7 @@ export default function FormNewsletter() {
   return newslettersIdsSelected !== undefined ? (
     submitted ? (
       <Box className={styles.success}>
-        <IconDoneOutlined className={styles.joinIcon} />
+        <IconMarkEmailReadOutlined className={styles.joinIcon} />
         <Typography variant="h5" className={styles.joinSubtitle}>
           {t("pages.about-newsletter.success")}
         </Typography>
