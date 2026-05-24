@@ -1,8 +1,13 @@
+from uuid import UUID
+
+from django.db import transaction
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from comunicat.utils.email import get_module_emails_from_user
+from consent.models import EntityConsent
+from notify.enums import NewsletterType
 from user.consts import GOOGLE_GROUP_SCOPES
 from user.enums import GoogleGroupUserRole
 from user.models import GoogleGroup, GoogleGroupUser
@@ -15,11 +20,36 @@ import logging
 _log = logging.getLogger(__name__)
 
 
+@transaction.atomic
+def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
+    entity_consent_obj = (
+        EntityConsent.objects.filter(
+            id=entity_consent_id,
+            entity__email__isnull=False,
+            deleted_at__isnull=False,
+            newsletter__isnull=False,
+            newsletter__type=NewsletterType.GOOGLE,
+            newsletter__google_group__isnull=False,
+        )
+        .select_related("newsletter", "newsletter__google_group")
+        .first()
+    )
+
+    if not entity_consent_obj:
+        return None
+
+    return GoogleGroupUser.objects.create(
+        group=entity_consent_obj.newsletter.google_group,
+        user=entity_consent_obj.entity.user,
+        email=entity_consent_obj.entity.email,
+    )
+
+
 # TODO: Missing update with role and store in model
 def sync_users() -> None:
     google_group_objs = list(
         GoogleGroup.objects.select_related("google_integration").prefetch_related(
-            "modules", "users"
+            "modules", "users", "newsletters", "newsletters__consents"
         )
     )
 
@@ -38,9 +68,28 @@ def sync_users() -> None:
         }
         user_by_email = {}
 
-        google_group_user_creates = []
-        google_group_user_deletes = []
+        google_group_user_creates = {}
+        google_group_user_deletes = {}
 
+        # Add based on newsletters
+        for newsletter_obj in google_group_obj.newsletters.all():
+            entity_consent_objs = list(
+                newsletter_obj.consents.filter(
+                    entity__email__isnull=False, is_deleted__isnull=False
+                )
+            )
+
+            for entity_consent_obj in entity_consent_objs:
+                if entity_consent_obj.entity.email not in google_group_user_by_email:
+                    google_group_user_creates[entity_consent_obj.entity.email] = (
+                        GoogleGroupUser(
+                            group=google_group_obj,
+                            user=entity_consent_obj.entity.user,
+                            email=entity_consent_obj.entity.email,
+                        )
+                    )
+
+        # Add based on group rules
         for google_group_module_obj in google_group_obj.modules.all():
             team_ids = (
                 [google_group_module_obj.team.id]
@@ -132,7 +181,7 @@ def sync_users() -> None:
                     if google_group_user_obj.force_member:
                         continue
 
-                    google_group_user_deletes.append(google_group_user_obj.id)
+                    google_group_user_deletes[delete_email] = google_group_user_obj.id
 
                 try:
                     service.members().delete(
@@ -144,6 +193,10 @@ def sync_users() -> None:
         create_emails = set(user_emails) - set(existing_emails)
 
         for create_email in create_emails:
+            # Skip those that are being added by newsletter
+            if create_email in google_group_user_creates:
+                pass
+
             try:
                 service.members().insert(
                     groupKey=google_group_obj.external_id,
@@ -162,21 +215,21 @@ def sync_users() -> None:
         for user_email in user_emails:
             if user_email not in google_group_user_by_email:
                 user_obj = user_by_email[user_email]
-                google_group_user_creates.append(
-                    GoogleGroupUser(
-                        group=google_group_obj,
-                        user=user_obj,
-                        email=user_email,
-                    )
+                google_group_user_creates[user_email] = GoogleGroupUser(
+                    group=google_group_obj,
+                    user=user_obj,
+                    email=user_email,
                 )
 
         for user_email, google_group_user_obj in google_group_user_by_email.items():
             if user_email not in user_emails and not google_group_user_obj.force_member:
                 google_group_user_obj = google_group_user_by_email[user_email]
-                google_group_user_deletes.append(google_group_user_obj.id)
+                google_group_user_deletes[user_email] = google_group_user_obj.id
 
         if google_group_user_deletes:
-            GoogleGroupUser.objects.filter(id__in=google_group_user_deletes).delete()
+            GoogleGroupUser.objects.filter(
+                id__in=google_group_user_deletes.values()
+            ).delete()
 
         if google_group_user_creates:
-            GoogleGroupUser.objects.bulk_create(google_group_user_creates)
+            GoogleGroupUser.objects.bulk_create(google_group_user_creates.values())

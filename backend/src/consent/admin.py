@@ -14,4 +14,5 @@ class EntityConsentAdmin(admin.ModelAdmin):
     list_display = ("entity", "type", "created_at")
     list_filter = ("type",)
     raw_id_fields = ("entity",)
+    readonly_fields = ("google_group_user",)
     ordering = ("-created_at",)

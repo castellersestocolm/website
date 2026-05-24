@@ -492,7 +492,7 @@ class EntityConsentInline(admin.TabularInline):
     model = EntityConsent
     ordering = ("-created_at",)
     extra = 0
-    readonly_fields = ("type", "created_at", "deleted_at")
+    readonly_fields = ("type", "created_at", "deleted_at", "google_group_user")
 
     def get_queryset(self, request):
         return (

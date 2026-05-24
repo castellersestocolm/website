@@ -3,7 +3,7 @@ from uuid import UUID
 from django import forms
 from django.conf import settings
 from django.contrib import admin
-from django.db.models import JSONField
+from django.db.models import JSONField, Prefetch
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path, reverse
@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 import notify.tasks
 
 from comunicat.utils.admin import FIELD_LOCALE
+from consent.models import EntityConsent
 from notify.api.template import get_email_render
 from notify.consts import TEMPLATE_BY_MODULE, SETTINGS_BY_MODULE
 from notify.enums import EmailStatus, NotificationType, EmailType
@@ -231,6 +232,23 @@ class ContactMessageAdmin(admin.ModelAdmin):
         return readonly_fields
 
 
+class EntityConsentInline(admin.TabularInline):
+    model = EntityConsent
+    extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(deleted_at__isnull=True)
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(Newsletter)
 class NewsletterAdmin(admin.ModelAdmin):
     search_fields = (
@@ -241,6 +259,7 @@ class NewsletterAdmin(admin.ModelAdmin):
     list_display = ("name_locale", "type", "module", "created_at")
     list_filter = ("type", "module")
     ordering = ("-created_at",)
+    inlines = (EntityConsentInline,)
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},
