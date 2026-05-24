@@ -304,7 +304,7 @@ class GoogleGroupUser(StandardModel, Timestamps):
         GoogleGroup, related_name="users", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        User, related_name="google_groups", on_delete=models.CASCADE
+        User, blank=True, null=True, related_name="google_groups", on_delete=models.CASCADE
     )
     email = models.EmailField()
 
