@@ -38,10 +38,12 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
     if not entity_consent_obj:
         return None
 
-    return GoogleGroupUser.objects.create(
+    return GoogleGroupUser.objects.get_or_create(
         group=entity_consent_obj.newsletter.google_group,
-        user=entity_consent_obj.entity.user,
         email=entity_consent_obj.entity.email,
+        defaults={
+            "user": entity_consent_obj.entity.user
+        }
     )
 
 
