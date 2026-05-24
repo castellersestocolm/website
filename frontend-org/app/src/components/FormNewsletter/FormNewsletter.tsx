@@ -16,6 +16,7 @@ import { LoaderClip } from "../LoaderClip/LoaderClip";
 import Box from "@mui/material/Box";
 import QRCode from "qrcode";
 import { useState } from "react";
+import IconMarkEmailReadOutlined from "@mui/icons-material/MarkEmailReadOutlined";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -127,7 +128,14 @@ export default function FormNewsletter() {
   }
 
   return newslettersIdsSelected !== undefined ? (
-    <form onSubmit={handleSubmit}>
+    submitted ? (
+        <Box className={styles.success}>
+          <IconMarkEmailReadOutlined className={styles.joinIcon} />
+          <Typography variant="h5" className={styles.joinSubtitle}>
+            {t("pages.about-newsletter.success")}
+          </Typography>
+        </Box>
+      ) : <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
         {!user && (
           <>

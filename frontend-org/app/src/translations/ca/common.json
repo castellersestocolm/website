@@ -94,6 +94,7 @@
   "pages.contact.form.message": "Missatge",
   "pages.contact.form.button-send": "Envia",
   "pages.contact.success": "El teu missatge s'ha enviat correctament.",
+  "pages.about-newsletter.success": "Les teves subscripcions s'ha canviat correctament.",
   "pages.about-newsletter.form.button-complete": "Subscriu-te",
   "pages.news-post.link-back": "Torna a l'inici",
   "pages.calendar.title": "Calendari d'activitats",
