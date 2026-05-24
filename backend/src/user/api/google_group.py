@@ -38,13 +38,16 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
     if not entity_consent_obj:
         return None
 
-    return GoogleGroupUser.objects.get_or_create(
+    google_group_user_obj, __ = GoogleGroupUser.objects.get_or_create(
         group=entity_consent_obj.newsletter.google_group,
         email=entity_consent_obj.entity.email,
-        defaults={
-            "user": entity_consent_obj.entity.user
-        }
+        defaults={"user": entity_consent_obj.entity.user},
     )
+
+    entity_consent_obj.google_group_user = google_group_user_obj
+    entity_consent_obj.save(sync=False)
+
+    return google_group_user_obj
 
 
 # TODO: Missing update with role and store in model

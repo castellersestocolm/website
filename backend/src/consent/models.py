@@ -57,9 +57,10 @@ class EntityConsent(StandardModel, Timestamps):
         if validation_errors:
             raise ValidationError(validation_errors)
 
-    def save(self, *args, **kwargs):
+    def save(self, sync: bool = True, *args, **kwargs):
         if (
-            self.type == ConsentType.NEWSLETTER
+            sync
+            and self.type == ConsentType.NEWSLETTER
             and self.newsletter
             and self.newsletter.type == NewsletterType.GOOGLE
             and not self.deleted_at
