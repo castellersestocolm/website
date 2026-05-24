@@ -57,5 +57,22 @@ class EntityConsent(StandardModel, Timestamps):
         if validation_errors:
             raise ValidationError(validation_errors)
 
+    def save(self, *args, **kwargs):
+        if (
+            self.type == ConsentType.NEWSLETTER
+            and self.newsletter
+            and self.newsletter.type == NewsletterType.GOOGLE
+            and not self.deleted_at
+        ):
+            import user.api.google_group
+
+            transaction.on_commit(
+                lambda: user.api.google_group.sync_from_consent(
+                    entity_consent_id=self.id
+                )
+            )
+
+        super().save(*args, **kwargs)
+
     def __str__(self) -> str:
         return f"{str(self.entity)} - {ConsentType(self.type).name}"
