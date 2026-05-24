@@ -26,7 +26,7 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
         EntityConsent.objects.filter(
             id=entity_consent_id,
             entity__email__isnull=False,
-            deleted_at__isnull=False,
+            deleted_at__isnull=True,
             newsletter__isnull=False,
             newsletter__type=NewsletterType.GOOGLE,
             newsletter__google_group__isnull=False,
