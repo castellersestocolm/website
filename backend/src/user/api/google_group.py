@@ -80,7 +80,7 @@ def sync_users() -> None:
         for newsletter_obj in google_group_obj.newsletters.all():
             entity_consent_objs = list(
                 newsletter_obj.consents.filter(
-                    entity__email__isnull=False, is_deleted__isnull=False
+                    entity__email__isnull=False, deleted_at__isnull=False
                 )
             )
 
