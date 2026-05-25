@@ -31,7 +31,11 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
             newsletter__type=NewsletterType.GOOGLE,
             newsletter__google_group__isnull=False,
         )
-        .select_related("newsletter", "newsletter__google_group")
+        .select_related(
+            "newsletter",
+            "newsletter__google_group",
+            "newsletter__google_group__google_integration",
+        )
         .first()
     )
 
@@ -43,6 +47,33 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
         email=entity_consent_obj.entity.email,
         defaults={"user": entity_consent_obj.entity.user},
     )
+
+    creds = Credentials.from_authorized_user_info(
+        info=entity_consent_obj.newsletter.google_group.google_integration.authorized_user_info,
+        scopes=GOOGLE_GROUP_SCOPES,
+    )
+    service = build("admin", "directory_v1", credentials=creds)
+
+    user_domain_emails = (
+        get_module_emails_from_user(user_obj=entity_consent_obj.entity.user)
+        if entity_consent_obj.entity.user
+        else []
+    )
+
+    try:
+        service.members().insert(
+            groupKey=entity_consent_obj.newsletter.google_group.external_id,
+            body={
+                "email": entity_consent_obj.entity.email,
+                "role": (
+                    GoogleGroupUserRole.MANAGER.value
+                    if entity_consent_obj.entity.email in user_domain_emails
+                    else GoogleGroupUserRole.MEMBER.value
+                ),
+            },
+        ).execute()
+    except HttpError as e:
+        _log.exception(e)
 
     entity_consent_obj.google_group_user = google_group_user_obj
     entity_consent_obj.save(sync=False)
