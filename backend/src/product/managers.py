@@ -1,3 +1,5 @@
+import datetime
+
 from django.apps import apps
 from django.db.models import (
     QuerySet,
@@ -12,7 +14,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce, Cast
-from django.utils import translation
+from django.utils import translation, timezone
 
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
@@ -20,14 +22,19 @@ from order.enums import OrderStatus
 
 
 class ProductQuerySet(QuerySet):
-    def with_stock(self):
+    def with_stock(self, date: datetime.date | None = None):
         StockProduct = apps.get_model("product", "StockProduct")
         OrderProduct = apps.get_model("order", "OrderProduct")
+
+        date = date or timezone.localdate()
 
         return self.annotate(
             stock_in=Coalesce(
                 Subquery(
-                    StockProduct.objects.filter(size__product_id=OuterRef("id"))
+                    StockProduct.objects.filter(
+                        Q(Q(date_available__isnull=True) | Q(date_available__lte=date)),
+                        size__product_id=OuterRef("id"),
+                    )
                     .values("size__product")
                     .annotate(sum=Sum("amount"))
                     .values_list("sum", flat=True)[:1],
@@ -100,14 +107,19 @@ class ProductQuerySet(QuerySet):
 
 
 class ProductSizeQuerySet(QuerySet):
-    def with_stock(self):
+    def with_stock(self, date: datetime.date | None = None):
         StockProduct = apps.get_model("product", "StockProduct")
         OrderProduct = apps.get_model("order", "OrderProduct")
+
+        date = date or timezone.localdate()
 
         return self.annotate(
             stock_in=Coalesce(
                 Subquery(
-                    StockProduct.objects.filter(size_id=OuterRef("id"))
+                    StockProduct.objects.filter(
+                        Q(Q(date_available__isnull=True) | Q(date_available__lte=date)),
+                        size_id=OuterRef("id"),
+                    )
                     .values("size__product")
                     .annotate(sum=Sum("amount"))
                     .values_list("sum", flat=True)[:1],
