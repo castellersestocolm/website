@@ -26,7 +26,9 @@ class ProductSizeInline(admin.TabularInline):
         return super().get_queryset(request).with_stock()
 
     def stock(self, obj):
-        return obj.stock
+        if not obj.stock_in_pending:
+            return obj.stock
+        return f"{obj.stock} (+{obj.stock_in_pending})"
 
     stock.short_description = _("stock")
 
@@ -83,7 +85,9 @@ class ProductAdmin(admin.ModelAdmin):
         return obj.name.get(translation.get_language()) or list(obj.name.values())[0]
 
     def stock(self, obj):
-        return obj.stock
+        if not obj.stock_in_pending:
+            return obj.stock
+        return f"{obj.stock} (+{obj.stock_in_pending})"
 
     name_locale.short_description = _("name")
     stock.short_description = _("stock")

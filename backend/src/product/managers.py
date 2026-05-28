@@ -32,7 +32,23 @@ class ProductQuerySet(QuerySet):
             stock_in=Coalesce(
                 Subquery(
                     StockProduct.objects.filter(
-                        Q(Q(date_available__isnull=True) | Q(date_available__lte=date)),
+                        Q(
+                            Q(order__date_available__isnull=True)
+                            | Q(order__date_available__lte=date)
+                        ),
+                        size__product_id=OuterRef("id"),
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            stock_in_pending=Coalesce(
+                Subquery(
+                    StockProduct.objects.filter(
+                        order__date_available__gt=date,
                         size__product_id=OuterRef("id"),
                     )
                     .values("size__product")
@@ -117,7 +133,23 @@ class ProductSizeQuerySet(QuerySet):
             stock_in=Coalesce(
                 Subquery(
                     StockProduct.objects.filter(
-                        Q(Q(date_available__isnull=True) | Q(date_available__lte=date)),
+                        Q(
+                            Q(order__date_available__isnull=True)
+                            | Q(order__date_available__lte=date)
+                        ),
+                        size_id=OuterRef("id"),
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            stock_in_pending=Coalesce(
+                Subquery(
+                    StockProduct.objects.filter(
+                        order__date_available__gt=date,
                         size_id=OuterRef("id"),
                     )
                     .values("size__product")
