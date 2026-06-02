@@ -694,7 +694,7 @@ class PaymentOrder(StandardModel, Timestamps):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.provider:
+        if hasattr(self, "provider"):
             self.__provider_id = self.provider.id
 
     def __str__(self) -> str:
