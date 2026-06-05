@@ -21,11 +21,14 @@ def create(
     module: Module,
     towers: dict | None,
     organisation: dict | None,
-    consent_types: list[ConsentType] = list,
+    consent_types: list[ConsentType] = None,
     role: FamilyMemberRole = FamilyMemberRole.MEMBER,
     status: FamilyMemberStatus = FamilyMemberStatus.REQUESTED,
 ) -> FamilyMember | None:
     user_obj = User.objects.filter(id=user_id).select_related("family_member").first()
+
+    if not consent_types:
+        consent_types = []
 
     # TODO: Max members per family, max adults per family
 
