@@ -55,7 +55,7 @@ class OrgAPI(ComuniCatViewSet):
             **adult_1,
             birthday=None,
             password=None,
-            consent_pictures=False,
+            # consent_pictures=False,
             preferred_language=locale,
             towers=None,
             organisation=None,
@@ -82,7 +82,7 @@ class OrgAPI(ComuniCatViewSet):
                     **adult_2,
                     birthday=None,
                     password=None,
-                    consent_pictures=False,
+                    # consent_pictures=False,
                     preferred_language=locale,
                     towers=None,
                     organisation=None,
@@ -124,12 +124,13 @@ class OrgAPI(ComuniCatViewSet):
                     family_member_obj = user.api.family_member.create(
                         user_id=user_1_obj.id,
                         **child,
-                        consent_pictures=False,
+                        # consent_pictures=False,
                         towers=None,
                         organisation=None,
                         module=self.module,
                         role=FamilyMemberRole.MEMBER,
                         status=FamilyMemberStatus.ACTIVE,
+                        consent_types=[],
                     )
                     user_i_obj = family_member_obj.user
 
