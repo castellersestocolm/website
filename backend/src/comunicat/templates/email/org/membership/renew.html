@@ -11,6 +11,6 @@
     <p>{% trans "You can find the form to renew your membership in the following page." %}</p>
 {% endblock %}
 
-{% block email_button_url %}{% full_towers_url %}?email={{ user_obj.email }}{% endblock %}
+{% block email_button_url %}{% full_org_url "user/join/" %}?email={{ user_obj.email }}{% endblock %}
 
 {% block email_button_text %}{% trans "Renew membership" %}{% endblock %}
