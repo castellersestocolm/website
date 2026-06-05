@@ -158,11 +158,7 @@ def create(
     pickup: dict | None = None,
 ) -> Order | None:
     if user_id:
-        user_obj = (
-            User.objects.filter(id=user_id)
-            .with_has_active_membership()
-            .first()
-        )
+        user_obj = User.objects.filter(id=user_id).with_has_active_membership().first()
         modules = [
             module
             for module in Module

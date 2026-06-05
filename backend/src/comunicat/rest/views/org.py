@@ -20,6 +20,7 @@ import user.api.family_member
 import membership.api
 
 from comunicat.rest.viewsets import ComuniCatViewSet
+from consent.enums import ConsentType
 from notify.enums import EmailType
 from payment.api.entity import get_entity_by_key
 from user.enums import FamilyMemberRole, FamilyMemberStatus
@@ -61,6 +62,7 @@ class OrgAPI(ComuniCatViewSet):
             with_membership=False,
             with_notify=False,
             module=self.module,
+            consent_types=[ConsentType.GENERAL, ConsentType.MEDIA],
         )
 
         from user.models import FamilyMember
@@ -88,6 +90,7 @@ class OrgAPI(ComuniCatViewSet):
                     with_family=False,
                     with_notify=False,
                     module=self.module,
+                    consent_types=[ConsentType.GENERAL, ConsentType.MEDIA],
                 )
                 if not hasattr(user_2_obj, "family_member"):
                     FamilyMember.objects.create(
