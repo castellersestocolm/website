@@ -652,15 +652,12 @@ function UserDashboardPage() {
                     </ListItemIcon>
                     <ListItemText
                       primary={
-                        datetimeToString(
+                        dateToString(
                           i18n.resolvedLanguage,
                           membership.date_from,
                         ) +
                         " → " +
-                        datetimeToString(
-                          i18n.resolvedLanguage,
-                          membership.date_to,
-                        )
+                        dateToString(i18n.resolvedLanguage, membership.date_to)
                       }
                     />
                   </ListItem>
