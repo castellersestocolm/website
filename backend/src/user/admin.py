@@ -364,7 +364,8 @@ class GoogleGroupUserInline(admin.TabularInline):
 
 @admin.action(description="Sync Google group users")
 def sync_google_group_users(modeladmin, request, queryset):
-    user.tasks.sync_users.delay()
+    for google_group_obj in queryset:
+        user.tasks.sync_users.delay(group_id=google_group_obj.id)
 
 
 @admin.register(GoogleGroup)
