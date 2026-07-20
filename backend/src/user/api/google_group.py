@@ -274,13 +274,12 @@ def sync_users(group_id: UUID | None = None) -> None:
                         "role": google_group_user_role.name,
                     },
                 ).execute()
-            except HttpError as e:
+            except HttpError:
                 try:
                     service.members().update(
                         groupKey=google_group_obj.external_id,
                         memberKey=email_to_add_group,
                         body={
-                            "email": email_to_add_group,
                             "role": google_group_user_role.name,
                         },
                     ).execute()
@@ -306,7 +305,6 @@ def sync_users(group_id: UUID | None = None) -> None:
                     groupKey=google_group_obj.external_id,
                     memberKey=email_to_update_group,
                     body={
-                        "email": email_to_update_group,
                         "role": google_group_user_role.name,
                     },
                 ).execute()

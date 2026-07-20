@@ -95,6 +95,7 @@ class AdminUserAPI(ComuniCatViewSet):
 
         user_objs = user.api.get_list(
             modules=[self.module],
+            with_membership=True,
             with_orders=True,
             with_teams=True,
             with_products=True,
