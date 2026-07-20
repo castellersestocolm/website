@@ -9,6 +9,7 @@ from django.utils import timezone
 import user.api.google_group
 from comunicat.enums import Module
 from comunicat.utils.test.mocks import MockGoogleApiClientExecute
+from conftest import NumOperationsMixin
 from consent.enums import ConsentType
 from consent.tests.factories import EntityConsentFactory
 from integration.tests.factories import GoogleIntegrationFactory
@@ -32,7 +33,7 @@ from user.tests.factories import (GoogleGroupFactory, GoogleGroupModuleFactory,
 @pytest.mark.django_db
 @mock.patch("user.api.google_group.Credentials.before_request", return_value=None)
 @mock.patch("user.api.google_group.Credentials.refresh", return_value=None)
-class TestGoogleGroupSyncUsers(TestCase):
+class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -237,7 +238,15 @@ class TestGoogleGroupSyncUsers(TestCase):
                 {},
             ),
         ):
-            user.api.google_group.sync_users(group_id=self.google_group_board_obj.id)
+            with self.assertNumOperations(
+                num_selects=12,
+                num_inserts=3,
+                num_updates=0,
+                num_deletes=4,
+            ):
+                user.api.google_group.sync_users(
+                    group_id=self.google_group_board_obj.id
+                )
 
         google_group_board_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
@@ -293,9 +302,15 @@ class TestGoogleGroupSyncUsers(TestCase):
                 {},
             ),
         ):
-            user.api.google_group.sync_users(
-                group_id=self.google_group_board_team_obj.id
-            )
+            with self.assertNumOperations(
+                num_selects=12,
+                num_inserts=2,
+                num_updates=0,
+                num_deletes=0,
+            ):
+                user.api.google_group.sync_users(
+                    group_id=self.google_group_board_team_obj.id
+                )
 
         google_group_board_team_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
@@ -344,9 +359,15 @@ class TestGoogleGroupSyncUsers(TestCase):
                 {},
             ),
         ):
-            user.api.google_group.sync_users(
-                group_id=self.google_group_board_team_role_obj.id
-            )
+            with self.assertNumOperations(
+                num_selects=11,
+                num_inserts=1,
+                num_updates=0,
+                num_deletes=0,
+            ):
+                user.api.google_group.sync_users(
+                    group_id=self.google_group_board_team_role_obj.id
+                )
 
         google_group_board_team_role_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
@@ -377,7 +398,15 @@ class TestGoogleGroupSyncUsers(TestCase):
             "googleapiclient.http.HttpRequest.execute",
             side_effect=MockGoogleApiClientExecute({"members": []}, {}),
         ):
-            user.api.google_group.sync_users(group_id=self.google_group_members_obj.id)
+            with self.assertNumOperations(
+                num_selects=19,
+                num_inserts=9,
+                num_updates=0,
+                num_deletes=0,
+            ):
+                user.api.google_group.sync_users(
+                    group_id=self.google_group_members_obj.id
+                )
 
         google_group_members_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
@@ -419,9 +448,15 @@ class TestGoogleGroupSyncUsers(TestCase):
             "googleapiclient.http.HttpRequest.execute",
             side_effect=MockGoogleApiClientExecute({"members": []}, {}),
         ):
-            user.api.google_group.sync_users(
-                group_id=self.google_group_members_old_obj.id
-            )
+            with self.assertNumOperations(
+                num_selects=8,
+                num_inserts=1,
+                num_updates=0,
+                num_deletes=0,
+            ):
+                user.api.google_group.sync_users(
+                    group_id=self.google_group_members_old_obj.id
+                )
 
         google_group_members_old_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
@@ -452,9 +487,15 @@ class TestGoogleGroupSyncUsers(TestCase):
             "googleapiclient.http.HttpRequest.execute",
             side_effect=MockGoogleApiClientExecute({"members": []}, {}),
         ):
-            user.api.google_group.sync_users(
-                group_id=self.google_group_newsletter_obj.id
-            )
+            with self.assertNumOperations(
+                num_selects=10,
+                num_inserts=2,
+                num_updates=0,
+                num_deletes=0,
+            ):
+                user.api.google_group.sync_users(
+                    group_id=self.google_group_newsletter_obj.id
+                )
 
         google_group_newsletter_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
