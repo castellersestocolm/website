@@ -1,19 +1,11 @@
 from django.contrib import admin
 from django.db.models import JSONField
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
-from django.utils.translation import gettext_lazy as _
-
-from product.models import (
-    ProductSize,
-    ProductImage,
-    Product,
-    ProductPrice,
-    StockOrder,
-    StockProduct,
-    ProductModule,
-)
+from product.models import (Product, ProductImage, ProductModule, ProductPrice,
+                            ProductSize, StockOrder, StockProduct)
 
 
 class ProductSizeInline(admin.TabularInline):

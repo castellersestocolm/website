@@ -5,20 +5,19 @@ from django.conf import settings
 from django.db.models import Prefetch
 from django.urls import reverse
 from django.utils import timezone, translation
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.openapi import Contact
 
 from comunicat.enums import Module
-from comunicat.template_tags.comunicat_tags import full_url, full_media
+from comunicat.template_tags.comunicat_tags import full_media, full_url
 from event.enums import RegistrationStatus
 from event.models import Registration
 from notify.api.slack import get_client
-
-from django.utils.translation import gettext_lazy as _
-
-from notify.enums import MessageSlackType, ContactMessageStatus, ContactMessageType
-from notify.models import MessageSlack, ContactMessage
+from notify.enums import (ContactMessageStatus, ContactMessageType,
+                          MessageSlackType)
+from notify.models import ContactMessage, MessageSlack
 from order.enums import OrderStatus
-from order.models import Order, OrderProduct, OrderLog
+from order.models import Order, OrderLog, OrderProduct
 from product.models import ProductSize
 
 

@@ -7,15 +7,12 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
-from comunicat.db.mixins import Timestamps, StandardModel
+from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
-from user.enums import (
-    FamilyMemberRole,
-    FamilyMemberStatus,
-    FamilyMemberRequestStatus,
-    UserProductSource, GoogleGroupUserRole,
-)
-from user.managers import UserManager, FamilyMemberQuerySet, FamilyQuerySet
+from user.enums import (FamilyMemberRequestStatus, FamilyMemberRole,
+                        FamilyMemberStatus, GoogleGroupUserRole,
+                        UserProductSource)
+from user.managers import FamilyMemberQuerySet, FamilyQuerySet, UserManager
 from user.utils import is_over_minimum_age
 
 

@@ -1,16 +1,15 @@
 from collections import defaultdict
 from uuid import UUID
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Prefetch
 
 from membership.models import Membership, MembershipUser
 from membership.utils import get_membership_account
-from payment.enums import PaymentType, PaymentStatus, AccountCategory
-from payment.models import Payment, PaymentLine, Entity, Account
-
-from django.conf import settings
+from payment.enums import AccountCategory, PaymentStatus, PaymentType
+from payment.models import Account, Entity, Payment, PaymentLine
 
 
 def create_or_update_payment(membership_id: UUID) -> Payment | None:

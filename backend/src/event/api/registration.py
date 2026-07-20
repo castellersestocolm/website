@@ -2,14 +2,13 @@ from uuid import UUID
 
 from django.db.models import Q
 
+import notify.tasks
 import payment.api.entity
 from comunicat.enums import Module
 from event.enums import RegistrationStatus
-from event.models import Registration, Event
+from event.models import Event, Registration
 from event.utils.event import get_registration_initial_status
 from user.models import FamilyMember
-
-import notify.tasks
 
 
 def get_list(

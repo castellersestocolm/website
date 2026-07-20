@@ -1,5 +1,5 @@
 import importlib
-from typing import List, Any
+from typing import Any, List
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -17,9 +17,8 @@ import membership.enums
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
-
 from comunicat.enums import Module
-from event.models import Registration, Event
+from event.models import Event, Registration
 from membership.enums import MembershipStatus
 from membership.models import Membership
 from notify.consts import SETTINGS_BY_MODULE

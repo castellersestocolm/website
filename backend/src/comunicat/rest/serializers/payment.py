@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_serializer_method
 from paypalserversdk.configuration import Environment
 from phonenumber_field.formfields import PhoneNumberField
@@ -9,19 +10,9 @@ from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from comunicat.rest.utils.fields import MoneyField
 from payment.enums import PaymentStatus
-from payment.models import (
-    PaymentLine,
-    Payment,
-    PaymentLog,
-    Transaction,
-    Receipt,
-    Expense,
-    ExpenseLog,
-    PaymentProvider,
-    PaymentOrder,
-    Entity,
-)
-from django.utils.translation import gettext_lazy as _
+from payment.models import (Entity, Expense, ExpenseLog, Payment, PaymentLine,
+                            PaymentLog, PaymentOrder, PaymentProvider, Receipt,
+                            Transaction)
 
 
 class CreateEntitySerializer(s.Serializer):

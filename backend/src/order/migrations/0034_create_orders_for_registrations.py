@@ -2,9 +2,9 @@
 import itertools
 
 import django.db.models.deletion
-import order.enums
 from django.db import migrations, models
 
+import order.enums
 from event.enums import RegistrationStatus
 from order.enums import OrderStatus
 

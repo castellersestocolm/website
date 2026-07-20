@@ -1,12 +1,6 @@
 from django.apps import apps
-from django.db.models import (
-    QuerySet,
-    Sum,
-    IntegerField,
-    Value,
-    Subquery,
-    OuterRef,
-)
+from django.db.models import (IntegerField, OuterRef, QuerySet, Subquery, Sum,
+                              Value)
 from django.db.models.functions import Coalesce
 
 from user.enums import FamilyMemberRole

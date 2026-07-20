@@ -1,6 +1,6 @@
 from urllib import parse
 
-from django.core.signing import Signer, BadSignature
+from django.core.signing import BadSignature, Signer
 from django.utils import timezone
 
 

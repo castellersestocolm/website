@@ -2,41 +2,31 @@ import decimal
 from typing import List
 from uuid import UUID
 
+from django.conf import settings
 from django.db import transaction
-from django.db.models import Prefetch, Q, Exists, OuterRef
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils import timezone, translation
+from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
+import notify.tasks
+import payment.api.payment_provider
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from data.models import Country, Region
 from notify.enums import EmailType
-from order.enums import OrderStatus, OrderDeliveryType
-from order.models import (
-    Order,
-    OrderProduct,
-    OrderLog,
-    OrderDelivery,
-    OrderDeliveryAddress,
-    DeliveryProvider,
-    OrderRegistration,
-)
+from order.enums import OrderDeliveryType, OrderStatus
+from order.models import (DeliveryProvider, Order, OrderDelivery,
+                          OrderDeliveryAddress, OrderLog, OrderProduct,
+                          OrderRegistration)
 from order.utils.delivery import get_delivery_price
 from payment.enums import PaymentStatus
 from payment.models import Entity, PaymentOrder
 from product.models import ProductSize
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
-
-import payment.api.payment_provider
-
-import notify.tasks
-
-from django.conf import settings
-
-from django.utils.translation import gettext_lazy as _
 
 
 def get_list(

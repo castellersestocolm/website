@@ -1,5 +1,6 @@
-from comunicat.enums import Module
 from django.conf import settings
+
+from comunicat.enums import Module
 
 MEMBERSHIP_BY_MODULE = {
     Module.ORG: {

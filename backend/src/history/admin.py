@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.db.models import JSONField
+from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
 from history.models import HistoryEvent
-
-from django.utils.translation import gettext_lazy as _
 
 
 @admin.register(HistoryEvent)

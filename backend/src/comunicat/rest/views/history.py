@@ -1,14 +1,13 @@
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 
-from comunicat.rest.serializers.history import HistoryEventSerializer
-
-from comunicat.rest.viewsets import ComuniCatViewSet
 import history.api.history_event
+from comunicat.rest.serializers.history import HistoryEventSerializer
+from comunicat.rest.viewsets import ComuniCatViewSet
 
 
 class HistoryEventResultsSetPagination(PageNumberPagination):

@@ -1,6 +1,5 @@
-from towers.enums import PositionType
-
 import pinyator.api
+from towers.enums import PositionType
 from user.models import User
 
 

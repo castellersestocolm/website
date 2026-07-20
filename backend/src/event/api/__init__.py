@@ -3,40 +3,24 @@ from collections import defaultdict
 from typing import List
 from uuid import UUID
 
-from django.db.models import (
-    Q,
-    Prefetch,
-    Subquery,
-    OuterRef,
-    Count,
-    Value,
-    IntegerField,
-)
+from django.conf import settings
+from django.db.models import (Count, IntegerField, OuterRef, Prefetch, Q,
+                              Subquery, Value)
 from django.db.models.functions import Coalesce
 from django.utils import timezone, translation
 
 import legal.api.team
+import notify.tasks
+import user.api
+import user.api.event
 from comunicat.enums import Module
-from event.enums import EventStatus, RegistrationStatus, EventType
-from event.models import (
-    Event,
-    Registration,
-    AgendaItem,
-    Connection,
-    EventModule,
-    EventPrice,
-    EventQuestion,
-)
+from event.enums import EventStatus, EventType, RegistrationStatus
+from event.models import (AgendaItem, Connection, Event, EventModule,
+                          EventPrice, EventQuestion, Registration)
 from legal.enums import TeamType
 from notify.enums import EmailType
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
-
-import user.api
-import user.api.event
-import notify.tasks
-
-from django.conf import settings
 
 
 def get_list(

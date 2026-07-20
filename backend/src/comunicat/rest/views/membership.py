@@ -1,19 +1,16 @@
-from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.serializers import Serializer
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 
-from comunicat.rest.serializers.membership import (
-    MembershipSerializer,
-    MembershipRenewSerializer,
-    MembershipRenewRequestSerializer,
-)
-
-from comunicat.rest.viewsets import ComuniCatViewSet
 import membership.api
 import membership.api.renew
+from comunicat.rest.serializers.membership import (
+    MembershipRenewRequestSerializer, MembershipRenewSerializer,
+    MembershipSerializer)
+from comunicat.rest.viewsets import ComuniCatViewSet
 
 
 class MembershipResultsSetPagination(PageNumberPagination):

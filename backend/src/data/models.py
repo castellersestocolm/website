@@ -5,9 +5,8 @@ from django.utils import translation
 from django.utils.functional import cached_property
 
 from comunicat.db.mixins import StandardModel, Timestamps
-
 from comunicat.utils.models import language_field_default
-from data.consts import COUNTRY_CODE_3_TO_CODE_2, COUNTRY_CODE_2_TO_CODE_3
+from data.consts import COUNTRY_CODE_2_TO_CODE_3, COUNTRY_CODE_3_TO_CODE_2
 from data.managers import CountryQuerySet, RegionQuerySet, ZoneQuerySet
 
 

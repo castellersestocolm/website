@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from django.db import transaction
@@ -6,6 +7,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+import user.api
 from comunicat.utils.email import get_module_emails_from_user
 from consent.models import EntityConsent
 from notify.enums import NewsletterType
@@ -13,11 +15,6 @@ from notify.models import Newsletter
 from user.consts import GOOGLE_GROUP_SCOPES
 from user.enums import GoogleGroupUserRole
 from user.models import GoogleGroup, GoogleGroupUser, User
-
-import user.api
-
-import logging
-
 
 _log = logging.getLogger(__name__)
 
@@ -91,19 +88,25 @@ def sync_users(group_id: UUID | None = None) -> None:
         google_group_filter &= Q(id=group_id)
 
     google_group_objs = list(
-        GoogleGroup.objects.filter(google_group_filter).select_related("google_integration").prefetch_related(
-            "modules", "users", "newsletters",
+        GoogleGroup.objects.filter(google_group_filter)
+        .select_related("google_integration")
+        .prefetch_related(
+            "modules",
+            "users",
+            "newsletters",
             Prefetch(
                 "newsletters",
-                Newsletter.objects.prefetch_related(Prefetch(
-                "consents",
-                EntityConsent.objects.filter(
-                    entity__email__isnull=False, deleted_at__isnull=True
+                Newsletter.objects.prefetch_related(
+                    Prefetch(
+                        "consents",
+                        EntityConsent.objects.filter(
+                            entity__email__isnull=False, deleted_at__isnull=True
+                        ),
+                        to_attr="all_consents",
+                    )
                 ),
-                to_attr="all_consents"
-            )),
-                to_attr="all_newsletters"
-            )
+                to_attr="all_newsletters",
+            ),
         )
     )
 
@@ -118,7 +121,9 @@ def sync_users(group_id: UUID | None = None) -> None:
             service.members().list(groupKey=google_group_obj.external_id).execute()
         )
         existing_emails = {
-            member.get("email"): GoogleGroupUserRole[member.get("role", GoogleGroupUserRole.MEMBER.name)]
+            member.get("email"): GoogleGroupUserRole[
+                member.get("role", GoogleGroupUserRole.MEMBER.name)
+            ]
             for member in existing_members.get("members", [])
             if "email" in member
         }
@@ -131,11 +136,16 @@ def sync_users(group_id: UUID | None = None) -> None:
                 )
                 .execute()
             )
-            existing_emails = {**existing_members, **{
-                member.get("email"): GoogleGroupUserRole[member.get("role", GoogleGroupUserRole.MEMBER.name)]
-                for member in existing_members.get("members", [])
-                if "email" in member
-            }}
+            existing_emails = {
+                **existing_members,
+                **{
+                    member.get("email"): GoogleGroupUserRole[
+                        member.get("role", GoogleGroupUserRole.MEMBER.name)
+                    ]
+                    for member in existing_members.get("members", [])
+                    if "email" in member
+                },
+            }
 
         google_group_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
@@ -146,7 +156,11 @@ def sync_users(group_id: UUID | None = None) -> None:
         user_by_email: dict[str, User] = {}
 
         # Entities that should be present based on newsletters
-        emails_due_newsletter = {entity_consent_obj.entity.email for newsletter_obj in google_group_obj.all_newsletters for entity_consent_obj in newsletter_obj.all_consents}
+        emails_due_newsletter = {
+            entity_consent_obj.entity.email
+            for newsletter_obj in google_group_obj.all_newsletters
+            for entity_consent_obj in newsletter_obj.all_consents
+        }
 
         # Entities that should be present based on group rules
         emails_due_module = set()
@@ -179,32 +193,59 @@ def sync_users(group_id: UUID | None = None) -> None:
                     # TODO: Possibly handle OWNERs as well via permissions
                     permission_by_email[email] = GoogleGroupUserRole.MANAGER
             else:
-                user_module_by_email = {**{user_obj.email: user_obj for user_obj in user_objs if user_obj.can_manage}, **(
-                    {
-                        user_email_obj.email: user_obj
+                user_module_by_email = {
+                    **{
+                        user_obj.email: user_obj
                         for user_obj in user_objs
-                        if user_obj.can_manage and hasattr(user_obj, "emails")
-                        for user_email_obj in user_obj.emails.all()
-                    }
-                )}
+                        if user_obj.can_manage
+                    },
+                    **(
+                        {
+                            user_email_obj.email: user_obj
+                            for user_obj in user_objs
+                            if user_obj.can_manage and hasattr(user_obj, "emails")
+                            for user_email_obj in user_obj.emails.all()
+                        }
+                    ),
+                }
 
-            emails_due_module = emails_due_module.union(set(user_module_by_email.keys()))
+            emails_due_module = emails_due_module.union(
+                set(user_module_by_email.keys())
+            )
             user_by_email = {**user_by_email, **user_module_by_email}
 
         emails_due_all = emails_due_newsletter.union(emails_due_module)
 
-        emails_to_add_group = {email for email in emails_due_all if email not in existing_emails.keys()}
+        emails_to_add_group = {
+            email for email in emails_due_all if email not in existing_emails.keys()
+        }
         if google_group_obj.delete_on_expire:
-            emails_to_delete_group = {email for email in existing_emails.keys() if email not in emails_due_all and (email not in google_group_user_by_email or not google_group_user_by_email[email].force_member)}
+            emails_to_delete_group = {
+                email
+                for email in existing_emails.keys()
+                if email not in emails_due_all
+                and (
+                    email not in google_group_user_by_email
+                    or not google_group_user_by_email[email].force_member
+                )
+            }
         else:
             emails_to_delete_group = set()
-        emails_to_update_group = {email for email in emails_due_all if email in existing_emails.keys() and email not in emails_to_delete_group and permission_by_email.get(email, GoogleGroupUserRole.MEMBER) != existing_emails[email]}
+        emails_to_update_group = {
+            email
+            for email in emails_due_all
+            if email in existing_emails.keys()
+            and email not in emails_to_delete_group
+            and permission_by_email.get(email, GoogleGroupUserRole.MEMBER)
+            != existing_emails[email]
+        }
 
         # Delete emails from the Google group
         for email_to_delete_group in emails_to_delete_group:
             try:
                 service.members().delete(
-                    groupKey=google_group_obj.external_id, memberKey=email_to_delete_group
+                    groupKey=google_group_obj.external_id,
+                    memberKey=email_to_delete_group,
                 ).execute()
                 GoogleGroupUser.objects.filter(
                     group=google_group_obj,
@@ -231,7 +272,7 @@ def sync_users(group_id: UUID | None = None) -> None:
                     defaults={
                         "user": user_by_email.get(email_to_add_group),
                         "role": google_group_user_role,
-                    }
+                    },
                 )
             except HttpError as e:
                 _log.exception(e)
@@ -243,7 +284,8 @@ def sync_users(group_id: UUID | None = None) -> None:
             )
             try:
                 service.members().update(
-                    groupKey=google_group_obj.external_id, memberKey=email_to_update_group,
+                    groupKey=google_group_obj.external_id,
+                    memberKey=email_to_update_group,
                     body={
                         "email": email_to_update_group,
                         "role": google_group_user_role.name,
@@ -255,7 +297,7 @@ def sync_users(group_id: UUID | None = None) -> None:
                     defaults={
                         "user": user_by_email.get(email_to_update_group),
                         "role": google_group_user_role,
-                    }
+                    },
                 )
             except HttpError as e:
                 _log.exception(e)

@@ -3,16 +3,14 @@ from io import BytesIO
 
 import fitz
 from django.core.files.images import ImageFile
-
 from django.core.validators import FileExtensionValidator
+from django.db import models
 from versatileimagefield.fields import VersatileImageField
 
 from comunicat.db.mixins import StandardModel, Timestamps
-from django.db import models
-
 from comunicat.enums import Module
 from comunicat.storage import signed_storage
-from document.enums import DocumentType, DocumentStatus
+from document.enums import DocumentStatus, DocumentType
 from document.managers import DocumentQuerySet, EmailAttachmentQuerySet
 from notify.enums import EmailType
 

@@ -1,35 +1,18 @@
 from click.types import convert_type
 from django.apps import apps
-from django.db.models import (
-    QuerySet,
-    Sum,
-    Value,
-    Case,
-    When,
-    Q,
-    CharField,
-    F,
-    Subquery,
-    OuterRef,
-    Count,
-    Exists,
-    DateField,
-    Func,
-    IntegerField,
-    UUIDField,
-)
-from django.db.models.fields.json import KeyTextTransform
-from django.db.models.functions import Coalesce, Cast, Concat, Substr
-from django.utils import timezone, translation
-
-from comunicat.enums import Module
-
 from django.conf import settings
+from django.db.models import (Case, CharField, Count, DateField, Exists, F,
+                              Func, IntegerField, OuterRef, Q, QuerySet,
+                              Subquery, Sum, UUIDField, Value, When)
+from django.db.models.fields.json import KeyTextTransform
+from django.db.models.functions import Cast, Coalesce, Concat, Substr
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
+from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
 from consent.enums import ConsentType
-from payment.enums import PaymentType, PaymentStatus
+from payment.enums import PaymentStatus, PaymentType
 
 
 class PaymentQuerySet(QuerySet):

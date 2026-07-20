@@ -3,12 +3,11 @@ from functools import cached_property
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db import models, transaction
 from django.utils import timezone
 from djmoney.models.fields import MoneyField
 
 from comunicat.db.mixins import StandardModel, Timestamps
-from django.db import models, transaction
-
 from comunicat.enums import Module
 from membership.enums import MembershipStatus
 from membership.managers import MembershipQuerySet, MembershipUserQuerySet

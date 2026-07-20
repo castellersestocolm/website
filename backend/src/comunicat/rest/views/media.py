@@ -1,16 +1,15 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
+import media.api.release
 from comunicat.consts import PERMISSIONS_BY_LEVEL
 from comunicat.rest.serializers.media import ReleaseSerializer
-
 from comunicat.rest.viewsets import ComuniCatViewSet
-import media.api.release
 
 
 class ReleaseResultsSetPagination(PageNumberPagination):

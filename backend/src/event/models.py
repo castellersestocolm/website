@@ -7,33 +7,25 @@ from zoneinfo import ZoneInfo
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.db.models import JSONField, Q, F
+from django.db import models, transaction
+from django.db.models import F, JSONField, Q
 from django.db.models.functions import Trunc
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils import timezone, translation
+from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
-from django.db import models, transaction
-
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 from event.consts import EVENT_QUESTION_TYPE_FIELDS
-from event.enums import (
-    EventType,
-    EventRequirementType,
-    RegistrationStatus,
-    TransportMode,
-    EventStatus,
-    EventQuestionType,
-)
-
-from django.utils.translation import gettext_lazy as _
-
-from event.managers import EventQuerySet, RegistrationQuerySet, AgendaItemQuerySet
+from event.enums import (EventQuestionType, EventRequirementType, EventStatus,
+                         EventType, RegistrationStatus, TransportMode)
+from event.managers import (AgendaItemQuerySet, EventQuerySet,
+                            RegistrationQuerySet)
 from event.utils.event import get_event_title
 
 

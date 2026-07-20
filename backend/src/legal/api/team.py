@@ -4,7 +4,7 @@ from django.db.models import Prefetch, Q
 from django.utils import timezone
 
 from comunicat.enums import Module
-from legal.models import Team, Member
+from legal.models import Member, Team
 
 
 def get_list(module: Module) -> List[Team]:

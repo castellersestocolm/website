@@ -1,9 +1,8 @@
 from io import BytesIO
 
-from openpyxl.workbook import Workbook
-from openpyxl.styles import numbers, Font
-
 from django.utils.translation import gettext_lazy as _
+from openpyxl.styles import Font, numbers
+from openpyxl.workbook import Workbook
 
 
 # TODO: Include actual memberships

@@ -1,26 +1,19 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import JSONField, F
+from django.db.models import F, JSONField
 from django.utils import timezone, translation
+from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
 from comunicat.db.mixins import StandardModel, Timestamps
-from djmoney.models.fields import MoneyField
-
 from comunicat.enums import Module
 from comunicat.rest.utils.helpers import generate_reference
 from comunicat.utils.models import language_field_default
 from event.enums import RegistrationStatus
 from order.enums import OrderDeliveryType, OrderStatus
-from order.managers import (
-    OrderQuerySet,
-    DeliveryPriceQuerySet,
-    OrderProductQuerySet,
-    OrderRegistrationQuerySet,
-)
-
-from django.utils.translation import gettext_lazy as _
-
+from order.managers import (DeliveryPriceQuerySet, OrderProductQuerySet,
+                            OrderQuerySet, OrderRegistrationQuerySet)
 from user.enums import UserProductSource
 
 

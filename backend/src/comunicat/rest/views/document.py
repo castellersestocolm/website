@@ -1,18 +1,14 @@
 import logging
 
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, cache_control
+from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 
 import document.api
-
-from comunicat.rest.serializers.document import (
-    DocumentSerializer,
-    ListDocumentSerializer,
-)
-
+from comunicat.rest.serializers.document import (DocumentSerializer,
+                                                 ListDocumentSerializer)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

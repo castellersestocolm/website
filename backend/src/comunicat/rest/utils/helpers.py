@@ -1,7 +1,6 @@
 import random
 import string
 
-
 string_characters = "".join(
     [
         c

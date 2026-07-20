@@ -1,13 +1,14 @@
 from uuid import UUID
 
 from django.db import transaction
-from django.db.models import ExpressionWrapper, Q, BooleanField, Exists, OuterRef
+from django.db.models import (BooleanField, Exists, ExpressionWrapper,
+                              OuterRef, Q)
 
 from activity.models import ProgramCourseRegistration
 from event.models import Registration
-from notify.models import Email, ContactMessage
+from notify.models import ContactMessage, Email
 from order.models import Order
-from payment.models import Entity, Payment, Expense, Receipt, EntityAlias
+from payment.models import Entity, EntityAlias, Expense, Payment, Receipt
 from product.models import StockOrder
 from user.models import User
 

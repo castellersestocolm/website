@@ -1,19 +1,15 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 
-from comunicat.rest.serializers.legal import (
-    TeamSerializer,
-    BylawsSerializer,
-    GroupSerializer,
-)
-
-from comunicat.rest.viewsets import ComuniCatViewSet
-import legal.api.team
-import legal.api.group
 import legal.api.bylaws
+import legal.api.group
+import legal.api.team
+from comunicat.rest.serializers.legal import (BylawsSerializer,
+                                              GroupSerializer, TeamSerializer)
+from comunicat.rest.viewsets import ComuniCatViewSet
 
 
 class TeamResultsSetPagination(PageNumberPagination):

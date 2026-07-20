@@ -1,7 +1,7 @@
 import datetime
 
-from django.utils import timezone
 from django.conf import settings
+from django.utils import timezone
 
 
 def is_over_minimum_age(date: datetime.date) -> bool:

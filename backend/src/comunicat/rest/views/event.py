@@ -4,29 +4,26 @@ import datetime
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
-import user.api.event
-from comunicat.rest.serializers.event import (
-    EventSerializer,
-    RegistrationSerializer,
-    CreateRegistrationSerializer,
-    ListEventSerializer,
-    DestroyRegistrationSerializer,
-    ListEventCalendarSerializer,
-    RegistrationSlimSerializer,
-    EventWithCountsSerializer,
-    PageEventSerializer,
-)
-
-from comunicat.rest.viewsets import ComuniCatViewSet
 import event.api
 import event.api.registration
+import user.api.event
+from comunicat.rest.serializers.event import (CreateRegistrationSerializer,
+                                              DestroyRegistrationSerializer,
+                                              EventSerializer,
+                                              EventWithCountsSerializer,
+                                              ListEventCalendarSerializer,
+                                              ListEventSerializer,
+                                              PageEventSerializer,
+                                              RegistrationSerializer,
+                                              RegistrationSlimSerializer)
+from comunicat.rest.viewsets import ComuniCatViewSet
 
 
 class EventResultsSetPagination(PageNumberPagination):

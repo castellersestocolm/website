@@ -4,7 +4,7 @@ from rest_framework import serializers as s
 
 from comunicat.rest.serializers.legal import TeamSlimSerializer
 from comunicat.rest.utils.fields import MoneyField
-from product.models import Product, ProductSize, ProductImage, ProductModule
+from product.models import Product, ProductImage, ProductModule, ProductSize
 
 
 class ProductImageSerializer(s.ModelSerializer):

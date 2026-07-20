@@ -7,57 +7,36 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db.models import JSONField, Q, Prefetch
+from django.db.models import JSONField, Prefetch, Q
 from django.forms import BaseInlineFormSet
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from django.urls import reverse, path
+from django.urls import path, reverse
 from django.utils import timezone, translation
 from django.utils.safestring import mark_safe
-
+from django.utils.translation import gettext_lazy as _
+from jsoneditor.forms import JSONEditor
 from weasyprint import HTML
 
+import notify.tasks
 import payment.api.entity
 import payment.tasks
 from activity.models import ProgramCourseRegistration
-from comunicat.consts import ZERO_MONEY, TEMPLATE_PDF_BY_MODULE
+from comunicat.consts import TEMPLATE_PDF_BY_MODULE, ZERO_MONEY
 from comunicat.enums import Module, PDFType
-from comunicat.utils.admin import DynamicColumn, FIELD_LOCALE
+from comunicat.utils.admin import FIELD_LOCALE, DynamicColumn
 from consent.models import EntityConsent
 from event.models import Registration
 from notify.enums import EmailType
 from order.models import Order
 from payment.consts import PAYMENT_LINE_CONTENT_TYPES
 from payment.enums import PaymentType
-
-import notify.tasks
-
-from payment.models import (
-    Payment,
-    PaymentLine,
-    PaymentLog,
-    Account,
-    Transaction,
-    AccountTag,
-    Source,
-    Entity,
-    TransactionImport,
-    Receipt,
-    Expense,
-    ExpenseLog,
-    Statement,
-    PaymentProvider,
-    PaymentOrder,
-    PaymentOrderProviderLog,
-    EntityAlias,
-    EntityPaymentMethod,
-    AccountEvent,
-)
-
-from jsoneditor.forms import JSONEditor
-
-from django.utils.translation import gettext_lazy as _
-
+from payment.models import (Account, AccountEvent, AccountTag, Entity,
+                            EntityAlias, EntityPaymentMethod, Expense,
+                            ExpenseLog, Payment, PaymentLine, PaymentLog,
+                            PaymentOrder, PaymentOrderProviderLog,
+                            PaymentProvider, Receipt, Source, Statement,
+                            Transaction, TransactionImport)
 from payment.utils.admin import EntityHasPaymentFilter
 
 

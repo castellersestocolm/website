@@ -2,20 +2,17 @@ import logging
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+import notify.api.contact_message
 import notify.api.newsletter
 import payment.api.entity
-import notify.api.contact_message
-from comunicat.rest.serializers.notify import (
-    ContactMessageSerializer,
-    CreateContactMessageSerializer,
-    NewsletterSerializer,
-)
-
+from comunicat.rest.serializers.notify import (ContactMessageSerializer,
+                                               CreateContactMessageSerializer,
+                                               NewsletterSerializer)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

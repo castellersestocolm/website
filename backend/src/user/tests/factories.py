@@ -1,11 +1,13 @@
-from factory import Faker, LazyFunction, PostGenerationMethodCall, SubFactory, SelfAttribute
+from factory import (Faker, LazyFunction, PostGenerationMethodCall,
+                     SelfAttribute, SubFactory)
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
-from comunicat.utils.factories import fake_telephone, fake_string
+from comunicat.utils.factories import fake_string, fake_telephone
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import User, GoogleGroup, GoogleGroupModule, GoogleGroupUser, UserEmail, Family, FamilyMember
+from user.models import (Family, FamilyMember, GoogleGroup, GoogleGroupModule,
+                         GoogleGroupUser, User, UserEmail)
 
 
 class UserFactory(DjangoModelFactory):
@@ -60,7 +62,9 @@ class GoogleGroupFactory(DjangoModelFactory):
 
     is_primary = False
 
-    google_integration = SubFactory("integration.tests.factories.GoogleIntegrationFactory")
+    google_integration = SubFactory(
+        "integration.tests.factories.GoogleIntegrationFactory"
+    )
 
     delete_on_expire = True
 

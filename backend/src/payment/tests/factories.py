@@ -1,4 +1,4 @@
-from factory import SubFactory, SelfAttribute
+from factory import SelfAttribute, SubFactory
 from factory.django import DjangoModelFactory
 
 from payment.models import Entity

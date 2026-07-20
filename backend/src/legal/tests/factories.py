@@ -1,12 +1,12 @@
 from django.utils import timezone
-from factory import SubFactory, SelfAttribute, Faker, LazyFunction, Sequence
+from factory import Faker, LazyFunction, SelfAttribute, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
 from comunicat.utils.factories import fake_title
 from legal.enums import TeamType
-from legal.models import Team, Group, Role, Member
+from legal.models import Group, Member, Role, Team
 
 
 class GroupFactory(DjangoModelFactory):

@@ -1,10 +1,9 @@
 from urllib.parse import urlparse
 
+from django.conf import settings
 from rest_framework.viewsets import ViewSet
 
 from comunicat.enums import Module
-
-from django.conf import settings
 
 
 class ComuniCatViewSet(ViewSet):

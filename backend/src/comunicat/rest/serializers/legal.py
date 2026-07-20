@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
@@ -5,10 +6,8 @@ from rest_framework import serializers as s
 from comunicat.rest.utils.fields import IntEnumField
 from comunicat.utils.email import get_module_emails_from_user
 from legal.enums import ContactEmailType
-from legal.models import Team, Member, Role, Bylaws, Group
+from legal.models import Bylaws, Group, Member, Role, Team
 from user.models import User
-
-from django.conf import settings
 
 
 class MemberUserContactEmailSerializer(s.Serializer):

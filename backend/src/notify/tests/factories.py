@@ -1,4 +1,4 @@
-from factory import SubFactory, LazyFunction
+from factory import LazyFunction, SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 

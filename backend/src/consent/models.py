@@ -1,10 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
-from comunicat.db.mixins import Timestamps, StandardModel
-from consent.enums import ConsentType
-
 from django.utils.translation import gettext_lazy as _
 
+from comunicat.db.mixins import StandardModel, Timestamps
+from consent.enums import ConsentType
 from notify.enums import NewsletterType
 
 

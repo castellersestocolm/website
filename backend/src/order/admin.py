@@ -3,29 +3,17 @@ from django.contrib import admin
 from django.db.models import JSONField
 from django.utils import translation
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
+import notify.tasks
 from comunicat.utils.admin import FIELD_LOCALE
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
-from order.models import (
-    OrderProduct,
-    Order,
-    OrderDelivery,
-    OrderLog,
-    DeliveryProvider,
-    DeliveryPrice,
-    OrderDeliveryAddress,
-    DeliveryDate,
-    OrderRegistration,
-)
-
-import notify.tasks
-
-from django.utils.translation import gettext_lazy as _
-
+from order.models import (DeliveryDate, DeliveryPrice, DeliveryProvider, Order,
+                          OrderDelivery, OrderDeliveryAddress, OrderLog,
+                          OrderProduct, OrderRegistration)
 from payment.models import PaymentLine
-
 
 # class OrderProductInlineFormAdmin(forms.ModelForm):
 #     class Meta:

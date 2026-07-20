@@ -2,9 +2,8 @@ from typing import Optional
 
 from django.conf import settings
 
-from comunicat.enums import Module
-
 import notify.api.google_mail
+from comunicat.enums import Module
 
 
 def send_email(

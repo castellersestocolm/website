@@ -3,37 +3,23 @@ import re
 from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_serializer_method
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
-from comunicat.rest.serializers.data import (
-    CountrySerializer,
-    RegionSerializer,
-    ZoneSerializer,
-)
+from comunicat.rest.serializers.data import (CountrySerializer,
+                                             RegionSerializer, ZoneSerializer)
 from comunicat.rest.serializers.event import RegistrationWithEventSerializer
-from comunicat.rest.serializers.payment import (
-    PaymentLineSerializer,
-    PaymentOrderSerializer,
-)
+from comunicat.rest.serializers.payment import (PaymentLineSerializer,
+                                                PaymentOrderSerializer)
 from comunicat.rest.serializers.product import ProductSizeSerializer
-from comunicat.rest.utils.fields import MoneyField, IntEnumField
+from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from order.enums import OrderDeliveryType, OrderStatus
-from order.models import (
-    Order,
-    OrderDelivery,
-    OrderProduct,
-    OrderLog,
-    DeliveryProvider,
-    DeliveryPrice,
-    DeliveryDate,
-    OrderRegistration,
-)
-
-from django.utils.translation import gettext_lazy as _
-
+from order.models import (DeliveryDate, DeliveryPrice, DeliveryProvider, Order,
+                          OrderDelivery, OrderLog, OrderProduct,
+                          OrderRegistration)
 from user.models import User
 
 

@@ -1,7 +1,4 @@
-from django.db.models import (
-    QuerySet,
-    F,
-)
+from django.db.models import F, QuerySet
 from django.utils import translation
 
 

@@ -1,16 +1,13 @@
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, cache_control
-from rest_framework import permissions
+from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 
 import towers.api
 from comunicat.rest.serializers.towers import (
-    ListTowerSerializer,
-    TowerWithPlacesTechnicalSerializer,
-    TowerWithPlacesAliasSerializer,
-)
-
+    ListTowerSerializer, TowerWithPlacesAliasSerializer,
+    TowerWithPlacesTechnicalSerializer)
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import PermissionLevel
 

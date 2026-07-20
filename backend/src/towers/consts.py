@@ -1,6 +1,5 @@
 from towers.enums import PositionType
 
-
 PINYATOR_POSITION_TO_POSITION_TYPE = {
     "Primers": PositionType.PRIMER,
     "Tronqueti": None,

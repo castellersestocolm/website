@@ -1,16 +1,12 @@
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, cache_control
-from rest_framework import permissions
+from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import Serializer
 
 import product.api
-
-from comunicat.rest.serializers.product import (
-    ProductWithStockSerializer,
-)
-
+from comunicat.rest.serializers.product import ProductWithStockSerializer
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 

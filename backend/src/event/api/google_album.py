@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from django.utils import timezone
@@ -6,17 +7,9 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
-from event.consts import (
-    GOOGLE_PHOTOS_SCOPES,
-)
-from event.models import (
-    Event,
-    GoogleAlbum,
-)
-
+from event.consts import GOOGLE_PHOTOS_SCOPES
+from event.models import Event, GoogleAlbum
 from integration.models import GoogleIntegration
-
-import logging
 
 _log = logging.getLogger(__name__)
 

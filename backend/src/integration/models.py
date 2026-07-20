@@ -1,7 +1,8 @@
+from django.db import models
+from django.db.models import JSONField
+
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
-from django.db.models import JSONField
-from django.db import models
 
 
 class GoogleIntegration(StandardModel, Timestamps):

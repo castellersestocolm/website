@@ -3,10 +3,12 @@ import datetime
 import difflib
 import itertools
 import re
+import unicodedata
 from collections import OrderedDict
 from typing import List
 from uuid import UUID
 
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Q
@@ -14,34 +16,17 @@ from django.utils import timezone
 from djmoney.money import Money
 from phonenumber_field.phonenumber import PhoneNumber
 
+import membership.api
 from membership.consts import MEMBERSHIP_ACCOUNTS_BY_MODULE_AND_AMOUNT
 from membership.enums import MembershipStatus
 from membership.models import Membership
-from payment.consts import EDIT_DISTANCE_NAME_THRESHOLD, EDIT_DISTANCE_ACCOUNT_THRESHOLD
-from payment.enums import (
-    TransactionImportStatus,
-    PaymentMethod,
-    PaymentType,
-    PaymentStatus,
-    AccountCategory,
-)
-from payment.models import (
-    Transaction,
-    TransactionImport,
-    Entity,
-    Payment,
-    PaymentLine,
-    Account,
-    EntityAlias,
-)
-
-from django.conf import settings
-
-import membership.api
-
+from payment.consts import (EDIT_DISTANCE_ACCOUNT_THRESHOLD,
+                            EDIT_DISTANCE_NAME_THRESHOLD)
+from payment.enums import (AccountCategory, PaymentMethod, PaymentStatus,
+                           PaymentType, TransactionImportStatus)
+from payment.models import (Account, Entity, EntityAlias, Payment, PaymentLine,
+                            Transaction, TransactionImport)
 from user.models import User
-
-import unicodedata
 
 
 # TODO: Fix import when payments have been manually split into multiple lines after import such as for orders or registrations

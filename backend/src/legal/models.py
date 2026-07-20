@@ -1,14 +1,12 @@
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.db.models import JSONField
 from django.utils import translation
-from versatileimagefield.fields import VersatileImageField
-
 from django.utils.translation import gettext_lazy as _
+from versatileimagefield.fields import VersatileImageField
 
 from comunicat.consts import SHORT_NAME_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
-from django.db import models
-
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 from legal.enums import TeamType

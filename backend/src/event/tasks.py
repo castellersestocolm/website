@@ -4,8 +4,8 @@ from uuid import UUID
 from celery import shared_task
 
 import event.api
-import event.api.google_calendar
 import event.api.google_album
+import event.api.google_calendar
 from comunicat.enums import Module
 from event.enums import EventType
 

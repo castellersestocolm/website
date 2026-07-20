@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.db.models import JSONField
+from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
-from legal.models import Team, Member, Role, Bylaws, Group
-
-from django.utils.translation import gettext_lazy as _
+from legal.models import Bylaws, Group, Member, Role, Team
 
 
 class TeamInline(admin.TabularInline):

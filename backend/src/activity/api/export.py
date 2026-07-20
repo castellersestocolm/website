@@ -3,18 +3,16 @@ from uuid import UUID
 
 from django.db.models import Prefetch
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from openpyxl.styles import Font, numbers
 from openpyxl.utils import get_column_letter
 from openpyxl.workbook import Workbook
-from openpyxl.styles import numbers, Font
 
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourse, ProgramCourseRegistration
-
-from django.utils.translation import gettext_lazy as _
-
 from event.enums import EventStatus
 from event.models import Event
-from user.enums import FamilyMemberStatus, FamilyMemberRole
+from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import FamilyMember
 
 

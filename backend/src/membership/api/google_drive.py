@@ -1,9 +1,9 @@
-from comunicat.enums import Module
-from integration.api.google.drive import get_service, upload_file
 from django.utils.translation import gettext_lazy as _
 
-from membership.consts import GOOGLE_DRIVE_ID, GOOGLE_DRIVE_FOLDER_ID
+from comunicat.enums import Module
+from integration.api.google.drive import get_service, upload_file
 from membership.api.export import export_memberships
+from membership.consts import GOOGLE_DRIVE_FOLDER_ID, GOOGLE_DRIVE_ID
 
 
 def sync_memberships(module: Module) -> None:

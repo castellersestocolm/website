@@ -6,7 +6,7 @@ from django.utils import translation
 from unidecode import unidecode
 from versatileimagefield.fields import VersatileImageField
 
-from comunicat.db.mixins import Timestamps, StandardModel
+from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 

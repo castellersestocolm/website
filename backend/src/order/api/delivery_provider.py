@@ -4,7 +4,7 @@ from django.db.models import Prefetch
 from django.utils import timezone
 
 from comunicat.enums import Module
-from order.models import DeliveryProvider, DeliveryPrice, DeliveryDate
+from order.models import DeliveryDate, DeliveryPrice, DeliveryProvider
 
 
 def get_list(module: Module) -> List[DeliveryProvider]:

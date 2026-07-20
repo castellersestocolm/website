@@ -1,13 +1,11 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-
-from comunicat.consts import SHORT_NAME_BY_MODULE
-from membership.models import Membership, MembershipModule, MembershipUser
-
 from django.utils.translation import gettext_lazy as _
 
 import membership.api
+from comunicat.consts import SHORT_NAME_BY_MODULE
+from membership.models import Membership, MembershipModule, MembershipUser
 
 
 class MembershipModuleInline(admin.TabularInline):

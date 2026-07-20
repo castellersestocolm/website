@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-from integration.models import (
-    GoogleIntegration,
-)
+from integration.models import GoogleIntegration
 
 
 @admin.register(GoogleIntegration)

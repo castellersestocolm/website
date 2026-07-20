@@ -2,8 +2,9 @@ import datetime
 import re
 from uuid import UUID
 
+from django.conf import settings
 from django.db import transaction
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch, Q
 from django.utils import timezone
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -13,24 +14,12 @@ import payment.api.entity
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
-from event.consts import (
-    GOOGLE_CALENDAR_SCOPES,
-    REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS,
-    GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS,
-)
+from event.consts import (GOOGLE_CALENDAR_SCOPES,
+                          GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS,
+                          REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS)
 from event.enums import EventType, RegistrationStatus
-from event.models import (
-    Event,
-    GoogleEvent,
-    GoogleCalendar,
-    EventModule,
-    AgendaItem,
-    Registration,
-    Location,
-)
-
-from django.conf import settings
-
+from event.models import (AgendaItem, Event, EventModule, GoogleCalendar,
+                          GoogleEvent, Location, Registration)
 from event.utils.google_calendar import get_event_type_by_title
 from integration.models import GoogleIntegration
 from user.models import User

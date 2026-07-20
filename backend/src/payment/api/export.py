@@ -2,14 +2,12 @@ import datetime
 from io import BytesIO
 
 from django.db.models import Prefetch
+from django.utils.translation import gettext_lazy as _
+from openpyxl.styles import Font, numbers
 from openpyxl.workbook import Workbook
-from openpyxl.styles import numbers, Font
 
 from comunicat.consts import SHORT_NAME_BY_MODULE
 from comunicat.enums import Module
-
-from django.utils.translation import gettext_lazy as _
-
 from payment.enums import PaymentMethod, PaymentType
 from payment.models import Payment, PaymentLine
 

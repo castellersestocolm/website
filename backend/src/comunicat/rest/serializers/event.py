@@ -1,4 +1,4 @@
-from django.utils import translation, timezone
+from django.utils import timezone, translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
@@ -7,22 +7,11 @@ from comunicat.rest.serializers.legal import TeamSerializer
 from comunicat.rest.serializers.payment import EntitySuperSlimSerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
-from event.enums import RegistrationStatus, EventType
-from event.models import (
-    Event,
-    Location,
-    Registration,
-    AgendaItem,
-    Connection,
-    EventModule,
-    GoogleEvent,
-    GoogleCalendar,
-    GoogleAlbum,
-    GooglePhotosAlbum,
-    EventPrice,
-    EventQuestion,
-    EventSignup,
-)
+from event.enums import EventType, RegistrationStatus
+from event.models import (AgendaItem, Connection, Event, EventModule,
+                          EventPrice, EventQuestion, EventSignup, GoogleAlbum,
+                          GoogleCalendar, GoogleEvent, GooglePhotosAlbum,
+                          Location, Registration)
 from integration.models import GoogleIntegration
 
 

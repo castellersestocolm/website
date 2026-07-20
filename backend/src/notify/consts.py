@@ -1,10 +1,8 @@
-from comunicat.enums import Module
-from notify.enums import NotificationType, EmailType
-
 from django.conf import settings
-
 from django.utils.translation import gettext_lazy as _
 
+from comunicat.enums import Module
+from notify.enums import EmailType, NotificationType
 
 EMAIL_BY_MODULE = {
     Module.ORG: settings.MODULE_ORG_EMAIL_FROM_FULL,

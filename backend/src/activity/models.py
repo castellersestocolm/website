@@ -3,12 +3,10 @@ from django.db.models import JSONField
 from django.utils import translation
 from djmoney.models.fields import MoneyField
 
-from activity.enums import ProgramType, ProgramCourseRegistrationStatus
-from activity.managers import (
-    ProgramQuerySet,
-    ProgramCourseQuerySet,
-    ProgramCourseRegistrationQuerySet,
-)
+from activity.enums import ProgramCourseRegistrationStatus, ProgramType
+from activity.managers import (ProgramCourseQuerySet,
+                               ProgramCourseRegistrationQuerySet,
+                               ProgramQuerySet)
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default

@@ -2,11 +2,10 @@ from uuid import UUID
 
 from django.db.models import Q
 
+import user.api.family
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
 from comunicat.enums import Module
-
-import user.api.family
 
 
 def get_list(

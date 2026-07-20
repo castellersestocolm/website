@@ -1,7 +1,6 @@
 from uuid import UUID
 
 import pinyator.api
-
 from towers.types import Tower
 
 

@@ -1,21 +1,19 @@
 from typing import List
 from uuid import UUID
 
+from django.conf import settings
 from django.db.models import Prefetch
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
+import membership.api
 from comunicat.enums import Module
 from notify.enums import EmailType
-from user.enums import FamilyMemberRole, FamilyMemberStatus, FamilyMemberRequestStatus
-from user.models import FamilyMember, User, Family, FamilyMemberRequest
 from notify.tasks import send_user_email
-
-from django.utils.translation import gettext_lazy as _
-
-from django.conf import settings
-
-import membership.api
+from user.enums import (FamilyMemberRequestStatus, FamilyMemberRole,
+                        FamilyMemberStatus)
+from user.models import Family, FamilyMember, FamilyMemberRequest, User
 
 
 def create(

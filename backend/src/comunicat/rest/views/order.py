@@ -1,26 +1,22 @@
 import logging
 
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, cache_control
-from rest_framework import permissions
+from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.serializers import Serializer
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 
 import order.api
-import order.api.delivery_provider
 import order.api.delivery_price
-
-from comunicat.rest.serializers.order import (
-    OrderSerializer,
-    CreateOrderSerializer,
-    DeliveryProviderSerializer,
-    DeliveryPriceSerializer,
-    UpdateOrderProviderSerializer,
-)
-
+import order.api.delivery_provider
+from comunicat.rest.serializers.order import (CreateOrderSerializer,
+                                              DeliveryPriceSerializer,
+                                              DeliveryProviderSerializer,
+                                              OrderSerializer,
+                                              UpdateOrderProviderSerializer)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

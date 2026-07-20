@@ -2,8 +2,8 @@ from uuid import UUID
 
 from django.db.models import Prefetch
 
-from order.models import Order, OrderProduct, OrderDelivery
-from payment.models import PaymentOrder, PaymentProvider, Entity
+from order.models import Order, OrderDelivery, OrderProduct
+from payment.models import Entity, PaymentOrder, PaymentProvider
 
 
 class PaymentProviderBase:

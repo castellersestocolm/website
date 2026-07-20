@@ -5,42 +5,26 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
-from django.db.models import JSONField, UniqueConstraint, Q
+from django.db import models
+from django.db.models import JSONField, Q, UniqueConstraint
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from phonenumber_field.phonenumber import PhoneNumber
 from versatileimagefield.fields import VersatileImageField
 
 from comunicat.consts import CODE_NAME_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
-from django.db import models
-
 from comunicat.enums import Module
 from comunicat.storage import signed_storage
 from comunicat.utils.models import language_field_default
 from payment.consts import PAYMENT_METHOD_FIELDS
-from payment.enums import (
-    PaymentType,
-    PaymentMethod,
-    PaymentStatus,
-    SourceType,
-    AccountCategory,
-    TransactionImportStatus,
-    ReceiptStatus,
-    ReceiptType,
-    ExpenseStatus,
-)
-from payment.managers import (
-    PaymentQuerySet,
-    PaymentLineQuerySet,
-    AccountQuerySet,
-    ExpenseQuerySet,
-    SourceQuerySet,
-    PaymentProviderQuerySet,
-    EntityQuerySet,
-)
-
-from django.utils.translation import gettext_lazy as _
+from payment.enums import (AccountCategory, ExpenseStatus, PaymentMethod,
+                           PaymentStatus, PaymentType, ReceiptStatus,
+                           ReceiptType, SourceType, TransactionImportStatus)
+from payment.managers import (AccountQuerySet, EntityQuerySet, ExpenseQuerySet,
+                              PaymentLineQuerySet, PaymentProviderQuerySet,
+                              PaymentQuerySet, SourceQuerySet)
 
 
 class Payment(StandardModel, Timestamps):

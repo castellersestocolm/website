@@ -1,29 +1,13 @@
 from django.urls import include, path, re_path
-from drf_yasg.views import get_schema_view
-
-from comunicat.rest.views import (
-    user,
-    membership,
-    payment,
-    event,
-    legal,
-    towers,
-    order,
-    org,
-    product,
-    data,
-    media,
-    admin,
-    document,
-    activity,
-    notify,
-    history,
-    consent,
-)
-from comunicat.rest.utils.routers import UUIDRouter
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from comunicat.rest.utils.routers import UUIDRouter
+from comunicat.rest.views import (activity, admin, consent, data, document,
+                                  event, history, legal, media, membership,
+                                  notify, order, org, payment, product, towers,
+                                  user)
 
 router = UUIDRouter()
 router.register("user", user.UserAPI, "user")

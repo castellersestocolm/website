@@ -1,18 +1,15 @@
 import logging
 
-from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 import consent.api
 import payment.api.entity
-from comunicat.rest.serializers.consent import (
-    EntityConsentSerializer,
-    CreateEntityConsentsSerializer,
-)
-
+from comunicat.rest.serializers.consent import (CreateEntityConsentsSerializer,
+                                                EntityConsentSerializer)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

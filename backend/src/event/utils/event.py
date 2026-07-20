@@ -1,6 +1,6 @@
 from comunicat.enums import Module
 from comunicat.rest.utils.translation import get_translated_string
-from event.enums import RegistrationStatus, EventType
+from event.enums import EventType, RegistrationStatus
 from legal.enums import TeamType
 
 

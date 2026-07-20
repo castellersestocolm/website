@@ -3,14 +3,11 @@ from decimal import Decimal
 from enum import Enum
 from typing import Any, Collection, Optional, TypeVar
 
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from rest_framework import serializers
-
-from djmoney.contrib.exchange.models import convert_money
-
-from django.conf import settings
-
 
 EnumT = TypeVar("EnumT", bound=Enum)
 

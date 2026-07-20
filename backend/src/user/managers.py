@@ -2,34 +2,19 @@ import datetime
 from uuid import UUID
 
 from django.apps import apps
-
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.postgres.aggregates import StringAgg
 from django.db import IntegrityError
-from django.db.models import (
-    Exists,
-    Subquery,
-    Q,
-    OuterRef,
-    QuerySet,
-    Case,
-    IntegerField,
-    Value,
-    When,
-    ExpressionWrapper,
-    BooleanField,
-    F,
-    UUIDField,
-)
+from django.db.models import (BooleanField, Case, Exists, ExpressionWrapper, F,
+                              IntegerField, OuterRef, Q, QuerySet, Subquery,
+                              UUIDField, Value, When)
 from django.utils import timezone
 
 from comunicat.enums import Module
-
-from django.conf import settings
-
-from legal.enums import TeamType, PermissionLevel
+from legal.enums import PermissionLevel, TeamType
 from membership.enums import MembershipStatus
-from user.enums import FamilyMemberStatus, FamilyMemberRole
+from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.utils import is_over_minimum_age
 
 

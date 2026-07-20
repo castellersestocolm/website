@@ -1,11 +1,10 @@
 from django.contrib import admin
 from django.db.models import JSONField
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
 from data.models import Country, Region, Zone
-
-from django.utils.translation import gettext_lazy as _
 
 
 class CountryInline(admin.TabularInline):

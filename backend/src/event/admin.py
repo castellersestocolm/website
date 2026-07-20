@@ -1,47 +1,31 @@
 import tempfile
 from uuid import UUID
 
+import inline_actions.admin
 from django import forms
 from django.contrib import admin, messages
-from django.db.models import JSONField, Q, Prefetch
+from django.db.models import JSONField, Prefetch, Q
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
-
-import inline_actions.admin
 from weasyprint import HTML
 
 import notify.tasks
-
-from django.utils.translation import gettext_lazy as _
-
 from activity.models import ProgramCourse
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import beautify_dict
 from event.enums import EventStatus
-from event.models import (
-    Location,
-    Event,
-    Registration,
-    EventModule,
-    EventRequirement,
-    RegistrationLog,
-    AgendaItem,
-    GoogleCalendar,
-    GoogleCalendarDefault,
-    GoogleEvent,
-    Connection,
-    GoogleAlbum,
-    GooglePhotosAlbum,
-    GoogleDriveAlbum,
-    EventPrice,
-    EventQuestion,
-    EventSignup,
-)
+from event.models import (AgendaItem, Connection, Event, EventModule,
+                          EventPrice, EventQuestion, EventRequirement,
+                          EventSignup, GoogleAlbum, GoogleCalendar,
+                          GoogleCalendarDefault, GoogleDriveAlbum, GoogleEvent,
+                          GooglePhotosAlbum, Location, Registration,
+                          RegistrationLog)
 from notify.enums import EmailType
 from payment.models import AccountEvent
 

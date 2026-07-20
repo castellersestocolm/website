@@ -1,13 +1,12 @@
 import random
 
-from django.db.models import Case, When, Value, IntegerField, Q
+from django.conf import settings
+from django.db.models import Case, IntegerField, Q, Value, When
 from django.utils import translation
 
 from comunicat.enums import Module
 from document.enums import DocumentStatus, DocumentType
 from document.models import Document
-
-from django.conf import settings
 
 
 def get_list(

@@ -2,19 +2,14 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import JSONField
 from django.utils import translation
-
 from django.utils.translation import gettext_lazy as _
-from comunicat.db.mixins import Timestamps, StandardModel
+
+from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
-from notify.enums import (
-    EmailType,
-    MessageSlackType,
-    EmailStatus,
-    ContactMessageType,
-    ContactMessageStatus,
-    NewsletterType,
-)
+from notify.enums import (ContactMessageStatus, ContactMessageType,
+                          EmailStatus, EmailType, MessageSlackType,
+                          NewsletterType)
 from notify.managers import EmailTemplateQuerySet, NewsletterQuerySet
 
 

@@ -1,9 +1,7 @@
+from django.conf import settings
 from djmoney.money import Money
 
 from comunicat.enums import Module, PDFType
-
-from django.conf import settings
-
 from legal.enums import PermissionLevel
 
 CODE_NAME_BY_MODULE = {

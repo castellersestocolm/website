@@ -14,12 +14,14 @@ def fake_string(*args, length: int = 10, **kwargs):
 
 
 def fake_title(*args, **kwargs):
-    return {
-        language_code: Faker("name")
-        for language_code, __ in settings.LANGUAGES
-    }
+    return {language_code: Faker("name") for language_code, __ in settings.LANGUAGES}
+
 
 def fake_authorized_user_info(*args, **kwargs):
-    return {"refresh_token": "".join(random.choices(string.digits + string.ascii_letters, k=20)),
-            "client_id": "".join(random.choices(string.digits, k=10)),
-            "client_secret": ''.join(random.choices(string.digits, k=10))}
+    return {
+        "refresh_token": "".join(
+            random.choices(string.digits + string.ascii_letters, k=20)
+        ),
+        "client_id": "".join(random.choices(string.digits, k=10)),
+        "client_secret": "".join(random.choices(string.digits, k=10)),
+    }

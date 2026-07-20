@@ -1,17 +1,7 @@
 from django.apps import apps
-from django.db.models import (
-    QuerySet,
-    Sum,
-    Value,
-    Case,
-    When,
-    F,
-    CharField,
-    Subquery,
-    OuterRef,
-    Prefetch,
-)
-from django.db.models.functions import Coalesce, Concat, Cast
+from django.db.models import (Case, CharField, F, OuterRef, Prefetch, QuerySet,
+                              Subquery, Sum, Value, When)
+from django.db.models.functions import Cast, Coalesce, Concat
 from django.utils import translation
 
 from comunicat.utils.managers import MoneyOutput

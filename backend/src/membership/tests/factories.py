@@ -2,7 +2,7 @@ import random
 
 from django.utils import timezone
 from djmoney.money import Money
-from factory import SubFactory, LazyFunction, LazyAttribute
+from factory import LazyAttribute, LazyFunction, SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 

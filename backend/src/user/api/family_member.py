@@ -3,14 +3,13 @@ import uuid
 from uuid import UUID
 
 import consent.api
+import membership.api
 import user.api
 from comunicat.enums import Module
 from consent.enums import ConsentType
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import FamilyMember, User, Family
+from user.models import Family, FamilyMember, User
 from user.utils import get_default_consent_pictures
-
-import membership.api
 
 
 def create(

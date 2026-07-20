@@ -1,18 +1,15 @@
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.db.models import JSONField
 from django.utils import translation
+from django.utils.translation import gettext_lazy as _
+from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
-from django.db import models
-from djmoney.models.fields import MoneyField
-
-from product.enums import ArticleType, ArticleSizeCategory
-
-from django.utils.translation import gettext_lazy as _
-
+from product.enums import ArticleSizeCategory, ArticleType
 from product.managers import ProductQuerySet, ProductSizeQuerySet
 
 

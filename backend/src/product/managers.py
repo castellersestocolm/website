@@ -1,20 +1,10 @@
 import datetime
 
 from django.apps import apps
-from django.db.models import (
-    QuerySet,
-    Sum,
-    OuterRef,
-    Subquery,
-    Value,
-    IntegerField,
-    F,
-    Q,
-    Case,
-    When,
-)
-from django.db.models.functions import Coalesce, Cast
-from django.utils import translation, timezone
+from django.db.models import (Case, F, IntegerField, OuterRef, Q, QuerySet,
+                              Subquery, Sum, Value, When)
+from django.db.models.functions import Cast, Coalesce
+from django.utils import timezone, translation
 
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput

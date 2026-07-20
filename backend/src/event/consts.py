@@ -1,5 +1,6 @@
-from event.enums import RegistrationStatus, EventQuestionType
 from django.utils.translation import gettext_lazy as _
+
+from event.enums import EventQuestionType, RegistrationStatus
 
 GOOGLE_CALENDAR_SCOPES = [
     "https://www.googleapis.com/auth/calendar.readonly",

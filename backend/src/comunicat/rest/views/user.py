@@ -1,37 +1,26 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
-from rest_framework import exceptions, permissions
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.exceptions import ValidationError
-from rest_framework.serializers import Serializer
+from rest_framework import exceptions, permissions
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 
 import user.api
 import user.api.family
 import user.api.family_member
 import user.api.family_member_request
 from comunicat.consts import PERMISSIONS_BY_LEVEL
-
 from comunicat.rest.serializers.user import (
-    UserSerializer,
-    LoginSerializer,
-    CreateSerializer,
-    UpdateFamilyMemberSerializer,
-    FamilyMemberSerializer,
-    CreateFamilyMemberSerializer,
-    UserChangeApplySerializer,
-    UserChangeUpdateSerializer,
-    UpdateSerializer,
-    CreateFamilyMemberRequestSerializer,
-    FamilyMemberRequestSlimSerializer,
-    FamilyMemberRequestExtraSlimSerializer,
-    UserPasswordChangeApplySerializer,
-    FamilySerializer,
-    ListFamilySerializer,
-    UserExtraSlimSerializer,
-    UserExtraSlimWithFamilySerializer,
-)
+    CreateFamilyMemberRequestSerializer, CreateFamilyMemberSerializer,
+    CreateSerializer, FamilyMemberRequestExtraSlimSerializer,
+    FamilyMemberRequestSlimSerializer, FamilyMemberSerializer,
+    FamilySerializer, ListFamilySerializer, LoginSerializer,
+    UpdateFamilyMemberSerializer, UpdateSerializer, UserChangeApplySerializer,
+    UserChangeUpdateSerializer, UserExtraSlimSerializer,
+    UserExtraSlimWithFamilySerializer, UserPasswordChangeApplySerializer,
+    UserSerializer)
 from comunicat.rest.viewsets import ComuniCatViewSet
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 

@@ -3,34 +3,29 @@ from uuid import UUID
 from django.conf import settings
 from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
-from django.utils import translation, timezone
-
-from activity.models import ProgramCourseRegistration, ProgramCourse
-from comunicat.enums import Module
-from document.enums import DocumentStatus
-from document.models import EmailAttachment
-from event.enums import EventType
-from event.models import Registration, EventModule
-from membership.enums import MembershipStatus
-from membership.models import Membership, MembershipModule, MembershipUser
-from notify.consts import (
-    SETTINGS_BY_MODULE,
-    TEMPLATE_BY_MODULE,
-    EMAIL_BY_MODULE,
-    EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE,
-)
-from notify.enums import NotificationType, EmailType, ContactMessageType
-from notify.models import Email, ContactMessage
-
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
 import membership.utils
 import payment.api.entity
 import user.api.family
-from order.models import Order, OrderProduct, OrderLog
+from activity.models import ProgramCourse, ProgramCourseRegistration
+from comunicat.enums import Module
+from document.enums import DocumentStatus
+from document.models import EmailAttachment
+from event.enums import EventType
+from event.models import EventModule, Registration
+from membership.enums import MembershipStatus
+from membership.models import Membership, MembershipModule, MembershipUser
+from notify.consts import (EMAIL_BY_MODULE,
+                           EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE,
+                           SETTINGS_BY_MODULE, TEMPLATE_BY_MODULE)
+from notify.enums import ContactMessageType, EmailType, NotificationType
+from notify.models import ContactMessage, Email
+from order.models import Order, OrderLog, OrderProduct
 from payment.models import Entity, Payment, PaymentLine
 from user.enums import FamilyMemberStatus
-from user.models import User, FamilyMember
+from user.models import FamilyMember, User
 
 
 class EmailRender:

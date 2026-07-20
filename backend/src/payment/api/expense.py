@@ -1,15 +1,14 @@
 from typing import List
 from uuid import UUID
 
-from django.db.models import Prefetch, Q, Exists, OuterRef
+from django.conf import settings
+from django.db.models import Exists, OuterRef, Prefetch, Q
 
 from comunicat.enums import Module
 from payment.enums import ExpenseStatus
-from payment.models import Expense, Receipt, ExpenseLog
+from payment.models import Expense, ExpenseLog, Receipt
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
-
-from django.conf import settings
 
 
 def get_list(user_id: UUID, module: Module) -> List[Expense]:

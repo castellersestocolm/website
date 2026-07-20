@@ -1,9 +1,7 @@
 from django.conf import settings
-
-from payment.enums import PaymentMethod
-
 from django.utils.translation import gettext_lazy as _
 
+from payment.enums import PaymentMethod
 
 EDIT_DISTANCE_NAME_THRESHOLD = 0.7
 EDIT_DISTANCE_ACCOUNT_THRESHOLD = 0.3

@@ -1,11 +1,9 @@
+import mimetypes
 from io import BytesIO
 
-import mimetypes
-
-from googleapiclient.http import MediaIoBaseUpload
-
 from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build, Resource
+from googleapiclient.discovery import Resource, build
+from googleapiclient.http import MediaIoBaseUpload
 
 from comunicat.enums import Module
 from integration.consts import GOOGLE_DRIVE_SCOPES

@@ -2,19 +2,9 @@ import datetime
 
 from django.apps import apps
 from django.conf import settings
-from django.db.models import (
-    QuerySet,
-    Value,
-    Subquery,
-    OuterRef,
-    BooleanField,
-    Case,
-    When,
-    F,
-    Sum,
-    UUIDField,
-)
-from django.db.models.functions import Coalesce, Cast
+from django.db.models import (BooleanField, Case, F, OuterRef, QuerySet,
+                              Subquery, Sum, UUIDField, Value, When)
+from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone, translation
 
 from comunicat.enums import Module

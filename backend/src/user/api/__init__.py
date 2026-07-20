@@ -3,20 +3,19 @@ import random
 import unicodedata
 from uuid import UUID
 
-from django.contrib.auth import (
-    authenticate,
-    login as django_login,
-    logout as django_logout,
-)
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
 from django.core import signing
 from django.db import IntegrityError, transaction
 from django.db.models import Prefetch, Q
 from django.http import HttpRequest
-from django.utils import translation, timezone
+from django.utils import timezone, translation
 from rest_framework.exceptions import AuthenticationFailed
 
 import consent.api
 import membership.api
+import payment.api.entity
 import user.api.family_member_request
 from comunicat.enums import Module
 from consent.enums import ConsentType
@@ -27,10 +26,10 @@ from notify.enums import EmailType
 from notify.tasks import send_user_email
 from order.enums import OrderStatus
 from order.models import Order
-from user.enums import FamilyMemberStatus, FamilyMemberRole
-from user.models import User, TowersUser, FamilyMember, Family, UserEmail, UserProduct
+from user.enums import FamilyMemberRole, FamilyMemberStatus
+from user.models import (Family, FamilyMember, TowersUser, User, UserEmail,
+                         UserProduct)
 from user.utils import get_default_consent_pictures
-import payment.api.entity
 
 
 def get(user_id: UUID, module: Module | None = None) -> User:

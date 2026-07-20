@@ -4,11 +4,8 @@ from uuid import UUID
 from django.conf import settings
 
 from comunicat.enums import Module
-from membership.utils import (
-    get_membership_length,
-    get_membership_date_to,
-    get_membership_amount,
-)
+from membership.utils import (get_membership_amount, get_membership_date_to,
+                              get_membership_length)
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 

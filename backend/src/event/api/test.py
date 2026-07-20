@@ -1,11 +1,12 @@
 import datetime
 import os.path
 
-from integration.auth.transport.requests import Request
-from integration.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+
+from integration.auth.transport.requests import Request
+from integration.oauth2.credentials import Credentials
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = [

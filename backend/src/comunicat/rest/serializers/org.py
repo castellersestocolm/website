@@ -1,20 +1,19 @@
 import datetime
 import re
 
+from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_serializer_method
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 
-from comunicat.rest.utils.fields import IntEnumField, EnumField
+from comunicat.rest.utils.fields import EnumField, IntEnumField
 from legal.enums import PermissionLevel
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import User, TowersUser, Family, FamilyMember, FamilyMemberRequest
-from django.conf import settings
-
-from django.utils.translation import gettext_lazy as _
-
+from user.models import (Family, FamilyMember, FamilyMemberRequest, TowersUser,
+                         User)
 from user.utils import is_over_minimum_age
 
 

@@ -1,10 +1,9 @@
 from uuid import UUID
 
+import notify.tasks
 from comunicat.enums import Module
 from notify.enums import ContactMessageType
 from notify.models import ContactMessage
-
-import notify.tasks
 
 
 def create(

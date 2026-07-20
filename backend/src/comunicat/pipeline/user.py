@@ -1,12 +1,11 @@
 from django.db.models import Q
+from social_core.exceptions import AuthException
+from social_core.pipeline.partial import partial
 
 from comunicat.enums import Module
 from comunicat.utils.request import get_module_from_request
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.models import Family, FamilyMember, User
-
-from social_core.pipeline.partial import partial
-from social_core.exceptions import AuthException
 
 
 def module_data(details, user, request, **kwargs):

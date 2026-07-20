@@ -1,9 +1,8 @@
 from decimal import Decimal
 
+from django.conf import settings
 from django.db.models import CharField
 from djmoney.money import Money
-
-from django.conf import settings
 
 
 class MoneyOutput(CharField):

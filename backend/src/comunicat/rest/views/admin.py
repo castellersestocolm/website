@@ -3,34 +3,27 @@ from django.views.decorators.cache import cache_page
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.serializers import Serializer
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 
+import event.api
+import event.api.registration
+import history.api.history_event
+import order.api
+import towers.api
+import towers.api.statistics
 import user.api
 import user.api.family
 import user.api.family_member
 import user.api.family_member_request
-import order.api
-import event.api
-import event.api.registration
-import towers.api
-import towers.api.statistics
-import history.api.history_event
 from comunicat.rest.permissions import AllowLevelAdmin, AllowLevelSuperAdmin
-
 from comunicat.rest.serializers.admin import (
-    AdminUserSerializer,
-    AdminUserRequestSerializer,
-    AdminOrderSerializer,
-    AdminEventSerializer,
-    AdminListEventSerializer,
-    AdminTowersEventSerializer,
-    AdminTowersStatsPositionSerializer,
-    AdminHistoryEventSerializer,
-    AdminHistoryEventUpdateSerializer,
-    AdminRegistrationSerializer,
-    AdminListRegistrationSerializer,
-)
+    AdminEventSerializer, AdminHistoryEventSerializer,
+    AdminHistoryEventUpdateSerializer, AdminListEventSerializer,
+    AdminListRegistrationSerializer, AdminOrderSerializer,
+    AdminRegistrationSerializer, AdminTowersEventSerializer,
+    AdminTowersStatsPositionSerializer, AdminUserRequestSerializer,
+    AdminUserSerializer)
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import TeamType
 

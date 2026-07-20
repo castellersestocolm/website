@@ -4,8 +4,8 @@ from django.db.models import Prefetch
 
 import user.api
 from comunicat.enums import Module
-from user.enums import FamilyMemberStatus, FamilyMemberRole
-from user.models import FamilyMember, Family
+from user.enums import FamilyMemberRole, FamilyMemberStatus
+from user.models import Family, FamilyMember
 
 
 def get_user_ids(user_id: UUID, only_active: bool = True) -> list[UUID]:

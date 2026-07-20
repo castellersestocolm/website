@@ -1,11 +1,5 @@
 from django.conf import settings
-from django.db.models import (
-    QuerySet,
-    IntegerField,
-    Value,
-    Case,
-    When,
-)
+from django.db.models import Case, IntegerField, QuerySet, Value, When
 from django.utils import translation
 
 

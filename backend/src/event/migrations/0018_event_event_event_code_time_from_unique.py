@@ -2,8 +2,9 @@
 import zoneinfo
 
 import django.db.models.functions.datetime
-import event.enums
 from django.db import migrations, models
+
+import event.enums
 
 
 class Migration(migrations.Migration):

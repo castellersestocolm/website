@@ -1,32 +1,21 @@
 from django import forms
+from django.conf import settings
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 import event.tasks
+import notify.tasks
+import user.api
 import user.tasks
 from comunicat.utils.admin import FIELD_LOCALE
 from membership.enums import MembershipStatus
 from notify.enums import EmailType
-from user.models import (
-    User,
-    FamilyMember,
-    Family,
-    FamilyMemberRequest,
-    TowersUser,
-    GoogleGroup,
-    GoogleGroupModule,
-    UserEmail,
-    UserProduct,
-    GoogleGroupUser,
-)
-from django.conf import settings
-
-import user.api
-import notify.tasks
-
-from django.utils.translation import gettext_lazy as _
+from user.models import (Family, FamilyMember, FamilyMemberRequest,
+                         GoogleGroup, GoogleGroupModule, GoogleGroupUser,
+                         TowersUser, User, UserEmail, UserProduct)
 
 
 class FamilyMemberRequestSentInline(admin.TabularInline):

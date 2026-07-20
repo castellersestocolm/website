@@ -3,25 +3,23 @@ from uuid import UUID
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models import JSONField, Prefetch
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path, reverse
 from django.utils import translation
 from django.utils.safestring import mark_safe
-from jsoneditor.forms import JSONEditor
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-
 from django.utils.translation import gettext_lazy as _
+from jsoneditor.forms import JSONEditor
 
 import notify.tasks
-
 from comunicat.utils.admin import FIELD_LOCALE
 from consent.models import EntityConsent
 from notify.api.template import get_email_render
-from notify.consts import TEMPLATE_BY_MODULE, SETTINGS_BY_MODULE
-from notify.enums import EmailStatus, NotificationType, EmailType
-from notify.models import Email, EmailTemplate, ContactMessage, Newsletter
+from notify.consts import SETTINGS_BY_MODULE, TEMPLATE_BY_MODULE
+from notify.enums import EmailStatus, EmailType, NotificationType
+from notify.models import ContactMessage, Email, EmailTemplate, Newsletter
 from payment.models import Entity
 
 

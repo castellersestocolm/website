@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 
@@ -6,8 +7,6 @@ from comunicat.rest.serializers.payment import CreateEntitySerializer
 from comunicat.rest.utils.fields import IntEnumField
 from consent.enums import ConsentType
 from consent.models import EntityConsent
-
-from django.utils.translation import gettext_lazy as _
 
 
 class EntityConsentSerializer(s.ModelSerializer):
