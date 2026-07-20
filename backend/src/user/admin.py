@@ -352,7 +352,7 @@ class GoogleGroupModuleInline(admin.TabularInline):
 
 class GoogleGroupUserInline(admin.TabularInline):
     model = GoogleGroupUser
-    readonly_fields = ("user", "email")
+    readonly_fields = ("user", "email", "role")
     extra = 0
 
     def has_add_permission(self, request, obj=None):

@@ -272,6 +272,16 @@ class GoogleGroup(StandardModel, Timestamps):
     def __str__(self) -> str:
         return f"{self.name} <{self.external_id}>"
 
+    def save(self, sync: bool = True, *args, **kwargs):
+        if sync:
+            import user.api.google_group
+
+            transaction.on_commit(
+                lambda: user.api.google_group.sync_users(group_id=self.id)
+            )
+
+        super().save(*args, **kwargs)
+
 
 class GoogleGroupModule(StandardModel, Timestamps):
     group = models.ForeignKey(
