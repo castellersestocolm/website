@@ -247,12 +247,14 @@ def sync_users(group_id: UUID | None = None) -> None:
                     groupKey=google_group_obj.external_id,
                     memberKey=email_to_delete_group,
                 ).execute()
-                GoogleGroupUser.objects.filter(
-                    group=google_group_obj,
-                    email=email_to_delete_group,
-                ).delete()
             except HttpError as e:
                 _log.exception(e)
+
+            GoogleGroupUser.objects.filter(
+                group=google_group_obj,
+                email=email_to_delete_group,
+            ).delete()
+
         # Add emails to the Google group
         for email_to_add_group in emails_to_add_group:
             google_group_user_role = permission_by_email.get(
@@ -266,16 +268,27 @@ def sync_users(group_id: UUID | None = None) -> None:
                         "role": google_group_user_role.name,
                     },
                 ).execute()
-                GoogleGroupUser.objects.update_or_create(
-                    group=google_group_obj,
-                    email=email_to_add_group,
-                    defaults={
-                        "user": user_by_email.get(email_to_add_group),
-                        "role": google_group_user_role,
-                    },
-                )
             except HttpError as e:
-                _log.exception(e)
+                try:
+                    service.members().update(
+                        groupKey=google_group_obj.external_id,
+                        memberKey=email_to_add_group,
+                        body={
+                            "email": email_to_add_group,
+                            "role": google_group_user_role.name,
+                        },
+                    ).execute()
+                except HttpError as e:
+                    _log.exception(e)
+
+            GoogleGroupUser.objects.update_or_create(
+                group=google_group_obj,
+                email=email_to_add_group,
+                defaults={
+                    "user": user_by_email.get(email_to_add_group),
+                    "role": google_group_user_role,
+                },
+            )
 
         # Update emails from the Google group
         for email_to_update_group in emails_to_update_group:
@@ -291,13 +304,14 @@ def sync_users(group_id: UUID | None = None) -> None:
                         "role": google_group_user_role.name,
                     },
                 ).execute()
-                GoogleGroupUser.objects.update_or_create(
-                    group=google_group_obj,
-                    email=email_to_update_group,
-                    defaults={
-                        "user": user_by_email.get(email_to_update_group),
-                        "role": google_group_user_role,
-                    },
-                )
             except HttpError as e:
                 _log.exception(e)
+
+            GoogleGroupUser.objects.update_or_create(
+                group=google_group_obj,
+                email=email_to_update_group,
+                defaults={
+                    "user": user_by_email.get(email_to_update_group),
+                    "role": google_group_user_role,
+                },
+            )
