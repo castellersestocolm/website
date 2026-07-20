@@ -297,6 +297,13 @@ class GoogleGroupModule(StandardModel, Timestamps):
         related_name="google_group_models",
         on_delete=models.CASCADE,
     )
+    role = models.ForeignKey(
+        "legal.Role",
+        blank=True,
+        null=True,
+        related_name="google_group_models",
+        on_delete=models.CASCADE,
+    )
 
     require_module_domain = models.BooleanField(default=False)
     require_membership = models.BooleanField(default=True)

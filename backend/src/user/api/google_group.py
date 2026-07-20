@@ -166,12 +166,18 @@ def sync_users(group_id: UUID | None = None) -> None:
         emails_due_module = set()
         for google_group_module_obj in google_group_obj.modules.all():
             team_ids = (
-                [google_group_module_obj.team.id]
+                [google_group_module_obj.team_id]
                 if google_group_module_obj.team
+                else []
+            )
+            role_ids = (
+                [google_group_module_obj.role_id]
+                if google_group_module_obj.role
                 else []
             )
             user_objs = user.api.get_list(
                 team_ids=team_ids,
+                role_ids=role_ids,
                 modules=[google_group_module_obj.module],
                 with_membership=google_group_module_obj.require_membership,
                 with_active_membership=google_group_module_obj.require_membership,

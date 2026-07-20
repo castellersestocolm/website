@@ -78,6 +78,7 @@ class GoogleGroupModuleFactory(DjangoModelFactory):
     module = SelfAttribute("group.google_integration.module")
 
     team = SubFactory("legal.tests.factories.TeamFactory")
+    role = SubFactory("legal.tests.factories.RoleFactory")
 
     require_module_domain = False
     require_membership = False

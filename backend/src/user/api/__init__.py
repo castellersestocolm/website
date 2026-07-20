@@ -96,6 +96,7 @@ def get_list(
     user_ids: list[UUID] | None = None,
     team_ids: list[UUID] | None = None,
     team_types: list[TeamType] | None = None,
+    role_ids: list[UUID] | None = None,
     with_membership: bool = True,
     with_active_membership: bool = True,
     with_pending_membership: bool = True,
@@ -149,10 +150,15 @@ def get_list(
             team_ids=team_ids, modules=modules
         ).filter(has_active_team=True)
 
-    if team_types:
+    if role_ids:
         user_qs = user_qs.with_has_active_role(
-            team_types=team_types, modules=modules
+            role_ids=role_ids, modules=modules
         ).filter(has_active_role=True)
+
+    if team_types:
+        user_qs = user_qs.with_has_active_team_types(
+            team_types=team_types, modules=modules
+        ).filter(has_active_team_types=True)
 
     if with_orders:
         user_qs = user_qs.prefetch_related(

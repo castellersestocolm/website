@@ -13,7 +13,8 @@ from consent.enums import ConsentType
 from consent.tests.factories import EntityConsentFactory
 from integration.tests.factories import GoogleIntegrationFactory
 from legal.enums import TeamType
-from legal.tests.factories import GroupFactory, MemberFactory, TeamFactory
+from legal.tests.factories import (GroupFactory, MemberFactory, RoleFactory,
+                                   TeamFactory)
 from membership.enums import MembershipStatus
 from membership.tests.factories import (MembershipFactory,
                                         MembershipModuleFactory,
@@ -39,6 +40,7 @@ class TestGoogleGroupSyncUsers(TestCase):
         cls.user_board_1_obj = UserFactory(email="user-board-1@domain-test.org")
         cls.user_board_2_obj = UserFactory(email="user-board-2@domain-test.org")
         cls.user_board_3_obj = UserFactory(email="user-board-3@domain-test.org")
+        cls.user_board_4_obj = UserFactory(email="user-board-4@domain-test.org")
         cls.user_member_1_obj = UserFactory(email="user-member-1@domain-test.org")
         cls.user_member_2_obj = UserFactory(email="user-member-2@domain-test.org")
 
@@ -46,6 +48,7 @@ class TestGoogleGroupSyncUsers(TestCase):
             cls.user_board_1_obj,
             cls.user_board_2_obj,
             cls.user_board_3_obj,
+            cls.user_board_4_obj,
             cls.user_member_1_obj,
             cls.user_member_2_obj,
         )
@@ -54,12 +57,14 @@ class TestGoogleGroupSyncUsers(TestCase):
             cls.user_board_1_obj,
             cls.user_board_2_obj,
             cls.user_board_3_obj,
+            cls.user_board_4_obj,
             cls.user_member_1_obj,
         )
 
         cls.entity_board_1_obj = EntityFactory(user=cls.user_board_1_obj)
         cls.entity_board_2_obj = EntityFactory(user=cls.user_board_2_obj)
         cls.entity_board_3_obj = EntityFactory(user=cls.user_board_3_obj)
+        cls.entity_board_4_obj = EntityFactory(user=cls.user_board_4_obj)
         cls.entity_member_1_obj = EntityFactory(user=cls.user_member_1_obj)
         cls.entity_member_2_obj = EntityFactory(user=cls.user_member_2_obj)
 
@@ -75,11 +80,16 @@ class TestGoogleGroupSyncUsers(TestCase):
             user=cls.user_board_3_obj,
             email=f"user-board-3@{settings.MODULE_ORG_DOMAIN}",
         )
+        cls.user_email_board_4_obj = UserEmailFactory(
+            user=cls.user_board_4_obj,
+            email=f"user-board-4@{settings.MODULE_ORG_DOMAIN}",
+        )
 
         cls.user_email_objs = (
             cls.user_email_board_1_obj,
             cls.user_email_board_2_obj,
             cls.user_email_board_3_obj,
+            cls.user_email_board_4_obj,
         )
 
         for user_obj in cls.user_objs:
@@ -110,6 +120,9 @@ class TestGoogleGroupSyncUsers(TestCase):
         cls.google_group_board_team_obj = GoogleGroupFactory(
             google_integration=cls.google_integration_obj
         )
+        cls.google_group_board_team_role_obj = GoogleGroupFactory(
+            google_integration=cls.google_integration_obj
+        )
         cls.google_group_members_obj = GoogleGroupFactory(
             google_integration=cls.google_integration_obj
         )
@@ -122,36 +135,55 @@ class TestGoogleGroupSyncUsers(TestCase):
 
         cls.group_1_obj = GroupFactory(module=Module.ORG)
         cls.team_1_obj = TeamFactory(group=cls.group_1_obj, type=TeamType.BOARD)
-        cls.role_1_obj = MemberFactory(user=cls.user_board_1_obj, team=cls.team_1_obj)
+        cls.role_1_obj = RoleFactory()
+        cls.role_2_obj = RoleFactory()
+        cls.member_user_board_1_obj = MemberFactory(
+            user=cls.user_board_1_obj, team=cls.team_1_obj, role=cls.role_1_obj
+        )
+        cls.member_user_board_4_obj = MemberFactory(
+            user=cls.user_board_4_obj, team=cls.team_1_obj, role=cls.role_2_obj
+        )
 
         GoogleGroupModuleFactory(
             group=cls.google_group_board_obj,
             module=Module.ORG,
             team=None,
+            role=None,
             require_module_domain=True,
         )
         GoogleGroupModuleFactory(
             group=cls.google_group_board_team_obj,
             module=Module.ORG,
             team=cls.team_1_obj,
+            role=None,
+            require_module_domain=True,
+        )
+        GoogleGroupModuleFactory(
+            group=cls.google_group_board_team_role_obj,
+            module=Module.ORG,
+            team=cls.team_1_obj,
+            role=cls.role_1_obj,
             require_module_domain=True,
         )
         GoogleGroupModuleFactory(
             group=cls.google_group_members_obj,
             module=Module.ORG,
             team=None,
+            role=None,
             require_membership=True,
         )
         GoogleGroupModuleFactory(
             group=cls.google_group_members_obj,
             module=Module.ORG,
             team=cls.team_1_obj,
+            role=None,
             require_module_domain=True,
         )
         GoogleGroupModuleFactory(
             group=cls.google_group_members_old_obj,
             module=Module.ORG,
             team=None,
+            role=None,
             require_membership=True,
             exclude_active=True,
         )
@@ -214,7 +246,7 @@ class TestGoogleGroupSyncUsers(TestCase):
             )
         }
 
-        self.assertEqual(len(google_group_board_user_by_email), 2)
+        self.assertEqual(len(google_group_board_user_by_email), 3)
 
         for user_obj in self.user_objs:
             self.assertNotIn(user_obj.email, google_group_board_user_by_email)
@@ -225,6 +257,9 @@ class TestGoogleGroupSyncUsers(TestCase):
         self.assertIn(
             self.user_email_board_3_obj.email, google_group_board_user_by_email
         )
+        self.assertIn(
+            self.user_email_board_4_obj.email, google_group_board_user_by_email
+        )
 
         self.assertEqual(
             google_group_board_user_by_email[self.user_email_board_1_obj.email].role,
@@ -232,6 +267,10 @@ class TestGoogleGroupSyncUsers(TestCase):
         )
         self.assertEqual(
             google_group_board_user_by_email[self.user_email_board_3_obj.email].role,
+            GoogleGroupUserRole.MANAGER,
+        )
+        self.assertEqual(
+            google_group_board_user_by_email[self.user_email_board_4_obj.email].role,
             GoogleGroupUserRole.MANAGER,
         )
 
@@ -265,7 +304,7 @@ class TestGoogleGroupSyncUsers(TestCase):
             )
         }
 
-        self.assertEqual(len(google_group_board_team_user_by_email), 1)
+        self.assertEqual(len(google_group_board_team_user_by_email), 2)
 
         for user_obj in self.user_objs:
             self.assertNotIn(user_obj.email, google_group_board_team_user_by_email)
@@ -273,9 +312,61 @@ class TestGoogleGroupSyncUsers(TestCase):
         self.assertIn(
             self.user_email_board_1_obj.email, google_group_board_team_user_by_email
         )
+        self.assertIn(
+            self.user_email_board_4_obj.email, google_group_board_team_user_by_email
+        )
 
         self.assertEqual(
             google_group_board_team_user_by_email[
+                self.user_email_board_1_obj.email
+            ].role,
+            GoogleGroupUserRole.MANAGER,
+        )
+        self.assertEqual(
+            google_group_board_team_user_by_email[
+                self.user_email_board_4_obj.email
+            ].role,
+            GoogleGroupUserRole.MANAGER,
+        )
+
+    def test_sync_users__board_team_role(self, *args, **kwargs):
+        with mock.patch(
+            "googleapiclient.http.HttpRequest.execute",
+            side_effect=MockGoogleApiClientExecute(
+                {
+                    "members": [
+                        {
+                            "email": self.user_board_1_obj.email,
+                            "role": GoogleGroupUserRole.MEMBER.name,
+                        }
+                    ]
+                },
+                {},
+            ),
+        ):
+            user.api.google_group.sync_users(
+                group_id=self.google_group_board_team_role_obj.id
+            )
+
+        google_group_board_team_role_user_by_email = {
+            google_group_user_obj.email: google_group_user_obj
+            for google_group_user_obj in GoogleGroupUser.objects.filter(
+                group=self.google_group_board_team_role_obj
+            )
+        }
+
+        self.assertEqual(len(google_group_board_team_role_user_by_email), 1)
+
+        for user_obj in self.user_objs:
+            self.assertNotIn(user_obj.email, google_group_board_team_role_user_by_email)
+
+        self.assertIn(
+            self.user_email_board_1_obj.email,
+            google_group_board_team_role_user_by_email,
+        )
+
+        self.assertEqual(
+            google_group_board_team_role_user_by_email[
                 self.user_email_board_1_obj.email
             ].role,
             GoogleGroupUserRole.MANAGER,
@@ -295,7 +386,7 @@ class TestGoogleGroupSyncUsers(TestCase):
             )
         }
 
-        self.assertEqual(len(google_group_members_user_by_email), 7)
+        self.assertEqual(len(google_group_members_user_by_email), 9)
 
         for user_obj in self.user_objs:
             if user_obj in self.user_with_membership_obj:
