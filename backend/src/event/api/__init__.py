@@ -10,7 +10,6 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone, translation
 
 import legal.api.team
-import notify.tasks
 import user.api
 import user.api.event
 from comunicat.enums import Module
@@ -379,6 +378,8 @@ def send_events_signup(
 
             if not user_event_objs:
                 continue
+
+            import notify.tasks
 
             notify.tasks.send_user_email.delay(
                 user_id=user_obj.id,
