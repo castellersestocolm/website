@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from django.db import transaction
+from django.db.models import Prefetch, Q
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -8,9 +9,10 @@ from googleapiclient.errors import HttpError
 from comunicat.utils.email import get_module_emails_from_user
 from consent.models import EntityConsent
 from notify.enums import NewsletterType
+from notify.models import Newsletter
 from user.consts import GOOGLE_GROUP_SCOPES
 from user.enums import GoogleGroupUserRole
-from user.models import GoogleGroup, GoogleGroupUser
+from user.models import GoogleGroup, GoogleGroupUser, User
 
 import user.api
 
@@ -66,9 +68,9 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
             body={
                 "email": entity_consent_obj.entity.email,
                 "role": (
-                    GoogleGroupUserRole.MANAGER.value
+                    GoogleGroupUserRole.MANAGER.name
                     if entity_consent_obj.entity.email in user_domain_emails
-                    else GoogleGroupUserRole.MEMBER.value
+                    else GoogleGroupUserRole.MEMBER.name
                 ),
             },
         ).execute()
@@ -82,10 +84,26 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
 
 
 # TODO: Missing update with role and store in model
-def sync_users() -> None:
+def sync_users(group_id: UUID | None = None) -> None:
+    google_group_filter = Q()
+
+    if group_id:
+        google_group_filter &= Q(id=group_id)
+
     google_group_objs = list(
-        GoogleGroup.objects.select_related("google_integration").prefetch_related(
-            "modules", "users", "newsletters", "newsletters__consents"
+        GoogleGroup.objects.filter(google_group_filter).select_related("google_integration").prefetch_related(
+            "modules", "users", "newsletters",
+            Prefetch(
+                "newsletters",
+                Newsletter.objects.prefetch_related(Prefetch(
+                "consents",
+                EntityConsent.objects.filter(
+                    entity__email__isnull=False, deleted_at__isnull=True
+                ),
+                to_attr="all_consents"
+            )),
+                to_attr="all_newsletters"
+            )
         )
     )
 
@@ -96,36 +114,42 @@ def sync_users() -> None:
         )
         service = build("admin", "directory_v1", credentials=creds)
 
-        user_emails = set()
-        domain_emails = set()
+        existing_members = (
+            service.members().list(groupKey=google_group_obj.external_id).execute()
+        )
+        existing_emails = {
+            member.get("email"): GoogleGroupUserRole[member.get("role", GoogleGroupUserRole.MEMBER.name)]
+            for member in existing_members.get("members", [])
+            if "email" in member
+        }
+        while "nextPageToken" in existing_members:
+            existing_members = (
+                service.members()
+                .list(
+                    groupKey=google_group_obj.external_id,
+                    pageToken=existing_members["nextPageToken"],
+                )
+                .execute()
+            )
+            existing_emails = {**existing_members, **{
+                member.get("email"): GoogleGroupUserRole[member.get("role", GoogleGroupUserRole.MEMBER.name)]
+                for member in existing_members.get("members", [])
+                if "email" in member
+            }}
+
         google_group_user_by_email = {
             google_group_user_obj.email: google_group_user_obj
             for google_group_user_obj in google_group_obj.users.all()
         }
-        user_by_email = {}
 
-        google_group_user_creates = {}
-        google_group_user_deletes = {}
+        permission_by_email: dict[str, GoogleGroupUserRole] = {}
+        user_by_email: dict[str, User] = {}
 
-        # Add based on newsletters
-        for newsletter_obj in google_group_obj.newsletters.all():
-            entity_consent_objs = list(
-                newsletter_obj.consents.filter(
-                    entity__email__isnull=False, deleted_at__isnull=False
-                )
-            )
+        # Entities that should be present based on newsletters
+        emails_due_newsletter = {entity_consent_obj.entity.email for newsletter_obj in google_group_obj.all_newsletters for entity_consent_obj in newsletter_obj.all_consents}
 
-            for entity_consent_obj in entity_consent_objs:
-                if entity_consent_obj.entity.email not in google_group_user_by_email:
-                    google_group_user_creates[entity_consent_obj.entity.email] = (
-                        GoogleGroupUser(
-                            group=google_group_obj,
-                            user=entity_consent_obj.entity.user,
-                            email=entity_consent_obj.entity.email,
-                        )
-                    )
-
-        # Add based on group rules
+        # Entities that should be present based on group rules
+        emails_due_module = set()
         for google_group_module_obj in google_group_obj.modules.all():
             team_ids = (
                 [google_group_module_obj.team.id]
@@ -141,131 +165,97 @@ def sync_users() -> None:
                 with_expired_membership=google_group_module_obj.exclude_active,
             )
 
-            user_by_email = {
-                **user_by_email,
-                **{user_obj.email: user_obj for user_obj in user_objs},
-                **(
-                    {
-                        user_email_obj.email: user_obj
-                        for user_obj in user_objs
-                        if hasattr(user_obj, "emails")
-                        for user_email_obj in user_obj.emails.all()
-                    }
-                ),
-            }
-
             if google_group_module_obj.require_module_domain:
-                user_domain_emails = {
-                    email
+                user_module_by_email = {
+                    email: user_obj
                     for user_obj in user_objs
                     if user_obj.can_manage
                     for email in get_module_emails_from_user(
                         user_obj=user_obj, module=google_group_module_obj.module
                     )
                 }
-                domain_emails = domain_emails.union(user_domain_emails)
-                user_emails = user_emails.union(user_domain_emails)
+                for email, user_obj in user_module_by_email.items():
+                    # MANAGER is the highest role assigned due to group rules, default is MEMBER
+                    # TODO: Possibly handle OWNERs as well via permissions
+                    permission_by_email[email] = GoogleGroupUserRole.MANAGER
             else:
-                user_emails = user_emails.union(
+                user_module_by_email = {**{user_obj.email: user_obj for user_obj in user_objs if user_obj.can_manage}, **(
                     {
-                        email
+                        user_email_obj.email: user_obj
                         for user_obj in user_objs
-                        if user_obj.can_manage
-                        for email in [user_obj.email]
-                        + (
-                            [
-                                user_email_obj.email
-                                for user_email_obj in user_obj.emails.all()
-                            ]
-                            if hasattr(user_obj, "emails")
-                            else []
-                        )
+                        if user_obj.can_manage and hasattr(user_obj, "emails")
+                        for user_email_obj in user_obj.emails.all()
                     }
-                )
+                )}
 
-        existing_members = (
-            service.members().list(groupKey=google_group_obj.external_id).execute()
-        )
-        existing_emails = [
-            member.get("email")
-            for member in existing_members.get("members", [])
-            if "email" in member
-        ]
-        while "nextPageToken" in existing_members:
-            existing_members = (
-                service.members()
-                .list(
-                    groupKey=google_group_obj.external_id,
-                    pageToken=existing_members["nextPageToken"],
-                )
-                .execute()
-            )
-            existing_emails += [
-                member.get("email")
-                for member in existing_members.get("members", [])
-                if "email" in member
-            ]
+            emails_due_module = emails_due_module.union(set(user_module_by_email.keys()))
+            user_by_email = {**user_by_email, **user_module_by_email}
 
+        emails_due_all = emails_due_newsletter.union(emails_due_module)
+
+        emails_to_add_group = {email for email in emails_due_all if email not in existing_emails.keys()}
         if google_group_obj.delete_on_expire:
-            delete_emails = set(existing_emails) - set(user_emails)
+            emails_to_delete_group = {email for email in existing_emails.keys() if email not in emails_due_all and (email not in google_group_user_by_email or not google_group_user_by_email[email].force_member)}
+        else:
+            emails_to_delete_group = set()
+        emails_to_update_group = {email for email in emails_due_all if email in existing_emails.keys() and email not in emails_to_delete_group and permission_by_email.get(email, GoogleGroupUserRole.MEMBER) != existing_emails[email]}
 
-            for delete_email in delete_emails:
-                if delete_email in google_group_user_by_email:
-                    google_group_user_obj = google_group_user_by_email[delete_email]
-
-                    # Don't delete the email from the list if marked as force
-                    if google_group_user_obj.force_member:
-                        continue
-
-                    google_group_user_deletes[delete_email] = google_group_user_obj.id
-
-                try:
-                    service.members().delete(
-                        groupKey=google_group_obj.external_id, memberKey=delete_email
-                    ).execute()
-                except HttpError as e:
-                    _log.exception(e)
-
-        create_emails = set(user_emails) - set(existing_emails)
-
-        for create_email in create_emails:
-            # Skip those that are being added by newsletter
-            if create_email in google_group_user_creates:
-                pass
-
+        # Delete emails from the Google group
+        for email_to_delete_group in emails_to_delete_group:
+            try:
+                service.members().delete(
+                    groupKey=google_group_obj.external_id, memberKey=email_to_delete_group
+                ).execute()
+                GoogleGroupUser.objects.filter(
+                    group=google_group_obj,
+                    email=email_to_delete_group,
+                ).delete()
+            except HttpError as e:
+                _log.exception(e)
+        # Add emails to the Google group
+        for email_to_add_group in emails_to_add_group:
+            google_group_user_role = permission_by_email.get(
+                email_to_add_group, GoogleGroupUserRole.MEMBER
+            )
             try:
                 service.members().insert(
                     groupKey=google_group_obj.external_id,
                     body={
-                        "email": create_email,
-                        "role": (
-                            GoogleGroupUserRole.MANAGER.value
-                            if create_email in domain_emails
-                            else GoogleGroupUserRole.MEMBER.value
-                        ),
+                        "email": email_to_add_group,
+                        "role": google_group_user_role.name,
                     },
                 ).execute()
+                GoogleGroupUser.objects.update_or_create(
+                    group=google_group_obj,
+                    email=email_to_add_group,
+                    defaults={
+                        "user": user_by_email.get(email_to_add_group),
+                        "role": google_group_user_role,
+                    }
+                )
             except HttpError as e:
                 _log.exception(e)
 
-        for user_email in user_emails:
-            if user_email not in google_group_user_by_email:
-                user_obj = user_by_email[user_email]
-                google_group_user_creates[user_email] = GoogleGroupUser(
+        # Update emails from the Google group
+        for email_to_update_group in emails_to_update_group:
+            google_group_user_role = permission_by_email.get(
+                email_to_update_group, GoogleGroupUserRole.MEMBER
+            )
+            try:
+                service.members().update(
+                    groupKey=google_group_obj.external_id, memberKey=email_to_update_group,
+                    body={
+                        "email": email_to_update_group,
+                        "role": google_group_user_role.name,
+                    },
+                ).execute()
+                GoogleGroupUser.objects.update_or_create(
                     group=google_group_obj,
-                    user=user_obj,
-                    email=user_email,
+                    email=email_to_update_group,
+                    defaults={
+                        "user": user_by_email.get(email_to_update_group),
+                        "role": google_group_user_role,
+                    }
                 )
-
-        for user_email, google_group_user_obj in google_group_user_by_email.items():
-            if user_email not in user_emails and not google_group_user_obj.force_member:
-                google_group_user_obj = google_group_user_by_email[user_email]
-                google_group_user_deletes[user_email] = google_group_user_obj.id
-
-        if google_group_user_deletes:
-            GoogleGroupUser.objects.filter(
-                id__in=google_group_user_deletes.values()
-            ).delete()
-
-        if google_group_user_creates:
-            GoogleGroupUser.objects.bulk_create(google_group_user_creates.values())
+            except HttpError as e:
+                _log.exception(e)

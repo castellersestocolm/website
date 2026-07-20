@@ -37,9 +37,11 @@ RUN set -x && apt-get update && apt-get install -y --no-install-recommends \
 
 # Setup the virtualenv
 RUN python -m venv /backend/venv
+
 WORKDIR /backend
 
 COPY src src
+COPY Makefile Makefile
 
 # Install dependencies
 COPY "requirements/$BUILD_TARGET/requirements.txt" .
@@ -112,6 +114,9 @@ COPY --from=builder /backend/venv /backend/venv
 
 # Copy the src directory
 COPY --from=builder --chown=backend:backend /backend/src /backend/src
+
+# Copy the makefile
+COPY --from=builder --chown=backend:backend /backend/Makefile /backend/Makefile
 
 WORKDIR /backend/src
 

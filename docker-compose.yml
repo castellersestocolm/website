@@ -16,6 +16,8 @@ services:
       - comunicat
     volumes:
       - ./backend/src:/backend/src:cached
+      - ./backend/requirements:/backend/requirements:cached
+      - ./backend/Makefile:/backend/Makefile:cached
       - ./backend/media:/backend/media:cached
       - ./backend/media-private:/backend/media-private:cached
       - internal-media:/backend/internal_media:cached
@@ -29,54 +31,54 @@ services:
       - redis
     env_file:
       - ./envs/local.env
-  frontend-org:
-    image: frontend-org
-    build: frontend-org
-    stdin_open: true
-    tty: true
-    restart: on-failure
-    entrypoint: ["npm"]
-    command: ["start"]
-    networks:
-      - comunicat
-    volumes:
-      - ./frontend-org/app:/frontend-org:cached
-    ports:
-      - target: 3100
-        published: 3100
-        protocol: tcp
-        mode: host
-    env_file:
-      - ./envs/local.env
-    environment:
-      PORT: 3100
-      WDS_SOCKET_HOST: 127.0.0.1
-      CHOKIDAR_USEPOLLING: "true"
-      WATCHPACK_POLLING: "true"
-  frontend-towers:
-    image: frontend-towers
-    build: frontend-towers
-    stdin_open: true
-    tty: true
-    restart: on-failure
-    entrypoint: ["npm"]
-    command: ["start"]
-    networks:
-      - comunicat
-    volumes:
-      - ./frontend-towers/app:/frontend-towers:cached
-    ports:
-      - target: 3200
-        published: 3200
-        protocol: tcp
-        mode: host
-    env_file:
-      - ./envs/local.env
-    environment:
-      PORT: 3200
-      WDS_SOCKET_HOST: 127.0.0.1
-      CHOKIDAR_USEPOLLING: "true"
-      WATCHPACK_POLLING: "true"
+#  frontend-org:
+#    image: frontend-org
+#    build: frontend-org
+#    stdin_open: true
+#    tty: true
+#    restart: on-failure
+#    entrypoint: ["npm"]
+#    command: ["start"]
+#    networks:
+#      - comunicat
+#    volumes:
+#      - ./frontend-org/app:/frontend-org:cached
+#    ports:
+#      - target: 3100
+#        published: 3100
+#        protocol: tcp
+#        mode: host
+#    env_file:
+#      - ./envs/local.env
+#    environment:
+#      PORT: 3100
+#      WDS_SOCKET_HOST: 127.0.0.1
+#      CHOKIDAR_USEPOLLING: "true"
+#      WATCHPACK_POLLING: "true"
+#  frontend-towers:
+#    image: frontend-towers
+#    build: frontend-towers
+#    stdin_open: true
+#    tty: true
+#    restart: on-failure
+#    entrypoint: ["npm"]
+#    command: ["start"]
+#    networks:
+#      - comunicat
+#    volumes:
+#      - ./frontend-towers/app:/frontend-towers:cached
+#    ports:
+#      - target: 3200
+#        published: 3200
+#        protocol: tcp
+#        mode: host
+#    env_file:
+#      - ./envs/local.env
+#    environment:
+#      PORT: 3200
+#      WDS_SOCKET_HOST: 127.0.0.1
+#      CHOKIDAR_USEPOLLING: "true"
+#      WATCHPACK_POLLING: "true"
   database:
     image: postgres:17.2
     ports:
@@ -99,86 +101,86 @@ services:
       - 6390:6379
     networks:
       - comunicat
-  worker:
-    image: backend
-    stdin_open: true
-    tty: true
-    entrypoint: [ "celery" ]
-    command: [ "-A", "comunicat", "worker", "-Q", "default" ]
-    depends_on:
-      - redis
-      - database
-    volumes:
-      - ./backend/src:/backend/src:cached
-      - ./backend/media:/backend/media:cached
-      - ./backend/media-private:/backend/media-private:cached
-      - internal-media:/backend/internal_media:cached
-    networks:
-      - comunicat
-    env_file:
-      - ./envs/local.env
-  beat:
-    image: backend
-    entrypoint: [ "celery" ]
-    command:
-      [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
-    depends_on:
-      - worker
-    volumes:
-      - celerybeat-data:/data
-      - ./backend:/backend/backend:cached
-    networks:
-      - comunicat
-    env_file:
-      - ./envs/local.env
-  pinyator:
-    image: pinyator
-    build: pinyator
-    stdin_open: true
-    tty: true
-    restart: on-failure
-    networks:
-      - comunicat
-    volumes:
-      - ./pinyator/src:/pinyator/pinyator:cached
-    ports:
-      - target: 80
-        published: 8100
-        protocol: tcp
-        mode: host
-    depends_on:
-      - php
-    env_file:
-      - ./envs/local.env
-  php:
-    image: php
-    build: php
-    stdin_open: true
-    tty: true
-    restart: on-failure
-    # entrypoint: ["wait-for-it", "database:5432", "--", "php"]
-    # command: ["-S", "0.0.0.0:8110", "./pinyator/Pinyator.php"]
-    networks:
-      - comunicat
-    volumes:
-      - ./pinyator/src:/pinyator/pinyator:cached
-    depends_on:
-      - mysql
-    env_file:
-      - ./envs/local.env
-  mysql:
-    image: mysql:8.4.4
-    ports:
-      - 3306:3306
-    networks:
-      - comunicat
-    volumes:
-      - mysql-data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: pinyator
-      MYSQL_USER: pinyator
-      MYSQL_PASSWORD: pinyator
-      MYSQL_DATABASE: pinyator
+#  worker:
+#    image: backend
+#    stdin_open: true
+#    tty: true
+#    entrypoint: [ "celery" ]
+#    command: [ "-A", "comunicat", "worker", "-Q", "default" ]
+#    depends_on:
+#      - redis
+#      - database
+#    volumes:
+#      - ./backend/src:/backend/src:cached
+#      - ./backend/media:/backend/media:cached
+#      - ./backend/media-private:/backend/media-private:cached
+#      - internal-media:/backend/internal_media:cached
+#    networks:
+#      - comunicat
+#    env_file:
+#      - ./envs/local.env
+#  beat:
+#    image: backend
+#    entrypoint: [ "celery" ]
+#    command:
+#      [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
+#    depends_on:
+#      - worker
+#    volumes:
+#      - celerybeat-data:/data
+#      - ./backend:/backend/backend:cached
+#    networks:
+#      - comunicat
+#    env_file:
+#      - ./envs/local.env
+#  pinyator:
+#    image: pinyator
+#    build: pinyator
+#    stdin_open: true
+#    tty: true
+#    restart: on-failure
+#    networks:
+#      - comunicat
+#    volumes:
+#      - ./pinyator/src:/pinyator/pinyator:cached
+#    ports:
+#      - target: 80
+#        published: 8100
+#        protocol: tcp
+#        mode: host
+#    depends_on:
+#      - php
+#    env_file:
+#      - ./envs/local.env
+#  php:
+#    image: php
+#    build: php
+#    stdin_open: true
+#    tty: true
+#    restart: on-failure
+#    # entrypoint: ["wait-for-it", "database:5432", "--", "php"]
+#    # command: ["-S", "0.0.0.0:8110", "./pinyator/Pinyator.php"]
+#    networks:
+#      - comunicat
+#    volumes:
+#      - ./pinyator/src:/pinyator/pinyator:cached
+#    depends_on:
+#      - mysql
+#    env_file:
+#      - ./envs/local.env
+#  mysql:
+#    image: mysql:8.4.4
+#    ports:
+#      - 3306:3306
+#    networks:
+#      - comunicat
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: pinyator
+#      MYSQL_USER: pinyator
+#      MYSQL_PASSWORD: pinyator
+#      MYSQL_DATABASE: pinyator
 #  mail:
 #    image: ghcr.io/docker-mailserver/docker-mailserver:15.0.0
 #    deploy:

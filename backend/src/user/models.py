@@ -13,7 +13,7 @@ from user.enums import (
     FamilyMemberRole,
     FamilyMemberStatus,
     FamilyMemberRequestStatus,
-    UserProductSource,
+    UserProductSource, GoogleGroupUserRole,
 )
 from user.managers import UserManager, FamilyMemberQuerySet, FamilyQuerySet
 from user.utils import is_over_minimum_age
@@ -311,6 +311,11 @@ class GoogleGroupUser(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
     email = models.EmailField()
+
+    role = models.PositiveSmallIntegerField(
+        choices=((ggur.value, ggur.name) for ggur in GoogleGroupUserRole),
+        default=GoogleGroupUserRole.MEMBER,
+    )
 
     force_member = models.BooleanField(default=False)
 

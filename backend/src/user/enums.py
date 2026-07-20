@@ -24,7 +24,7 @@ class UserProductSource(IntEnum):
     FROM_ORDER = 20
 
 
-class GoogleGroupUserRole(Enum):
-    OWNER = "OWNER"
-    MANAGER = "MANAGER"
-    MEMBER = "MEMBER"
+class GoogleGroupUserRole(IntEnum):
+    OWNER = 10
+    MANAGER = 20
+    MEMBER = 30
