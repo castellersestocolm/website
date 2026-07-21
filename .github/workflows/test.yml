@@ -32,7 +32,7 @@ jobs:
       with:
         name: backend
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        build_target: ${{ vars.BUILD_TARGET }}
+        build_target: ${{ env.BUILD_TARGET }}
 
   lint-backend:
     runs-on: ubuntu-latest
