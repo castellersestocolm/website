@@ -2,11 +2,11 @@ version: "3.9"
 
 services:
   backend-org:
-    image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-live}
     build:
       context: backend
       args:
-        - BUILD_TARGET=${BUILD_TARGET:-dev}
+        - BUILD_TARGET=${BUILD_TARGET:-live}
     deploy:
       replicas: 1
       update_config:
