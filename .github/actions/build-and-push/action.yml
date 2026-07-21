@@ -90,7 +90,7 @@ runs:
         --build-arg REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID=${{ inputs.react_app_payment_provider_paypal_client_id }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }} \
-        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.build_target }} \
+        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ inputs.build_target }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:latest
 
     - name: Build dev image
