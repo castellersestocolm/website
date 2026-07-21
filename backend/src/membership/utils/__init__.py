@@ -5,8 +5,11 @@ from django.conf import settings
 from django.utils import timezone
 
 from comunicat.enums import Module
-from membership.consts import (MEMBERSHIP_ACCOUNT_BY_MODULE_AND_MEMBERS,
-                               MEMBERSHIP_BY_MODULE, MEMBERSHIP_LENGTHS)
+from membership.consts import (
+    MEMBERSHIP_ACCOUNT_BY_MODULE_AND_MEMBERS,
+    MEMBERSHIP_BY_MODULE,
+    MEMBERSHIP_LENGTHS,
+)
 
 
 def get_membership_length(member_count: int) -> int | None:

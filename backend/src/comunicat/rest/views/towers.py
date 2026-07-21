@@ -6,8 +6,10 @@ from rest_framework.pagination import PageNumberPagination
 
 import towers.api
 from comunicat.rest.serializers.towers import (
-    ListTowerSerializer, TowerWithPlacesAliasSerializer,
-    TowerWithPlacesTechnicalSerializer)
+    ListTowerSerializer,
+    TowerWithPlacesAliasSerializer,
+    TowerWithPlacesTechnicalSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import PermissionLevel
 

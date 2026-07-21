@@ -14,15 +14,17 @@ from rest_framework.serializers import Serializer
 import event.api
 import event.api.registration
 import user.api.event
-from comunicat.rest.serializers.event import (CreateRegistrationSerializer,
-                                              DestroyRegistrationSerializer,
-                                              EventSerializer,
-                                              EventWithCountsSerializer,
-                                              ListEventCalendarSerializer,
-                                              ListEventSerializer,
-                                              PageEventSerializer,
-                                              RegistrationSerializer,
-                                              RegistrationSlimSerializer)
+from comunicat.rest.serializers.event import (
+    CreateRegistrationSerializer,
+    DestroyRegistrationSerializer,
+    EventSerializer,
+    EventWithCountsSerializer,
+    ListEventCalendarSerializer,
+    ListEventSerializer,
+    PageEventSerializer,
+    RegistrationSerializer,
+    RegistrationSlimSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 

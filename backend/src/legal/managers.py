@@ -1,8 +1,7 @@
 from uuid import UUID
 
 from django.apps import apps
-from django.db.models import (Count, F, IntegerField, OuterRef, QuerySet,
-                              Subquery, Value)
+from django.db.models import Count, F, IntegerField, OuterRef, QuerySet, Subquery, Value
 from django.db.models.functions import Coalesce
 from django.utils import translation
 

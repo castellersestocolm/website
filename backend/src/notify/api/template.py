@@ -17,9 +17,12 @@ from event.enums import EventType
 from event.models import EventModule, Registration
 from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipModule, MembershipUser
-from notify.consts import (EMAIL_BY_MODULE,
-                           EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE,
-                           SETTINGS_BY_MODULE, TEMPLATE_BY_MODULE)
+from notify.consts import (
+    EMAIL_BY_MODULE,
+    EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE,
+    SETTINGS_BY_MODULE,
+    TEMPLATE_BY_MODULE,
+)
 from notify.enums import ContactMessageType, EmailType, NotificationType
 from notify.models import ContactMessage, Email
 from order.models import Order, OrderLog, OrderProduct

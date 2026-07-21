@@ -13,9 +13,18 @@ import user.tasks
 from comunicat.utils.admin import FIELD_LOCALE
 from membership.enums import MembershipStatus
 from notify.enums import EmailType
-from user.models import (Family, FamilyMember, FamilyMemberRequest,
-                         GoogleGroup, GoogleGroupModule, GoogleGroupUser,
-                         TowersUser, User, UserEmail, UserProduct)
+from user.models import (
+    Family,
+    FamilyMember,
+    FamilyMemberRequest,
+    GoogleGroup,
+    GoogleGroupModule,
+    GoogleGroupUser,
+    TowersUser,
+    User,
+    UserEmail,
+    UserProduct,
+)
 
 
 class FamilyMemberRequestSentInline(admin.TabularInline):

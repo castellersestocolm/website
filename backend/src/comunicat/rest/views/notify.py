@@ -10,9 +10,11 @@ from rest_framework.response import Response
 import notify.api.contact_message
 import notify.api.newsletter
 import payment.api.entity
-from comunicat.rest.serializers.notify import (ContactMessageSerializer,
-                                               CreateContactMessageSerializer,
-                                               NewsletterSerializer)
+from comunicat.rest.serializers.notify import (
+    ContactMessageSerializer,
+    CreateContactMessageSerializer,
+    NewsletterSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

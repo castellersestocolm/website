@@ -18,12 +18,18 @@ import user.api.family_member
 import user.api.family_member_request
 from comunicat.rest.permissions import AllowLevelAdmin, AllowLevelSuperAdmin
 from comunicat.rest.serializers.admin import (
-    AdminEventSerializer, AdminHistoryEventSerializer,
-    AdminHistoryEventUpdateSerializer, AdminListEventSerializer,
-    AdminListRegistrationSerializer, AdminOrderSerializer,
-    AdminRegistrationSerializer, AdminTowersEventSerializer,
-    AdminTowersStatsPositionSerializer, AdminUserRequestSerializer,
-    AdminUserSerializer)
+    AdminEventSerializer,
+    AdminHistoryEventSerializer,
+    AdminHistoryEventUpdateSerializer,
+    AdminListEventSerializer,
+    AdminListRegistrationSerializer,
+    AdminOrderSerializer,
+    AdminRegistrationSerializer,
+    AdminTowersEventSerializer,
+    AdminTowersStatsPositionSerializer,
+    AdminUserRequestSerializer,
+    AdminUserSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 from legal.enums import TeamType
 

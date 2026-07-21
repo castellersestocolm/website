@@ -9,9 +9,11 @@ from rest_framework.serializers import Serializer
 import payment.api
 import payment.api.expense
 import payment.api.payment_provider
-from comunicat.rest.serializers.payment import (ExpenseSerializer,
-                                                PaymentProviderSerializer,
-                                                PaymentSerializer)
+from comunicat.rest.serializers.payment import (
+    ExpenseSerializer,
+    PaymentProviderSerializer,
+    PaymentSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 

@@ -9,9 +9,13 @@ from django.utils.translation import gettext_lazy as _
 
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
-from user.enums import (FamilyMemberRequestStatus, FamilyMemberRole,
-                        FamilyMemberStatus, GoogleGroupUserRole,
-                        UserProductSource)
+from user.enums import (
+    FamilyMemberRequestStatus,
+    FamilyMemberRole,
+    FamilyMemberStatus,
+    GoogleGroupUserRole,
+    UserProductSource,
+)
 from user.managers import FamilyMemberQuerySet, FamilyQuerySet, UserManager
 from user.utils import is_over_minimum_age
 

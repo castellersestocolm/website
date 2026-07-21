@@ -1,8 +1,18 @@
 import datetime
 
 from django.apps import apps
-from django.db.models import (Case, F, IntegerField, OuterRef, Q, QuerySet,
-                              Subquery, Sum, Value, When)
+from django.db.models import (
+    Case,
+    F,
+    IntegerField,
+    OuterRef,
+    Q,
+    QuerySet,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone, translation
 

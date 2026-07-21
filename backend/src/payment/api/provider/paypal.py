@@ -8,31 +8,37 @@ from paypalserversdk.exceptions.api_exception import ApiException
 from paypalserversdk.exceptions.error_exception import ErrorException
 from paypalserversdk.http.auth.o_auth_2 import ClientCredentialsAuthCredentials
 from paypalserversdk.logging.configuration.api_logging_configuration import (
-    LoggingConfiguration, RequestLoggingConfiguration,
-    ResponseLoggingConfiguration)
+    LoggingConfiguration,
+    RequestLoggingConfiguration,
+    ResponseLoggingConfiguration,
+)
 from paypalserversdk.models.address import Address
 from paypalserversdk.models.amount_breakdown import AmountBreakdown
 from paypalserversdk.models.amount_with_breakdown import AmountWithBreakdown
-from paypalserversdk.models.checkout_payment_intent import \
-    CheckoutPaymentIntent
+from paypalserversdk.models.checkout_payment_intent import CheckoutPaymentIntent
 from paypalserversdk.models.fulfillment_type import FulfillmentType
 from paypalserversdk.models.item import Item
 from paypalserversdk.models.item_category import ItemCategory
 from paypalserversdk.models.money import Money as PayPalMoney
 from paypalserversdk.models.order_request import OrderRequest
 from paypalserversdk.models.payee_base import PayeeBase
-from paypalserversdk.models.payee_payment_method_preference import \
-    PayeePaymentMethodPreference
+from paypalserversdk.models.payee_payment_method_preference import (
+    PayeePaymentMethodPreference,
+)
 from paypalserversdk.models.payment_source import PaymentSource
-from paypalserversdk.models.paypal_experience_landing_page import \
-    PaypalExperienceLandingPage
-from paypalserversdk.models.paypal_experience_user_action import \
-    PaypalExperienceUserAction
+from paypalserversdk.models.paypal_experience_landing_page import (
+    PaypalExperienceLandingPage,
+)
+from paypalserversdk.models.paypal_experience_user_action import (
+    PaypalExperienceUserAction,
+)
 from paypalserversdk.models.paypal_wallet import PaypalWallet
-from paypalserversdk.models.paypal_wallet_experience_context import \
-    PaypalWalletExperienceContext
-from paypalserversdk.models.phone_number_with_country_code import \
-    PhoneNumberWithCountryCode
+from paypalserversdk.models.paypal_wallet_experience_context import (
+    PaypalWalletExperienceContext,
+)
+from paypalserversdk.models.phone_number_with_country_code import (
+    PhoneNumberWithCountryCode,
+)
 from paypalserversdk.models.purchase_unit_request import PurchaseUnitRequest
 from paypalserversdk.models.shipping_details import ShippingDetails
 from paypalserversdk.models.shipping_name import ShippingName

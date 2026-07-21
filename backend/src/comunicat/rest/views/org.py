@@ -15,8 +15,7 @@ import notify.tasks
 import user.api
 import user.api.family
 import user.api.family_member
-from comunicat.rest.serializers.org import (OrgCheckSerializer,
-                                            OrgCreateSerializer)
+from comunicat.rest.serializers.org import OrgCheckSerializer, OrgCreateSerializer
 from comunicat.rest.viewsets import ComuniCatViewSet
 from consent.enums import ConsentType
 from notify.enums import EmailType

@@ -1,0 +1,85 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
+      - dev
+
+env:
+  REGISTRY: ghcr.io
+  BUILD_TARGET: dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    name: Build backend
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ./.github/actions/build-and-push
+      name: Build backend
+      with:
+        name: backend
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        build_target: ${{ vars.BUILD_TARGET }}
+
+  lint-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: ${{ github.ref_name }}
+    needs: [ build-backend ]
+    name: Lint backend
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Download image
+      uses: actions/download-artifact@v8
+      with:
+        name: backend
+        path: /tmp
+
+    - name: Load image
+      run: |
+        docker load --input /tmp/backend.tar
+        docker image ls -a
+
+    - name: Lint
+      id: lint
+      run: docker compose -f docker-compose-test.yml run --rm --entrypoint=make --workdir=/backend backend lint
+
+  test-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [ build-backend ]
+    name: Test backend
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Download image
+      uses: actions/download-artifact@v8
+      with:
+        name: backend
+        path: /tmp
+
+    - name: Load image
+      run: |
+        docker load --input /tmp/backend.tar
+        docker image ls -a
+
+    - name: Test
+      id: test
+      run: docker compose -f docker-compose-test.yml run --rm --entrypoint=make --workdir=/backend backend test

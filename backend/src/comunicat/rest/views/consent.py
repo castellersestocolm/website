@@ -8,8 +8,10 @@ from rest_framework.serializers import Serializer
 
 import consent.api
 import payment.api.entity
-from comunicat.rest.serializers.consent import (CreateEntityConsentsSerializer,
-                                                EntityConsentSerializer)
+from comunicat.rest.serializers.consent import (
+    CreateEntityConsentsSerializer,
+    EntityConsentSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

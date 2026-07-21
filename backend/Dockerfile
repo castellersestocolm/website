@@ -42,6 +42,7 @@ WORKDIR /backend
 
 COPY src src
 COPY Makefile Makefile
+COPY setup.cfg setup.cfg
 
 # Install dependencies
 COPY "requirements/$BUILD_TARGET/requirements.txt" .
@@ -117,6 +118,9 @@ COPY --from=builder --chown=backend:backend /backend/src /backend/src
 
 # Copy the makefile
 COPY --from=builder --chown=backend:backend /backend/Makefile /backend/Makefile
+
+# Copy the setup
+COPY --from=builder --chown=backend:backend /backend/setup.cfg /backend/setup.cfg
 
 WORKDIR /backend/src
 

@@ -1,6 +1,16 @@
 from django.apps import apps
-from django.db.models import (Case, CharField, F, OuterRef, Prefetch, QuerySet,
-                              Subquery, Sum, Value, When)
+from django.db.models import (
+    Case,
+    CharField,
+    F,
+    OuterRef,
+    Prefetch,
+    QuerySet,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Cast, Coalesce, Concat
 from django.utils import translation
 

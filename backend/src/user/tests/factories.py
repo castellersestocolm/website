@@ -1,13 +1,25 @@
-from factory import (Faker, LazyFunction, PostGenerationMethodCall,
-                     SelfAttribute, SubFactory)
+from factory import (
+    Faker,
+    LazyFunction,
+    PostGenerationMethodCall,
+    SelfAttribute,
+    SubFactory,
+)
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
 from comunicat.utils.factories import fake_string, fake_telephone
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import (Family, FamilyMember, GoogleGroup, GoogleGroupModule,
-                         GoogleGroupUser, User, UserEmail)
+from user.models import (
+    Family,
+    FamilyMember,
+    GoogleGroup,
+    GoogleGroupModule,
+    GoogleGroupUser,
+    User,
+    UserEmail,
+)
 
 
 class UserFactory(DjangoModelFactory):

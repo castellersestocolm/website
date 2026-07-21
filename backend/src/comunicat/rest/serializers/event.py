@@ -8,10 +8,21 @@ from comunicat.rest.serializers.payment import EntitySuperSlimSerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.enums import EventType, RegistrationStatus
-from event.models import (AgendaItem, Connection, Event, EventModule,
-                          EventPrice, EventQuestion, EventSignup, GoogleAlbum,
-                          GoogleCalendar, GoogleEvent, GooglePhotosAlbum,
-                          Location, Registration)
+from event.models import (
+    AgendaItem,
+    Connection,
+    Event,
+    EventModule,
+    EventPrice,
+    EventQuestion,
+    EventSignup,
+    GoogleAlbum,
+    GoogleCalendar,
+    GoogleEvent,
+    GooglePhotosAlbum,
+    Location,
+    Registration,
+)
 from integration.models import GoogleIntegration
 
 

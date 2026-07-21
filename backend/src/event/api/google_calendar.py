@@ -14,12 +14,21 @@ import payment.api.entity
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
-from event.consts import (GOOGLE_CALENDAR_SCOPES,
-                          GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS,
-                          REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS)
+from event.consts import (
+    GOOGLE_CALENDAR_SCOPES,
+    GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS,
+    REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS,
+)
 from event.enums import EventType, RegistrationStatus
-from event.models import (AgendaItem, Event, EventModule, GoogleCalendar,
-                          GoogleEvent, Location, Registration)
+from event.models import (
+    AgendaItem,
+    Event,
+    EventModule,
+    GoogleCalendar,
+    GoogleEvent,
+    Location,
+    Registration,
+)
 from event.utils.google_calendar import get_event_type_by_title
 from integration.models import GoogleIntegration
 from user.models import User

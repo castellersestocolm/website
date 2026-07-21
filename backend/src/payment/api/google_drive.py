@@ -5,8 +5,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from comunicat.enums import Module
-from integration.api.google.drive import (create_folder, get_service,
-                                          upload_file)
+from integration.api.google.drive import create_folder, get_service, upload_file
 from payment.api.export import export_payments
 from payment.consts import GOOGLE_DRIVE_FOLDER_ID, GOOGLE_DRIVE_ID
 from payment.enums import ExpenseStatus

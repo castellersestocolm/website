@@ -2,8 +2,7 @@ from typing import List
 from uuid import UUID
 
 from django.conf import settings
-from django.db.models import (Case, DateField, Exists, F, OuterRef, Prefetch,
-                              Q, When)
+from django.db.models import Case, DateField, Exists, F, OuterRef, Prefetch, Q, When
 
 from comunicat.enums import Module
 from payment.enums import PaymentStatus

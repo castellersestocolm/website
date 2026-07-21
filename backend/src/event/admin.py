@@ -20,12 +20,25 @@ from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import beautify_dict
 from event.enums import EventStatus
-from event.models import (AgendaItem, Connection, Event, EventModule,
-                          EventPrice, EventQuestion, EventRequirement,
-                          EventSignup, GoogleAlbum, GoogleCalendar,
-                          GoogleCalendarDefault, GoogleDriveAlbum, GoogleEvent,
-                          GooglePhotosAlbum, Location, Registration,
-                          RegistrationLog)
+from event.models import (
+    AgendaItem,
+    Connection,
+    Event,
+    EventModule,
+    EventPrice,
+    EventQuestion,
+    EventRequirement,
+    EventSignup,
+    GoogleAlbum,
+    GoogleCalendar,
+    GoogleCalendarDefault,
+    GoogleDriveAlbum,
+    GoogleEvent,
+    GooglePhotosAlbum,
+    Location,
+    Registration,
+    RegistrationLog,
+)
 from notify.enums import EmailType
 from payment.models import AccountEvent
 

@@ -3,9 +3,11 @@ import random
 import unicodedata
 from uuid import UUID
 
-from django.contrib.auth import authenticate
-from django.contrib.auth import login as django_login
-from django.contrib.auth import logout as django_logout
+from django.contrib.auth import (
+    authenticate,
+    login as django_login,
+    logout as django_logout,
+)
 from django.core import signing
 from django.db import IntegrityError, transaction
 from django.db.models import Prefetch, Q
@@ -27,8 +29,7 @@ from notify.tasks import send_user_email
 from order.enums import OrderStatus
 from order.models import Order
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import (Family, FamilyMember, TowersUser, User, UserEmail,
-                         UserProduct)
+from user.models import Family, FamilyMember, TowersUser, User, UserEmail, UserProduct
 from user.utils import get_default_consent_pictures
 
 

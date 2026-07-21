@@ -3,15 +3,15 @@ from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from comunicat.enums import Module
-from comunicat.rest.serializers.event import (EventModuleSerializer,
-                                              LocationSerializer)
+from comunicat.rest.serializers.event import EventModuleSerializer, LocationSerializer
 from comunicat.rest.serializers.legal import RoleSerializer, TeamSlimSerializer
-from comunicat.rest.serializers.order import (OrderProductSerializer,
-                                              OrderSlimSerializer)
+from comunicat.rest.serializers.order import OrderProductSerializer, OrderSlimSerializer
 from comunicat.rest.serializers.product import ProductSerializer
 from comunicat.rest.serializers.towers import TowerWithPlacesSerializer
-from comunicat.rest.serializers.user import (UserExtraSlimWithFamilySerializer,
-                                             UserSuperSlimSerializer)
+from comunicat.rest.serializers.user import (
+    UserExtraSlimWithFamilySerializer,
+    UserSuperSlimSerializer,
+)
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.models import Event, Registration
 from history.models import HistoryEvent

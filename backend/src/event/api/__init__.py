@@ -4,8 +4,7 @@ from typing import List
 from uuid import UUID
 
 from django.conf import settings
-from django.db.models import (Count, IntegerField, OuterRef, Prefetch, Q,
-                              Subquery, Value)
+from django.db.models import Count, IntegerField, OuterRef, Prefetch, Q, Subquery, Value
 from django.db.models.functions import Coalesce
 from django.utils import timezone, translation
 
@@ -14,8 +13,15 @@ import user.api
 import user.api.event
 from comunicat.enums import Module
 from event.enums import EventStatus, EventType, RegistrationStatus
-from event.models import (AgendaItem, Connection, Event, EventModule,
-                          EventPrice, EventQuestion, Registration)
+from event.models import (
+    AgendaItem,
+    Connection,
+    Event,
+    EventModule,
+    EventPrice,
+    EventQuestion,
+    Registration,
+)
 from legal.enums import TeamType
 from notify.enums import EmailType
 from user.enums import FamilyMemberStatus

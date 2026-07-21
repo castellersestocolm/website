@@ -13,14 +13,24 @@ import user.api.family_member
 import user.api.family_member_request
 from comunicat.consts import PERMISSIONS_BY_LEVEL
 from comunicat.rest.serializers.user import (
-    CreateFamilyMemberRequestSerializer, CreateFamilyMemberSerializer,
-    CreateSerializer, FamilyMemberRequestExtraSlimSerializer,
-    FamilyMemberRequestSlimSerializer, FamilyMemberSerializer,
-    FamilySerializer, ListFamilySerializer, LoginSerializer,
-    UpdateFamilyMemberSerializer, UpdateSerializer, UserChangeApplySerializer,
-    UserChangeUpdateSerializer, UserExtraSlimSerializer,
-    UserExtraSlimWithFamilySerializer, UserPasswordChangeApplySerializer,
-    UserSerializer)
+    CreateFamilyMemberRequestSerializer,
+    CreateFamilyMemberSerializer,
+    CreateSerializer,
+    FamilyMemberRequestExtraSlimSerializer,
+    FamilyMemberRequestSlimSerializer,
+    FamilyMemberSerializer,
+    FamilySerializer,
+    ListFamilySerializer,
+    LoginSerializer,
+    UpdateFamilyMemberSerializer,
+    UpdateSerializer,
+    UserChangeApplySerializer,
+    UserChangeUpdateSerializer,
+    UserExtraSlimSerializer,
+    UserExtraSlimWithFamilySerializer,
+    UserPasswordChangeApplySerializer,
+    UserSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 

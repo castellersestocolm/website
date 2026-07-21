@@ -22,10 +22,15 @@ from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 from event.consts import EVENT_QUESTION_TYPE_FIELDS
-from event.enums import (EventQuestionType, EventRequirementType, EventStatus,
-                         EventType, RegistrationStatus, TransportMode)
-from event.managers import (AgendaItemQuerySet, EventQuerySet,
-                            RegistrationQuerySet)
+from event.enums import (
+    EventQuestionType,
+    EventRequirementType,
+    EventStatus,
+    EventType,
+    RegistrationStatus,
+    TransportMode,
+)
+from event.managers import AgendaItemQuerySet, EventQuerySet, RegistrationQuerySet
 from event.utils.event import get_event_title
 
 

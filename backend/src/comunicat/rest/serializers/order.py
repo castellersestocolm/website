@@ -9,17 +9,29 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
-from comunicat.rest.serializers.data import (CountrySerializer,
-                                             RegionSerializer, ZoneSerializer)
+from comunicat.rest.serializers.data import (
+    CountrySerializer,
+    RegionSerializer,
+    ZoneSerializer,
+)
 from comunicat.rest.serializers.event import RegistrationWithEventSerializer
-from comunicat.rest.serializers.payment import (PaymentLineSerializer,
-                                                PaymentOrderSerializer)
+from comunicat.rest.serializers.payment import (
+    PaymentLineSerializer,
+    PaymentOrderSerializer,
+)
 from comunicat.rest.serializers.product import ProductSizeSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from order.enums import OrderDeliveryType, OrderStatus
-from order.models import (DeliveryDate, DeliveryPrice, DeliveryProvider, Order,
-                          OrderDelivery, OrderLog, OrderProduct,
-                          OrderRegistration)
+from order.models import (
+    DeliveryDate,
+    DeliveryPrice,
+    DeliveryProvider,
+    Order,
+    OrderDelivery,
+    OrderLog,
+    OrderProduct,
+    OrderRegistration,
+)
 from user.models import User
 
 

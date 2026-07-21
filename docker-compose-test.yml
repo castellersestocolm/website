@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  backend:
+    image: backend
+    build:
+      context: backend
+      args:
+        - BUILD_TARGET=dev
+    stdin_open: true
+    tty: true
+    restart: on-failure
+    entrypoint: ["wait-for-it", "database:5432", "--", "python", "manage.py"]
+    command: ["runserver", "0.0.0.0:8000"]
+    networks:
+      - comunicat
+    volumes:
+      - ./backend/src:/backend/src:cached
+      - ./backend/requirements:/backend/requirements:cached
+      - ./backend/Makefile:/backend/Makefile:cached
+      - ./backend/setup.cfg:/backend/setup.cfg:cached
+      - ./backend/media:/backend/media:cached
+      - ./backend/media-private:/backend/media-private:cached
+      - internal-media:/backend/internal_media:cached
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: host
+    depends_on:
+      - database
+    environment:
+      - DJANGO_SETTINGS_MODULE=comunicat.settings_test
+  database:
+    image: postgres:17.2
+    ports:
+      - 5432:5432
+    networks:
+      - comunicat
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      DJANGO_WATCHMAN_TIMEOUT: 20
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: comunicat
+      POSTGRES_PASSWORD: comunicat
+      POSTGRES_DB: comunicat
+
+volumes:
+  internal-media:
+  postgres-data:
+
+networks:
+  comunicat:
+    ipam:
+      config:
+        - subnet: 172.24.0.0/16

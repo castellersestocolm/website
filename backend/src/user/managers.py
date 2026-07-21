@@ -6,9 +6,21 @@ from django.conf import settings
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.postgres.aggregates import StringAgg
 from django.db import IntegrityError
-from django.db.models import (BooleanField, Case, Exists, ExpressionWrapper, F,
-                              IntegerField, OuterRef, Q, QuerySet, Subquery,
-                              UUIDField, Value, When)
+from django.db.models import (
+    BooleanField,
+    Case,
+    Exists,
+    ExpressionWrapper,
+    F,
+    IntegerField,
+    OuterRef,
+    Q,
+    QuerySet,
+    Subquery,
+    UUIDField,
+    Value,
+    When,
+)
 from django.utils import timezone
 
 from comunicat.enums import Module

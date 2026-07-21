@@ -2,7 +2,9 @@ name: Deploy
 
 on:
   push:
-    branches: [ "master", "dev" ]
+    branches:
+      - master
+      - dev
 
 env:
   REGISTRY: ghcr.io
@@ -17,7 +19,8 @@ jobs:
     name: Build backend
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
 
     - uses: ./.github/actions/build-and-push
       name: Build backend
@@ -32,7 +35,8 @@ jobs:
     name: Build frontend-org
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
 
     - uses: ./.github/actions/build-and-push
       name: Build frontend-org
@@ -61,7 +65,8 @@ jobs:
     name: Build frontend-towers
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
 
     - uses: ./.github/actions/build-and-push
       name: Build frontend-towers
@@ -86,7 +91,8 @@ jobs:
     name: Build pinyator
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
 
     - uses: ./.github/actions/build-and-push
       name: Build pinyator
@@ -102,7 +108,8 @@ jobs:
     name: Build php
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
 
     - uses: ./.github/actions/build-and-push
       name: Build php
@@ -120,7 +127,8 @@ jobs:
     name: Deploy
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout source
+      uses: actions/checkout@v4
 
     - uses: appleboy/ssh-action@v1.2.2
       name: Deploy

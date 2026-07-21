@@ -10,9 +10,18 @@ from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from comunicat.rest.utils.fields import MoneyField
 from payment.enums import PaymentStatus
-from payment.models import (Entity, Expense, ExpenseLog, Payment, PaymentLine,
-                            PaymentLog, PaymentOrder, PaymentProvider, Receipt,
-                            Transaction)
+from payment.models import (
+    Entity,
+    Expense,
+    ExpenseLog,
+    Payment,
+    PaymentLine,
+    PaymentLog,
+    PaymentOrder,
+    PaymentProvider,
+    Receipt,
+    Transaction,
+)
 
 
 class CreateEntitySerializer(s.Serializer):

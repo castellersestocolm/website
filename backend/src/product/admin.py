@@ -4,8 +4,15 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
-from product.models import (Product, ProductImage, ProductModule, ProductPrice,
-                            ProductSize, StockOrder, StockProduct)
+from product.models import (
+    Product,
+    ProductImage,
+    ProductModule,
+    ProductPrice,
+    ProductSize,
+    StockOrder,
+    StockProduct,
+)
 
 
 class ProductSizeInline(admin.TabularInline):

@@ -30,4 +30,9 @@ test: wait-for-database
 .PHONY: format
 format:
 	find $(SRC_DIR)/$(format) -name '*.py' -not -path '*/migrations/*' | xargs black
-	isort -rc $(SRC_DIR)/$(format)
+	isort $(SRC_DIR)/$(format)
+
+.PHONY: lint
+lint:
+	flake8 $(SRC_DIR)/$(lint)
+	isort --check-only $(SRC_DIR)/$(lint)

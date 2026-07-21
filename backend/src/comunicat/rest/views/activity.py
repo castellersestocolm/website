@@ -11,7 +11,9 @@ from rest_framework.serializers import Serializer
 import activity.api.program
 import activity.api.program_course_registration
 from comunicat.rest.serializers.activity import (
-    ProgramCourseRegistrationSlimSerializer, ProgramSerializer)
+    ProgramCourseRegistrationSlimSerializer,
+    ProgramSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

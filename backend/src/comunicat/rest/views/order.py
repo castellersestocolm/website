@@ -12,11 +12,13 @@ from rest_framework.serializers import Serializer
 import order.api
 import order.api.delivery_price
 import order.api.delivery_provider
-from comunicat.rest.serializers.order import (CreateOrderSerializer,
-                                              DeliveryPriceSerializer,
-                                              DeliveryProviderSerializer,
-                                              OrderSerializer,
-                                              UpdateOrderProviderSerializer)
+from comunicat.rest.serializers.order import (
+    CreateOrderSerializer,
+    DeliveryPriceSerializer,
+    DeliveryProviderSerializer,
+    OrderSerializer,
+    UpdateOrderProviderSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

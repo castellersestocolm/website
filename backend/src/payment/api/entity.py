@@ -1,8 +1,7 @@
 from uuid import UUID
 
 from django.db import transaction
-from django.db.models import (BooleanField, Exists, ExpressionWrapper,
-                              OuterRef, Q)
+from django.db.models import BooleanField, Exists, ExpressionWrapper, OuterRef, Q
 
 from activity.models import ProgramCourseRegistration
 from event.models import Registration

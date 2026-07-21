@@ -13,8 +13,7 @@ from comunicat.template_tags.comunicat_tags import full_media, full_url
 from event.enums import RegistrationStatus
 from event.models import Registration
 from notify.api.slack import get_client
-from notify.enums import (ContactMessageStatus, ContactMessageType,
-                          MessageSlackType)
+from notify.enums import ContactMessageStatus, ContactMessageType, MessageSlackType
 from notify.models import ContactMessage, MessageSlack
 from order.enums import OrderStatus
 from order.models import Order, OrderLog, OrderProduct

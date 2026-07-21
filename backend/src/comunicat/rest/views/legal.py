@@ -7,8 +7,11 @@ from rest_framework.pagination import PageNumberPagination
 import legal.api.bylaws
 import legal.api.group
 import legal.api.team
-from comunicat.rest.serializers.legal import (BylawsSerializer,
-                                              GroupSerializer, TeamSerializer)
+from comunicat.rest.serializers.legal import (
+    BylawsSerializer,
+    GroupSerializer,
+    TeamSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 

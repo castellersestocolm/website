@@ -4,8 +4,7 @@ from rest_framework import serializers as s
 
 from comunicat.rest.serializers.payment import CreateEntitySerializer
 from comunicat.rest.utils.fields import IntEnumField
-from notify.enums import (ContactMessageStatus, ContactMessageType,
-                          NewsletterType)
+from notify.enums import ContactMessageStatus, ContactMessageType, NewsletterType
 from notify.models import ContactMessage, Newsletter
 
 

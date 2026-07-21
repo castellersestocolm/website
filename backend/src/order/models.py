@@ -12,8 +12,12 @@ from comunicat.rest.utils.helpers import generate_reference
 from comunicat.utils.models import language_field_default
 from event.enums import RegistrationStatus
 from order.enums import OrderDeliveryType, OrderStatus
-from order.managers import (DeliveryPriceQuerySet, OrderProductQuerySet,
-                            OrderQuerySet, OrderRegistrationQuerySet)
+from order.managers import (
+    DeliveryPriceQuerySet,
+    OrderProductQuerySet,
+    OrderQuerySet,
+    OrderRegistrationQuerySet,
+)
 from user.enums import UserProductSource
 
 

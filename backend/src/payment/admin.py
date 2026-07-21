@@ -31,12 +31,27 @@ from notify.enums import EmailType
 from order.models import Order
 from payment.consts import PAYMENT_LINE_CONTENT_TYPES
 from payment.enums import PaymentType
-from payment.models import (Account, AccountEvent, AccountTag, Entity,
-                            EntityAlias, EntityPaymentMethod, Expense,
-                            ExpenseLog, Payment, PaymentLine, PaymentLog,
-                            PaymentOrder, PaymentOrderProviderLog,
-                            PaymentProvider, Receipt, Source, Statement,
-                            Transaction, TransactionImport)
+from payment.models import (
+    Account,
+    AccountEvent,
+    AccountTag,
+    Entity,
+    EntityAlias,
+    EntityPaymentMethod,
+    Expense,
+    ExpenseLog,
+    Payment,
+    PaymentLine,
+    PaymentLog,
+    PaymentOrder,
+    PaymentOrderProviderLog,
+    PaymentProvider,
+    Receipt,
+    Source,
+    Statement,
+    Transaction,
+    TransactionImport,
+)
 from payment.utils.admin import EntityHasPaymentFilter
 
 

@@ -7,8 +7,10 @@ from rest_framework import permissions
 from rest_framework.pagination import PageNumberPagination
 
 import document.api
-from comunicat.rest.serializers.document import (DocumentSerializer,
-                                                 ListDocumentSerializer)
+from comunicat.rest.serializers.document import (
+    DocumentSerializer,
+    ListDocumentSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 _log = logging.getLogger(__name__)

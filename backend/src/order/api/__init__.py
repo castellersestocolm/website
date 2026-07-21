@@ -18,9 +18,15 @@ from comunicat.enums import Module
 from data.models import Country, Region
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
-from order.models import (DeliveryProvider, Order, OrderDelivery,
-                          OrderDeliveryAddress, OrderLog, OrderProduct,
-                          OrderRegistration)
+from order.models import (
+    DeliveryProvider,
+    Order,
+    OrderDelivery,
+    OrderDeliveryAddress,
+    OrderLog,
+    OrderProduct,
+    OrderRegistration,
+)
 from order.utils.delivery import get_delivery_price
 from payment.enums import PaymentStatus
 from payment.models import Entity, PaymentOrder

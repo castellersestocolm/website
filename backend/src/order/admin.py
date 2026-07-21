@@ -10,9 +10,17 @@ import notify.tasks
 from comunicat.utils.admin import FIELD_LOCALE
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
-from order.models import (DeliveryDate, DeliveryPrice, DeliveryProvider, Order,
-                          OrderDelivery, OrderDeliveryAddress, OrderLog,
-                          OrderProduct, OrderRegistration)
+from order.models import (
+    DeliveryDate,
+    DeliveryPrice,
+    DeliveryProvider,
+    Order,
+    OrderDelivery,
+    OrderDeliveryAddress,
+    OrderLog,
+    OrderProduct,
+    OrderRegistration,
+)
 from payment.models import PaymentLine
 
 # class OrderProductInlineFormAdmin(forms.ModelForm):

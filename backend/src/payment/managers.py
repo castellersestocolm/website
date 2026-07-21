@@ -1,9 +1,24 @@
 from click.types import convert_type
 from django.apps import apps
 from django.conf import settings
-from django.db.models import (Case, CharField, Count, DateField, Exists, F,
-                              Func, IntegerField, OuterRef, Q, QuerySet,
-                              Subquery, Sum, UUIDField, Value, When)
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    DateField,
+    Exists,
+    F,
+    Func,
+    IntegerField,
+    OuterRef,
+    Q,
+    QuerySet,
+    Subquery,
+    Sum,
+    UUIDField,
+    Value,
+    When,
+)
 from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce, Concat, Substr
 from django.utils import timezone, translation

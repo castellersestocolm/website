@@ -6,8 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from activity.api.export import export_program_course
 from activity.consts import GOOGLE_DRIVE_FOLDER_ID, GOOGLE_DRIVE_ID
 from activity.models import Program
-from integration.api.google.drive import (create_folder, get_service,
-                                          upload_file)
+from integration.api.google.drive import create_folder, get_service, upload_file
 
 
 def sync_program(program_id: UUID) -> None:

@@ -18,6 +18,7 @@ services:
       - ./backend/src:/backend/src:cached
       - ./backend/requirements:/backend/requirements:cached
       - ./backend/Makefile:/backend/Makefile:cached
+      - ./backend/setup.cfg:/backend/setup.cfg:cached
       - ./backend/media:/backend/media:cached
       - ./backend/media-private:/backend/media-private:cached
       - internal-media:/backend/internal_media:cached

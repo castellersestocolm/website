@@ -14,20 +14,25 @@ from consent.enums import ConsentType
 from consent.tests.factories import EntityConsentFactory
 from integration.tests.factories import GoogleIntegrationFactory
 from legal.enums import TeamType
-from legal.tests.factories import (GroupFactory, MemberFactory, RoleFactory,
-                                   TeamFactory)
+from legal.tests.factories import GroupFactory, MemberFactory, RoleFactory, TeamFactory
 from membership.enums import MembershipStatus
-from membership.tests.factories import (MembershipFactory,
-                                        MembershipModuleFactory,
-                                        MembershipUserFactory)
+from membership.tests.factories import (
+    MembershipFactory,
+    MembershipModuleFactory,
+    MembershipUserFactory,
+)
 from notify.enums import NewsletterType
 from notify.tests.factories import NewsletterFactory
 from payment.tests.factories import EntityFactory
 from user.enums import GoogleGroupUserRole
 from user.models import GoogleGroupUser
-from user.tests.factories import (GoogleGroupFactory, GoogleGroupModuleFactory,
-                                  GoogleGroupUserFactory, UserEmailFactory,
-                                  UserFactory)
+from user.tests.factories import (
+    GoogleGroupFactory,
+    GoogleGroupModuleFactory,
+    GoogleGroupUserFactory,
+    UserEmailFactory,
+    UserFactory,
+)
 
 
 @pytest.mark.django_db

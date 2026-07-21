@@ -20,12 +20,23 @@ import membership.api
 from membership.consts import MEMBERSHIP_ACCOUNTS_BY_MODULE_AND_AMOUNT
 from membership.enums import MembershipStatus
 from membership.models import Membership
-from payment.consts import (EDIT_DISTANCE_ACCOUNT_THRESHOLD,
-                            EDIT_DISTANCE_NAME_THRESHOLD)
-from payment.enums import (AccountCategory, PaymentMethod, PaymentStatus,
-                           PaymentType, TransactionImportStatus)
-from payment.models import (Account, Entity, EntityAlias, Payment, PaymentLine,
-                            Transaction, TransactionImport)
+from payment.consts import EDIT_DISTANCE_ACCOUNT_THRESHOLD, EDIT_DISTANCE_NAME_THRESHOLD
+from payment.enums import (
+    AccountCategory,
+    PaymentMethod,
+    PaymentStatus,
+    PaymentType,
+    TransactionImportStatus,
+)
+from payment.models import (
+    Account,
+    Entity,
+    EntityAlias,
+    Payment,
+    PaymentLine,
+    Transaction,
+    TransactionImport,
+)
 from user.models import User
 
 

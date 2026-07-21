@@ -10,8 +10,17 @@ from event.enums import EventType, RegistrationStatus
 from event.models import AgendaItem, Event, Registration
 from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS, TEXT_CONTENTS
 from towers.enums import PositionType
-from towers.types import (Place, PlaceComment, PlaceExtra, Placement, Position,
-                          Responsible, Size, Text, Tower)
+from towers.types import (
+    Place,
+    PlaceComment,
+    PlaceExtra,
+    Placement,
+    Position,
+    Responsible,
+    Size,
+    Text,
+    Tower,
+)
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 

@@ -11,8 +11,7 @@ import membership.api
 from comunicat.enums import Module
 from notify.enums import EmailType
 from notify.tasks import send_user_email
-from user.enums import (FamilyMemberRequestStatus, FamilyMemberRole,
-                        FamilyMemberStatus)
+from user.enums import FamilyMemberRequestStatus, FamilyMemberRole, FamilyMemberStatus
 from user.models import Family, FamilyMember, FamilyMemberRequest, User
 
 

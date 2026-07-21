@@ -5,8 +5,12 @@ from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
 import activity.tasks
-from activity.models import (Program, ProgramCourse, ProgramCoursePrice,
-                             ProgramCourseRegistration)
+from activity.models import (
+    Program,
+    ProgramCourse,
+    ProgramCoursePrice,
+    ProgramCourseRegistration,
+)
 from comunicat import settings
 from event.enums import EventType
 from event.models import Event

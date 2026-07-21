@@ -15,8 +15,14 @@ from comunicat.rest.utils.fields import EnumField, IntEnumField
 from consent.enums import ConsentType
 from legal.enums import PermissionLevel
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import (Family, FamilyMember, FamilyMemberRequest, TowersUser,
-                         User, UserEmail)
+from user.models import (
+    Family,
+    FamilyMember,
+    FamilyMemberRequest,
+    TowersUser,
+    User,
+    UserEmail,
+)
 from user.utils import is_over_minimum_age
 
 

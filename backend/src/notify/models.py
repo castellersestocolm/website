@@ -7,9 +7,14 @@ from django.utils.translation import gettext_lazy as _
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
-from notify.enums import (ContactMessageStatus, ContactMessageType,
-                          EmailStatus, EmailType, MessageSlackType,
-                          NewsletterType)
+from notify.enums import (
+    ContactMessageStatus,
+    ContactMessageType,
+    EmailStatus,
+    EmailType,
+    MessageSlackType,
+    NewsletterType,
+)
 from notify.managers import EmailTemplateQuerySet, NewsletterQuerySet
 
 

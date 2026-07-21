@@ -12,8 +12,7 @@ from rest_framework.exceptions import ValidationError
 from comunicat.rest.utils.fields import EnumField, IntEnumField
 from legal.enums import PermissionLevel
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.models import (Family, FamilyMember, FamilyMemberRequest, TowersUser,
-                         User)
+from user.models import Family, FamilyMember, FamilyMemberRequest, TowersUser, User
 from user.utils import is_over_minimum_age
 
 

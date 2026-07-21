@@ -2,8 +2,12 @@ from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
-from activity.models import (Program, ProgramCourse, ProgramCoursePrice,
-                             ProgramCourseRegistration)
+from activity.models import (
+    Program,
+    ProgramCourse,
+    ProgramCoursePrice,
+    ProgramCourseRegistration,
+)
 from comunicat.rest.serializers.event import EventSlimSerializer
 from comunicat.rest.serializers.payment import EntitySuperSlimSerializer
 from comunicat.rest.utils.fields import MoneyField

@@ -8,8 +8,10 @@ from rest_framework.serializers import Serializer
 import membership.api
 import membership.api.renew
 from comunicat.rest.serializers.membership import (
-    MembershipRenewRequestSerializer, MembershipRenewSerializer,
-    MembershipSerializer)
+    MembershipRenewRequestSerializer,
+    MembershipRenewSerializer,
+    MembershipSerializer,
+)
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 

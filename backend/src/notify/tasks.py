@@ -4,15 +4,20 @@ from celery import shared_task
 
 from comunicat.enums import Module
 from notify.api.email import send_email
-from notify.api.slack.chat import (send_contact_message, send_order_message,
-                                   send_registration_message)
-from notify.api.template import (get_contact_message_email_render,
-                                 get_generic_email_render,
-                                 get_order_email_render,
-                                 get_payment_email_render,
-                                 get_program_course_registration_email_renders,
-                                 get_registration_email_renders,
-                                 get_user_email_render)
+from notify.api.slack.chat import (
+    send_contact_message,
+    send_order_message,
+    send_registration_message,
+)
+from notify.api.template import (
+    get_contact_message_email_render,
+    get_generic_email_render,
+    get_order_email_render,
+    get_payment_email_render,
+    get_program_course_registration_email_renders,
+    get_registration_email_renders,
+    get_user_email_render,
+)
 from notify.enums import EmailStatus, EmailType
 from notify.models import Email
 
