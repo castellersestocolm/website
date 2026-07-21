@@ -66,8 +66,9 @@ runs:
       with:
         ref: ${{ github.sha }}
 
-    - name: Build image
+    - name: Build live image
       shell: bash
+      if: "${{ inputs.build_target == 'live' }}"
       run: |
         docker build --no-cache ${{ inputs.name }} \
         -f ${{ inputs.name }}/${{ inputs.dockerfile }} \
@@ -89,7 +90,18 @@ runs:
         --build-arg REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID=${{ inputs.react_app_payment_provider_paypal_client_id }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }} \
+        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.build_target }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:latest
+
+    - name: Build dev image
+      shell: bash
+      if: "${{ inputs.build_target == 'dev' }}"
+      run: |
+        docker build --no-cache ${{ inputs.name }} \
+        -f ${{ inputs.name }}/${{ inputs.dockerfile }} \
+        --build-arg BUILD_TARGET=${{ inputs.build_target }} \
+        --build-arg BUILD_TAG=${{ github.sha }} \
+        --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ inputs.build_target }}
 
     - name: Log in to registry
       shell: bash

@@ -15,7 +15,7 @@ env:
   BUILD_TARGET: dev
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-test
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

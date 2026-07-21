@@ -8,9 +8,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  BUILD_TARGET: live
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-deploy
+  group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   build-backend:
