@@ -137,7 +137,7 @@ def sync_users(group_id: UUID | None = None) -> None:
                 .execute()
             )
             existing_emails = {
-                **existing_members,
+                **existing_emails,
                 **{
                     member.get("email"): GoogleGroupUserRole[
                         member.get("role", GoogleGroupUserRole.MEMBER.name)
