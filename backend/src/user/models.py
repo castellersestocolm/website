@@ -278,11 +278,9 @@ class GoogleGroup(StandardModel, Timestamps):
 
     def save(self, sync: bool = True, *args, **kwargs):
         if sync:
-            import user.api.google_group
+            import user.tasks
 
-            transaction.on_commit(
-                lambda: user.api.google_group.sync_users(group_id=self.id)
-            )
+            transaction.on_commit(lambda: user.tasks.sync_users.delay(group_id=self.id))
 
         super().save(*args, **kwargs)
 
