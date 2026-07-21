@@ -14,9 +14,6 @@ env:
   REGISTRY: ghcr.io
   BUILD_TARGET: dev
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-
 jobs:
   build-backend:
     runs-on: ubuntu-latest
