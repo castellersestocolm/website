@@ -47,7 +47,7 @@ jobs:
 
     - name: Log in to registry
       shell: bash
-      run: echo "${{ inputs.github_token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Pull image
       shell: bash
@@ -69,7 +69,7 @@ jobs:
 
     - name: Log in to registry
       shell: bash
-      run: echo "${{ inputs.github_token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Pull image
       shell: bash
