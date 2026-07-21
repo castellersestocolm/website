@@ -84,10 +84,12 @@ class MembershipAdmin(admin.ModelAdmin):
         )[0]
 
         if family_obj:
-            return mark_safe(
-                f'<a href="{reverse(
+            user_family_change_url = reverse(
                 "admin:user_family_change", args=(family_obj.id,)
-            )}">{str(family_obj)}</a>'
+            )
+
+            return mark_safe(
+                f'<a href="{user_family_change_url}">{str(family_obj)}</a>'
             )
 
         return "-"
