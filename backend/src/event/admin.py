@@ -389,7 +389,7 @@ class GoogleDriveAlbumInline(admin.TabularInline):
 
 
 @admin.register(GoogleAlbum)
-class GoogleEventAdmin(admin.ModelAdmin):
+class GoogleAlbumAdmin(admin.ModelAdmin):
     search_fields = ("id", "external_id")
     list_display = (
         "event",

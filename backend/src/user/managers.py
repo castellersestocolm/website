@@ -11,7 +11,6 @@ from django.db.models import (
     Case,
     Exists,
     ExpressionWrapper,
-    F,
     IntegerField,
     OuterRef,
     Q,
@@ -27,7 +26,6 @@ from comunicat.enums import Module
 from legal.enums import PermissionLevel, TeamType
 from membership.enums import MembershipStatus
 from user.enums import FamilyMemberRole, FamilyMemberStatus
-from user.utils import is_over_minimum_age
 
 
 class UserQuerySet(QuerySet):

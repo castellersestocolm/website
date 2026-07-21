@@ -1,10 +1,6 @@
-import datetime
-
 from django.apps import apps
-from django.conf import settings
 from django.db.models import (
     BooleanField,
-    Case,
     F,
     OuterRef,
     QuerySet,
@@ -12,10 +8,9 @@ from django.db.models import (
     Sum,
     UUIDField,
     Value,
-    When,
 )
 from django.db.models.functions import Cast, Coalesce
-from django.utils import timezone, translation
+from django.utils import translation
 
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput

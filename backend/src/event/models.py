@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
-from django.db.models import F, JSONField, Q
+from django.db.models import JSONField, Q
 from django.db.models.functions import Trunc
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -178,7 +178,7 @@ class Event(StandardModel, Timestamps):
         if validation_errors:
             raise ValidationError(validation_errors)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # noqa: C901
         if self.series:
             self.series.events.exclude(id=self.id).update(type=self.type)
 

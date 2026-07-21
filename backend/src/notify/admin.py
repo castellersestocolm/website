@@ -4,7 +4,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-from django.db.models import JSONField, Prefetch
+from django.db.models import JSONField
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path, reverse
@@ -171,8 +171,8 @@ class EmailTemplateAdmin(admin.ModelAdmin):
 
     def preview(self, obj):
         preview_html = f"<iframe style='border: 1px solid var(--hairline-color);width: 100%;min-width: 750px;min-height: 500px' src='{reverse(
-                "admin:notify_emailtemplate_preview", args=(obj.id,)
-            )}'></iframe>"
+            "admin:notify_emailtemplate_preview", args=(obj.id,)
+        )}'></iframe>"
         return mark_safe(preview_html)
 
     def preview_view(self, request, object_id: UUID):

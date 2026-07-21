@@ -81,7 +81,7 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
 
 
 # TODO: Missing update with role and store in model
-def sync_users(group_id: UUID | None = None) -> None:
+def sync_users(group_id: UUID | None = None) -> None:  # noqa: C901
     google_group_filter = Q()
 
     if group_id:

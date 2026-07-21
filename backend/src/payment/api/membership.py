@@ -12,7 +12,7 @@ from payment.enums import AccountCategory, PaymentStatus, PaymentType
 from payment.models import Account, Entity, Payment, PaymentLine
 
 
-def create_or_update_payment(membership_id: UUID) -> Payment | None:
+def create_or_update_payment(membership_id: UUID) -> Payment | None:  # noqa: C901
     membership_obj = (
         Membership.objects.filter(id=membership_id)
         .prefetch_related(

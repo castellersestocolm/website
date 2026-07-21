@@ -145,7 +145,7 @@ def get(
 
 
 @transaction.atomic
-def create(
+def create(  # noqa: C901
     sizes: list[dict],
     delivery: dict,
     module: Module,

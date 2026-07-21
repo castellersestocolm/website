@@ -20,7 +20,7 @@ class SlackClient(ABC):
 
 class SlackDummyClient(SlackClient):
     def chat_post_message(self, *args, **kwargs):
-        _log.debug(f"Dummy chat post message for Slack")
+        _log.debug("Dummy chat post message for Slack")
         return {
             "ok": True,
             "message": {},

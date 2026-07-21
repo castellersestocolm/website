@@ -21,7 +21,6 @@ from order.models import (
     OrderProduct,
     OrderRegistration,
 )
-from payment.models import PaymentLine
 
 # class OrderProductInlineFormAdmin(forms.ModelForm):
 #     class Meta:

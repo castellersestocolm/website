@@ -356,13 +356,13 @@ class CreateOrderSerializer(s.Serializer):
             delivery_type = kwargs["data"]["delivery"]["provider"]["type"]
             if delivery_type == OrderDeliveryType.DELIVERY:
                 kwargs["data"].pop("pickup")
-                if not "address" in kwargs["data"]["delivery"]:
+                if "address" not in kwargs["data"]["delivery"]:
                     raise s.ValidationError(
                         {"delivery": {"address": _("This field is required.")}}
                     )
             elif delivery_type == OrderDeliveryType.PICK_UP:
                 kwargs["data"]["delivery"].pop("address")
-                if not "pickup" in kwargs["data"]:
+                if "pickup" not in kwargs["data"]:
                     raise s.ValidationError({"pickup": _("This field is required.")})
             else:
                 kwargs["data"]["delivery"].pop("address")

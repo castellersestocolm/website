@@ -61,11 +61,10 @@ class MembershipAdmin(admin.ModelAdmin):
                 "<br/>".join(
                     [
                         f'<a href="{
-        reverse(
-                'admin:user_user_change', args=(member_user_obj.user_id,)
-            )
-        
-        }">{str(member_user_obj.user)}</a>'
+                            reverse(
+                    'admin:user_user_change', args=(member_user_obj.user_id,)
+                            )
+                        }">{str(member_user_obj.user)}</a>'
                         for member_user_obj in obj.membership_users.order_by(
                             "user__firstname", "user__lastname"
                         )

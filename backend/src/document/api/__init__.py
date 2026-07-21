@@ -1,8 +1,6 @@
 import random
 
-from django.conf import settings
-from django.db.models import Case, IntegerField, Q, Value, When
-from django.utils import translation
+from django.db.models import Q
 
 from comunicat.enums import Module
 from document.enums import DocumentStatus, DocumentType

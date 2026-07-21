@@ -1,4 +1,3 @@
-from click.types import convert_type
 from django.apps import apps
 from django.conf import settings
 from django.db.models import (

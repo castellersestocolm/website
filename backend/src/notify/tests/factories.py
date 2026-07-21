@@ -1,9 +1,8 @@
-from factory import LazyFunction, SubFactory
+from factory import SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
-from comunicat.utils.factories import fake_title
 from notify.enums import NewsletterType
 from notify.models import Newsletter
 

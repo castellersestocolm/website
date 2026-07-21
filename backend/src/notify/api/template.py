@@ -69,7 +69,7 @@ class EmailRender:
         self.attachments = attachments
 
 
-def get_user_email_render(
+def get_user_email_render(  # noqa: C901
     email_type: EmailType,
     module: Module,
     user_id: UUID | None = None,
@@ -419,7 +419,7 @@ def get_payment_email_render(
             rebut_text = str(_("receipt"))
             attachments.append(
                 (
-                    f"{rebut_text}-{i+1}.{payment_line_obj.receipt.file.name.split('.')[-1]}",
+                    f"{rebut_text}-{i + 1}.{payment_line_obj.receipt.file.name.split('.')[-1]}",
                     payment_line_obj.receipt.file.file.read(),
                 )
             )

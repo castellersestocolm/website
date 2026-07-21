@@ -6,7 +6,7 @@ from uuid import UUID
 from django.conf import settings
 from django.db.models import Count, IntegerField, OuterRef, Prefetch, Q, Subquery, Value
 from django.db.models.functions import Coalesce
-from django.utils import timezone, translation
+from django.utils import timezone
 
 import legal.api.team
 import user.api
@@ -28,7 +28,7 @@ from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 
 
-def get_list(
+def get_list(  # noqa: C901
     module: Module,
     event_ids: list[UUID] | None = None,
     date: datetime.date | None = None,
@@ -55,7 +55,6 @@ def get_list(
         family_user_ids = []
 
     event_filter = Q()
-    event_filter_post = Q()
 
     if event_ids:
         event_filter &= Q(id__in=event_ids)

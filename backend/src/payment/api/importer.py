@@ -43,7 +43,7 @@ from user.models import User
 # TODO: Fix import when payments have been manually split into multiple lines after import such as for orders or registrations
 # TODO: Link payments with orders automatically based on order reference
 @transaction.atomic
-def run(transaction_import_id: UUID) -> List[Transaction]:
+def run(transaction_import_id: UUID) -> List[Transaction]:  # noqa: C901
     transaction_import_obj = TransactionImport.objects.filter(
         id=transaction_import_id,
         status__in=(TransactionImportStatus.CREATED, TransactionImportStatus.ERRORED),
@@ -422,7 +422,7 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                         ),
                         remaining_amount,
                     )
-                    payment_line_obj = PaymentLine.objects.update_or_create(
+                    PaymentLine.objects.update_or_create(
                         payment=payment_obj,
                         amount=current_amount,
                         vat=vat,
@@ -438,7 +438,7 @@ def run(transaction_import_id: UUID) -> List[Transaction]:
                     if remaining_amount.amount <= 0:
                         break
                 if remaining_amount.amount > 0:
-                    payment_line_obj = PaymentLine.objects.update_or_create(
+                    PaymentLine.objects.update_or_create(
                         payment=payment_obj,
                         amount=abs(amount),
                         vat=vat,

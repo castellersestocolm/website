@@ -6,7 +6,6 @@ from django.db.models import Prefetch
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
-from drf_yasg.openapi import Contact
 
 from comunicat.enums import Module
 from comunicat.template_tags.comunicat_tags import full_media, full_url

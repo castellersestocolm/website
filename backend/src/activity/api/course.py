@@ -1,7 +1,6 @@
 from uuid import UUID
 
 from activity.models import ProgramCoursePrice, ProgramCourseRegistration
-from comunicat.consts import ZERO_MONEY
 from payment.models import Entity
 
 

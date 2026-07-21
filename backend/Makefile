@@ -35,4 +35,5 @@ format:
 .PHONY: lint
 lint:
 	flake8 $(SRC_DIR)/$(lint)
+	find $(SRC_DIR)/$(lint) -name '*.py' -not -path '*/migrations/*' | xargs black --check
 	isort --check-only $(SRC_DIR)/$(lint)

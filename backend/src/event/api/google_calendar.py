@@ -34,7 +34,7 @@ from integration.models import GoogleIntegration
 from user.models import User
 
 
-def import_events() -> None:
+def import_events() -> None:  # noqa: C901
     time_now = timezone.localtime()
     google_event_by_key = {
         (
@@ -301,7 +301,7 @@ def import_events() -> None:
         Registration.objects.bulk_update(registration_updates, fields=("status",))
 
 
-def create_or_update_event(
+def create_or_update_event(  # noqa: C901
     event_id: UUID, registration_id: UUID | None = None
 ) -> GoogleEvent | None:
     event_obj = (

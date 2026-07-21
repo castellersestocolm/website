@@ -1,4 +1,4 @@
- black ~= 24.10.0
+ black ~= 26.5.1
  django-debug-toolbar ~= 6.0.0
  django-silk ~= 5.4.3
  pytest ~= 9.1.1
@@ -6,3 +6,4 @@
  factory-boy ~= 3.3.3
  responses ~= 0.26.2
  isort ~= 8.0.1
+ flake8 ~= 7.3.0

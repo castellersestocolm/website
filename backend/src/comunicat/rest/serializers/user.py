@@ -222,7 +222,7 @@ class UserSerializer(UserSlimSerializer):
 
     @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
     def get_registration_finished(self, obj):
-        if not "module" in self.context:
+        if "module" not in self.context:
             return False
         return obj.registration_finished(module=self.context["module"])
 

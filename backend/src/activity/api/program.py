@@ -1,7 +1,6 @@
 from typing import List
 
-from django.db.models import Prefetch, Q
-from django.utils import timezone
+from django.db.models import Prefetch
 
 from activity.models import Program, ProgramCourse, ProgramCoursePrice
 from comunicat.enums import Module

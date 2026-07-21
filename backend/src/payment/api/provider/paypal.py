@@ -2,7 +2,6 @@ import logging
 from uuid import UUID
 
 from django.conf import settings
-from django.utils import timezone
 from paypalserversdk.configuration import Environment
 from paypalserversdk.exceptions.api_exception import ApiException
 from paypalserversdk.exceptions.error_exception import ErrorException
@@ -22,27 +21,12 @@ from paypalserversdk.models.item_category import ItemCategory
 from paypalserversdk.models.money import Money as PayPalMoney
 from paypalserversdk.models.order_request import OrderRequest
 from paypalserversdk.models.payee_base import PayeeBase
-from paypalserversdk.models.payee_payment_method_preference import (
-    PayeePaymentMethodPreference,
-)
-from paypalserversdk.models.payment_source import PaymentSource
-from paypalserversdk.models.paypal_experience_landing_page import (
-    PaypalExperienceLandingPage,
-)
-from paypalserversdk.models.paypal_experience_user_action import (
-    PaypalExperienceUserAction,
-)
-from paypalserversdk.models.paypal_wallet import PaypalWallet
-from paypalserversdk.models.paypal_wallet_experience_context import (
-    PaypalWalletExperienceContext,
-)
 from paypalserversdk.models.phone_number_with_country_code import (
     PhoneNumberWithCountryCode,
 )
 from paypalserversdk.models.purchase_unit_request import PurchaseUnitRequest
 from paypalserversdk.models.shipping_details import ShippingDetails
 from paypalserversdk.models.shipping_name import ShippingName
-from paypalserversdk.models.shipping_preference import ShippingPreference
 from paypalserversdk.paypal_serversdk_client import PaypalServersdkClient
 
 from comunicat.template_tags.comunicat_tags import full_media
