@@ -31,7 +31,26 @@ def get_list(
         # TODO: Allow non-user registrations but add support for entity on serializer instead before
         Registration.objects.filter(registration_filter)
         .filter_with_user()
-        .select_related("event", "entity", "entity__user")
+        .select_related(
+            "event",
+            "entity",
+            "entity__user",
+            "event__google_album",
+            "event__google_event",
+            "event__location",
+        )
+        .prefetch_related(
+            "event__modules",
+            "event__modules__team",
+            "event__prices",
+            "event__questions",
+            "event__signups",
+            "event__requirements",
+            "event__agenda_items",
+            "event__registrations",
+            "event__registrations__entity",
+            "event__registrations__entity__user",
+        )
         .order_by("-event__time_from", "created_at")
     )
 

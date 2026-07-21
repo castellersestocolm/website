@@ -116,8 +116,10 @@ def get_list(
                 FamilyMember.objects.filter(
                     status__in=(FamilyMemberStatus.REQUESTED, FamilyMemberStatus.ACTIVE)
                 )
-                .select_related("user", "user__towers")
-                .prefetch_related("user__members", "user__members__team")
+                .select_related("user", "user__towers", "user__entity")
+                .prefetch_related(
+                    "user__members", "user__members__team", "user__entity__consents"
+                )
                 .order_by("-role", "user__firstname", "user__lastname"),
             ),
             Prefetch(
