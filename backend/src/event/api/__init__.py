@@ -104,9 +104,7 @@ def get_list(  # noqa: C901
             "location",
             "google_event",
             "google_event__google_calendar",
-            "google_event__google_calendar__google_integration",
             "google_album",
-            "google_album__google_integration",
         )
         .prefetch_related(
             Prefetch(
