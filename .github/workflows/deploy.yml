@@ -10,7 +10,7 @@ env:
   REGISTRY: ghcr.io
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-deploy
 
 jobs:
   build-backend:
