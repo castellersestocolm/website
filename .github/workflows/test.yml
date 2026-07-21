@@ -45,16 +45,9 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
 
-    - name: Download image
-      uses: actions/download-artifact@v8
-      with:
-        name: backend
-        path: /tmp
-
-    - name: Load image
-      run: |
-        docker load --input /tmp/backend.tar
-        docker image ls -a
+    - name: Pull image
+      shell: bash
+      run: docker pull ghcr.io/castellersestocolm/backend:${{ env.BUILD_TARGET }}
 
     - name: Lint
       id: lint
@@ -70,16 +63,9 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
 
-    - name: Download image
-      uses: actions/download-artifact@v8
-      with:
-        name: backend
-        path: /tmp
-
-    - name: Load image
-      run: |
-        docker load --input /tmp/backend.tar
-        docker image ls -a
+    - name: Pull image
+      shell: bash
+      run: docker pull ghcr.io/castellersestocolm/backend:${{ env.BUILD_TARGET }}
 
     - name: Test
       id: test
