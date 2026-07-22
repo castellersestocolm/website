@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { Avatar, Divider, Link, Stack, Typography } from "@mui/material";
+import { Divider, Link, Stack, Typography } from "@mui/material";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
@@ -9,8 +9,6 @@ import PageBase from "../../components/PageBase/PageBase";
 import Pagination from "@mui/material/Pagination";
 import { API_LEGAL_GROUP_LIST_PAGE_SIZE } from "../../consts";
 import { languageToLocale } from "../../utils/locale";
-
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
 function AboutTeamPage() {
   const [t, i18n] = useTranslation("common");
@@ -137,15 +135,6 @@ function AboutTeamPage() {
                                   refMembers.current[member.id] = ref;
                                 }}
                               >
-                                <Avatar
-                                  alt={
-                                    member.user.firstname +
-                                    " " +
-                                    member.user.lastname
-                                  }
-                                  src={BACKEND_BASE_URL + member.picture}
-                                  className={styles.aboutTeamAvatar}
-                                />
                                 <Typography variant="body1" fontWeight="600">
                                   {member.user.firstname} {member.user.lastname}
                                 </Typography>

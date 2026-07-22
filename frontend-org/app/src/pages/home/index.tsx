@@ -169,6 +169,7 @@ function HomePage() {
                   variant="h6"
                   fontWeight="700"
                   className={styles.heroSubtitle}
+                  mb={1}
                 >
                   {t("pages.home-hero.subtitle")}
                 </Typography>
