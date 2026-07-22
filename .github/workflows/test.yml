@@ -62,9 +62,6 @@ jobs:
     timeout-minutes: 10
     needs: [ build-backend ]
     name: Test backend
-    permissions:
-      pull-requests: write
-      contents: write
 
     steps:
     - name: Checkout source
@@ -85,4 +82,4 @@ jobs:
     - name: Coverage comment
       uses: py-cov-action/python-coverage-comment-action@v4.1
       with:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
