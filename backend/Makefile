@@ -25,7 +25,7 @@ requirements:
 .PHONY: test
 test: wait-for-database
 	cd $(SRC_DIR) && \
-	$(TEST_ENV) $(PYTEST) $(test) --reuse-db -rA -s -x --log-level=INFO
+	$(TEST_ENV) $(PYTEST) $(test) --reuse-db -rA -s --log-level=INFO
 
 .PHONY: format
 format:
@@ -43,8 +43,8 @@ coverage:
 	$(TEST_ENV) \
 	cd $(SRC_DIR) && \
 	coverage erase; \
-	$(PYTEST) --reuse-db -rA -s -x --log-level=INFO \
+	$(TEST_ENV) $(PYTEST) --reuse-db -rA -s -x --log-level=INFO \
     --cov=. \
 	--cov-report=xml \
-    --cov-fail-under=46 \
+    --cov-fail-under=48 \
 	$(coverage)

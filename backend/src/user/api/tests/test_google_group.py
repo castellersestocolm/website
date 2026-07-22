@@ -243,9 +243,9 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
+                num=0,
                 num_selects=12,
                 num_inserts=3,
-                num_updates=0,
                 num_deletes=4,
             ):
                 user.api.google_group.sync_users(
@@ -307,10 +307,9 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
+                num=0,
                 num_selects=12,
                 num_inserts=2,
-                num_updates=0,
-                num_deletes=0,
             ):
                 user.api.google_group.sync_users(
                     group_id=self.google_group_board_team_obj.id
@@ -364,10 +363,9 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
+                num=0,
                 num_selects=11,
                 num_inserts=1,
-                num_updates=0,
-                num_deletes=0,
             ):
                 user.api.google_group.sync_users(
                     group_id=self.google_group_board_team_role_obj.id
@@ -403,10 +401,9 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
             side_effect=MockGoogleApiClientExecute({"members": []}, {}),
         ):
             with self.assertNumOperations(
+                num=0,
                 num_selects=19,
                 num_inserts=9,
-                num_updates=0,
-                num_deletes=0,
             ):
                 user.api.google_group.sync_users(
                     group_id=self.google_group_members_obj.id
@@ -453,10 +450,9 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
             side_effect=MockGoogleApiClientExecute({"members": []}, {}),
         ):
             with self.assertNumOperations(
+                num=0,
                 num_selects=8,
                 num_inserts=1,
-                num_updates=0,
-                num_deletes=0,
             ):
                 user.api.google_group.sync_users(
                     group_id=self.google_group_members_old_obj.id
@@ -492,10 +488,9 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
             side_effect=MockGoogleApiClientExecute({"members": []}, {}),
         ):
             with self.assertNumOperations(
+                num=0,
                 num_selects=10,
                 num_inserts=2,
-                num_updates=0,
-                num_deletes=0,
             ):
                 user.api.google_group.sync_users(
                     group_id=self.google_group_newsletter_obj.id

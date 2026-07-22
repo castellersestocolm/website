@@ -1,6 +1,8 @@
 from typing import Optional
 
+import html2text
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 
 import notify.api.google_mail
 from comunicat.enums import Module
@@ -21,30 +23,31 @@ def send_email(
     if to and not isinstance(to, (list, tuple)):
         to = [to]
 
-    return notify.api.google_mail.send_email(
+    if settings.EMAIL_PROVIDER == "google_mail":
+        return notify.api.google_mail.send_email(
+            subject=subject,
+            body=body,
+            from_email=from_email or settings.DEFAULT_FROM_EMAIL,
+            to_email=to,
+            reply_email=reply_to or settings.DEFAULT_FROM_EMAIL,
+            cc_email=cc_to,
+            attachments=attachments,
+            module=module,
+        )
+
+    body_plain = html2text.html2text(body)
+
+    msg = EmailMultiAlternatives(
         subject=subject,
-        body=body,
+        body=body_plain,
         from_email=from_email or settings.DEFAULT_FROM_EMAIL,
-        to_email=to,
-        reply_email=reply_to or settings.DEFAULT_FROM_EMAIL,
-        cc_email=cc_to,
+        to=to,
+        reply_to=[reply_to or settings.DEFAULT_FROM_EMAIL],
         attachments=attachments,
-        module=module,
     )
 
-    # body_plain = html2text.html2text(body)
-    #
-    # msg = EmailMultiAlternatives(
-    #     subject=subject,
-    #     body=body_plain,
-    #     from_email=from_email or settings.DEFAULT_FROM_EMAIL,
-    #     to=to,
-    #     reply_to=reply_to or [settings.DEFAULT_FROM_EMAIL],
-    #     attachments=attachments,
-    # )
-    #
-    # msg.attach_alternative(body, "text/html")
-    #
-    # msg.track_clicks = track_clicks
-    #
-    # return msg.send(fail_silently=fail_silently)
+    msg.attach_alternative(body, "text/html")
+
+    msg.track_clicks = track_clicks
+
+    return msg.send(fail_silently=fail_silently)

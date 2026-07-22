@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from factory import (
@@ -13,10 +14,11 @@ from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
 from comunicat.utils.factories import fake_string, fake_telephone
-from user.enums import FamilyMemberRole, FamilyMemberStatus
+from user.enums import FamilyMemberRequestStatus, FamilyMemberRole, FamilyMemberStatus
 from user.models import (
     Family,
     FamilyMember,
+    FamilyMemberRequest,
     GoogleGroup,
     GoogleGroupModule,
     GoogleGroupUser,
@@ -33,6 +35,12 @@ class UserFactory(DjangoModelFactory):
     phone = LazyFunction(fake_telephone)
 
     password = PostGenerationMethodCall("set_password", "password")
+
+    birthday = Faker(
+        "date_between_dates",
+        date_start=datetime.date(1970, 1, 1),
+        date_end=datetime.date(1999, 12, 31),
+    )
 
     origin_module = FuzzyChoice(Module)
 
@@ -81,6 +89,19 @@ class FamilyMemberFactory(DjangoModelFactory):
 
     class Meta:
         model = FamilyMember
+
+
+class FamilyMemberRequestFactory(DjangoModelFactory):
+    user_sender = SubFactory(UserFactory)
+    email_receiver = SelfAttribute("user_sender.email")
+    user_receiver = SubFactory(UserFactory)
+
+    family = SubFactory(FamilyFactory)
+
+    status = FuzzyChoice(FamilyMemberRequestStatus)
+
+    class Meta:
+        model = FamilyMemberRequest
 
 
 class GoogleGroupFactory(DjangoModelFactory):

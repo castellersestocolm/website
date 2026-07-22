@@ -29,6 +29,7 @@ services:
         mode: host
     depends_on:
       - database
+      - redis
     environment:
       - DJANGO_SETTINGS_MODULE=comunicat.settings_test
   database:
@@ -45,10 +46,19 @@ services:
       POSTGRES_USER: comunicat
       POSTGRES_PASSWORD: comunicat
       POSTGRES_DB: comunicat
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6390:6379
+    networks:
+      - comunicat
 
 volumes:
   internal-media:
   postgres-data:
+  redis-data:
 
 networks:
   comunicat:
