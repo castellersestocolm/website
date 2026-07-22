@@ -78,8 +78,3 @@ jobs:
     - name: Test
       id: test
       run: docker compose -f docker-compose-test.yml run --rm --entrypoint=make --workdir=/backend backend coverage
-
-    - name: Coverage comment
-      uses: py-cov-action/python-coverage-comment-action@v4.1
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

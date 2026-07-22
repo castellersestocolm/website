@@ -45,5 +45,6 @@ coverage:
 	coverage erase; \
 	$(PYTEST) --reuse-db -rA -s -x --log-level=INFO \
     --cov=. \
+	--cov-report=xml \
     --cov-fail-under=46 \
 	$(coverage)
