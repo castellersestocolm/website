@@ -367,14 +367,16 @@ MODULE_ALL_MEMBERSHIP_REQUIRED = [
 MODULE_ALL_MEMBERSHIP_START_DATES = [
     [int(d) for d in dates.split("-")]
     for dates in filter(
-        None, os.getenv("MODULE_ALL_MEMBERSHIP_START_DATES", "").split(",")
+        None, os.getenv("MODULE_ALL_MEMBERSHIP_START_DATES", "1-1").split(",")
     )
 ]
 MODULE_ALL_MEMBERSHIP_LIMIT_ADULTS = os.getenv("MODULE_ALL_MEMBERSHIP_MAX_ADULTS", 5)
 MODULE_ALL_MEMBERSHIP_LIMIT_ALL = os.getenv("MODULE_ALL_MEMBERSHIP_LIMIT_ALL", 10)
 MODULE_ALL_MEMBERSHIP_CONFIG = [
     config.split("-")
-    for config in filter(None, os.getenv("MODULE_ALL_MEMBERSHIP_CONFIG", "").split(","))
+    for config in filter(
+        None, os.getenv("MODULE_ALL_MEMBERSHIP_CONFIG", "1-12").split(",")
+    )
 ]
 MODULE_ALL_MEMBERSHIP_RENEW_DAYS = int(
     os.getenv("MODULE_ALL_MEMBERSHIP_RENEW_DAYS", "28")
@@ -446,7 +448,9 @@ MODULE_ORG_EMAIL_FROM_FULL = (
 )
 MODULE_ORG_MEMBERSHIP_CONFIG = [
     config.split("-")
-    for config in filter(None, os.getenv("MODULE_ORG_MEMBERSHIP_CONFIG", "").split(","))
+    for config in filter(
+        None, os.getenv("MODULE_ORG_MEMBERSHIP_CONFIG", "1-100").split(",")
+    )
 ]
 # TODO: Missing live?
 MODULE_ORG_MEMBERSHIP_ACCOUNT_CONFIG = [
@@ -506,7 +510,7 @@ MODULE_TOWERS_EMAIL_FROM_FULL = (
 MODULE_TOWERS_MEMBERSHIP_CONFIG = [
     config.split("-")
     for config in filter(
-        None, os.getenv("MODULE_TOWERS_MEMBERSHIP_CONFIG", "").split(",")
+        None, os.getenv("MODULE_TOWERS_MEMBERSHIP_CONFIG", "1-100").split(",")
     )
 ]
 MODULE_TOWERS_MEMBERSHIP_ACCOUNT_CONFIG = [
