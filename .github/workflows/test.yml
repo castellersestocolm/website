@@ -62,10 +62,6 @@ jobs:
     timeout-minutes: 10
     needs: [ build-backend ]
     name: Test backend
-    permissions:
-      pull-requests: write
-      contents: write
-      packages: read
 
     steps:
     - name: Checkout source
@@ -83,8 +79,14 @@ jobs:
       id: test
       run: docker compose -f docker-compose-test.yml run --rm --entrypoint=make --workdir=/backend --user=root backend coverage
 
-    - name: Coverage comment
-      uses: py-cov-action/python-coverage-comment-action@v4.1
+    - name: Report coverage
+      if: github.event_name == "pull_request" && (github.event.action == "opened" || github.event.action == "reopened" || github.event.action == "synchronize")
+      uses: 5monkeys/cobertura-action@v14
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERAGE_PATH: backend/src/
+        path: coverage/coverage.xml
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        minimum_coverage: 46
+        show_line: true
+        show_missing: false
+        show_missing_max_length: 100
+        link_missing_lines: true
