@@ -204,6 +204,9 @@ LOGGING = {
         "handlers": ["console"],
         "level": "DEBUG",
     },
+    "loggers": {
+        "celery": {"handlers": ["console"], "level": "INFO"},
+    },
 }
 
 
@@ -603,6 +606,8 @@ EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = MODULE_ORG_EMAIL_FROM_ADDRESS
+
+EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "google_mail")
 
 # SSO
 

@@ -25,7 +25,7 @@ requirements:
 .PHONY: test
 test: wait-for-database
 	cd $(SRC_DIR) && \
-	$(TEST_ENV) $(PYTEST) $(test) --reuse-db -rA -s -x --log-level=INFO
+	$(TEST_ENV) $(PYTEST) $(test) --reuse-db -rA -s --log-level=INFO
 
 .PHONY: format
 format:

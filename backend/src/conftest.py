@@ -29,16 +29,17 @@ class _AssertNumOperationsContext(CaptureQueriesContext):
         self,
         test_case: TestCaseLike,
         connection: BaseDatabaseWrapper,
+        num: int | None = None,
         num_selects: int | None = None,
         num_inserts: int | None = None,
         num_updates: int | None = None,
         num_deletes: int | None = None,
     ) -> None:
         self.test_case = test_case
-        self.num_selects = num_selects
-        self.num_inserts = num_inserts
-        self.num_updates = num_updates
-        self.num_deletes = num_deletes
+        self.num_selects = num_selects or num
+        self.num_inserts = num_inserts or num
+        self.num_updates = num_updates or num
+        self.num_deletes = num_deletes or num
         super().__init__(connection)
 
     def __exit__(
@@ -83,6 +84,7 @@ class NumOperationsMixin:
     def assertNumOperations(
         self,
         *,
+        num: Optional[int] = None,
         num_selects: Optional[int] = None,
         num_inserts: Optional[int] = None,
         num_updates: Optional[int] = None,
@@ -91,6 +93,7 @@ class NumOperationsMixin:
     ) -> _AssertNumOperationsContext:
         if all(
             [
+                num is None,
                 num_selects is None,
                 num_inserts is None,
                 num_updates is None,
@@ -103,6 +106,7 @@ class NumOperationsMixin:
         return _AssertNumOperationsContext(
             self,
             connections[using],
+            num=num,
             num_selects=num_selects,
             num_inserts=num_inserts,
             num_updates=num_updates,
