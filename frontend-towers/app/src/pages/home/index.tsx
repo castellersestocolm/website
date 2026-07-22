@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import ImageHero from "../../assets/images/hero.jpg";
-import ImageJoin from "../../assets/images/join3.jpg";
+import ImageJoin from "../../assets/images/join4.jpg";
+import ImageHeroOrder from "../../assets/images/heros/order.jpg";
 import styles from "./styles.module.css";
 import {
   Button,
@@ -679,24 +680,30 @@ function HomePage() {
           </Grid>
         </Container>
       </Box>
-      <Box
-        component="section"
-        sx={{ height: { xs: "300px", md: "750px" } }}
-        className={styles.mapBox}
-      >
-        <Map
-          location={
-            rehearsal && rehearsal.location ? rehearsal.location : undefined
+      <Box component="section">
+        <Hero
+          title={t("pages.home-order.title")}
+          subtitle={t("pages.home-order.subtitle")}
+          hero={ImageHeroOrder}
+          content={
+            <Box>
+              <Grid size={12} marginTop="24px">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  className={styles.joinButtons}
+                >
+                  <Button
+                    variant="contained"
+                    href={ROUTES.order.path}
+                    disableElevation
+                  >
+                    {t("pages.home-order.button-order")}
+                  </Button>
+                </Stack>
+              </Grid>
+            </Box>
           }
-          coordinates={
-            rehearsal && rehearsal.location
-              ? [
-                  rehearsal.location.coordinate_lat,
-                  rehearsal.location.coordinate_lon,
-                ]
-              : [59.3576, 17.9941]
-          }
-          zoom={12}
         />
       </Box>
     </>

@@ -66,6 +66,7 @@
 
 .heroSubtitle {
   color: var(--mui-palette-text-primary);
+  text-wrap: balance;
 }
 
 .heroButton {
