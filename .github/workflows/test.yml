@@ -80,10 +80,10 @@ jobs:
       run: docker compose -f docker-compose-test.yml run --rm --entrypoint=make --workdir=/backend --user=root backend coverage
 
     - name: Report coverage
-      if: github.event_name == "pull_request" && (github.event.action == "opened" || github.event.action == "reopened" || github.event.action == "synchronize")
+      if: ${{ github.event_name == "pull_request" && (github.event.action == "opened" || github.event.action == "reopened" || github.event.action == "synchronize") }}
       uses: 5monkeys/cobertura-action@v14
       with:
-        path: coverage/coverage.xml
+        path: backend/src/coverage.xml
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         minimum_coverage: 46
         show_line: true
