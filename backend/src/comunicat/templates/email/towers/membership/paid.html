@@ -38,4 +38,12 @@
       {% endwith %}
   </tr>
 </table>
+{% if membership_obj.all_membership_users %}
+    <p>{% trans "The following members are included in your membership." %}</p>
+    <ul>
+        {% for membership_user in membership_obj.all_membership_users %}
+            <li>{{ membership_user.user.name }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% endblock %}
