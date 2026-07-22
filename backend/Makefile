@@ -25,7 +25,7 @@ requirements:
 .PHONY: test
 test: wait-for-database
 	cd $(SRC_DIR) && \
-	$(TEST_ENV) $(PYTEST) $(test) --reuse-db -s --log-level=INFO
+	$(TEST_ENV) $(PYTEST) $(test) --reuse-db -rA -s -x --log-level=INFO
 
 .PHONY: format
 format:
@@ -37,3 +37,13 @@ lint:
 	flake8 $(SRC_DIR)/$(lint)
 	find $(SRC_DIR)/$(lint) -name '*.py' -not -path '*/migrations/*' | xargs black --check --diff
 	isort --check-only $(SRC_DIR)/$(lint)
+
+.PHONY: coverage
+coverage:
+	$(TEST_ENV) \
+	cd $(SRC_DIR) && \
+	coverage erase; \
+	$(PYTEST) --reuse-db -rA -s -x --log-level=INFO \
+    --cov=. \
+    --cov-fail-under=46 \
+	$(coverage)

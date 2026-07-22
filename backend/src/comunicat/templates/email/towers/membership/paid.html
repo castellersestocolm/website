@@ -3,6 +3,14 @@
 
 {% block email_body %}
     <p>{% trans "Your membership has been marked as paid! You will find a summary right below." %}</p>
+    {% if membership_obj.all_membership_users %}
+        <p>{% trans "The following members are included in your membership." %}</p>
+        <ul>
+            {% for membership_user in membership_obj.all_membership_users %}
+                <li>{{ membership_user.user.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
 .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
@@ -38,12 +46,4 @@
       {% endwith %}
   </tr>
 </table>
-{% if membership_obj.all_membership_users %}
-    <p>{% trans "The following members are included in your membership." %}</p>
-    <ul>
-        {% for membership_user in membership_obj.all_membership_users %}
-            <li>{{ membership_user.user.name }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
 {% endblock %}
