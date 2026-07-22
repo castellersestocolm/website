@@ -207,14 +207,14 @@ class TestUpdate(NumOperationsMixin, TestCase):
             lastname="surname-1",
             email="user-1@domain-test.org",
             phone="+46700000001",
-            preferred_language="en",
+            preferred_language="ca",
         )
         cls.user_2_obj = UserFactory(
             firstname="name-2",
             lastname="surname-2",
             email="user-2@domain-test.org",
             phone="+46700000002",
-            preferred_language="en",
+            preferred_language="ca",
             birthday=None,
         )
 
@@ -241,13 +241,13 @@ class TestUpdate(NumOperationsMixin, TestCase):
                     ConsentType.COMMUNICATION,
                     ConsentType.HEALTH,
                 ],
-                preferred_language="ca",
+                preferred_language="en",
             )
 
         self.assertEqual(user_obj.firstname, "name-1")
         self.assertEqual(user_obj.lastname, "surname-1")
         self.assertEqual(user_obj.phone, "+46700000001")
-        self.assertEqual(user_obj.preferred_language, "ca")
+        self.assertEqual(user_obj.preferred_language, "en")
 
         has_email = Email.objects.filter(entity__user=user_obj).exists()
 
@@ -278,13 +278,13 @@ class TestUpdate(NumOperationsMixin, TestCase):
                     ConsentType.COMMUNICATION,
                     ConsentType.HEALTH,
                 ],
-                preferred_language="ca",
+                preferred_language="en",
             )
 
         self.assertEqual(user_obj.firstname, "name-3")
         self.assertEqual(user_obj.lastname, "surname-3")
         self.assertEqual(user_obj.phone, "+46700000003")
-        self.assertEqual(user_obj.preferred_language, "ca")
+        self.assertEqual(user_obj.preferred_language, "en")
 
         towers_user_obj = TowersUser.objects.get(user=user_obj)
 
@@ -297,8 +297,8 @@ class TestUpdate(NumOperationsMixin, TestCase):
         self.assertEqual(email_obj.type, EmailType.WELCOME)
         self.assertEqual(email_obj.status, EmailStatus.SENT)
         self.assertEqual(email_obj.module, Module.ORG)
-        self.assertEqual(email_obj.locale, "ca")
-        self.assertIn("Benvingut a", email_obj.subject)
+        self.assertEqual(email_obj.locale, "en")
+        self.assertIn("Welcome to", email_obj.subject)
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [user_obj.email])
