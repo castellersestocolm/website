@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from factory import (
@@ -34,6 +35,12 @@ class UserFactory(DjangoModelFactory):
     phone = LazyFunction(fake_telephone)
 
     password = PostGenerationMethodCall("set_password", "password")
+
+    birthday = Faker(
+        "date_between_dates",
+        date_start=datetime.date(1970, 1, 1),
+        date_end=datetime.date(1999, 12, 31),
+    )
 
     origin_module = FuzzyChoice(Module)
 

@@ -446,7 +446,7 @@ def update(
             },
         )
 
-    if user_obj.entity:
+    if hasattr(user_obj, "entity"):
         # Create the associated consents
         consent.api.add_consents(
             entity_id=user_obj.entity.id, consent_types=consent_types
