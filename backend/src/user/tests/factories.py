@@ -1,5 +1,8 @@
+import random
+
 from factory import (
     Faker,
+    LazyAttribute,
     LazyFunction,
     PostGenerationMethodCall,
     SelfAttribute,
@@ -17,6 +20,7 @@ from user.models import (
     GoogleGroup,
     GoogleGroupModule,
     GoogleGroupUser,
+    TowersUser,
     User,
     UserEmail,
 )
@@ -50,6 +54,17 @@ class UserEmailFactory(DjangoModelFactory):
 
     class Meta:
         model = UserEmail
+
+
+class TowersUserFactory(DjangoModelFactory):
+    user = SubFactory(UserFactory)
+
+    alias = Faker("name")
+    height_shoulders = LazyAttribute(lambda n: random.randint(100, 175))
+    height_arms = LazyAttribute(lambda n: random.randint(150, 200))
+
+    class Meta:
+        model = TowersUser
 
 
 class FamilyFactory(DjangoModelFactory):
