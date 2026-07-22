@@ -85,8 +85,8 @@ jobs:
       with:
         path: backend/src/coverage.xml
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        minimum_coverage: 46
+        minimum_coverage: 48
         show_line: true
-        show_missing: false
+        show_missing: true
         show_missing_max_length: 100
         link_missing_lines: true
