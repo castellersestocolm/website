@@ -67,6 +67,7 @@
 .heroSubtitle {
   color: var(--mui-palette-text-primary);
   text-wrap: balance;
+  line-height: 1.3 !important;
 }
 
 .heroButton {
@@ -97,7 +98,6 @@
   display: flex;
   flex-basis: 0;
   align-items: center;
-  padding: 32px 0;
 }
 
 .postsInnerGrid {
