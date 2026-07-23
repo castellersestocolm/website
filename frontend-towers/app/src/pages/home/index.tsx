@@ -231,7 +231,12 @@ function HomePage() {
           }
         />
       )}
-      <Box component="section" className={styles.rehearsals}>
+      <Box
+        component="section"
+        className={styles.rehearsals}
+        pt={{ xs: 5, md: 8 }}
+        pb={{ xs: 5, md: 8 }}
+      >
         <Container maxWidth="lg">
           <Typography
             variant="h3"
@@ -396,7 +401,12 @@ function HomePage() {
           </Grid>
         </Container>
       </Box>
-      <Box component="section" className={styles.join}>
+      <Box
+        component="section"
+        className={styles.join}
+        pt={{ xs: 5, md: 8 }}
+        pb={{ xs: 5, md: 8 }}
+      >
         <Container maxWidth="lg">
           <Grid container spacing={4}>
             <Grid size={4} sx={{ display: { xs: "none", md: "block" } }}>
@@ -554,7 +564,12 @@ function HomePage() {
           </Grid>
         </Container>
       </Box>
-      <Box component="section" className={styles.timeline}>
+      <Box
+        component="section"
+        className={styles.timeline}
+        pt={{ xs: 5, md: 8 }}
+        pb={{ xs: 5, md: 8 }}
+      >
         <Container maxWidth="lg">
           <Typography
             variant="h3"
