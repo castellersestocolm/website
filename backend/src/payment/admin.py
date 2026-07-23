@@ -11,6 +11,7 @@ from django.db.models import JSONField, Prefetch, Q
 from django.forms import BaseInlineFormSet
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.templatetags.static import static
 from django.urls import path, reverse
 from django.utils import timezone, translation
 from django.utils.safestring import mark_safe
@@ -586,6 +587,7 @@ class AccountAdmin(admin.ModelAdmin):
         "category",
         "module",
         "allow_transactions",
+        "trend",
         "balance",
         "balance_y1",
         "balance_y2",
@@ -633,6 +635,20 @@ class AccountAdmin(admin.ModelAdmin):
 
         return super().changelist_view(request, extra_context=extra_context)
 
+    def trend(self, obj):
+        balance = getattr(obj, f"amount_{timezone.localdate().year}")
+        balance_y1 = getattr(obj, f"amount_{timezone.localdate().year - 1}")
+
+        if balance is None or balance_y1 is None:
+            return "-"
+
+        if balance >= balance_y1:
+            trend_html = f'<img src="{static('admin/icon-up.svg')}" style="color: var(--message-success-bg)" /> {abs(balance - balance_y1)}'
+        else:
+            trend_html = f'<img src="{static('admin/icon-down.svg')}" style="color: var(--message-error-bg)" /> {abs(balance_y1 - balance)}'
+
+        return mark_safe(trend_html)
+
     def balance(self, obj):
         return getattr(obj, f"amount_{timezone.localdate().year}")
 
@@ -645,6 +661,7 @@ class AccountAdmin(admin.ModelAdmin):
     def account_name(self, obj):
         return str(obj)
 
+    trend.short_description = _("trend")
     balance.short_description = _("balance")
     balance_y1.short_description = _("balance %s") % (timezone.localdate().year - 1,)
     balance_y2.short_description = _("balance %s") % (timezone.localdate().year - 2,)
