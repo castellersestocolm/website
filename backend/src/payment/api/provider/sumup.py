@@ -3,8 +3,6 @@ import logging
 from uuid import UUID
 
 from django.conf import settings
-from paypalserversdk.exceptions.api_exception import ApiException
-from paypalserversdk.exceptions.error_exception import ErrorException
 from sumup import Sumup
 from sumup._exceptions import APIError
 
