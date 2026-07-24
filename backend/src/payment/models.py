@@ -696,7 +696,7 @@ class PaymentOrder(StandardModel, Timestamps):
             self.__provider_id = self.provider.id
 
     def __str__(self) -> str:
-        return f"{self.provider.name.get(translation.get_language()) or list(self.provider.name.values())[0]}{' - ' + self.external_id if self.external_id else ''}"
+        return f"{self.provider.name.get(translation.get_language()) or list(self.provider.name.values())[0]}{' - ' + self.external_id if self.external_id and len(self.external_id) <= 10 else ''}"
 
     def save(self, *args, **kwargs):
         if self.pk and self.provider and self.provider.id != self.__provider_id:
