@@ -146,7 +146,7 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:  # noqa: C9
         payment_pending_objs = [
             payment_obj
             for payment_obj in payment_objs
-            if payment_obj.status == PaymentStatus.PENDING
+            if payment_obj.status <= PaymentStatus.PENDING
         ]
         payment_pending_obj = payment_pending_objs[0] if payment_pending_objs else None
 
@@ -204,7 +204,7 @@ def create_or_update_payment(membership_id: UUID) -> Payment | None:  # noqa: C9
                         payment_pending_obj = Payment.objects.create(
                             entity=entity_obj,
                             type=PaymentType.DEBIT,
-                            status=PaymentStatus.PENDING,
+                            status=PaymentStatus.CREATED,
                         )
 
                     PaymentLine.objects.create(

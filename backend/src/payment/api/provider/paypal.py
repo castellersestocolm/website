@@ -198,7 +198,7 @@ class PaymentProviderPaypal(PaymentProviderBase):
         assert self.order_obj.status == OrderStatus.CREATED
 
         if (
-            self.payment_order_obj.status > PaymentStatus.PENDING
+            self.payment_order_obj.status > PaymentStatus.CREATED
             or not self.payment_order_obj.external_id
         ):
             return False

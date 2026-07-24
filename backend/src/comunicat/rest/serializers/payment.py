@@ -352,7 +352,7 @@ class PaymentOrderSerializer(s.ModelSerializer):
 
     @swagger_serializer_method(serializer_or_field=s.DictField(read_only=True))
     def get_fulfillment(self, obj):
-        if obj.status == PaymentStatus.PENDING:
+        if obj.status <= PaymentStatus.PENDING:
             if obj.provider.code == "PAYPAL" and obj.external_id:
                 return {
                     "url": f"https://www{'.sandbox' if Environment[settings.PAYMENT_PROVIDER_PAYPAL_ENVIRONMENT] == Environment.SANDBOX else ''}.paypal.com/checkoutnow?token={obj.external_id}"

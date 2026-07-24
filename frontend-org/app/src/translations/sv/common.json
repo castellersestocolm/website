@@ -244,6 +244,7 @@
   "enums.language.en": "Engelska",
   "enums.language.ca": "Katalanska",
   "enums.language.sv": "Svenska",
+  "enums.payment-status.0": "I väntan",
   "enums.payment-status.10": "I väntan",
   "enums.payment-status.20": "Bearbetas",
   "enums.payment-status.30": "Slutfört",

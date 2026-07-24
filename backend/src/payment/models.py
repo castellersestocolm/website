@@ -55,7 +55,7 @@ class Payment(StandardModel, Timestamps):
     )
     status = models.PositiveSmallIntegerField(
         choices=((ps.value, ps.name) for ps in PaymentStatus),
-        default=PaymentStatus.PENDING,
+        default=PaymentStatus.CREATED,
     )
     method = models.PositiveIntegerField(
         choices=((pm.value, pm.name) for pm in PaymentMethod),
@@ -683,7 +683,7 @@ class PaymentOrder(StandardModel, Timestamps):
 
     status = models.PositiveIntegerField(
         choices=((ps.value, ps.name) for ps in PaymentStatus),
-        default=PaymentStatus.PENDING,
+        default=PaymentStatus.CREATED,
     )
 
     external_id = models.CharField(max_length=255, blank=True, null=True, unique=True)

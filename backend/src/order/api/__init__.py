@@ -17,6 +17,10 @@ from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from data.models import Country, Region
 from notify.enums import EmailType
+from order.consts import (
+    ORDER_CLEAN_STATUS_CREATED_HOURS,
+    ORDER_CLEAN_STATUS_PROCESSING_HOURS,
+)
 from order.enums import OrderDeliveryType, OrderStatus
 from order.models import (
     DeliveryProvider,
@@ -305,6 +309,14 @@ def create(  # noqa: C901
             vat=product_size_obj.vat,
         )
 
+    if payment_order_obj:
+        # Initialise external_id
+        update_provider(
+            order_id=order_obj.id,
+            provider_id=payment_order_obj.provider_id,
+            module=module,
+        )
+
     return order_obj
 
 
@@ -342,6 +354,10 @@ def update_provider(
         order_obj.save(update_fields=("payment_order",))
 
     payment_classes_by_id = payment.api.payment_provider.get_classes(module=module)
+
+    if payment_order_obj.provider and payment_order_obj.provider_id != provider_id:
+        payment_classes_by_id[payment_order_obj.provider_id](order_id=order_id).cancel()
+
     payment_class = payment_classes_by_id[provider_id](order_id=order_id)
     external_id = payment_class.create()
 
@@ -354,11 +370,26 @@ def update_provider(
 
 def clean_pending_orders() -> None:
     # TODO: Move delta to a setting perhaps
-    # TODO: Update status on payment order
-    Order.objects.filter(
-        status=OrderStatus.CREATED,
-        created_at__lte=timezone.now() - timezone.timedelta(hours=1),
-    ).update(status=OrderStatus.ABANDONED)
+    # TODO: Check what happens when payment order and order are out of sync
+    order_ids = Order.objects.filter(
+        Q(
+            status=OrderStatus.CREATED,
+            created_at__lte=timezone.now()
+            - timezone.timedelta(hours=ORDER_CLEAN_STATUS_CREATED_HOURS)
+            - timezone.timedelta(minutes=5),
+        )
+        | Q(
+            status=OrderStatus.PROCESSING,
+            created_at__lte=timezone.now()
+            - timezone.timedelta(hours=ORDER_CLEAN_STATUS_PROCESSING_HOURS),
+        )
+    ).value_list("id", flat=True)
+
+    Order.objects.filter(id__in=order_ids).update(status=OrderStatus.ABANDONED)
+
+    PaymentOrder.objects.filter(order__id__in=order_ids).update(
+        status=OrderStatus.ABANDONED
+    )
 
 
 @transaction.atomic
@@ -380,7 +411,7 @@ def complete(
 
     if payment_order_obj.provider.code in ("SWISH", "TRANSFER"):
         is_captured = True
-    elif payment_order_obj.provider.code == "PAYPAL":
+    elif payment_order_obj.provider.code in ("SWISH", "SUMUP"):
         payment_class = payment.api.payment_provider.get_class(
             provider_id=payment_order_obj.provider_id
         )(order_id=order_id)

@@ -8,7 +8,6 @@ import Box from "@mui/material/Box";
 import {
   Card,
   Divider,
-  Link,
   List,
   ListItemButton,
   Typography,
@@ -24,7 +23,7 @@ import {
   apiOrderProviderUpdate,
   apiOrderComplete,
 } from "../../api";
-import { PaymentStatus, OrderStatus } from "../../enums";
+import { OrderStatus } from "../../enums";
 import { amountToString } from "../../utils/money";
 import { LoaderBar } from "../../components/LoaderBar/LoaderBar";
 import QRCode from "qrcode";
@@ -45,10 +44,19 @@ import {
   PayPalButtons,
   usePayPalScriptReducer,
 } from "@paypal/react-paypal-js";
+import { useCallback } from "react";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 const PAYMENT_PROVIDER_PAYPAL_CLIENT_ID =
   process.env.REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID;
+
+declare global {
+  interface Window {
+    SumUpCard: any;
+  }
+}
+
+window.SumUpCard = window.SumUpCard || {};
 
 function OrderPaymentPage() {
   const [t, i18n] = useTranslation("common");
@@ -66,6 +74,9 @@ function OrderPaymentPage() {
   const [paymentSwishSvg, setPaymentSwishSvg] = React.useState(undefined);
   const [paymentPayPalOrderId, setPaymentPayPalOrderId] =
     React.useState(undefined);
+  const [paymentSumUpOrderId, setPaymentSumUpOrderId] =
+    React.useState(undefined);
+  const [paymentSumUpMounted, setPaymentSumUpMounted] = React.useState(false);
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {
@@ -137,6 +148,47 @@ function OrderPaymentPage() {
     i18n.resolvedLanguage,
   ]);
 
+  function handleSelectProvider(paymentProviderId: string) {
+    const paymentProvider = paymentProviderById[paymentProviderId];
+    if (paymentProvider.is_enabled) {
+      setPaymentProvider(paymentProvider);
+      apiOrderProviderUpdate(id, paymentProviderId).then((response) => {
+        if (response.status === 200) {
+          const orderData = response.data;
+          setOrder(orderData);
+          localStorage.setItem("order", JSON.stringify(orderData));
+        } else {
+          setMessages([
+            { message: t("pages.order-cart.order.error"), type: "error" },
+          ]);
+          setTimeout(() => setMessages(undefined), 10000);
+        }
+      });
+    }
+  }
+
+  const handleCompleteOrder = useCallback(() => {
+    return apiOrderComplete(id).then((response: any) => {
+      if (response.status === 200) {
+        const orderData = response.data;
+
+        if (orderData.status !== OrderStatus.CREATED) {
+          setOrder(orderData);
+          localStorage.removeItem("orderId");
+          localStorage.removeItem("order");
+          navigate(
+            ROUTES["order-receipt"].path.replace(":id", response.data.id),
+          );
+        }
+      } else {
+        setMessages([
+          { message: t("pages.order-cart.order.error"), type: "error" },
+        ]);
+        setTimeout(() => setMessages(undefined), 10000);
+      }
+    });
+  }, [id, navigate, setMessages, t]);
+
   React.useEffect(() => {
     if (order && order.payment_order) {
       if (order.payment_order.provider.code === "SWISH") {
@@ -164,58 +216,52 @@ function OrderPaymentPage() {
       } else {
         setPaymentPayPalOrderId(undefined);
       }
+
+      if (order.payment_order.provider.code === "SUMUP") {
+        setPaymentSumUpOrderId(order.payment_order.external_id);
+      } else {
+        setPaymentSumUpOrderId(undefined);
+      }
     } else {
       setPaymentSwishSvg(undefined);
       setPaymentPayPalOrderId(undefined);
+      setPaymentSumUpOrderId(undefined);
     }
   }, [
     order,
     i18n.resolvedLanguage,
     setPaymentSwishSvg,
     setPaymentPayPalOrderId,
+    setPaymentSumUpOrderId,
     t,
   ]);
 
-  function handleSelectProvider(paymentProviderId: string) {
-    const paymentProvider = paymentProviderById[paymentProviderId];
-    if (paymentProvider.is_enabled) {
-      setPaymentProvider(paymentProvider);
-      apiOrderProviderUpdate(id, paymentProviderId).then((response) => {
-        if (response.status === 200) {
-          const orderData = response.data;
-          setOrder(orderData);
-          localStorage.setItem("order", JSON.stringify(orderData));
-        } else {
-          setMessages([
-            { message: t("pages.order-cart.order.error"), type: "error" },
-          ]);
-          setTimeout(() => setMessages(undefined), 10000);
-        }
-      });
-    }
-  }
-
-  function handleCompleteOrder() {
-    return apiOrderComplete(id).then((response) => {
-      if (response.status === 200) {
-        const orderData = response.data;
-
-        if (orderData.status !== OrderStatus.CREATED) {
-          setOrder(orderData);
-          localStorage.removeItem("orderId");
-          localStorage.removeItem("order");
-          navigate(
-            ROUTES["order-receipt"].path.replace(":id", response.data.id),
-          );
-        }
-      } else {
-        setMessages([
-          { message: t("pages.order-cart.order.error"), type: "error" },
-        ]);
-        setTimeout(() => setMessages(undefined), 10000);
+  React.useEffect(() => {
+    if (paymentSumUpOrderId) {
+      setTimeout(() => {
+        setPaymentSumUpMounted(true);
+        window.SumUpCard.mount({
+          id: "sumup-card",
+          checkoutId: paymentSumUpOrderId,
+          onResponse: (type: any, body: any) => {
+            console.log("SHOULD DO SOMETHING HERE", type);
+            console.log(body);
+            if (type === "success") {
+              console.log(body);
+              handleCompleteOrder();
+            } else if (type === "error") {
+              console.log(body);
+            }
+          },
+        });
+      }, 1000);
+    } else {
+      if (window.SumUpCard && window.SumUpCard.unmount) {
+        window.SumUpCard.unmount("sumup-card");
       }
-    });
-  }
+      setPaymentSumUpMounted(false);
+    }
+  }, [paymentSumUpOrderId, handleCompleteOrder, setPaymentSumUpMounted]);
 
   const ButtonWrapper = ({ showSpinner }: any) => {
     const [{ isPending }] = usePayPalScriptReducer();
@@ -248,155 +294,217 @@ function OrderPaymentPage() {
           {t("pages.order-payment.providers-card.paypal.window-1")}
         </Typography>
       </>
+    ) : paymentProvider.code === "SUMUP" ? (
+      <>
+        <Typography variant="body2" component="div" mt={1}>
+          {t("pages.order-payment.providers-card.sumup.window-1")}
+        </Typography>
+      </>
     ) : paymentProvider.code === "TRANSFER" ? (
       <Typography variant="body2" component="div" mt={1}>
         {t("pages.order-payment.providers-card.transfer.time-1")}
       </Typography>
     ) : undefined);
 
-  const payContent =
-    order &&
-    paymentProvider &&
-    (paymentProvider.code === "SWISH" && paymentSwishSvg ? (
-      <Box className={styles.providerSwish}>
-        <img src={paymentSwishSvg} alt="Swish QR" />
-        <Typography
-          variant="h5"
-          component="span"
-          fontWeight={700}
-          className={styles.providerSwishText}
-        >
-          {amountToString(order.amount.amount)} {order.amount.currency}
-        </Typography>
-        <Typography
-          variant="body1"
-          component="span"
-          className={styles.providerSwishText}
-        >
-          {t("swish.payment.order")}
-          {" #"}
-          {order.reference}
-        </Typography>
-        <Typography
-          variant="body2"
-          component="span"
-          className={styles.providerSwishText}
-        >
-          {PAYMENT_SWISH_OWNER}
-        </Typography>
-        <Typography
-          variant="body1"
-          component="span"
-          className={styles.providerSwishPhone}
-        >
-          <IconPhone />
-          {PAYMENT_SWISH_NUMBER}
-        </Typography>
-        <Button
-          variant="contained"
-          type="button"
-          color="primary"
-          disableElevation
-          onClick={handleCompleteOrder}
-          className={styles.providerSwishButton}
-        >
-          {t("pages.order-payment.providers-card.complete")}
-        </Button>
-      </Box>
-    ) : paymentProvider.code === "PAYPAL" && paymentPayPalOrderId ? (
-      <Box className={styles.providerPayPal}>
-        <PayPalScriptProvider
-          options={{
-            clientId: PAYMENT_PROVIDER_PAYPAL_CLIENT_ID,
-            components: "buttons",
-            currency: order.amount.currency,
-          }}
-        >
-          <ButtonWrapper showSpinner={false} />
-        </PayPalScriptProvider>
-      </Box>
-    ) : paymentProvider.code === "TRANSFER" ? (
-      <Box className={styles.providerTransfer}>
-        <List className={styles.providerTransferList}>
-          <Box>
-            <ListItemButton disableTouchRipple dense>
-              <ListItemIcon>
-                <IconAccountBalance />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <>
-                    <Typography variant="body2" fontWeight={600}>
-                      {PAYMENT_TRANSFER_OWNER}
-                    </Typography>
-                    <Typography variant="body2">
-                      {"IBAN: "}
-                      {PAYMENT_TRANSFER_IBAN}
-                      {" (BIC: "}
-                      {PAYMENT_TRANSFER_BIC}
-                      {")"}
-                    </Typography>
-                    <Typography variant="body2">
-                      {"PlusGirot: "}
-                      {PAYMENT_TRANSFER_PLUSGIRO}
-                    </Typography>
-                  </>
-                }
-              ></ListItemText>
-            </ListItemButton>
+  const payContent = (
+    <>
+      <Box
+        style={{
+          display:
+            order && paymentProvider && paymentProvider.code === "SUMUP"
+              ? "block"
+              : "none",
+        }}
+      >
+        {order && (
+          <Box className={styles.providerTransfer}>
+            <List className={styles.providerTransferList}>
+              <Box>
+                <ListItemButton disableTouchRipple dense>
+                  <ListItemIcon>
+                    <IconMoney />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography variant="caption" color="textSecondary">
+                          {t(
+                            "pages.order-payment.providers-card.transfer.amount",
+                          )}
+                        </Typography>
+                        <Typography variant="body2">
+                          {amountToString(order.amount.amount, 2) +
+                            " " +
+                            order.amount.currency}
+                        </Typography>
+                      </>
+                    }
+                  ></ListItemText>
+                </ListItemButton>
+              </Box>
+            </List>
+            <Divider />
           </Box>
-          <Box>
-            <ListItemButton disableTouchRipple dense>
-              <ListItemIcon>
-                <IconMessage />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <>
-                    <Typography variant="caption" color="textSecondary">
-                      {t("pages.order-payment.providers-card.transfer.message")}
-                    </Typography>
-                    <Typography variant="body2">{order.reference}</Typography>
-                  </>
-                }
-              ></ListItemText>
-            </ListItemButton>
+        )}
+        {!paymentSumUpMounted && (
+          <Box className={styles.providerBox}>
+            <LoaderBar />
           </Box>
-          <Box>
-            <ListItemButton disableTouchRipple dense>
-              <ListItemIcon>
-                <IconMoney />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <>
-                    <Typography variant="caption" color="textSecondary">
-                      {t("pages.order-payment.providers-card.transfer.amount")}
-                    </Typography>
-                    <Typography variant="body2">
-                      {amountToString(order.amount.amount, 2) +
-                        " " +
-                        order.amount.currency}
-                    </Typography>
-                  </>
-                }
-              ></ListItemText>
-            </ListItemButton>
-          </Box>
-        </List>
-        <Divider />
-        <Button
-          variant="contained"
-          type="button"
-          color="primary"
-          disableElevation
-          onClick={handleCompleteOrder}
-          className={styles.providerTransferButton}
-        >
-          {t("pages.order-payment.providers-card.complete")}
-        </Button>
+        )}
+        <Box className={styles.providerSumup}>
+          <div id="sumup-card" className="widget"></div>
+        </Box>
       </Box>
-    ) : undefined);
+      {order &&
+        paymentProvider &&
+        (paymentProvider.code === "SWISH" && paymentSwishSvg ? (
+          <Box className={styles.providerSwish}>
+            <img src={paymentSwishSvg} alt="Swish QR" />
+            <Typography
+              variant="h5"
+              component="span"
+              fontWeight={700}
+              className={styles.providerSwishText}
+            >
+              {amountToString(order.amount.amount)} {order.amount.currency}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="span"
+              className={styles.providerSwishText}
+            >
+              {t("swish.payment.order")}
+              {" #"}
+              {order.reference}
+            </Typography>
+            <Typography
+              variant="body2"
+              component="span"
+              className={styles.providerSwishText}
+            >
+              {PAYMENT_SWISH_OWNER}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="span"
+              className={styles.providerSwishPhone}
+            >
+              <IconPhone />
+              {PAYMENT_SWISH_NUMBER}
+            </Typography>
+            <Button
+              variant="contained"
+              type="button"
+              color="primary"
+              disableElevation
+              onClick={handleCompleteOrder}
+              className={styles.providerSwishButton}
+            >
+              {t("pages.order-payment.providers-card.complete")}
+            </Button>
+          </Box>
+        ) : paymentProvider.code === "PAYPAL" && paymentPayPalOrderId ? (
+          <Box className={styles.providerPayPal}>
+            <PayPalScriptProvider
+              options={{
+                clientId: PAYMENT_PROVIDER_PAYPAL_CLIENT_ID,
+                components: "buttons",
+                currency: order.amount.currency,
+              }}
+            >
+              <ButtonWrapper showSpinner={false} />
+            </PayPalScriptProvider>
+          </Box>
+        ) : paymentProvider.code === "TRANSFER" ? (
+          <Box className={styles.providerTransfer}>
+            <List className={styles.providerTransferList}>
+              <Box>
+                <ListItemButton disableTouchRipple dense>
+                  <ListItemIcon>
+                    <IconAccountBalance />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography variant="body2" fontWeight={600}>
+                          {PAYMENT_TRANSFER_OWNER}
+                        </Typography>
+                        <Typography variant="body2">
+                          {"IBAN: "}
+                          {PAYMENT_TRANSFER_IBAN}
+                          {" (BIC: "}
+                          {PAYMENT_TRANSFER_BIC}
+                          {")"}
+                        </Typography>
+                        <Typography variant="body2">
+                          {"PlusGirot: "}
+                          {PAYMENT_TRANSFER_PLUSGIRO}
+                        </Typography>
+                      </>
+                    }
+                  ></ListItemText>
+                </ListItemButton>
+              </Box>
+              <Box>
+                <ListItemButton disableTouchRipple dense>
+                  <ListItemIcon>
+                    <IconMessage />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography variant="caption" color="textSecondary">
+                          {t(
+                            "pages.order-payment.providers-card.transfer.message",
+                          )}
+                        </Typography>
+                        <Typography variant="body2">
+                          {order.reference}
+                        </Typography>
+                      </>
+                    }
+                  ></ListItemText>
+                </ListItemButton>
+              </Box>
+              <Box>
+                <ListItemButton disableTouchRipple dense>
+                  <ListItemIcon>
+                    <IconMoney />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography variant="caption" color="textSecondary">
+                          {t(
+                            "pages.order-payment.providers-card.transfer.amount",
+                          )}
+                        </Typography>
+                        <Typography variant="body2">
+                          {amountToString(order.amount.amount, 2) +
+                            " " +
+                            order.amount.currency}
+                        </Typography>
+                      </>
+                    }
+                  ></ListItemText>
+                </ListItemButton>
+              </Box>
+            </List>
+            <Divider />
+            <Button
+              variant="contained"
+              type="button"
+              color="primary"
+              disableElevation
+              onClick={handleCompleteOrder}
+              className={styles.providerTransferButton}
+            >
+              {t("pages.order-payment.providers-card.complete")}
+            </Button>
+          </Box>
+        ) : undefined)}
+    </>
+  );
 
   const content = (
     <Grid container spacing={4} className={styles.orderGrid}>

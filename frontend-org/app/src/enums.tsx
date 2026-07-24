@@ -43,6 +43,7 @@ export enum PaymentType {
 }
 
 export enum PaymentStatus {
+  CREATED = 0,
   PENDING = 10,
   PROCESSING = 20,
   COMPLETED = 30,
@@ -50,6 +51,7 @@ export enum PaymentStatus {
 }
 
 export const PAYMENT_STATUS_ICON: any = {
+  0: <IconPending />,
   10: <IconPending />,
   20: <IconChangeCircle />,
   30: <IconCheckCircle />,
@@ -149,6 +151,8 @@ export enum TeamType {
   TECHNICAL = 20,
   MUSICIANS = 30,
   COMMISSION = 40,
+  ELECTION = 50,
+  AUDITING = 60,
 }
 
 export enum ContactMessageType {
