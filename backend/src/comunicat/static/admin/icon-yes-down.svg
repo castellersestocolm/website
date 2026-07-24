@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="13"
+   height="13"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg418"
+   sodipodi:docname="icon-yes-down.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs422" />
+  <sodipodi:namedview
+     id="namedview420"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="39.5"
+     inkscape:cx="6.835443"
+     inkscape:cy="10.113924"
+     inkscape:window-width="2560"
+     inkscape:window-height="1313"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg418" />
+  <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+  <!--
+    Icon Name: circle-check
+    Icon Family: classic
+    Icon Style: solid
+  -->
+  <path
+     id="path416"
+     d="M 256,512 C 114.61515,512 0,397.38475 0,256 0,114.61525 114.61515,0 256,0 397.38485,0 512,114.61525 512,256 512,397.38475 397.38485,512 256,512 Z m 0,-160.23077 c 6.13533,0 12.32368,-2.32368 17,-7 L 416.61538,201.15385 c 9.35265,-9.35263 9.35265,-24.57044 0,-33.92308 -9.35263,-9.35263 -24.49353,-9.35263 -33.84615,0 L 256,294 129.23077,167.30769 c -9.35262,-9.35264 -24.49354,-9.35264 -33.846155,0 -9.352642,9.35263 -9.352642,24.57045 0,33.92308 L 239,344.84615 l 0.0769,-0.0769 c 4.67632,4.67632 10.78775,7 16.92308,7 z"
+     style="fill:#649c35;fill-opacity:1" />
+</svg>

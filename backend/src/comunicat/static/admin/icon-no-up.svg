@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="13"
+   height="13"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg293"
+   sodipodi:docname="icon-no-up.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs297" />
+  <sodipodi:namedview
+     id="namedview295"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="79"
+     inkscape:cx="5.7848101"
+     inkscape:cy="7.1202532"
+     inkscape:window-width="2560"
+     inkscape:window-height="1313"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg293" />
+  <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+  <!--
+    Icon Name: circle-xmark
+    Icon Family: classic
+    Icon Style: solid
+  -->
+  <path
+     id="path291"
+     d="M 256,512 C 114.61515,512 0,397.38475 0,256 0,114.61525 114.61515,0 256,0 397.38485,0 512,114.61525 512,256 512,397.38475 397.38485,512 256,512 Z M 382.76923,344.76923 c 9.35262,9.35263 24.49352,9.35263 33.84615,0 9.35265,-9.35265 9.35265,-24.57045 0,-33.92308 L 273,167.23077 c -9.35264,-9.35264 -24.57045,-9.35264 -33.92308,0 L 239,167.15385 95.384615,310.76923 c -9.352637,9.35263 -9.352637,24.57045 0,33.92308 9.352625,9.35264 24.493535,9.35264 33.846155,0 L 256,218 Z"
+     style="fill:#c63d3d;fill-opacity:1" />
+</svg>
