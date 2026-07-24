@@ -642,10 +642,16 @@ class AccountAdmin(admin.ModelAdmin):
         if balance is None or balance_y1 is None:
             return "-"
 
-        if balance >= balance_y1:
-            trend_html = f'<img src="{static('admin/icon-up.svg')}" style="color: var(--message-success-bg)" /> {abs(balance - balance_y1)}'
+        if obj.type == PaymentType.DEBIT:
+            if balance >= balance_y1:
+                trend_html = f'<img src="{static('admin/icon-yes-up.svg')}" style="color: var(--message-success-bg)" /> {abs(balance) - abs(balance_y1)}'
+            else:
+                trend_html = f'<img src="{static('admin/icon-no-down.svg')}" style="color: var(--message-error-bg)" /> {abs(balance_y1) - abs(balance)}'
         else:
-            trend_html = f'<img src="{static('admin/icon-down.svg')}" style="color: var(--message-error-bg)" /> {abs(balance_y1 - balance)}'
+            if balance >= balance_y1:
+                trend_html = f'<img src="{static('admin/icon-yes-down.svg')}" style="color: var(--message-success-bg)" /> {abs(balance) - abs(balance_y1)}'
+            else:
+                trend_html = f'<img src="{static('admin/icon-no-up.svg')}" style="color: var(--message-error-bg)" /> {abs(balance_y1) - abs(balance)}'
 
         return mark_safe(trend_html)
 

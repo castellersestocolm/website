@@ -6,6 +6,8 @@ class TeamType(enum.IntEnum):
     TECHNICAL = 20
     MUSICIANS = 30
     COMMISSION = 40
+    ELECTION = 50
+    AUDITING = 60
 
 
 class PermissionLevel(enum.IntEnum):
