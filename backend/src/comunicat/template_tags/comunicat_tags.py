@@ -14,6 +14,7 @@ from rest_framework.exceptions import ValidationError
 import activity.enums
 import event.enums
 import membership.enums
+import payment.enums
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
@@ -104,6 +105,11 @@ def enums_activity(name: str):
 @register.filter
 def enums_event(name: str):
     return getattr(event.enums, name, "")
+
+
+@register.filter
+def enums_payment(name: str):
+    return getattr(payment.enums, name, "")
 
 
 @register.filter
