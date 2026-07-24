@@ -337,6 +337,7 @@ def run(transaction_import_id: UUID) -> List[Transaction]:  # noqa: C901
                     PaymentLine.objects.filter(
                         Q(
                             payment__status__in=(
+                                PaymentStatus.CREATED,
                                 PaymentStatus.PENDING,
                                 PaymentStatus.PROCESSING,
                             )

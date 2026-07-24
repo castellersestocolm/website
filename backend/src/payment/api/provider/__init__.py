@@ -59,3 +59,6 @@ class PaymentProviderBase:
 
     def capture(self) -> bool:
         return False
+
+    def cancel(self) -> bool:
+        return False

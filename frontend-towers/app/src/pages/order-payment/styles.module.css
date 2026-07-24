@@ -223,6 +223,9 @@
   padding: 16px;
 }
 
+.providerSumup {
+}
+
 .providerTransfer {
   display: flex;
   flex-direction: column;

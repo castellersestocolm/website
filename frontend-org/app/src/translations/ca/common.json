@@ -245,6 +245,7 @@
   "enums.language.en": "Anglès",
   "enums.language.ca": "Català",
   "enums.language.sv": "Suec",
+  "enums.payment-status.0": "Pendent",
   "enums.payment-status.10": "Pendent",
   "enums.payment-status.20": "Processant",
   "enums.payment-status.30": "Completat",

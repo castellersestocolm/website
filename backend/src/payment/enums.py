@@ -7,6 +7,7 @@ class PaymentType(IntEnum):
 
 
 class PaymentStatus(IntEnum):
+    CREATED = 0
     PENDING = 10
     PROCESSING = 20
     COMPLETED = 30
@@ -21,6 +22,7 @@ class PaymentMethod(IntEnum):
     CARD = 30
 
     PAYPAL = 110
+    SUMUP = 120
 
     # https://www.iso.org/obp/ui/#iso:code:3166:SE
     SE_SWISH = 75201
