@@ -110,23 +110,42 @@ class PaymentQuerySet(QuerySet):
         PaymentLine = apps.get_model("payment", "PaymentLine")
 
         return self.annotate(
-            membership_year=Subquery(
-                Membership.objects.filter(
-                    modules__payment_lines__payment_id=OuterRef("id"),
-                ).values("date_from")[:1]
+            membership_year_str=Case(
+                When(
+                    Q(
+                        lines__item_type__app_label="membership",
+                        lines__item_type__model="membershipmodule",
+                    ),
+                    then=Subquery(
+                        Membership.objects.filter(
+                            modules__payment_lines__payment_id=OuterRef("id"),
+                        )
+                        .annotate(
+                            membership_year_str=Substr(
+                                Cast("date_from", CharField()), 1, 4
+                            )
+                        )
+                        .values("membership_year_str")[:1]
+                    ),
+                ),
+                output_field=CharField(),
+                default=Value(None),
             ),
-            membership_year_str=Substr(Cast("membership_year", CharField()), 1, 4),
-            order_reference=Subquery(
-                Order.objects.filter(
-                    Q(products__line__payment_id=OuterRef("id"))
-                    | Q(registrations__line__payment_id=OuterRef("id"))
-                    | Q(delivery__line__payment_id=OuterRef("id"))
-                ).values("reference")[:1]
-            ),
-            line_text=Subquery(
-                PaymentLine.objects.filter(payment_id=OuterRef("id"))
-                .with_description()
-                .values("text")[:1]
+            order_reference=Case(
+                When(
+                    Q(
+                        lines__item_type__app_label="order",
+                    ),
+                    then=Subquery(
+                        Order.objects.filter(
+                            Q(products__line__payment_id=OuterRef("id"))
+                            | Q(registrations__line__payment_id=OuterRef("id"))
+                            | Q(delivery__line__payment_id=OuterRef("id"))
+                        ).values("reference")[:1]
+                    ),
+                ),
+                output_field=CharField(),
+                default=Value(None),
             ),
             lines_count=Count("lines"),
             is_update=Exists(
@@ -177,7 +196,6 @@ class PaymentQuerySet(QuerySet):
                         output_field=CharField(),
                     ),
                 ),
-                When(Q(lines_count=1, line_text__isnull=False), then=F("line_text")),
                 When(Q(text__isnull=False), then=F("text")),
                 default=Value(str(_("Payment"))),
                 output_field=CharField(),
