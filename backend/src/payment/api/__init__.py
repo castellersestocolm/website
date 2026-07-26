@@ -1,5 +1,4 @@
 import datetime
-from typing import List
 from uuid import UUID
 
 from django.conf import settings
