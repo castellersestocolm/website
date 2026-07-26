@@ -12,7 +12,6 @@ from django.db.models import (
     OuterRef,
     Prefetch,
     Q,
-    QuerySet,
     Value,
     When,
 )
@@ -28,8 +27,8 @@ from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 
 
-def get_list(user_id: UUID, module: Module) -> QuerySet[Payment]:
-    return (
+def get_list(user_id: UUID, module: Module) -> list[Payment]:
+    return list(
         Payment.objects.annotate(
             is_user_related=(
                 Exists(

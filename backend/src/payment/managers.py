@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.conf import settings
 from django.db.models import (
+    BooleanField,
     Case,
     CharField,
     Count,
@@ -110,12 +111,30 @@ class PaymentQuerySet(QuerySet):
         PaymentLine = apps.get_model("payment", "PaymentLine")
 
         return self.annotate(
-            membership_year_str=Case(
+            type_membership=Case(
                 When(
                     Q(
                         lines__item_type__app_label="membership",
                         lines__item_type__model="membershipmodule",
                     ),
+                    then=Value(True),
+                ),
+                output_field=BooleanField(),
+                default=Value(False),
+            ),
+            type_order=Case(
+                When(
+                    Q(
+                        lines__item_type__app_label="order",
+                    ),
+                    then=Value(True),
+                ),
+                output_field=BooleanField(),
+                default=Value(False),
+            ),
+            membership_year_str=Case(
+                When(
+                    type_membership=True,
                     then=Subquery(
                         Membership.objects.filter(
                             modules__payment_lines__payment_id=OuterRef("id"),
@@ -133,9 +152,7 @@ class PaymentQuerySet(QuerySet):
             ),
             order_reference=Case(
                 When(
-                    Q(
-                        lines__item_type__app_label="order",
-                    ),
+                    type_order=True,
                     then=Subquery(
                         Order.objects.filter(
                             Q(products__line__payment_id=OuterRef("id"))
@@ -147,21 +164,24 @@ class PaymentQuerySet(QuerySet):
                 output_field=CharField(),
                 default=Value(None),
             ),
-            lines_count=Count("lines"),
-            is_update=Exists(
-                PaymentLine.objects.filter(
-                    item_id=OuterRef("lines__item_id"),
-                    created_at__lt=OuterRef("created_at"),
-                ).exclude(
-                    id__in=OuterRef("lines__id"),
-                )
+            is_update=Case(
+                When(
+                    type_membership=True,
+                    then=Exists(
+                        PaymentLine.objects.filter(
+                            item_id=OuterRef("lines__item_id"),
+                            created_at__lt=OuterRef("created_at"),
+                        ).exclude(
+                            id__in=OuterRef("lines__id"),
+                        )
+                    ),
+                ),
+                output_field=BooleanField(),
+                default=Value(False),
             ),
             description=Case(
                 When(
-                    Q(
-                        lines__item_type__app_label="membership",
-                        lines__item_type__model="membershipmodule",
-                    ),
+                    type_membership=True,
                     then=Case(
                         When(
                             is_update=True,
@@ -180,9 +200,7 @@ class PaymentQuerySet(QuerySet):
                     ),
                 ),
                 When(
-                    Q(
-                        lines__item_type__app_label="order",
-                    ),
+                    type_order=True,
                     then=Case(
                         When(
                             order_reference__isnull=False,
