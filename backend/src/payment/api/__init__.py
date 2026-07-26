@@ -4,7 +4,18 @@ from uuid import UUID
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, DateField, Exists, F, OuterRef, Prefetch, Q, When
+from django.db.models import (
+    BooleanField,
+    Case,
+    DateField,
+    Exists,
+    F,
+    OuterRef,
+    Prefetch,
+    Q,
+    Value,
+    When,
+)
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
@@ -60,7 +71,20 @@ def get_list(user_id: UUID, module: Module) -> List[Payment]:
                 Prefetch(
                     "lines",
                     PaymentLine.objects.with_description()
-                    .order_by("amount")
+                    .annotate(
+                        is_delivery=Case(
+                            When(
+                                Q(
+                                    item_type__app_label="order",
+                                    item_type__model="orderdelivery",
+                                ),
+                                then=Value(True),
+                            ),
+                            default=Value(False),
+                            output_field=BooleanField(),
+                        )
+                    )
+                    .order_by("is_delivery", "amount", "product_name_locale")
                     .select_related("receipt"),
                 ),
                 Prefetch("logs", PaymentLog.objects.all().order_by("-created_at")),
