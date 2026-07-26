@@ -384,7 +384,7 @@ def clean_pending_orders() -> None:
             created_at__lte=timezone.now()
             - timezone.timedelta(hours=ORDER_CLEAN_STATUS_PROCESSING_HOURS),
         )
-    ).value_list("id", flat=True)
+    ).values_list("id", flat=True)
 
     Order.objects.filter(id__in=order_ids).update(status=OrderStatus.ABANDONED)
 
