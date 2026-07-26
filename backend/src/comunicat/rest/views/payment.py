@@ -32,7 +32,7 @@ class PaymentAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: PaymentSerializer(many=True), 400: Serializer()},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     @method_decorator(cache_control(private=True))
     def list(self, request):
         if not request.user.is_authenticated:
