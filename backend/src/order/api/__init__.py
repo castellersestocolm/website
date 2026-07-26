@@ -4,7 +4,7 @@ from uuid import UUID
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Prefetch, Q, QuerySet
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.models import convert_money
@@ -44,7 +44,7 @@ def get_list(
     user_id: UUID | None = None,
     order_id: UUID | None = None,
     for_admin: bool = False,
-) -> QuerySet[Order]:
+) -> list[Order]:
     order_filter = Q()
     order_annotate = {}
 
@@ -76,9 +76,9 @@ def get_list(
         order_filter &= Q(entity__user_id=user_id) | Q(is_user_related=True)
     else:
         if not order_id and not for_admin:
-            return Order.objects.none()
+            return []
 
-    return (
+    return list(
         Order.objects.annotate(**order_annotate)
         .filter(order_filter)
         .exclude(status__in=(OrderStatus.CANCELLED, OrderStatus.ABANDONED))
