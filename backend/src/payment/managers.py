@@ -106,6 +106,7 @@ class PaymentQuerySet(QuerySet):
 
     def with_description(self):
         Membership = apps.get_model("membership", "Membership")
+        Order = apps.get_model("order", "Order")
         PaymentLine = apps.get_model("payment", "PaymentLine")
 
         return self.annotate(
@@ -115,6 +116,13 @@ class PaymentQuerySet(QuerySet):
                 ).values("date_from")[:1]
             ),
             membership_year_str=Substr(Cast("membership_year", CharField()), 1, 4),
+            order_reference=Subquery(
+                Order.objects.filter(
+                    Q(products__line__payment_id=OuterRef("id"))
+                    | Q(registrations__line__payment_id=OuterRef("id"))
+                    | Q(delivery__line__payment_id=OuterRef("id"))
+                ).values("reference")[:1]
+            ),
             line_text=Subquery(
                 PaymentLine.objects.filter(payment_id=OuterRef("id"))
                 .with_description()
@@ -149,6 +157,23 @@ class PaymentQuerySet(QuerySet):
                             Value(" "),
                             F("membership_year_str"),
                         ),
+                        output_field=CharField(),
+                    ),
+                ),
+                When(
+                    Q(
+                        lines__item_type__app_label="order",
+                    ),
+                    then=Case(
+                        When(
+                            order_reference__isnull=False,
+                            then=Concat(
+                                Value(str(_("Order"))),
+                                Value(" #"),
+                                F("order_reference"),
+                            ),
+                        ),
+                        default=Value(str(_("Order"))),
                         output_field=CharField(),
                     ),
                 ),
@@ -313,6 +338,8 @@ class PaymentLineQuerySet(QuerySet):
             "activity", "ProgramCourseRegistration"
         )
         OrderProduct = apps.get_model("order", "OrderProduct")
+        OrderRegistration = apps.get_model("order", "OrderRegistration")
+        OrderDelivery = apps.get_model("order", "OrderDelivery")
 
         locale = translation.get_language()
 
@@ -412,6 +439,22 @@ class PaymentLineQuerySet(QuerySet):
                         .values_list("event_title_locale", flat=True)[:1]
                     ),
                 ),
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="orderregistration",
+                    ),
+                    then=Subquery(
+                        OrderRegistration.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(
+                            event_title_locale=Cast(
+                                KeyTextTransform(locale, "registration__event__title"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("event_title_locale", flat=True)[:1]
+                    ),
+                ),
                 default=Value(None),
                 output_field=CharField(),
             ),
@@ -432,6 +475,26 @@ class PaymentLineQuerySet(QuerySet):
                             )
                         )
                         .values_list("program_name_locale", flat=True)[:1]
+                    ),
+                ),
+                default=Value(None),
+                output_field=CharField(),
+            ),
+            product_name_locale=Case(
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="orderproduct",
+                    ),
+                    then=Subquery(
+                        OrderProduct.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(
+                            product_name_locale=Cast(
+                                KeyTextTransform(locale, "size__product__name"),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("product_name_locale", flat=True)[:1]
                     ),
                 ),
                 default=Value(None),
@@ -522,9 +585,48 @@ class PaymentLineQuerySet(QuerySet):
                     then=Subquery(
                         OrderProduct.objects.filter(id=OuterRef("item_uuid"))
                         .annotate(
-                            name_locale=Cast(
-                                KeyTextTransform(locale, "size__product__name"),
-                                output_field=CharField(),
+                            name_locale=Concat(
+                                Cast(F("quantity"), output_field=CharField()),
+                                Value(" x "),
+                                OuterRef("product_name_locale"),
+                                Value(" — "),
+                                F("size__size"),
+                            )
+                        )
+                        .values_list("name_locale", flat=True)[:1]
+                    ),
+                ),
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="orderregistration",
+                    ),
+                    then=Case(
+                        When(
+                            entity_name__isnull=False,
+                            then=Concat(
+                                F("event_title_locale"), Value(" — "), F("entity_name")
+                            ),
+                        ),
+                        default=F("program_name_locale"),
+                        output_field=CharField(),
+                    ),
+                ),
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="orderdelivery",
+                    ),
+                    then=Subquery(
+                        OrderDelivery.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(
+                            name_locale=Concat(
+                                Value(str(_("Delivery"))),
+                                Value(" — "),
+                                Cast(
+                                    KeyTextTransform(locale, "provider__name"),
+                                    output_field=CharField(),
+                                ),
                             )
                         )
                         .values_list("name_locale", flat=True)[:1]

@@ -104,10 +104,7 @@ def get_list(
         .prefetch_related(
             Prefetch(
                 "products",
-                OrderProduct.objects.order_by(
-                    "size__product__type", "size__order", "size__category", "size__size"
-                )
-                .select_related("size", "size__product", "line")
+                OrderProduct.objects.select_related("size", "size__product", "line")
                 .prefetch_related(
                     "size__product__sizes",
                     "size__product__images",
@@ -115,20 +112,21 @@ def get_list(
                     "size__product__modules__teams",
                     "size__product__modules__exclude_teams",
                 )
-                .with_name(),
+                .with_name()
+                .order_by("amount", "name_locale", "size__size"),
             ),
             Prefetch(
                 "registrations",
-                OrderRegistration.objects.order_by(
-                    "registration__event__time_from",
-                    "amount",
-                    "registration__entity__firstname",
-                    "registration__entity__lastname",
-                ).select_related(
+                OrderRegistration.objects.select_related(
                     "registration",
                     "registration__event",
                     "registration__entity",
                     "registration__entity__user",
+                ).order_by(
+                    "registration__event__time_from",
+                    "amount",
+                    "registration__entity__firstname",
+                    "registration__entity__lastname",
                 ),
             ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
