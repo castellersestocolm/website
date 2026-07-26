@@ -1,6 +1,5 @@
 import datetime
 from collections import defaultdict
-from typing import List
 from uuid import UUID
 
 from django.conf import settings
@@ -41,7 +40,7 @@ def get_list(  # noqa: C901
     filter_is_registered: bool | None = None,
     filter_types: list[EventType] | None = None,
     order_by: list[str] | None = None,
-) -> List[Event]:
+) -> list[Event]:
     if request_user_id:
         family_user_ids = [
             family_member_obj.user_id
@@ -87,11 +86,11 @@ def get_list(  # noqa: C901
     if filter_types:
         event_filter &= Q(type__in=filter_types)
 
+    # TODO: Rethink this, for now this will do
     if filter_is_registered:
-        event_filter &= (
-            Q(registrations__entity__user_id__in=family_user_ids)
-            if filter_is_registered
-            else ~Q(registrations__entity__user_id__in=family_user_ids)
+        event_filter &= Q(
+            registrations__entity__user_id__in=family_user_ids,
+            registrations__price__isnull=False,
         )
 
     event_qs = (
@@ -285,7 +284,7 @@ def get(
 
 
 def send_events_signup(
-    user_ids: List[UUID] | None = None,
+    user_ids: list[UUID] | None = None,
     event_types: list[EventType] | None = None,
     range_days: tuple[int, int] | None = None,
     module: Module | None = None,
