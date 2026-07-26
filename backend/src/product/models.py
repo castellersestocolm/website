@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import JSONField
 from django.utils import translation
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
@@ -25,6 +26,10 @@ class Product(StandardModel, Timestamps):
     ignore_stock = models.BooleanField(default=False)
 
     objects = ProductQuerySet.as_manager()
+
+    @cached_property
+    def name_locale(self) -> str:
+        return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
     def __str__(self) -> str:
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
@@ -142,6 +147,41 @@ class ProductModule(StandardModel, Timestamps):
 
     class Meta:
         unique_together = ("product", "module")
+
+
+class ProductAccounts(StandardModel, Timestamps):
+    product = models.OneToOneField(
+        Product, related_name="accounts", on_delete=models.CASCADE
+    )
+
+    payment_debit = models.ForeignKey(
+        "payment.Account",
+        related_name="product_accounts_payment_debit",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    payment_credit = models.ForeignKey(
+        "payment.Account",
+        related_name="product_accounts_payment_credit",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    stock_order = models.ForeignKey(
+        "payment.Account",
+        related_name="product_accounts_stock_order",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self) -> str:
+        return str(self.product)
+
+    class Meta:
+        verbose_name = _("product accounts")
+        verbose_name_plural = _("product accounts")
 
 
 class StockOrder(StandardModel, Timestamps):

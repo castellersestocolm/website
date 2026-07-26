@@ -167,27 +167,39 @@ function OrderPaymentPage() {
     }
   }
 
-  const handleCompleteOrder = useCallback(() => {
-    return apiOrderComplete(id).then((response: any) => {
-      if (response.status === 200) {
-        const orderData = response.data;
+  const handleCompleteOrder = useCallback(
+    (
+      datePaid: string = undefined,
+      transactionId: string = undefined,
+      transactionReference: string = undefined,
+    ) => {
+      return apiOrderComplete(
+        id,
+        datePaid,
+        transactionId,
+        transactionReference,
+      ).then((response: any) => {
+        if (response.status === 200) {
+          const orderData = response.data;
 
-        if (orderData.status !== OrderStatus.CREATED) {
-          setOrder(orderData);
-          localStorage.removeItem("orderId");
-          localStorage.removeItem("order");
-          navigate(
-            ROUTES["order-receipt"].path.replace(":id", response.data.id),
-          );
+          if (orderData.status !== OrderStatus.CREATED) {
+            setOrder(orderData);
+            localStorage.removeItem("orderId");
+            localStorage.removeItem("order");
+            navigate(
+              ROUTES["order-receipt"].path.replace(":id", response.data.id),
+            );
+          }
+        } else {
+          setMessages([
+            { message: t("pages.order-cart.order.error"), type: "error" },
+          ]);
+          setTimeout(() => setMessages(undefined), 10000);
         }
-      } else {
-        setMessages([
-          { message: t("pages.order-cart.order.error"), type: "error" },
-        ]);
-        setTimeout(() => setMessages(undefined), 10000);
-      }
-    });
-  }, [id, navigate, setMessages, t]);
+      });
+    },
+    [id, navigate, setMessages, t],
+  );
 
   React.useEffect(() => {
     if (order && order.payment_order) {
@@ -244,13 +256,17 @@ function OrderPaymentPage() {
           id: "sumup-card",
           checkoutId: paymentSumUpOrderId,
           onResponse: (type: any, body: any) => {
-            console.log("SHOULD DO SOMETHING HERE", type);
-            console.log(body);
             if (type === "success") {
-              console.log(body);
-              handleCompleteOrder();
+              handleCompleteOrder(
+                body.paid_at,
+                body.transaction_id,
+                body.transaction_code,
+              );
             } else if (type === "error") {
-              console.log(body);
+              setMessages([
+                { message: t("pages.order-cart.order.error"), type: "error" },
+              ]);
+              setTimeout(() => setMessages(undefined), 10000);
             }
           },
         });
@@ -261,7 +277,13 @@ function OrderPaymentPage() {
       }
       setPaymentSumUpMounted(false);
     }
-  }, [paymentSumUpOrderId, handleCompleteOrder, setPaymentSumUpMounted]);
+  }, [
+    paymentSumUpOrderId,
+    handleCompleteOrder,
+    setPaymentSumUpMounted,
+    setMessages,
+    t,
+  ]);
 
   const ButtonWrapper = ({ showSpinner }: any) => {
     const [{ isPending }] = usePayPalScriptReducer();
@@ -397,7 +419,7 @@ function OrderPaymentPage() {
               type="button"
               color="primary"
               disableElevation
-              onClick={handleCompleteOrder}
+              onClick={() => handleCompleteOrder()}
               className={styles.providerSwishButton}
             >
               {t("pages.order-payment.providers-card.complete")}
@@ -496,7 +518,7 @@ function OrderPaymentPage() {
               type="button"
               color="primary"
               disableElevation
-              onClick={handleCompleteOrder}
+              onClick={() => handleCompleteOrder()}
               className={styles.providerTransferButton}
             >
               {t("pages.order-payment.providers-card.complete")}

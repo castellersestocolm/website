@@ -1,12 +1,18 @@
+import datetime
 from typing import List
 from uuid import UUID
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, DateField, Exists, F, OuterRef, Prefetch, Q, When
+from django.utils import translation
+from django.utils.translation import gettext_lazy as _
 
 from comunicat.enums import Module
-from payment.enums import PaymentStatus
-from payment.models import Payment, PaymentLine, PaymentLog  # , PaymentReceipt
+from order.enums import OrderStatus
+from order.models import Order, OrderProduct, OrderRegistration
+from payment.enums import PaymentStatus, PaymentType
+from payment.models import Payment, PaymentLine, PaymentLog, Transaction
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 
@@ -71,3 +77,156 @@ def get_list(user_id: UUID, module: Module) -> List[Payment]:
             .order_by("-date", "-created_at")
         }.values()
     )
+
+
+def create_for_order(
+    order_id: UUID,
+    date_accounting: datetime.datetime,
+    external_id: str | None = None,
+    reference: str | None = None,
+) -> Payment:
+    order_obj = (
+        Order.objects.filter(id=order_id, status=OrderStatus.CREATED)
+        .with_amount()
+        .select_related(
+            "delivery", "delivery__provider", "delivery__provider__accounts"
+        )
+        .prefetch_related(
+            Prefetch(
+                "products",
+                OrderProduct.objects.select_related(
+                    "size", "size__product", "size__product__accounts"
+                ),
+                to_attr="all_products",
+            ),
+            Prefetch(
+                "registrations",
+                OrderRegistration.objects.select_related(
+                    "registration",
+                    "registration__event",
+                    "registration__event__accounts",
+                ),
+                to_attr="all_registrations",
+            ),
+        )
+        .first()
+    )
+
+    payment_order_obj = order_obj.payment_order
+
+    assert payment_order_obj.provider.source is not None
+    source_obj = payment_order_obj.provider.source
+
+    order_product_updates = []
+    order_registration_updates = []
+
+    with translation.override(
+        language=order_obj.origin_language or settings.LANGUAGE_CODE
+    ):
+        text_order = _("Order")
+        text = f"{text_order} #{order_obj.reference}"
+
+        transaction_obj, __ = Transaction.objects.update_or_create(
+            source=source_obj,
+            external_id=external_id,
+            reference=reference,
+            method=payment_order_obj.provider.method,
+            amount=order_obj.amount,
+            vat=settings.MODULE_ALL_VAT,
+            date_accounting=date_accounting,
+            # TODO: Check if this is OK
+            date_interest=date_accounting,
+            defaults={"text": text, "sender": order_obj.entity.name.upper()},
+        )
+
+        payment_obj, __ = Payment.objects.update_or_create(
+            type=PaymentType.DEBIT,
+            status=PaymentStatus.COMPLETED,
+            method=transaction_obj.method,
+            transaction=transaction_obj,
+            entity=order_obj.entity,
+            defaults={
+                "text": text,
+            },
+        )
+
+        item_type_order_product = ContentType.objects.get_by_natural_key(
+            "order", "orderproduct"
+        )
+        item_type_order_registration = ContentType.objects.get_by_natural_key(
+            "order", "orderregistration"
+        )
+        item_type_order_delivery = ContentType.objects.get_by_natural_key(
+            "order", "orderdelivery"
+        )
+
+        for order_product_obj in order_obj.all_products:
+            account_product_obj = (
+                order_product_obj.size.product.accounts.payment_debit
+                if hasattr(order_product_obj.size.product, "accounts")
+                else None
+            )
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_product_obj.amount,
+                vat=order_product_obj.vat,
+                text=order_product_obj.size.product.name_locale,
+                item_type=item_type_order_product,
+                item_id=order_product_obj.id,
+                defaults={
+                    "account": account_product_obj,
+                },
+            )
+            order_product_obj.line = payment_line_obj
+            order_product_updates.append(order_product_obj)
+
+        for order_registration_obj in order_obj.all_registrations:
+            account_registration_obj = (
+                order_registration_obj.registration.event.accounts.registration_debit
+                if hasattr(order_registration_obj.registration.event, "accounts")
+                else None
+            )
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_registration_obj.amount,
+                vat=order_registration_obj.vat,
+                text=order_registration_obj.registration.event.title_locale,
+                item_type=item_type_order_registration,
+                item_id=order_registration_obj.id,
+                defaults={
+                    "account": account_registration_obj,
+                },
+            )
+            order_registration_obj.line = payment_line_obj
+            order_registration_updates.append(order_registration_obj)
+
+        if order_obj.delivery:
+            text_delivery = _("Delivery")
+            account_delivery_obj = (
+                order_obj.delivery.provider.accounts.payment_debit
+                if hasattr(order_obj.delivery.provider, "accounts")
+                else None
+            )
+            payment_line, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_obj.delivery.amount,
+                vat=order_obj.delivery.vat,
+                text=f"{text_delivery} — {order_obj.delivery.provider.name_locale}",
+                item_type=item_type_order_delivery,
+                item_id=order_obj.delivery.id,
+                defaults={
+                    "account": account_delivery_obj,
+                },
+            )
+            order_obj.delivery.line = payment_line
+            order_obj.delivery.save(update_fields=("line",))
+
+        if order_product_updates:
+            OrderProduct.objects.bulk_update(order_product_updates, fields=("line",))
+
+        if order_registration_updates:
+            OrderRegistration.objects.bulk_update(
+                order_registration_updates, fields=("line",)
+            )
+
+    return payment_obj

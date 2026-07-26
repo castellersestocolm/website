@@ -2,14 +2,22 @@ import importlib
 from typing import List
 from uuid import UUID
 
+from django.db.models import Q
+
 from comunicat.enums import Module
 from payment.api.provider import PaymentProviderBase
+from payment.consts import PAYMENT_METHOD_REQUIRE_SOURCE
 from payment.models import PaymentProvider
 
 
 def get_list(module: Module) -> List[PaymentProvider]:
     return list(
-        PaymentProvider.objects.with_name().order_by("-is_enabled", "order", "code")
+        PaymentProvider.objects.filter(
+            Q(method__in=PAYMENT_METHOD_REQUIRE_SOURCE, source__isnull=False)
+            | ~Q(method__in=PAYMENT_METHOD_REQUIRE_SOURCE)
+        )
+        .with_name()
+        .order_by("-is_enabled", "order", "code")
     )
 
 

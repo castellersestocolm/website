@@ -1,3 +1,4 @@
+import datetime
 import decimal
 from typing import List
 from uuid import UUID
@@ -396,10 +397,17 @@ def clean_pending_orders() -> None:
 def complete(
     order_id: UUID,
     module: Module,
+    date_paid: datetime.datetime | None = None,
+    transaction_id: str | None = None,
+    transaction_reference: str | None = None,
     user_id: UUID | None = None,
     with_notify: bool = True,
 ) -> Order | None:
-    order_obj = Order.objects.filter(id=order_id, status=OrderStatus.CREATED).first()
+    order_obj = (
+        Order.objects.filter(id=order_id, status=OrderStatus.CREATED)
+        .with_amount()
+        .first()
+    )
 
     if not order_obj.payment_order:
         return None
@@ -417,6 +425,15 @@ def complete(
         )(order_id=order_id)
         is_captured = payment_class.capture()
         is_completed = is_captured
+
+    if transaction_id or transaction_reference:
+        # TODO: Move vat to money_vat instead to store amounts and not percentages
+        payment.api.create_for_order(
+            order_id=order_obj.id,
+            date_accounting=date_paid or timezone.localtime(),
+            external_id=transaction_id,
+            reference=transaction_reference,
+        )
 
     if is_captured:
         payment_order_obj.status = (

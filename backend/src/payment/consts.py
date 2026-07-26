@@ -11,6 +11,7 @@ PAYMENT_LINE_CONTENT_TYPES = (
     ("membership", "membershipmodule"),
     ("order", "orderdelivery"),
     ("order", "orderproduct"),
+    ("order", "orderdelivery"),
     ("event", "registration"),
 )
 
@@ -37,3 +38,5 @@ PAYMENT_METHOD_FIELD_LABELS = {
     "account": _("Account number"),
     "clearing": _("Clearing number"),
 }
+
+PAYMENT_METHOD_REQUIRE_SOURCE = (PaymentMethod.SUMUP,)

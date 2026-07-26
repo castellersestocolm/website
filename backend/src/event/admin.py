@@ -7,7 +7,7 @@ from django.contrib import admin, messages
 from django.db.models import JSONField, Prefetch, Q
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from django.urls import path
+from django.urls import path, reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -24,6 +24,7 @@ from event.models import (
     AgendaItem,
     Connection,
     Event,
+    EventAccounts,
     EventModule,
     EventPrice,
     EventQuestion,
@@ -40,7 +41,8 @@ from event.models import (
     RegistrationLog,
 )
 from notify.enums import EmailType
-from payment.models import AccountEvent
+from payment.enums import PaymentType
+from payment.models import Account, AccountEvent
 
 
 class ConnectionInline(admin.TabularInline):
@@ -261,7 +263,7 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
         RegistrationInline,
     )
     actions = (publish_events,)
-    readonly_fields = ("google_event", "google_album")
+    readonly_fields = ("accounts_link", "google_event", "google_album")
     raw_id_fields = ("course",)
     form = EventForm
 
@@ -274,6 +276,14 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
 
     def title_locale(self, obj):
         return obj.title_locale
+
+    def accounts_link(self, obj):
+        if hasattr(obj, "accounts"):
+            event_accounts_link = reverse(
+                "admin:event_eventaccounts_change", args=(obj.accounts.id,)
+            )
+            return mark_safe(f'<a href="{event_accounts_link}">{obj.accounts}</a>')
+        return "-"
 
     def get_urls(self):
         urls = super().get_urls()
@@ -328,6 +338,35 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
         return response
 
     title_locale.short_description = _("title")
+    accounts_link.short_description = _("accounts")
+
+
+class EventAccountsForm(forms.ModelForm):
+    class Meta:
+        model = EventAccounts
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["registration_debit"].queryset = Account.objects.filter(
+            type=PaymentType.DEBIT, allow_transactions=True
+        ).order_by("code")
+        self.fields["registration_credit"].queryset = Account.objects.filter(
+            type=PaymentType.CREDIT, allow_transactions=True
+        ).order_by("code")
+
+
+@admin.register(EventAccounts)
+class EventAccountsAdmin(admin.ModelAdmin):
+    search_fields = ("id",)
+    list_display = (
+        "event",
+        "created_at",
+    )
+    list_filter = ("created_at",)
+    raw_id_fields = ("event",)
+    ordering = ("-created_at",)
+    form = EventAccountsForm
 
 
 class RegistrationLogInline(admin.TabularInline):

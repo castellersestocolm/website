@@ -98,5 +98,5 @@ class Bylaws(StandardModel, Timestamps):
     content = JSONField(default=language_field_default)
 
     class Meta:
-        verbose_name = "bylaws"
-        verbose_name_plural = "bylaws"
+        verbose_name = _("bylaws")
+        verbose_name_plural = _("bylaws")
