@@ -8,6 +8,7 @@ from django.utils import timezone
 from comunicat.enums import Module
 from event.enums import EventType, RegistrationStatus
 from event.models import AgendaItem, Event, Registration
+from pinyator.utils.string import sanitise
 from towers.consts import POSITION_TYPE_TO_PINYATOR_POSITIONS, TEXT_CONTENTS
 from towers.enums import PositionType
 from towers.types import (
@@ -58,11 +59,11 @@ def update_or_create_user(user_id: UUID) -> None:
 
     if exists:
         cursor.execute(
-            f"UPDATE CASTELLER SET MalNom='{user_obj.towers.alias}', Altura='{user_obj.towers.height_shoulders or 0}', ALTURA_TRONCS='{user_obj.towers.height_arms or 0}', Nom='{user_obj.firstname}', Cognom_1='{user_obj.lastname}', Cognom_2='', Estat={user_status} WHERE Codi='{user_obj.id}'"
+            f"UPDATE CASTELLER SET MalNom='{sanitise(user_obj.towers.alias)}', Altura='{user_obj.towers.height_shoulders or 0}', ALTURA_TRONCS='{user_obj.towers.height_arms or 0}', Nom='{sanitise(user_obj.firstname)}', Cognom_1='{sanitise(user_obj.lastname)}', Cognom_2='', Estat={user_status} WHERE Codi='{user_obj.id}'"
         )
     else:
         cursor.execute(
-            f"INSERT INTO CASTELLER (MalNom, Altura, ALTURA_TRONCS, POSICIO_PINYA_ID, Nom, Cognom_1, Cognom_2, Codi, Familia_ID, Estat) VALUES ('{user_obj.towers.alias}', '{user_obj.towers.height_shoulders or 0}', '{user_obj.towers.height_arms or 0}', '0', '{user_obj.firstname}', '{user_obj.lastname}', '', '{user_obj.id}', '0', {user_status})"
+            f"INSERT INTO CASTELLER (MalNom, Altura, ALTURA_TRONCS, POSICIO_PINYA_ID, Nom, Cognom_1, Cognom_2, Codi, Familia_ID, Estat) VALUES ('{sanitise(user_obj.towers.alias)}', '{user_obj.towers.height_shoulders or 0}', '{user_obj.towers.height_arms or 0}', '0', '{sanitise(user_obj.firstname)}', '{sanitise(user_obj.lastname)}', '', '{user_obj.id}', '0', {user_status})"
         )
 
     cursor.close()
@@ -122,11 +123,11 @@ def update_or_create_event(event_id: UUID) -> None:
 
     if exists:
         cursor.execute(
-            f"UPDATE EVENT SET Nom='{event_title}', Data='{event_time_from}', Tipus={event_type}, Estat={event_status}, TEMPORADA='{event_season}', OBSERVACIONS='{agenda}' WHERE Data='{event_time_from}'"
+            f"UPDATE EVENT SET Nom='{sanitise(event_title)}', Data='{event_time_from}', Tipus={event_type}, Estat={event_status}, TEMPORADA='{event_season}', OBSERVACIONS='{sanitise(agenda)}' WHERE Data='{event_time_from}'"
         )
     else:
         cursor.execute(
-            f"INSERT INTO EVENT (Nom, Data, Tipus, Estat, Codi, TEMPORADA, OBSERVACIONS) VALUES ('{event_title}', '{event_time_from}', {event_type}, {event_status}, '{event_obj.id}', '{event_season}', '{agenda}')"
+            f"INSERT INTO EVENT (Nom, Data, Tipus, Estat, Codi, TEMPORADA, OBSERVACIONS) VALUES ('{sanitise(event_title)}', '{event_time_from}', {event_type}, {event_status}, '{event_obj.id}', '{event_season}', '{sanitise(agenda)}')"
         )
 
     cursor.close()
