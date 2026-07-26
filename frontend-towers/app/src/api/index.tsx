@@ -725,9 +725,20 @@ export const apiOrderProviderUpdate = async (
   }
 };
 
-export const apiOrderComplete = async (orderId: string) => {
+export const apiOrderComplete = async (
+  orderId: string,
+  datePaid: string = undefined,
+  transactionId: string = undefined,
+  transactionReference: string = undefined,
+) => {
   try {
-    return await instance.post("/order/" + orderId + "/complete/");
+    return await instance.post("/order/" + orderId + "/complete/", {
+      date_paid: datePaid,
+      transaction: {
+        id: transactionId,
+        reference: transactionReference,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

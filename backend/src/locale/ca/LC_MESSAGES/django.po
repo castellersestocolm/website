@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-26 09:04+0200\n"
+"POT-Creation-Date: 2026-07-26 10:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,21 +18,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: activity/admin.py:59 activity/admin.py:148 data/admin.py:39 data/admin.py:70
-#: data/admin.py:94 legal/admin.py:31 legal/admin.py:76 legal/admin.py:100
-#: order/admin.py:289 payment/admin.py:632 payment/admin.py:991
-#: product/admin.py:88
+#: activity/admin.py:56 activity/admin.py:145 data/admin.py:38 data/admin.py:69
+#: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
+#: notify/admin.py:272 order/admin.py:284 payment/admin.py:674
+#: payment/admin.py:1034 product/admin.py:91
 msgid "name"
 msgstr "nom"
 
-#: activity/admin.py:123 event/admin.py:319 history/admin.py:32
-#: media/admin.py:36
+#: activity/admin.py:120 event/admin.py:330 history/admin.py:31
+#: media/admin.py:35
 msgid "title"
 msgstr "títol"
 
-#: activity/api/export.py:41 membership/api/export.py:13
+#: activity/api/export.py:49 membership/api/export.py:12
 msgid "Registrations"
 msgstr "Inscripcions"
+
+#: activity/api/export.py:142
+#, fuzzy
+#| msgid "Attending"
+msgid "Attendance"
+msgstr "Hi participo"
+
+#: activity/api/export.py:146
+#: comunicat/templates/email/org/contact/message.html:18
+#: comunicat/templates/email/towers/contact/message.html:18
+msgid "Name"
+msgstr "Nom"
 
 #: comunicat/db/mixins.py:15
 msgid "created"
@@ -42,8 +54,12 @@ msgstr "create"
 msgid "updated"
 msgstr "actualitzat"
 
-#: comunicat/rest/serializers/order.py:363
-#: comunicat/rest/serializers/order.py:368
+#: comunicat/rest/serializers/consent.py:36
+msgid "The entity is required for non-logged in users."
+msgstr ""
+
+#: comunicat/rest/serializers/order.py:361
+#: comunicat/rest/serializers/order.py:366
 msgid "This field is required."
 msgstr ""
 
@@ -55,57 +71,57 @@ msgstr ""
 msgid "The last name is required for non-logged in users."
 msgstr ""
 
-#: comunicat/rest/serializers/user.py:314
+#: comunicat/rest/serializers/user.py:329
 #, python-format
 msgid "The minimum age to join is %s."
 msgstr "L'edat mínima per unir-se és %s."
 
-#: comunicat/rest/serializers/user.py:323
+#: comunicat/rest/serializers/user.py:338
 #, python-format
 msgid "Only the following languages are allowed: %s."
 msgstr "Només els següents idiomes estan permesos: %s."
 
-#: comunicat/rest/serializers/user.py:334
-#: comunicat/rest/serializers/user.py:393
-#: comunicat/rest/serializers/user.py:433
+#: comunicat/rest/serializers/user.py:349
+#: comunicat/rest/serializers/user.py:419
+#: comunicat/rest/serializers/user.py:465
 #, python-format
 msgid "Members over %s must consent in order to become members."
 msgstr ""
 "Membres majors de %s han de donar consentiment per tal d'esdevenir membres."
 
-#: comunicat/rest/serializers/user.py:353
-#: comunicat/rest/serializers/user.py:460
+#: comunicat/rest/serializers/user.py:371
+#: comunicat/rest/serializers/user.py:492
 msgid "The passwords do not match."
 msgstr "Les contrasenyes no són iguals."
 
-#: comunicat/rest/serializers/user.py:382
+#: comunicat/rest/serializers/user.py:404
 #, python-format
 msgid "The family member must be below %s to update."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo actualitzar."
 
-#: comunicat/rest/serializers/user.py:422
+#: comunicat/rest/serializers/user.py:450
 #, python-format
 msgid "The family member must be below %s to create."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: comunicat/rest/utils/fields.py:20 comunicat/rest/utils/fields.py:53
+#: comunicat/rest/utils/fields.py:17 comunicat/rest/utils/fields.py:50
 msgid "Invalid value."
 msgstr "Valor invàlid."
 
-#: comunicat/rest/utils/fields.py:21 comunicat/rest/utils/fields.py:54
+#: comunicat/rest/utils/fields.py:18 comunicat/rest/utils/fields.py:51
 #, python-brace-format
 msgid "\"{input}\" is not a valid choice."
 msgstr "\"{input}\" no és una opció vàlida."
 
-#: comunicat/rest/utils/fields.py:86
+#: comunicat/rest/utils/fields.py:83
 msgid "Not money."
 msgstr "No són diners."
 
-#: comunicat/rest/utils/fields.py:87
+#: comunicat/rest/utils/fields.py:84
 msgid "Missing amount or currency."
 msgstr "Manca la quantitat o la divisa."
 
-#: comunicat/rest/views/org.py:111
+#: comunicat/rest/views/org.py:110
 msgid "The amount of children you entered is incorrect."
 msgstr "El nombre de nens que has introduït és incorrecte."
 
@@ -205,11 +221,6 @@ msgstr "Enviat amb"
 msgid "by"
 msgstr "per"
 
-#: comunicat/templates/email/org/contact/message.html:18
-#: comunicat/templates/email/towers/contact/message.html:18
-msgid "Name"
-msgstr "Nom"
-
 #: comunicat/templates/email/org/contact/message.html:22
 #: comunicat/templates/email/towers/contact/message.html:22
 msgid "Email"
@@ -231,12 +242,12 @@ msgstr ""
 "continuació."
 
 #: comunicat/templates/email/org/courseregistration/paid.html:14
-#: comunicat/templates/email/org/membership/paid.html:14
+#: comunicat/templates/email/org/membership/paid.html:22
 #: comunicat/templates/email/org/order/created.html:14
 #: comunicat/templates/email/org/payment/paid.html:14
 #: comunicat/templates/email/org/registration/paid.html:14
 #: comunicat/templates/email/towers/courseregistration/paid.html:14
-#: comunicat/templates/email/towers/membership/paid.html:14
+#: comunicat/templates/email/towers/membership/paid.html:22
 #: comunicat/templates/email/towers/order/created.html:14
 #: comunicat/templates/email/towers/order/paid.html:14
 #: comunicat/templates/email/towers/payment/paid.html:14
@@ -245,12 +256,12 @@ msgid "Summary"
 msgstr "Resum"
 
 #: comunicat/templates/email/org/courseregistration/paid.html:25
-#: comunicat/templates/email/org/membership/paid.html:31
+#: comunicat/templates/email/org/membership/paid.html:39
 #: comunicat/templates/email/org/order/created.html:31
 #: comunicat/templates/email/org/payment/paid.html:23
 #: comunicat/templates/email/org/registration/paid.html:26
 #: comunicat/templates/email/towers/courseregistration/paid.html:25
-#: comunicat/templates/email/towers/membership/paid.html:31
+#: comunicat/templates/email/towers/membership/paid.html:39
 #: comunicat/templates/email/towers/order/created.html:31
 #: comunicat/templates/email/towers/order/paid.html:31
 #: comunicat/templates/email/towers/payment/paid.html:23
@@ -318,7 +329,9 @@ msgid "Valid"
 msgstr "Validesa"
 
 #: comunicat/templates/email/org/membership/check.html:23
+#: comunicat/templates/email/org/membership/paid.html:7
 #: comunicat/templates/email/towers/membership/check.html:23
+#: comunicat/templates/email/towers/membership/paid.html:7
 msgid "The following members are included in your membership."
 msgstr "Els membres següents formen part de la teva quota."
 
@@ -453,8 +466,8 @@ msgstr ""
 "Gràcies per la teva comanda! Trobaràs un resum dels productes que has "
 "comprat a continuació així com la informació de pagament."
 
-#: comunicat/templates/email/org/order/created.html:35
-#: comunicat/templates/email/towers/order/created.html:35
+#: comunicat/templates/email/org/order/created.html:37
+#: comunicat/templates/email/towers/order/created.html:37
 msgid "Payment options"
 msgstr "Com pagar"
 
@@ -540,39 +553,14 @@ msgid ""
 "You have now completed the registration process and are part of Les Quatre "
 "Barres, welcome!"
 msgstr ""
-"Has completat el procés de registre i ets part de les Quatre Barres, "
-"et donem la benvinguda!"
+"Has completat el procés de registre i ets part de les Quatre Barres, et "
+"donem la benvinguda!"
 
-#: comunicat/templates/email/org/user/welcome.html:6
-#: comunicat/templates/email/towers/user/welcome.html:6
-msgid ""
-"In this email attached you will find some information with hopefully answers "
-"to all your questions. However, if you still want to reach out and ask us "
-"anything the best way is through the WhatsApp community. All active members "
-"are part of it as it's where we discuss and share rehearsal information, "
-"post pictures and much more. Please note that we only accept requests into "
-"some of the groups if your phone matches the one you used to register with "
-"us. If that's not the case please do let us know and we'll fix it for you!"
-msgstr ""
-"En aquest correu hi trobaràs adjunta informació que esperem que resolgui "
-"totes les teves preguntes. Tot i això, si no tens alguna cosa clara no "
-"dubtis en preguntar-nos el que vulguis a través de la nostra comunitat de "
-"WhatsApp. Tots els membres actius en són part i és on parlem i compartim "
-"informació dels assajos, pengem imatges i molt més. Si us plau, tingues en "
-"compte que només acceptem peticions a alguns dels grups si el teu telèfon "
-"coincideix amb el que tens registrat al teu compte. Si aquest no és el cas "
-"fes-nos-ho saber i ho arreglarem!"
-
-#: comunicat/templates/email/org/user/welcome.html:10
+#: comunicat/templates/email/org/user/welcome.html:9
 #: comunicat/templates/email/towers/user/imported.html:27
 #: comunicat/templates/email/towers/user/welcome.html:10
 msgid "See you around!"
 msgstr "Ens veiem!"
-
-#: comunicat/templates/email/org/user/welcome.html:15
-#: comunicat/templates/email/towers/user/welcome.html:15
-msgid "Join the community"
-msgstr "Uneix-te a la comunitat"
 
 #: comunicat/templates/email/towers/courseregistration/paid.html:5
 msgid ""
@@ -711,6 +699,29 @@ msgstr ""
 "Has completat el procés de registre i ets part dels Castellers d'Estocolm, "
 "et donem la benvinguda!"
 
+#: comunicat/templates/email/towers/user/welcome.html:6
+msgid ""
+"In this email attached you will find some information with hopefully answers "
+"to all your questions. However, if you still want to reach out and ask us "
+"anything the best way is through the WhatsApp community. All active members "
+"are part of it as it's where we discuss and share rehearsal information, "
+"post pictures and much more. Please note that we only accept requests into "
+"some of the groups if your phone matches the one you used to register with "
+"us. If that's not the case please do let us know and we'll fix it for you!"
+msgstr ""
+"En aquest correu hi trobaràs adjunta informació que esperem que resolgui "
+"totes les teves preguntes. Tot i això, si no tens alguna cosa clara no "
+"dubtis en preguntar-nos el que vulguis a través de la nostra comunitat de "
+"WhatsApp. Tots els membres actius en són part i és on parlem i compartim "
+"informació dels assajos, pengem imatges i molt més. Si us plau, tingues en "
+"compte que només acceptem peticions a alguns dels grups si el teu telèfon "
+"coincideix amb el que tens registrat al teu compte. Si aquest no és el cas "
+"fes-nos-ho saber i ho arreglarem!"
+
+#: comunicat/templates/email/towers/user/welcome.html:15
+msgid "Join the community"
+msgstr "Uneix-te a la comunitat"
+
 #: comunicat/templates/pdf/org/registration.html:77
 #: comunicat/templates/pdf/towers/registration.html:77
 msgid "First name"
@@ -733,27 +744,31 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: event/admin.py:123 payment/admin.py:276
+#: consent/models.py:53
+msgid "The newsletter is mandatory for newsletter consents."
+msgstr ""
+
+#: event/admin.py:126 payment/admin.py:272
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:125
+#: event/admin.py:128
 msgid "Data"
 msgstr ""
 
-#: event/admin.py:126 order/admin.py:127 payment/admin.py:207
+#: event/admin.py:129 order/admin.py:122 payment/admin.py:203
 msgid "Send paid email"
 msgstr ""
 
-#: event/admin.py:221
+#: event/admin.py:231
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:399
+#: event/admin.py:410
 msgid "time from"
 msgstr ""
 
-#: event/consts.py:43
+#: event/consts.py:44
 msgid "Choices"
 msgstr ""
 
@@ -777,27 +792,27 @@ msgstr ""
 msgid "Tentative"
 msgstr "actiu"
 
-#: event/models.py:165
+#: event/models.py:162
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The end time must be greater than start time."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: event/models.py:170
+#: event/models.py:167
 msgid "The module must match the course program module."
 msgstr ""
 
-#: event/models.py:178
+#: event/models.py:175
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The start time must be within the course dates."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:270 product/models.py:138 product/models.py:143
+#: event/models.py:278 product/models.py:140 product/models.py:145
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:352 payment/models.py:223
+#: event/models.py:360 payment/models.py:227
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
@@ -813,41 +828,41 @@ msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 msgid "The to date must be within the team's dates."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: membership/admin.py:111
+#: membership/admin.py:110
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:112 user/admin.py:326
+#: membership/admin.py:111 user/admin.py:324
 msgid "family"
 msgstr "família"
 
-#: membership/admin.py:113
+#: membership/admin.py:112
 msgid "modules"
 msgstr "mòduls"
 
-#: notify/admin.py:77
+#: notify/admin.py:76
 #, fuzzy
 #| msgid "Confirm email"
 msgid "Send email"
 msgstr "Confirma el teu correu"
 
-#: notify/admin.py:141 notify/admin.py:202
+#: notify/admin.py:140 notify/admin.py:201
 msgid "preview"
 msgstr ""
 
-#: notify/admin.py:201
+#: notify/admin.py:200
 msgid "subject"
 msgstr ""
 
-#: notify/api/slack/chat.py:168
+#: notify/api/slack/chat.py:165
 msgid "View order"
 msgstr ""
 
-#: notify/api/slack/chat.py:248
+#: notify/api/slack/chat.py:245
 msgid "View message"
 msgstr ""
 
-#: notify/api/slack/chat.py:337
+#: notify/api/slack/chat.py:334
 msgid "View attendance"
 msgstr "Mostra l'assistència"
 
@@ -859,250 +874,262 @@ msgstr "Confirma l'assistència a les properes actuacions"
 msgid "receipt"
 msgstr "rebut"
 
-#: notify/consts.py:34 notify/consts.py:105
+#: notify/consts.py:32 notify/consts.py:103
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
 
-#: notify/consts.py:38 notify/consts.py:109
+#: notify/consts.py:36 notify/consts.py:107
 msgid "Reset your password to login"
 msgstr "Reinicia la teva contrasenya per entrar"
 
-#: notify/consts.py:42
+#: notify/consts.py:40
 msgid "Welcome to Les Quatre Barres"
 msgstr "Benvingut a Les Quatre Barres"
 
-#: notify/consts.py:46
+#: notify/consts.py:44
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
-#: notify/consts.py:50 notify/consts.py:121
+#: notify/consts.py:48 notify/consts.py:119
 msgid "You have been invited to join a family"
 msgstr "Has estat convidat a unir-te a una família"
 
-#: notify/consts.py:54
+#: notify/consts.py:52
 msgid "Sign-up for the upcoming events"
 msgstr "Confirma l'assistència als propers esdeveniments"
 
-#: notify/consts.py:58 notify/consts.py:129
+#: notify/consts.py:56 notify/consts.py:127
 msgid "Time to renew your membership"
 msgstr "La teva quota caduca aviat"
 
-#: notify/consts.py:62 notify/consts.py:133
+#: notify/consts.py:60 notify/consts.py:131
 msgid "Your membership has expired"
 msgstr "La teva quota ha caducat"
 
-#: notify/consts.py:66 notify/consts.py:137
+#: notify/consts.py:64 notify/consts.py:135
 msgid "Your membership is now paid"
 msgstr "La teva quota s'ha pagat"
 
-#: notify/consts.py:70 notify/consts.py:141
+#: notify/consts.py:68 notify/consts.py:139
 msgid "Your membership status"
 msgstr "L'estat de la teva quota"
 
-#: notify/consts.py:74 notify/consts.py:145
+#: notify/consts.py:72 notify/consts.py:143
 msgid "Thank you for your order"
 msgstr "Gràcies per la teva comanda"
 
-#: notify/consts.py:78 notify/consts.py:149
+#: notify/consts.py:76 notify/consts.py:147
 #, python-format
 msgid "Your order %s is now paid"
 msgstr "La teva comanda %s s'ha pagat"
 
-#: notify/consts.py:82 notify/consts.py:153
+#: notify/consts.py:80 notify/consts.py:151
 #, python-format
 msgid "Your registration for %s is now paid"
 msgstr "La teva inscripció per %s s'ha pagat"
 
-#: notify/consts.py:86 notify/consts.py:157
+#: notify/consts.py:84 notify/consts.py:155
 #, python-format
 msgid "Contact form — %s"
 msgstr "Formulari de contacte — %s"
 
-#: notify/consts.py:90 notify/consts.py:94 notify/consts.py:161
+#: notify/consts.py:88 notify/consts.py:92 notify/consts.py:159
 #, python-format
 msgid "Your payment has been processed — %s"
 msgstr "El vostre pagament s'ha processat — %s"
 
-#: notify/consts.py:113
+#: notify/consts.py:111
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Benvingut/da als Castellers d'Estocolm"
 
-#: notify/consts.py:117
+#: notify/consts.py:115
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 
-#: notify/consts.py:125
+#: notify/consts.py:123
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
-#: notify/consts.py:165
+#: notify/consts.py:163
 #, python-format
 msgid "Your registration is now paid — %s"
 msgstr "La teva inscripció s'ha pagat — %s"
 
-#: order/admin.py:116
+#: notify/models.py:132
+msgid "The Google group is mandatory for Google newsletters."
+msgstr ""
+
+#: order/admin.py:111
 msgid "Send created email"
 msgstr ""
 
-#: order/admin.py:208
-#, fuzzy
-#| msgid "Attending"
+#: order/admin.py:203
 msgid "pending"
-msgstr "Hi participo"
+msgstr "pendent"
 
-#: order/admin.py:209
+#: order/admin.py:204
 msgid "delivery"
-msgstr ""
+msgstr "entrega"
 
-#: order/admin.py:210 payment/admin.py:487
-#, fuzzy
-#| msgid "Payment"
+#: order/admin.py:205 payment/admin.py:483
 msgid "payment"
-msgstr "Pagament"
+msgstr "pagament"
 
-#: order/api/__init__.py:304
+#: order/api/__init__.py:301
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
-#: order/models.py:285
+#: order/models.py:283
 msgid "The quantity given must be equal or lower than the ordered quantity."
 msgstr ""
 
-#: order/models.py:445
+#: order/models.py:447
 msgid "Region's country must match country."
 msgstr ""
 
-#: payment/admin.py:171 payment/admin.py:394
+#: payment/admin.py:167 payment/admin.py:390
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:360 payment/admin.py:464
+#: payment/admin.py:356 payment/admin.py:460
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:361 payment/admin.py:466
+#: payment/admin.py:357 payment/admin.py:462
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:362 payment/admin.py:467 payment/admin.py:629
-#: payment/admin.py:791
+#: payment/admin.py:358 payment/admin.py:463 payment/admin.py:671
+#: payment/admin.py:834
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:465 user/admin.py:325
+#: payment/admin.py:461 user/admin.py:323
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:486
+#: payment/admin.py:482
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Quantitat"
 
-#: payment/admin.py:630 payment/admin.py:631 payment/admin.py:792
-#: payment/admin.py:793
+#: payment/admin.py:670
+msgid "trend"
+msgstr ""
+
+#: payment/admin.py:672 payment/admin.py:673 payment/admin.py:835
+#: payment/admin.py:836
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:790
+#: payment/admin.py:833
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:847
+#: payment/admin.py:890
 msgid "file"
 msgstr "fitxer"
 
-#: payment/api/export.py:39
+#: payment/api/__init__.py:118
+msgid "Order"
+msgstr "Comanda"
+
+#: payment/api/__init__.py:185
+msgid "Delivery"
+msgstr "Entrega"
+
+#: payment/api/export.py:37
 msgid "Payments"
 msgstr "Pagaments"
 
-#: payment/api/google_drive.py:72
+#: payment/api/google_drive.py:70
 msgid "Receipts"
 msgstr "Rebuts"
 
-#: payment/consts.py:37
+#: payment/consts.py:36
 msgid "IBAN"
 msgstr "IBAN"
 
-#: payment/consts.py:38
+#: payment/consts.py:37
 msgid "Bank"
 msgstr "Banc"
 
-#: payment/consts.py:39
+#: payment/consts.py:38
 msgid "Account number"
 msgstr "Número de compte"
 
-#: payment/consts.py:40
+#: payment/consts.py:39
 msgid "Clearing number"
 msgstr "Número d’autorització"
 
-#: payment/managers.py:143 payment/managers.py:480
+#: payment/managers.py:142 payment/managers.py:479
 msgid "Membership update"
 msgstr "Actualització quota"
 
-#: payment/managers.py:149 payment/managers.py:482
+#: payment/managers.py:148 payment/managers.py:481
 msgid "Membership"
 msgstr "Quota"
 
-#: payment/managers.py:158
+#: payment/managers.py:157
 msgid "Payment"
 msgstr "Pagament"
 
-#: payment/managers.py:536
+#: payment/managers.py:535
 msgid "Unspecified"
 msgstr "Sense especificar"
 
-#: payment/managers.py:568
+#: payment/managers.py:567
 msgid "(and more)"
 msgstr "(i més)"
 
-#: payment/managers.py:571
+#: payment/managers.py:570
 msgid "Expense"
 msgstr "Despesa"
 
-#: payment/models.py:104
+#: payment/models.py:103
 #, fuzzy
 #| msgid "Category must be set for accounts with parent."
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:140
+#: payment/models.py:141
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: payment/models.py:464
+#: payment/models.py:471
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/utils/admin.py:10
+#: payment/utils/admin.py:9
 #, fuzzy
 #| msgid "Payment"
 msgid "has payment"
 msgstr "Pagament"
 
-#: payment/utils/admin.py:15
+#: payment/utils/admin.py:14
 msgid "Yes"
 msgstr ""
 
-#: payment/utils/admin.py:16
+#: payment/utils/admin.py:15
 msgid "No"
 msgstr ""
 
-#: product/admin.py:31 product/admin.py:89
+#: product/admin.py:32 product/admin.py:92
 msgid "stock"
 msgstr ""
 
-#: product/models.py:107
+#: product/models.py:109
 msgid "Product size must match product."
 msgstr ""
 
-#: user/admin.py:159
+#: user/admin.py:157
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 
-#: user/api/family_member_request.py:52
+#: user/api/family_member_request.py:49
 msgid ""
 "You have too many pending requests, cancel some of them before you send a "
 "new one."
@@ -1110,27 +1137,27 @@ msgstr ""
 "Tens massa peticions pendents, cancel·la'n alguna abans d'enviar-ne una de "
 "nova."
 
-#: user/api/family_member_request.py:64
+#: user/api/family_member_request.py:61
 msgid "The member already belongs to your family."
 msgstr "El membre ja pertany a la teva família."
 
-#: user/api/family_member_request.py:71
+#: user/api/family_member_request.py:68
 msgid "You have reached the maximum amount of members in your family."
 msgstr "Has arribat al nombre màxim de membres a la teva família."
 
-#: user/api/family_member_request.py:86
+#: user/api/family_member_request.py:83
 msgid "You have reached the maximum amount of adult members in your family."
 msgstr "Has arribat al nombre màxim de membres adults a la teva família."
 
-#: user/models.py:35
+#: user/models.py:36
 msgid "staff status"
 msgstr "personal"
 
-#: user/models.py:39
+#: user/models.py:40
 msgid "active"
 msgstr "actiu"
 
-#: user/models.py:178
+#: user/models.py:170
 #, fuzzy, python-format
 #| msgid "Category must be set for accounts with parent."
 msgid "Order must be set for source %s."

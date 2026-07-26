@@ -414,6 +414,34 @@ class EventRequirement(StandardModel, Timestamps):
     )
 
 
+class EventAccounts(StandardModel, Timestamps):
+    event = models.OneToOneField(
+        Event, related_name="accounts", on_delete=models.CASCADE
+    )
+
+    registration_debit = models.ForeignKey(
+        "payment.Account",
+        related_name="event_accounts_registration_debit",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    registration_credit = models.ForeignKey(
+        "payment.Account",
+        related_name="event_accounts_registration_credit",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self) -> str:
+        return str(self.event)
+
+    class Meta:
+        verbose_name = _("event accounts")
+        verbose_name_plural = _("event accounts")
+
+
 # TODO: Handle registrations without users (external)
 class Registration(StandardModel, Timestamps):
     event = models.ForeignKey(

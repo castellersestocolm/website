@@ -13,6 +13,7 @@ import order.api
 import order.api.delivery_price
 import order.api.delivery_provider
 from comunicat.rest.serializers.order import (
+    CompleteOrderSerializer,
     CreateOrderSerializer,
     DeliveryPriceSerializer,
     DeliveryProviderSerializer,
@@ -142,12 +143,30 @@ class OrderAPI(ComuniCatViewSet):
         return Response(serializer.data)
 
     @swagger_auto_schema(
+        request_body=CompleteOrderSerializer,
         responses={200: OrderSerializer(), 400: Serializer(), 404: Serializer()},
     )
     @action(methods=["post"], detail=True, url_path="complete", url_name="complete")
     def complete(self, request, id):
+        serializer = CompleteOrderSerializer(
+            data=request.data,
+        )
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
         order_obj = order.api.complete(
             order_id=id,
+            date_paid=validated_data.get("date_paid"),
+            **(
+                {
+                    f"transaction_{transaction_key}": transaction_value
+                    for transaction_key, transaction_value in validated_data[
+                        "transaction"
+                    ].items()
+                }
+                if "transaction" in validated_data
+                else {}
+            ),
             user_id=request.user.id if request.user.is_authenticated else None,
             module=self.module,
         )

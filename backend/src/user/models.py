@@ -197,8 +197,8 @@ class Family(StandardModel, Timestamps):
     objects = FamilyQuerySet.as_manager()
 
     class Meta:
-        verbose_name = "family"
-        verbose_name_plural = "families"
+        verbose_name = _("family")
+        verbose_name_plural = _("families")
 
 
 class FamilyMember(StandardModel, Timestamps):

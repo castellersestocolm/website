@@ -175,8 +175,8 @@ class Entity(StandardModel, Timestamps):
         super().save(*args, **kwargs)
 
     class Meta:
-        verbose_name = "entity"
-        verbose_name_plural = "entities"
+        verbose_name = _("entity")
+        verbose_name_plural = _("entities")
 
         indexes = [
             models.Index(fields=("firstname", "lastname", "email", "-created_at"))
@@ -192,8 +192,8 @@ class EntityAlias(StandardModel, Timestamps):
     alias = models.CharField(max_length=255)
 
     class Meta:
-        verbose_name = "entity alias"
-        verbose_name_plural = "entity aliases"
+        verbose_name = _("entity alias")
+        verbose_name_plural = _("entity aliases")
 
         unique_together = (("entity", "alias"),)
 
@@ -240,8 +240,8 @@ class EntityPaymentMethod(StandardModel, Timestamps):
         return f"{str(self.entity)} - {PaymentMethod(self.method).name}"
 
     class Meta:
-        verbose_name = "entity payment method"
-        verbose_name_plural = "entity payment methods"
+        verbose_name = _("entity payment method")
+        verbose_name_plural = _("entity payment methods")
 
         constraints = [
             UniqueConstraint(
@@ -493,7 +493,7 @@ class AccountEvent(StandardModel, Timestamps):
         "Account", related_name="events", on_delete=models.CASCADE
     )
     event = models.ForeignKey(
-        "event.Event", related_name="accounts", on_delete=models.CASCADE
+        "event.Event", related_name="payment_accounts", on_delete=models.CASCADE
     )
 
     date_from = models.DateField(blank=True, null=True)
@@ -513,11 +513,41 @@ class AccountEvent(StandardModel, Timestamps):
         return f"{self.account} - {self.event.title_locale}{dates_str}"
 
 
+class PaymentProvider(StandardModel, Timestamps):
+    name = JSONField(default=language_field_default)
+    code = models.CharField(max_length=255)
+
+    picture = VersatileImageField(
+        "Image", blank=True, null=True, upload_to="payment/payment-provider/picture/"
+    )
+
+    method = models.PositiveIntegerField(
+        choices=((pm.value, pm.name) for pm in PaymentMethod),
+    )
+
+    order = models.PositiveSmallIntegerField(default=0)
+
+    is_enabled = models.BooleanField(default=True)
+
+    objects = PaymentProviderQuerySet.as_manager()
+
+    def __str__(self) -> str:
+        return self.name.get(translation.get_language()) or list(self.name.values())[0]
+
+
 class Source(StandardModel, Timestamps):
     name = models.CharField(max_length=255, unique=True)
     type = models.PositiveSmallIntegerField(
         choices=((st.value, st.name) for st in SourceType),
         default=SourceType.BANK,
+    )
+
+    provider = models.OneToOneField(
+        PaymentProvider,
+        related_name="source",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
     )
 
     @cached_property
@@ -528,6 +558,21 @@ class Source(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         return self.name
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    models.Q(type=SourceType.PROVIDER)
+                    & models.Q(provider__isnull=False)
+                )
+                | models.Q(
+                    ~models.Q(type=SourceType.PROVIDER)
+                    & models.Q(provider__isnull=True)
+                ),
+                name="payment_source_type_provider",
+            ),
+        ]
 
 
 class Transaction(StandardModel, Timestamps):
@@ -650,28 +695,6 @@ class Statement(StandardModel, Timestamps):
         storage=signed_storage,
         validators=[FileExtensionValidator(["pdf"])],
     )
-
-
-class PaymentProvider(StandardModel, Timestamps):
-    name = JSONField(default=language_field_default)
-    code = models.CharField(max_length=255)
-
-    picture = VersatileImageField(
-        "Image", blank=True, null=True, upload_to="payment/payment-provider/picture/"
-    )
-
-    method = models.PositiveIntegerField(
-        choices=((pm.value, pm.name) for pm in PaymentMethod),
-    )
-
-    order = models.PositiveSmallIntegerField(default=0)
-
-    is_enabled = models.BooleanField(default=True)
-
-    objects = PaymentProviderQuerySet.as_manager()
-
-    def __str__(self) -> str:
-        return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
 
 class PaymentOrder(StandardModel, Timestamps):

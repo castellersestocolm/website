@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib import admin
 from django.db.models import JSONField
+from django.urls import reverse
 from django.utils import translation
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 
@@ -11,6 +13,7 @@ from comunicat.utils.admin import FIELD_LOCALE
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
 from order.models import (
+    DeliveryAccounts,
     DeliveryDate,
     DeliveryPrice,
     DeliveryProvider,
@@ -21,6 +24,8 @@ from order.models import (
     OrderProduct,
     OrderRegistration,
 )
+from payment.enums import PaymentType
+from payment.models import Account
 
 # class OrderProductInlineFormAdmin(forms.ModelForm):
 #     class Meta:
@@ -268,6 +273,7 @@ class DeliveryProviderAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     list_display = ("name_locale",)
     list_filter = ("type", "created_at")
+    readonly_fields = ("accounts_link",)
     ordering = (
         "type",
         "-created_at",
@@ -281,4 +287,40 @@ class DeliveryProviderAdmin(admin.ModelAdmin):
     def name_locale(self, obj):
         return obj.name.get(translation.get_language()) or list(obj.name.values())[0]
 
+    def accounts_link(self, obj):
+        if hasattr(obj, "accounts"):
+            delivery_accounts_link = reverse(
+                "admin:order_deliveryaccounts_change", args=(obj.accounts.id,)
+            )
+            return mark_safe(f'<a href="{delivery_accounts_link}">{obj.accounts}</a>')
+        return "-"
+
     name_locale.short_description = _("name")
+    accounts_link.short_description = _("accounts")
+
+
+class DeliveryAccountsForm(forms.ModelForm):
+    class Meta:
+        model = DeliveryAccounts
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["payment_debit"].queryset = Account.objects.filter(
+            type=PaymentType.DEBIT, allow_transactions=True
+        ).order_by("code")
+        self.fields["payment_credit"].queryset = Account.objects.filter(
+            type=PaymentType.CREDIT, allow_transactions=True
+        ).order_by("code")
+
+
+@admin.register(DeliveryAccounts)
+class DeliveryAccountsAdmin(admin.ModelAdmin):
+    search_fields = ("id",)
+    list_display = (
+        "provider",
+        "created_at",
+    )
+    list_filter = ("created_at",)
+    ordering = ("-created_at",)
+    form = DeliveryAccountsForm

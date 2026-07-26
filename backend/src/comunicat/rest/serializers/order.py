@@ -376,3 +376,13 @@ class CreateOrderSerializer(s.Serializer):
 
 class UpdateOrderProviderSerializer(s.Serializer):
     provider_id = s.UUIDField()
+
+
+class CompleteOrderTransactionSerializer(s.Serializer):
+    id = s.CharField(required=False)
+    reference = s.CharField(required=False)
+
+
+class CompleteOrderSerializer(s.Serializer):
+    date_paid = s.DateTimeField(required=False)
+    transaction = CompleteOrderTransactionSerializer(required=False)

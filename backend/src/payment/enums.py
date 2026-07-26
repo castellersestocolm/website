@@ -33,6 +33,7 @@ class PaymentMethod(IntEnum):
 
 class SourceType(IntEnum):
     BANK = 10
+    PROVIDER = 20
 
 
 class AccountCategory(IntEnum):

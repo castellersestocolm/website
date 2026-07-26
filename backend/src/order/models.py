@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, JSONField
 from django.utils import timezone, translation
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
@@ -383,6 +384,10 @@ class DeliveryProvider(StandardModel, Timestamps):
 
     is_enabled = models.BooleanField(default=True)
 
+    @cached_property
+    def name_locale(self) -> str:
+        return self.name.get(translation.get_language()) or list(self.name.values())[0]
+
     def __str__(self) -> str:
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
@@ -443,3 +448,31 @@ class DeliveryPrice(StandardModel, Timestamps):
 
     class Meta:
         ordering = ("price", "max_grams")
+
+
+class DeliveryAccounts(StandardModel, Timestamps):
+    provider = models.OneToOneField(
+        DeliveryProvider, related_name="accounts", on_delete=models.CASCADE
+    )
+
+    payment_debit = models.ForeignKey(
+        "payment.Account",
+        related_name="delivery_accounts_payment_debit",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    payment_credit = models.ForeignKey(
+        "payment.Account",
+        related_name="delivery_accounts_payment_credit",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self) -> str:
+        return str(self.provider)
+
+    class Meta:
+        verbose_name = _("delivery accounts")
+        verbose_name_plural = _("delivery accounts")
