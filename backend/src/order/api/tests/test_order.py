@@ -9,7 +9,7 @@ from httpx._client import Response
 from comunicat.enums import Module
 from comunicat.utils.test.mocks import MockSumUpApiClientExecute
 from conftest import NumOperationsMixin
-from order.api import complete
+from order.api import clean_pending_orders, complete, delete, update_provider
 from order.enums import OrderStatus
 from order.tests.factories import (
     OrderDeliveryFactory,
@@ -21,6 +21,278 @@ from order.tests.factories import (
 from payment.enums import PaymentMethod, PaymentStatus, SourceType
 from payment.models import Payment, PaymentLine, Transaction
 from payment.tests.factories import PaymentProviderFactory, SourceFactory
+
+
+@pytest.mark.django_db
+class TestDelete(NumOperationsMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.payment_order_1_obj = PaymentOrderFactory(status=PaymentStatus.CREATED)
+        cls.payment_order_2_obj = PaymentOrderFactory(status=PaymentStatus.PROCESSING)
+        cls.payment_order_3_obj = PaymentOrderFactory(status=PaymentStatus.COMPLETED)
+        cls.payment_order_4_obj = PaymentOrderFactory(status=PaymentStatus.COMPLETED)
+
+        cls.order_1_obj = OrderFactory(
+            payment_order=cls.payment_order_1_obj,
+            status=OrderStatus.CREATED,
+        )
+        cls.order_2_obj = OrderFactory(
+            payment_order=cls.payment_order_2_obj,
+            status=OrderStatus.CREATED,
+        )
+        cls.order_3_obj = OrderFactory(
+            payment_order=cls.payment_order_3_obj,
+            status=OrderStatus.PROCESSING,
+        )
+        cls.order_4_obj = OrderFactory(
+            payment_order=cls.payment_order_4_obj,
+            status=OrderStatus.COMPLETED,
+        )
+
+    def test_delete__status_created_payment_status_created(self, *args, **kwargs):
+        with self.assertNumOperations(
+            num=0, num_selects=3, num_inserts=1, num_updates=2
+        ):
+            is_deleted = delete(
+                order_id=self.order_1_obj.id,
+                module=Module.ORG,
+            )
+
+        self.assertTrue(is_deleted)
+
+        self.order_1_obj.refresh_from_db()
+        self.payment_order_1_obj.refresh_from_db()
+
+        self.assertEqual(self.order_1_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.payment_order_1_obj.status, PaymentStatus.CANCELED)
+
+    def test_delete__status_created_payment_status_processing(self, *args, **kwargs):
+        with self.assertNumOperations(
+            num=0, num_selects=3, num_inserts=1, num_updates=1
+        ):
+            is_deleted = delete(
+                order_id=self.order_2_obj.id,
+                module=Module.ORG,
+            )
+
+        self.assertTrue(is_deleted)
+
+        self.order_2_obj.refresh_from_db()
+        self.payment_order_2_obj.refresh_from_db()
+
+        self.assertEqual(self.order_2_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.payment_order_2_obj.status, PaymentStatus.PROCESSING)
+
+    def test_delete__status_processing_payment_status_completed(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=1):
+            is_deleted = delete(
+                order_id=self.order_3_obj.id,
+                module=Module.ORG,
+            )
+
+        self.assertFalse(is_deleted)
+
+        self.order_3_obj.refresh_from_db()
+        self.payment_order_3_obj.refresh_from_db()
+
+        self.assertEqual(self.order_3_obj.status, OrderStatus.PROCESSING)
+        self.assertEqual(self.payment_order_3_obj.status, PaymentStatus.COMPLETED)
+
+    def test_delete__status_completed_payment_status_completed(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=1):
+            is_deleted = delete(
+                order_id=self.order_4_obj.id,
+                module=Module.ORG,
+            )
+
+        self.assertFalse(is_deleted)
+
+        self.order_4_obj.refresh_from_db()
+        self.payment_order_4_obj.refresh_from_db()
+
+        self.assertEqual(self.order_4_obj.status, OrderStatus.COMPLETED)
+        self.assertEqual(self.payment_order_4_obj.status, PaymentStatus.COMPLETED)
+
+
+@pytest.mark.django_db
+class TestUpdateProvider(NumOperationsMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.payment_provider_1_obj = PaymentProviderFactory(
+            method=PaymentMethod.SUMUP, code="SUMUP"
+        )
+        cls.payment_provider_2_obj = PaymentProviderFactory(
+            method=PaymentMethod.SE_SWISH, code="SWISH"
+        )
+
+        cls.source_1_obj = SourceFactory(
+            type=SourceType.PROVIDER, provider=cls.payment_provider_1_obj
+        )
+
+        cls.payment_order_1_obj = PaymentOrderFactory(
+            provider=cls.payment_provider_1_obj, status=PaymentStatus.CREATED
+        )
+        cls.payment_order_2_obj = PaymentOrderFactory(
+            provider=cls.payment_provider_1_obj, status=PaymentStatus.PROCESSING
+        )
+
+        cls.order_1_obj = OrderFactory(
+            payment_order=cls.payment_order_1_obj,
+            status=OrderStatus.CREATED,
+        )
+        cls.order_2_obj = OrderFactory(
+            payment_order=None,
+            status=OrderStatus.CREATED,
+        )
+        cls.order_3_obj = OrderFactory(
+            payment_order=cls.payment_order_2_obj,
+            status=OrderStatus.PROCESSING,
+        )
+
+    def test_update_provider__existing_payment_order(self, *args, **kwargs):
+        with self.assertNumOperations(
+            num=0, num_selects=21, num_inserts=1, num_updates=1
+        ):
+            order_obj = update_provider(
+                order_id=self.order_1_obj.id,
+                provider_id=self.payment_provider_2_obj.id,
+                module=Module.ORG,
+                user_id=None,
+            )
+
+        self.assertIsNotNone(order_obj)
+        self.assertIsNotNone(order_obj.payment_order)
+        self.assertEqual(order_obj.payment_order.provider, self.payment_provider_2_obj)
+
+    def test_update_provider__new_payment_order(self, *args, **kwargs):
+        with self.assertNumOperations(
+            num=0, num_selects=15, num_inserts=1, num_updates=2
+        ):
+            order_obj = update_provider(
+                order_id=self.order_2_obj.id,
+                provider_id=self.payment_provider_2_obj.id,
+                module=Module.ORG,
+                user_id=None,
+            )
+
+        self.assertIsNotNone(order_obj)
+        self.assertIsNotNone(order_obj.payment_order)
+        self.assertEqual(order_obj.payment_order.provider, self.payment_provider_2_obj)
+
+    def test_update_provider__status_processing(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=1):
+            order_obj = update_provider(
+                order_id=self.order_3_obj.id,
+                provider_id=self.payment_provider_2_obj.id,
+                module=Module.ORG,
+                user_id=None,
+            )
+
+        self.assertIsNone(order_obj)
+
+
+@pytest.mark.django_db
+class TestCleanPendingOrders(NumOperationsMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.payment_order_1_obj = PaymentOrderFactory(status=PaymentStatus.CREATED)
+        cls.payment_order_2_obj = PaymentOrderFactory(status=PaymentStatus.PENDING)
+        cls.payment_order_3_obj = PaymentOrderFactory(status=PaymentStatus.PROCESSING)
+        cls.payment_order_4_obj = PaymentOrderFactory(status=PaymentStatus.PROCESSING)
+        cls.payment_order_5_obj = PaymentOrderFactory(status=PaymentStatus.COMPLETED)
+
+        cls.order_1_obj = OrderFactory(
+            payment_order=cls.payment_order_1_obj,
+            status=OrderStatus.CREATED,
+        )
+        cls.order_2_obj = OrderFactory(
+            payment_order=cls.payment_order_2_obj,
+            status=OrderStatus.CREATED,
+        )
+        cls.order_3_obj = OrderFactory(
+            payment_order=cls.payment_order_3_obj,
+            status=OrderStatus.REQUESTED,
+        )
+        cls.order_4_obj = OrderFactory(
+            payment_order=cls.payment_order_4_obj,
+            status=OrderStatus.PROCESSING,
+        )
+        cls.order_5_obj = OrderFactory(
+            payment_order=cls.payment_order_5_obj,
+            status=OrderStatus.COMPLETED,
+        )
+
+    @mock.patch(
+        "django.utils.timezone.now",
+        return_value=timezone.now() + timezone.timedelta(minutes=70),
+    )
+    def test_clean_pending_orders__status_created(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=1, num_updates=2):
+            clean_pending_orders()
+
+        self.payment_order_1_obj.refresh_from_db()
+        self.payment_order_2_obj.refresh_from_db()
+        self.payment_order_3_obj.refresh_from_db()
+        self.payment_order_4_obj.refresh_from_db()
+        self.payment_order_5_obj.refresh_from_db()
+
+        self.assertEqual(self.payment_order_1_obj.status, PaymentStatus.CANCELED)
+        self.assertEqual(self.payment_order_2_obj.status, PaymentStatus.CANCELED)
+        self.assertEqual(self.payment_order_3_obj.status, PaymentStatus.PROCESSING)
+        self.assertEqual(self.payment_order_4_obj.status, PaymentStatus.PROCESSING)
+        self.assertEqual(self.payment_order_5_obj.status, PaymentStatus.COMPLETED)
+
+        self.order_1_obj.refresh_from_db()
+        self.order_2_obj.refresh_from_db()
+        self.order_3_obj.refresh_from_db()
+        self.order_4_obj.refresh_from_db()
+        self.order_5_obj.refresh_from_db()
+
+        self.assertEqual(self.order_1_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.order_2_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.order_3_obj.status, OrderStatus.REQUESTED)
+        self.assertEqual(self.order_4_obj.status, OrderStatus.PROCESSING)
+        self.assertEqual(self.order_5_obj.status, OrderStatus.COMPLETED)
+
+    @mock.patch(
+        "django.utils.timezone.now",
+        return_value=timezone.now() + timezone.timedelta(minutes=259205),
+    )
+    def test_clean_pending_orders__status_requested_or_processing(
+        self, *args, **kwargs
+    ):
+        with self.assertNumOperations(num=0, num_selects=1, num_updates=2):
+            clean_pending_orders()
+
+        self.payment_order_1_obj.refresh_from_db()
+        self.payment_order_2_obj.refresh_from_db()
+        self.payment_order_3_obj.refresh_from_db()
+        self.payment_order_4_obj.refresh_from_db()
+        self.payment_order_5_obj.refresh_from_db()
+
+        self.assertEqual(self.payment_order_1_obj.status, PaymentStatus.CANCELED)
+        self.assertEqual(self.payment_order_2_obj.status, PaymentStatus.CANCELED)
+        self.assertEqual(self.payment_order_3_obj.status, PaymentStatus.PROCESSING)
+        self.assertEqual(self.payment_order_4_obj.status, PaymentStatus.PROCESSING)
+        self.assertEqual(self.payment_order_5_obj.status, PaymentStatus.COMPLETED)
+
+        self.order_1_obj.refresh_from_db()
+        self.order_2_obj.refresh_from_db()
+        self.order_3_obj.refresh_from_db()
+        self.order_4_obj.refresh_from_db()
+        self.order_5_obj.refresh_from_db()
+
+        self.assertEqual(self.order_1_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.order_2_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.order_3_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.order_4_obj.status, OrderStatus.ABANDONED)
+        self.assertEqual(self.order_5_obj.status, OrderStatus.COMPLETED)
 
 
 @pytest.mark.django_db
