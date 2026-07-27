@@ -102,12 +102,13 @@ def get_list(user_id: UUID, module: Module) -> list[Payment]:
 
 def create_for_order(
     order_id: UUID,
+    is_captured: bool,
     date_accounting: datetime.datetime,
     external_id: str | None = None,
     reference: str | None = None,
 ) -> Payment:
     order_obj = (
-        Order.objects.filter(id=order_id, status=OrderStatus.CREATED)
+        Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
         .with_amount()
         .select_related(
             "delivery", "delivery__provider", "delivery__provider__accounts"
@@ -132,6 +133,8 @@ def create_for_order(
         )
         .first()
     )
+
+    assert order_obj is not None
 
     payment_order_obj = order_obj.payment_order
 
@@ -162,12 +165,14 @@ def create_for_order(
 
         payment_obj, __ = Payment.objects.update_or_create(
             type=PaymentType.DEBIT,
-            status=PaymentStatus.COMPLETED,
             method=transaction_obj.method,
             transaction=transaction_obj,
             entity=order_obj.entity,
             defaults={
                 "text": text,
+                "status": (
+                    PaymentStatus.COMPLETED if is_captured else PaymentStatus.PROCESSING
+                ),
             },
         )
 

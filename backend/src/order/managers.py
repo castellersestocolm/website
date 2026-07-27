@@ -25,7 +25,15 @@ class OrderQuerySet(QuerySet):
 
         return self.annotate(
             amount_products=Coalesce(
-                Sum("products__amount"), Value(0), output_field=MoneyOutput()
+                Subquery(
+                    OrderProduct.objects.filter(order_id=OuterRef("id"))
+                    .with_amount()
+                    .values("order_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
             ),
             amount_products_vat=Coalesce(
                 Subquery(
@@ -39,7 +47,15 @@ class OrderQuerySet(QuerySet):
                 output_field=MoneyOutput(),
             ),
             amount_registrations=Coalesce(
-                Sum("registrations__amount"), Value(0), output_field=MoneyOutput()
+                Subquery(
+                    OrderRegistration.objects.filter(order_id=OuterRef("id"))
+                    .with_amount()
+                    .values("order_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
             ),
             amount_registrations_vat=Coalesce(
                 Subquery(

@@ -17,6 +17,7 @@ from order.models import (
     OrderDelivery,
     OrderDeliveryAddress,
     OrderProduct,
+    OrderRegistration,
 )
 from payment.enums import PaymentStatus
 from payment.models import PaymentOrder
@@ -70,8 +71,7 @@ class OrderDeliveryFactory(DjangoModelFactory):
     provider = SubFactory(DeliveryProviderFactory)
     address = SubFactory(OrderDeliveryAddressFactory)
 
-    # TODO: Factory add event
-    # event = SubFactory("event.tests.factories.EventFactory")
+    event = SubFactory("event.tests.factories.EventFactory")
 
     line = SubFactory("payment.tests.factories.PaymentLineFactory")
 
@@ -127,3 +127,17 @@ class OrderProductFactory(DjangoModelFactory):
 
     class Meta:
         model = OrderProduct
+
+
+class OrderRegistrationFactory(DjangoModelFactory):
+    order = SubFactory(OrderFactory)
+
+    registration = SubFactory("event.tests.factories.RegistrationFactory")
+
+    line = SubFactory("payment.tests.factories.PaymentLineFactory")
+
+    amount = LazyAttribute(lambda n: Money(random.randint(100, 500), "SEK"))
+    vat = 0
+
+    class Meta:
+        model = OrderRegistration

@@ -60,10 +60,10 @@ class PaymentProviderSumup(PaymentProviderBase):
         return None
 
     def capture(self) -> bool:
-        assert self.order_obj.status == OrderStatus.CREATED
+        assert self.order_obj.status <= OrderStatus.REQUESTED
 
         if (
-            self.payment_order_obj.status > PaymentStatus.CREATED
+            self.payment_order_obj.status > PaymentStatus.PROCESSING
             or not self.payment_order_obj.external_id
         ):
             return False
