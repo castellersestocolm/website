@@ -401,12 +401,12 @@ def complete(
     with_notify: bool = True,
 ) -> Order | None:
     order_obj = (
-        Order.objects.filter(id=order_id, status=OrderStatus.CREATED)
+        Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
         .with_amount()
         .first()
     )
 
-    if not order_obj.payment_order:
+    if not order_obj or not order_obj.payment_order:
         return None
 
     payment_order_obj = order_obj.payment_order
@@ -423,24 +423,25 @@ def complete(
         is_captured = payment_class.capture()
         is_completed = is_captured
 
-    if transaction_id or transaction_reference:
-        # TODO: Move vat to money_vat instead to store amounts and not percentages
-        payment.api.create_for_order(
-            order_id=order_obj.id,
-            date_accounting=date_paid or timezone.localtime(),
-            external_id=transaction_id,
-            reference=transaction_reference,
-        )
+        if transaction_id or transaction_reference:
+            # TODO: Move vat to money_vat instead to store amounts and not percentages
+            payment.api.create_for_order(
+                order_id=order_obj.id,
+                date_accounting=date_paid or timezone.localtime(),
+                external_id=transaction_id,
+                reference=transaction_reference,
+                is_captured=is_captured,
+            )
+
+    payment_order_obj.status = (
+        PaymentStatus.COMPLETED if is_completed else PaymentStatus.PROCESSING
+    )
+    payment_order_obj.save(update_fields=("status",))
+
+    order_obj.status = OrderStatus.PROCESSING if is_completed else OrderStatus.REQUESTED
+    order_obj.save(update_fields=("status",))
 
     if is_captured:
-        payment_order_obj.status = (
-            PaymentStatus.COMPLETED if is_completed else PaymentStatus.PROCESSING
-        )
-        payment_order_obj.save(update_fields=("status",))
-
-        order_obj.status = OrderStatus.PROCESSING
-        order_obj.save(update_fields=("status",))
-
         if with_notify:
             notify.tasks.send_order_email.delay(
                 order_id=order_obj.id,

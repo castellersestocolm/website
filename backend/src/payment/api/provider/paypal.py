@@ -195,7 +195,7 @@ class PaymentProviderPaypal(PaymentProviderBase):
         return None
 
     def capture(self) -> bool:
-        assert self.order_obj.status == OrderStatus.CREATED
+        assert self.order_obj.status <= OrderStatus.REQUESTED
 
         if (
             self.payment_order_obj.status > PaymentStatus.CREATED

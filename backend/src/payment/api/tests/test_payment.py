@@ -11,11 +11,12 @@ from order.tests.factories import (
     OrderDeliveryFactory,
     OrderFactory,
     OrderProductFactory,
+    OrderRegistrationFactory,
     PaymentOrderFactory,
 )
 from payment.api import create_for_order
 from payment.enums import PaymentMethod, PaymentStatus, PaymentType, SourceType
-from payment.models import PaymentLine
+from payment.models import Payment, PaymentLine, Transaction
 from payment.tests.factories import PaymentProviderFactory, SourceFactory
 
 
@@ -34,30 +35,78 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         cls.payment_order_1_obj = PaymentOrderFactory(
             provider=cls.payment_provider_1_obj, status=PaymentStatus.CREATED
         )
+        cls.payment_order_2_obj = PaymentOrderFactory(
+            provider=cls.payment_provider_1_obj, status=PaymentStatus.CREATED
+        )
 
         cls.order_delivery_1_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
+        cls.order_delivery_2_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
 
         cls.order_1_obj = OrderFactory(
             delivery=cls.order_delivery_1_obj,
             payment_order=cls.payment_order_1_obj,
             status=OrderStatus.CREATED,
         )
-
-        cls.order_1_product_1_obj = OrderProductFactory(
-            order=cls.order_1_obj, quantity=1, amount_unit=Money(200, "SEK")
-        )
-        cls.order_1_product_2_obj = OrderProductFactory(
-            order=cls.order_1_obj, quantity=2, amount_unit=Money(50, "SEK")
+        cls.order_2_obj = OrderFactory(
+            delivery=cls.order_delivery_2_obj,
+            payment_order=cls.payment_order_2_obj,
+            status=OrderStatus.CREATED,
         )
 
-    def test_create_for_order__order_created(self, *args, **kwargs):
+        for order_obj in (cls.order_1_obj, cls.order_2_obj):
+            OrderProductFactory(
+                order=order_obj, quantity=1, amount_unit=Money(200, "SEK")
+            )
+            OrderProductFactory(
+                order=order_obj, quantity=2, amount_unit=Money(50, "SEK")
+            )
+
+            OrderRegistrationFactory(order=order_obj, amount=Money(300, "SEK"))
+            OrderRegistrationFactory(order=order_obj, amount=Money(200, "SEK"))
+
+        cls.order_3_obj = OrderFactory(
+            status=OrderStatus.COMPLETED,
+        )
+
+    def test_create_for_order__order_created_captured(self, *args, **kwargs):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
-        payment_obj = create_for_order(
-            order_id=self.order_1_obj.id,
-            date_accounting=date_accounting,
-            external_id="external-order-1",
-            reference="ORDER-1",
-        )
+
+        with self.assertNumOperations(
+            num=0, num_selects=22, num_inserts=7, num_updates=5
+        ):
+            payment_obj = create_for_order(
+                order_id=self.order_1_obj.id,
+                is_captured=False,
+                date_accounting=date_accounting,
+                external_id="external-order-1",
+                reference="ORDER-1",
+            )
+
+        self.assertEqual(payment_obj.type, PaymentType.DEBIT)
+        self.assertEqual(payment_obj.status, PaymentStatus.PROCESSING)
+
+        with self.assertNumOperations(
+            num=0, num_selects=22, num_inserts=1, num_updates=10
+        ):
+            payment_obj = create_for_order(
+                order_id=self.order_1_obj.id,
+                is_captured=True,
+                date_accounting=date_accounting,
+                external_id="external-order-1",
+                reference="ORDER-1",
+            )
+
+        self.assertIsNotNone(payment_obj)
+
+        transaction_count = Transaction.objects.filter(reference="ORDER-1").count()
+        payment_count = Payment.objects.filter(transaction__reference="ORDER-1").count()
+        payment_line_count = PaymentLine.objects.filter(
+            payment__transaction__reference="ORDER-1"
+        ).count()
+
+        self.assertEqual(transaction_count, 1)
+        self.assertEqual(payment_count, 1)
+        self.assertEqual(payment_line_count, 5)
 
         self.assertEqual(payment_obj.type, PaymentType.DEBIT)
         self.assertEqual(payment_obj.status, PaymentStatus.COMPLETED)
@@ -72,8 +121,8 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         self.assertEqual(
             payment_obj.transaction.method, self.payment_order_1_obj.provider.method
         )
-        self.assertEqual(payment_obj.transaction.amount, Money(400, "SEK"))
-        self.assertEqual(payment_obj.transaction.vat, settings.MODULE_ALL_VAT)
+        self.assertEqual(payment_obj.transaction.amount, Money(900, "SEK"))
+        self.assertEqual(payment_obj.transaction.vat, int(settings.MODULE_ALL_VAT))
         self.assertEqual(payment_obj.transaction.date_accounting, date_accounting)
         self.assertEqual(payment_obj.transaction.date_interest, date_accounting)
         self.assertEqual(
@@ -113,10 +162,15 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
                 payment=payment_obj, item_type=item_type_order_registration
             )
         )
-        # payment_line_registration_amount = sum([payment_line_registration_obj.amount for payment_line_registration_obj in payment_line_registration_objs])
+        payment_line_registration_amount = sum(
+            [
+                payment_line_registration_obj.amount
+                for payment_line_registration_obj in payment_line_registration_objs
+            ]
+        )
 
-        self.assertEqual(len(payment_line_registration_objs), 0)
-        # self.assertEqual(payment_line_registration_amount, Money(0, "SEK"))
+        self.assertEqual(len(payment_line_registration_objs), 2)
+        self.assertEqual(payment_line_registration_amount, Money(500, "SEK"))
 
         payment_line_delivery_objs = list(
             PaymentLine.objects.filter(
@@ -132,3 +186,37 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
 
         self.assertEqual(len(payment_line_delivery_objs), 1)
         self.assertEqual(payment_line_delivery_amount, Money(100, "SEK"))
+
+    def test_create_for_order__order_created_not_captured(self, *args, **kwargs):
+        date_accounting = timezone.localdate() + timezone.timedelta(days=1)
+
+        with self.assertNumOperations(
+            num=0, num_selects=22, num_inserts=7, num_updates=5
+        ):
+            payment_obj = create_for_order(
+                order_id=self.order_2_obj.id,
+                is_captured=False,
+                date_accounting=date_accounting,
+                external_id="external-order-2",
+                reference="ORDER-2",
+            )
+
+        self.assertIsNotNone(payment_obj)
+
+        self.assertEqual(payment_obj.type, PaymentType.DEBIT)
+        self.assertEqual(payment_obj.status, PaymentStatus.PROCESSING)
+        self.assertEqual(payment_obj.entity, self.order_2_obj.entity)
+        self.assertEqual(payment_obj.text, f"Order #{self.order_2_obj.reference}")
+
+    def test_create_for_order__order_completed(self, *args, **kwargs):
+        date_accounting = timezone.localdate() + timezone.timedelta(days=1)
+
+        with self.assertNumOperations(num=0, num_selects=1):
+            with self.assertRaises(AssertionError):
+                 create_for_order(
+                    order_id=self.order_3_obj.id,
+                    is_captured=True,
+                    date_accounting=date_accounting,
+                    external_id="external-order-3",
+                    reference="ORDER-3",
+                )
