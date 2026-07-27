@@ -328,9 +328,15 @@ def delete(order_id: UUID, module: Module) -> bool:
     if not order_obj:
         return False
 
-    # TODO: Update status on payment order
     order_obj.status = OrderStatus.ABANDONED
     order_obj.save(update_fields=("status",))
+
+    if (
+        order_obj.payment_order
+        and order_obj.payment_order.status <= PaymentStatus.PENDING
+    ):
+        order_obj.payment_order.status = PaymentStatus.CANCELED
+        order_obj.payment_order.save(update_fields=("status",))
 
     return True
 
@@ -369,27 +375,30 @@ def update_provider(
 def clean_pending_orders() -> None:
     # TODO: Move delta to a setting perhaps
     # TODO: Check what happens when payment order and order are out of sync
-    order_ids = Order.objects.filter(
-        Q(
-            status=OrderStatus.CREATED,
-            created_at__lte=timezone.now()
-            - timezone.timedelta(hours=ORDER_CLEAN_STATUS_CREATED_HOURS)
-            - timezone.timedelta(minutes=5),
-        )
-        | Q(
-            status=OrderStatus.PROCESSING,
-            created_at__lte=timezone.now()
-            - timezone.timedelta(hours=ORDER_CLEAN_STATUS_PROCESSING_HOURS),
-        )
-    ).values_list("id", flat=True)
+    order_ids = list(
+        Order.objects.filter(
+            Q(
+                status=OrderStatus.CREATED,
+                created_at__lte=timezone.now()
+                - timezone.timedelta(hours=ORDER_CLEAN_STATUS_CREATED_HOURS)
+                - timezone.timedelta(minutes=5),
+            )
+            | Q(
+                status__in=(OrderStatus.REQUESTED, OrderStatus.PROCESSING),
+                created_at__lte=timezone.now()
+                - timezone.timedelta(hours=ORDER_CLEAN_STATUS_PROCESSING_HOURS),
+            )
+        ).values_list("id", flat=True)
+    )
 
     Order.objects.filter(id__in=order_ids).update(status=OrderStatus.ABANDONED)
 
-    PaymentOrder.objects.filter(order__id__in=order_ids).update(
-        status=OrderStatus.ABANDONED
-    )
+    PaymentOrder.objects.filter(
+        order__id__in=order_ids, status__lte=PaymentStatus.PENDING
+    ).update(status=PaymentStatus.CANCELED)
 
 
+# TODO: Should run a background sync to "capture" pending orders
 @transaction.atomic
 def complete(
     order_id: UUID,
