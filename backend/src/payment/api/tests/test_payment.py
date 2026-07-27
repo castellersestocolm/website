@@ -213,7 +213,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
 
         with self.assertNumOperations(num=0, num_selects=1):
             with self.assertRaises(AssertionError):
-                 create_for_order(
+                create_for_order(
                     order_id=self.order_3_obj.id,
                     is_captured=True,
                     date_accounting=date_accounting,
