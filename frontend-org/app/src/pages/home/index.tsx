@@ -121,7 +121,6 @@ function HomePage() {
     ]).then((response) => {
       if (response.status === 200 && response.data.results.length > 0) {
         setHighlightedEvent(response.data.results[0]);
-        console.log(response.data.results[0]);
       }
     });
   }, [setHighlightedEvent, i18n.resolvedLanguage]);
