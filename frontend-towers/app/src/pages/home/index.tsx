@@ -43,7 +43,7 @@ import ImageCarousel from "../../components/ImageCarousel/ImageCarousel";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Alerts from "../../components/Alerts/Alerts";
 import { apiEventList, apiHistoryEventGroupList } from "../../api";
-import { EventType, TRANSPORT_MODE_ICON } from "../../enums";
+import { EventType, TRANSPORT_MODE_ICON, Module } from "../../enums";
 import { capitalizeFirstLetter } from "../../utils/string";
 import EventCalendar from "../../components/EventCalendar/EventCalendar";
 import Map from "../../components/Map/Map";
@@ -56,6 +56,7 @@ import Hero from "../../components/Hero/Hero";
 import { languageToLocale } from "../../utils/locale";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
+const ORG_BASE_URL = new URL(process.env.REACT_APP_ORG_BASE_URL).origin;
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -216,11 +217,19 @@ function HomePage() {
                 >
                   <Button
                     variant="contained"
-                    href={ROUTES["calendar-event"].path
-                      .replace(":year", highligtedEvent.time_from.slice(0, 4))
-                      .replace(":month", highligtedEvent.time_from.slice(5, 7))
-                      .replace(":day", highligtedEvent.time_from.slice(8, 10))
-                      .replace(":code", highligtedEvent.code)}
+                    href={
+                      (highligtedEvent.module === Module.ORG
+                        ? ORG_BASE_URL
+                        : "") +
+                      ROUTES["calendar-event"].path
+                        .replace(":year", highligtedEvent.time_from.slice(0, 4))
+                        .replace(
+                          ":month",
+                          highligtedEvent.time_from.slice(5, 7),
+                        )
+                        .replace(":day", highligtedEvent.time_from.slice(8, 10))
+                        .replace(":code", highligtedEvent.code)
+                    }
                     disableElevation
                   >
                     {t("pages.home-highlight.button-info")}

@@ -36,10 +36,11 @@ import ImageHeroNewsletters from "../../assets/images/heros/newsletters.jpg";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import IconEast from "@mui/icons-material/East";
 import { apiEventList } from "../../api";
-import { EventType } from "../../enums";
+import { EventType, Module } from "../../enums";
 import Hero from "../../components/Hero/Hero";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
+const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
 
 function HomePage() {
   const [t, i18n] = useTranslation("common");
@@ -258,7 +259,7 @@ function HomePage() {
                   </Link>
                 </Typography>
               )}
-              {/*<Grid size={12} marginTop="24px">
+              <Grid size={12} marginTop="24px">
                 <Stack
                   direction="row"
                   spacing={2}
@@ -266,17 +267,25 @@ function HomePage() {
                 >
                   <Button
                     variant="contained"
-                    href={ROUTES["calendar-event"].path
-                      .replace(":year", highligtedEvent.time_from.slice(0, 4))
-                      .replace(":month", highligtedEvent.time_from.slice(5, 7))
-                      .replace(":day", highligtedEvent.time_from.slice(8, 10))
-                      .replace(":code", highligtedEvent.code)}
+                    href={
+                      (highligtedEvent.module === Module.TOWERS
+                        ? TOWERS_BASE_URL
+                        : "") +
+                      ROUTES["calendar-event"].path
+                        .replace(":year", highligtedEvent.time_from.slice(0, 4))
+                        .replace(
+                          ":month",
+                          highligtedEvent.time_from.slice(5, 7),
+                        )
+                        .replace(":day", highligtedEvent.time_from.slice(8, 10))
+                        .replace(":code", highligtedEvent.code)
+                    }
                     disableElevation
                   >
                     {t("pages.home-highlight.button-info")}
                   </Button>
                 </Stack>
-              </Grid>*/}
+              </Grid>
             </Box>
           }
         />
