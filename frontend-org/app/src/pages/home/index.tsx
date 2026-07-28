@@ -118,6 +118,7 @@ function HomePage() {
       EventType.TALK,
       EventType.GATHERING,
       EventType.WORKSHOP,
+      EventType.PERFORMANCE,
     ]).then((response) => {
       if (response.status === 200 && response.data.results.length > 0) {
         setHighlightedEvent(response.data.results[0]);

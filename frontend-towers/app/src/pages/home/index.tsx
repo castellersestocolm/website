@@ -97,6 +97,10 @@ function HomePage() {
 
   React.useEffect(() => {
     apiEventList(1, 1, undefined, undefined, undefined, undefined, undefined, [
+      EventType.GENERAL,
+      EventType.TALK,
+      EventType.GATHERING,
+      EventType.WORKSHOP,
       EventType.PERFORMANCE,
     ]).then((response) => {
       if (response.status === 200 && response.data.results.length > 0) {
@@ -145,7 +149,7 @@ function HomePage() {
                   {t("pages.home-hero.title")}
                 </Typography>
                 <Typography
-                  variant="h5"
+                  variant="h6"
                   fontWeight="700"
                   className={styles.heroSubtitle}
                 >
