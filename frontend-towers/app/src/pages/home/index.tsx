@@ -31,6 +31,7 @@ import IconLoyalty from "@mui/icons-material/Loyalty";
 import IconCreditCardOff from "@mui/icons-material/CreditCardOff";
 import IconCheckroom from "@mui/icons-material/Checkroom";
 import IconPayment from "@mui/icons-material/Payment";
+import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
@@ -236,6 +237,9 @@ function HomePage() {
                     disableElevation
                   >
                     {t("pages.home-highlight.button-info")}
+                    {highligtedEvent.module === Module.ORG && (
+                      <IconArrowOutward className={styles.joinExternalIcon} />
+                    )}
                   </Button>
                 </Stack>
               </Grid>

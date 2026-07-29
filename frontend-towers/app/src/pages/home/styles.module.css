@@ -109,6 +109,11 @@
   justify-content: center;
 }
 
+.joinExternalIcon {
+  font-size: 16px !important;
+  padding-left: 4px;
+}
+
 .rehearsals {
   display: flex;
   flex-basis: 0;
