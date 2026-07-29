@@ -38,6 +38,7 @@ import IconEast from "@mui/icons-material/East";
 import { apiEventList } from "../../api";
 import { EventType, Module } from "../../enums";
 import Hero from "../../components/Hero/Hero";
+import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
@@ -284,6 +285,9 @@ function HomePage() {
                     disableElevation
                   >
                     {t("pages.home-highlight.button-info")}
+                    {highligtedEvent.module === Module.TOWERS && (
+                      <IconArrowOutward className={styles.joinExternalIcon} />
+                    )}
                   </Button>
                 </Stack>
               </Grid>
