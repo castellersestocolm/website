@@ -213,13 +213,6 @@ function HomePage() {
               >
                 {highligtedEvent.description}
               </Typography>
-              <Typography
-                variant="h4"
-                className={styles.heroSectionSubtitle}
-                marginTop="12px"
-              >
-                {highligtedEvent.description}
-              </Typography>
               <Grid size={12} marginTop="24px">
                 <Stack
                   direction="row"
