@@ -1,3 +1,4 @@
+from comunicat.enums import Module
 from comunicat.settings import *  # noqa: F401,F403
 
 SECRET_KEY = "2x9%{O91)OE>F#+ZzGbof8mht+flJ[[O"
