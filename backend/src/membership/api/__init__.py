@@ -56,6 +56,9 @@ def renew_membership(membership_id: UUID) -> Membership | None:
     if not date_to:
         return None
 
+    if date_to <= membership_obj.date_to:
+        return membership_obj
+
     new_membership_obj = Membership.objects.create(
         date_from=timezone.localdate(),
         date_to=date_to,
