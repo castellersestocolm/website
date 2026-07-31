@@ -6,11 +6,12 @@ from membership.api.export import export_memberships
 from membership.consts import GOOGLE_DRIVE_FOLDER_ID, GOOGLE_DRIVE_ID
 
 
-def sync_memberships(module: Module) -> None:
+# TODO: Add configure to enable the export depending on module and store it accordingly
+def sync_memberships(module: Module) -> bool:
     service = get_service(module=module)
 
     if not service:
-        return None
+        return False
 
     memberships_file = export_memberships()
     members_name = f"{str(_('Members'))}.xlsx"
@@ -23,4 +24,4 @@ def sync_memberships(module: Module) -> None:
         mime_type="application/vnd.google-apps.spreadsheet",
     )
 
-    return None
+    return True
