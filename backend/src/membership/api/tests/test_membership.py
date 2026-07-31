@@ -5,7 +5,7 @@ from djmoney.money import Money
 
 from comunicat.enums import Module
 from conftest import NumOperationsMixin
-from membership.api import create_or_update
+from membership.api import create_or_update, get_list, renew_membership
 from membership.enums import MembershipStatus
 from membership.models import MembershipModule, MembershipUser
 from membership.tests.factories import (
@@ -15,6 +15,421 @@ from membership.tests.factories import (
 )
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.tests.factories import FamilyFactory, FamilyMemberFactory, UserFactory
+
+
+@pytest.mark.django_db
+class TestList(NumOperationsMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.user_member_1_obj = UserFactory(email="user-member-1@domain-test.org")
+        cls.user_member_2_obj = UserFactory(email="user-member-2@domain-test.org")
+        cls.user_member_3_obj = UserFactory(email="user-member-3@domain-test.org")
+        cls.user_member_4_obj = UserFactory(email="user-member-4@domain-test.org")
+
+        cls.membership_1_user_1_obj = MembershipFactory(
+            status=MembershipStatus.ACTIVE,
+            date_from=timezone.localdate() - timezone.timedelta(days=365),
+            date_to=timezone.localdate() - timezone.timedelta(days=1),
+        )
+        cls.membership_2_user_1_obj = MembershipFactory(
+            status=MembershipStatus.PROCESSING,
+            date_from=timezone.localdate(),
+            date_to=timezone.localdate() + timezone.timedelta(days=365 - 1),
+        )
+        cls.membership_3_user_2_obj = MembershipFactory(
+            status=MembershipStatus.ACTIVE,
+            date_from=timezone.localdate(),
+            date_to=timezone.localdate() + timezone.timedelta(days=365 - 1),
+        )
+
+        cls.membership_module_1_user_1_obj = MembershipModuleFactory(
+            membership=cls.membership_1_user_1_obj,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(150, "SEK"),
+            module=Module.ORG,
+        )
+        cls.membership_module_2_user_2_obj = MembershipModuleFactory(
+            membership=cls.membership_2_user_1_obj,
+            status=MembershipStatus.PROCESSING,
+            amount=Money(150, "SEK"),
+            module=Module.ORG,
+        )
+        cls.membership_module_3_user_3_obj = MembershipModuleFactory(
+            membership=cls.membership_3_user_2_obj,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(250, "SEK"),
+            module=Module.ORG,
+        )
+        cls.membership_module_4_user_3_obj = MembershipModuleFactory(
+            membership=cls.membership_3_user_2_obj,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(450, "SEK"),
+            module=Module.TOWERS,
+        )
+
+        cls.family_1_obj = FamilyFactory()
+
+        cls.family_1_user_2_obj = FamilyMemberFactory(
+            user=cls.user_member_2_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MANAGER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_1_user_3_obj = FamilyMemberFactory(
+            user=cls.user_member_3_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MANAGER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_1_user_4_obj = FamilyMemberFactory(
+            user=cls.user_member_4_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MEMBER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+
+        cls.membership_user_1_user_1_obj = MembershipUserFactory(
+            user=cls.user_member_1_obj,
+            membership=cls.membership_1_user_1_obj,
+            family=None,
+        )
+        cls.membership_user_2_user_1_obj = MembershipUserFactory(
+            user=cls.user_member_1_obj,
+            membership=cls.membership_2_user_1_obj,
+            family=None,
+        )
+        cls.membership_user_3_user_2_obj = MembershipUserFactory(
+            user=cls.user_member_2_obj,
+            membership=cls.membership_3_user_2_obj,
+            family=cls.family_1_obj,
+        )
+        cls.membership_user_4_user_3_obj = MembershipUserFactory(
+            user=cls.user_member_3_obj,
+            membership=cls.membership_3_user_2_obj,
+            family=cls.family_1_obj,
+        )
+        cls.membership_user_5_user_4_obj = MembershipUserFactory(
+            user=cls.user_member_4_obj,
+            membership=cls.membership_3_user_2_obj,
+            family=cls.family_1_obj,
+        )
+
+    def test_list__active_and_processing(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=2):
+            membership_objs = get_list(
+                user_id=self.user_member_1_obj,
+                module=Module.ORG,
+            )
+
+        self.assertIsNotNone(membership_objs)
+        self.assertEqual(len(membership_objs), 2)
+
+        membership_active_objs = [
+            membership_obj
+            for membership_obj in membership_objs
+            if membership_obj.status == MembershipStatus.ACTIVE
+        ]
+        membership_processing_objs = [
+            membership_obj
+            for membership_obj in membership_objs
+            if membership_obj.status == MembershipStatus.PROCESSING
+        ]
+
+        self.assertEqual(len(membership_active_objs), 1)
+        self.assertEqual(len(membership_processing_objs), 1)
+
+    def test_list__active_family(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=2):
+            membership_objs = get_list(
+                user_id=self.user_member_3_obj,
+                module=Module.ORG,
+            )
+
+        self.assertIsNotNone(membership_objs)
+        self.assertEqual(len(membership_objs), 1)
+
+        membership_active_objs = [
+            membership_obj
+            for membership_obj in membership_objs
+            if membership_obj.status == MembershipStatus.ACTIVE
+        ]
+
+        self.assertEqual(len(membership_active_objs), 1)
+
+        membership_obj = membership_active_objs[0]
+        membership_module_objs = list(membership_obj.modules.all())
+
+        self.assertEqual(len(membership_module_objs), 2)
+
+        membership_module_org_obj = membership_module_objs[0]
+        membership_module_towers_obj = membership_module_objs[1]
+
+        self.assertEqual(membership_module_org_obj.module, Module.ORG)
+        self.assertEqual(membership_module_org_obj.status, MembershipStatus.ACTIVE)
+        self.assertEqual(membership_module_org_obj.amount, Money(250, "SEK"))
+
+        self.assertEqual(membership_module_towers_obj.module, Module.TOWERS)
+        self.assertEqual(membership_module_towers_obj.status, MembershipStatus.ACTIVE)
+        self.assertEqual(membership_module_towers_obj.amount, Money(450, "SEK"))
+
+
+@pytest.mark.django_db
+class TestRenew(NumOperationsMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.user_member_1_obj = UserFactory(email="user-member-1@domain-test.org")
+        cls.user_member_2_obj = UserFactory(email="user-member-2@domain-test.org")
+        cls.user_member_3_obj = UserFactory(email="user-member-3@domain-test.org")
+        cls.user_member_4_obj = UserFactory(email="user-member-4@domain-test.org")
+        cls.user_member_5_obj = UserFactory(email="user-member-5@domain-test.org")
+        cls.user_member_6_obj = UserFactory(email="user-member-6@domain-test.org")
+
+        cls.membership_1_user_1_obj = MembershipFactory(
+            status=MembershipStatus.ACTIVE,
+            date_from=timezone.localdate() - timezone.timedelta(days=375),
+            date_to=timezone.localdate() - timezone.timedelta(days=10 - 1),
+        )
+        cls.membership_2_user_2_obj = MembershipFactory(
+            status=MembershipStatus.PROCESSING,
+            date_from=timezone.localdate() - timezone.timedelta(days=355),
+            date_to=timezone.localdate() + timezone.timedelta(days=10 - 1),
+        )
+        cls.membership_3_user_3_obj = MembershipFactory(
+            status=MembershipStatus.ACTIVE,
+            date_from=timezone.localdate() - timezone.timedelta(days=355),
+            date_to=timezone.localdate() + timezone.timedelta(days=10 - 1),
+        )
+        cls.membership_4_user_6_obj = MembershipFactory(
+            status=MembershipStatus.ACTIVE,
+            date_from=timezone.localdate() - timezone.timedelta(days=10),
+            date_to=timezone.localdate() + timezone.timedelta(days=355 - 1),
+        )
+
+        cls.membership_module_1_user_1_obj = MembershipModuleFactory(
+            membership=cls.membership_1_user_1_obj,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(150, "SEK"),
+            module=Module.ORG,
+        )
+        cls.membership_module_2_user_2_obj = MembershipModuleFactory(
+            membership=cls.membership_2_user_2_obj,
+            status=MembershipStatus.PROCESSING,
+            amount=Money(150, "SEK"),
+            module=Module.ORG,
+        )
+        cls.membership_module_3_user_3_obj = MembershipModuleFactory(
+            membership=cls.membership_3_user_3_obj,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(250, "SEK"),
+            module=Module.ORG,
+        )
+        cls.membership_module_4_user_3_obj = MembershipModuleFactory(
+            membership=cls.membership_3_user_3_obj,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(450, "SEK"),
+            module=Module.TOWERS,
+        )
+        cls.membership_module_5_user_6_obj = MembershipModuleFactory(
+            membership=cls.membership_4_user_6_obj,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(150, "SEK"),
+            module=Module.ORG,
+        )
+
+        cls.family_1_obj = FamilyFactory()
+
+        cls.family_1_user_3_obj = FamilyMemberFactory(
+            user=cls.user_member_3_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MANAGER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_1_user_4_obj = FamilyMemberFactory(
+            user=cls.user_member_4_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MANAGER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_1_user_5_obj = FamilyMemberFactory(
+            user=cls.user_member_5_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MEMBER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+
+        cls.membership_user_1_user_1_obj = MembershipUserFactory(
+            user=cls.user_member_1_obj,
+            membership=cls.membership_1_user_1_obj,
+            family=None,
+        )
+        cls.membership_user_2_user_2_obj = MembershipUserFactory(
+            user=cls.user_member_2_obj,
+            membership=cls.membership_2_user_2_obj,
+            family=None,
+        )
+        cls.membership_user_3_user_3_obj = MembershipUserFactory(
+            user=cls.user_member_3_obj,
+            membership=cls.membership_3_user_3_obj,
+            family=cls.family_1_obj,
+        )
+        cls.membership_user_4_user_4_obj = MembershipUserFactory(
+            user=cls.user_member_4_obj,
+            membership=cls.membership_3_user_3_obj,
+            family=cls.family_1_obj,
+        )
+        cls.membership_user_5_user_5_obj = MembershipUserFactory(
+            user=cls.user_member_5_obj,
+            membership=cls.membership_3_user_3_obj,
+            family=cls.family_1_obj,
+        )
+        cls.membership_user_6_user_6_obj = MembershipUserFactory(
+            user=cls.user_member_6_obj,
+            membership=cls.membership_4_user_6_obj,
+            family=cls.family_1_obj,
+        )
+
+    def test_renew__no_membership(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=1):
+            membership_obj = renew_membership(
+                membership_id=None,
+            )
+
+        self.assertIsNone(membership_obj)
+
+    def test_renew__status_active_but_past(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=7, num_inserts=3):
+            membership_obj = renew_membership(
+                membership_id=self.membership_1_user_1_obj.id,
+            )
+
+        self.assertIsNotNone(membership_obj)
+        self.assertIsNot(membership_obj, self.membership_1_user_1_obj)
+        self.assertEqual(membership_obj.previous, self.membership_1_user_1_obj)
+        self.assertEqual(membership_obj.status, MembershipStatus.REQUESTED)
+
+        membership_module_objs = list(
+            MembershipModule.objects.filter(membership=membership_obj)
+        )
+
+        self.assertEqual(len(membership_module_objs), 1)
+
+        membership_module_org_obj = [
+            membership_module_obj
+            for membership_module_obj in membership_module_objs
+            if membership_module_obj.module == Module.ORG
+        ][0]
+
+        self.assertEqual(membership_module_org_obj.status, MembershipStatus.REQUESTED)
+        self.assertEqual(membership_module_org_obj.amount, Money(150, "SEK"))
+
+    def test_renew__status_processing(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=7, num_inserts=3):
+            membership_obj = renew_membership(
+                membership_id=self.membership_2_user_2_obj.id,
+            )
+
+        self.assertIsNotNone(membership_obj)
+        self.assertIsNot(membership_obj, self.membership_2_user_2_obj)
+        self.assertEqual(membership_obj.previous, self.membership_2_user_2_obj)
+        self.assertEqual(membership_obj.status, MembershipStatus.REQUESTED)
+
+        membership_module_objs = list(
+            MembershipModule.objects.filter(membership=membership_obj)
+        )
+
+        self.assertEqual(len(membership_module_objs), 1)
+
+        membership_module_org_obj = [
+            membership_module_obj
+            for membership_module_obj in membership_module_objs
+            if membership_module_obj.module == Module.ORG
+        ][0]
+
+        self.assertEqual(membership_module_org_obj.status, MembershipStatus.REQUESTED)
+        self.assertEqual(membership_module_org_obj.amount, Money(150, "SEK"))
+
+    def test_renew__status_active_family(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=9, num_inserts=6):
+            membership_obj = renew_membership(
+                membership_id=self.membership_3_user_3_obj.id,
+            )
+
+        self.assertIsNotNone(membership_obj)
+        self.assertIsNot(membership_obj, self.membership_3_user_3_obj)
+        self.assertEqual(membership_obj.previous, self.membership_3_user_3_obj)
+        self.assertEqual(membership_obj.status, MembershipStatus.REQUESTED)
+
+        membership_user_objs = list(
+            MembershipUser.objects.filter(membership=membership_obj)
+        )
+
+        self.assertEqual(len(membership_user_objs), 3)
+
+        user_have_membership_objs = {
+            membership_user_obj.user for membership_user_obj in membership_user_objs
+        }
+        user_should_have_membership_objs = {
+            self.user_member_3_obj,
+            self.user_member_4_obj,
+            self.user_member_5_obj,
+        }
+
+        self.assertEqual(user_have_membership_objs, user_should_have_membership_objs)
+
+        membership_module_objs = list(
+            MembershipModule.objects.filter(membership=membership_obj)
+        )
+
+        self.assertEqual(len(membership_module_objs), 2)
+
+        membership_module_org_obj = [
+            membership_module_obj
+            for membership_module_obj in membership_module_objs
+            if membership_module_obj.module == Module.ORG
+        ][0]
+        membership_module_towers_obj = [
+            membership_module_obj
+            for membership_module_obj in membership_module_objs
+            if membership_module_obj.module == Module.TOWERS
+        ][0]
+
+        self.assertEqual(membership_module_org_obj.status, MembershipStatus.REQUESTED)
+        self.assertEqual(membership_module_org_obj.amount, Money(250, "SEK"))
+
+        self.assertEqual(
+            membership_module_towers_obj.status, MembershipStatus.REQUESTED
+        )
+        self.assertEqual(membership_module_towers_obj.amount, Money(450, "SEK"))
+
+    def test_renew__status_active_current(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=5):
+            membership_obj = renew_membership(
+                membership_id=self.membership_4_user_6_obj.id,
+            )
+
+        self.assertIsNotNone(membership_obj)
+        self.assertEqual(membership_obj, self.membership_4_user_6_obj)
+        self.assertIsNone(membership_obj.previous)
+        self.assertEqual(membership_obj.status, MembershipStatus.ACTIVE)
+
+        membership_module_objs = list(
+            MembershipModule.objects.filter(membership=membership_obj)
+        )
+
+        self.assertEqual(len(membership_module_objs), 1)
+
+        membership_module_org_obj = [
+            membership_module_obj
+            for membership_module_obj in membership_module_objs
+            if membership_module_obj.module == Module.ORG
+        ][0]
+
+        self.assertEqual(membership_module_org_obj.status, MembershipStatus.ACTIVE)
+        self.assertEqual(membership_module_org_obj.amount, Money(150, "SEK"))
 
 
 @pytest.mark.django_db

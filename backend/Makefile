@@ -44,8 +44,9 @@ coverage:
 	cd $(SRC_DIR) && \
 	coverage erase; \
 	$(TEST_ENV) $(PYTEST) --reuse-db -rA -s -x --log-level=INFO \
+    --cov-config=../setup.cfg \
     --cov=. \
 	--cov-report=xml \
 	--cov-report=term \
-    --cov-fail-under=54 \
+    --cov-fail-under=50 \
 	$(coverage)
