@@ -90,3 +90,4 @@ jobs:
         show_missing: true
         show_missing_max_length: 100
         link_missing_lines: true
+        only_changed_files: true
