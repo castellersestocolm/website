@@ -354,7 +354,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             payment_order=None,
         )
 
-    def test_create_for_order__order_created_capture(self, *args, **kwargs):
+    def test_complete__order_created_capture(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with mock.patch(
@@ -418,7 +418,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         self.assertEqual(payment_count, 1)
         self.assertEqual(payment_line_count, 5)
 
-    def test_create_for_order__order_created_autocapture(self, *args, **kwargs):
+    def test_complete__order_created_autocapture(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
@@ -449,7 +449,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         self.assertEqual(payment_count, 0)
         self.assertEqual(payment_line_count, 0)
 
-    def test_create_for_order__order_created_no_payment_order(self, *args, **kwargs):
+    def test_complete__order_created_no_payment_order(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(num=0, num_selects=1):
@@ -464,7 +464,7 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         self.assertIsNone(order_obj)
 
-    def test_create_for_order__order_completed(self, *args, **kwargs):
+    def test_complete__order_completed(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(num=0, num_selects=1):

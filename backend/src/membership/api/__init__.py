@@ -120,6 +120,7 @@ def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
     membership_user_objs = list(
         MembershipUser.objects.filter(
             user_id__in=user_ids,
+            membership__date_end__isnull=True,
             membership__date_to__gte=timezone.localdate()
             + timezone.timedelta(days=settings.MODULE_ALL_MEMBERSHIP_RENEW_DAYS),
         )
@@ -181,7 +182,7 @@ def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
         Membership.objects.filter(id=membership_obj.id)
         .with_amount()
         .prefetch_related(
-            Prefetch("modules", MembershipModule.objects.all().order_by("module"))
+            Prefetch("modules", MembershipModule.objects.order_by("module"))
         )
         .order_by("-date_from")
     ).first()
