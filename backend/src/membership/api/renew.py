@@ -2,6 +2,7 @@ from typing import Any
 from uuid import UUID
 
 from django.conf import settings
+from djmoney.money import Money
 
 from comunicat.enums import Module
 from membership.utils import (
@@ -52,13 +53,12 @@ def get_options(user_id: UUID) -> list[dict[str, list[dict[str, Any]]]]:
             membership_amount = get_membership_amount(
                 member_count=len(user_ids), module=current_module
             )
-            current_options.append(
-                {"module": current_module, "amount": membership_amount}
+            new_amount = Money(
+                amount=membership_amount, currency=settings.MODULE_ALL_CURRENCY
             )
+            current_options.append({"module": current_module, "amount": new_amount})
             current_amount = (
-                current_amount + membership_amount
-                if current_amount
-                else membership_amount
+                current_amount + new_amount if current_amount else new_amount
             )
 
         membership_options.append(

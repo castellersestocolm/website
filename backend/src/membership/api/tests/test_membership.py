@@ -119,7 +119,7 @@ class TestList(NumOperationsMixin, TestCase):
     def test_list__active_and_processing(self, *args, **kwargs):
         with self.assertNumOperations(num=0, num_selects=2):
             membership_objs = get_list(
-                user_id=self.user_member_1_obj,
+                user_id=self.user_member_1_obj.id,
                 module=Module.ORG,
             )
 
@@ -143,7 +143,7 @@ class TestList(NumOperationsMixin, TestCase):
     def test_list__active_family(self, *args, **kwargs):
         with self.assertNumOperations(num=0, num_selects=2):
             membership_objs = get_list(
-                user_id=self.user_member_3_obj,
+                user_id=self.user_member_3_obj.id,
                 module=Module.ORG,
             )
 
