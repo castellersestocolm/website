@@ -46,5 +46,6 @@ coverage:
 	$(TEST_ENV) $(PYTEST) --reuse-db -rA -s -x --log-level=INFO \
     --cov=. \
 	--cov-report=xml \
+	--cov-report=term \
     --cov-fail-under=54 \
 	$(coverage)
