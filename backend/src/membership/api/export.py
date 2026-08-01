@@ -1,6 +1,7 @@
 from io import BytesIO
 
 from django.db.models import Prefetch
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from openpyxl.styles import Font, numbers
 from openpyxl.workbook import Workbook
@@ -14,7 +15,12 @@ from user.models import FamilyMember
 
 def export_memberships(module: Module) -> BytesIO:
     membership_user_objs = (
-        MembershipUser.objects.filter(membership__modules__module=module)
+        MembershipUser.objects.filter(
+            membership__modules__module=module,
+            membership__date_end__isnull=True,
+            membership__date_from__lte=timezone.localdate(),
+            membership__date_to__gte=timezone.localdate(),
+        )
         .select_related("family", "user", "membership")
         .prefetch_related(
             Prefetch(
