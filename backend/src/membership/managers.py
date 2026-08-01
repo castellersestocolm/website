@@ -15,6 +15,15 @@ class MembershipQuerySet(QuerySet):
 
 
 class MembershipUserQuerySet(QuerySet):
+    def with_membership_amount(self):
+        return self.annotate(
+            membership_amount=Coalesce(
+                Sum("membership__modules__amount"),
+                Value(0),
+                output_field=IntegerField(),
+            )
+        )
+
     def with_family_role(self):
         FamilyMember = apps.get_model("user", "FamilyMember")
 

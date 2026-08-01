@@ -404,29 +404,6 @@ MODULE_ALL_ADMIN_TEAM_TYPES = [
         os.getenv("MODULE_ALL_ADMIN_TEAM_TYPES", "board,technical").split(","),
     )
 ]
-MODULE_ALL_GOOGLE_DRIVE = {
-    "activity": {
-        "drive_id": os.getenv("MODULE_ALL_ACTIVITY_GOOGLE_DRIVE_ID", None),
-        "folder_id": os.getenv(
-            "MODULE_ALL_ACTIVITY_GOOGLE_DRIVE_FOLDER_ID",
-            os.getenv("MODULE_ALL_ACTIVITY_GOOGLE_DRIVE_ID", None),
-        ),
-    },
-    "membership": {
-        "drive_id": os.getenv("MODULE_ALL_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
-        "folder_id": os.getenv(
-            "MODULE_ALL_MEMBERSHIP_GOOGLE_DRIVE_FOLDER_ID",
-            os.getenv("MODULE_ALL_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
-        ),
-    },
-    "payment": {
-        "drive_id": os.getenv("MODULE_ALL_PAYMENT_GOOGLE_DRIVE_ID", None),
-        "folder_id": os.getenv(
-            "MODULE_ALL_PAYMENT_GOOGLE_DRIVE_FOLDER_ID",
-            os.getenv("MODULE_ALL_PAYMENT_GOOGLE_DRIVE_ID", None),
-        ),
-    },
-}
 MODULE_ALL_ACCOUNTING_GOOGLE_DRIVE_ID = os.getenv(
     "MODULE_ALL_ACCOUNTING_GOOGLE_DRIVE_ID", None
 )
@@ -484,12 +461,45 @@ MODULE_ORG_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES = [
         os.getenv("MODULE_ORG_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES", "").split(","),
     )
 ]
+MODULE_ORG_SYNC_MEMBERSHIP_SIGNUP_TIME = (
+    dict(
+        [
+            st.split("-")
+            for st in os.getenv("MODULE_ORG_SYNC_MEMBERSHIP_SIGNUP_TIME").split(",")
+        ]
+    )
+    if os.getenv("MODULE_ORG_SYNC_MEMBERSHIP_SIGNUP_TIME")
+    else None
+)
 MODULE_ORG_GOOGLE_CALENDAR_ENABLED = (
     os.getenv("MODULE_ORG_GOOGLE_CALENDAR_ENABLED", "false").lower() == "true"
 )
 MODULE_ORG_GOOGLE_PHOTOS_ENABLED = (
     os.getenv("MODULE_ORG_GOOGLE_PHOTOS_ENABLED", "false").lower() == "true"
 )
+MODULE_ORG_GOOGLE_DRIVE = {
+    "activity": {
+        "drive_id": os.getenv("MODULE_ORG_ACTIVITY_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_ORG_ACTIVITY_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_ORG_ACTIVITY_GOOGLE_DRIVE_ID", None),
+        ),
+    },
+    "membership": {
+        "drive_id": os.getenv("MODULE_ORG_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_ORG_MEMBERSHIP_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_ORG_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
+        ),
+    },
+    "payment": {
+        "drive_id": os.getenv("MODULE_ORG_PAYMENT_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_ORG_PAYMENT_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_ORG_PAYMENT_GOOGLE_DRIVE_ID", None),
+        ),
+    },
+}
 
 MODULE_TOWERS_NAME = os.getenv("MODULE_TOWERS_NAME")
 MODULE_TOWERS_SHORT_NAME = os.getenv("MODULE_TOWERS_SHORT_NAME", MODULE_TOWERS_NAME)
@@ -546,12 +556,45 @@ MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES = [
         ).split(","),
     )
 ]
+MODULE_TOWERS_SYNC_MEMBERSHIP_SIGNUP_TIME = (
+    dict(
+        [
+            st.split("-")
+            for st in os.getenv("MODULE_TOWERS_SYNC_MEMBERSHIP_SIGNUP_TIME").split(",")
+        ]
+    )
+    if os.getenv("MODULE_TOWERS_SYNC_MEMBERSHIP_SIGNUP_TIME")
+    else None
+)
 MODULE_TOWERS_GOOGLE_CALENDAR_ENABLED = (
     os.getenv("MODULE_TOWERS_GOOGLE_CALENDAR_ENABLED", "false").lower() == "true"
 )
 MODULE_TOWERS_GOOGLE_PHOTOS_ENABLED = (
     os.getenv("MODULE_TOWERS_GOOGLE_PHOTOS_ENABLED", "false").lower() == "true"
 )
+MODULE_TOWERS_GOOGLE_DRIVE = {
+    "activity": {
+        "drive_id": os.getenv("MODULE_TOWERS_ACTIVITY_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_TOWERS_ACTIVITY_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_TOWERS_ACTIVITY_GOOGLE_DRIVE_ID", None),
+        ),
+    },
+    "membership": {
+        "drive_id": os.getenv("MODULE_TOWERS_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_TOWERS_MEMBERSHIP_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_TOWERS_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
+        ),
+    },
+    "payment": {
+        "drive_id": os.getenv("MODULE_TOWERS_PAYMENT_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_TOWERS_PAYMENT_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_TOWERS_PAYMENT_GOOGLE_DRIVE_ID", None),
+        ),
+    },
+}
 
 # Payment providers
 

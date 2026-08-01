@@ -48,4 +48,16 @@ if settings.MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_TIME:
         "schedule": crontab(**settings.MODULE_TOWERS_NOTIFY_EVENT_SIGNUP_TIME),
     }
 
+if settings.MODULE_ORG_SYNC_MEMBERSHIP_SIGNUP_TIME:
+    app.conf.beat_schedule["membership.sync_memberships_org"] = {
+        "task": "membership.tasks.sync_memberships_org",
+        "schedule": crontab(**settings.MODULE_ORG_SYNC_MEMBERSHIP_SIGNUP_TIME),
+    }
+
+if settings.MODULE_TOWERS_SYNC_MEMBERSHIP_SIGNUP_TIME:
+    app.conf.beat_schedule["event.sync_memberships_towers"] = {
+        "task": "membership.tasks.sync_memberships_towers",
+        "schedule": crontab(**settings.MODULE_TOWERS_SYNC_MEMBERSHIP_SIGNUP_TIME),
+    }
+
 app.conf.task_default_queue = "default"

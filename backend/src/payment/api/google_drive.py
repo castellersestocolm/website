@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from comunicat.enums import Module
 from integration.api.google.drive import create_folder, get_service, upload_file
 from payment.api.export import export_payments
-from payment.consts import GOOGLE_DRIVE_FOLDER_ID, GOOGLE_DRIVE_ID
+from payment.consts import GOOGLE_DRIVE_BY_MODULE
 from payment.enums import ExpenseStatus
 from payment.models import Payment, Receipt, Statement
 
@@ -24,18 +24,24 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
     if not service:
         return None
 
+    google_drive_id = GOOGLE_DRIVE_BY_MODULE[module]["drive_id"]
+    google_folder_id = GOOGLE_DRIVE_BY_MODULE[module]["folder_id"]
+
+    if not google_drive_id or not google_folder_id:
+        return None
+
     statement_year = str(statement_obj.date_from.year)
     statement_month = str(statement_obj.date_from.month)
 
     folder_year_id = create_folder(
         service=service,
-        drive_id=GOOGLE_DRIVE_ID,
+        drive_id=google_drive_id,
         folder_name=statement_year,
-        parent_id=GOOGLE_DRIVE_FOLDER_ID,
+        parent_id=google_folder_id,
     )
     folder_month_id = create_folder(
         service=service,
-        drive_id=GOOGLE_DRIVE_ID,
+        drive_id=google_drive_id,
         folder_name=statement_month,
         parent_id=folder_year_id,
     )
@@ -45,7 +51,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
     upload_file(
         service=service,
-        drive_id=GOOGLE_DRIVE_ID,
+        drive_id=google_drive_id,
         file_bytes=statement_obj.file.file,
         file_name=file_name,
         folder_id=folder_month_id,
@@ -57,7 +63,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
     payments_name = f"{str(_('Payments'))}_{statement_obj.date_from.strftime('%Y%m%d')}_{statement_obj.date_to.strftime('%Y%m%d')}.xlsx"
     upload_file(
         service=service,
-        drive_id=GOOGLE_DRIVE_ID,
+        drive_id=google_drive_id,
         file_bytes=payments_file,
         file_name=payments_name,
         folder_id=folder_month_id,
@@ -66,7 +72,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
     folder_receipts_id = create_folder(
         service=service,
-        drive_id=GOOGLE_DRIVE_ID,
+        drive_id=google_drive_id,
         folder_name=str(_("Receipts")),
         parent_id=folder_month_id,
     )
@@ -99,7 +105,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
         # Reuse the same folder for the same entity
         folder_expense_id = create_folder(
             service=service,
-            drive_id=GOOGLE_DRIVE_ID,
+            drive_id=google_drive_id,
             folder_name=expense_obj.entity.full_name,
             parent_id=folder_receipts_id,
         )
@@ -110,7 +116,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
             upload_file(
                 service=service,
-                drive_id=GOOGLE_DRIVE_ID,
+                drive_id=google_drive_id,
                 file_bytes=expense_obj.file.file,
                 file_name=expense_name,
                 folder_id=folder_expense_id,
@@ -122,7 +128,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
             upload_file(
                 service=service,
-                drive_id=GOOGLE_DRIVE_ID,
+                drive_id=google_drive_id,
                 file_bytes=receipt_obj.file.file,
                 file_name=receipt_name,
                 folder_id=folder_expense_id,
@@ -135,7 +141,7 @@ def sync_statement(statement_id: UUID, module: Module) -> None:
 
         upload_file(
             service=service,
-            drive_id=GOOGLE_DRIVE_ID,
+            drive_id=google_drive_id,
             file_bytes=receipt_obj.file.file,
             file_name=receipt_name,
             folder_id=folder_receipts_id,

@@ -4,7 +4,7 @@ from uuid import UUID
 from django.utils.translation import gettext_lazy as _
 
 from activity.api.export import export_program_course
-from activity.consts import GOOGLE_DRIVE_FOLDER_ID, GOOGLE_DRIVE_ID
+from activity.consts import GOOGLE_DRIVE_BY_MODULE
 from activity.models import Program
 from integration.api.google.drive import create_folder, get_service, upload_file
 
@@ -25,21 +25,27 @@ def sync_program(program_id: UUID) -> None:
     if not service:
         return None
 
+    google_drive_id = GOOGLE_DRIVE_BY_MODULE[program_obj.module]["drive_id"]
+    google_folder_id = GOOGLE_DRIVE_BY_MODULE[program_obj.module]["folder_id"]
+
+    if not google_drive_id or not google_folder_id:
+        return None
+
     for year, program_course_objs in itertools.groupby(
         program_obj.courses.all(),
         lambda pc_obj: pc_obj.date_from.year,
     ):
         folder_year_id = create_folder(
             service=service,
-            drive_id=GOOGLE_DRIVE_ID,
+            drive_id=google_drive_id,
             folder_name=str(year),
-            parent_id=GOOGLE_DRIVE_FOLDER_ID,
+            parent_id=google_folder_id,
         )
 
         for program_course_obj in program_course_objs:
             folder_course_id = create_folder(
                 service=service,
-                drive_id=GOOGLE_DRIVE_ID,
+                drive_id=google_drive_id,
                 folder_name=program_obj.name_locale,
                 parent_id=folder_year_id,
             )
@@ -48,7 +54,7 @@ def sync_program(program_id: UUID) -> None:
             payments_name = f"{str(_('Registrations'))}.xlsx"
             upload_file(
                 service=service,
-                drive_id=GOOGLE_DRIVE_ID,
+                drive_id=google_drive_id,
                 file_bytes=course_file,
                 file_name=payments_name,
                 folder_id=folder_course_id,
