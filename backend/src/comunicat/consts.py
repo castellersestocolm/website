@@ -19,6 +19,11 @@ DOMAIN_BY_MODULE = {
     Module.TOWERS: settings.MODULE_TOWERS_DOMAIN,
 }
 
+LOCALE_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_LOCALE,
+    Module.TOWERS: settings.MODULE_TOWERS_LOCALE,
+}
+
 GOOGLE_ENABLED_BY_MODULE = {
     Module.ORG: {
         "calendar": settings.MODULE_ORG_GOOGLE_CALENDAR_ENABLED,

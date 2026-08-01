@@ -9,8 +9,10 @@ from django.db import IntegrityError
 from django.db.models import (
     BooleanField,
     Case,
+    CharField,
     Exists,
     ExpressionWrapper,
+    F,
     IntegerField,
     OuterRef,
     Q,
@@ -20,6 +22,7 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from comunicat.enums import Module
@@ -33,21 +36,25 @@ class UserQuerySet(QuerySet):
         Family = apps.get_model("user", "Family")
 
         return self.annotate(
-            family_name=Subquery(
-                Family.objects.filter(id=OuterRef("family_member__family_id"))
-                .annotate(
-                    family_name=StringAgg(
-                        "members__user__lastname",
-                        filter=Q(
-                            members__status=FamilyMemberStatus.ACTIVE,
-                            members__role=FamilyMemberRole.MANAGER,
-                        ),
-                        delimiter="-",
-                        order_by="members__user__lastname",
+            family_name=Coalesce(
+                Subquery(
+                    Family.objects.filter(id=OuterRef("family_member__family_id"))
+                    .annotate(
+                        family_name=StringAgg(
+                            "members__user__lastname",
+                            filter=Q(
+                                members__status=FamilyMemberStatus.ACTIVE,
+                                members__role=FamilyMemberRole.MANAGER,
+                            ),
+                            delimiter="-",
+                            order_by="members__user__lastname",
+                        )
                     )
-                )
-                .values("family_name")[:1]
-            ),
+                    .values("family_name")[:1]
+                ),
+                F("lastname"),
+                output_field=CharField(),
+            )
         )
 
     def with_has_active_membership(
@@ -455,15 +462,19 @@ class UserManager(BaseUserManager):
 class FamilyQuerySet(QuerySet):
     def with_name(self):
         return self.annotate(
-            name=StringAgg(
-                "members__user__lastname",
-                delimiter="-",
-                filter=Q(
-                    members__status=FamilyMemberStatus.ACTIVE,
-                    members__role=FamilyMemberRole.MANAGER,
-                ),
-                order_by="members__user__lastname",
-            )
+            name=Coalesce(
+                StringAgg(
+                    "members__user__lastname",
+                    delimiter="-",
+                    filter=Q(
+                        members__status=FamilyMemberStatus.ACTIVE,
+                        members__role=FamilyMemberRole.MANAGER,
+                    ),
+                    order_by="members__user__lastname",
+                )
+            ),
+            default=F("id"),
+            output_field=CharField(),
         )
 
 
@@ -472,19 +483,23 @@ class FamilyMemberQuerySet(QuerySet):
         Family = apps.get_model("user", "Family")
 
         return self.annotate(
-            family_name=Subquery(
-                Family.objects.filter(id=OuterRef("family_id"))
-                .annotate(
-                    family_name=StringAgg(
-                        "members__user__lastname",
-                        filter=Q(
-                            members__status=FamilyMemberStatus.ACTIVE,
-                            members__role=FamilyMemberRole.MANAGER,
-                        ),
-                        delimiter="-",
-                        order_by="members__user__lastname",
+            family_name=Coalesce(
+                Subquery(
+                    Family.objects.filter(id=OuterRef("family_id"))
+                    .annotate(
+                        family_name=StringAgg(
+                            "members__user__lastname",
+                            filter=Q(
+                                members__status=FamilyMemberStatus.ACTIVE,
+                                members__role=FamilyMemberRole.MANAGER,
+                            ),
+                            delimiter="-",
+                            order_by="members__user__lastname",
+                        )
                     )
-                )
-                .values("family_name")[:1]
+                    .values("family_name")[:1]
+                ),
             ),
+            default=F("user__lastname"),
+            output_field=CharField(),
         )
