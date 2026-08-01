@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 import membership.api
-import membership.api.renew
 from comunicat.rest.serializers.membership import (
     MembershipRenewRequestSerializer,
     MembershipRenewSerializer,
@@ -79,7 +78,7 @@ class MembershipAPI(ComuniCatViewSet):
             )
             return Response(serializer.data)
 
-        membership_options = membership.api.renew.get_options(user_id=request.user.id)
+        membership_options = membership.api.get_renew_options(user_id=request.user.id)
 
         serializer = MembershipRenewSerializer(
             membership_options, many=True, context={"module": self.module}

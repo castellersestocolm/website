@@ -10,6 +10,7 @@ from djmoney.money import Money
 from comunicat.enums import Module
 from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipModule, MembershipUser
+from membership.types import MembershipRenewModule, MembershipRenewOption
 from membership.utils import (
     get_membership_amount,
     get_membership_date_to,
@@ -189,3 +190,61 @@ def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
         )
         .order_by("-date_from")
     ).first()
+
+
+def get_renew_options(user_id: UUID) -> list[MembershipRenewOption]:
+    user_obj = User.objects.filter(id=user_id).select_related("family_member").first()
+    family_id = (
+        user_obj.family_member.family_id if hasattr(user_obj, "family_member") else None
+    )
+
+    if family_id is None:
+        user_ids = [user_id]
+    else:
+        user_ids = list(
+            {user_id}
+            | {
+                family_member_obj.user_id
+                for family_member_obj in FamilyMember.objects.filter(
+                    family_id=family_id, status=FamilyMemberStatus.ACTIVE
+                )
+            }
+        )
+
+    membership_length = get_membership_length(member_count=len(user_ids))
+
+    if not membership_length:
+        return []
+
+    date_to = get_membership_date_to(months=membership_length)
+
+    if not date_to:
+        return []
+
+    membership_renew_options = []
+
+    for module in Module:
+        modules = list({module} | set(settings.MODULE_ALL_MEMBERSHIP_REQUIRED))
+        membership_renew_modules = []
+        current_amount = None
+        for current_module in modules:
+            membership_amount = get_membership_amount(
+                member_count=len(user_ids), module=current_module
+            )
+            new_amount = Money(
+                amount=membership_amount, currency=settings.MODULE_ALL_CURRENCY
+            )
+            membership_renew_modules.append(
+                MembershipRenewModule(module=current_module, amount=new_amount)
+            )
+            current_amount = (
+                current_amount + new_amount if current_amount else new_amount
+            )
+
+        membership_renew_options.append(
+            MembershipRenewOption(
+                modules=membership_renew_modules, amount=current_amount, date_to=date_to
+            )
+        )
+
+    return membership_renew_options

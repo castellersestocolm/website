@@ -6,7 +6,10 @@ from django.utils import timezone
 from djmoney.money import Money
 
 from comunicat.enums import Module
-from comunicat.utils.test.mocks import MockGoogleApiClientExecute
+from comunicat.utils.test.mocks import (
+    MockGoogleApiClientExecute,
+    google_drive_by_module,
+)
 from conftest import NumOperationsMixin
 from integration.tests.factories import GoogleIntegrationFactory
 from membership.api.google_drive import sync_memberships
@@ -129,6 +132,17 @@ class TestSyncMemberships(NumOperationsMixin, TestCase):
 
     @mock.patch("user.api.google_group.Credentials.before_request", return_value=None)
     @mock.patch("user.api.google_group.Credentials.refresh", return_value=None)
+    def test_sync_memberships__no_drive_configuration(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=1):
+            synced_memberships = sync_memberships(module=Module.ORG)
+
+        self.assertFalse(synced_memberships)
+
+    @mock.patch("user.api.google_group.Credentials.before_request", return_value=None)
+    @mock.patch("user.api.google_group.Credentials.refresh", return_value=None)
+    @mock.patch.dict(
+        "membership.consts.GOOGLE_DRIVE_BY_MODULE", values=google_drive_by_module()
+    )
     def test_sync_memberships__succeeded(self, *args, **kwargs):
         with mock.patch(
             "googleapiclient.http.HttpRequest.execute",
@@ -140,7 +154,7 @@ class TestSyncMemberships(NumOperationsMixin, TestCase):
                 },
             ),
         ):
-            with self.assertNumOperations(num=0, num_selects=1):
+            with self.assertNumOperations(num=0, num_selects=13):
                 synced_memberships = sync_memberships(module=Module.ORG)
 
         self.assertTrue(synced_memberships)
@@ -162,7 +176,7 @@ class TestSyncMemberships(NumOperationsMixin, TestCase):
                 },
             ),
         ):
-            with self.assertNumOperations(num=0, num_selects=1):
+            with self.assertNumOperations(num=0, num_selects=13):
                 synced_memberships = sync_memberships(module=Module.ORG)
 
         self.assertTrue(synced_memberships)
