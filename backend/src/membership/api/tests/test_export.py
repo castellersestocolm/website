@@ -145,7 +145,7 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
         ws = wb.worksheets[0]
         ws_rows = [[cell.value for cell in row] for row in ws.iter_rows()]
 
-        self.assertEqual(len(ws_rows), 6)
+        self.assertEqual(len(ws_rows), 5)
         self.assertEqual(
             ws_rows[0],
             [
@@ -170,21 +170,6 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
                 self.user_member_1_obj.phone,
                 None,
                 "Name ORG",
-                self.membership_1_user_1_obj.date_from.strftime("%Y-%m-%d"),
-                self.membership_1_user_1_obj.date_to.strftime("%Y-%m-%d"),
-                "ACTIVE",
-                "150",
-            ],
-        )
-        self.assertEqual(
-            ws_rows[2],
-            [
-                "firstname-1",
-                "lastname-1",
-                "user-member-1@domain-test.org",
-                self.user_member_1_obj.phone,
-                None,
-                "Name ORG",
                 self.membership_2_user_1_obj.date_from.strftime("%Y-%m-%d"),
                 self.membership_2_user_1_obj.date_to.strftime("%Y-%m-%d"),
                 "PROCESSING",
@@ -192,7 +177,7 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
             ],
         )
         self.assertEqual(
-            ws_rows[3],
+            ws_rows[2],
             [
                 "firstname-2",
                 "lastname-2",
@@ -207,7 +192,7 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
             ],
         )
         self.assertEqual(
-            ws_rows[4],
+            ws_rows[3],
             [
                 "firstname-3",
                 "lastname-3",
@@ -222,7 +207,7 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
             ],
         )
         self.assertEqual(
-            ws_rows[5],
+            ws_rows[4],
             [
                 "firstname-4",
                 "lastname-4",
