@@ -10,5 +10,5 @@ from comunicat.enums import Module
 @shared_task
 def sync_statement(statement_id: UUID) -> None:
     payment.api.google_drive.sync_statement(
-        statement_id=statement_id, module=Module.TOWERS
+        statement_id=statement_id, module=Module.ORG
     )

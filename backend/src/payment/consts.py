@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from comunicat.enums import Module
 from payment.enums import PaymentMethod
 
 EDIT_DISTANCE_NAME_THRESHOLD = 0.7
@@ -16,8 +17,10 @@ PAYMENT_LINE_CONTENT_TYPES = (
     ("event", "registration"),
 )
 
-GOOGLE_DRIVE_ID = settings.MODULE_ALL_GOOGLE_DRIVE["payment"]["drive_id"]
-GOOGLE_DRIVE_FOLDER_ID = settings.MODULE_ALL_GOOGLE_DRIVE["payment"]["folder_id"]
+GOOGLE_DRIVE_BY_MODULE = {
+    module: getattr(settings, f"MODULE_{Module(module).name}_GOOGLE_DRIVE")["payment"]
+    for module in Module
+}
 
 PAYMENT_METHOD_FIELDS = {
     PaymentMethod.CASH: None,
