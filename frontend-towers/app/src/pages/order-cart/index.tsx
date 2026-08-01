@@ -151,7 +151,7 @@ function OrderCartPage() {
   let navigate = useNavigate();
 
   React.useEffect(() => {
-    apiEventList().then((response) => {
+    apiEventList(1, 10).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
       }
