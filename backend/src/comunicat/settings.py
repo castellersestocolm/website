@@ -214,6 +214,7 @@ LOGGING = {
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en")
+print(BASE_DIR)
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 
 LANGUAGES = [

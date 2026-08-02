@@ -3,6 +3,8 @@ from comunicat.settings import *  # noqa: F401,F403
 
 SECRET_KEY = "2x9%{O91)OE>F#+ZzGbof8mht+flJ[[O"
 
+DEBUG = True
+
 MODULE_ORG_ENABLED = True
 MODULE_TOWERS_ENABLED = True
 MODULE_ALL_USER_FIELDS = ["phone"]
