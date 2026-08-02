@@ -399,12 +399,18 @@ class TestComplete(NumOperationsMixin, TestCase):
                 ),
                 Response(
                     status_code=200,
-                    json={"status": "PAID", "transactions": [{"id": "transaction-1"}]},
+                    json={
+                        "status": "PAID",
+                        "transactions": [
+                            {"id": "transaction-1", "status": "FAILED"},
+                            {"id": "transaction-2", "status": "SUCCESSFUL"},
+                        ],
+                    },
                 ),
                 Response(
                     status_code=200,
                     json={
-                        "id": "transaction-1",
+                        "id": "transaction-2",
                         "amount": 900,
                         "transaction_events": [{"event_type": "PAYOUT", "amount": 800}],
                     },
