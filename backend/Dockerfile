@@ -23,11 +23,6 @@ ENV APT_GCC_VERSION 4:10.2.1-1
 ENV APT_BUILD_ESSENTIAL 12.9*
 ENV APT_DEFAULT_LIB_MYSQL_CLIENT_DEV 1.0.7*
 ENV APT_PKG_CONFIG 0.29.2-*
-ENV APT_GETTEXT_VERSION 0.21-*
-ENV APT_LIB_MAGIC_DEV 1:5.39-*
-ENV APT_GDAL_VERSION 3.2.2*
-ENV APT_LIBPANGO_VERSION 1.46.2-3
-ENV APT_LIBPANGOFT2_VERSION 1.46.2-3
 
 # Install sys dependencies
 RUN set -x && apt-get update && apt-get install -y --no-install-recommends \
@@ -37,11 +32,6 @@ RUN set -x && apt-get update && apt-get install -y --no-install-recommends \
     build-essential=$APT_BUILD_ESSENTIAL \
     default-libmysqlclient-dev=$APT_DEFAULT_LIB_MYSQL_CLIENT_DEV \
     pkg-config=$APT_PKG_CONFIG \
-    gettext=$APT_GETTEXT_VERSION \
-    libmagic-dev=$APT_LIB_MAGIC_DEV \
-    gdal-bin=$APT_GDAL_VERSION \
-    libpango-1.0-0=$APT_LIBPANGO_VERSION \
-    libpangoft2-1.0-0=$APT_LIBPANGOFT2_VERSION \
     && apt-get clean \
     && rm -rf "/var/lib/apt/lists/*"
 
@@ -60,14 +50,6 @@ RUN set -x && \
     pip install pip==$PIP_PIP_VERSION setuptools==$PIP_SETUPTOOLS_VERSION && \
     pip install --pre --require-hashes --no-deps -r "requirements.txt" && \
     pip check
-
-WORKDIR /backend/src
-
-# Collect static files
-RUN set -x && \
-    DJANGO_SECRET_KEY=none python manage.py compilemessages --locale ca && \
-    DJANGO_SECRET_KEY=none python manage.py compilemessages --locale sv && \
-    DJANGO_SECRET_KEY=none python manage.py collectstatic --no-input --clear
 
 ######################################
 # Runtime step #######################
@@ -141,6 +123,12 @@ COPY --from=builder --chown=backend:backend /backend/Makefile /backend/Makefile
 COPY --from=builder --chown=backend:backend /backend/setup.cfg /backend/setup.cfg
 
 WORKDIR /backend/src
+
+# Collect static files
+RUN set -x && \
+    DJANGO_SECRET_KEY=none python manage.py compilemessages --locale ca && \
+    DJANGO_SECRET_KEY=none python manage.py compilemessages --locale sv && \
+    DJANGO_SECRET_KEY=none python manage.py collectstatic --no-input --clear
 
 USER backend
 
