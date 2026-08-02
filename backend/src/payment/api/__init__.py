@@ -3,6 +3,7 @@ from uuid import UUID
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 from django.db.models import (
     BooleanField,
     Case,
@@ -17,6 +18,7 @@ from django.db.models import (
 )
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
+from djmoney.money import Money
 
 from comunicat.enums import Module
 from order.enums import OrderStatus
@@ -100,12 +102,14 @@ def get_list(user_id: UUID, module: Module) -> list[Payment]:
     )
 
 
+@transaction.atomic
 def create_for_order(
     order_id: UUID,
     is_captured: bool,
     date_accounting: datetime.datetime,
     external_id: str | None = None,
     reference: str | None = None,
+    fee_amount: Money | None = None,
 ) -> Payment:
     order_obj = (
         Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
@@ -233,7 +237,7 @@ def create_for_order(
                 if hasattr(order_obj.delivery.provider, "accounts")
                 else None
             )
-            payment_line, __ = PaymentLine.objects.update_or_create(
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
                 payment=payment_obj,
                 amount=order_obj.delivery.amount,
                 vat=order_obj.delivery.vat,
@@ -244,7 +248,7 @@ def create_for_order(
                     "account": account_delivery_obj,
                 },
             )
-            order_obj.delivery.line = payment_line
+            order_obj.delivery.line = payment_line_obj
             order_obj.delivery.save(update_fields=("line",))
 
         if order_product_updates:
@@ -253,6 +257,53 @@ def create_for_order(
         if order_registration_updates:
             OrderRegistration.objects.bulk_update(
                 order_registration_updates, fields=("line",)
+            )
+
+        if fee_amount:
+            account_fees_obj = (
+                payment_order_obj.provider.accounts.payment_fees
+                if hasattr(payment_order_obj.provider, "accounts")
+                else None
+            )
+
+            text_order_fee = _("Order fee")
+            text_fee = f"{text_order_fee} #{order_obj.reference}"
+
+            transaction_fee_obj, __ = Transaction.objects.update_or_create(
+                source=source_obj,
+                external_id=external_id,
+                reference=reference,
+                method=payment_order_obj.provider.method,
+                amount=-fee_amount,
+                vat=settings.MODULE_ALL_VAT,
+                date_accounting=date_accounting,
+                # TODO: Check if this is OK
+                date_interest=date_accounting,
+                defaults={"text": text_fee},
+            )
+
+            payment_fee_obj, __ = Payment.objects.update_or_create(
+                type=PaymentType.CREDIT,
+                method=transaction_fee_obj.method,
+                transaction=transaction_fee_obj,
+                entity=payment_order_obj.provider.entity,
+                defaults={
+                    "text": text_fee,
+                    "status": (
+                        PaymentStatus.COMPLETED
+                        if is_captured
+                        else PaymentStatus.PROCESSING
+                    ),
+                },
+            )
+
+            PaymentLine.objects.update_or_create(
+                payment=payment_fee_obj,
+                amount=fee_amount,
+                vat=settings.MODULE_ALL_VAT,
+                defaults={
+                    "account": account_fees_obj,
+                },
             )
 
     return payment_obj

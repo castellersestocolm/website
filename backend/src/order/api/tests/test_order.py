@@ -18,7 +18,7 @@ from order.tests.factories import (
     OrderRegistrationFactory,
     PaymentOrderFactory,
 )
-from payment.enums import PaymentMethod, PaymentStatus, SourceType
+from payment.enums import PaymentMethod, PaymentStatus, PaymentType, SourceType
 from payment.models import Payment, PaymentLine, Transaction
 from payment.tests.factories import PaymentProviderFactory, SourceFactory
 
@@ -391,11 +391,28 @@ class TestComplete(NumOperationsMixin, TestCase):
         with mock.patch(
             "httpx._client.Client.get",
             side_effect=MockSumUpApiClientExecute(
-                Response(status_code=200, json={"status": "PAID"}),
+                Response(
+                    status_code=200,
+                    json={
+                        "status": "PAID",
+                    },
+                ),
+                Response(
+                    status_code=200,
+                    json={"status": "PAID", "transactions": [{"id": "transaction-1"}]},
+                ),
+                Response(
+                    status_code=200,
+                    json={
+                        "id": "transaction-1",
+                        "amount": 900,
+                        "transaction_events": [{"event_type": "PAYOUT", "amount": 100}],
+                    },
+                ),
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=71, num_inserts=3, num_updates=12
+                num=0, num_selects=75, num_inserts=6, num_updates=12
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -412,15 +429,62 @@ class TestComplete(NumOperationsMixin, TestCase):
         self.assertEqual(order_obj.status, OrderStatus.PROCESSING)
         self.assertEqual(order_obj.payment_order.status, PaymentStatus.COMPLETED)
 
-        transaction_count = Transaction.objects.filter(reference="ORDER-1").count()
-        payment_count = Payment.objects.filter(transaction__reference="ORDER-1").count()
-        payment_line_count = PaymentLine.objects.filter(
-            payment__transaction__reference="ORDER-1"
-        ).count()
+        transaction_objs = list(
+            Transaction.objects.filter(reference="ORDER-1").order_by("-amount")
+        )
+        payment_objs = list(
+            Payment.objects.filter(transaction__reference="ORDER-1").order_by("type")
+        )
+        payment_line_objs = list(
+            PaymentLine.objects.filter(
+                payment__transaction__reference="ORDER-1"
+            ).order_by("payment__type")
+        )
 
-        self.assertEqual(transaction_count, 1)
-        self.assertEqual(payment_count, 1)
-        self.assertEqual(payment_line_count, 5)
+        self.assertEqual(len(transaction_objs), 2)
+        self.assertEqual(len(payment_objs), 2)
+        self.assertEqual(len(payment_line_objs), 6)
+
+        transaction_debit_obj = transaction_objs[0]
+        transaction_credit_obj = transaction_objs[1]
+
+        payment_debit_obj = payment_objs[0]
+        payment_credit_obj = payment_objs[1]
+
+        payment_line_debit_objs = payment_line_objs[:-1]
+        payment_line_credit_objs = payment_line_objs[-1:]
+
+        self.assertEqual(transaction_debit_obj.external_id, "external-order-1")
+        self.assertEqual(transaction_debit_obj.reference, "ORDER-1")
+        self.assertEqual(transaction_debit_obj.amount, Money(900, "SEK"))
+        self.assertEqual(
+            transaction_debit_obj.text, f"Order #{self.order_1_obj.reference}"
+        )
+
+        self.assertEqual(transaction_credit_obj.external_id, "external-order-1")
+        self.assertEqual(transaction_credit_obj.reference, "ORDER-1")
+        self.assertEqual(transaction_credit_obj.amount, Money(-100, "SEK"))
+        self.assertEqual(
+            transaction_credit_obj.text, f"Order fee #{self.order_1_obj.reference}"
+        )
+
+        self.assertEqual(payment_debit_obj.type, PaymentType.DEBIT)
+        self.assertEqual(payment_debit_obj.transaction, transaction_debit_obj)
+        self.assertEqual(payment_debit_obj.text, f"Order #{self.order_1_obj.reference}")
+
+        self.assertEqual(payment_credit_obj.type, PaymentType.CREDIT)
+        self.assertEqual(payment_credit_obj.transaction, transaction_credit_obj)
+        self.assertEqual(
+            payment_credit_obj.text, f"Order fee #{self.order_1_obj.reference}"
+        )
+
+        for payment_line_debit_obj in payment_line_debit_objs:
+            self.assertGreaterEqual(payment_line_debit_obj.amount, Money(0, "SEK"))
+            self.assertEqual(payment_line_debit_obj.payment, payment_debit_obj)
+
+        for payment_line_credit_obj in payment_line_credit_objs:
+            self.assertEqual(payment_line_credit_obj.amount, Money(100, "SEK"))
+            self.assertEqual(payment_line_credit_obj.payment, payment_credit_obj)
 
     def test_complete__order_created_autocapture(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)

@@ -23,7 +23,10 @@ class MockSumUpApiClientExecute:
 
     def __call__(self, *args, **kwargs):
         try:
-            return self.mocked_returns[self.return_count]
+            mocked_return = self.mocked_returns[self.return_count]
+            self.return_count += 1
+
+            return mocked_return
         except IndexError:
             return self.mocked_returns[-1]
 
