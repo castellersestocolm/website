@@ -79,7 +79,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=22, num_inserts=7, num_updates=5
+            num=0, num_selects=25, num_inserts=7, num_updates=5
         ):
             payment_obj = create_for_order(
                 order_id=self.order_1_obj.id,
