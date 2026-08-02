@@ -1022,6 +1022,7 @@ class PaymentProviderAdmin(admin.ModelAdmin):
     list_filter = ("is_enabled", "method")
     readonly_fields = ("created_at",)
     ordering = ("order", "code")
+    raw_id_fields = ("entity",)
     actions = (sync_statements_google_drive,)
 
     formfield_overrides = {

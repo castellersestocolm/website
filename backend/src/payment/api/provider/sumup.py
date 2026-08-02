@@ -129,16 +129,18 @@ class PaymentProviderSumup(PaymentProviderBase):
             except APIError as e:
                 _log.exception(e)
 
-        fees_amount = ZERO_MONEY
+        amount_paid = ZERO_MONEY
+        amount_to_receive = ZERO_MONEY
         for transaction in transactions:
+            amount_paid += Money(transaction.amount, settings.MODULE_ALL_CURRENCY)
             for transaction_event in transaction.transaction_events:
                 transaction_event_money = Money(
                     transaction_event.amount, settings.MODULE_ALL_CURRENCY
                 )
                 if transaction_event.event_type == "PAYOUT":
-                    fees_amount += transaction_event_money
+                    amount_to_receive += transaction_event_money
                 # TODO: Add test coverage for refunds
                 # else:
                 #     amount_to_receive -= transaction_event_money
 
-        return fees_amount
+        return max(ZERO_MONEY, amount_paid - amount_to_receive)

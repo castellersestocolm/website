@@ -406,7 +406,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                     json={
                         "id": "transaction-1",
                         "amount": 900,
-                        "transaction_events": [{"event_type": "PAYOUT", "amount": 100}],
+                        "transaction_events": [{"event_type": "PAYOUT", "amount": 800}],
                     },
                 ),
             ),
