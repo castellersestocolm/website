@@ -3,9 +3,11 @@ import logging
 from uuid import UUID
 
 from django.conf import settings
+from djmoney.money import Money
 from sumup import Sumup
 from sumup._exceptions import APIError
 
+from comunicat.consts import ZERO_MONEY
 from order.enums import OrderStatus
 from payment.api.provider import PaymentProviderBase
 from payment.enums import PaymentStatus
@@ -99,3 +101,44 @@ class PaymentProviderSumup(PaymentProviderBase):
             _log.exception(e)
 
         return False
+
+    def fees(self) -> Money:  # noqa: C901
+        if not self.payment_order_obj.external_id:
+            return ZERO_MONEY
+
+        try:
+            checkout = self.client.checkouts.get(
+                checkout_id=self.payment_order_obj.external_id,
+            )
+        except APIError as e:
+            _log.exception(e)
+            return ZERO_MONEY
+
+        if not checkout or not checkout.transactions:
+            return ZERO_MONEY
+
+        transactions = []
+
+        for checkout_transaction in checkout.transactions:
+            try:
+                transaction = self.client.transactions.get(
+                    id=checkout_transaction.id,
+                    merchant_code=checkout.merchant_code,
+                )
+                transactions.append(transaction)
+            except APIError as e:
+                _log.exception(e)
+
+        fees_amount = ZERO_MONEY
+        for transaction in transactions:
+            for transaction_event in transaction.transaction_events:
+                transaction_event_money = Money(
+                    transaction_event.amount, settings.MODULE_ALL_CURRENCY
+                )
+                if transaction_event.event_type == "PAYOUT":
+                    fees_amount += transaction_event_money
+                # TODO: Add test coverage for refunds
+                # else:
+                #     amount_to_receive -= transaction_event_money
+
+        return fees_amount

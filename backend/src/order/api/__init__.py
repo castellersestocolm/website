@@ -433,6 +433,8 @@ def complete(
         is_completed = is_captured
 
         if transaction_id or transaction_reference:
+            fee_amount = payment_class.fees()
+
             # TODO: Move vat to money_vat instead to store amounts and not percentages
             payment.api.create_for_order(
                 order_id=order_obj.id,
@@ -440,6 +442,7 @@ def complete(
                 external_id=transaction_id,
                 reference=transaction_reference,
                 is_captured=is_captured,
+                fee_amount=fee_amount,
             )
 
     payment_order_obj.status = (

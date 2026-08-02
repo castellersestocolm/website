@@ -1,7 +1,9 @@
 from uuid import UUID
 
 from django.db.models import Prefetch
+from djmoney.money import Money
 
+from comunicat.consts import ZERO_MONEY
 from order.models import Order, OrderDelivery, OrderProduct
 from payment.models import Entity, PaymentOrder, PaymentProvider
 
@@ -62,3 +64,6 @@ class PaymentProviderBase:
 
     def cancel(self) -> bool:
         return False
+
+    def fees(self) -> Money:
+        return ZERO_MONEY

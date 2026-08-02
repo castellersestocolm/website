@@ -517,6 +517,14 @@ class PaymentProvider(StandardModel, Timestamps):
     name = JSONField(default=language_field_default)
     code = models.CharField(max_length=255)
 
+    entity = models.ForeignKey(
+        "Entity",
+        null=True,
+        blank=True,
+        related_name="payment_providers",
+        on_delete=models.CASCADE,
+    )
+
     picture = VersatileImageField(
         "Image", blank=True, null=True, upload_to="payment/payment-provider/picture/"
     )
@@ -533,6 +541,27 @@ class PaymentProvider(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
+
+
+class PaymentProviderAccounts(StandardModel, Timestamps):
+    provider = models.OneToOneField(
+        PaymentProvider, related_name="accounts", on_delete=models.CASCADE
+    )
+
+    payment_fees = models.ForeignKey(
+        "payment.Account",
+        related_name="payment_provider_accounts_payment_fees",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self) -> str:
+        return str(self.provider)
+
+    class Meta:
+        verbose_name = _("payment provider accounts")
+        verbose_name_plural = _("payment provider accounts")
 
 
 class Source(StandardModel, Timestamps):
