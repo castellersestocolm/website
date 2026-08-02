@@ -120,14 +120,15 @@ class PaymentProviderSumup(PaymentProviderBase):
         transactions = []
 
         for checkout_transaction in checkout.transactions:
-            try:
-                transaction = self.client.transactions.get(
-                    id=checkout_transaction.id,
-                    merchant_code=checkout.merchant_code,
-                )
-                transactions.append(transaction)
-            except APIError as e:
-                _log.exception(e)
+            if checkout_transaction.status in ("PENDING", "SUCCESSFUL"):
+                try:
+                    transaction = self.client.transactions.get(
+                        id=checkout_transaction.id,
+                        merchant_code=checkout.merchant_code,
+                    )
+                    transactions.append(transaction)
+                except APIError as e:
+                    _log.exception(e)
 
         amount_paid = ZERO_MONEY
         amount_to_receive = ZERO_MONEY
