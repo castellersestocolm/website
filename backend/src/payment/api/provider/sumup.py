@@ -129,7 +129,6 @@ class PaymentProviderSumup(PaymentProviderBase):
             except APIError as e:
                 _log.exception(e)
 
-
         amount_paid = ZERO_MONEY
         amount_to_receive = ZERO_MONEY
         for transaction in transactions:
@@ -142,7 +141,6 @@ class PaymentProviderSumup(PaymentProviderBase):
                     amount_to_receive += transaction_event_money
                 # TODO: Add test coverage for refunds
                 # else:
-                #     # TODO: Add test coverage for refunds
                 #     amount_to_receive -= transaction_event_money
 
         return max(ZERO_MONEY, amount_paid - amount_to_receive)
