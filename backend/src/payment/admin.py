@@ -47,6 +47,7 @@ from payment.models import (
     PaymentOrder,
     PaymentOrderProviderLog,
     PaymentProvider,
+    PaymentProviderAccounts,
     Receipt,
     Source,
     Statement,
@@ -1020,7 +1021,10 @@ class PaymentProviderAdmin(admin.ModelAdmin):
         "is_enabled",
     )
     list_filter = ("is_enabled", "method")
-    readonly_fields = ("created_at",)
+    readonly_fields = (
+        "accounts_link",
+        "created_at",
+    )
     ordering = ("order", "code")
     raw_id_fields = ("entity",)
     actions = (sync_statements_google_drive,)
@@ -1032,7 +1036,40 @@ class PaymentProviderAdmin(admin.ModelAdmin):
     def name_locale(self, obj):
         return obj.name.get(translation.get_language()) or list(obj.name.values())[0]
 
+    def accounts_link(self, obj):
+        if hasattr(obj, "accounts"):
+            delivery_accounts_link = reverse(
+                "admin:order_deliveryaccounts_change", args=(obj.accounts.id,)
+            )
+            return mark_safe(f'<a href="{delivery_accounts_link}">{obj.accounts}</a>')
+        return "-"
+
     name_locale.short_description = _("name")
+    accounts_link.short_description = _("accounts")
+
+
+class PaymentProviderAccountsForm(forms.ModelForm):
+    class Meta:
+        model = PaymentProviderAccounts
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["payment_fees"].queryset = Account.objects.filter(
+            type=PaymentType.CREDIT, allow_transactions=True
+        ).order_by("code")
+
+
+@admin.register(PaymentProviderAccounts)
+class PaymentProviderAccountsAdmin(admin.ModelAdmin):
+    search_fields = ("id",)
+    list_display = (
+        "provider",
+        "created_at",
+    )
+    list_filter = ("created_at",)
+    ordering = ("-created_at",)
+    form = PaymentProviderAccountsForm
 
 
 class PaymentOrderProviderLogInline(admin.TabularInline):
