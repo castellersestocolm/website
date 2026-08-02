@@ -154,7 +154,7 @@ class TestSyncMemberships(NumOperationsMixin, TestCase):
                 },
             ),
         ):
-            with self.assertNumOperations(num=0, num_selects=13):
+            with self.assertNumOperations(num=0, num_selects=4):
                 synced_memberships = sync_memberships(module=Module.ORG)
 
         self.assertTrue(synced_memberships)
@@ -176,7 +176,7 @@ class TestSyncMemberships(NumOperationsMixin, TestCase):
                 },
             ),
         ):
-            with self.assertNumOperations(num=0, num_selects=13):
+            with self.assertNumOperations(num=0, num_selects=4):
                 synced_memberships = sync_memberships(module=Module.ORG)
 
         self.assertTrue(synced_memberships)

@@ -42,11 +42,13 @@ lint:
 coverage:
 	$(TEST_ENV) \
 	cd $(SRC_DIR) && \
+	python manage.py compilemessages --locale ca && \
+    python manage.py compilemessages --locale sv && \
 	coverage erase; \
 	$(TEST_ENV) $(PYTEST) --reuse-db -rA -s -x --log-level=INFO \
     --cov-config=../setup.cfg \
     --cov=. \
 	--cov-report=xml \
 	--cov-report=term \
-    --cov-fail-under=52 \
+    --cov-fail-under=53 \
 	$(coverage)

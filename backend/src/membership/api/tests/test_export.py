@@ -41,7 +41,7 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
         cls.user_member_4_obj = UserFactory(
             firstname="firstname-4",
             lastname="lastname-4",
-            email="user-member-4@domain-test.org",
+            email="user-member-4+user-member-2@domain-test.org",
         )
 
         cls.membership_1_user_1_obj = MembershipFactory(
@@ -133,14 +133,14 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
         )
 
     def test_export_memberships(self, *args, **kwargs):
-        with self.assertNumOperations(num=0, num_selects=12):
+        with self.assertNumOperations(num=0, num_selects=3):
             memberships_file = export_memberships(module=Module.ORG)
 
         self.assertIsNotNone(memberships_file)
 
         wb = load_workbook(filename=memberships_file)
 
-        self.assertEqual(wb.sheetnames, ["Registrations"])
+        self.assertEqual(wb.sheetnames, ["Membres"])
 
         ws = wb.worksheets[0]
         ws_rows = [[cell.value for cell in row] for row in ws.iter_rows()]
@@ -149,16 +149,16 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
         self.assertEqual(
             ws_rows[0],
             [
-                "First name",
-                "Last name",
-                "Email",
-                "Phone",
-                "Family",
-                "Membership",
-                "Date from",
-                "Date to",
-                "Status",
-                "Price",
+                "Nom",
+                "Cognom",
+                "Correu electrònic",
+                "Telèfon",
+                "Família",
+                "Quota",
+                "Data des de",
+                "Data fins a",
+                "Estat",
+                "Preu",
             ],
         )
         self.assertEqual(
@@ -168,12 +168,12 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
                 "lastname-1",
                 "user-member-1@domain-test.org",
                 self.user_member_1_obj.phone,
-                None,
+                "lastname-1",
                 "Name ORG",
                 self.membership_2_user_1_obj.date_from.strftime("%Y-%m-%d"),
                 self.membership_2_user_1_obj.date_to.strftime("%Y-%m-%d"),
-                "PROCESSING",
-                "150",
+                "Processant",
+                150,
             ],
         )
         self.assertEqual(
@@ -187,8 +187,8 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
                 "Name ORG\nName TOWERS",
                 self.membership_3_user_2_obj.date_from.strftime("%Y-%m-%d"),
                 self.membership_3_user_2_obj.date_to.strftime("%Y-%m-%d"),
-                "ACTIVE",
-                "250",
+                "Actiu",
+                700,
             ],
         )
         self.assertEqual(
@@ -202,8 +202,8 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
                 "Name ORG\nName TOWERS",
                 self.membership_3_user_2_obj.date_from.strftime("%Y-%m-%d"),
                 self.membership_3_user_2_obj.date_to.strftime("%Y-%m-%d"),
-                "ACTIVE",
-                "250",
+                "Actiu",
+                700,
             ],
         )
         self.assertEqual(
@@ -211,13 +211,13 @@ class TestExportMemberships(NumOperationsMixin, TestCase):
             [
                 "firstname-4",
                 "lastname-4",
-                "user-member-4@domain-test.org",
-                self.user_member_4_obj.phone,
+                None,
+                None,
                 "lastname-2-lastname-3",
                 "Name ORG\nName TOWERS",
                 self.membership_3_user_2_obj.date_from.strftime("%Y-%m-%d"),
                 self.membership_3_user_2_obj.date_to.strftime("%Y-%m-%d"),
-                "ACTIVE",
-                "250",
+                "Actiu",
+                700,
             ],
         )

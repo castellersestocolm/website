@@ -1,26 +1,58 @@
 from django.apps import apps
-from django.db.models import IntegerField, OuterRef, QuerySet, Subquery, Sum, Value
+from django.contrib.postgres.aggregates import StringAgg
+from django.db.models import (
+    Case,
+    CharField,
+    F,
+    IntegerField,
+    OuterRef,
+    Q,
+    QuerySet,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
 
-from user.enums import FamilyMemberRole
+from comunicat.utils.managers import MoneyOutput
+from user.enums import FamilyMemberRole, FamilyMemberStatus
 
 
 class MembershipQuerySet(QuerySet):
     def with_amount(self):
+        MembershipModule = apps.get_model("membership", "MembershipModule")
+
         return self.annotate(
             amount=Coalesce(
-                Sum("modules__amount"), Value(0), output_field=IntegerField()
+                Subquery(
+                    MembershipModule.objects.filter(membership_id=OuterRef("id"))
+                    .values("membership_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
             )
         )
 
 
 class MembershipUserQuerySet(QuerySet):
     def with_membership_amount(self):
+        MembershipModule = apps.get_model("membership", "MembershipModule")
+
         return self.annotate(
             membership_amount=Coalesce(
-                Sum("membership__modules__amount"),
+                Subquery(
+                    MembershipModule.objects.filter(
+                        membership_id=OuterRef("membership_id")
+                    )
+                    .values("membership_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1]
+                ),
                 Value(0),
-                output_field=IntegerField(),
+                output_field=MoneyOutput(),
             )
         )
 
@@ -37,5 +69,34 @@ class MembershipUserQuerySet(QuerySet):
                 ),
                 Value(FamilyMemberRole.MEMBER),
                 output_field=IntegerField(),
+            )
+        )
+
+    def with_family_name(self):
+        Family = apps.get_model("user", "Family")
+
+        return self.annotate(
+            family_name=Case(
+                When(
+                    family__isnull=False,
+                    family__members__isnull=False,
+                    then=Subquery(
+                        Family.objects.filter(id=OuterRef("family_id"))
+                        .annotate(
+                            family_name=StringAgg(
+                                "members__user__lastname",
+                                filter=Q(
+                                    members__status=FamilyMemberStatus.ACTIVE,
+                                    members__role=FamilyMemberRole.MANAGER,
+                                ),
+                                delimiter="-",
+                                order_by="members__user__lastname",
+                            )
+                        )
+                        .values("family_name")[:1]
+                    ),
+                ),
+                default=F("user__lastname"),
+                output_field=CharField(),
             )
         )
