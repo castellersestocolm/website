@@ -123,6 +123,13 @@ class ProductQuerySet(QuerySet):
 
 
 class ProductSizeQuerySet(QuerySet):
+    def with_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            name_locale=F(f"description__{locale}"),
+        )
+
     def with_stock(self, date: datetime.date | None = None):
         StockProduct = apps.get_model("product", "StockProduct")
         OrderProduct = apps.get_model("order", "OrderProduct")

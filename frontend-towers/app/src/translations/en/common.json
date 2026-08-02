@@ -312,6 +312,7 @@
   "pages.order.product-card.empty": "Cancel",
   "pages.order.product-card.change": "Change",
   "pages.order.product-card.order": "Proceed with your order",
+  "pages.order.product-card.size-description": "Size details",
   "pages.order-cart.title": "Complete your order",
   "pages.order-cart.products-card.title": "Products",
   "pages.order-cart.products-card.stock-none": "We don't currently have this product in stock, it can take a few weeks for it to be delivered.",

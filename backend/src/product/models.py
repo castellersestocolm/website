@@ -52,6 +52,8 @@ class ProductSize(StandardModel, Timestamps):
     size = models.CharField(max_length=32)
     order = models.PositiveSmallIntegerField(default=0)
 
+    description = JSONField(default=language_field_default)
+
     objects = ProductSizeQuerySet.as_manager()
 
     def __str__(self) -> str:

@@ -9,6 +9,9 @@ import {
   Typography,
   Stack,
   Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
@@ -25,6 +28,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import IconAddShoppingCart from "@mui/icons-material/AddShoppingCart";
+import IconExpandMore from "@mui/icons-material/ExpandMore";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import { ROUTES } from "../../routes";
 import { getEnumLabel } from "../../enums";
@@ -171,6 +175,9 @@ function OrderPage() {
                 product.price.min.amount === product.price.max.amount
                   ? product.price.min.amount
                   : undefined;
+              const sizeDescriptions = product.sizes.filter(
+                (productSize: any) => productSize.description,
+              );
               return (
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Card variant="outlined" className={styles.productCard}>
@@ -211,6 +218,46 @@ function OrderPage() {
                         </Typography>
                       )}
                     </CardContent>
+                    {sizeDescriptions && sizeDescriptions.length > 0 && (
+                      <Accordion
+                        className={styles.productCardAccordion}
+                        elevation={0}
+                      >
+                        <AccordionSummary
+                          expandIcon={<IconExpandMore />}
+                          id={product.id}
+                          className={styles.productCardAccordionSummary}
+                        >
+                          <Typography variant="body1">
+                            {t("pages.order.product-card.size-description")}
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails
+                          className={styles.productCardAccordionDetails}
+                        >
+                          {product.sizes
+                            .filter(
+                              (productSize: any) => productSize.description,
+                            )
+                            .map((productSize: any) => {
+                              return (
+                                <Grid container spacing={1}>
+                                  <Grid>
+                                    <Typography variant="body2">
+                                      {productSize.size}
+                                    </Typography>
+                                  </Grid>
+                                  <Grid size="grow" textAlign="right">
+                                    <Typography variant="body2">
+                                      {productSize.description}
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                              );
+                            })}
+                        </AccordionDetails>
+                      </Accordion>
+                    )}
                     <CardContent className={styles.productCardSelect}>
                       <Stack direction="row" spacing={2}>
                         <FormControl className={styles.productSelect}>

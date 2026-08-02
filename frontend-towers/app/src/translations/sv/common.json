@@ -312,6 +312,7 @@
   "pages.order.product-card.empty": "Avbryta",
   "pages.order.product-card.change": "Ändra",
   "pages.order.product-card.order": "Fortsätta med din beställning",
+  "pages.order.product-card.size-description": "Storleksdetaljer",
   "pages.order-cart.title": "Slutför din beställning",
   "pages.order-cart.products-card.title": "Produkter",
   "pages.order-cart.products-card.stock-none": "Produkten finns inte i lager just nu, det kan ta några veckor innan den levereras.",

@@ -314,6 +314,7 @@
   "pages.order.product-card.empty": "Cancel·la",
   "pages.order.product-card.change": "Canvia",
   "pages.order.product-card.order": "Continua amb la comanda",
+  "pages.order.product-card.size-description": "Informació de les talles",
   "pages.order-cart.title": "Finalitza la comanda",
   "pages.order-cart.products-card.title": "Productes",
   "pages.order-cart.products-card.stock-none": "Aquest producte no és en estoc en aquests moments, és per això que l'entrega pot trigar unes setmanes.",
