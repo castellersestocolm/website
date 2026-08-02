@@ -23,7 +23,8 @@ def get_list(module: Module, user_id: UUID | None = None) -> List[Product]:
         Product.objects.prefetch_related(
             Prefetch(
                 "sizes",
-                ProductSize.objects.with_stock()
+                ProductSize.objects.with_description()
+                .with_stock()
                 .with_price(modules=modules)
                 .order_by("order", "category", "size"),
             ),

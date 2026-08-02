@@ -38,6 +38,32 @@
   flex: 1;
 }
 
+.productCardAccordion {
+  margin: 0 !important;
+  width: 100%;
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+.productCardAccordion:before,
+.productCardAccordion:after {
+  display: none;
+}
+
+.productCardAccordionSummary {
+  min-height: 48px !important;
+  margin: 0 !important;
+}
+
+.productCardAccordionSummary span {
+  margin: 0 !important;
+}
+
+.productCardAccordionDetails {
+  border-top: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-grey-50);
+  padding: 12px 16px !important;
+}
+
 .productCardSelect {
   padding-bottom: 16px !important;
 }

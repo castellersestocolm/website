@@ -69,7 +69,7 @@ class ProductAdmin(admin.ModelAdmin):
         "accounts_link",
         "stock",
     )
-    ordering = ("type", "created_at")
+    ordering = ("type", "name", "created_at")
     inlines = (
         ProductSizeInline,
         ProductPriceInline,
@@ -107,6 +107,43 @@ class ProductAdmin(admin.ModelAdmin):
 
     name_locale.short_description = _("name")
     accounts_link.short_description = _("accounts")
+    stock.short_description = _("stock")
+
+
+@admin.register(ProductSize)
+class ProductSizeAdmin(admin.ModelAdmin):
+    search_fields = ("id", "product__name")
+    list_display = (
+        "product_name_locale",
+        "category",
+        "size",
+        "order",
+        "stock",
+        "created_at",
+    )
+    list_filter = ("category", "size", "created_at")
+    readonly_fields = ("stock",)
+    ordering = ("product__type", "product__name", "order", "created_at")
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_stock().select_related("product")
+
+    def product_name_locale(self, obj):
+        return (
+            obj.product.name.get(translation.get_language())
+            or list(obj.product.name.values())[0]
+        )
+
+    def stock(self, obj):
+        if not obj.stock_in_pending:
+            return obj.stock
+        return f"{obj.stock} (+{obj.stock_in_pending})"
+
+    product_name_locale.short_description = _("product name")
     stock.short_description = _("stock")
 
 

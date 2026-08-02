@@ -25,6 +25,7 @@ class ProductSizeWithStockSerializer(s.ModelSerializer):
     stock_out_pending = s.IntegerField(read_only=True)
     price = MoneyField(required=False, read_only=True)
     price_vat = MoneyField(required=False, read_only=True)
+    description = s.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ProductSize
@@ -36,6 +37,7 @@ class ProductSizeWithStockSerializer(s.ModelSerializer):
             "stock_out_pending",
             "price",
             "price_vat",
+            "description",
         )
         read_only_fields = (
             "id",
@@ -45,7 +47,12 @@ class ProductSizeWithStockSerializer(s.ModelSerializer):
             "stock_out_pending",
             "price",
             "price_vat",
+            "description",
         )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
 
 
 class ProductPriceSerializer(s.Serializer):
