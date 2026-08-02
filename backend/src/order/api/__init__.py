@@ -409,7 +409,11 @@ def complete(
     user_id: UUID | None = None,
     with_notify: bool = True,
 ) -> Order | None:
-    order_obj = Order.objects.filter(id=order_id).with_amount().first()
+    order_obj = (
+        Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
+        .with_amount()
+        .first()
+    )
 
     if not order_obj or not order_obj.payment_order:
         return None
