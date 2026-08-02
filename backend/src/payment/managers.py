@@ -27,7 +27,7 @@ from django.utils.translation import gettext_lazy as _
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
 from consent.enums import ConsentType
-from payment.enums import PaymentStatus, PaymentType
+from payment.enums import PaymentStatus, PaymentType, SourceType
 
 
 class PaymentQuerySet(QuerySet):
@@ -51,11 +51,13 @@ class PaymentQuerySet(QuerySet):
             ),
         )
 
-    def with_balance(self):
+    def with_balance(self, for_payment: bool = True):
         PaymentLine = apps.get_model("payment", "PaymentLine")
         Source = apps.get_model("payment", "Source")
 
-        source_objs = list(Source.objects.all())
+        source_objs = list(
+            Source.objects.filter_type_bank() if for_payment else Source.objects.all()
+        )
         balance_sum = F("balance_")
         for source_obj in source_objs:
             balance_sum += F(f"balance_{source_obj.code}")
@@ -66,13 +68,24 @@ class PaymentQuerySet(QuerySet):
                     Subquery(
                         PaymentLine.objects.with_dates()
                         .filter(
+                            (
+                                (
+                                    Q(
+                                        Q(payment__transaction__source_id=source_obj.id)
+                                        | Q(
+                                            payment__transaction__source__source_bank_id=source_obj.id
+                                        )
+                                    )
+                                    if for_payment
+                                    else Q(
+                                        payment__transaction__source_id=source_obj.id
+                                    )
+                                )
+                                if source_obj
+                                else Q(payment__transaction__isnull=True)
+                            ),
                             payment__status=PaymentStatus.COMPLETED,
                             date_accounting__lte=OuterRef("date_accounting"),
-                            **(
-                                {"payment__transaction__source_id": source_obj.id}
-                                if source_obj
-                                else {"payment__transaction__isnull": True}
-                            ),
                         )
                         .with_actual_amount()
                         .annotate(
@@ -330,11 +343,13 @@ class PaymentLineQuerySet(QuerySet):
             ),
         )
 
-    def with_balance(self):
+    def with_balance(self, for_payment: bool = True):
         PaymentLine = apps.get_model("payment", "PaymentLine")
         Source = apps.get_model("payment", "Source")
 
-        source_objs = list(Source.objects.all())
+        source_objs = list(
+            Source.objects.filter_type_bank() if for_payment else Source.objects.all()
+        )
         balance_sum = F("balance_")
         for source_obj in source_objs:
             balance_sum += F(f"balance_{source_obj.code}")
@@ -345,13 +360,24 @@ class PaymentLineQuerySet(QuerySet):
                     Subquery(
                         PaymentLine.objects.with_dates()
                         .filter(
+                            (
+                                (
+                                    Q(
+                                        Q(payment__transaction__source_id=source_obj.id)
+                                        | Q(
+                                            payment__transaction__source__source_bank_id=source_obj.id
+                                        )
+                                    )
+                                    if for_payment
+                                    else Q(
+                                        payment__transaction__source_id=source_obj.id
+                                    )
+                                )
+                                if source_obj
+                                else Q(payment__transaction__isnull=True)
+                            ),
                             payment__status=PaymentStatus.COMPLETED,
                             date_accounting__lte=OuterRef("date_accounting"),
-                            **(
-                                {"payment__transaction__source_id": source_obj.id}
-                                if source_obj
-                                else {"payment__transaction__isnull": True}
-                            ),
                         )
                         .with_actual_amount()
                         .annotate(
@@ -712,6 +738,9 @@ class ExpenseQuerySet(QuerySet):
 
 
 class SourceQuerySet(QuerySet):
+    def filter_type_bank(self):
+        return self.filter(type=SourceType.BANK)
+
     def with_amount(self, year: int | None = None):
         PaymentLine = apps.get_model("payment", "PaymentLine")
 

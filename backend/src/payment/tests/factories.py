@@ -73,6 +73,7 @@ class SourceFactory(DjangoModelFactory):
     # TODO: Factory random provider depending on type
     type = SourceType.BANK
     provider = None
+    source_bank = None
 
     class Meta:
         model = Source

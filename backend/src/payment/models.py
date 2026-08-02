@@ -579,6 +579,14 @@ class Source(StandardModel, Timestamps):
         on_delete=models.PROTECT,
     )
 
+    source_bank = models.ForeignKey(
+        "self",
+        related_name="source_providers",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
     @cached_property
     def code(self):
         return self.name.replace(" ", "").lower()
@@ -600,6 +608,17 @@ class Source(StandardModel, Timestamps):
                     & models.Q(provider__isnull=True)
                 ),
                 name="payment_source_type_provider",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    models.Q(type=SourceType.PROVIDER)
+                    & models.Q(source_bank__isnull=False)
+                )
+                | models.Q(
+                    ~models.Q(type=SourceType.PROVIDER)
+                    & models.Q(source_bank__isnull=True)
+                ),
+                name="payment_source_bank_type_provider",
             ),
         ]
 

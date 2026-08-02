@@ -321,7 +321,7 @@ class PaymentAdmin(admin.ModelAdmin):
             "balance",
         ]
 
-        source_objs = list(Source.objects.all().order_by("name"))
+        source_objs = list(Source.objects.filter_type_bank().order_by("name"))
 
         for source_obj in source_objs:
             list_display.append(DynamicColumn(field=f"balance_{source_obj.code}"))
@@ -421,7 +421,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
             "balance",
         ]
 
-        source_objs = list(Source.objects.all().order_by("name"))
+        source_objs = list(Source.objects.filter_type_bank().order_by("name"))
 
         for source_obj in source_objs:
             list_display.append(DynamicColumn(field=f"balance_{source_obj.code}"))

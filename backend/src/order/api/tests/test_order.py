@@ -131,8 +131,13 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
 
         cls.source_1_obj = SourceFactory(
             name="provider-1",
+            type=SourceType.BANK,
+        )
+        cls.source_2_obj = SourceFactory(
+            name="provider-2",
             type=SourceType.PROVIDER,
             provider=cls.payment_provider_1_obj,
+            source_bank=cls.source_1_obj,
         )
 
         cls.payment_order_1_obj = PaymentOrderFactory(
@@ -312,8 +317,13 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         cls.source_1_obj = SourceFactory(
             name="provider-1",
+            type=SourceType.BANK,
+        )
+        cls.source_2_obj = SourceFactory(
+            name="provider-2",
             type=SourceType.PROVIDER,
             provider=cls.payment_provider_1_obj,
+            source_bank=cls.source_1_obj,
         )
 
         cls.payment_order_1_obj = PaymentOrderFactory(
