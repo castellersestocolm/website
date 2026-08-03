@@ -48,6 +48,7 @@ import { capitalizeFirstLetter } from "../../utils/string";
 import { amountToString } from "../../utils/money";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import { datetimeToString } from "../../utils/datetime";
+import IconEast from "@mui/icons-material/East";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
@@ -1540,6 +1541,20 @@ function OrderCartPage() {
                   </ListItemButton>
                 </Box>
               </List>
+              <Divider />
+              <Box className={styles.summaryDetailsBox}>
+                <Stack direction="column" spacing={2}>
+                  <Link
+                    color="secondary"
+                    underline="none"
+                    href={ROUTES["policy-purchase"].path}
+                    className={styles.link}
+                  >
+                    {t("pages.order-cart.summary-card.policy-purchase")}
+                    <IconEast className={styles.iconEast} />
+                  </Link>
+                </Stack>
+              </Box>
               <Divider />
               <Box className={styles.summaryDetailsBox}>
                 <Stack
