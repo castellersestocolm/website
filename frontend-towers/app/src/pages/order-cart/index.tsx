@@ -1560,6 +1560,7 @@ function OrderCartPage() {
                 <Stack
                   direction="column"
                   spacing={2}
+                  className={styles.buttons}
                 >
                   <Button
                     variant="contained"

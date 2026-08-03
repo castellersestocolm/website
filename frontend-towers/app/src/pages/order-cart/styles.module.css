@@ -57,6 +57,10 @@
   padding: 16px;
 }
 
+.buttons {
+  justify-content: center;
+}
+
 .buttonsFill {
   flex: 1;
 
