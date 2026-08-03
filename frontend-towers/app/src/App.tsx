@@ -46,6 +46,7 @@ import AdminStatsPage from "./pages/admin-stats";
 import AdminHistoryPage from "./pages/admin-history";
 import AdminUserIdPage from "./pages/admin-user-id";
 import AboutContactPage from "./pages/about-contact";
+import PolicyPurchasePage from "./pages/policy-purchase";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -271,6 +272,10 @@ const App = () => {
                         replace
                       />
                     }
+                  />
+                  <Route
+                    path={ROUTES["policy-purchase"].path}
+                    element={<PolicyPurchasePage />}
                   />
                 </Routes>
               </Box>

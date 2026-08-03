@@ -5,7 +5,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { useAppContext } from "../AppContext/AppContext";
 import { useTranslation } from "react-i18next";
-import FormUpdate from "../FormUpdate/FormUpdate";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
 import { isRegistrationFinished } from "../../utils/user";
 
@@ -64,17 +63,8 @@ export default function PageBase({
                 fontWeight="700"
                 className={styles.pageTitle}
               >
-                {t("pages.user-registration.title")}
+                {t("pages.order-terms-agreement.title")}
               </Typography>
-              {user ? (
-                <Box className={styles.pageForm}>
-                  <FormUpdate />
-                </Box>
-              ) : (
-                <Box className={styles.pageLoader}>
-                  <LoaderClip />
-                </Box>
-              )}
             </>
           ) : (
             <>
