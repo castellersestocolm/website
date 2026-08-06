@@ -19,6 +19,8 @@
   "components.navbar-menu.press": "Sala de premsa",
   "components.navbar-menu.press-article": "Articles de premsa",
   "components.navbar-menu.press-release": "Notes de premsa",
+  "components.navbar-menu.policy-purchase": "Condicions de compra",
+  "components.navbar-menu.policy-privacy": "Política de privadesa",
   "components.navbar-menu.admin": "Administració",
   "components.event-calendar.navigation.today": "Avui",
   "pages.home-hero.title": "Castellers d'Estocolm",

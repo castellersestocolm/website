@@ -19,6 +19,8 @@
   "components.navbar-menu.press": "Pressrum",
   "components.navbar-menu.press-article": "Pressartiklar",
   "components.navbar-menu.press-release": "Pressmeddelanden",
+  "components.navbar-menu.policy-purchase": "Köpvilkor",
+  "components.navbar-menu.policy-privacy": "Integritetspolicy",
   "components.navbar-menu.admin": "Admin",
   "components.event-calendar.navigation.today": "Idag",
   "pages.home-hero.title": "Stockholms mänskliga torn",
