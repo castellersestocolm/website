@@ -19,6 +19,8 @@
   "components.navbar-menu.press": "Press room",
   "components.navbar-menu.press-article": "Press articles",
   "components.navbar-menu.press-release": "Press releases",
+  "components.navbar-menu.policy-purchase": "Terms of purchase",
+  "components.navbar-menu.policy-privacy": "Privacy policy",
   "components.navbar-menu.admin": "Admin",
   "components.event-calendar.navigation.today": "Today",
   "pages.home-hero.title": "Stockholm human towers",

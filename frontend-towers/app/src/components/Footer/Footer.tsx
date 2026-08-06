@@ -29,12 +29,6 @@ export default function Footer() {
       target: "_self",
       language: undefined,
     },
-    {
-      name: t("components.navbar-menu.calendar"),
-      path: ROUTES.calendar.path,
-      target: "_self",
-      language: undefined,
-    },
     !user && {
       name: t("components.navbar-menu.membership"),
       path: ROUTES["user-join"].path,
@@ -42,17 +36,21 @@ export default function Footer() {
       language: undefined,
     },
     {
-      name: user
-        ? t("components.navbar-menu.equipmment")
-        : t("components.navbar-menu.merch"),
-      path: ROUTES.order.path,
+      name: t("components.navbar-menu.press-release"),
+      path: ROUTES["press-release"].path,
       target: "_self",
       language: undefined,
     },
     {
-      name: t("components.navbar-menu.press-release"),
-      path: ROUTES["press-release"].path,
+      name: t("components.navbar-menu.policy-purchase"),
+      path: ROUTES["policy-purchase"].path,
       target: "_self",
+      language: undefined,
+    },
+    {
+      name: t("components.navbar-menu.policy-privacy"),
+      path: ROUTES["external-casal-policy-privacy"].path,
+      target: "_blank",
       language: undefined,
     },
     {
