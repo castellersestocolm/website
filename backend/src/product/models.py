@@ -198,6 +198,8 @@ class StockOrder(StandardModel, Timestamps):
     date_made = models.DateField(blank=True, null=True)
     date_available = models.DateField(blank=True, null=True)
 
+    notes = models.TextField(max_length=1000, blank=True, null=True)
+
     receipt = models.ForeignKey(
         "payment.Receipt",
         related_name="stock_orders",
@@ -210,12 +212,54 @@ class StockOrder(StandardModel, Timestamps):
 class StockProduct(StandardModel, Timestamps):
     order = models.ForeignKey(
         "StockOrder",
+        # TODO: Fix this
         related_name="articles",
         on_delete=models.PROTECT,
     )
     size = models.ForeignKey(
         "ProductSize",
         related_name="stocks",
+        on_delete=models.PROTECT,
+    )
+
+    amount = models.PositiveSmallIntegerField()
+
+    class Meta:
+        ordering = ("size__product__type", "size__category", "size__size")
+
+
+class ReservationOrder(StandardModel, Timestamps):
+    entity = models.ForeignKey(
+        "payment.Entity",
+        null=True,
+        blank=True,
+        related_name="reservation_orders",
+        on_delete=models.PROTECT,
+    )
+
+    date_made = models.DateField(blank=True, null=True)
+    date_delivered = models.DateField(blank=True, null=True)
+
+    notes = models.TextField(max_length=1000, blank=True, null=True)
+
+    receipt = models.ForeignKey(
+        "payment.Receipt",
+        related_name="reservation_products",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+
+
+class ReservationProduct(StandardModel, Timestamps):
+    order = models.ForeignKey(
+        "ReservationOrder",
+        related_name="products",
+        on_delete=models.PROTECT,
+    )
+    size = models.ForeignKey(
+        "ProductSize",
+        related_name="reservations",
         on_delete=models.PROTECT,
     )
 
