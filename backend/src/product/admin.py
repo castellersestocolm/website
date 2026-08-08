@@ -16,6 +16,8 @@ from product.models import (
     ProductModule,
     ProductPrice,
     ProductSize,
+    ReservationOrder,
+    ReservationProduct,
     StockOrder,
     StockProduct,
 )
@@ -189,6 +191,7 @@ class StockOrderAdmin(admin.ModelAdmin):
         "entity",
         "date_made",
         "date_available",
+        "notes",
         "receipt",
         "created_at",
     )
@@ -202,3 +205,31 @@ class StockOrderAdmin(admin.ModelAdmin):
         "-created_at",
     )
     inlines = (StockProductInline,)
+
+
+class ReservationProductInline(admin.TabularInline):
+    model = ReservationProduct
+    extra = 0
+
+
+@admin.register(ReservationOrder)
+class ReservationOrderAdmin(admin.ModelAdmin):
+    search_fields = ("id",)
+    list_display = (
+        "entity",
+        "date_made",
+        "date_delivered",
+        "notes",
+        "receipt",
+        "created_at",
+    )
+    list_filter = ("date_made", "date_delivered", "created_at")
+    raw_id_fields = (
+        "entity",
+        "receipt",
+    )
+    ordering = (
+        "-date_made",
+        "-created_at",
+    )
+    inlines = (ReservationProductInline,)

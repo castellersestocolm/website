@@ -24,6 +24,7 @@ from order.enums import OrderStatus
 class ProductQuerySet(QuerySet):
     def with_stock(self, date: datetime.date | None = None):
         StockProduct = apps.get_model("product", "StockProduct")
+        ReservationProduct = apps.get_model("product", "ReservationProduct")
         OrderProduct = apps.get_model("order", "OrderProduct")
 
         date = date or timezone.localdate()
@@ -49,6 +50,35 @@ class ProductQuerySet(QuerySet):
                 Subquery(
                     StockProduct.objects.filter(
                         order__date_available__gt=date,
+                        size__product_id=OuterRef("id"),
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            stock_reservation=Coalesce(
+                Subquery(
+                    ReservationProduct.objects.filter(
+                        Q(
+                            Q(order__date_delivered__isnull=True)
+                            | Q(order__date_delivered__lte=date)
+                        ),
+                        size__product_id=OuterRef("id"),
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            stock_reservation_pending=Coalesce(
+                Subquery(
+                    ReservationProduct.objects.filter(
+                        order__date_delivered__gt=date,
                         size__product_id=OuterRef("id"),
                     )
                     .values("size__product")
@@ -84,7 +114,7 @@ class ProductQuerySet(QuerySet):
                 Value(0),
                 output_field=IntegerField(),
             ),
-            stock=F("stock_in") - F("stock_out"),
+            stock=F("stock_in") - F("stock_out") - F("stock_reservation"),
         )
 
     def with_price(self, modules: list[Module] | None = None):
@@ -132,6 +162,7 @@ class ProductSizeQuerySet(QuerySet):
 
     def with_stock(self, date: datetime.date | None = None):
         StockProduct = apps.get_model("product", "StockProduct")
+        ReservationProduct = apps.get_model("product", "ReservationProduct")
         OrderProduct = apps.get_model("order", "OrderProduct")
 
         date = date or timezone.localdate()
@@ -157,6 +188,35 @@ class ProductSizeQuerySet(QuerySet):
                 Subquery(
                     StockProduct.objects.filter(
                         order__date_available__gt=date,
+                        size_id=OuterRef("id"),
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            stock_reservation=Coalesce(
+                Subquery(
+                    ReservationProduct.objects.filter(
+                        Q(
+                            Q(order__date_delivered__isnull=True)
+                            | Q(order__date_delivered__lte=date)
+                        ),
+                        size_id=OuterRef("id"),
+                    )
+                    .values("size__product")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            stock_reservation_pending=Coalesce(
+                Subquery(
+                    ReservationProduct.objects.filter(
+                        order__date_delivered__gt=date,
                         size_id=OuterRef("id"),
                     )
                     .values("size__product")
@@ -192,7 +252,7 @@ class ProductSizeQuerySet(QuerySet):
                 Value(0),
                 output_field=IntegerField(),
             ),
-            stock=F("stock_in") - F("stock_out"),
+            stock=F("stock_in") - F("stock_out") - F("stock_reservation"),
         )
 
     def with_price(self, modules: list[Module] | None = None):
