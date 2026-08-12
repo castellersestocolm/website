@@ -1,14 +1,21 @@
+import tempfile
+
 from django import forms
 from django.contrib import admin
 from django.db.models import JSONField
-from django.urls import reverse
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.urls import path, reverse
 from django.utils import translation
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
+from weasyprint import HTML
 
 import notify.tasks
+from comunicat.consts import TEMPLATE_PDF_BY_MODULE
+from comunicat.enums import PDFType
 from comunicat.utils.admin import FIELD_LOCALE
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
@@ -182,8 +189,61 @@ class OrderAdmin(admin.ModelAdmin):
             )
         )
 
+    def get_urls(self):
+        urls = super().get_urls()
+
+        return [
+            path(
+                "print/",
+                self.print,
+                name="order_order_print",
+            )
+        ] + urls
+
+    # TODO: Translations for the PDF
+    def print(self, request):
+        response = HttpResponse(content_type="aplication/pdf")
+        response["Content-Disposition"] = "attachment; filename=Order.pdf"
+        response["Content-Transfer-Encoding"] = "binary"
+
+        order_objs = list(
+            Order.objects.filter(
+                status__gte=OrderStatus.REQUESTED, status__lte=OrderStatus.PROCESSING
+            ).with_products_pending()
+        )
+        order_product_objs = sorted(
+            [
+                (order_product_obj, order_obj)
+                for order_obj in order_objs
+                for order_product_obj in order_obj.products_pending
+                if order_obj.products_pending
+            ],
+            key=lambda op_o: (op_o[0].size.product.name_locale, op_o[0].size.order),
+        )
+
+        context = {"order_objs": order_objs, "order_product_objs": order_product_objs}
+        html_string = render_to_string(
+            template_name=TEMPLATE_PDF_BY_MODULE[request.module][PDFType.ORDER]["pdf"],
+            context=context,
+        )
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+
+        with tempfile.NamedTemporaryFile(delete=True) as output:
+            output.write(result)
+            output.flush()
+
+            output = open(output.name, "rb")
+            response.write(output.read())
+
+        return response
+
     def products_pending(self, obj):
-        if not obj.products_pending or obj.status != OrderStatus.PROCESSING:
+        if (
+            not obj.products_pending
+            or obj.status < OrderStatus.REQUESTED
+            or obj.status > OrderStatus.PROCESSING
+        ):
             return "-"
 
         return format_html(

@@ -1,0 +1,113 @@
+{% extends "pdf/org/base.html" %}
+{% load i18n %}
+
+{% block styles %}
+{{ block.super }}
+h1 {
+  font-size: 16pt;
+  margin: 0;
+  text-align: center;
+}
+
+h2 {
+  font-size: 14pt;
+  color: #999999;
+  margin: 0;
+  text-align: center;
+}
+
+section#data table {
+  margin-top: 32px;
+  width: 100%;
+}
+
+section#data table td,
+section#data table th {
+  padding: 0 6px;
+}
+
+section .data-th1,
+section .data-td1 {
+// width: calc(100%/5);
+}
+
+section .data-t1 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 20pt;
+  margin: 0;
+}
+
+section .data-t2 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 20pt;
+  margin: 0;
+  text-align: right;
+}
+
+section .data-t3 {
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 10pt;
+  margin: 0;
+  padding: 8px 0;
+}
+
+section .data-t4 {
+  font-weight: 500;
+  font-size: 10pt;
+  line-height: 10pt;
+  margin: 0;
+  padding: 8px 0;
+  text-align: right;
+  font-family: "IBMPlexMono", "Lexend", "sans-serif";
+}
+{% endblock %}
+
+{% block content %}
+    <section id="info">
+      <h1>{% trans "Pending orders" %}</h1>
+    </section>
+
+    <section id="data">
+      <table>
+          <tr>
+            <th class="data-th1">
+              <p class="data-t1">{% trans "Product" %}</p>
+            </th>
+            <th class="data-th1">
+              <p class="data-t1">{% trans "Size" %}</p>
+            </th>
+            <th class="data-th1">
+              <p class="data-t1">{% trans "Name" %}</p>
+            </th>
+            <th class="data-th1">
+              <p class="data-t1">{% trans "Status" %}</p>
+            </th>
+            <th class="data-th1">
+              <p class="data-t2">{% trans "Quantity" %}</p>
+            </th>
+          </tr>
+              {% for order_product_obj, order_obj in order_product_objs %}
+                <tr>
+                  <td class="data-td1">
+                    <p class="data-t3">{{ order_product_obj.size.product.name_locale }}</p>
+                  </td>
+                  <td class="data-td1">
+                    <p class="data-t3">{{ order_product_obj.size.size }}</p>
+                  </td>
+                  <td class="data-td1">
+                    <p class="data-t3">{% if order_obj.entity %}{{ order_obj.entity.name }}{% endif %}</p>
+                  </td>
+                  <td class="data-td1">
+                    <p class="data-t3">{{ "OrderStatus"|labels_order|get_value:order_obj.status }}</p>
+                  </td>
+                  <td class="data-td1">
+                    <p class="data-t4">{{ order_product_obj.quantity }}</p>
+                  </td>
+                </tr>
+              {% endfor %}
+      </table>
+    </section>
+{% endblock %}

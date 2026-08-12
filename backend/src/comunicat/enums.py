@@ -9,3 +9,4 @@ class Module(IntEnum):
 class PDFType(IntEnum):
     EXPENSE = 10
     REGISTRATION = 20
+    ORDER = 30
