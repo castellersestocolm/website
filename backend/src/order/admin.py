@@ -4,7 +4,6 @@ from django import forms
 from django.contrib import admin
 from django.db.models import JSONField
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import path, reverse
 from django.utils import translation
@@ -16,7 +15,7 @@ from weasyprint import HTML
 
 import notify.tasks
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
-from comunicat.enums import Module, PDFType
+from comunicat.enums import PDFType
 from comunicat.utils.admin import FIELD_LOCALE
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
@@ -204,7 +203,7 @@ class OrderAdmin(admin.ModelAdmin):
     # TODO: Translations for the PDF
     def print(self, request):
         response = HttpResponse(content_type="aplication/pdf")
-        response["Content-Disposition"] = f"attachment; filename=Order.pdf"
+        response["Content-Disposition"] = "attachment; filename=Order.pdf"
         response["Content-Transfer-Encoding"] = "binary"
 
         order_objs = list(
