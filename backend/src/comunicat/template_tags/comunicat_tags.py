@@ -14,6 +14,7 @@ from rest_framework.exceptions import ValidationError
 import activity.enums
 import event.enums
 import membership.enums
+import order.enums
 import payment.enums
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
@@ -113,8 +114,18 @@ def enums_payment(name: str):
 
 
 @register.filter
+def enums_order(name: str):
+    return getattr(order.enums, name, "")
+
+
+@register.filter
 def labels_event(name: str):
     return getattr(event.enums, name, "").labels
+
+
+@register.filter
+def labels_order(name: str):
+    return getattr(order.enums, name, "").labels
 
 
 @register.filter

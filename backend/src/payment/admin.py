@@ -745,7 +745,9 @@ class EntityAdmin(admin.ModelAdmin):
 
         context = {"entity_obj": entity_obj}
         html_string = render_to_string(
-            template_name=TEMPLATE_PDF_BY_MODULE[Module.ORG][PDFType.EXPENSE]["pdf"],
+            template_name=TEMPLATE_PDF_BY_MODULE[request.module][PDFType.EXPENSE][
+                "pdf"
+            ],
             context=context,
         )
         html = HTML(string=html_string)
@@ -968,7 +970,9 @@ class ExpenseAdmin(admin.ModelAdmin):
 
         context = {"expense_obj": expense_obj, "entity_obj": expense_obj.entity}
         html_string = render_to_string(
-            template_name=TEMPLATE_PDF_BY_MODULE[Module.ORG][PDFType.EXPENSE]["pdf"],
+            template_name=TEMPLATE_PDF_BY_MODULE[request.module][PDFType.EXPENSE][
+                "pdf"
+            ],
             context=context,
         )
         html = HTML(string=html_string)

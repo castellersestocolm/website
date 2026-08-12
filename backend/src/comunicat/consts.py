@@ -623,6 +623,9 @@ TEMPLATE_PDF_BY_MODULE = {
         PDFType.REGISTRATION: {
             "pdf": "pdf/org/registration.html",
         },
+        PDFType.ORDER: {
+            "pdf": "pdf/org/order.html",
+        },
     },
     Module.TOWERS: {
         PDFType.EXPENSE: {
@@ -630,6 +633,9 @@ TEMPLATE_PDF_BY_MODULE = {
         },
         PDFType.REGISTRATION: {
             "pdf": "pdf/towers/registration.html",
+        },
+        PDFType.ORDER: {
+            "pdf": "pdf/towers/order.html",
         },
     },
 }
