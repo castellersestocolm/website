@@ -1,6 +1,10 @@
 {% extends "pdf/org/base.html" %}
 {% load i18n %}
 
+{% block styles_page_size %}
+size: A4 landscape;
+{% endblock %}
+
 {% block styles %}
 {{ block.super }}
 h1 {
@@ -29,6 +33,11 @@ section#data table th {
 section .data-th1,
 section .data-td1 {
 // width: calc(100%/5);
+vertical-align: top;
+}
+
+section .data-td1 {
+  vertical-align: top;
 }
 
 section .data-t1 {
@@ -63,6 +72,13 @@ section .data-t4 {
   text-align: right;
   font-family: "IBMPlexMono", "Lexend", "sans-serif";
 }
+
+section .data-t5 {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 14pt;
+  margin: 0;
+}
 {% endblock %}
 
 {% block content %}
@@ -80,34 +96,46 @@ section .data-t4 {
               <p class="data-t1">{% trans "Size" %}</p>
             </th>
             <th class="data-th1">
+              <p class="data-t1">#</p>
+            </th>
+            <th class="data-th1">
               <p class="data-t1">{% trans "Name" %}</p>
             </th>
-            <th class="data-th1">
-              <p class="data-t1">{% trans "Status" %}</p>
-            </th>
-            <th class="data-th1">
-              <p class="data-t2">{% trans "Quantity" %}</p>
-            </th>
+            {% for event_obj in event_objs %}
+              <th class="data-th1">
+                <p class="data-t5">{{ event_obj.title_locale }}<br>{{ event_obj.time_from|date:"d/m G:i" }}</p>
+              </th>
+            {% endfor %}
           </tr>
-              {% for order_product_obj, order_obj in order_product_objs %}
+          {% for product_size_obj, order_product_order_objs in order_product_group_objs %}
+              {% for order_product_obj, order_obj in order_product_order_objs %}
                 <tr>
-                  <td class="data-td1">
-                    <p class="data-t3">{{ order_product_obj.size.product.name_locale }}</p>
-                  </td>
-                  <td class="data-td1">
-                    <p class="data-t3">{{ order_product_obj.size.size }}</p>
-                  </td>
-                  <td class="data-td1">
-                    <p class="data-t3">{% if order_obj.entity %}{{ order_obj.entity.name }}{% endif %}</p>
-                  </td>
-                  <td class="data-td1">
-                    <p class="data-t3">{{ "OrderStatus"|labels_order|get_value:order_obj.status }}</p>
-                  </td>
-                  <td class="data-td1">
-                    <p class="data-t4">{{ order_product_obj.quantity }}</p>
-                  </td>
-                </tr>
+                  {% if forloop.counter0 == 0 %}
+                    <td class="data-td1" rowspan="{{ order_product_order_objs|length }}">
+                      <p class="data-t3">{{ order_product_order_objs|order_products_quantity }} x {{ product_size_obj.product.name_locale }}</p>
+                    </td>
+                    <td class="data-td1" rowspan="{{ order_product_order_objs|length }}">
+                      <p class="data-t3">{{ product_size_obj.size }}</p>
+                    </td>
+                  {% endif %}
+                    <td class="data-td1">
+                      <p class="data-t3">{{ order_product_obj.quantity }}</p>
+                    </td>
+                    <td class="data-td1">
+                      <p class="data-t3">{% if order_obj.entity %}{{ order_obj.entity.name }}{% endif %}</p>
+                    </td>
+                    {% if order_obj.entity %}
+                      {% for event_obj in event_objs %}
+                        <td class="data-td1">
+                          {% with event_obj.id|event_entity_tuple:order_obj.entity.id as event_entity_tuple %}
+                            <p class="data-t3">{% if registration_keys|registration_keys_if_attended:event_entity_tuple %}{% trans "Yes" %}{% endif %}</p>
+                          {% endwith %}
+                        </td>
+                      {% endfor %}
+                    {% endif %}
+                  </tr>
               {% endfor %}
+          {% endfor %}
       </table>
     </section>
 {% endblock %}
