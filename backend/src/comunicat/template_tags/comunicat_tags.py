@@ -1,6 +1,7 @@
 import importlib
 from typing import Any, List
 from urllib.parse import urljoin
+from uuid import UUID
 
 from django.conf import settings
 from django.template.defaulttags import register
@@ -24,7 +25,7 @@ from event.models import Event, Registration
 from membership.enums import MembershipStatus
 from membership.models import Membership
 from notify.consts import SETTINGS_BY_MODULE
-from order.models import Order
+from order.models import Order, OrderProduct
 from payment.consts import PAYMENT_METHOD_FIELD_LABELS, PAYMENT_METHOD_FIELDS
 from payment.models import EntityPaymentMethod
 from user.models import User
@@ -309,3 +310,28 @@ def format_phone(phone: str) -> str:
         return phone_field.as_national
 
     return phone_field.as_international
+
+
+@register.filter
+def order_products_quantity(
+    order_product_order_objs: list[tuple[OrderProduct, Order]],
+) -> Money:
+    return sum(
+        [
+            order_product_obj.quantity
+            for order_product_obj, __ in order_product_order_objs
+        ]
+    )
+
+
+@register.filter
+def event_entity_tuple(event_id: UUID, entity_id: UUID) -> bool:
+    return event_id, entity_id
+
+
+@register.filter
+def registration_keys_if_attended(
+    registration_keys: list[tuple[UUID, UUID]], event_entity_tuple: tuple[UUID, UUID]
+) -> bool:
+    print(registration_keys, event_entity_tuple)
+    return event_entity_tuple in registration_keys

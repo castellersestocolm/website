@@ -1,3 +1,4 @@
+import itertools
 import tempfile
 
 from django import forms
@@ -6,7 +7,7 @@ from django.db.models import JSONField
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path, reverse
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -17,6 +18,8 @@ import notify.tasks
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import FIELD_LOCALE
+from event.enums import RegistrationStatus
+from event.models import Event, Registration
 from notify.enums import EmailType
 from order.enums import OrderDeliveryType, OrderStatus
 from order.models import (
@@ -221,7 +224,37 @@ class OrderAdmin(admin.ModelAdmin):
             key=lambda op_o: (op_o[0].size.product.name_locale, op_o[0].size.order),
         )
 
-        context = {"order_objs": order_objs, "order_product_objs": order_product_objs}
+        order_product_group_objs = [
+            (product_size_obj, list(order_product_grouped_objs))
+            for product_size_obj, order_product_grouped_objs in itertools.groupby(
+                order_product_objs,
+                lambda op_o: op_o[0].size,
+            )
+        ]
+
+        event_objs = list(
+            Event.objects.filter(time_from__date__gte=timezone.localdate())
+            .with_title()
+            .order_by("time_from")[:5]
+        )
+        entity_objs = [order_obj.entity for order_obj in order_objs if order_obj.entity]
+
+        registration_keys = [
+            (registration_obj.event_id, registration_obj.entity_id)
+            for registration_obj in Registration.objects.filter(
+                event__in=event_objs,
+                entity__in=entity_objs,
+                status=RegistrationStatus.ACTIVE,
+            )
+        ]
+
+        context = {
+            "order_objs": order_objs,
+            "order_product_objs": order_product_objs,
+            "order_product_group_objs": order_product_group_objs,
+            "event_objs": event_objs,
+            "registration_keys": registration_keys,
+        }
         html_string = render_to_string(
             template_name=TEMPLATE_PDF_BY_MODULE[request.module][PDFType.ORDER]["pdf"],
             context=context,
