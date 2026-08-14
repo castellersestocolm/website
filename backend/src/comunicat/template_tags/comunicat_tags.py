@@ -335,3 +335,11 @@ def registration_keys_if_attended(
 ) -> bool:
     print(registration_keys, event_entity_tuple)
     return event_entity_tuple in registration_keys
+
+
+@register.filter
+def order_event_title(title: str) -> str:
+    if len(title) < 15:
+        return title
+
+    return title[:15].strip() + "..."
