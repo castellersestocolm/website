@@ -36,6 +36,11 @@ section .data-td1 {
 vertical-align: top;
 }
 
+section .data-th5,
+section .data-td5 {
+  max-width: 20%;
+}
+
 section .data-td1 {
   vertical-align: top;
 }
@@ -78,6 +83,15 @@ section .data-t5 {
   font-size: 10pt;
   line-height: 14pt;
   margin: 0;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow: ellipsis;
+}
+
+section .data-t5 span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 {% endblock %}
 
@@ -102,8 +116,8 @@ section .data-t5 {
               <p class="data-t1">{% trans "Name" %}</p>
             </th>
             {% for event_obj in event_objs %}
-              <th class="data-th1">
-                <p class="data-t5">{{ event_obj.title_locale }}<br>{{ event_obj.time_from|date:"d/m G:i" }}</p>
+              <th class="data-th1 data-th5">
+                <p class="data-t5"><span>{{ event_obj.title_locale|order_event_title }}</span><br><span>{{ event_obj.time_from|date:"d/m G:i" }}</span></p>
               </th>
             {% endfor %}
           </tr>
@@ -126,9 +140,9 @@ section .data-t5 {
                     </td>
                     {% if order_obj.entity %}
                       {% for event_obj in event_objs %}
-                        <td class="data-td1">
+                        <td class="data-td1 data-td5">
                           {% with event_obj.id|event_entity_tuple:order_obj.entity.id as event_entity_tuple %}
-                            <p class="data-t3">{% if registration_keys|registration_keys_if_attended:event_entity_tuple %}{% trans "Yes" %}{% endif %}</p>
+                            <p class="data-t3">{% if registration_keys|registration_keys_if_attended:event_entity_tuple %}{% trans "Yes" %}{% else %}—{% endif %}</p>
                           {% endwith %}
                         </td>
                       {% endfor %}
