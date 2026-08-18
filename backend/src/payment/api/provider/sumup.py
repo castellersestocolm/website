@@ -15,7 +15,7 @@ from payment.enums import PaymentStatus
 _log = logging.getLogger(__name__)
 
 
-class PaymentProviderSumup(PaymentProviderBase):
+class PaymentProviderSumUp(PaymentProviderBase):
     client: Sumup
 
     def __init__(self, order_id: UUID):
@@ -45,6 +45,11 @@ class PaymentProviderSumup(PaymentProviderBase):
                 checkout_reference=self.order_obj.reference,
                 currency=str(self.order_obj.amount.currency),
             )
+
+            self.payment_order_obj.external_id = checkout.id
+            self.payment_order_obj.extra = checkout.dict()
+
+            self.payment_order_obj.save(update_fields=("external_id", "extra"))
 
             return checkout.id
         except APIError:

@@ -32,6 +32,7 @@ from order.models import (
     OrderRegistration,
 )
 from order.utils.delivery import get_delivery_price
+from payment.consts import PAYMENT_CODE_REQUIRE_SOURCE
 from payment.enums import PaymentStatus
 from payment.models import Entity, PaymentOrder
 from product.models import ProductSize
@@ -423,9 +424,9 @@ def complete(
     is_captured = False
     is_completed = False
 
-    if payment_order_obj.provider.code in ("SWISH", "TRANSFER"):
+    if payment_order_obj.provider.code in ("TRANSFER",):
         is_captured = True
-    elif payment_order_obj.provider.code in ("SWISH", "SUMUP"):
+    elif payment_order_obj.provider.code in PAYMENT_CODE_REQUIRE_SOURCE:
         payment_class = payment.api.payment_provider.get_class(
             provider_id=payment_order_obj.provider_id
         )(order_id=order_id)

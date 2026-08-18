@@ -341,6 +341,7 @@ class PaymentOrderSerializer(s.ModelSerializer):
             "status",
             "external_id",
             "fulfillment",
+            "extra",
         )
         read_only_fields = (
             "id",
@@ -348,6 +349,7 @@ class PaymentOrderSerializer(s.ModelSerializer):
             "status",
             "external_id",
             "fulfillment",
+            "extra",
         )
 
     @swagger_serializer_method(serializer_or_field=s.DictField(read_only=True))

@@ -144,7 +144,7 @@ class OrderAPI(ComuniCatViewSet):
 
     @swagger_auto_schema(
         request_body=CompleteOrderSerializer,
-        responses={200: OrderSerializer(), 400: Serializer(), 404: Serializer()},
+        responses={200: OrderSerializer(), 400: Serializer()},
     )
     @action(methods=["post"], detail=True, url_path="complete", url_name="complete")
     def complete(self, request, id):

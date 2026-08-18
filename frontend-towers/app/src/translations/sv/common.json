@@ -351,7 +351,7 @@
   "pages.order-payment.providers-card.select": "Välja betalningsalternativ för att slutföra beställningen.",
   "pages.order-payment.providers-card.paypal.window-1": "Ett nytt fönster öppnas, vänligen ange dina betalningsuppgifter där. När du är klar laddas sidan om automatiskt.",
   "pages.order-payment.providers-card.sumup.window-1": "Ange dina kortuppfigter. När du är klar laddas sidan om automatiskt.",
-  "pages.order-payment.providers-card.swish.qr-1": "Öppna Swish-appen och skanna QR-koden, du kan trycka på knappen nedan för att bekräfta betalningen. Observera att det kan ta några dagar innan betalningen registreras eftersom den måste verifieras från vår bank.",
+  "pages.order-payment.providers-card.se-swish.window-1": "Skanna QR-koden med Swish-appen och betala. När du är klar laddas sidan om automatiskt.",
   "pages.order-payment.providers-card.transfer.message": "Meddelande",
   "pages.order-payment.providers-card.transfer.amount": "Summa",
   "pages.order-payment.providers-card.transfer.time-1": "Observera att det kan ta några dagar innan betalningen registreras eftersom den måste verifieras från vår bank.",

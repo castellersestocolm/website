@@ -25,6 +25,7 @@ from legal.enums import TeamType
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = BASE_DIR.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -32,7 +33,7 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 INTERNAL_IPS = ("127.0.0.1",)
 
 DOMAIN = os.getenv("DOMAIN")
-HTTP_PROTOCOL = "http" if DEBUG else "https"
+HTTP_PROTOCOL = "https"  # "http" if DEBUG else "https"
 ALLOWED_HOSTS = list(filter(None, os.getenv("ALLOWED_HOSTS", "*").split(",")))
 if os.getenv("CSRF_TRUSTED_ORIGINS"):
     CSRF_TRUSTED_ORIGINS = list(
@@ -614,6 +615,17 @@ PAYMENT_PROVIDER_SUMUP_ENABLED = (
 )
 PAYMENT_PROVIDER_SUMUP_API_KEY = os.getenv("PAYMENT_PROVIDER_SUMUP_API_KEY")
 PAYMENT_PROVIDER_SUMUP_MERCHANT_CODE = os.getenv("PAYMENT_PROVIDER_SUMUP_MERCHANT_CODE")
+
+PAYMENT_PROVIDER_SE_SWISH_ENABLED = (
+    os.getenv("PAYMENT_PROVIDER_SE_SWISH_ENABLED", "false").lower() == "true"
+)
+PAYMENT_PROVIDER_SE_SWISH_MERCHANT_NUMBER = os.getenv(
+    "PAYMENT_PROVIDER_SE_SWISH_MERCHANT_NUMBER"
+)
+PAYMENT_PROVIDER_SE_SWISH_ENVIRONMENT = os.getenv(
+    "PAYMENT_PROVIDER_SE_SWISH_ENVIRONMENT"
+)
+PAYMENT_PROVIDER_SE_SWISH_CERT_DIR = os.path.join(ROOT_DIR, "cert/se_swish/")
 
 # Slack
 

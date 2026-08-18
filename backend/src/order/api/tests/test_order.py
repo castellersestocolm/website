@@ -126,7 +126,7 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
             method=PaymentMethod.SUMUP, code="SUMUP"
         )
         cls.payment_provider_2_obj = PaymentProviderFactory(
-            method=PaymentMethod.SE_SWISH, code="SWISH"
+            method=PaymentMethod.TRANSFER, code="TRANSFER"
         )
 
         cls.source_1_obj = SourceFactory(
@@ -312,7 +312,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             method=PaymentMethod.SUMUP, code="SUMUP"
         )
         cls.payment_provider_2_obj = PaymentProviderFactory(
-            method=PaymentMethod.SE_SWISH, code="SWISH"
+            method=PaymentMethod.TRANSFER, code="TRANSFER"
         )
 
         cls.source_1_obj = SourceFactory(

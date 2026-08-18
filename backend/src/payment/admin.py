@@ -1042,10 +1042,12 @@ class PaymentProviderAdmin(admin.ModelAdmin):
 
     def accounts_link(self, obj):
         if hasattr(obj, "accounts"):
-            delivery_accounts_link = reverse(
-                "admin:order_deliveryaccounts_change", args=(obj.accounts.id,)
+            payment_provider_accounts_link = reverse(
+                "admin:payment_paymentprovideraccounts_change", args=(obj.accounts.id,)
             )
-            return mark_safe(f'<a href="{delivery_accounts_link}">{obj.accounts}</a>')
+            return mark_safe(
+                f'<a href="{payment_provider_accounts_link}">{obj.accounts}</a>'
+            )
         return "-"
 
     name_locale.short_description = _("name")
@@ -1112,3 +1114,7 @@ class PaymentOrderAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
     inlines = (PaymentOrderProviderLogInline,)
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }

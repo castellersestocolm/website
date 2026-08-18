@@ -6,7 +6,7 @@ from django.db.models import Q
 
 from comunicat.enums import Module
 from payment.api.provider import PaymentProviderBase
-from payment.consts import PAYMENT_METHOD_REQUIRE_SOURCE
+from payment.consts import PAYMENT_METHOD_REQUIRE_SOURCE, PAYMENT_PROVIDER_CLASS_BY_CODE
 from payment.models import PaymentProvider
 
 
@@ -27,12 +27,13 @@ def get_classes(module: Module) -> dict[UUID, PaymentProviderBase.__class__]:
     return {
         payment_provider_obj.id: getattr(
             importlib.import_module(
-                f"payment.api.provider.{payment_provider_obj.code.lower()}"
+                f"payment.api.provider.{PAYMENT_PROVIDER_CLASS_BY_CODE[payment_provider_obj.code.upper()][0]}"
             ),
-            f"PaymentProvider{payment_provider_obj.code.capitalize()}",
+            PAYMENT_PROVIDER_CLASS_BY_CODE[payment_provider_obj.code.upper()][1],
         )
         for payment_provider_obj in payment_provider_objs
         if payment_provider_obj.is_enabled
+        and payment_provider_obj.code.upper() in PAYMENT_PROVIDER_CLASS_BY_CODE
     }
 
 
@@ -41,12 +42,15 @@ def get_class(provider_id: UUID) -> PaymentProviderBase.__class__ | None:
         id=provider_id, is_enabled=True
     ).first()
 
-    if not payment_provider_obj:
+    if (
+        not payment_provider_obj
+        or payment_provider_obj.code.upper() not in PAYMENT_PROVIDER_CLASS_BY_CODE
+    ):
         return None
 
     return getattr(
         importlib.import_module(
-            f"payment.api.provider.{payment_provider_obj.code.lower()}"
+            f"payment.api.provider.{PAYMENT_PROVIDER_CLASS_BY_CODE[payment_provider_obj.code.upper()][0]}"
         ),
-        f"PaymentProvider{payment_provider_obj.code.capitalize()}",
+        PAYMENT_PROVIDER_CLASS_BY_CODE[payment_provider_obj.code.upper()][1],
     )

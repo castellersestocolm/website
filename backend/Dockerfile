@@ -84,6 +84,11 @@ ENV APT_WGET 1.21-*
 ENV DJANGO_SETTINGS_MODULE comunicat.settings
 ENV DJANGO_STATIC_ROOT /backend/static
 
+# Certificates
+ARG CERT_SWISH_CERT
+ARG CERT_SWISH_KEY
+ARG CERT_SWISH_VERIFY
+
 # Setup app user and directory
 RUN set -x && groupadd -g 8000 backend && useradd -r -u 8000 -g backend backend -d /backend && \
     mkdir -p /backend/media && mkdir -p /backend/internal_media && chown -R backend:backend /backend
@@ -121,6 +126,12 @@ COPY --from=builder --chown=backend:backend /backend/Makefile /backend/Makefile
 
 # Copy the setup
 COPY --from=builder --chown=backend:backend /backend/setup.cfg /backend/setup.cfg
+
+RUN mkdir /backend/cert && mkdir /backend/cert/se_swish && chown -R backend:backend /backend/cert
+
+RUN echo "${CERT_SWISH_CERT}" > /backend/cert/se_swish/cert.pem
+RUN echo "${CERT_SWISH_KEY}" > /backend/cert/se_swish/key.pem
+RUN echo "${CERT_SWISH_VERIFY}" > /backend/cert/se_swish/verify.pem
 
 WORKDIR /backend/src
 

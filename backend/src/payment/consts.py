@@ -30,7 +30,8 @@ PAYMENT_METHOD_FIELDS = {
     ),
     PaymentMethod.CARD: None,
     PaymentMethod.PAYPAL: None,
-    PaymentMethod.SE_SWISH: None,
+    # TODO SWISH: Verify phone on save entity payment details
+    PaymentMethod.SE_SWISH: ("phone",),
     PaymentMethod.SE_PLUSGIRO: ("account",),
     PaymentMethod.SE_BANKGIRO: ("account",),
     PaymentMethod.SE_TRANSFER: ("bank", "clearing", "account"),
@@ -41,6 +42,15 @@ PAYMENT_METHOD_FIELD_LABELS = {
     "bank": _("Bank"),
     "account": _("Account number"),
     "clearing": _("Clearing number"),
+    "phone": _("Phone"),
 }
 
-PAYMENT_METHOD_REQUIRE_SOURCE = (PaymentMethod.SUMUP,)
+PAYMENT_METHOD_REQUIRE_SOURCE = (PaymentMethod.SUMUP, PaymentMethod.SE_SWISH)
+PAYMENT_CODE_REQUIRE_SOURCE = ("SUMUP", "SE_SWISH")
+
+PAYMENT_PROVIDER_CLASS_BY_CODE = {
+    "PAYPAL": ("paypal", "PaymentProviderPaypal"),
+    "SUMUP": ("sumup", "PaymentProviderSumUp"),
+    "TRANSFER": ("transfer", "PaymentProviderTransfer"),
+    "SE_SWISH": ("se_swish", "PaymentProviderSESwish"),
+}
