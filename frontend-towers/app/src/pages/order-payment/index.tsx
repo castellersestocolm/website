@@ -46,6 +46,7 @@ import { useCallback } from "react";
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 const PAYMENT_PROVIDER_PAYPAL_CLIENT_ID =
   process.env.REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID;
+const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
 
 declare global {
   interface Window {
@@ -218,16 +219,18 @@ function OrderPaymentPage() {
       if (order.payment_order.provider.code === "SE_SWISH") {
         setPaymentSESwishOrderId(order.payment_order.external_id);
 
-        if (order.payment_order.extra && order.payment_order.extra.request_token)
-        QRCode.toDataURL(
-          "D" + order.payment_order.extra.request_token,
-          { width: 500, margin: 0 },
+        if (
+          order.payment_order.extra &&
+          order.payment_order.extra.request_token
         )
-          .then((url: string) => {
-            setPaymentSESwishOrderQR(url);
+          QRCode.toDataURL("D" + order.payment_order.extra.request_token, {
+            width: 500,
+            margin: 0,
           })
-          .catch((err: any) => {});
-
+            .then((url: string) => {
+              setPaymentSESwishOrderQR(url);
+            })
+            .catch((err: any) => {});
       } else {
         setPaymentSESwishOrderId(undefined);
         setPaymentSESwishOrderQR(undefined);
@@ -379,39 +382,52 @@ function OrderPaymentPage() {
       </Box>
       {order &&
         paymentProvider &&
-        (paymentProvider.code === "SE_SWISH" ? (paymentSESwishOrderQR ?
-          <Box className={styles.providerSwish}>
-            <img src={paymentSESwishOrderQR} alt="Swish QR" />
-            <Typography
-              variant="h5"
-              component="span"
-              fontWeight={700}
-              className={styles.providerSwishText}
-            >
-              {amountToString(order.amount.amount)} {order.amount.currency}
-            </Typography>
-            <Typography
-              variant="body1"
-              component="span"
-              className={styles.providerSwishText}
-            >
-              {t("swish.payment.order")}
-              {" "}
-              {order.reference}
-            </Typography>
-            {/*<Button
-              variant="contained"
-              type="button"
-              color="primary"
-              disableElevation
-              onClick={() => handleCompleteOrder()}
-              className={styles.providerSwishButton}
-            >
-              {t("pages.order-payment.providers-card.complete")}
-            </Button>*/}
-          </Box> : <Box className={styles.providerBox}>
-            <LoaderBar />
-          </Box>
+        (paymentProvider.code === "SE_SWISH" ? (
+          paymentSESwishOrderQR ? (
+            <Box className={styles.providerSwish}>
+              <img src={paymentSESwishOrderQR} alt="Swish QR" />
+              <Typography
+                variant="h5"
+                component="span"
+                fontWeight={700}
+                className={styles.providerSwishText}
+              >
+                {amountToString(order.amount.amount)} {order.amount.currency}
+              </Typography>
+              <Typography
+                variant="body1"
+                component="span"
+                className={styles.providerSwishText}
+              >
+                {t("swish.payment.order")} {order.reference}
+              </Typography>
+              {order.payment_order &&
+                order.payment_order.extra &&
+                order.payment_order.extra.request_token && (
+                  <Button
+                    variant="contained"
+                    type="button"
+                    color="primary"
+                    disableElevation
+                    href={
+                      "swish://paymentrequest?token=" +
+                      order.payment_order.extra.request_token +
+                      "&callbackurl=" +
+                      TOWERS_BASE_URL +
+                      "order/receipt/" +
+                      order.id
+                    }
+                    className={styles.providerSwishButton}
+                  >
+                    {t("pages.order-payment.providers-card.complete")}
+                  </Button>
+                )}
+            </Box>
+          ) : (
+            <Box className={styles.providerBox}>
+              <LoaderBar />
+            </Box>
+          )
         ) : paymentProvider.code === "PAYPAL" && paymentPayPalOrderId ? (
           <Box className={styles.providerPayPal}>
             <PayPalScriptProvider
