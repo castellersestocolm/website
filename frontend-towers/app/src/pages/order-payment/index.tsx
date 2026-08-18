@@ -46,6 +46,7 @@ import { useCallback } from "react";
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 const PAYMENT_PROVIDER_PAYPAL_CLIENT_ID =
   process.env.REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID;
+const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
 
 declare global {
   interface Window {
@@ -400,16 +401,27 @@ function OrderPaymentPage() {
               >
                 {t("swish.payment.order")} {order.reference}
               </Typography>
-              {/*<Button
-              variant="contained"
-              type="button"
-              color="primary"
-              disableElevation
-              onClick={() => handleCompleteOrder()}
-              className={styles.providerSwishButton}
-            >
-              {t("pages.order-payment.providers-card.complete")}
-            </Button>*/}
+              {order.payment_order &&
+                order.payment_order.extra &&
+                order.payment_order.extra.request_token && (
+                  <Button
+                    variant="contained"
+                    type="button"
+                    color="primary"
+                    disableElevation
+                    href={
+                      "swish://paymentrequest?token=" +
+                      order.payment_order.extra.request_token +
+                      "&callbackurl=" +
+                      TOWERS_BASE_URL +
+                      "order/receipt/" +
+                      order.id
+                    }
+                    className={styles.providerSwishButton}
+                  >
+                    {t("pages.order-payment.providers-card.complete")}
+                  </Button>
+                )}
             </Box>
           ) : (
             <Box className={styles.providerBox}>

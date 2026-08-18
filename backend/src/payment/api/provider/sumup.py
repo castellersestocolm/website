@@ -47,9 +47,8 @@ class PaymentProviderSumUp(PaymentProviderBase):
             )
 
             self.payment_order_obj.external_id = checkout.id
-            self.payment_order_obj.extra = checkout.dict()
 
-            self.payment_order_obj.save(update_fields=("external_id", "extra"))
+            self.payment_order_obj.save(update_fields=("external_id",))
 
             return checkout.id
         except APIError:
