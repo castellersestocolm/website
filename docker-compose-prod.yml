@@ -7,6 +7,9 @@ services:
       context: backend
       args:
         - BUILD_TARGET=${BUILD_TARGET:-live}
+        - CERT_SWISH_CERT=${CERT_SWISH_CERT}
+        - CERT_SWISH_KEY=${CERT_SWISH_KEY}
+        - CERT_SWISH_VERIFY=${CERT_SWISH_VERIFY}
     deploy:
       replicas: 1
       update_config:
@@ -52,6 +55,9 @@ services:
       context: backend
       args:
         - BUILD_TARGET=${BUILD_TARGET:-dev}
+        - CERT_SWISH_CERT=${CERT_SWISH_CERT}
+        - CERT_SWISH_KEY=${CERT_SWISH_KEY}
+        - CERT_SWISH_VERIFY=${CERT_SWISH_VERIFY}
     deploy:
       replicas: 1
       update_config:

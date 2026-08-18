@@ -759,6 +759,9 @@ class PaymentOrder(StandardModel, Timestamps):
 
     external_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
 
+    # For storing extra data such as the token for SE_SWISH
+    extra = models.JSONField(default=dict)
+
     __provider_id = None
 
     def __init__(self, *args, **kwargs):

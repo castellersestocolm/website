@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import PageBase from "../../components/PageBase/PageBase";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Box from "@mui/material/Box";
+import QRCode from "qrcode";
 import {
   Card,
   Divider,
@@ -26,14 +27,10 @@ import {
 import { OrderStatus } from "../../enums";
 import { amountToString } from "../../utils/money";
 import { LoaderBar } from "../../components/LoaderBar/LoaderBar";
-import QRCode from "qrcode";
 import IconAccountBalance from "@mui/icons-material/AccountBalance";
 import IconMessage from "@mui/icons-material/Message";
 import IconMoney from "@mui/icons-material/Money";
-import IconPhone from "@mui/icons-material/Phone";
 import {
-  PAYMENT_SWISH_NUMBER,
-  PAYMENT_SWISH_OWNER,
   PAYMENT_TRANSFER_BIC,
   PAYMENT_TRANSFER_IBAN,
   PAYMENT_TRANSFER_OWNER,
@@ -71,12 +68,15 @@ function OrderPaymentPage() {
     React.useState(undefined);
   const [formPaymentProviderId, setFormPaymentProviderId] =
     React.useState(undefined);
-  const [paymentSwishSvg, setPaymentSwishSvg] = React.useState(undefined);
   const [paymentPayPalOrderId, setPaymentPayPalOrderId] =
     React.useState(undefined);
   const [paymentSumUpOrderId, setPaymentSumUpOrderId] =
     React.useState(undefined);
   const [paymentSumUpMounted, setPaymentSumUpMounted] = React.useState(false);
+  const [paymentSESwishOrderId, setPaymentSESwishOrderId] =
+    React.useState(undefined);
+  const [paymentSESwishOrderQR, setPaymentSESwishOrderQR] =
+    React.useState(undefined);
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {
@@ -203,26 +203,6 @@ function OrderPaymentPage() {
 
   React.useEffect(() => {
     if (order && order.payment_order) {
-      if (order.payment_order.provider.code === "SWISH") {
-        const textOrder = t("swish.payment.order") + " #" + order.reference;
-        QRCode.toDataURL(
-          "C" +
-            PAYMENT_SWISH_NUMBER.replaceAll(" ", "") +
-            ";" +
-            order.amount.amount +
-            ";" +
-            textOrder +
-            ";0",
-          { width: 500, margin: 0 },
-        )
-          .then((url: string) => {
-            setPaymentSwishSvg(url);
-          })
-          .catch((err: any) => {});
-      } else {
-        setPaymentSwishSvg(undefined);
-      }
-
       if (order.payment_order.provider.code === "PAYPAL") {
         setPaymentPayPalOrderId(order.payment_order.external_id);
       } else {
@@ -234,17 +214,39 @@ function OrderPaymentPage() {
       } else {
         setPaymentSumUpOrderId(undefined);
       }
+
+      if (order.payment_order.provider.code === "SE_SWISH") {
+        setPaymentSESwishOrderId(order.payment_order.external_id);
+
+        if (
+          order.payment_order.extra &&
+          order.payment_order.extra.request_token
+        )
+          QRCode.toDataURL("D" + order.payment_order.extra.request_token, {
+            width: 500,
+            margin: 0,
+          })
+            .then((url: string) => {
+              setPaymentSESwishOrderQR(url);
+            })
+            .catch((err: any) => {});
+      } else {
+        setPaymentSESwishOrderId(undefined);
+        setPaymentSESwishOrderQR(undefined);
+      }
     } else {
-      setPaymentSwishSvg(undefined);
       setPaymentPayPalOrderId(undefined);
       setPaymentSumUpOrderId(undefined);
+      setPaymentSESwishOrderId(undefined);
+      setPaymentSESwishOrderQR(undefined);
     }
   }, [
     order,
     i18n.resolvedLanguage,
-    setPaymentSwishSvg,
     setPaymentPayPalOrderId,
     setPaymentSumUpOrderId,
+    setPaymentSESwishOrderId,
+    setPaymentSESwishOrderQR,
     t,
   ]);
 
@@ -306,9 +308,9 @@ function OrderPaymentPage() {
   const payText =
     order &&
     paymentProvider &&
-    (paymentProvider.code === "SWISH" ? (
+    (paymentProvider.code === "SE_SWISH" ? (
       <Typography variant="body2" component="div" mt={1}>
-        {t("pages.order-payment.providers-card.swish.qr-1")}
+        {t("pages.order-payment.providers-card.se-swish.window-1")}
       </Typography>
     ) : paymentProvider.code === "PAYPAL" ? (
       <>
@@ -379,42 +381,26 @@ function OrderPaymentPage() {
       </Box>
       {order &&
         paymentProvider &&
-        (paymentProvider.code === "SWISH" && paymentSwishSvg ? (
-          <Box className={styles.providerSwish}>
-            <img src={paymentSwishSvg} alt="Swish QR" />
-            <Typography
-              variant="h5"
-              component="span"
-              fontWeight={700}
-              className={styles.providerSwishText}
-            >
-              {amountToString(order.amount.amount)} {order.amount.currency}
-            </Typography>
-            <Typography
-              variant="body1"
-              component="span"
-              className={styles.providerSwishText}
-            >
-              {t("swish.payment.order")}
-              {" #"}
-              {order.reference}
-            </Typography>
-            <Typography
-              variant="body2"
-              component="span"
-              className={styles.providerSwishText}
-            >
-              {PAYMENT_SWISH_OWNER}
-            </Typography>
-            <Typography
-              variant="body1"
-              component="span"
-              className={styles.providerSwishPhone}
-            >
-              <IconPhone />
-              {PAYMENT_SWISH_NUMBER}
-            </Typography>
-            <Button
+        (paymentProvider.code === "SE_SWISH" ? (
+          paymentSESwishOrderQR ? (
+            <Box className={styles.providerSwish}>
+              <img src={paymentSESwishOrderQR} alt="Swish QR" />
+              <Typography
+                variant="h5"
+                component="span"
+                fontWeight={700}
+                className={styles.providerSwishText}
+              >
+                {amountToString(order.amount.amount)} {order.amount.currency}
+              </Typography>
+              <Typography
+                variant="body1"
+                component="span"
+                className={styles.providerSwishText}
+              >
+                {t("swish.payment.order")} {order.reference}
+              </Typography>
+              {/*<Button
               variant="contained"
               type="button"
               color="primary"
@@ -423,8 +409,13 @@ function OrderPaymentPage() {
               className={styles.providerSwishButton}
             >
               {t("pages.order-payment.providers-card.complete")}
-            </Button>
-          </Box>
+            </Button>*/}
+            </Box>
+          ) : (
+            <Box className={styles.providerBox}>
+              <LoaderBar />
+            </Box>
+          )
         ) : paymentProvider.code === "PAYPAL" && paymentPayPalOrderId ? (
           <Box className={styles.providerPayPal}>
             <PayPalScriptProvider

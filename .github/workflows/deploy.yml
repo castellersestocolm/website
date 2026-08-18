@@ -59,6 +59,9 @@ jobs:
         react_app_org_wp_api_password: ${{ vars.REACT_APP_ORG_WP_API_PASSWORD }}
         react_app_org_wp_categories_ca: ${{ vars.REACT_APP_ORG_WP_CATEGORIES_CA }}
         react_app_org_wp_categories_sv: ${{ vars.REACT_APP_ORG_WP_CATEGORIES_SV }}
+        cert_swish_cert: ${{ vars.CERT_SWISH_CERT }}
+        cert_swish_key: ${{ vars.CERT_SWISH_KEY }}
+        cert_swish_verify: ${{ vars.CERT_SWISH_VERIFY }}
 
   build-frontend-towers:
     runs-on: ubuntu-latest
