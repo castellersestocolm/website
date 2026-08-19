@@ -352,6 +352,7 @@
   "pages.order-payment.providers-card.paypal.window-1": "A new window will open, please enter your payment details there. Once you have finished this page will reload automatically.",
   "pages.order-payment.providers-card.sumup.window-1": "Enter your card details. Once you have finished this page will reload automatically.",
   "pages.order-payment.providers-card.se-swish.window-1": "Scan the QR code with the Swish app and pay. Once you have finished this page will reload automatically.",
+  "pages.order-payment.providers-card.se-swish.window-phone-1": "Open the Swish app by clicking the button below and pay. Once you have finished this page will reload automatically.",
   "pages.order-payment.providers-card.transfer.message": "Message",
   "pages.order-payment.providers-card.transfer.amount": "Amount",
   "pages.order-payment.providers-card.transfer.time-1": "Please note it can take a few days for the payment to be registered as it needs to be verified from our bank.",
