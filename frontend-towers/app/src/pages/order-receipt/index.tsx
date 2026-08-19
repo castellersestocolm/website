@@ -34,9 +34,13 @@ function OrderReceiptPage() {
           if (orderData.status === OrderStatus.CREATED) {
             apiOrderComplete(id).then((response: any) => {
               if (response.status === 200) {
-                setOrder(response.data);
+                const orderCompletedData = response.data;
+                if (orderCompletedData.status === OrderStatus.CREATED) {
+                  navigate(ROUTES["order-payment"].path.replace(":id", id));
+                } else {
+                  setOrder(orderCompletedData);
+                }
               } else {
-                setOrder(orderData);
                 navigate(ROUTES["order-payment"].path.replace(":id", id));
               }
             });

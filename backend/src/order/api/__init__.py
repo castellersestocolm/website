@@ -470,5 +470,8 @@ def complete(
         )
 
         return get(order_id=order_id, user_id=user_id, module=module)
+    else:
+        payment_order_obj.extra = {}
+        payment_order_obj.save(update_fields=("extra",))
 
     return None
