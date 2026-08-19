@@ -354,6 +354,7 @@
   "pages.order-payment.providers-card.paypal.window-1": "S'obrirà una nova finestra, si us plau, introdueix la informació de pagament allà. Quan hagis acabat aquesta pàgina s'actualitzarà automàticament.",
   "pages.order-payment.providers-card.sumup.window-1": "Introdueix les dades de la teva targeta. Quan hagis acabat aquesta pàgina s'actualitzarà automàticament.",
   "pages.order-payment.providers-card.se-swish.window-1": "Escaneja el QR amb l'aplicació de Swish i realitza el pagament. Quan hagis acabat aquesta pàgina s'actualitzarà automàticament.",
+  "pages.order-payment.providers-card.se-swish.window-phone-1": "Obre l'aplicació de Swish fent clic al botó de sota i paga. Quan hagis acabat aquesta pàgina s'actualitzarà automàticament.",
   "pages.order-payment.providers-card.transfer.message": "Concepte",
   "pages.order-payment.providers-card.transfer.amount": "Quantitat",
   "pages.order-payment.providers-card.transfer.time-1": "Tingues en compte però que pot trigar uns quants dies a registrar-se perquè ha de ser verificat amb el nostre banc.",

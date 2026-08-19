@@ -495,7 +495,6 @@ def restart(
     external_id = payment_class.create()
 
     payment_order_obj.external_id = external_id
-    payment_order_obj.extra = {}
-    payment_order_obj.save(update_fields=("provider_id", "external_id", "extra"))
+    payment_order_obj.save(update_fields=("external_id",))
 
     return get(order_id=order_id, user_id=user_id, module=module)

@@ -314,7 +314,9 @@ function OrderPaymentPage() {
     paymentProvider &&
     (paymentProvider.code === "SE_SWISH" ? (
       <Typography variant="body2" component="div" mt={1}>
-        {t("pages.order-payment.providers-card.se-swish.window-1")}
+        {isMobile
+          ? t("pages.order-payment.providers-card.se-swish.window-phone-1")
+          : t("pages.order-payment.providers-card.se-swish.window-1")}
       </Typography>
     ) : paymentProvider.code === "PAYPAL" ? (
       <>
