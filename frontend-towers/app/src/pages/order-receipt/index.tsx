@@ -29,25 +29,19 @@ function OrderReceiptPage() {
     apiOrderRetrieve(id).then((response) => {
       if (response.status === 200) {
         const orderData = response.data;
-        setOrder(orderData);
 
         if (orderData) {
           if (orderData.status === OrderStatus.CREATED) {
             apiOrderComplete(id).then((response: any) => {
               if (response.status === 200) {
-                const orderData = response.data;
-                setOrder(orderData);
-
-                if (orderData.status !== OrderStatus.CREATED) {
-                  localStorage.removeItem("orderId");
-                  localStorage.removeItem("order");
-                }
+                setOrder(response.data);
               } else {
-                navigate(
-                  ROUTES["order-payment"].path.replace(":id", response.data.id),
-                );
+                setOrder(orderData);
+                navigate(ROUTES["order-payment"].path.replace(":id", id));
               }
             });
+          } else {
+            setOrder(orderData);
           }
         }
       } else {
