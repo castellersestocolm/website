@@ -33,11 +33,12 @@ class PaymentProviderSESwish(PaymentProviderBase):
             verify=f"{settings.PAYMENT_PROVIDER_SE_SWISH_CERT_DIR}verify.pem",
         )
 
-    def create(self) -> str | None:
+    def create(self, *args, force: bool = False, **kwargs) -> str | None:
         assert self.order_obj.status == OrderStatus.CREATED
 
         if (
-            self.payment_order_obj
+            not force
+            and self.payment_order_obj
             and self.payment_order_obj.provider.code == "SE_SWISH"
             and self.payment_order_obj.external_id
         ):
@@ -74,7 +75,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
 
         return None
 
-    def capture(self) -> bool:
+    def capture(self, *args, **kwargs) -> bool:
         assert self.order_obj.status <= OrderStatus.REQUESTED
 
         if (
@@ -94,7 +95,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
 
         return False
 
-    def cancel(self) -> bool:
+    def cancel(self, *args, **kwargs) -> bool:
         assert self.order_obj.status == OrderStatus.CREATED
 
         if (
@@ -108,12 +109,10 @@ class PaymentProviderSESwish(PaymentProviderBase):
             self.client.cancel_payment(
                 payment_request_id=self.payment_order_obj.external_id
             )
+        except APIError:
+            pass
 
-            return True
-        except APIError as e:
-            _log.exception(e)
-
-        return False
+        return True
 
     # TODO SWISH: Fees
     # def fees(self) -> Money:  # noqa: C901

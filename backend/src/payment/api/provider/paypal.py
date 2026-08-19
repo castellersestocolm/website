@@ -66,7 +66,7 @@ class PaymentProviderPaypal(PaymentProviderBase):
             ),
         )
 
-    def create(self) -> str | None:
+    def create(self, *args, **kwargs) -> str | None:
         assert self.order_obj.status == OrderStatus.CREATED
 
         if (
@@ -194,7 +194,7 @@ class PaymentProviderPaypal(PaymentProviderBase):
 
         return None
 
-    def capture(self) -> bool:
+    def capture(self, *args, **kwargs) -> bool:
         assert self.order_obj.status <= OrderStatus.REQUESTED
 
         if (

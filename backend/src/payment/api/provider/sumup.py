@@ -23,11 +23,12 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         self.client = Sumup(api_key=settings.PAYMENT_PROVIDER_SUMUP_API_KEY)
 
-    def create(self) -> str | None:
+    def create(self, *args, force: bool = False, **kwargs) -> str | None:
         assert self.order_obj.status == OrderStatus.CREATED
 
         if (
-            self.payment_order_obj
+            not force
+            and self.payment_order_obj
             and self.payment_order_obj.provider.code == "SUMUP"
             and self.payment_order_obj.external_id
         ):
@@ -65,7 +66,7 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         return None
 
-    def capture(self) -> bool:
+    def capture(self, *args, **kwargs) -> bool:
         assert self.order_obj.status <= OrderStatus.REQUESTED
 
         if (
@@ -85,7 +86,7 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         return False
 
-    def cancel(self) -> bool:
+    def cancel(self, *args, **kwargs) -> bool:
         assert self.order_obj.status == OrderStatus.CREATED
 
         if (
@@ -106,7 +107,7 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         return False
 
-    def fees(self) -> Money:  # noqa: C901
+    def fees(self, *args, **kwargs) -> Money:  # noqa: C901
         if not self.payment_order_obj.external_id:
             return ZERO_MONEY
 

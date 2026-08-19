@@ -492,7 +492,7 @@ def restart(
 
     payment_class.cancel()
 
-    external_id = payment_class.create()
+    external_id = payment_class.create(force=True)
 
     payment_order_obj.external_id = external_id
     payment_order_obj.save(update_fields=("external_id",))
