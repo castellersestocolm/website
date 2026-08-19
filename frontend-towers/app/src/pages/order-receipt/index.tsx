@@ -123,7 +123,7 @@ function OrderReceiptPage() {
     <PageBase
       title={t("pages.order-receipt.title")}
       content={content}
-      loading={!order}
+      loading={!order || order.status === OrderStatus.CREATED}
     />
   );
 }
