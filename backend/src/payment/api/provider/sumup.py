@@ -90,7 +90,7 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         if (
             not self.payment_order_obj
-            or self.payment_order_obj.provider.code == "SUMUP"
+            or self.payment_order_obj.provider.code != "SUMUP"
             or not self.payment_order_obj.external_id
         ):
             return True

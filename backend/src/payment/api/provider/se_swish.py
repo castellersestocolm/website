@@ -99,7 +99,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
 
         if (
             not self.payment_order_obj
-            or self.payment_order_obj.provider.code == "SE_SWISH"
+            or self.payment_order_obj.provider.code != "SE_SWISH"
             or not self.payment_order_obj.external_id
         ):
             return True
