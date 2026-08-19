@@ -6,8 +6,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
-from sumup._exceptions import APIError
 from swish import Environment, SwishClient
+from swish.exceptions import SwishError
 
 from comunicat.template_tags.comunicat_tags import full_url
 from order.enums import OrderStatus
@@ -70,7 +70,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
             self.payment_order_obj.save(update_fields=("external_id", "extra"))
 
             return payment.id
-        except APIError as e:
+        except SwishError as e:
             _log.exception(e)
 
         return None
@@ -90,7 +90,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
             )
 
             return result.status == "PAID"
-        except APIError as e:
+        except SwishError as e:
             _log.exception(e)
 
         return False
@@ -109,7 +109,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
             self.client.cancel_payment(
                 payment_request_id=self.payment_order_obj.external_id
             )
-        except APIError:
+        except SwishError:
             pass
 
         return True
