@@ -433,7 +433,11 @@ def complete(
         is_captured = payment_class.capture()
         is_completed = is_captured
 
-        if transaction_id or transaction_reference:
+        if (
+            payment_order_obj.provider.code != "SUMUP"
+            or transaction_id
+            or transaction_reference
+        ):
             fee_amount = payment_class.fees()
 
             # TODO: Move vat to money_vat instead to store amounts and not percentages
