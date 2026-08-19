@@ -378,7 +378,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=37, num_inserts=8, num_updates=7
+                num=0, num_selects=37, num_inserts=7, num_updates=5
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -395,8 +395,8 @@ class TestComplete(NumOperationsMixin, TestCase):
         self.order_1_obj.refresh_from_db()
         self.payment_order_1_obj.refresh_from_db()
 
-        self.assertEqual(self.order_1_obj.status, OrderStatus.REQUESTED)
-        self.assertEqual(self.payment_order_1_obj.status, PaymentStatus.PROCESSING)
+        self.assertEqual(self.order_1_obj.status, OrderStatus.CREATED)
+        self.assertEqual(self.payment_order_1_obj.status, PaymentStatus.CREATED)
 
         with mock.patch(
             "httpx._client.Client.get",

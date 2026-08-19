@@ -446,15 +446,17 @@ def complete(
                 fee_amount=fee_amount,
             )
 
-    payment_order_obj.status = (
-        PaymentStatus.COMPLETED if is_completed else PaymentStatus.PROCESSING
-    )
-    payment_order_obj.save(update_fields=("status",))
-
-    order_obj.status = OrderStatus.PROCESSING if is_completed else OrderStatus.REQUESTED
-    order_obj.save(update_fields=("status",))
-
     if is_captured:
+        payment_order_obj.status = (
+            PaymentStatus.COMPLETED if is_completed else PaymentStatus.PROCESSING
+        )
+        payment_order_obj.save(update_fields=("status",))
+
+        order_obj.status = (
+            OrderStatus.PROCESSING if is_completed else OrderStatus.REQUESTED
+        )
+        order_obj.save(update_fields=("status",))
+
         if with_notify:
             notify.tasks.send_order_email.delay(
                 order_id=order_obj.id,
