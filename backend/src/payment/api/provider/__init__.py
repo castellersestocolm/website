@@ -56,14 +56,14 @@ class PaymentProviderBase:
         self.payment_order_obj = self.order_obj.payment_order
         self.provider_obj = self.payment_order_obj.provider
 
-    def create(self) -> str | None:
+    def create(self, *args, **kwargs) -> str | None:
         return None
 
-    def capture(self) -> bool:
+    def capture(self, *args, **kwargs) -> bool:
         return False
 
-    def cancel(self) -> bool:
+    def cancel(self, *args, **kwargs) -> bool:
         return False
 
-    def fees(self) -> Money:
+    def fees(self, *args, **kwargs) -> Money:
         return ZERO_MONEY
