@@ -452,7 +452,9 @@ def complete(
         )
         payment_order_obj.save(update_fields=("status",))
 
-        order_obj.status = OrderStatus.PROCESSING if is_completed else OrderStatus.REQUESTED
+        order_obj.status = (
+            OrderStatus.PROCESSING if is_completed else OrderStatus.REQUESTED
+        )
         order_obj.save(update_fields=("status",))
 
         if with_notify:
