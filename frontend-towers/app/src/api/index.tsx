@@ -746,6 +746,16 @@ export const apiOrderComplete = async (
   }
 };
 
+export const apiOrderRestart = async (orderId: string) => {
+  try {
+    return await instance.post("/order/" + orderId + "/restart/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiDataLocationCountryList = async () => {
   try {
     return await instance.get("/data/location/country/");

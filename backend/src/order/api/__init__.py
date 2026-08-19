@@ -472,3 +472,30 @@ def complete(
         return get(order_id=order_id, user_id=user_id, module=module)
 
     return None
+
+
+@transaction.atomic
+def restart(
+    order_id: UUID, module: Module, user_id: UUID | None = None
+) -> Order | None:
+    order_obj = Order.objects.filter(id=order_id, status=OrderStatus.CREATED).first()
+
+    if not order_obj or not order_obj.payment_order:
+        return None
+
+    payment_order_obj = order_obj.payment_order
+
+    payment_classes_by_id = payment.api.payment_provider.get_classes(module=module)
+    payment_class = payment_classes_by_id[payment_order_obj.provider_id](
+        order_id=order_id
+    )
+
+    payment_class.cancel()
+
+    external_id = payment_class.create()
+
+    payment_order_obj.external_id = external_id
+    payment_order_obj.extra = {}
+    payment_order_obj.save(update_fields=("provider_id", "external_id", "extra"))
+
+    return get(order_id=order_id, user_id=user_id, module=module)

@@ -433,7 +433,7 @@ function OrderPaymentPage() {
               >
                 {t("swish.payment.order")} {order.reference}
               </Typography>
-              {isMobile &&
+              {isMobile ? (
                 order.payment_order &&
                 order.payment_order.extra &&
                 order.payment_order.extra.request_token && (
@@ -454,7 +454,19 @@ function OrderPaymentPage() {
                   >
                     {t("pages.order-payment.providers-se-swish.open")}
                   </Button>
-                )}
+                )
+              ) : (
+                <Button
+                  variant="contained"
+                  type="button"
+                  color="primary"
+                  disableElevation
+                  onClick={() => handleCompleteOrder()}
+                  className={styles.providerSwishButton}
+                >
+                  {t("pages.order-payment.providers-se-swish.complete")}
+                </Button>
+              )}
             </Box>
           ) : (
             <Box className={styles.providerBox}>

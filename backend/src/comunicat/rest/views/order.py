@@ -178,7 +178,7 @@ class OrderAPI(ComuniCatViewSet):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        responses={204: Serializer(), 400: Serializer()},
+        responses={204: Serializer(), 401: Serializer()},
     )
     def destroy(self, request, id):
         is_deleted = order.api.delete(order_id=id, module=self.module)
@@ -187,6 +187,23 @@ class OrderAPI(ComuniCatViewSet):
             return Response(status=401)
 
         return Response(status=204)
+
+    @swagger_auto_schema(
+        responses={200: OrderSerializer(), 404: Serializer()},
+    )
+    @action(methods=["post"], detail=True, url_path="restart", url_name="restart")
+    def restart(self, request, id):
+        order_obj = order.api.restart(
+            order_id=id,
+            user_id=request.user.id if request.user.is_authenticated else None,
+            module=self.module,
+        )
+
+        if not order_obj:
+            return Response(status=404)
+
+        serializer = self.serializer_class(order_obj, context={"module": self.module})
+        return Response(serializer.data)
 
 
 class DeliveryProviderAPI(ComuniCatViewSet):

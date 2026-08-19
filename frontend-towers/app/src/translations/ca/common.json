@@ -360,6 +360,7 @@
   "pages.order-payment.providers-card.pay": "Finalitza",
   "pages.order-payment.providers-card.complete": "Marca com a pagat",
   "pages.order-payment.providers-se-swish.open": "Obre l'aplicació de Swish",
+  "pages.order-payment.providers-se-swish.complete": "Marca com a pagat",
   "pages.order-payment.terms-agreement.disclaimer-1": "En confirmar aquesta compra accepteu les",
   "pages.order-payment.terms-agreement.disclaimer-2": "condicions de compra",
   "pages.order-payment.terms-privacy.disclaimer-1": "Per a més informació sobre com processem les vostres dades personals consulteu la",

@@ -358,6 +358,7 @@
   "pages.order-payment.providers-card.pay": "Complete",
   "pages.order-payment.providers-card.complete": "Mark as paid",
   "pages.order-payment.providers-se-swish.open": "Open the Swish app",
+  "pages.order-payment.providers-se-swish.complete": "Mark as paid",
   "pages.order-payment.terms-agreement.disclaimer-1": "By confirming this purchase I agree with the",
   "pages.order-payment.terms-agreement.disclaimer-2": "terms of purchase",
   "pages.order-payment.terms-privacy.disclaimer-1": "For more information on how we process your personal data please see the",
