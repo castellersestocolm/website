@@ -13,6 +13,7 @@ import {
   ListItemButton,
   Typography,
   Button,
+  Link,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
@@ -232,15 +233,6 @@ function OrderPaymentPage() {
               setPaymentSESwishOrderQR(url);
             })
             .catch((err: any) => {});
-          if (isMobile) {
-            window.location.href =
-              "swish://paymentrequest?token=" +
-              order.payment_order.extra.request_token +
-              "&callbackurl=" +
-              TOWERS_BASE_URL +
-              "order/receipt/" +
-              order.id;
-          }
         }
       } else {
         setPaymentSESwishOrderId(undefined);
@@ -342,6 +334,35 @@ function OrderPaymentPage() {
       </Typography>
     ) : undefined);
 
+  const payDisclaimer = (
+    <>
+      <Typography variant="body2" component="div">
+        {t("pages.order-payment.terms-agreement.disclaimer-1")}{" "}
+        <Link
+          href={ROUTES["policy-purchase"].path}
+          color="secondary"
+          underline="none"
+          target="_blank"
+        >
+          {t("pages.order-payment.terms-agreement.disclaimer-2")}
+        </Link>
+        {"."}
+      </Typography>
+      <Typography variant="body2" component="div" mt={1}>
+        {t("pages.order-payment.terms-privacy.disclaimer-1")}{" "}
+        <Link
+          href={ROUTES["external-casal-policy-privacy"].path}
+          color="secondary"
+          underline="none"
+          target="_blank"
+        >
+          {t("pages.order-payment.terms-privacy.disclaimer-2")}
+        </Link>
+        {"."}
+      </Typography>
+    </>
+  );
+
   const payContent = (
     <>
       <Box
@@ -396,7 +417,7 @@ function OrderPaymentPage() {
         (paymentProvider.code === "SE_SWISH" ? (
           paymentSESwishOrderQR ? (
             <Box className={styles.providerSwish}>
-              <img src={paymentSESwishOrderQR} alt="Swish QR" />
+              {!isMobile && <img src={paymentSESwishOrderQR} alt="Swish QR" />}
               <Typography
                 variant="h5"
                 component="span"
@@ -412,6 +433,28 @@ function OrderPaymentPage() {
               >
                 {t("swish.payment.order")} {order.reference}
               </Typography>
+              {isMobile &&
+                order.payment_order &&
+                order.payment_order.extra &&
+                order.payment_order.extra.request_token && (
+                  <Button
+                    variant="contained"
+                    type="button"
+                    color="primary"
+                    disableElevation
+                    href={
+                      "swish://paymentrequest?token=" +
+                      order.payment_order.extra.request_token +
+                      "&callbackurl=" +
+                      TOWERS_BASE_URL +
+                      "/order/receipt/" +
+                      order.id
+                    }
+                    className={styles.providerSwishButton}
+                  >
+                    {t("pages.order-payment.providers-se-swish.open")}
+                  </Button>
+                )}
             </Box>
           ) : (
             <Box className={styles.providerBox}>
@@ -556,6 +599,8 @@ function OrderPaymentPage() {
                       {payContent}
                     </>
                   )}
+                  <Divider />
+                  <Box className={styles.providerBox}>{payDisclaimer}</Box>
                 </>
               ) : (
                 <Box className={styles.providerBox}>
