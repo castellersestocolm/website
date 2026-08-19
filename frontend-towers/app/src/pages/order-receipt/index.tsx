@@ -7,7 +7,7 @@ import { useAppContext } from "../../components/AppContext/AppContext";
 import { Typography } from "@mui/material";
 import { ROUTES } from "../../routes";
 import { useNavigate, useParams } from "react-router-dom";
-import { apiOrderComplete, apiOrderRetrieve } from "../../api";
+import { apiOrderComplete, apiOrderRetrieve, apiOrderRestart } from "../../api";
 import { getEnumLabel, ORDER_STATUS_ICON, OrderStatus } from "../../enums";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
@@ -36,12 +36,16 @@ function OrderReceiptPage() {
               if (response.status === 200) {
                 const orderCompletedData = response.data;
                 if (orderCompletedData.status === OrderStatus.CREATED) {
-                  navigate(ROUTES["order-payment"].path.replace(":id", id));
+                  apiOrderRestart(id).then((response: any) => {
+                    navigate(ROUTES["order-payment"].path.replace(":id", id));
+                  });
                 } else {
                   setOrder(orderCompletedData);
                 }
               } else {
-                navigate(ROUTES["order-payment"].path.replace(":id", id));
+                apiOrderRestart(id).then((response: any) => {
+                  navigate(ROUTES["order-payment"].path.replace(":id", id));
+                });
               }
             });
           } else {
