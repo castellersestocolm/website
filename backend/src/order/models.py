@@ -12,9 +12,10 @@ from comunicat.enums import Module
 from comunicat.rest.utils.helpers import generate_reference
 from comunicat.utils.models import language_field_default
 from event.enums import RegistrationStatus
-from order.enums import OrderDeliveryType, OrderStatus
+from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.managers import (
     DeliveryPriceQuerySet,
+    OrderMembershipQuerySet,
     OrderProductQuerySet,
     OrderQuerySet,
     OrderRegistrationQuerySet,
@@ -47,6 +48,10 @@ class Order(StandardModel, Timestamps):
 
     reference = models.CharField(unique=True, max_length=8, default=generate_reference)
 
+    type = models.PositiveSmallIntegerField(
+        choices=((ot.value, ot.name) for ot in OrderType),
+        default=OrderType.PRODUCT,
+    )
     status = models.PositiveSmallIntegerField(
         choices=((os.value, os.name) for os in OrderStatus),
         default=OrderStatus.CREATED,
@@ -346,6 +351,68 @@ class OrderRegistration(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         return f"{str(self.order)} - {str(self.registration)}"
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            if self.line != self.__line:
+                if self.line:
+                    self.line.item = self
+                    self.line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+                if self.__line:
+                    self.__line.item = None
+                    self.__line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+
+        super().save(*args, **kwargs)
+
+
+class OrderMembership(StandardModel, Timestamps):
+    order = models.ForeignKey(
+        "Order",
+        related_name="memberships",
+        on_delete=models.CASCADE,
+    )
+
+    module = models.OneToOneField(
+        "membership.MembershipModule",
+        related_name="order_membership",
+        on_delete=models.PROTECT,
+    )
+
+    line = models.OneToOneField(
+        "payment.PaymentLine",
+        related_name="order_membership",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    __line = None
+
+    objects = OrderMembershipQuerySet.as_manager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__line = self.line
+
+    def __str__(self) -> str:
+        return f"{str(self.order)} - {str(self.module)}"
 
     def save(self, *args, **kwargs):
         if self.pk:

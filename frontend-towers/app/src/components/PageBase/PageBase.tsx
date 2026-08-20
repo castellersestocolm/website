@@ -19,81 +19,80 @@ export default function PageBase({
 
   const { user } = useAppContext();
 
+  const hasFinishedRegistration =
+    finishedRegistration && !isRegistrationFinished(user);
+  const isLoading = hasFinishedRegistration && loading;
+
   return (
     <>
-      <Box
-        component="section"
-        className={styles.page}
-        sx={{
-          marginTop: { xs: "56px", md: "65px" },
-          padding: { xs: "32px 0", md: "64px 0" },
-          ...(loading
-            ? {
-                position: "absolute",
-                bottom: 0,
-                top: 0,
-                left: 0,
-                right: 0,
-                alignItems: "start",
-                display: "flex",
-                flexGrow: 1,
-                flexDirection: "column",
-                zIndex: -100,
-              }
-            : {}),
-        }}
-      >
-        <Container
-          maxWidth="lg"
+      {isLoading ? (
+        <Box
+          className={styles.pageLoader}
           sx={{
-            position: "relative",
-            ...(loading
-              ? {
-                  display: "flex",
-                  flexDirection: "column",
-                  flexGrow: 1,
-                }
-              : {}),
+            marginTop: { xs: "56px", md: "65px" },
           }}
         >
-          <Alerts />
-          {finishedRegistration && !isRegistrationFinished(user) ? (
-            <>
-              <Typography
-                variant="h3"
-                fontWeight="700"
-                className={styles.pageTitle}
-              >
-                {t("pages.user-registration.title")}
-              </Typography>
-              {user ? (
-                <Box className={styles.pageForm}>
-                  <FormUpdate />
-                </Box>
-              ) : (
-                <Box className={styles.pageLoader}>
-                  <LoaderClip />
-                </Box>
-              )}
-            </>
-          ) : loading ? (
-            <>
-              <Typography
-                variant="h3"
-                fontWeight="700"
-                className={styles.pageTitle}
-              >
-                {title}
-              </Typography>
-              {content}
-            </>
-          ) : (
-            <Box className={styles.pageLoader}>
-              <LoaderClip />
-            </Box>
-          )}
-        </Container>
-      </Box>
+          <Box className={styles.boxLoader}>
+            <LoaderClip />
+          </Box>
+        </Box>
+      ) : (
+        <Box
+          component="section"
+          className={styles.page}
+          sx={{
+            marginTop: { xs: "56px", md: "65px" },
+            padding: { xs: "32px 0", md: "64px 0" },
+          }}
+        >
+          <Container
+            maxWidth="lg"
+            sx={{
+              position: "relative",
+              ...(loading
+                ? {
+                    display: "flex",
+                    flexDirection: "column",
+                    flexGrow: 1,
+                  }
+                : {}),
+            }}
+          >
+            <Alerts />
+            {hasFinishedRegistration ? (
+              <>
+                <Typography
+                  variant="h3"
+                  fontWeight="700"
+                  className={styles.pageTitle}
+                >
+                  {t("pages.user-registration.title")}
+                </Typography>
+                {user ? (
+                  <Box className={styles.pageForm}>
+                    <FormUpdate />
+                  </Box>
+                ) : (
+                  <Box className={styles.pageLoader}>
+                    <LoaderClip />
+                  </Box>
+                )}
+              </>
+            ) : (
+              <>
+                <Typography
+                  variant="h3"
+                  fontWeight="700"
+                  className={styles.pageTitle}
+                >
+                  {title}
+                </Typography>
+                {content}
+              </>
+            )}
+          </Container>
+        </Box>
+      )}
     </>
   );
 }

@@ -9,13 +9,14 @@ from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
 from comunicat.utils.factories import fake_string
-from order.enums import OrderDeliveryType
+from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
     DeliveryPrice,
     DeliveryProvider,
     Order,
     OrderDelivery,
     OrderDeliveryAddress,
+    OrderMembership,
     OrderProduct,
     OrderRegistration,
 )
@@ -102,7 +103,8 @@ class OrderFactory(DjangoModelFactory):
 
     reference = LazyFunction(lambda: fake_string(length=8).upper())
 
-    status = FuzzyChoice(PaymentStatus)
+    type = FuzzyChoice(OrderType)
+    status = FuzzyChoice(OrderStatus)
 
     origin_module = FuzzyChoice(Module)
     origin_language = settings.LANGUAGE_CODE
@@ -141,3 +143,17 @@ class OrderRegistrationFactory(DjangoModelFactory):
 
     class Meta:
         model = OrderRegistration
+
+
+class OrderMembershipFactory(DjangoModelFactory):
+    order = SubFactory(OrderFactory)
+
+    module = SubFactory("membership.tests.factories.MembershipModuleFactory")
+
+    line = SubFactory("payment.tests.factories.PaymentLineFactory")
+
+    amount = LazyAttribute(lambda n: Money(random.randint(100, 500), "SEK"))
+    vat = 0
+
+    class Meta:
+        model = OrderMembership
