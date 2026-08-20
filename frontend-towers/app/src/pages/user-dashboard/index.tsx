@@ -70,6 +70,7 @@ import {
   PaymentType,
   PermissionLevel,
   RegistrationStatus,
+  OrderType,
   OrderStatus,
   ORDER_STATUS_ICON,
 } from "../../enums";
@@ -370,7 +371,7 @@ function UserDashboardPage() {
 
   React.useEffect(() => {
     if (user) {
-      apiOrderList(orderPage).then((response) => {
+      apiOrderList(orderPage, [OrderType.PRODUCT]).then((response) => {
         if (response.status === 200) {
           setOrders(response.data);
         }

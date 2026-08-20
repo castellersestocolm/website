@@ -3,7 +3,6 @@ import { Container, Typography } from "@mui/material";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
-import { useAppContext } from "../AppContext/AppContext";
 
 export default function PageBase({
   title,
@@ -12,10 +11,10 @@ export default function PageBase({
   finishedRegistration = false,
   loading = false,
 }: any) {
-  const { user } = useAppContext();
+  // const { user } = useAppContext();
 
-  const hasFinishedRegistration =
-    finishedRegistration && !isRegistrationFinished(user);
+  // TODO: Prompt to finish registration
+  const hasFinishedRegistration = finishedRegistration; // && !isRegistrationFinished(user);
   const isLoading = hasFinishedRegistration && loading;
 
   return (

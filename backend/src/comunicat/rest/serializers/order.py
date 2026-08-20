@@ -21,7 +21,7 @@ from comunicat.rest.serializers.payment import (
 )
 from comunicat.rest.serializers.product import ProductSizeSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
-from order.enums import OrderDeliveryType, OrderStatus
+from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
     DeliveryDate,
     DeliveryPrice,
@@ -386,3 +386,15 @@ class CompleteOrderTransactionSerializer(s.Serializer):
 class CompleteOrderSerializer(s.Serializer):
     date_paid = s.DateTimeField(required=False)
     transaction = CompleteOrderTransactionSerializer(required=False)
+
+
+class ListOrderSerializer(s.Serializer):
+    filter_types = s.ListSerializer(child=IntEnumField(OrderType), required=False)
+
+    def to_internal_value(self, data):
+        data = {k: v for k, v in data.items()}
+        data["filter_types"] = (
+            data["filter_types"].split(",") if data.get("filter_types", False) else []
+        )
+        data = super().to_internal_value(data)
+        return data

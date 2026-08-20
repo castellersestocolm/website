@@ -21,7 +21,7 @@ from order.consts import (
     ORDER_CLEAN_STATUS_CREATED_HOURS,
     ORDER_CLEAN_STATUS_PROCESSING_HOURS,
 )
-from order.enums import OrderDeliveryType, OrderStatus
+from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
     DeliveryProvider,
     Order,
@@ -44,6 +44,7 @@ def get_list(
     module: Module | None = None,
     user_id: UUID | None = None,
     order_id: UUID | None = None,
+    filter_types: list[OrderType] | None = None,
     for_admin: bool = False,
 ) -> list[Order]:
     order_filter = Q()
@@ -51,6 +52,9 @@ def get_list(
 
     if order_id:
         order_filter = Q(id=order_id)
+
+    if filter_types:
+        order_filter &= Q(type__in=filter_types)
 
     if user_id:
         order_annotate = {

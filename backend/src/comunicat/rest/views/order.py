@@ -17,6 +17,7 @@ from comunicat.rest.serializers.order import (
     CreateOrderSerializer,
     DeliveryPriceSerializer,
     DeliveryProviderSerializer,
+    ListOrderSerializer,
     OrderSerializer,
     UpdateOrderProviderSerializer,
 )
@@ -82,15 +83,23 @@ class OrderAPI(ComuniCatViewSet):
         return Response(serializer.data, status=201)
 
     @swagger_auto_schema(
+        query_serializer=ListOrderSerializer(),
         responses={200: OrderSerializer(many=True), 400: Serializer()},
     )
     @method_decorator(cache_page(60))
     @method_decorator(cache_control(private=True))
     def list(self, request):
+        serializer = ListOrderSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
         if not request.user.is_authenticated:
             return Response(status=400)
 
-        order_objs = order.api.get_list(user_id=request.user.id, module=self.module)
+        filter_types = serializer.validated_data.get("filter_types", None)
+
+        order_objs = order.api.get_list(
+            user_id=request.user.id, filter_types=filter_types, module=self.module
+        )
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(order_objs, request)
