@@ -26,3 +26,9 @@ class OrderDeliveryType(IntEnum):
     PICK_UP = 10
     IN_PERSON = 20
     DELIVERY = 30
+
+
+class OrderType(IntEnum):
+    PRODUCT = 10
+    REGISTRATION = 20
+    MEMBERSHIP = 30

@@ -21,7 +21,7 @@ from comunicat.utils.admin import FIELD_LOCALE
 from event.enums import RegistrationStatus
 from event.models import Event, Registration
 from notify.enums import EmailType
-from order.enums import OrderDeliveryType, OrderStatus
+from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
     DeliveryAccounts,
     DeliveryDate,
@@ -31,6 +31,7 @@ from order.models import (
     OrderDelivery,
     OrderDeliveryAddress,
     OrderLog,
+    OrderMembership,
     OrderProduct,
     OrderRegistration,
 )
@@ -84,6 +85,17 @@ class OrderRegistrationInline(admin.TabularInline):
         "amount",
         "registration__entity__firstname",
         "registration__entity__lastname",
+    )
+
+
+class OrderMembershipInline(admin.TabularInline):
+    model = OrderMembership
+    raw_id_fields = ("module", "line")
+    # form = OrderProductInlineFormAdmin
+    extra = 0
+    ordering = (
+        "module__module",
+        "amount",
     )
 
     def get_queryset(self, request):
@@ -174,9 +186,10 @@ class OrderAdmin(admin.ModelAdmin):
     )
     list_filter = ("status", "created_at")
     raw_id_fields = ("entity", "delivery", "payment_order")
+    readonly_fields = ("type",)
     ordering = ("-created_at",)
     form = OrderAdminForm
-    inlines = (OrderProductInline, OrderRegistrationInline, OrderLogInline)
+    inlines = (OrderLogInline,)
     actions = (send_created_email, send_paid_email)
 
     def get_queryset(self, request):
@@ -191,6 +204,19 @@ class OrderAdmin(admin.ModelAdmin):
                 "payment_order__provider",
             )
         )
+
+    def get_inlines(self, request, obj):
+        inlines = super().get_inlines(request=request, obj=obj)
+
+        if obj:
+            if obj.type == OrderType.PRODUCT:
+                inlines = (OrderProductInline,) + inlines
+            elif obj.type == OrderType.REGISTRATION:
+                inlines = (OrderRegistrationInline,) + inlines
+            elif obj.type == OrderType.MEMBERSHIP:
+                inlines = (OrderMembershipInline,) + inlines
+
+        return inlines
 
     def get_urls(self):
         urls = super().get_urls()

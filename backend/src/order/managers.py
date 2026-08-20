@@ -16,56 +16,106 @@ from django.utils import translation
 
 from comunicat.utils.managers import MoneyOutput
 from event.enums import RegistrationStatus
+from order.enums import OrderType
 
 
 class OrderQuerySet(QuerySet):
     def with_amount(self):
         OrderProduct = apps.get_model("order", "OrderProduct")
         OrderRegistration = apps.get_model("order", "OrderRegistration")
+        OrderMembership = apps.get_model("order", "OrderMembership")
 
         return self.annotate(
-            amount_products=Coalesce(
-                Subquery(
-                    OrderProduct.objects.filter(order_id=OuterRef("id"))
-                    .with_amount()
-                    .values("order_id")
-                    .annotate(amount=Sum("amount"))
-                    .values("amount")[:1]
+            amount_items=Case(
+                When(
+                    type=OrderType.PRODUCT,
+                    then=Coalesce(
+                        Subquery(
+                            OrderProduct.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount=Sum("amount"))
+                            .values("amount")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
                 ),
-                Value(0),
+                When(
+                    type=OrderType.REGISTRATION,
+                    then=Coalesce(
+                        Subquery(
+                            OrderRegistration.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount=Sum("amount"))
+                            .values("amount")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
+                ),
+                When(
+                    type=OrderType.MEMBERSHIP,
+                    then=Coalesce(
+                        Subquery(
+                            OrderMembership.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount=Sum("amount"))
+                            .values("amount")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
+                ),
+                default=Value(0),
                 output_field=MoneyOutput(),
             ),
-            amount_products_vat=Coalesce(
-                Subquery(
-                    OrderProduct.objects.filter(order_id=OuterRef("id"))
-                    .with_amount()
-                    .values("order_id")
-                    .annotate(amount_vat=Sum("amount_vat"))
-                    .values("amount_vat")[:1]
+            amount_items_vat=Case(
+                When(
+                    type=OrderType.PRODUCT,
+                    then=Coalesce(
+                        Subquery(
+                            OrderProduct.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount_vat=Sum("amount_vat"))
+                            .values("amount_vat")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
                 ),
-                Value(0),
-                output_field=MoneyOutput(),
-            ),
-            amount_registrations=Coalesce(
-                Subquery(
-                    OrderRegistration.objects.filter(order_id=OuterRef("id"))
-                    .with_amount()
-                    .values("order_id")
-                    .annotate(amount=Sum("amount"))
-                    .values("amount")[:1]
+                When(
+                    type=OrderType.REGISTRATION,
+                    then=Coalesce(
+                        Subquery(
+                            OrderRegistration.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount_vat=Sum("amount_vat"))
+                            .values("amount_vat")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
                 ),
-                Value(0),
-                output_field=MoneyOutput(),
-            ),
-            amount_registrations_vat=Coalesce(
-                Subquery(
-                    OrderRegistration.objects.filter(order_id=OuterRef("id"))
-                    .with_amount()
-                    .values("order_id")
-                    .annotate(amount_vat=Sum("amount_vat"))
-                    .values("amount_vat")[:1]
+                When(
+                    type=OrderType.MEMBERSHIP,
+                    then=Coalesce(
+                        Subquery(
+                            OrderMembership.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount_vat=Sum("amount_vat"))
+                            .values("amount_vat")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
                 ),
-                Value(0),
+                default=Value(0),
                 output_field=MoneyOutput(),
             ),
             amount_delivery=Coalesce(
@@ -77,13 +127,11 @@ class OrderQuerySet(QuerySet):
                 output_field=MoneyOutput(),
             ),
             amount=Cast(
-                F("amount_products") + F("amount_registrations") + F("amount_delivery"),
+                F("amount_items") + F("amount_delivery"),
                 output_field=MoneyOutput(),
             ),
             amount_vat=Cast(
-                F("amount_products_vat")
-                + F("amount_registrations_vat")
-                + F("amount_delivery_vat"),
+                F("amount_items_vat") + F("amount_delivery_vat"),
                 output_field=MoneyOutput(),
             ),
         )
@@ -149,6 +197,11 @@ class OrderProductQuerySet(QuerySet):
 
 
 class OrderRegistrationQuerySet(QuerySet):
+    def with_amount(self):
+        return self.annotate(amount_vat=F("vat") * F("amount") / 100)
+
+
+class OrderMembershipQuerySet(QuerySet):
     def with_amount(self):
         return self.annotate(amount_vat=F("vat") * F("amount") / 100)
 
