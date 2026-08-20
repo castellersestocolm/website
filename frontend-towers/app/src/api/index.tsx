@@ -406,12 +406,13 @@ export const apiUserFamilyMemberRequestAccept = async (id: string) => {
   }
 };
 
-export const apiOrderList = async (page: number = undefined) => {
+export const apiOrderList = async (page: number = undefined, filterTypes: number[] = undefined) => {
   try {
     return await instance.get("/order/", {
       params: {
         page_size: API_ORDERS_LIST_PAGE_SIZE,
         page: page,
+        filter_types: filterTypes && filterTypes.join(","),
       },
     });
   } catch (error) {

@@ -77,6 +77,12 @@ export const PAYMENT_STATUS_ICON: any = {
   40: <IconCancel />,
 };
 
+export enum OrderType {
+  PRODUCT = 10,
+  REGISTRATION = 20,
+  MEMBERSHIP = 30,
+}
+
 export enum OrderStatus {
   CREATED = 10,
   REQUESTED = 15,
