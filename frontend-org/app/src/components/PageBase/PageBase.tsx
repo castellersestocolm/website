@@ -47,30 +47,32 @@ export default function PageBase({
               : {}),
           }}
         >
-          <Box className={styles.pageHeader}>
-            <Typography
-              variant="h3"
-              fontWeight="700"
-              className={styles.pageTitle}
-            >
-              {title}
-            </Typography>
-            {subtitle && (
-              <Typography
-                variant="h6"
-                fontWeight="700"
-                className={styles.pageSubtitle}
-              >
-                {subtitle}
-              </Typography>
-            )}
-          </Box>
           {loading ? (
             <Box className={styles.pageLoader}>
               <LoaderClip />
             </Box>
           ) : (
-            content
+            <>
+              <Box className={styles.pageHeader}>
+                <Typography
+                  variant="h3"
+                  fontWeight="700"
+                  className={styles.pageTitle}
+                >
+                  {title}
+                </Typography>
+                {subtitle && (
+                  <Typography
+                    variant="h6"
+                    fontWeight="700"
+                    className={styles.pageSubtitle}
+                  >
+                    {subtitle}
+                  </Typography>
+                )}
+              </Box>
+              {content}
+            </>
           )}
         </Container>
       </Box>
