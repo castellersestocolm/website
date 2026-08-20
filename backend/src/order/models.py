@@ -378,7 +378,7 @@ class OrderRegistration(StandardModel, Timestamps):
 class OrderMembership(StandardModel, Timestamps):
     order = models.ForeignKey(
         "Order",
-        related_name="membershipsa",
+        related_name="memberships",
         on_delete=models.CASCADE,
     )
 
