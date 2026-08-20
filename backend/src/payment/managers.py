@@ -401,6 +401,7 @@ class PaymentLineQuerySet(QuerySet):
         )
         OrderProduct = apps.get_model("order", "OrderProduct")
         OrderRegistration = apps.get_model("order", "OrderRegistration")
+        OrderMembership = apps.get_model("order", "OrderMembership")
         OrderDelivery = apps.get_model("order", "OrderDelivery")
 
         locale = translation.get_language()
@@ -520,6 +521,82 @@ class PaymentLineQuerySet(QuerySet):
                 default=Value(None),
                 output_field=CharField(),
             ),
+            membership_description_locale=Case(
+                When(
+                    Q(
+                        item_type__app_label="membership",
+                        item_type__model="membershipmodule",
+                    ),
+                    then=Case(
+                        When(
+                            membership_module__module=Module.ORG,
+                            then=Case(
+                                When(
+                                    is_update=True,
+                                    then=Value(
+                                        f"{str(_('Membership update'))} {settings.MODULE_ORG_SHORT_NAME}"
+                                    ),
+                                ),
+                                default=Value(
+                                    f"{str(_('Membership'))} {settings.MODULE_ORG_SHORT_NAME}"
+                                ),
+                                output_field=CharField(),
+                            ),
+                        ),
+                        When(
+                            membership_module__module=Module.TOWERS,
+                            then=Case(
+                                When(
+                                    is_update=True,
+                                    then=Value(
+                                        f"{str(_('Membership update'))} {settings.MODULE_TOWERS_SHORT_NAME}"
+                                    ),
+                                ),
+                                default=Value(
+                                    f"{str(_('Membership'))} {settings.MODULE_TOWERS_SHORT_NAME}"
+                                ),
+                                output_field=CharField(),
+                            ),
+                        ),
+                        When(
+                            is_update=True,
+                            then=Value(str(_("Membership update"))),
+                        ),
+                        default=Value(str(_("Membership"))),
+                        output_field=CharField(),
+                    ),
+                ),
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="ordermembership",
+                    ),
+                    then=Subquery(
+                        OrderMembership.objects.filter(id=OuterRef("item_uuid"))
+                        .annotate(
+                            membership_description_locale=Case(
+                                When(
+                                    module__module=Module.ORG,
+                                    then=Value(
+                                        f"{str(_('Membership'))} {settings.MODULE_ORG_SHORT_NAME}"
+                                    ),
+                                ),
+                                When(
+                                    module__module=Module.TOWERS,
+                                    then=Value(
+                                        f"{str(_('Membership'))} {settings.MODULE_TOWERS_SHORT_NAME}"
+                                    ),
+                                ),
+                                default=Value(str(_("Membership"))),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("membership_description_locale", flat=True)[:1]
+                    ),
+                ),
+                default=Value(None),
+                output_field=CharField(),
+            ),
             program_name_locale=Case(
                 When(
                     Q(
@@ -568,44 +645,7 @@ class PaymentLineQuerySet(QuerySet):
                         item_type__app_label="membership",
                         item_type__model="membershipmodule",
                     ),
-                    then=Case(
-                        When(
-                            membership_module__module=Module.ORG,
-                            then=Case(
-                                When(
-                                    is_update=True,
-                                    then=Value(
-                                        f"{str(_('Membership update'))} {settings.MODULE_ORG_SHORT_NAME}"
-                                    ),
-                                ),
-                                default=Value(
-                                    f"{str(_('Membership'))} {settings.MODULE_ORG_SHORT_NAME}"
-                                ),
-                                output_field=CharField(),
-                            ),
-                        ),
-                        When(
-                            membership_module__module=Module.TOWERS,
-                            then=Case(
-                                When(
-                                    is_update=True,
-                                    then=Value(
-                                        f"{str(_('Membership update'))} {settings.MODULE_TOWERS_SHORT_NAME}"
-                                    ),
-                                ),
-                                default=Value(
-                                    f"{str(_('Membership'))} {settings.MODULE_TOWERS_SHORT_NAME}"
-                                ),
-                                output_field=CharField(),
-                            ),
-                        ),
-                        When(
-                            is_update=True,
-                            then=Value(str(_("Membership update"))),
-                        ),
-                        default=Value(str(_("Membership"))),
-                        output_field=CharField(),
-                    ),
+                    then=F("membership_description_locale"),
                 ),
                 When(
                     Q(
@@ -673,6 +713,13 @@ class PaymentLineQuerySet(QuerySet):
                         default=F("program_name_locale"),
                         output_field=CharField(),
                     ),
+                ),
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="ordermembership",
+                    ),
+                    then=F("membership_description_locale"),
                 ),
                 When(
                     Q(

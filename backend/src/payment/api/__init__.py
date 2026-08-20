@@ -22,7 +22,7 @@ from djmoney.money import Money
 
 from comunicat.enums import Module
 from order.enums import OrderStatus
-from order.models import Order, OrderProduct, OrderRegistration
+from order.models import Order, OrderMembership, OrderProduct, OrderRegistration
 from payment.enums import PaymentStatus, PaymentType
 from payment.models import Payment, PaymentLine, PaymentLog, Transaction
 from user.enums import FamilyMemberStatus
@@ -134,6 +134,14 @@ def create_for_order(
                 ),
                 to_attr="all_registrations",
             ),
+            Prefetch(
+                "memberships",
+                OrderMembership.objects.select_related(
+                    "module",
+                    "module__membership",
+                ),
+                to_attr="all_memberships",
+            ),
         )
         .first()
     )
@@ -147,6 +155,7 @@ def create_for_order(
 
     order_product_updates = []
     order_registration_updates = []
+    order_membership_updates = []
 
     with translation.override(
         language=order_obj.origin_language or settings.LANGUAGE_CODE
@@ -185,6 +194,9 @@ def create_for_order(
         )
         item_type_order_registration = ContentType.objects.get_by_natural_key(
             "order", "orderregistration"
+        )
+        item_type_order_membership = ContentType.objects.get_by_natural_key(
+            "order", "ordermembership"
         )
         item_type_order_delivery = ContentType.objects.get_by_natural_key(
             "order", "orderdelivery"
@@ -230,6 +242,19 @@ def create_for_order(
             order_registration_obj.line = payment_line_obj
             order_registration_updates.append(order_registration_obj)
 
+        # TODO order membership: Register the correct accounts
+        for order_membership_obj in order_obj.all_memberships:
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_membership_obj.amount,
+                vat=order_membership_obj.vat,
+                text=f"{str(_('Membership'))} {getattr(settings, f'MODULE_{Module(order_membership_obj.module.module).name}_SHORT_NAME')}",
+                item_type=item_type_order_membership,
+                item_id=order_membership_obj.id,
+            )
+            order_membership_obj.line = payment_line_obj
+            order_membership_updates.append(order_membership_obj)
+
         if order_obj.delivery:
             text_delivery = _("Delivery")
             account_delivery_obj = (
@@ -257,6 +282,11 @@ def create_for_order(
         if order_registration_updates:
             OrderRegistration.objects.bulk_update(
                 order_registration_updates, fields=("line",)
+            )
+
+        if order_membership_updates:
+            OrderMembership.objects.bulk_update(
+                order_membership_updates, fields=("line",)
             )
 
         if fee_amount:
