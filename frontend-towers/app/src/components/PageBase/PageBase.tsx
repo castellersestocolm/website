@@ -76,7 +76,7 @@ export default function PageBase({
                 </Box>
               )}
             </>
-          ) : (
+          ) : loading ? (
             <>
               <Typography
                 variant="h3"
@@ -85,14 +85,12 @@ export default function PageBase({
               >
                 {title}
               </Typography>
-              {loading ? (
-                <Box className={styles.pageLoader}>
-                  <LoaderClip />
-                </Box>
-              ) : (
-                content
-              )}
+              {content}
             </>
+          ) : (
+            <Box className={styles.pageLoader}>
+              <LoaderClip />
+            </Box>
           )}
         </Container>
       </Box>
