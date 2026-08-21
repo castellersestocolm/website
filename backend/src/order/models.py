@@ -88,7 +88,7 @@ class Order(StandardModel, Timestamps):
                 from event.models import Registration
 
                 registration_objs = Registration.objects.filter(
-                    order_registration__order_id=self.id
+                    order_registrations__order_id=self.id
                 )
                 registration_objs.update(status=RegistrationStatus.ACTIVE)
 
@@ -320,9 +320,9 @@ class OrderRegistration(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
 
-    registration = models.OneToOneField(
+    registration = models.ForeignKey(
         "event.Registration",
-        related_name="order_registration",
+        related_name="order_registrations",
         on_delete=models.PROTECT,
     )
 
@@ -382,9 +382,9 @@ class OrderMembership(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
 
-    module = models.OneToOneField(
+    module = models.ForeignKey(
         "membership.MembershipModule",
-        related_name="order_membership",
+        related_name="order_memberships",
         on_delete=models.PROTECT,
     )
 

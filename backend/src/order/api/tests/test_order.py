@@ -9,6 +9,10 @@ from httpx._client import Response
 from comunicat.enums import Module
 from comunicat.utils.test.mocks import MockSumUpApiClientExecute
 from conftest import NumOperationsMixin
+from event.enums import RegistrationStatus
+from event.tests.factories import RegistrationFactory
+from membership.enums import MembershipStatus
+from membership.tests.factories import MembershipFactory, MembershipModuleFactory
 from order.api import clean_pending_orders, complete, delete, update_provider
 from order.enums import OrderStatus, OrderType
 from order.tests.factories import (
@@ -217,22 +221,27 @@ class TestCleanPendingOrders(NumOperationsMixin, TestCase):
 
         cls.order_1_obj = OrderFactory(
             payment_order=cls.payment_order_1_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
         )
         cls.order_2_obj = OrderFactory(
             payment_order=cls.payment_order_2_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
         )
         cls.order_3_obj = OrderFactory(
             payment_order=cls.payment_order_3_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.REQUESTED,
         )
         cls.order_4_obj = OrderFactory(
             payment_order=cls.payment_order_4_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.PROCESSING,
         )
         cls.order_5_obj = OrderFactory(
             payment_order=cls.payment_order_5_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.COMPLETED,
         )
 
@@ -342,8 +351,6 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         cls.order_delivery_1_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
         cls.order_delivery_2_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
-        cls.order_delivery_3_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
-        cls.order_delivery_4_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
 
         cls.order_1_obj = OrderFactory(
             delivery=cls.order_delivery_1_obj,
@@ -358,13 +365,13 @@ class TestComplete(NumOperationsMixin, TestCase):
             status=OrderStatus.CREATED,
         )
         cls.order_3_obj = OrderFactory(
-            delivery=cls.order_delivery_3_obj,
+            delivery=None,
             payment_order=cls.payment_order_3_obj,
             type=OrderType.REGISTRATION,
             status=OrderStatus.CREATED,
         )
         cls.order_4_obj = OrderFactory(
-            delivery=cls.order_delivery_4_obj,
+            delivery=None,
             payment_order=cls.payment_order_4_obj,
             type=OrderType.MEMBERSHIP,
             status=OrderStatus.CREATED,
@@ -378,18 +385,57 @@ class TestComplete(NumOperationsMixin, TestCase):
                 order=order_obj, quantity=2, amount_unit=Money(50, "SEK")
             )
 
-        OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(300, "SEK"))
-        OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(200, "SEK"))
+        cls.registration_1_obj = RegistrationFactory(
+            status=RegistrationStatus.REQUESTED
+        )
+        cls.registration_2_obj = RegistrationFactory(
+            status=RegistrationStatus.REQUESTED
+        )
 
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(300, "SEK"))
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(200, "SEK"))
+        OrderRegistrationFactory(
+            order=cls.order_3_obj,
+            registration=cls.registration_1_obj,
+            amount=Money(300, "SEK"),
+        )
+        OrderRegistrationFactory(
+            order=cls.order_3_obj,
+            registration=cls.registration_2_obj,
+            amount=Money(200, "SEK"),
+        )
+
+        cls.membership_1_obj = MembershipFactory(status=MembershipStatus.REQUESTED)
+        cls.membership_module_1_obj = MembershipModuleFactory(
+            membership=cls.membership_1_obj,
+            module=Module.ORG,
+            status=MembershipStatus.REQUESTED,
+            amount=Money(300, "SEK"),
+        )
+        cls.membership_module_2_obj = MembershipModuleFactory(
+            membership=cls.membership_1_obj,
+            module=Module.TOWERS,
+            status=MembershipStatus.REQUESTED,
+            amount=Money(200, "SEK"),
+        )
+
+        OrderMembershipFactory(
+            order=cls.order_4_obj,
+            module=cls.membership_module_1_obj,
+            amount=Money(300, "SEK"),
+        )
+        OrderMembershipFactory(
+            order=cls.order_4_obj,
+            module=cls.membership_module_2_obj,
+            amount=Money(200, "SEK"),
+        )
 
         cls.order_5_obj = OrderFactory(
+            type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
             payment_order=None,
         )
 
         cls.order_6_obj = OrderFactory(
+            type=OrderType.PRODUCT,
             status=OrderStatus.COMPLETED,
             payment_order=None,
         )
@@ -404,7 +450,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=33, num_inserts=5, num_updates=4
+                num=0, num_selects=35, num_inserts=5, num_updates=4
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -454,7 +500,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=66, num_inserts=6, num_updates=9
+                num=0, num_selects=68, num_inserts=6, num_updates=9
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -532,7 +578,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=36, num_inserts=2, num_updates=2
+            num=0, num_selects=38, num_inserts=2, num_updates=2
         ):
             order_obj = complete(
                 order_id=self.order_2_obj.id,
@@ -584,14 +630,14 @@ class TestComplete(NumOperationsMixin, TestCase):
                     status_code=200,
                     json={
                         "id": "transaction-1",
-                        "amount": 600,
-                        "transaction_events": [{"event_type": "PAYOUT", "amount": 550}],
+                        "amount": 500,
+                        "transaction_events": [{"event_type": "PAYOUT", "amount": 450}],
                     },
                 ),
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=56, num_inserts=10, num_updates=6
+                num=0, num_selects=45, num_inserts=8, num_updates=3
             ):
                 order_obj = complete(
                     order_id=self.order_3_obj.id,
@@ -622,13 +668,13 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         self.assertEqual(len(transaction_objs), 2)
         self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 4)
+        self.assertEqual(len(payment_line_objs), 3)
 
         transaction_debit_obj = transaction_objs[0]
 
         self.assertEqual(transaction_debit_obj.external_id, "external-order-3")
         self.assertEqual(transaction_debit_obj.reference, "ORDER-3")
-        self.assertEqual(transaction_debit_obj.amount, Money(600, "SEK"))
+        self.assertEqual(transaction_debit_obj.amount, Money(500, "SEK"))
         self.assertEqual(
             transaction_debit_obj.text, f"Order #{self.order_3_obj.reference}"
         )
@@ -658,14 +704,14 @@ class TestComplete(NumOperationsMixin, TestCase):
                     status_code=200,
                     json={
                         "id": "transaction-1",
-                        "amount": 600,
-                        "transaction_events": [{"event_type": "PAYOUT", "amount": 550}],
+                        "amount": 500,
+                        "transaction_events": [{"event_type": "PAYOUT", "amount": 450}],
                     },
                 ),
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=50, num_inserts=10, num_updates=6
+                num=0, num_selects=38, num_inserts=8, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -696,13 +742,13 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         self.assertEqual(len(transaction_objs), 2)
         self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 4)
+        self.assertEqual(len(payment_line_objs), 3)
 
         transaction_debit_obj = transaction_objs[0]
 
         self.assertEqual(transaction_debit_obj.external_id, "external-order-4")
         self.assertEqual(transaction_debit_obj.reference, "ORDER-4")
-        self.assertEqual(transaction_debit_obj.amount, Money(600, "SEK"))
+        self.assertEqual(transaction_debit_obj.amount, Money(500, "SEK"))
         self.assertEqual(
             transaction_debit_obj.text, f"Order #{self.order_4_obj.reference}"
         )
@@ -710,7 +756,7 @@ class TestComplete(NumOperationsMixin, TestCase):
     def test_complete__order_created_no_payment_order(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
-        with self.assertNumOperations(num=0, num_selects=1):
+        with self.assertNumOperations(num=0, num_selects=3):
             order_obj = complete(
                 order_id=self.order_5_obj.id,
                 module=Module.ORG,

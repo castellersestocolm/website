@@ -21,7 +21,7 @@ class MembershipUserInline(admin.TabularInline):
 @admin.action(description="Renew membership")
 def renew_membership(modeladmin, request, queryset):
     for membership_obj in queryset:
-        membership.api.renew_membership(membership_id=membership_obj.id)
+        membership.api.renew(membership_id=membership_obj.id)
 
 
 @admin.register(Membership)

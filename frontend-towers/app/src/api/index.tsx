@@ -20,7 +20,7 @@ import {
   API_REGISTRATIONS_LIST_PAGE_SIZE,
   API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../consts";
-import { ContactMessageType, RegistrationStatus } from "../enums";
+import { ContactMessageType, RegistrationStatus, OrderType } from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_TOWERS_API_URL;
 
@@ -406,7 +406,10 @@ export const apiUserFamilyMemberRequestAccept = async (id: string) => {
   }
 };
 
-export const apiOrderList = async (page: number = undefined, filterTypes: number[] = undefined) => {
+export const apiOrderList = async (
+  page: number = undefined,
+  filterTypes: number[] = undefined,
+) => {
   try {
     return await instance.get("/order/", {
       params: {
@@ -693,6 +696,20 @@ export const apiOrderCreate = async (
       },
       user: userData,
       pickup: { event_id: formPickupData.event },
+      type: OrderType.PRODUCT,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderMembershipCreate = async (modules: any[]) => {
+  try {
+    return await instance.post("/order/", {
+      cart: { modules: modules },
+      type: OrderType.MEMBERSHIP,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

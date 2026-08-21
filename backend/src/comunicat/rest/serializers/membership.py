@@ -8,15 +8,28 @@ from membership.models import Membership, MembershipModule
 
 
 class MembershipModuleSerializer(s.ModelSerializer):
+    status = s.SerializerMethodField(read_only=True)
+    amount = MoneyField(read_only=True)
+
+    @swagger_serializer_method(
+        serializer_or_field=IntEnumField(MembershipStatus, read_only=True)
+    )
+    def get_status(self, obj):
+        if obj.membership.is_active:
+            return obj.status
+        return MembershipStatus.EXPIRED
+
     class Meta:
         model = MembershipModule
         fields = (
             "id",
+            "status",
             "amount",
             "module",
         )
         read_only_fields = (
             "id",
+            "status",
             "amount",
             "module",
         )
@@ -74,3 +87,17 @@ class MembershipRenewSerializer(s.Serializer):
 
 class MembershipRenewRequestSerializer(s.Serializer):
     modules = s.ListSerializer(child=IntEnumField(Module))
+
+
+class ListMembershipSerializer(s.Serializer):
+    filter_status = s.ListSerializer(
+        child=IntEnumField(MembershipStatus), required=False
+    )
+
+    def to_internal_value(self, data):
+        data = {k: v for k, v in data.items()}
+        data["filter_status"] = (
+            data["filter_status"].split(",") if data.get("filter_status", False) else []
+        )
+        data = super().to_internal_value(data)
+        return data

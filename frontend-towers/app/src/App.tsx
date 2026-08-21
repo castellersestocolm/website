@@ -36,6 +36,8 @@ import OrderCartPage from "./pages/order-cart";
 import OrderPaymentPage from "./pages/order-payment";
 import OrderReceiptPage from "./pages/order-receipt";
 import OrderCompletePage from "./pages/order-complete";
+import MembershipPaymentPage from "./pages/membership-payment";
+import MembershipReceiptPage from "./pages/membership-receipt";
 import AdminUserPage from "./pages/admin-user";
 import PressReleasePage from "./pages/press-release";
 import CalendarEventPage from "./pages/calendar-event";
@@ -47,6 +49,7 @@ import AdminHistoryPage from "./pages/admin-history";
 import AdminUserIdPage from "./pages/admin-user-id";
 import AboutContactPage from "./pages/about-contact";
 import PolicyPurchasePage from "./pages/policy-purchase";
+import MembershipPage from "./pages/membership";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -199,6 +202,18 @@ const App = () => {
                   <Route
                     path={ROUTES["order-receipt"].path}
                     element={<OrderReceiptPage />}
+                  />
+                  <Route
+                    path={ROUTES.membership.path}
+                    element={<MembershipPage />}
+                  />
+                  <Route
+                    path={ROUTES["membership-payment"].path}
+                    element={<MembershipPaymentPage />}
+                  />
+                  <Route
+                    path={ROUTES["membership-receipt"].path}
+                    element={<MembershipReceiptPage />}
                   />
                   <Route
                     path={ROUTES["press-article"].path}

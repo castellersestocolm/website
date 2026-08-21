@@ -102,6 +102,9 @@ class MembershipModule(StandardModel, Timestamps):
         related_query_name="membership_module",
     )
 
+    def __str__(self) -> str:
+        return f"{self.membership} [{Module(self.module).name}]"
+
     def save(self, *args, **kwargs):
         import membership.tasks
 

@@ -35,6 +35,7 @@ import {
   apiUserLogout,
   apiUserMe,
   apiActivityProgramCourseRegistrationList,
+  apiOrderMembershipCreate,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
@@ -180,8 +181,6 @@ function UserDashboardPage() {
   const [membership, setMembership] = React.useState(undefined);
   const [programCourseRegistrations, setProgramCourseRegistrations] =
     React.useState(undefined);
-  const [membershipRenewOptions, setMembershipRenewOptions] =
-    React.useState(undefined);
   const [castles, setCastles] = React.useState(undefined);
   const [paymentSvg, setPaymentSvg] = React.useState(undefined);
 
@@ -278,14 +277,6 @@ function UserDashboardPage() {
                 .catch((err: any) => {});
             }
           }
-
-          if (!currentMembership || currentMembership.can_renew) {
-            apiMembershipRenewList().then((response) => {
-              if (response.status === 200) {
-                setMembershipRenewOptions(response.data);
-              }
-            });
-          }
         }
       });
       apiUserFamilyMemberRequestList().then((response) => {
@@ -313,7 +304,6 @@ function UserDashboardPage() {
     setFamilyMemberRequests,
     setFamilyMemberRequestsReceived,
     setMembership,
-    setMembershipRenewOptions,
     // setMemberships
     t,
   ]);
@@ -525,58 +515,25 @@ function UserDashboardPage() {
     });
   }
 
-  function handleRenewSubmit(modules: number[]) {
-    apiMembershipRenewCreate(modules).then((response) => {
-      if (response.status === 200) {
-        const currentMembership = response.data;
-        setMembership(currentMembership);
-        setMembershipRenewOptions(undefined);
+  function handleMembershipProcess() {
+    if (!membership) {
+      navigate(ROUTES.membership.path);
+    }
 
-        const membershipText =
-          t("swish.payment.membership") +
-          " " +
-          currentMembership.date_from.slice(0, 4) +
-          " - " +
-          (user.lastname
-            ? user.firstname + " " + user.lastname
-            : user.firstname);
-
-        if (currentMembership.status < MembershipStatus.PROCESSING) {
-          QRCode.toDataURL(
-            "C" +
-              PAYMENT_SWISH_NUMBER.replaceAll(" ", "") +
-              ";" +
-              currentMembership.amount.amount +
-              ";" +
-              membershipText +
-              ";0",
-            { width: 500, margin: 0 },
-          )
-            .then((url: string) => {
-              setPaymentSvg(url);
-            })
-            .catch((err: any) => {});
-        }
-
-        setMessages([
-          {
-            message: t(
-              "pages.user-dashboard.section.membership-renew.renew.success",
-            ),
-            type: "success",
-          },
-        ]);
-        setTimeout(() => setMessages(undefined), 5000);
+    const cartModules = membership.modules.map((module: any) => {
+      return { id: module.id };
+    });
+    apiOrderMembershipCreate(cartModules).then((response) => {
+      if (response.status === 201) {
+        localStorage.setItem("orderId", response.data.id);
+        navigate(
+          ROUTES["membership-payment"].path.replace(":id", response.data.id),
+        );
       } else {
         setMessages([
-          {
-            message: t(
-              "pages.user-dashboard.section.membership-renew.renew.error",
-            ),
-            type: "error",
-          },
+          { message: t("pages.order-cart.order.error"), type: "error" },
         ]);
-        setTimeout(() => setMessages(undefined), 5000);
+        setTimeout(() => setMessages(undefined), 10000);
       }
     });
   }
@@ -752,7 +709,7 @@ function UserDashboardPage() {
 
   const contentSidebarMembership = user && (
     <Grid>
-      {(membership || membershipRenewOptions) && (
+      {membership && (
         <Card variant="outlined">
           <Box className={styles.userTopBox}>
             <Typography variant="h6" fontWeight="600" component="div">
@@ -848,45 +805,25 @@ function UserDashboardPage() {
                     </ListItem>
                   )}
                 </List>
+                {membership.status < MembershipStatus.PROCESSING && (
+                  <>
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      style={{ padding: "8px 0", justifyContent: "center" }}
+                    >
+                      <Button
+                        variant="contained"
+                        type="button"
+                        disableElevation
+                        onClick={handleMembershipProcess}
+                      >
+                        {t("pages.user-dashboard.section.membership.payment")}
+                      </Button>
+                    </Stack>
+                  </>
+                )}
               </Box>
-              {membership.status < MembershipStatus.PROCESSING && (
-                <>
-                  <Divider />
-                  <Box className={styles.userPaymentBox}>
-                    <Typography variant="body1" fontWeight={600}>
-                      {t(
-                        "pages.user-dashboard.section.membership.payment-title",
-                      )}
-                    </Typography>
-                    <List dense className={styles.userList}>
-                      {t("pages.user-dashboard.section.membership.payment-list")
-                        .split("\n")
-                        .map((paymentText: string, ix: number) => {
-                          return (
-                            <ListItem key={ix}>
-                              <ListItemIcon>
-                                <IconChevronRight />
-                              </ListItemIcon>
-                              <ListItemText primary={paymentText} />
-                            </ListItem>
-                          );
-                        })}
-                    </List>
-                    <Box className={styles.userMembershipPaymentBox}>
-                      <img
-                        src={ImageIconSwish}
-                        className={styles.userMembershipPaymentIconSwish}
-                        alt="Swish logo"
-                      />
-                      <img
-                        src={paymentSvg}
-                        alt="Swish QR"
-                        className={styles.userMembershipPaymentSwish}
-                      />
-                    </Box>
-                  </Box>
-                </>
-              )}
               <Divider />
             </>
           )}
@@ -980,81 +917,6 @@ function UserDashboardPage() {
                         </List>
                       </Collapse>
 
-                      {i + 1 < row.length && <Divider />}
-                    </Box>
-                  ),
-                )}
-              </List>
-              <Divider />
-            </>
-          )}
-          {membershipRenewOptions && (
-            <>
-              <List className={styles.userFamilyList}>
-                {membershipRenewOptions.map(
-                  (option: any, i: number, row: any) => (
-                    <Box key={i}>
-                      <ListItemButton disableTouchRipple dense>
-                        <ListItemIcon>
-                          <IconWorkspaces />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={option.modules.map(
-                            (membershipModule: any) => {
-                              return (
-                                <span
-                                  className={styles.dashboardMembershipModule}
-                                >
-                                  {getEnumLabel(
-                                    t,
-                                    "module",
-                                    membershipModule.module,
-                                  )}
-                                </span>
-                              );
-                            },
-                          )}
-                          secondary={
-                            <>
-                              <Typography variant="body2" component="span">
-                                {option.date_to}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                color="textSecondary"
-                                component="span"
-                              >
-                                {" — "}
-                              </Typography>
-                              <Typography variant="body2" component="span">
-                                {option.amount.amount} {option.amount.currency}
-                              </Typography>
-                            </>
-                          }
-                        />
-                        <Stack
-                          direction="row"
-                          spacing={2}
-                          style={{ marginLeft: "16px" }}
-                        >
-                          <Button
-                            variant="contained"
-                            type="button"
-                            disableElevation
-                            onClick={() =>
-                              handleRenewSubmit(
-                                option.modules.map(
-                                  (moduleOption: any) => moduleOption.module,
-                                ),
-                              )
-                            }
-                          >
-                            {t(
-                              "pages.user-dashboard.section.membership-renew.renew",
-                            )}
-                          </Button>
-                        </Stack>
-                      </ListItemButton>
                       {i + 1 < row.length && <Divider />}
                     </Box>
                   ),

@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.utils import timezone
 from djmoney.money import Money
 
+from comunicat.enums import Module
 from conftest import NumOperationsMixin
 from order.enums import OrderStatus, OrderType
 from order.tests.factories import (
@@ -55,8 +56,6 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
 
         cls.order_delivery_1_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
         cls.order_delivery_2_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
-        cls.order_delivery_3_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
-        cls.order_delivery_4_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
 
         cls.order_1_obj = OrderFactory(
             delivery=cls.order_delivery_1_obj,
@@ -71,13 +70,13 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
             status=OrderStatus.CREATED,
         )
         cls.order_3_obj = OrderFactory(
-            delivery=cls.order_delivery_3_obj,
+            delivery=None,
             payment_order=cls.payment_order_3_obj,
             type=OrderType.REGISTRATION,
             status=OrderStatus.CREATED,
         )
         cls.order_4_obj = OrderFactory(
-            delivery=cls.order_delivery_4_obj,
+            delivery=None,
             payment_order=cls.payment_order_4_obj,
             type=OrderType.MEMBERSHIP,
             status=OrderStatus.CREATED,
@@ -94,10 +93,17 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(300, "SEK"))
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(200, "SEK"))
 
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(300, "SEK"))
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(200, "SEK"))
+        OrderMembershipFactory(
+            order=cls.order_4_obj, module__module=Module.ORG, amount=Money(300, "SEK")
+        )
+        OrderMembershipFactory(
+            order=cls.order_4_obj,
+            module__module=Module.TOWERS,
+            amount=Money(200, "SEK"),
+        )
 
         cls.order_5_obj = OrderFactory(
+            type=OrderType.PRODUCT,
             status=OrderStatus.COMPLETED,
         )
 
@@ -209,7 +215,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=19, num_inserts=5, num_updates=4
+            num=0, num_selects=17, num_inserts=4, num_updates=1
         ):
             payment_obj = create_for_order(
                 order_id=self.order_3_obj.id,
@@ -229,7 +235,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
 
         self.assertEqual(transaction_count, 1)
         self.assertEqual(payment_count, 1)
-        self.assertEqual(payment_line_count, 3)
+        self.assertEqual(payment_line_count, 2)
 
         item_type_order_registration = ContentType.objects.get_by_natural_key(
             "order", "orderregistration"
@@ -254,7 +260,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=17, num_inserts=5, num_updates=4
+            num=0, num_selects=15, num_inserts=4, num_updates=1
         ):
             payment_obj = create_for_order(
                 order_id=self.order_4_obj.id,
@@ -274,7 +280,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
 
         self.assertEqual(transaction_count, 1)
         self.assertEqual(payment_count, 1)
-        self.assertEqual(payment_line_count, 3)
+        self.assertEqual(payment_line_count, 2)
 
         item_type_order_membership = ContentType.objects.get_by_natural_key(
             "order", "ordermembership"

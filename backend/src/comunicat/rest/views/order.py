@@ -61,8 +61,10 @@ class OrderAPI(ComuniCatViewSet):
 
         try:
             order_obj = order.api.create(
-                sizes=validated_data["cart"]["sizes"],
-                delivery=validated_data["delivery"],
+                cart_sizes=validated_data["cart"].get("sizes"),
+                cart_modules=validated_data["cart"].get("modules"),
+                delivery=validated_data.get("delivery"),
+                order_type=validated_data["type"],
                 user=validated_data.get("user"),
                 pickup=validated_data.get("pickup"),
                 user_id=request.user.id if request.user.is_authenticated else None,

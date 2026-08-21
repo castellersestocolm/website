@@ -3,10 +3,11 @@ from uuid import UUID
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.utils import timezone
 from djmoney.money import Money
 
+import notify.tasks
 from comunicat.enums import Module
 from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipModule, MembershipUser
@@ -16,23 +17,34 @@ from membership.utils import (
     get_membership_date_to,
     get_membership_length,
 )
+from notify.enums import EmailType
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 
 
-def get_list(user_id: UUID, module: Module) -> List[Membership]:
+def get_list(
+    user_id: UUID, module: Module, filter_status: list[MembershipStatus] | None = None
+) -> List[Membership]:
+    membership_filter = Q()
+
+    if filter_status:
+        membership_filter &= Q(status__in=filter_status)
+
     return list(
-        Membership.objects.filter(membership_users__user_id=user_id)
+        Membership.objects.filter(membership_filter, membership_users__user_id=user_id)
         .with_amount()
         .prefetch_related(
-            Prefetch("modules", MembershipModule.objects.all().order_by("module"))
+            Prefetch(
+                "modules",
+                MembershipModule.objects.filter(membership_filter).order_by("module"),
+            )
         )
         .order_by("-date_from")
     )
 
 
 @transaction.atomic
-def renew_membership(membership_id: UUID) -> Membership | None:
+def renew(membership_id: UUID) -> Membership | None:
     membership_obj = (
         Membership.objects.filter(id=membership_id)
         .prefetch_related("modules", "membership_users")
@@ -248,3 +260,53 @@ def get_renew_options(user_id: UUID) -> list[MembershipRenewOption]:
         )
 
     return membership_renew_options
+
+
+@transaction.atomic
+def complete(
+    membership_module_ids: list[UUID],
+    is_completed: bool = True,
+    with_notify: bool = True,
+) -> bool:
+    membership_module_objs = list(
+        MembershipModule.objects.filter(
+            id__in=membership_module_ids, status__lte=MembershipStatus.PROCESSING
+        )
+        .select_related("membership")
+        .prefetch_related(
+            "membership__membership_users", "membership__membership_users__user"
+        )
+    )
+
+    membership_objs = {
+        membership_module_obj.membership
+        for membership_module_obj in membership_module_objs
+    }
+
+    if not membership_module_objs or len(membership_objs) != 1:
+        return False
+
+    membership_obj = list(membership_objs)[0]
+
+    for membership_module_obj in membership_module_objs:
+        membership_module_obj.status = (
+            MembershipStatus.ACTIVE if is_completed else MembershipStatus.PROCESSING
+        )
+
+    MembershipModule.objects.bulk_update(membership_module_objs, fields=("status",))
+
+    if membership_obj.status != MembershipStatus.ACTIVE:
+        membership_obj.status = (
+            MembershipStatus.ACTIVE if is_completed else MembershipStatus.PROCESSING
+        )
+        membership_obj.save(update_fields=("status",))
+
+    if with_notify:
+        for membership_user_obj in membership_obj.membership_users.all():
+            notify.tasks.send_user_email.delay(
+                user_id=membership_user_obj.user_id,
+                email_type=EmailType.MEMBERSHIP_PAID,
+                module=membership_user_obj.user.origin_module,
+            )
+
+    return True

@@ -68,6 +68,18 @@ export const ROUTES = {
   "order-receipt": {
     path: "/order/receipt/:id",
   },
+  membership: {
+    path: "/membership",
+  },
+  "membership-payment": {
+    path: "/membership/payment/:id",
+  },
+  "membership-complete": {
+    path: "/membership/complete/:id",
+  },
+  "membership-receipt": {
+    path: "/membership/receipt/:id",
+  },
   "policy-purchase": {
     path: "/policy/purchase",
   },
