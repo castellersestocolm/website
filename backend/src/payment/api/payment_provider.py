@@ -14,7 +14,8 @@ def get_list(module: Module) -> List[PaymentProvider]:
     return list(
         PaymentProvider.objects.filter(
             Q(method__in=PAYMENT_METHOD_REQUIRE_SOURCE, source__isnull=False)
-            | ~Q(method__in=PAYMENT_METHOD_REQUIRE_SOURCE)
+            | ~Q(method__in=PAYMENT_METHOD_REQUIRE_SOURCE),
+            is_visible=True,
         )
         .with_name()
         .order_by("-is_enabled", "order", "code")
