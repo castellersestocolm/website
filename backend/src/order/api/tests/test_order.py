@@ -386,8 +386,14 @@ class TestComplete(NumOperationsMixin, TestCase):
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(300, "SEK"))
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(200, "SEK"))
 
-        OrderMembershipFactory(order=cls.order_4_obj, module__module=Module.ORG, amount=Money(300, "SEK"))
-        OrderMembershipFactory(order=cls.order_4_obj, module__module=Module.TOWERS, amount=Money(200, "SEK"))
+        OrderMembershipFactory(
+            order=cls.order_4_obj, module__module=Module.ORG, amount=Money(300, "SEK")
+        )
+        OrderMembershipFactory(
+            order=cls.order_4_obj,
+            module__module=Module.TOWERS,
+            amount=Money(200, "SEK"),
+        )
 
         cls.order_5_obj = OrderFactory(
             type=OrderType.PRODUCT,
