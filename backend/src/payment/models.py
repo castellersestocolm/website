@@ -536,6 +536,7 @@ class PaymentProvider(StandardModel, Timestamps):
     order = models.PositiveSmallIntegerField(default=0)
 
     is_enabled = models.BooleanField(default=True)
+    is_visible = models.BooleanField(default=True)
 
     objects = PaymentProviderQuerySet.as_manager()
 

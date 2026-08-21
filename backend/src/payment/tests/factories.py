@@ -62,6 +62,7 @@ class PaymentProviderFactory(DjangoModelFactory):
     order = Sequence(lambda n: n)
 
     is_enabled = True
+    is_visible = True
 
     class Meta:
         model = PaymentProvider
