@@ -466,43 +466,41 @@ def complete(
 
     payment_order_obj = order_obj.payment_order
 
-    is_captured = False
-    is_completed = False
+    payment_class = payment.api.payment_provider.get_class(
+        provider_id=payment_order_obj.provider_id
+    )(order_id=order_id)
+    payment_status = payment_class.capture()
 
-    if payment_order_obj.provider.code in ("TRANSFER",):
-        is_captured = True
-    elif payment_order_obj.provider.code in PAYMENT_CODE_REQUIRE_SOURCE:
-        payment_class = payment.api.payment_provider.get_class(
-            provider_id=payment_order_obj.provider_id
-        )(order_id=order_id)
-        is_captured = payment_class.capture()
-        is_completed = is_captured
+    if payment_status in (
+        PaymentStatus.PENDING,
+        PaymentStatus.PROCESSING,
+        PaymentStatus.COMPLETED,
+    ):
+        if payment_order_obj.provider.code in PAYMENT_CODE_REQUIRE_SOURCE:
+            if (
+                payment_order_obj.provider.code != "SUMUP"
+                or transaction_id
+                or transaction_reference
+            ):
+                fee_amount = payment_class.fees()
 
-        if (
-            payment_order_obj.provider.code != "SUMUP"
-            or transaction_id
-            or transaction_reference
-        ):
-            fee_amount = payment_class.fees()
+                # TODO: Move vat to money_vat instead to store amounts and not percentages
+                payment.api.create_for_order(
+                    order_id=order_obj.id,
+                    date_accounting=date_paid or timezone.localtime(),
+                    external_id=transaction_id,
+                    reference=transaction_reference,
+                    status=payment_status,
+                    fee_amount=fee_amount,
+                )
 
-            # TODO: Move vat to money_vat instead to store amounts and not percentages
-            payment.api.create_for_order(
-                order_id=order_obj.id,
-                date_accounting=date_paid or timezone.localtime(),
-                external_id=transaction_id,
-                reference=transaction_reference,
-                is_captured=is_captured,
-                fee_amount=fee_amount,
-            )
-
-    if is_captured:
-        payment_order_obj.status = (
-            PaymentStatus.COMPLETED if is_completed else PaymentStatus.PROCESSING
-        )
+        payment_order_obj.status = payment_status
         payment_order_obj.save(update_fields=("status",))
 
         order_obj.status = (
-            OrderStatus.PROCESSING if is_completed else OrderStatus.REQUESTED
+            OrderStatus.PROCESSING
+            if payment_status == PaymentStatus.COMPLETED
+            else OrderStatus.REQUESTED
         )
         order_obj.save(update_fields=("status",))
 
@@ -533,7 +531,7 @@ def complete(
             ]
             membership.api.complete(
                 membership_module_ids=membership_module_ids,
-                is_completed=is_completed,
+                is_completed=payment_status == PaymentStatus.COMPLETED,
                 with_notify=with_notify,
             )
 

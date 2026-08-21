@@ -115,7 +115,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         ):
             payment_obj = create_for_order(
                 order_id=self.order_1_obj.id,
-                is_captured=False,
+                status=PaymentStatus.PROCESSING,
                 date_accounting=date_accounting,
                 external_id="external-order-1",
                 reference="ORDER-1",
@@ -129,7 +129,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         ):
             payment_obj = create_for_order(
                 order_id=self.order_1_obj.id,
-                is_captured=True,
+                status=PaymentStatus.COMPLETED,
                 date_accounting=date_accounting,
                 external_id="external-order-1",
                 reference="ORDER-1",
@@ -219,7 +219,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         ):
             payment_obj = create_for_order(
                 order_id=self.order_3_obj.id,
-                is_captured=True,
+                status=PaymentStatus.COMPLETED,
                 date_accounting=date_accounting,
                 external_id="external-order-3",
                 reference="ORDER-3",
@@ -264,7 +264,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         ):
             payment_obj = create_for_order(
                 order_id=self.order_4_obj.id,
-                is_captured=True,
+                status=PaymentStatus.COMPLETED,
                 date_accounting=date_accounting,
                 external_id="external-order-4",
                 reference="ORDER-4",
@@ -309,7 +309,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         ):
             payment_obj = create_for_order(
                 order_id=self.order_2_obj.id,
-                is_captured=False,
+                status=PaymentStatus.PROCESSING,
                 date_accounting=date_accounting,
                 external_id="external-order-2",
                 reference="ORDER-2",
@@ -329,7 +329,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
             with self.assertRaises(AssertionError):
                 create_for_order(
                     order_id=self.order_5_obj.id,
-                    is_captured=True,
+                    status=PaymentStatus.COMPLETED,
                     date_accounting=date_accounting,
                     external_id="external-order-3",
                     reference="ORDER-3",

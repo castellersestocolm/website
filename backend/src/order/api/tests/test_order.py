@@ -348,6 +348,9 @@ class TestComplete(NumOperationsMixin, TestCase):
         cls.payment_order_4_obj = PaymentOrderFactory(
             provider=cls.payment_provider_1_obj, status=PaymentStatus.CREATED
         )
+        cls.payment_order_5_obj = PaymentOrderFactory(
+            provider=cls.payment_provider_1_obj, status=PaymentStatus.CREATED
+        )
 
         cls.order_delivery_1_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
         cls.order_delivery_2_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
@@ -440,6 +443,12 @@ class TestComplete(NumOperationsMixin, TestCase):
             payment_order=None,
         )
 
+        cls.order_7_obj = OrderFactory(
+            type=OrderType.PRODUCT,
+            status=OrderStatus.CREATED,
+            payment_order=cls.payment_order_5_obj,
+        )
+
     def test_complete__order_created_capture(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
@@ -447,10 +456,28 @@ class TestComplete(NumOperationsMixin, TestCase):
             "httpx._client.Client.get",
             side_effect=MockSumUpApiClientExecute(
                 Response(status_code=200, json={"status": "PENDING"}),
+                Response(
+                    status_code=200,
+                    json={
+                        "status": "PENDING",
+                        "transactions": [
+                            {"id": "transaction-1", "status": "FAILED"},
+                            {"id": "transaction-2", "status": "PENDING"},
+                        ],
+                    },
+                ),
+                Response(
+                    status_code=200,
+                    json={
+                        "id": "transaction-2",
+                        "amount": 400,
+                        "transaction_events": [{"event_type": "PAYOUT", "amount": 350}],
+                    },
+                ),
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=35, num_inserts=5, num_updates=4
+                num=0, num_selects=72, num_inserts=10, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -462,13 +489,26 @@ class TestComplete(NumOperationsMixin, TestCase):
                     with_notify=True,
                 )
 
-        self.assertIsNone(order_obj)
+        self.assertIsNotNone(order_obj)
 
-        self.order_1_obj.refresh_from_db()
-        self.payment_order_1_obj.refresh_from_db()
+        self.assertEqual(order_obj.status, OrderStatus.REQUESTED)
+        self.assertEqual(order_obj.payment_order.status, PaymentStatus.PROCESSING)
 
-        self.assertEqual(self.order_1_obj.status, OrderStatus.CREATED)
-        self.assertEqual(self.payment_order_1_obj.status, PaymentStatus.CREATED)
+        transaction_objs = list(
+            Transaction.objects.filter(reference="ORDER-1").order_by("-amount")
+        )
+        payment_objs = list(
+            Payment.objects.filter(transaction__reference="ORDER-1").order_by("type")
+        )
+        payment_line_objs = list(
+            PaymentLine.objects.filter(
+                payment__transaction__reference="ORDER-1"
+            ).order_by("payment__type")
+        )
+
+        self.assertEqual(len(transaction_objs), 2)
+        self.assertEqual(len(payment_objs), 2)
+        self.assertEqual(len(payment_line_objs), 4)
 
         with mock.patch(
             "httpx._client.Client.get",
@@ -500,7 +540,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=68, num_inserts=6, num_updates=9
+                num=0, num_selects=68, num_inserts=4, num_updates=12
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -578,7 +618,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=38, num_inserts=2, num_updates=2
+            num=0, num_selects=47, num_inserts=2, num_updates=2
         ):
             order_obj = complete(
                 order_id=self.order_2_obj.id,
@@ -593,7 +633,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         self.assertIsNotNone(order_obj)
 
         self.assertEqual(order_obj.status, OrderStatus.REQUESTED)
-        self.assertEqual(order_obj.payment_order.status, PaymentStatus.PROCESSING)
+        self.assertEqual(order_obj.payment_order.status, PaymentStatus.PENDING)
 
         transaction_count = Transaction.objects.filter(reference="ORDER-2").count()
         payment_count = Payment.objects.filter(transaction__reference="ORDER-2").count()
@@ -761,8 +801,8 @@ class TestComplete(NumOperationsMixin, TestCase):
                 order_id=self.order_5_obj.id,
                 module=Module.ORG,
                 date_paid=date_paid,
-                transaction_id="external-order-3",
-                transaction_reference="ORDER-3",
+                transaction_id="external-order-5",
+                transaction_reference="ORDER-5",
                 with_notify=True,
             )
 
@@ -776,9 +816,60 @@ class TestComplete(NumOperationsMixin, TestCase):
                 order_id=self.order_6_obj.id,
                 module=Module.ORG,
                 date_paid=date_paid,
-                transaction_id="external-order-4",
-                transaction_reference="ORDER-4",
+                transaction_id="external-order-6",
+                transaction_reference="ORDER-6",
                 with_notify=True,
             )
 
         self.assertIsNone(order_obj)
+
+    def test_complete__order_not_completed(self, *args, **kwargs):
+        date_paid = timezone.localdate() + timezone.timedelta(days=1)
+
+        with mock.patch(
+            "httpx._client.Client.get",
+            side_effect=MockSumUpApiClientExecute(
+                Response(
+                    status_code=200,
+                    json={
+                        "status": "CANCELLED",
+                    },
+                ),
+                Response(
+                    status_code=200,
+                    json={
+                        "status": "CANCELLED",
+                        "transactions": [
+                            {"id": "transaction-1", "status": "CANCELLED"},
+                        ],
+                    },
+                ),
+            ),
+        ):
+            with self.assertNumOperations(num=0, num_selects=11):
+                order_obj = complete(
+                    order_id=self.order_7_obj.id,
+                    module=Module.ORG,
+                    date_paid=date_paid,
+                    transaction_id="external-order-7",
+                    transaction_reference="ORDER-7",
+                    with_notify=True,
+                )
+
+        self.assertIsNone(order_obj)
+
+        transaction_objs = list(
+            Transaction.objects.filter(reference="ORDER-7").order_by("-amount")
+        )
+        payment_objs = list(
+            Payment.objects.filter(transaction__reference="ORDER-7").order_by("type")
+        )
+        payment_line_objs = list(
+            PaymentLine.objects.filter(
+                payment__transaction__reference="ORDER-7"
+            ).order_by("payment__type")
+        )
+
+        self.assertEqual(len(transaction_objs), 0)
+        self.assertEqual(len(payment_objs), 0)
+        self.assertEqual(len(payment_line_objs), 0)

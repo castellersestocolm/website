@@ -5,6 +5,7 @@ from djmoney.money import Money
 
 from comunicat.consts import ZERO_MONEY
 from order.models import Order, OrderDelivery, OrderProduct
+from payment.enums import PaymentStatus
 from payment.models import Entity, PaymentOrder, PaymentProvider
 
 
@@ -58,8 +59,8 @@ class PaymentProviderBase:
     def create(self, *args, **kwargs) -> str | None:
         return None
 
-    def capture(self, *args, **kwargs) -> bool:
-        return False
+    def capture(self, *args, **kwargs) -> PaymentStatus:
+        return PaymentStatus.CANCELED
 
     def cancel(self, *args, **kwargs) -> bool:
         return False

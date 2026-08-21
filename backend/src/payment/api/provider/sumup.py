@@ -66,25 +66,29 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         return None
 
-    def capture(self, *args, **kwargs) -> bool:
+    def capture(self, *args, **kwargs) -> PaymentStatus:
         assert self.order_obj.status <= OrderStatus.REQUESTED
 
         if (
             self.payment_order_obj.status > PaymentStatus.PROCESSING
             or not self.payment_order_obj.external_id
         ):
-            return False
+            return PaymentStatus.CANCELED
 
         try:
             result = self.client.checkouts.get(
                 checkout_id=self.payment_order_obj.external_id,
             )
 
-            return result.status == "PAID"
+            if result.status == "PAID":
+                return PaymentStatus.COMPLETED
+            elif result.status == "PENDING":
+                return PaymentStatus.PROCESSING
+            return PaymentStatus.CANCELED
         except APIError as e:
             _log.exception(e)
 
-        return False
+        return PaymentStatus.CANCELED
 
     def cancel(self, *args, **kwargs) -> bool:
         assert self.order_obj.status == OrderStatus.CREATED
