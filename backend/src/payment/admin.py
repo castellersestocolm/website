@@ -1023,8 +1023,9 @@ class PaymentProviderAdmin(admin.ModelAdmin):
         "method",
         "order",
         "is_enabled",
+        "is_visible",
     )
-    list_filter = ("is_enabled", "method")
+    list_filter = ("is_enabled", "is_visible", "method")
     readonly_fields = (
         "accounts_link",
         "created_at",
