@@ -98,6 +98,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         OrderMembershipFactory(order=cls.order_4_obj, amount=Money(200, "SEK"))
 
         cls.order_5_obj = OrderFactory(
+            type=OrderType.PRODUCT,
             status=OrderStatus.COMPLETED,
         )
 

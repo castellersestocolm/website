@@ -88,7 +88,7 @@ class Order(StandardModel, Timestamps):
                 from event.models import Registration
 
                 registration_objs = Registration.objects.filter(
-                    order_registration__order_id=self.id
+                    order_registrations__order_id=self.id
                 )
                 registration_objs.update(status=RegistrationStatus.ACTIVE)
 

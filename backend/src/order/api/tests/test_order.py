@@ -217,22 +217,27 @@ class TestCleanPendingOrders(NumOperationsMixin, TestCase):
 
         cls.order_1_obj = OrderFactory(
             payment_order=cls.payment_order_1_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
         )
         cls.order_2_obj = OrderFactory(
             payment_order=cls.payment_order_2_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
         )
         cls.order_3_obj = OrderFactory(
             payment_order=cls.payment_order_3_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.REQUESTED,
         )
         cls.order_4_obj = OrderFactory(
             payment_order=cls.payment_order_4_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.PROCESSING,
         )
         cls.order_5_obj = OrderFactory(
             payment_order=cls.payment_order_5_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.COMPLETED,
         )
 
@@ -385,11 +390,13 @@ class TestComplete(NumOperationsMixin, TestCase):
         OrderMembershipFactory(order=cls.order_4_obj, amount=Money(200, "SEK"))
 
         cls.order_5_obj = OrderFactory(
+            type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
             payment_order=None,
         )
 
         cls.order_6_obj = OrderFactory(
+            type=OrderType.PRODUCT,
             status=OrderStatus.COMPLETED,
             payment_order=None,
         )
@@ -404,7 +411,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=33, num_inserts=5, num_updates=4
+                num=0, num_selects=35, num_inserts=5, num_updates=4
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -454,7 +461,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=66, num_inserts=6, num_updates=9
+                num=0, num_selects=68, num_inserts=6, num_updates=9
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -532,7 +539,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=36, num_inserts=2, num_updates=2
+            num=0, num_selects=38, num_inserts=2, num_updates=2
         ):
             order_obj = complete(
                 order_id=self.order_2_obj.id,
@@ -591,7 +598,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=56, num_inserts=10, num_updates=6
+                num=0, num_selects=47, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_3_obj.id,
@@ -665,7 +672,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=50, num_inserts=10, num_updates=6
+                num=0, num_selects=42, num_inserts=9, num_updates=9
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -710,7 +717,7 @@ class TestComplete(NumOperationsMixin, TestCase):
     def test_complete__order_created_no_payment_order(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
-        with self.assertNumOperations(num=0, num_selects=1):
+        with self.assertNumOperations(num=0, num_selects=3):
             order_obj = complete(
                 order_id=self.order_5_obj.id,
                 module=Module.ORG,
