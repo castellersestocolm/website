@@ -47,7 +47,6 @@ class PaymentProviderBase:
 
         assert self.order_obj is not None
         assert self.order_obj.entity is not None
-        assert self.order_obj.delivery is not None
         assert self.order_obj.payment_order is not None
         assert self.order_obj.payment_order.provider is not None
 

@@ -47,6 +47,7 @@ DELIVERY_TYPE_TO_PAYPAL_FULFILLMENT_TYPE = {
 }
 
 
+# TODO: Deprecate all this + order_delivery_obj might be NONE
 class PaymentProviderPaypal(PaymentProviderBase):
     client: PaypalServersdkClient
 

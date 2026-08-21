@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from django.db import transaction
 from django.db.models import Q
 
 import notify.tasks
@@ -133,3 +134,26 @@ def create(
     )
 
     return registration_obj
+
+
+# TODO registrations: Send emails
+@transaction.atomic
+def complete(registration_ids: list[UUID], with_notify: bool = True) -> bool:
+    registration_objs = list(
+        Registration.objects.filter(
+            id__in=registration_ids, status=RegistrationStatus.REQUESTED
+        ).select_related("event")
+    )
+
+    event_objs = {registration_obj.event for registration_obj in registration_objs}
+
+    if not registration_objs or len(event_objs) != 1:
+        return False
+
+    # TODO: Check if this goes above the limit for the event
+    for registration_obj in registration_objs:
+        registration_obj.status = RegistrationStatus.ACTIVE
+
+    Registration.objects.bulk_update(registration_objs, fields=("status",))
+
+    return True

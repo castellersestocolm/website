@@ -5,12 +5,7 @@ from djmoney.money import Money
 
 from comunicat.enums import Module
 from conftest import NumOperationsMixin
-from membership.api import (
-    create_or_update,
-    get_list,
-    get_renew_options,
-    renew_membership,
-)
+from membership.api import create_or_update, get_list, get_renew_options, renew
 from membership.enums import MembershipStatus
 from membership.models import MembershipModule, MembershipUser
 from membership.tests.factories import (
@@ -299,7 +294,7 @@ class TestRenew(NumOperationsMixin, TestCase):
 
     def test_renew__no_membership(self, *args, **kwargs):
         with self.assertNumOperations(num=0, num_selects=1):
-            membership_obj = renew_membership(
+            membership_obj = renew(
                 membership_id=None,
             )
 
@@ -307,7 +302,7 @@ class TestRenew(NumOperationsMixin, TestCase):
 
     def test_renew__status_active_but_past(self, *args, **kwargs):
         with self.assertNumOperations(num=0, num_selects=7, num_inserts=3):
-            membership_obj = renew_membership(
+            membership_obj = renew(
                 membership_id=self.membership_1_user_1_obj.id,
             )
 
@@ -333,7 +328,7 @@ class TestRenew(NumOperationsMixin, TestCase):
 
     def test_renew__status_processing(self, *args, **kwargs):
         with self.assertNumOperations(num=0, num_selects=7, num_inserts=3):
-            membership_obj = renew_membership(
+            membership_obj = renew(
                 membership_id=self.membership_2_user_2_obj.id,
             )
 
@@ -359,7 +354,7 @@ class TestRenew(NumOperationsMixin, TestCase):
 
     def test_renew__status_active_family(self, *args, **kwargs):
         with self.assertNumOperations(num=0, num_selects=9, num_inserts=6):
-            membership_obj = renew_membership(
+            membership_obj = renew(
                 membership_id=self.membership_3_user_3_obj.id,
             )
 
@@ -412,7 +407,7 @@ class TestRenew(NumOperationsMixin, TestCase):
 
     def test_renew__status_active_current(self, *args, **kwargs):
         with self.assertNumOperations(num=0, num_selects=5):
-            membership_obj = renew_membership(
+            membership_obj = renew(
                 membership_id=self.membership_4_user_6_obj.id,
             )
 

@@ -87,17 +87,6 @@ class OrderRegistrationInline(admin.TabularInline):
         "registration__entity__lastname",
     )
 
-
-class OrderMembershipInline(admin.TabularInline):
-    model = OrderMembership
-    raw_id_fields = ("module", "line")
-    # form = OrderProductInlineFormAdmin
-    extra = 0
-    ordering = (
-        "module__module",
-        "amount",
-    )
-
     def get_queryset(self, request):
         return (
             super()
@@ -117,6 +106,53 @@ class OrderMembershipInline(admin.TabularInline):
 
     def has_delete_permission(self, request, obj=None):
         return obj and obj.status <= OrderStatus.PROCESSING
+
+
+class OrderMembershipInline(admin.TabularInline):
+    model = OrderMembership
+    raw_id_fields = ("module", "line")
+    # form = OrderProductInlineFormAdmin
+    readonly_fields = ("membership_link",)
+    extra = 0
+    ordering = (
+        "module__module",
+        "amount",
+    )
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "module",
+                "module__membership",
+            )
+        )
+
+    def has_add_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_change_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_delete_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def entity_link(self, obj):
+        if hasattr(obj, "entity"):
+            entity_link = reverse("admin:payment_entity_change", args=(obj.entity.id,))
+            return mark_safe(f'<a href="{entity_link}">{obj.entity}</a>')
+        return "-"
+
+    def membership_link(self, obj):
+        if hasattr(obj, "module"):
+            membership_link = reverse(
+                "admin:membership_membership_change", args=(obj.module.membership_id,)
+            )
+            return mark_safe(f'<a href="{membership_link}">{obj.module.membership}</a>')
+        return "-"
+
+    membership_link.short_description = _("membership")
 
 
 class OrderLogInline(admin.TabularInline):

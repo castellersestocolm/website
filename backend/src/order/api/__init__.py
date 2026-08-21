@@ -11,11 +11,14 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
+import event.api.registration
+import membership.api
 import notify.tasks
 import payment.api.payment_provider
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from data.models import Country, Region
+from membership.models import MembershipModule
 from notify.enums import EmailType
 from order.consts import (
     ORDER_CLEAN_STATUS_CREATED_HOURS,
@@ -28,6 +31,7 @@ from order.models import (
     OrderDelivery,
     OrderDeliveryAddress,
     OrderLog,
+    OrderMembership,
     OrderProduct,
     OrderRegistration,
 )
@@ -153,11 +157,13 @@ def get(
 
 @transaction.atomic
 def create(  # noqa: C901
-    sizes: list[dict],
-    delivery: dict,
+    order_type: OrderType,
     module: Module,
+    cart_sizes: list[dict] | None = None,
+    cart_modules: list[dict] | None = None,
     user_id: UUID | None = None,
     user: dict | None = None,
+    delivery: dict | None = None,
     pickup: dict | None = None,
 ) -> Order | None:
     if user_id:
@@ -199,80 +205,94 @@ def create(  # noqa: C901
                 phone=user["phone"],
             )
 
-    delivery_provider_obj = DeliveryProvider.objects.get(id=delivery["provider"]["id"])
+    order_delivery_obj = None
+    product_size_obj_by_id = {}
+    membership_module_obj_by_id = {}
 
-    if delivery_provider_obj.type == OrderDeliveryType.DELIVERY:
-        country_obj = Country.objects.get(code=delivery["address"].pop("country"))
-        if "region" in delivery["address"]:
-            region_obj = Region.objects.get(
-                country_id=country_obj.id, code=delivery["address"].pop("region")
+    if order_type == OrderType.PRODUCT:
+        delivery_provider_obj = DeliveryProvider.objects.get(
+            id=delivery["provider"]["id"]
+        )
+
+        if delivery_provider_obj.type == OrderDeliveryType.DELIVERY:
+            country_obj = Country.objects.get(code=delivery["address"].pop("country"))
+            if "region" in delivery["address"]:
+                region_obj = Region.objects.get(
+                    country_id=country_obj.id, code=delivery["address"].pop("region")
+                )
+            else:
+                region_obj = None
+            order_delivery_address_obj = OrderDeliveryAddress.objects.create(
+                **delivery["address"], country=country_obj, region=region_obj
             )
         else:
-            region_obj = None
-        order_delivery_address_obj = OrderDeliveryAddress.objects.create(
-            **delivery["address"], country=country_obj, region=region_obj
-        )
-    else:
-        order_delivery_address_obj = None
+            order_delivery_address_obj = None
 
-    if delivery_provider_obj.type == OrderDeliveryType.PICK_UP:
-        event_id = pickup["event_id"]
-    else:
-        event_id = None
+        if delivery_provider_obj.type == OrderDeliveryType.PICK_UP:
+            event_id = pickup["event_id"]
+        else:
+            event_id = None
 
-    product_size_obj_by_id = {
-        product_size_obj.id: product_size_obj
-        for product_size_obj in ProductSize.objects.filter(
-            id__in=[size["id"] for size in sizes]
-        )
-        .select_related("product")
-        .with_price(modules=modules)
-        .with_stock()
-    }
-
-    delivery_price_obj = None
-
-    if delivery_provider_obj.type == OrderDeliveryType.DELIVERY:
-        weight = sum(
-            [
-                size["quantity"]
-                * product_size_obj_by_id[size["id"]].product.weight_grams
-                for size in sizes
-            ]
-        )
-
-        delivery_price_obj = get_delivery_price(
-            provider_id=delivery_provider_obj.id,
-            weight=weight,
-            country_id=order_delivery_address_obj.country_id,
-            region_id=order_delivery_address_obj.region_id,
-        )
-
-        if not delivery_price_obj:
-            return None
-
-        delivery_amount = delivery_price_obj.price
-        delivery_vat = delivery_price_obj.vat
-
-        if delivery_amount.currency != settings.MODULE_ALL_CURRENCY:
-            delivery_amount = Money(
-                convert_money(
-                    delivery_amount, settings.MODULE_ALL_CURRENCY
-                ).amount.to_integral(rounding=decimal.ROUND_UP),
-                settings.MODULE_ALL_CURRENCY,
+        product_size_obj_by_id = {
+            product_size_obj.id: product_size_obj
+            for product_size_obj in ProductSize.objects.filter(
+                id__in=[size["id"] for size in cart_sizes]
             )
-    else:
-        delivery_amount = ZERO_MONEY
-        delivery_vat = 0
+            .select_related("product")
+            .with_price(modules=modules)
+            .with_stock()
+        }
 
-    order_delivery_obj = OrderDelivery.objects.create(
-        provider=delivery_provider_obj,
-        address=order_delivery_address_obj,
-        event_id=event_id,
-        price=delivery_price_obj,
-        amount=delivery_amount,
-        vat=delivery_vat,
-    )
+        delivery_price_obj = None
+
+        if delivery_provider_obj.type == OrderDeliveryType.DELIVERY:
+            weight = sum(
+                [
+                    size["quantity"]
+                    * product_size_obj_by_id[size["id"]].product.weight_grams
+                    for size in cart_sizes
+                ]
+            )
+
+            delivery_price_obj = get_delivery_price(
+                provider_id=delivery_provider_obj.id,
+                weight=weight,
+                country_id=order_delivery_address_obj.country_id,
+                region_id=order_delivery_address_obj.region_id,
+            )
+
+            if not delivery_price_obj:
+                return None
+
+            delivery_amount = delivery_price_obj.price
+            delivery_vat = delivery_price_obj.vat
+
+            if delivery_amount.currency != settings.MODULE_ALL_CURRENCY:
+                delivery_amount = Money(
+                    convert_money(
+                        delivery_amount, settings.MODULE_ALL_CURRENCY
+                    ).amount.to_integral(rounding=decimal.ROUND_UP),
+                    settings.MODULE_ALL_CURRENCY,
+                )
+        else:
+            delivery_amount = ZERO_MONEY
+            delivery_vat = 0
+
+        order_delivery_obj = OrderDelivery.objects.create(
+            provider=delivery_provider_obj,
+            address=order_delivery_address_obj,
+            event_id=event_id,
+            price=delivery_price_obj,
+            amount=delivery_amount,
+            vat=delivery_vat,
+        )
+    elif order_type == OrderType.MEMBERSHIP:
+        membership_module_obj_by_id = {
+            membership_module_obj.id: membership_module_obj
+            for membership_module_obj in MembershipModule.objects.filter(
+                id__in=[cart_module["id"] for cart_module in cart_modules]
+            ).select_related("membership")
+        }
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
     if provider_objs:
@@ -284,33 +304,52 @@ def create(  # noqa: C901
 
     # TODO: Fix this
 
-    order_obj = Order.objects.create(
+    order_obj, __ = Order.objects.get_or_create(
         entity=entity_obj,
+        type=order_type,
+        status=OrderStatus.CREATED,
         delivery=order_delivery_obj,
-        payment_order=payment_order_obj,
         origin_module=module,
         origin_language=translation.get_language(),
+        defaults={"payment_order": payment_order_obj},
     )
 
-    for size in sizes:
-        product_size_obj = product_size_obj_by_id[size["id"]]
+    if order_type == OrderType.PRODUCT:
+        for cart_size in cart_sizes:
+            product_size_obj = product_size_obj_by_id[cart_size["id"]]
 
-        if (
-            size["quantity"] > product_size_obj.stock
-            and not product_size_obj.product.ignore_stock
-        ):
-            raise ValidationError(
-                {"size": _("The amount of some products exceed the available stock.")}
+            if (
+                cart_size["quantity"] > product_size_obj.stock
+                and not product_size_obj.product.ignore_stock
+            ):
+                raise ValidationError(
+                    {
+                        "size": _(
+                            "The amount of some products exceed the available stock."
+                        )
+                    }
+                )
+
+            OrderProduct.objects.create(
+                order=order_obj,
+                size=product_size_obj,
+                quantity=cart_size["quantity"],
+                amount_unit=product_size_obj.price,
+                amount=cart_size["quantity"] * product_size_obj.price,
+                vat=product_size_obj.vat,
             )
+    elif order_type == OrderType.MEMBERSHIP:
+        for cart_module in cart_modules:
+            membership_module_obj = membership_module_obj_by_id[cart_module["id"]]
 
-        OrderProduct.objects.create(
-            order=order_obj,
-            size=product_size_obj,
-            quantity=size["quantity"],
-            amount_unit=product_size_obj.price,
-            amount=size["quantity"] * product_size_obj.price,
-            vat=product_size_obj.vat,
-        )
+            OrderMembership.objects.get_or_create(
+                order=order_obj,
+                module=membership_module_obj,
+                defaults={
+                    "amount": membership_module_obj.amount,
+                    "vat": settings.MODULE_ALL_VAT,
+                },
+            )
 
     if payment_order_obj:
         # Initialise external_id
@@ -377,6 +416,7 @@ def update_provider(
     return get(order_id=order_id, user_id=user_id, module=module)
 
 
+# TODO: Membership orders perhaps delete it entirely as 1-to-1 relationship to module
 def clean_pending_orders() -> None:
     # TODO: Move delta to a setting perhaps
     # TODO: Check what happens when payment order and order are out of sync
@@ -416,6 +456,7 @@ def complete(
 ) -> Order | None:
     order_obj = (
         Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
+        .prefetch_related("registrations", "memberships")
         .with_amount()
         .first()
     )
@@ -465,17 +506,36 @@ def complete(
         )
         order_obj.save(update_fields=("status",))
 
-        if with_notify:
-            notify.tasks.send_order_email.delay(
-                order_id=order_obj.id,
-                email_type=EmailType.ORDER_CREATED,
-                module=module,
-                locale=translation.get_language(),
-            )
+        if order_obj.type == OrderType.PRODUCT:
+            if with_notify:
+                notify.tasks.send_order_email.delay(
+                    order_id=order_obj.id,
+                    email_type=EmailType.ORDER_CREATED,
+                    module=module,
+                    locale=translation.get_language(),
+                )
 
-        notify.tasks.send_order_message_slack.delay(
-            order_id=order_obj.id,
-        )
+            notify.tasks.send_order_message_slack.delay(
+                order_id=order_obj.id,
+            )
+        elif order_obj.type == OrderType.REGISTRATION:
+            registration_ids = [
+                order_registration_obj.registration_id
+                for order_registration_obj in order_obj.registrations.all()
+            ]
+            event.api.registration.complete(
+                registration_ids=registration_ids, with_notify=with_notify
+            )
+        elif order_obj.type == OrderType.MEMBERSHIP:
+            membership_module_ids = [
+                order_membership_obj.module_id
+                for order_membership_obj in order_obj.memberships.all()
+            ]
+            membership.api.complete(
+                membership_module_ids=membership_module_ids,
+                is_completed=is_completed,
+                with_notify=with_notify,
+            )
 
         return get(order_id=order_id, user_id=user_id, module=module)
 

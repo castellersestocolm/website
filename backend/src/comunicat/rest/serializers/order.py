@@ -15,6 +15,7 @@ from comunicat.rest.serializers.data import (
     ZoneSerializer,
 )
 from comunicat.rest.serializers.event import RegistrationWithEventSerializer
+from comunicat.rest.serializers.membership import MembershipModuleSerializer
 from comunicat.rest.serializers.payment import (
     PaymentLineSerializer,
     PaymentOrderSerializer,
@@ -226,6 +227,26 @@ class OrderRegistrationSerializer(s.ModelSerializer):
         )
 
 
+class OrderMembershipSerializer(s.ModelSerializer):
+    module = MembershipModuleSerializer(read_only=True)
+    amount = MoneyField(read_only=True)
+
+    class Meta:
+        model = OrderRegistration
+        fields = (
+            "id",
+            "module",
+            "amount",
+            "vat",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+            "amount",
+            "vat",
+        )
+
+
 class OrderLogSerializer(s.ModelSerializer):
     class Meta:
         model = OrderLog
@@ -265,6 +286,7 @@ class OrderSerializer(OrderSlimSerializer):
     amount_vat = MoneyField(read_only=True)
     products = OrderProductSerializer(many=True, read_only=True)
     registrations = OrderRegistrationSerializer(many=True, read_only=True)
+    memberships = OrderMembershipSerializer(many=True, read_only=True)
     logs = OrderLogSerializer(many=True, read_only=True)
 
     class Meta:
@@ -272,6 +294,7 @@ class OrderSerializer(OrderSlimSerializer):
         fields = (
             "id",
             "reference",
+            "type",
             "status",
             "delivery",
             "payment_order",
@@ -279,12 +302,14 @@ class OrderSerializer(OrderSlimSerializer):
             "amount_vat",
             "products",
             "registrations",
+            "memberships",
             "logs",
             "created_at",
         )
         read_only_fields = (
             "id",
             "reference",
+            "type",
             "status",
             "delivery",
             "payment_order",
@@ -292,6 +317,7 @@ class OrderSerializer(OrderSlimSerializer):
             "amount_vat",
             "products",
             "registrations",
+            "memberships",
             "logs",
             "created_at",
         )
@@ -302,9 +328,22 @@ class CreateOrderSizeSerializer(s.Serializer):
     quantity = s.IntegerField(min_value=1, max_value=100)
 
 
+class CreateOrderModulesSerializer(s.Serializer):
+    id = s.UUIDField()
+
+
 class CreateCartSerializer(s.Serializer):
     sizes = s.ListSerializer(
-        child=CreateOrderSizeSerializer(), min_length=1, max_length=100
+        child=CreateOrderSizeSerializer(),
+        min_length=0,
+        max_length=100,
+        required=False,
+    )
+    modules = s.ListSerializer(
+        child=CreateOrderModulesSerializer(),
+        min_length=0,
+        max_length=10,
+        required=False,
     )
 
 
@@ -346,30 +385,35 @@ class CreateUserDataSerializer(s.Serializer):
 
 
 class CreateOrderSerializer(s.Serializer):
+    type = IntEnumField(OrderType)
     cart = CreateCartSerializer()
     user = CreateUserDataSerializer(required=False)
-    delivery = CreateDeliverySerializer()
+    delivery = CreateDeliverySerializer(required=False)
     pickup = CreatePickupSerializer(required=False)
 
     def __init__(self, user: User | None = None, *args, **kwargs):
         if "data" in kwargs:
-            delivery_type = kwargs["data"]["delivery"]["provider"]["type"]
-            if delivery_type == OrderDeliveryType.DELIVERY:
-                kwargs["data"].pop("pickup")
-                if "address" not in kwargs["data"]["delivery"]:
-                    raise s.ValidationError(
-                        {"delivery": {"address": _("This field is required.")}}
-                    )
-            elif delivery_type == OrderDeliveryType.PICK_UP:
-                kwargs["data"]["delivery"].pop("address")
-                if "pickup" not in kwargs["data"]:
-                    raise s.ValidationError({"pickup": _("This field is required.")})
-            else:
-                kwargs["data"]["delivery"].pop("address")
-                kwargs["data"].pop("pickup")
+            if "delivery" in kwargs["data"]:
+                delivery_type = kwargs["data"]["delivery"]["provider"]["type"]
+                if delivery_type == OrderDeliveryType.DELIVERY:
+                    kwargs["data"].pop("pickup")
+                    if "address" not in kwargs["data"]["delivery"]:
+                        raise s.ValidationError(
+                            {"delivery": {"address": _("This field is required.")}}
+                        )
+                elif delivery_type == OrderDeliveryType.PICK_UP:
+                    kwargs["data"]["delivery"].pop("address")
+                    if "pickup" not in kwargs["data"]:
+                        raise s.ValidationError(
+                            {"pickup": _("This field is required.")}
+                        )
+                else:
+                    kwargs["data"]["delivery"].pop("address")
+                    kwargs["data"].pop("pickup")
 
             if user:
-                kwargs["data"].pop("user")
+                if "user" in kwargs["data"]:
+                    kwargs["data"].pop("user")
 
         super().__init__(*args, **kwargs)
 

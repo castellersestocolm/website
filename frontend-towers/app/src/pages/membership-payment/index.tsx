@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import OrderPayment from "../../components/OrderPayment/OrderPayment";
 
-function OrderPaymentPage() {
+function MembershipPaymentPage() {
   const { id } = useParams();
   const { t } = useTranslation("common");
 
@@ -23,11 +23,11 @@ function OrderPaymentPage() {
 
   return (
     <PageBase
-      title={t("pages.order-cart.title")}
+      title={t("pages.membership-cart.title")}
       content={content}
       loading={!order || !paymentProvider}
     />
   );
 }
 
-export default OrderPaymentPage;
+export default MembershipPaymentPage;

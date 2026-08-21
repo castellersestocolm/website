@@ -7,6 +7,7 @@ from rest_framework.serializers import Serializer
 
 import membership.api
 from comunicat.rest.serializers.membership import (
+    ListMembershipSerializer,
     MembershipRenewRequestSerializer,
     MembershipRenewSerializer,
     MembershipSerializer,
@@ -27,14 +28,20 @@ class MembershipAPI(ComuniCatViewSet):
     lookup_field = "id"
 
     @swagger_auto_schema(
+        query_serializer=ListMembershipSerializer(),
         responses={200: MembershipSerializer(many=True), 400: Serializer()},
     )
     def list(self, request):
+        serializer = ListMembershipSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
         if not request.user.is_authenticated:
             return Response(status=400)
 
+        filter_status = serializer.validated_data.get("filter_status", None)
+
         membership_objs = membership.api.get_list(
-            user_id=request.user.id, module=self.module
+            user_id=request.user.id, filter_status=filter_status, module=self.module
         )
 
         paginator = self.pagination_class()
