@@ -195,14 +195,14 @@ class PaymentProviderPaypal(PaymentProviderBase):
 
         return None
 
-    def capture(self, *args, **kwargs) -> bool:
+    def capture(self, *args, **kwargs) -> PaymentStatus:
         assert self.order_obj.status <= OrderStatus.REQUESTED
 
         if (
             self.payment_order_obj.status > PaymentStatus.CREATED
             or not self.payment_order_obj.external_id
         ):
-            return False
+            return PaymentStatus.CANCELED
 
         orders_controller = self.client.orders
 
@@ -211,12 +211,12 @@ class PaymentProviderPaypal(PaymentProviderBase):
             result = orders_controller.capture_order(collect)
 
             if result.status_code not in (200, 201):
-                return False
+                return PaymentStatus.CANCELED
 
-            return True
+            return PaymentStatus.COMPLETED
         except ErrorException as e:
             _log.exception(e)
         except ApiException as e:
             _log.exception(e)
 
-        return False
+        return PaymentStatus.CANCELED

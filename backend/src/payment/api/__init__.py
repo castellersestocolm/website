@@ -105,7 +105,7 @@ def get_list(user_id: UUID, module: Module) -> list[Payment]:
 @transaction.atomic
 def create_for_order(
     order_id: UUID,
-    is_captured: bool,
+    status: PaymentStatus,
     date_accounting: datetime.datetime,
     external_id: str | None = None,
     reference: str | None = None,
@@ -183,9 +183,7 @@ def create_for_order(
             entity=order_obj.entity,
             defaults={
                 "text": text,
-                "status": (
-                    PaymentStatus.COMPLETED if is_captured else PaymentStatus.PROCESSING
-                ),
+                "status": status,
             },
         )
 
@@ -319,11 +317,7 @@ def create_for_order(
                 entity=payment_order_obj.provider.entity,
                 defaults={
                     "text": text_fee,
-                    "status": (
-                        PaymentStatus.COMPLETED
-                        if is_captured
-                        else PaymentStatus.PROCESSING
-                    ),
+                    "status": status,
                 },
             )
 
