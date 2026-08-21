@@ -442,7 +442,11 @@ export default function OrderPayment({
                 component="span"
                 className={styles.providerSwishText}
               >
-                {t("swish.payment.order")} {order.reference}
+                {order.type === OrderType.MEMBERSHIP
+                  ? t("swish.payment.membership") +
+                    " " +
+                    new Date().getFullYear()
+                  : t("swish.payment.order") + " " + order.reference}
               </Typography>
               {isMobile ? (
                 order.payment_order &&

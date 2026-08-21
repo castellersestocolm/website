@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-01 20:14+0200\n"
+"POT-Creation-Date: 2026-08-21 17:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,8 @@ msgstr ""
 
 #: activity/admin.py:56 activity/admin.py:145 data/admin.py:38 data/admin.py:69
 #: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
-#: notify/admin.py:272 order/admin.py:298 payment/admin.py:674
-#: payment/admin.py:1034 product/admin.py:108
+#: notify/admin.py:272 order/admin.py:453 payment/admin.py:675
+#: payment/admin.py:1053 product/admin.py:110
 msgid "name"
 msgstr "namn"
 
@@ -30,59 +30,62 @@ msgstr "namn"
 msgid "title"
 msgstr "titel"
 
-#: activity/api/export.py:52
+#: activity/api/export.py:55
 msgid "Registrations"
 msgstr "Registreringar"
 
-#: activity/api/export.py:56 comunicat/templates/pdf/org/registration.html:77
+#: activity/api/export.py:59 comunicat/templates/pdf/org/registration.html:77
 #: comunicat/templates/pdf/towers/registration.html:77
 #: membership/api/export.py:51
 msgid "First name"
 msgstr "Namn"
 
-#: activity/api/export.py:57 comunicat/templates/pdf/org/registration.html:80
+#: activity/api/export.py:60 comunicat/templates/pdf/org/registration.html:80
 #: comunicat/templates/pdf/towers/registration.html:80
 #: membership/api/export.py:52
 msgid "Last name"
 msgstr "Efternamn"
 
-#: activity/api/export.py:58
+#: activity/api/export.py:61
 msgid "Age"
 msgstr "Ålder"
 
-#: activity/api/export.py:59 membership/api/export.py:55
+#: activity/api/export.py:62 membership/api/export.py:55
 msgid "Family"
 msgstr "Familj"
 
-#: activity/api/export.py:60
+#: activity/api/export.py:63
 msgid "Parents"
 msgstr "Föräldrar"
 
-#: activity/api/export.py:61
+#: activity/api/export.py:64
 msgid "Emails"
 msgstr "E-post"
 
-#: activity/api/export.py:62
+#: activity/api/export.py:65
 msgid "Phones"
 msgstr "Telefoner"
 
-#: activity/api/export.py:63 comunicat/templates/pdf/org/registration.html:86
+#: activity/api/export.py:66 comunicat/templates/pdf/org/registration.html:86
+#: comunicat/templates/pdf/towers/order.html:86
 #: comunicat/templates/pdf/towers/registration.html:86
 #: membership/api/export.py:59
 msgid "Status"
 msgstr "Status"
 
-#: activity/api/export.py:64 membership/api/export.py:60
+#: activity/api/export.py:67 membership/api/export.py:60
 msgid "Price"
 msgstr "Pris"
 
-#: activity/api/export.py:142
+#: activity/api/export.py:145
 msgid "Attendance"
 msgstr "Deltagande"
 
-#: activity/api/export.py:146
+#: activity/api/export.py:149
 #: comunicat/templates/email/org/contact/message.html:18
 #: comunicat/templates/email/towers/contact/message.html:18
+#: comunicat/templates/pdf/org/order.html:116
+#: comunicat/templates/pdf/towers/order.html:83
 msgid "Name"
 msgstr "Namn"
 
@@ -98,19 +101,20 @@ msgstr "Läger"
 msgid "Teaching"
 msgstr "Undervisning"
 
-#: activity/enums.py:27 event/enums.py:42 membership/enums.py:13
+#: activity/enums.py:27 event/enums.py:42 membership/enums.py:14
+#: order/enums.py:17
 msgid "Requested"
 msgstr "Begärt"
 
-#: activity/enums.py:28 membership/enums.py:14
+#: activity/enums.py:28 membership/enums.py:15 order/enums.py:18
 msgid "Processing"
 msgstr "Bearbetas"
 
-#: activity/enums.py:29 event/enums.py:43 membership/enums.py:15
+#: activity/enums.py:29 event/enums.py:43 membership/enums.py:16
 msgid "Active"
 msgstr "Aktiv"
 
-#: activity/enums.py:30 membership/enums.py:16
+#: activity/enums.py:30 membership/enums.py:17
 msgid "Expired"
 msgstr "Utgången"
 
@@ -126,8 +130,8 @@ msgstr "uppdaterad"
 msgid "The entity is required for non-logged in users."
 msgstr ""
 
-#: comunicat/rest/serializers/order.py:361
-#: comunicat/rest/serializers/order.py:366
+#: comunicat/rest/serializers/order.py:402
+#: comunicat/rest/serializers/order.py:408
 msgid "This field is required."
 msgstr ""
 
@@ -788,17 +792,42 @@ msgstr ""
 msgid "Join the community"
 msgstr "Gå med i gemenskapen"
 
+#: comunicat/templates/pdf/org/order.html:100
+#: comunicat/templates/pdf/towers/order.html:70
+msgid "Pending orders"
+msgstr ""
+
+#: comunicat/templates/pdf/org/order.html:107
+#: comunicat/templates/pdf/towers/order.html:77
+msgid "Product"
+msgstr ""
+
+#: comunicat/templates/pdf/org/order.html:110
+#: comunicat/templates/pdf/towers/order.html:80
+msgid "Size"
+msgstr ""
+
+#: comunicat/templates/pdf/org/order.html:145 payment/utils/admin.py:14
+msgid "Yes"
+msgstr ""
+
 #: comunicat/templates/pdf/org/registration.html:83
 #: comunicat/templates/pdf/towers/registration.html:83
-#: membership/api/export.py:54
+#: membership/api/export.py:54 payment/consts.py:45
 msgid "Phone"
 msgstr "Telefon"
+
+#: comunicat/templates/pdf/towers/order.html:89
+#, fuzzy
+#| msgid "entity"
+msgid "Quantity"
+msgstr "enhet"
 
 #: consent/models.py:53
 msgid "The newsletter is mandatory for newsletter consents."
 msgstr ""
 
-#: event/admin.py:128 payment/admin.py:272
+#: event/admin.py:128 payment/admin.py:273
 msgid "Action succeeded."
 msgstr ""
 
@@ -806,7 +835,7 @@ msgstr ""
 msgid "Data"
 msgstr ""
 
-#: event/admin.py:131 order/admin.py:127 payment/admin.py:203
+#: event/admin.py:131 order/admin.py:185 payment/admin.py:204
 msgid "Send paid email"
 msgstr ""
 
@@ -814,7 +843,8 @@ msgstr ""
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:341 order/admin.py:299 product/admin.py:109
+#: event/admin.py:341 order/admin.py:454 payment/admin.py:1054
+#: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
 msgid "accounts"
@@ -828,7 +858,7 @@ msgstr ""
 msgid "Choices"
 msgstr ""
 
-#: event/enums.py:44
+#: event/enums.py:44 order/enums.py:20
 msgid "Cancelled"
 msgstr ""
 
@@ -854,7 +884,7 @@ msgstr ""
 msgid "The start time must be within the course dates."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:278 product/models.py:140 product/models.py:145
+#: event/models.py:278 product/models.py:142 product/models.py:147
 msgid "Team's module must match module."
 msgstr ""
 
@@ -898,7 +928,8 @@ msgstr "moduler"
 msgid "Members"
 msgstr "Medlemmar"
 
-#: membership/api/export.py:56 payment/managers.py:195 payment/managers.py:580
+#: membership/api/export.py:56 payment/api/provider/se_swish.py:49
+#: payment/managers.py:208 payment/managers.py:565 payment/managers.py:590
 msgid "Membership"
 msgstr "Medlemskap"
 
@@ -1027,93 +1058,118 @@ msgstr "Din registrering är nu betald — %s"
 msgid "The Google group is mandatory for Google newsletters."
 msgstr ""
 
-#: order/admin.py:116
+#: order/admin.py:155
+msgid "membership"
+msgstr "medlemskap"
+
+#: order/admin.py:174
 msgid "Send created email"
 msgstr ""
 
-#: order/admin.py:208
+#: order/admin.py:363
 msgid "pending"
 msgstr "väntande"
 
-#: order/admin.py:209
+#: order/admin.py:364
 msgid "delivery"
 msgstr "leverans"
 
-#: order/admin.py:210 payment/admin.py:483
+#: order/admin.py:365 payment/admin.py:484
 msgid "payment"
 msgstr "betalning"
 
-#: order/api/__init__.py:298
+#: order/api/__init__.py:328
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
-#: order/models.py:283
+#: order/enums.py:16
+#, fuzzy
+#| msgid "created"
+msgid "Created"
+msgstr "skapad"
+
+#: order/enums.py:19
+msgid "Completed"
+msgstr ""
+
+#: order/enums.py:21
+msgid "Abandoned"
+msgstr ""
+
+#: order/models.py:288
 msgid "The quantity given must be equal or lower than the ordered quantity."
 msgstr ""
 
-#: order/models.py:447
+#: order/models.py:514
 msgid "Region's country must match country."
 msgstr ""
 
-#: order/models.py:477 order/models.py:478
+#: order/models.py:544 order/models.py:545
 #, fuzzy
 #| msgid "delivery"
 msgid "delivery accounts"
 msgstr "leverans"
 
-#: payment/admin.py:167 payment/admin.py:390
+#: payment/admin.py:168 payment/admin.py:391
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:356 payment/admin.py:460
+#: payment/admin.py:357 payment/admin.py:461
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:357 payment/admin.py:462
+#: payment/admin.py:358 payment/admin.py:463
 msgid "date"
 msgstr "datum"
 
-#: payment/admin.py:358 payment/admin.py:463 payment/admin.py:671
-#: payment/admin.py:834
+#: payment/admin.py:359 payment/admin.py:464 payment/admin.py:672
+#: payment/admin.py:837
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:461 payment/models.py:178 user/admin.py:323
+#: payment/admin.py:462 payment/models.py:178 user/admin.py:323
 msgid "entity"
 msgstr "enhet"
 
-#: payment/admin.py:482
+#: payment/admin.py:483
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Belopp"
 
-#: payment/admin.py:670
+#: payment/admin.py:671
 msgid "trend"
 msgstr ""
 
-#: payment/admin.py:672 payment/admin.py:673 payment/admin.py:835
-#: payment/admin.py:836
+#: payment/admin.py:673 payment/admin.py:674 payment/admin.py:838
+#: payment/admin.py:839
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:833
+#: payment/admin.py:836
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:890
+#: payment/admin.py:893
 msgid "file"
 msgstr "fil"
 
-#: payment/api/__init__.py:150 payment/managers.py:208 payment/managers.py:213
+#: payment/api/__init__.py:163 payment/api/provider/se_swish.py:52
+#: payment/managers.py:221 payment/managers.py:226
 msgid "Order"
 msgstr "Beställning"
 
-#: payment/api/__init__.py:230 payment/managers.py:660
+#: payment/api/__init__.py:259 payment/managers.py:733
 msgid "Delivery"
 msgstr "Leverans"
+
+#: payment/api/__init__.py:299
+#, fuzzy
+#| msgid "Order"
+msgid "Order fee"
+msgstr "Beställning"
 
 #: payment/api/export.py:37
 msgid "Payments"
@@ -1123,39 +1179,39 @@ msgstr "Betalningar"
 msgid "Receipts"
 msgstr "Kvitton"
 
-#: payment/consts.py:40
+#: payment/consts.py:41
 msgid "IBAN"
 msgstr "IBAN"
 
-#: payment/consts.py:41
+#: payment/consts.py:42
 msgid "Bank"
 msgstr "Bank"
 
-#: payment/consts.py:42
+#: payment/consts.py:43
 msgid "Account number"
 msgstr "Kontonummer"
 
-#: payment/consts.py:43
+#: payment/consts.py:44
 msgid "Clearing number"
 msgstr "Clearingnummer"
 
-#: payment/managers.py:189 payment/managers.py:578
+#: payment/managers.py:202 payment/managers.py:563
 msgid "Membership update"
 msgstr "Medlemskapsuppdatering"
 
-#: payment/managers.py:218
+#: payment/managers.py:231
 msgid "Payment"
 msgstr "Betalning"
 
-#: payment/managers.py:673
+#: payment/managers.py:746
 msgid "Unspecified"
 msgstr "Ospecificerad"
 
-#: payment/managers.py:705
+#: payment/managers.py:778
 msgid "(and more)"
 msgstr "(och mer)"
 
-#: payment/managers.py:708
+#: payment/managers.py:781
 msgid "Expense"
 msgstr "Bekostnad"
 
@@ -1199,29 +1255,37 @@ msgstr ""
 msgid "Category must be set for accounts with parent."
 msgstr "Kategorin måste vara inställd för konto med förälder."
 
+#: payment/models.py:563 payment/models.py:564
+#, fuzzy
+#| msgid "delivery"
+msgid "payment provider accounts"
+msgstr "leverans"
+
 #: payment/utils/admin.py:9
 #, fuzzy
 #| msgid "payment"
 msgid "has payment"
 msgstr "betalning"
 
-#: payment/utils/admin.py:14
-msgid "Yes"
-msgstr ""
-
 #: payment/utils/admin.py:15
 msgid "No"
 msgstr ""
 
-#: product/admin.py:38 product/admin.py:110
+#: product/admin.py:40 product/admin.py:112 product/admin.py:149
 msgid "stock"
 msgstr ""
 
-#: product/models.py:109
+#: product/admin.py:148
+#, fuzzy
+#| msgid "First name"
+msgid "product name"
+msgstr "Namn"
+
+#: product/models.py:111
 msgid "Product size must match product."
 msgstr ""
 
-#: product/models.py:183 product/models.py:184
+#: product/models.py:185 product/models.py:186
 msgid "product accounts"
 msgstr ""
 
