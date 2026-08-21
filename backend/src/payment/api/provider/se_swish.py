@@ -4,13 +4,13 @@ from uuid import UUID
 
 from django.conf import settings
 from django.urls import reverse
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 from requests import HTTPError
 from swish import Environment, SwishClient
 
 from comunicat.template_tags.comunicat_tags import full_url
-from order.enums import OrderStatus
+from order.enums import OrderStatus, OrderType
 from payment.api.provider import PaymentProviderBase
 from payment.enums import PaymentStatus
 
@@ -45,8 +45,12 @@ class PaymentProviderSESwish(PaymentProviderBase):
             return self.payment_order_obj.external_id
 
         with translation.override(self.order_obj.origin_language):
-            text_order = _("Order")
-            text = f"{text_order} {self.order_obj.reference}"
+            if self.order_obj.type == OrderType.MEMBERSHIP:
+                text_order = _("Membership")
+                text = f"{text_order} {timezone.localdate().year}"
+            else:
+                text_order = _("Order")
+                text = f"{text_order} {self.order_obj.reference}"
 
         try:
             payment = self.client.create_payment(
