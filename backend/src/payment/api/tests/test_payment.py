@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.utils import timezone
 from djmoney.money import Money
 
+from comunicat.enums import Module
 from conftest import NumOperationsMixin
 from order.enums import OrderStatus, OrderType
 from order.tests.factories import (
@@ -94,8 +95,8 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(300, "SEK"))
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(200, "SEK"))
 
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(300, "SEK"))
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(200, "SEK"))
+        OrderMembershipFactory(order=cls.order_4_obj, module__module=Module.ORG, amount=Money(300, "SEK"))
+        OrderMembershipFactory(order=cls.order_4_obj, module__module=Module.TOWERS, amount=Money(200, "SEK"))
 
         cls.order_5_obj = OrderFactory(
             type=OrderType.PRODUCT,

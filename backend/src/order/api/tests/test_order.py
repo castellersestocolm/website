@@ -386,8 +386,8 @@ class TestComplete(NumOperationsMixin, TestCase):
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(300, "SEK"))
         OrderRegistrationFactory(order=cls.order_3_obj, amount=Money(200, "SEK"))
 
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(300, "SEK"))
-        OrderMembershipFactory(order=cls.order_4_obj, amount=Money(200, "SEK"))
+        OrderMembershipFactory(order=cls.order_4_obj, module__module=Module.ORG, amount=Money(300, "SEK"))
+        OrderMembershipFactory(order=cls.order_4_obj, module__module=Module.TOWERS, amount=Money(200, "SEK"))
 
         cls.order_5_obj = OrderFactory(
             type=OrderType.PRODUCT,
@@ -598,7 +598,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=47, num_inserts=9, num_updates=6
+                num=0, num_selects=48, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_3_obj.id,
