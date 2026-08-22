@@ -40,13 +40,17 @@ import { useNavigate } from "react-router-dom";
 function MembershipPage() {
   const [t, i18n] = useTranslation("common");
 
-  const { setMessages } = useAppContext();
+  const { user, setMessages } = useAppContext();
+
+  let navigate = useNavigate();
+
+  if (user === null) {
+    navigate(ROUTES["user-login"].path + "?next=" + ROUTES.membership.path);
+  }
 
   const [membership, setMembership] = React.useState(undefined);
   const [membershipRenewOptions, setMembershipRenewOptions] =
     React.useState(undefined);
-
-  let navigate = useNavigate();
 
   React.useEffect(() => {
     apiMembershipList().then((response) => {

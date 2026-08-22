@@ -21,9 +21,13 @@ function MembershipReceiptPage() {
   const [t, i18n] = useTranslation("common");
   const { id } = useParams();
 
+  const { user, order, setOrder } = useAppContext();
+
   let navigate = useNavigate();
 
-  const { order, setOrder } = useAppContext();
+  if (user === null) {
+    navigate(ROUTES["user-login"].path);
+  }
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {

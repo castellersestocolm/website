@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 17:10+0200\n"
+"POT-Creation-Date: 2026-08-22 19:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,8 @@ msgstr ""
 
 #: activity/admin.py:56 activity/admin.py:145 data/admin.py:38 data/admin.py:69
 #: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
-#: notify/admin.py:272 order/admin.py:453 payment/admin.py:675
-#: payment/admin.py:1053 product/admin.py:110
+#: notify/admin.py:272 order/admin.py:453 payment/admin.py:678
+#: payment/admin.py:1132 product/admin.py:110
 msgid "name"
 msgstr "nom"
 
@@ -553,6 +553,78 @@ msgstr ""
 "La teva inscripció s'ha marcat com a pagada! En trobaràs un resum a "
 "continuació."
 
+#: comunicat/templates/email/org/user/imported.html:5
+#: comunicat/templates/email/towers/user/imported.html:5
+msgid ""
+"We are very excited to introduce to you our new website, a new way of "
+"managing your membership and registering for rehearsals. We are reaching out "
+"to give you a quick run down of some new features and hopefully answer any "
+"questions you may have regarding the system."
+msgstr ""
+"Estem molt contents d'introduïr la nostra nova web, una manera nova "
+"d'administrar la teva quota i registrar-te pels assajos. T'enviem aquest "
+"correu per donar-te un resum ràpid d'algunes de les funcions i alhora "
+"resoldre qualsevol dubte que hi pugui haver sobre el sistema."
+
+#: comunicat/templates/email/org/user/imported.html:6
+#: comunicat/templates/email/towers/user/imported.html:6
+msgid "Right now, the following features are up and running on our site."
+msgstr ""
+"Ara mateix les següents funcionalitats es poden fer servir a la nostra web."
+
+#: comunicat/templates/email/org/user/imported.html:8
+#: comunicat/templates/email/towers/user/imported.html:8
+msgid "Membership and family management."
+msgstr "Quotes i gestió de família"
+
+#: comunicat/templates/email/org/user/imported.html:9
+#: comunicat/templates/email/towers/user/imported.html:10
+msgid "Payments overview."
+msgstr "Historial de pagaments."
+
+#: comunicat/templates/email/org/user/imported.html:10
+#: comunicat/templates/email/towers/user/imported.html:11
+msgid "Google single sign-on (optional)."
+msgstr "Entra amb Google (opcional)."
+
+#: comunicat/templates/email/org/user/imported.html:12
+#: comunicat/templates/email/towers/user/imported.html:13
+msgid ""
+"We have more features coming soon, and will keep you all updated as we "
+"continue to implement them on the site."
+msgstr ""
+"Tenim més funcionalitats que encara estem desenvolupant i et mantindrem "
+"informat quan les implementem a la nostra web."
+
+#: comunicat/templates/email/org/user/imported.html:13
+#: comunicat/templates/email/towers/user/imported.html:14
+msgid ""
+"As you currently have a membership registered we have automatically migrated "
+"your data to the new platform, you can set a new password via the link below "
+"or use Google single sign-on directly on our website if you wish to."
+msgstr ""
+"Com que tens una quota registrada hem migrat automàticament les teves dades "
+"a la nova plataforma, pots configurar una contrasenya nova a través del "
+"següent enllaç o fer servir Google per entrar directament a la nostra web si "
+"ho prefereixes."
+
+#: comunicat/templates/email/org/user/imported.html:19
+#: comunicat/templates/email/towers/user/imported.html:20
+msgid "Set a new password"
+msgstr "Configura una contrasenya nova"
+
+#: comunicat/templates/email/org/user/imported.html:22
+#: comunicat/templates/email/towers/user/imported.html:23
+msgid "Have any more questions? Feel free to drop an email at"
+msgstr "Més preguntes? No dubtis a enviar-nos un correu a"
+
+#: comunicat/templates/email/org/user/imported.html:26
+#: comunicat/templates/email/org/user/welcome.html:9
+#: comunicat/templates/email/towers/user/imported.html:27
+#: comunicat/templates/email/towers/user/welcome.html:10
+msgid "See you around!"
+msgstr "Ens veiem!"
+
 #: comunicat/templates/email/org/user/invite.html:5
 #: comunicat/templates/email/towers/user/invite.html:5
 msgid "You have been invited to join a family membership by"
@@ -623,17 +695,18 @@ msgstr "Confirma el teu correu"
 
 #: comunicat/templates/email/org/user/welcome.html:5
 msgid ""
-"You have now completed the registration process and are part of Les Quatre "
-"Barres, welcome!"
+"Your email is now confirmed and you are very close from being part of Les "
+"Quatre Barres. In order to complete your registration you only have to pay "
+"for your membership. To do that, click on the button below and follow the "
+"steps to make the payment."
 msgstr ""
-"Has completat el procés de registre i ets part de les Quatre Barres, et "
-"donem la benvinguda!"
+"El vostre correu electrònic s'ha confirmat i esteu a punt de formar part de Les "
+"Quatre Barres. Per completar el registre només heu de pagar la quota. Per "
+"fer-ho, feu clic al botó següent i seguiu els passos per fer el pagament."
 
-#: comunicat/templates/email/org/user/welcome.html:9
-#: comunicat/templates/email/towers/user/imported.html:27
-#: comunicat/templates/email/towers/user/welcome.html:10
-msgid "See you around!"
-msgstr "Ens veiem!"
+#: comunicat/templates/email/org/user/welcome.html:14
+msgid "Pay the membership"
+msgstr "Paga la quota"
 
 #: comunicat/templates/email/towers/courseregistration/paid.html:5
 msgid ""
@@ -660,65 +733,9 @@ msgstr ""
 "La teva comanda s'ha marcat com a pagada! Trobaràs un resum dels productes "
 "que has comprat a continuació."
 
-#: comunicat/templates/email/towers/user/imported.html:5
-msgid ""
-"We are very excited to introduce to you our new website, a new way of "
-"managing your membership and registering for rehearsals. We are reaching out "
-"to give you a quick run down of some new features and hopefully answer any "
-"questions you may have regarding the system."
-msgstr ""
-"Estem molt contents d'introduïr la nostra nova web, una manera nova "
-"d'administrar la teva quota i registrar-te pels assajos. T'enviem aquest "
-"correu per donar-te un resum ràpid d'algunes de les funcions i alhora "
-"resoldre qualsevol dubte que hi pugui haver sobre el sistema."
-
-#: comunicat/templates/email/towers/user/imported.html:6
-msgid "Right now, the following features are up and running on our site."
-msgstr ""
-"Ara mateix les següents funcionalitats es poden fer servir a la nostra web."
-
-#: comunicat/templates/email/towers/user/imported.html:8
-msgid "Membership and family management."
-msgstr "Quotes i gestió de família"
-
 #: comunicat/templates/email/towers/user/imported.html:9
 msgid "Calendar and events registration."
 msgstr "Calendari i registre d'esdeveniments."
-
-#: comunicat/templates/email/towers/user/imported.html:10
-msgid "Payments overview."
-msgstr "Historial de pagaments."
-
-#: comunicat/templates/email/towers/user/imported.html:11
-msgid "Google single sign-on (optional)."
-msgstr "Entra amb Google (opcional)."
-
-#: comunicat/templates/email/towers/user/imported.html:13
-msgid ""
-"We have more features coming soon, and will keep you all updated as we "
-"continue to implement them on the site."
-msgstr ""
-"Tenim més funcionalitats que encara estem desenvolupant i et mantindrem "
-"informat quan les implementem a la nostra web."
-
-#: comunicat/templates/email/towers/user/imported.html:14
-msgid ""
-"As you currently have a membership registered we have automatically migrated "
-"your data to the new platform, you can set a new password via the link below "
-"or use Google single sign-on directly on our website if you wish to."
-msgstr ""
-"Com que tens una quota registrada hem migrat automàticament les teves dades "
-"a la nova plataforma, pots configurar una contrasenya nova a través del "
-"següent enllaç o fer servir Google per entrar directament a la nostra web si "
-"ho prefereixes."
-
-#: comunicat/templates/email/towers/user/imported.html:20
-msgid "Set a new password"
-msgstr "Configura una contrasenya nova"
-
-#: comunicat/templates/email/towers/user/imported.html:23
-msgid "Have any more questions? Feel free to drop an email at"
-msgstr "Més preguntes? No dubtis a enviar-nos un correu a"
 
 #: comunicat/templates/email/towers/user/imported.html:23
 msgid "or reach out on WhatsApp!"
@@ -830,7 +847,7 @@ msgstr "entitat"
 msgid "The newsletter is mandatory for newsletter consents."
 msgstr ""
 
-#: event/admin.py:128 payment/admin.py:273
+#: event/admin.py:128 payment/admin.py:276
 msgid "Action succeeded."
 msgstr ""
 
@@ -838,7 +855,7 @@ msgstr ""
 msgid "Data"
 msgstr ""
 
-#: event/admin.py:131 order/admin.py:185 payment/admin.py:204
+#: event/admin.py:131 order/admin.py:185 payment/admin.py:207
 msgid "Send paid email"
 msgstr ""
 
@@ -846,7 +863,7 @@ msgstr ""
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:341 order/admin.py:454 payment/admin.py:1054
+#: event/admin.py:341 order/admin.py:454 payment/admin.py:1133
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
@@ -1077,11 +1094,11 @@ msgstr "pendent"
 msgid "delivery"
 msgstr "entrega"
 
-#: order/admin.py:365 payment/admin.py:484
+#: order/admin.py:365 payment/admin.py:487
 msgid "payment"
 msgstr "pagament"
 
-#: order/api/__init__.py:328
+#: order/api/__init__.py:340
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
@@ -1113,49 +1130,53 @@ msgstr ""
 msgid "delivery accounts"
 msgstr "entrega"
 
-#: payment/admin.py:168 payment/admin.py:391
+#: payment/admin.py:171 payment/admin.py:394
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:357 payment/admin.py:461
+#: payment/admin.py:360 payment/admin.py:464
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:358 payment/admin.py:463
+#: payment/admin.py:361 payment/admin.py:466
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:359 payment/admin.py:464 payment/admin.py:672
-#: payment/admin.py:837
+#: payment/admin.py:362 payment/admin.py:467 payment/admin.py:675
+#: payment/admin.py:835
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:462 payment/models.py:178 user/admin.py:323
+#: payment/admin.py:465 payment/models.py:178 user/admin.py:323
 msgid "entity"
 msgstr "entitat"
 
-#: payment/admin.py:483
+#: payment/admin.py:486
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Quantitat"
 
-#: payment/admin.py:671
+#: payment/admin.py:674
 msgid "trend"
 msgstr ""
 
-#: payment/admin.py:673 payment/admin.py:674 payment/admin.py:838
-#: payment/admin.py:839
+#: payment/admin.py:676 payment/admin.py:677 payment/admin.py:836
+#: payment/admin.py:837
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:836
+#: payment/admin.py:834
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:893
+#: payment/admin.py:915
+msgid "diff."
+msgstr ""
+
+#: payment/admin.py:971
 msgid "file"
 msgstr "fitxer"
 
@@ -1164,11 +1185,11 @@ msgstr "fitxer"
 msgid "Order"
 msgstr "Comanda"
 
-#: payment/api/__init__.py:259 payment/managers.py:733
+#: payment/api/__init__.py:257 payment/managers.py:733
 msgid "Delivery"
 msgstr "Entrega"
 
-#: payment/api/__init__.py:299
+#: payment/api/__init__.py:297
 #, fuzzy
 #| msgid "Order"
 msgid "Order fee"
@@ -1258,7 +1279,7 @@ msgstr ""
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:563 payment/models.py:564
+#: payment/models.py:564 payment/models.py:565
 #, fuzzy
 #| msgid "delivery"
 msgid "payment provider accounts"
@@ -1333,6 +1354,13 @@ msgstr "La categoria és obligatòria per comptes amb matrius."
 #: user/models.py:201
 msgid "families"
 msgstr "famílies"
+
+#~ msgid ""
+#~ "You have now completed the registration process and are part of Les "
+#~ "Quatre Barres, welcome!"
+#~ msgstr ""
+#~ "Has completat el procés de registre i ets part de les Quatre Barres, et "
+#~ "donem la benvinguda!"
 
 #~ msgid "Rehearsal with musicians"
 #~ msgstr "Assaig amb músics"

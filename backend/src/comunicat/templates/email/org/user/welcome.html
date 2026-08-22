@@ -2,9 +2,13 @@
 {% load i18n comunicat_tags %}
 
 {% block email_message_pre %}
-    <p>{% trans "You have now completed the registration process and are part of Les Quatre Barres, welcome!" %}</p>
+    <p>{% trans "Your email is now confirmed and you are very close from being part of Les Quatre Barres. In order to complete your registration you only have to pay for your membership. To do that, click on the button below and follow the steps to make the payment." %}</p>
 {% endblock %}
 
 {% block email_closing %}
     <p style="margin:0;">{% trans "See you around!" %}</p>
 {% endblock %}
+
+{% block email_button_url %}{% full_org_url "membership" %}{% endblock %}
+
+{% block email_button_text %}{% trans "Pay the membership" %}{% endblock %}
