@@ -20,6 +20,7 @@ import { apiUserMe } from "./api";
 import UserLoginPage from "./pages/user-login";
 import UserJoinPage from "./pages/user-join";
 import UserPasswordPage from "./pages/user-password";
+import UserVerifyPage from "./pages/user-verify";
 import CalendarEventPage from "./pages/calendar-event";
 import CalendarPage from "./pages/calendar";
 import AboutBylawsPage from "./pages/about-bylaws";
@@ -118,6 +119,14 @@ const App = () => {
                   <Route
                     path={ROUTES["user-password"].path}
                     element={<UserPasswordPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-set-password"].path}
+                    element={<UserPasswordPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-set-verify"].path}
+                    element={<UserVerifyPage />}
                   />
                   <Route
                     path={ROUTES["user-dashboard"].path}

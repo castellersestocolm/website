@@ -415,6 +415,26 @@ export const apiUserRequestPassword = async (email: string) => {
   }
 };
 
+export const apiUserVerify = async (token: string) => {
+  try {
+    return await instance.post("/user/verify/", { token: token });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserRequestVerify = async (email: string) => {
+  try {
+    return await instance.post("/user/request-verify/", { email: email });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiUserMe = async () => {
   try {
     return await instance.get("/user/me/");
