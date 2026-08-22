@@ -62,6 +62,9 @@ class PaymentProviderBase:
     def capture(self, *args, **kwargs) -> PaymentStatus:
         return PaymentStatus.CANCELED
 
+    def refund(self, *args, **kwargs) -> PaymentStatus:
+        return PaymentStatus.CANCELED
+
     def cancel(self, *args, **kwargs) -> bool:
         return False
 

@@ -16,11 +16,13 @@ from django.urls import path, reverse
 from django.utils import timezone, translation
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from djmoney.money import Money
 from jsoneditor.forms import JSONEditor
 from weasyprint import HTML
 
 import notify.tasks
 import payment.api.entity
+import payment.api.transaction_import
 import payment.tasks
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE, ZERO_MONEY
@@ -53,6 +55,7 @@ from payment.models import (
     Statement,
     Transaction,
     TransactionImport,
+    TransactionImportLine,
 )
 from payment.utils.admin import EntityHasPaymentFilter
 
@@ -780,6 +783,7 @@ class TransactionAdmin(admin.ModelAdmin):
     )
     list_filter = ("source", "method")
     ordering = ("-date_accounting", "-date_interest", "-created_at")
+    raw_id_fields = ("importer", "import_line")
     inlines = (PaymentInline,)
 
     formfield_overrides = {
@@ -787,12 +791,6 @@ class TransactionAdmin(admin.ModelAdmin):
     }
 
     def has_add_permission(self, request, obj=None):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
         return False
 
 
@@ -857,6 +855,61 @@ class TransactionReadOnlyInline(TransactionInline):
         return False
 
 
+class TransactionImportLineInline(admin.TabularInline):
+    model = TransactionImportLine
+    ordering = ("row",)
+    fields = (
+        "row",
+        "method",
+        "amount",
+        "transaction_amount",
+        "vat",
+        "text",
+        "sender",
+        "reference",
+        "date_accounting",
+        "transactions",
+    )
+    readonly_fields = ("transaction_amount",)
+    exclude = ("extra",)
+    raw_id_fields = ("transactions",)
+    extra = 0
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request=request)
+            .prefetch_related("imported_transactions")
+        )
+
+    def transaction_amount(self, obj):
+        if not obj:
+            return "-"
+
+        return obj.amount - Money(
+            sum(obj.imported_transactions.values_list("amount", flat=True)),
+            obj.amount.currency,
+        )
+
+    transaction_amount.short_description = _("diff.")
+
+
+@admin.action(description="Read transaction import")
+def read_transaction_import(modeladmin, request, queryset):
+    for transaction_import_obj in queryset:
+        payment.api.transaction_import.read(
+            transaction_import_id=transaction_import_obj.id,
+        )
+
+
+@admin.action(description="Run transaction import")
+def run_transaction_import(modeladmin, request, queryset):
+    for transaction_import_obj in queryset:
+        payment.api.transaction_import.run(
+            transaction_import_id=transaction_import_obj.id,
+        )
+
+
 @admin.register(TransactionImport)
 class TransactionImportAdmin(admin.ModelAdmin):
     search_fields = ("id",)
@@ -864,7 +917,11 @@ class TransactionImportAdmin(admin.ModelAdmin):
     list_filter = ("date_from", "date_to", "status", "source")
     readonly_fields = ("status", "created_at")
     ordering = ("-created_at",)
-    inlines = (TransactionReadOnlyInline,)
+    actions = (read_transaction_import, run_transaction_import)
+    inlines = (
+        TransactionImportLineInline,
+        TransactionReadOnlyInline,
+    )
 
 
 @admin.register(Receipt)

@@ -82,10 +82,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
     def capture(self, *args, **kwargs) -> PaymentStatus:
         assert self.order_obj.status <= OrderStatus.REQUESTED
 
-        if (
-            self.payment_order_obj.status > PaymentStatus.PROCESSING
-            or not self.payment_order_obj.external_id
-        ):
+        if not self.payment_order_obj.external_id:
             return PaymentStatus.CANCELED
 
         try:
@@ -95,7 +92,36 @@ class PaymentProviderSESwish(PaymentProviderBase):
 
             if result.status == "PAID":
                 return PaymentStatus.COMPLETED
-            PaymentStatus.CANCELED
+            return PaymentStatus.CANCELED
+        except HTTPError as e:
+            _log.exception(e)
+
+        return PaymentStatus.CANCELED
+
+    def refund(self, *args, **kwargs) -> PaymentStatus:
+        assert self.order_obj.status >= OrderStatus.PROCESSING
+
+        if not self.payment_order_obj.external_id:
+            return PaymentStatus.CANCELED
+
+        try:
+            result = self.client.create_refund(
+                original_payment_reference=self.payment_order_obj.external_id,
+                amount=self.order_obj.amount.amount.to_integral(
+                    rounding=decimal.ROUND_UP
+                ),
+                currency=str(self.order_obj.amount.currency),
+                callback_url=full_url(
+                    path=reverse(
+                        "comunicat:1.0:order-complete", args=(str(self.order_obj.id),)
+                    ),
+                    module=self.order_obj.origin_module,
+                ),
+            )
+
+            if result.status == "PAID":
+                return PaymentStatus.COMPLETED
+            return PaymentStatus.CANCELED
         except HTTPError as e:
             _log.exception(e)
 
