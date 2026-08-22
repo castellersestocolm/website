@@ -855,6 +855,26 @@ class TransactionReadOnlyInline(TransactionInline):
         return False
 
 
+class TransactionImportLineFormset(BaseInlineFormSet):
+    def save(self, commit=True):
+        transaction_import_line_objs = super().save(commit=commit)
+
+        transaction_updates = []
+
+        for transaction_import_line_obj in transaction_import_line_objs:
+            for transaction_obj in transaction_import_line_obj.transactions.all():
+                transaction_obj.importer = (
+                    transaction_import_line_obj.transaction_import
+                )
+                transaction_obj.import_line = transaction_import_line_obj
+                transaction_updates.append(transaction_obj)
+
+        if transaction_updates:
+            Transaction.objects.bulk_update(
+                transaction_updates, fields=("importer", "import_line")
+            )
+
+
 class TransactionImportLineInline(admin.TabularInline):
     model = TransactionImportLine
     ordering = ("row",)
@@ -873,6 +893,7 @@ class TransactionImportLineInline(admin.TabularInline):
     readonly_fields = ("transaction_amount",)
     exclude = ("extra",)
     raw_id_fields = ("transactions",)
+    formset = TransactionImportLineFormset
     extra = 0
 
     def get_queryset(self, request):
