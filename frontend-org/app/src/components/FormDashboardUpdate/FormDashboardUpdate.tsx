@@ -93,7 +93,10 @@ export default function FormDashboardUpdate() {
             {(Object.keys(Language) as Array<keyof typeof Language>).map(
               (language) => {
                 return (
-                  <MenuItem value={Language[language]}>
+                  <MenuItem
+                    value={Language[language]}
+                    disabled={language === "ENGLISH"}
+                  >
                     {getEnumLabel(t, "language", Language[language])}
                   </MenuItem>
                 );

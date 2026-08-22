@@ -264,7 +264,10 @@ function MembershipPage() {
                       <Stack
                         direction="row"
                         spacing={2}
-                        style={{ padding: "8px 0", justifyContent: "center" }}
+                        style={{
+                          padding: "16px 0 8px 0",
+                          justifyContent: "center",
+                        }}
                       >
                         <Button
                           variant="contained"
