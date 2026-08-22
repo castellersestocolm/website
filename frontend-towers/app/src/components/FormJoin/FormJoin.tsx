@@ -320,14 +320,14 @@ export default function FormJoin() {
                 {t("pages.user-join.prices.title")}
               </Typography>
               <Grid container justifyContent="center">
-                <Grid size={{ xs: 12, sm: 10, md: 8, lg: 6 }}>
+                <Grid size={{ xs: 12, sm: 10, md: 10, lg: 8 }}>
                   <Typography variant="body1">
                     {t("pages.user-join.prices.description")}
                   </Typography>
                 </Grid>
               </Grid>
               <Grid container gap={3} justifyContent="center">
-                <Grid size={{ xs: 12, sm: 5, md: 4, lg: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 5, lg: 4 }}>
                   <Card variant="outlined" className={styles.pricesCard}>
                     <Box className={styles.pricesTopBox}>
                       <Typography variant="h6" fontWeight="600" component="div">
@@ -387,7 +387,7 @@ export default function FormJoin() {
                     </Box>
                   </Card>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 5, md: 4, lg: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 5, lg: 4 }}>
                   <Card variant="outlined" className={styles.pricesCard}>
                     <Box className={styles.pricesTopBox}>
                       <Typography variant="h6" fontWeight="600" component="div">

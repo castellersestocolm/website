@@ -987,7 +987,7 @@ msgstr "Välkomen till Les Quatre Barres"
 
 #: notify/consts.py:44
 msgid "Welcome to Les Quatre Barres new website"
-msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
+msgstr "Välkommen till Les Quatre Barres ny hemsida"
 
 #: notify/consts.py:48 notify/consts.py:119
 msgid "You have been invited to join a family"

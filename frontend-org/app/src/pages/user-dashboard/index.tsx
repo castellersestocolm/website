@@ -32,6 +32,7 @@ import {
   apiUserFamilyMemberRequestReject,
   apiUserFamilyMemberRequestAccept,
   apiUserMe,
+  apiOrderMembershipCreate,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes";
@@ -47,7 +48,6 @@ import IconPayment from "@mui/icons-material/Payment";
 import IconWorkspaces from "@mui/icons-material/Workspaces";
 import IconLanguage from "@mui/icons-material/Language";
 import IconReplay from "@mui/icons-material/Replay";
-import IconChevronRight from "@mui/icons-material/KeyboardDoubleArrowRight";
 import IconHowToReg from "@mui/icons-material/HowToReg";
 import IconPersonAdd from "@mui/icons-material/PersonAdd";
 import IconPersonSearch from "@mui/icons-material/PersonSearch";
@@ -69,6 +69,7 @@ import {
   EventType,
   RegistrationStatus,
   FamilyMemberRequestStatus,
+  OrderType,
 } from "../../enums";
 import { capitalizeFirstLetter, lowerFirstLetter } from "../../utils/string";
 import IconDowload from "@mui/icons-material/Download";
@@ -77,15 +78,11 @@ import {
   API_EXPENSES_LIST_PAGE_SIZE,
   API_ORDERS_LIST_PAGE_SIZE,
   API_PAYMENTS_LIST_PAGE_SIZE,
-  PAYMENT_SWISH_NUMBER,
   API_EVENTS_LIST_PAGE_SIZE,
   API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
 } from "../../consts";
 import IconButton from "@mui/material/IconButton";
-import ImageIconSwish from "../../assets/images/icons/swish.png";
 
-// @ts-ignore
-import QRCode from "qrcode";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
@@ -157,7 +154,6 @@ function UserDashboardPage() {
   const [membership, setMembership] = React.useState(undefined);
   const [programCourseRegistrations, setProgramCourseRegistrations] =
     React.useState(undefined);
-  const [paymentSvg, setPaymentSvg] = React.useState(undefined);
 
   const handleFamilyClick = (memberId: string) => {
     setFamilyMembersOpen({
@@ -322,34 +318,6 @@ function UserDashboardPage() {
             },
           );
           setMembership(currentMembership);
-
-          if (currentMembership) {
-            const membershipText =
-              t("swish.payment.membership") +
-              " " +
-              currentMembership.date_from.slice(0, 4) +
-              " - " +
-              (user.lastname
-                ? user.firstname + " " + user.lastname
-                : user.firstname);
-
-            if (currentMembership.status < MembershipStatus.PROCESSING) {
-              QRCode.toDataURL(
-                "C" +
-                  PAYMENT_SWISH_NUMBER.replaceAll(" ", "") +
-                  ";" +
-                  currentMembership.amount.amount +
-                  ";" +
-                  membershipText +
-                  ";0",
-                { width: 500, margin: 0 },
-              )
-                .then((url: string) => {
-                  setPaymentSvg(url);
-                })
-                .catch((err: any) => {});
-            }
-          }
         }
       });
       apiUserFamilyMemberRequestList().then((response) => {
@@ -433,7 +401,7 @@ function UserDashboardPage() {
 
   React.useEffect(() => {
     if (user) {
-      apiOrderList(orderPage).then((response) => {
+      apiOrderList(orderPage, [OrderType.PRODUCT]).then((response) => {
         if (response.status === 200) {
           setOrders(response.data);
         }
@@ -450,6 +418,29 @@ function UserDashboardPage() {
       });
     }
   }, [user, i18n.resolvedLanguage, setExpenses, expensePage]);
+
+  function handleMembershipProcess() {
+    if (membership) {
+      const cartModules = membership.modules.map((module: any) => {
+        return { id: module.id };
+      });
+
+      apiOrderMembershipCreate(cartModules).then((response) => {
+        if (response.status === 201) {
+          navigate(
+            ROUTES["membership-payment"].path.replace(":id", response.data.id),
+          );
+        } else {
+          setMessages([
+            { message: t("pages.order-cart.order.error"), type: "error" },
+          ]);
+          setTimeout(() => setMessages(undefined), 10000);
+        }
+      });
+    } else {
+      navigate(ROUTES.membership.path);
+    }
+  }
 
   const contentSidebarProfile = user && (
     <Grid>
@@ -588,253 +579,210 @@ function UserDashboardPage() {
 
   const contentSidebarMembership = user && (
     <Grid>
-      {membership && (
-        <Card variant="outlined">
-          <Box className={styles.userTopBox}>
-            <Typography variant="h6" fontWeight="600" component="div">
-              {membership
-                ? t("pages.user-dashboard.section.membership.title")
-                : t("pages.user-dashboard.section.membership-renew.title")}
-            </Typography>
-          </Box>
-          <Divider />
+      <Card variant="outlined">
+        <Box className={styles.userTopBox}>
+          <Typography variant="h6" fontWeight="600" component="div">
+            {t("pages.user-dashboard.section.membership.title")}
+          </Typography>
+        </Box>
+        <Divider />
+        <Box className={styles.userDetailsBox}>
           {membership && (
+            <List dense={true} className={styles.userList}>
+              <ListItem>
+                <ListItemIcon>
+                  {MEMBERSHIP_STATUS_ICON[membership.status]}
+                </ListItemIcon>
+                <ListItemText
+                  primary={getEnumLabel(
+                    t,
+                    "membership-status",
+                    membership.status,
+                  )}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <IconPayment />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    membership.amount.amount + " " + membership.amount.currency
+                  }
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <IconWorkspaces />
+                </ListItemIcon>
+                <ListItemText
+                  primary={membership.modules.map((membershipModule: any) => {
+                    return (
+                      <span className={styles.dashboardMembershipModule}>
+                        {getEnumLabel(t, "module", membershipModule.module)}
+                      </span>
+                    );
+                  })}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <IconCalendarMonth />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    dateToString(i18n.resolvedLanguage, membership.date_from) +
+                    " → " +
+                    dateToString(i18n.resolvedLanguage, membership.date_to)
+                  }
+                />
+              </ListItem>
+              {membership.status >= MembershipStatus.ACTIVE && (
+                <ListItem>
+                  <ListItemIcon>
+                    <IconEventRepeat />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      membership.can_renew
+                        ? t(
+                            "pages.user-dashboard.section.membership.renew-now",
+                          ) +
+                          " " +
+                          membership.date_to
+                        : t(
+                            "pages.user-dashboard.section.membership.renew-date",
+                          ) +
+                          " " +
+                          membership.date_renewal
+                    }
+                  />
+                </ListItem>
+              )}
+            </List>
+          )}
+          {(!membership || membership.status < MembershipStatus.PROCESSING) && (
             <>
-              <Box className={styles.userDetailsBox}>
-                <List dense={true} className={styles.userList}>
-                  <ListItem>
-                    <ListItemIcon>
-                      {MEMBERSHIP_STATUS_ICON[membership.status]}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={getEnumLabel(
-                        t,
-                        "membership-status",
-                        membership.status,
-                      )}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <IconPayment />
-                    </ListItemIcon>
+              <Stack
+                direction="row"
+                spacing={2}
+                style={{ padding: "8px 0", justifyContent: "center" }}
+              >
+                <Button
+                  variant="contained"
+                  type="button"
+                  disableElevation
+                  onClick={handleMembershipProcess}
+                >
+                  {t("pages.user-dashboard.section.membership.payment")}
+                </Button>
+              </Stack>
+            </>
+          )}
+        </Box>
+        <Divider />
+        {programCourses && (
+          <>
+            <List className={styles.userFamilyList}>
+              {programCourses.map((programCourse: any, i: number, row: any) => (
+                <Box key={programCourse.id}>
+                  <ListItemButton
+                    onClick={() => handleCourseClick(programCourse.id)}
+                    dense
+                  >
                     <ListItemText
                       primary={
-                        membership.amount.amount +
-                        " " +
-                        membership.amount.currency
+                        <Typography variant="body1">
+                          {programCourse.program.name}
+                        </Typography>
                       }
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <IconWorkspaces />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={membership.modules.map(
-                        (membershipModule: any) => {
-                          return (
-                            <span className={styles.dashboardMembershipModule}>
-                              {getEnumLabel(
-                                t,
-                                "module",
-                                membershipModule.module,
-                              )}
-                            </span>
-                          );
-                        },
-                      )}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <IconCalendarMonth />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={
+                      secondary={
                         dateToString(
                           i18n.resolvedLanguage,
-                          membership.date_from,
+                          programCourse.date_from,
                         ) +
                         " → " +
-                        dateToString(i18n.resolvedLanguage, membership.date_to)
+                        dateToString(
+                          i18n.resolvedLanguage,
+                          programCourse.date_to,
+                        )
                       }
                     />
-                  </ListItem>
-                  {membership.status >= MembershipStatus.ACTIVE && (
-                    <ListItem>
-                      <ListItemIcon>
-                        <IconEventRepeat />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={
-                          membership.can_renew
-                            ? t(
-                                "pages.user-dashboard.section.membership.renew-now",
-                              ) +
-                              " " +
-                              membership.date_to
-                            : t(
-                                "pages.user-dashboard.section.membership.renew-date",
-                              ) +
-                              " " +
-                              membership.date_renewal
-                        }
-                      />
-                    </ListItem>
-                  )}
-                </List>
-              </Box>
-              {membership.status < MembershipStatus.PROCESSING && (
-                <>
-                  <Divider />
-                  <Box className={styles.userPaymentBox}>
-                    <Typography variant="body1" fontWeight={600}>
-                      {t(
-                        "pages.user-dashboard.section.membership.payment-title",
-                      )}
-                    </Typography>
-                    <List dense className={styles.userList}>
-                      {t("pages.user-dashboard.section.membership.payment-list")
-                        .split("\n")
-                        .map((paymentText: string, ix: number) => {
-                          return (
-                            <ListItem key={ix}>
-                              <ListItemIcon>
-                                <IconChevronRight />
-                              </ListItemIcon>
-                              <ListItemText primary={paymentText} />
-                            </ListItem>
-                          );
-                        })}
-                    </List>
-                    <Box className={styles.userMembershipPaymentBox}>
-                      <img
-                        src={ImageIconSwish}
-                        className={styles.userMembershipPaymentIconSwish}
-                        alt="Swish logo"
-                      />
-                      <img
-                        src={paymentSvg}
-                        alt="Swish QR"
-                        className={styles.userMembershipPaymentSwish}
-                      />
-                    </Box>
-                  </Box>
-                </>
-              )}
-              <Divider />
-            </>
-          )}
-          {programCourses && (
-            <>
-              <List className={styles.userFamilyList}>
-                {programCourses.map(
-                  (programCourse: any, i: number, row: any) => (
-                    <Box key={programCourse.id}>
-                      <ListItemButton
-                        onClick={() => handleCourseClick(programCourse.id)}
-                        dense
-                      >
-                        <ListItemText
-                          primary={
-                            <Typography variant="body1">
-                              {programCourse.program.name}
-                            </Typography>
-                          }
-                          secondary={
-                            dateToString(
-                              i18n.resolvedLanguage,
-                              programCourse.date_from,
-                            ) +
-                            " → " +
-                            dateToString(
-                              i18n.resolvedLanguage,
-                              programCourse.date_to,
-                            )
-                          }
-                        />
-                        {coursesOpen[programCourse.id] ? (
-                          <IconExpandLess />
-                        ) : (
-                          <IconExpandMore />
-                        )}
-                      </ListItemButton>
-                      <Collapse
-                        in={coursesOpen[programCourse.id]}
-                        timeout="auto"
-                        unmountOnExit
-                      >
-                        <List className={styles.userFamilyList}>
-                          {programCourseRegistrations &&
-                            programCourseRegistrations.results
-                              .filter(
-                                (programCourseRegistration: any) =>
-                                  programCourseRegistration.course.id ===
-                                  programCourse.id,
-                              )
-                              .map(
-                                (
-                                  programCourseRegistration: any,
-                                  i: number,
-                                  row: any,
-                                ) => (
-                                  <Box key={programCourseRegistration.id}>
-                                    <ListItemButton disableTouchRipple dense>
-                                      <ListItemText
-                                        primary={
+                    {coursesOpen[programCourse.id] ? (
+                      <IconExpandLess />
+                    ) : (
+                      <IconExpandMore />
+                    )}
+                  </ListItemButton>
+                  <Collapse
+                    in={coursesOpen[programCourse.id]}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <List className={styles.userFamilyList}>
+                      {programCourseRegistrations &&
+                        programCourseRegistrations.results
+                          .filter(
+                            (programCourseRegistration: any) =>
+                              programCourseRegistration.course.id ===
+                              programCourse.id,
+                          )
+                          .map(
+                            (
+                              programCourseRegistration: any,
+                              i: number,
+                              row: any,
+                            ) => (
+                              <Box key={programCourseRegistration.id}>
+                                <ListItemButton disableTouchRipple dense>
+                                  <ListItemText
+                                    primary={
+                                      programCourseRegistration.entity.lastname
+                                        ? programCourseRegistration.entity
+                                            .firstname +
+                                          " " +
                                           programCourseRegistration.entity
                                             .lastname
-                                            ? programCourseRegistration.entity
-                                                .firstname +
-                                              " " +
-                                              programCourseRegistration.entity
-                                                .lastname
-                                            : programCourseRegistration.entity
-                                                .firstname
-                                        }
-                                      />
-                                      {programCourseRegistration.amount && (
-                                        <Typography
-                                          variant="body2"
-                                          component="span"
-                                        >
-                                          {
-                                            programCourseRegistration.amount
-                                              .amount
-                                          }{" "}
-                                          {
-                                            programCourseRegistration.amount
-                                              .currency
-                                          }
-                                        </Typography>
-                                      )}
-                                    </ListItemButton>
-                                  </Box>
-                                ),
-                              )}
-                        </List>
-                      </Collapse>
+                                        : programCourseRegistration.entity
+                                            .firstname
+                                    }
+                                  />
+                                  {programCourseRegistration.amount && (
+                                    <Typography
+                                      variant="body2"
+                                      component="span"
+                                    >
+                                      {programCourseRegistration.amount.amount}{" "}
+                                      {
+                                        programCourseRegistration.amount
+                                          .currency
+                                      }
+                                    </Typography>
+                                  )}
+                                </ListItemButton>
+                              </Box>
+                            ),
+                          )}
+                    </List>
+                  </Collapse>
 
-                      {i + 1 < row.length && <Divider />}
-                    </Box>
-                  ),
-                )}
-              </List>
-              <Divider />
-            </>
-          )}
-          <Box className={styles.userMembershipInfoBox}>
-            <Typography variant="body2" component="span">
-              {t("pages.user-dashboard.section.membership.description") + " "}
-              <Link color="textSecondary" href={"mailto:" + ORG_INFO_EMAIL}>
-                {ORG_INFO_EMAIL}
-              </Link>
-              {"."}
-            </Typography>
-          </Box>
-        </Card>
-      )}
+                  {i + 1 < row.length && <Divider />}
+                </Box>
+              ))}
+            </List>
+            <Divider />
+          </>
+        )}
+        <Box className={styles.userMembershipInfoBox}>
+          <Typography variant="body2" component="span">
+            {t("pages.user-dashboard.section.membership.description") + " "}
+            <Link color="textSecondary" href={"mailto:" + ORG_INFO_EMAIL}>
+              {ORG_INFO_EMAIL}
+            </Link>
+            {"."}
+          </Typography>
+        </Box>
+      </Card>
     </Grid>
   );
 
@@ -1191,213 +1139,187 @@ function UserDashboardPage() {
                 <Box className={styles.userFamilyBox}>
                   {orders.results.length > 0 ? (
                     <List className={styles.userFamilyList}>
-                      {orders.results
-                        .filter(
-                          (order: any) =>
-                            (order.products && order.products.length > 0) ||
-                            (order.registrations &&
-                              order.registrations.length > 0),
-                        )
-                        .map((order: any, i: number, row: any) => (
-                          <Box key={order.id}>
-                            <ListItemButton
-                              onClick={() => handleOrderClick(order.id)}
-                              dense
-                            >
-                              <ListItemIcon>
-                                {ORDER_STATUS_ICON[order.status]}
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={
-                                  <>
-                                    <Typography
-                                      variant="body2"
-                                      component="span"
-                                    >
-                                      {"#"}
-                                      {order.reference}
-                                      {" — "}
-                                      {order.products &&
-                                      order.products.length > 0
-                                        ? capitalizeFirstLetter(
-                                            Array.from(
-                                              new Set(
-                                                order.products.map(
-                                                  (orderProduct: any) =>
-                                                    lowerFirstLetter(
-                                                      orderProduct.size.product
-                                                        .name,
-                                                    ),
-                                                ),
-                                              ),
-                                            ).join(", "),
-                                          )
-                                        : Array.from(
+                      {orders.results.map((order: any, i: number, row: any) => (
+                        <Box key={order.id}>
+                          <ListItemButton
+                            onClick={() => handleOrderClick(order.id)}
+                            dense
+                          >
+                            <ListItemIcon>
+                              {ORDER_STATUS_ICON[order.status]}
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={
+                                <>
+                                  <Typography variant="body2" component="span">
+                                    {"#"}
+                                    {order.reference}
+                                    {" — "}
+                                    {order.products && order.products.length > 0
+                                      ? capitalizeFirstLetter(
+                                          Array.from(
                                             new Set(
-                                              order.registrations.map(
-                                                (orderRegistration: any) =>
-                                                  orderRegistration.registration
-                                                    .event.title,
+                                              order.products.map(
+                                                (orderProduct: any) =>
+                                                  lowerFirstLetter(
+                                                    orderProduct.size.product
+                                                      .name,
+                                                  ),
                                               ),
                                             ),
-                                          ).join(", ")}
-                                    </Typography>
-                                    <Typography
-                                      variant="body2"
-                                      color="textSecondary"
-                                      component="span"
-                                    >
-                                      {" — "}
-                                    </Typography>
-                                    <Typography
-                                      variant="body2"
-                                      color={
-                                        order.status === OrderStatus.CREATED
-                                          ? "error"
-                                          : order.status ===
-                                              OrderStatus.PROCESSING
-                                            ? "secondary"
-                                            : "success"
-                                      }
-                                      component="span"
-                                    >
-                                      {order.amount.amount}{" "}
-                                      {order.amount.currency}
-                                    </Typography>
-                                  </>
-                                }
-                                secondary={
-                                  getEnumLabel(
-                                    t,
-                                    "order-status",
-                                    order.status,
-                                  ) +
-                                  " " +
-                                  (order.status >= OrderStatus.COMPLETED ||
-                                  order.status === OrderStatus.REQUESTED
-                                    ? t("pages.user-payments.payment.date-done")
-                                    : t(
-                                        "pages.user-payments.payment.date-doing",
-                                      )) +
-                                  " " +
-                                  dateToString(
-                                    i18n.resolvedLanguage,
-                                    order.logs && order.logs.length > 0
-                                      ? order.logs[0].created_at
-                                      : order.created_at,
-                                  )
-                                }
-                              />
-                              {ordersOpen[order.id] ? (
-                                <IconExpandLess />
-                              ) : (
-                                <IconExpandMore />
-                              )}
-                            </ListItemButton>
-                            <Collapse
-                              in={ordersOpen[order.id]}
-                              timeout="auto"
-                              unmountOnExit
-                            >
-                              <List className={styles.userFamilyList}>
-                                {order.products &&
-                                  order.products.length > 0 &&
-                                  order.products.map(
-                                    (
-                                      orderProduct: any,
-                                      i: number,
-                                      row: any,
-                                    ) => (
-                                      <Box key={orderProduct.id}>
-                                        <ListItemButton
-                                          disableTouchRipple
-                                          dense
+                                          ).join(", "),
+                                        )
+                                      : Array.from(
+                                          new Set(
+                                            order.registrations.map(
+                                              (orderRegistration: any) =>
+                                                orderRegistration.registration
+                                                  .event.title,
+                                            ),
+                                          ),
+                                        ).join(", ")}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="textSecondary"
+                                    component="span"
+                                  >
+                                    {" — "}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color={
+                                      order.status === OrderStatus.CREATED
+                                        ? "error"
+                                        : order.status ===
+                                            OrderStatus.PROCESSING
+                                          ? "secondary"
+                                          : "success"
+                                    }
+                                    component="span"
+                                  >
+                                    {order.amount.amount}{" "}
+                                    {order.amount.currency}
+                                  </Typography>
+                                </>
+                              }
+                              secondary={
+                                getEnumLabel(t, "order-status", order.status) +
+                                " " +
+                                (order.status >= OrderStatus.COMPLETED ||
+                                order.status === OrderStatus.REQUESTED
+                                  ? t("pages.user-payments.payment.date-done")
+                                  : t(
+                                      "pages.user-payments.payment.date-doing",
+                                    )) +
+                                " " +
+                                dateToString(
+                                  i18n.resolvedLanguage,
+                                  order.logs && order.logs.length > 0
+                                    ? order.logs[0].created_at
+                                    : order.created_at,
+                                )
+                              }
+                            />
+                            {ordersOpen[order.id] ? (
+                              <IconExpandLess />
+                            ) : (
+                              <IconExpandMore />
+                            )}
+                          </ListItemButton>
+                          <Collapse
+                            in={ordersOpen[order.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <List className={styles.userFamilyList}>
+                              {order.products &&
+                                order.products.length > 0 &&
+                                order.products.map(
+                                  (orderProduct: any, i: number, row: any) => (
+                                    <Box key={orderProduct.id}>
+                                      <ListItemButton disableTouchRipple dense>
+                                        <ListItemIcon
+                                          className={styles.eventCardIcon}
                                         >
-                                          <ListItemIcon
-                                            className={styles.eventCardIcon}
-                                          >
-                                            {orderProduct.size.product.images &&
-                                              orderProduct.size.product.images
-                                                .length > 0 && (
-                                                <img
-                                                  src={
-                                                    BACKEND_BASE_URL +
-                                                    orderProduct.size.product
-                                                      .images[0].picture
-                                                  }
-                                                  alt={
-                                                    orderProduct.size.product
-                                                      .name
-                                                  }
-                                                  className={
-                                                    styles.eventCardImage
-                                                  }
-                                                />
-                                              )}
-                                          </ListItemIcon>
-                                          <ListItemText
-                                            primary={
-                                              orderProduct.quantity +
-                                              " x " +
-                                              orderProduct.size.product.name +
-                                              " — " +
-                                              orderProduct.size.size
-                                            }
-                                          />
-                                          <Typography
-                                            variant="body2"
-                                            component="span"
-                                          >
-                                            {orderProduct.amount.amount}{" "}
-                                            {orderProduct.amount.currency}
-                                          </Typography>
-                                        </ListItemButton>
-                                      </Box>
-                                    ),
-                                  )}
-                                {order.registrations &&
-                                  order.registrations.length > 0 &&
-                                  order.registrations.map(
-                                    (
-                                      orderRegistration: any,
-                                      i: number,
-                                      row: any,
-                                    ) => (
-                                      <Box key={orderRegistration.id}>
-                                        <ListItemButton
-                                          disableTouchRipple
-                                          dense
+                                          {orderProduct.size.product.images &&
+                                            orderProduct.size.product.images
+                                              .length > 0 && (
+                                              <img
+                                                src={
+                                                  BACKEND_BASE_URL +
+                                                  orderProduct.size.product
+                                                    .images[0].picture
+                                                }
+                                                alt={
+                                                  orderProduct.size.product.name
+                                                }
+                                                className={
+                                                  styles.eventCardImage
+                                                }
+                                              />
+                                            )}
+                                        </ListItemIcon>
+                                        <ListItemText
+                                          primary={
+                                            orderProduct.quantity +
+                                            " x " +
+                                            orderProduct.size.product.name +
+                                            " — " +
+                                            orderProduct.size.size
+                                          }
+                                        />
+                                        <Typography
+                                          variant="body2"
+                                          component="span"
                                         >
-                                          <ListItemText
-                                            primary={
-                                              orderRegistration.registration
-                                                .entity.lastname
-                                                ? orderRegistration.registration
-                                                    .entity.firstname +
-                                                  " " +
-                                                  orderRegistration.registration
-                                                    .entity.lastname
-                                                : orderRegistration.registration
-                                                    .entity.firstname
-                                            }
-                                          />
-                                          <Typography
-                                            variant="body2"
-                                            component="span"
-                                          >
-                                            {orderRegistration.amount.amount}{" "}
-                                            {orderRegistration.amount.currency}
-                                          </Typography>
-                                        </ListItemButton>
-                                      </Box>
-                                    ),
-                                  )}
-                              </List>
-                            </Collapse>
+                                          {orderProduct.amount.amount}{" "}
+                                          {orderProduct.amount.currency}
+                                        </Typography>
+                                      </ListItemButton>
+                                    </Box>
+                                  ),
+                                )}
+                              {order.registrations &&
+                                order.registrations.length > 0 &&
+                                order.registrations.map(
+                                  (
+                                    orderRegistration: any,
+                                    i: number,
+                                    row: any,
+                                  ) => (
+                                    <Box key={orderRegistration.id}>
+                                      <ListItemButton disableTouchRipple dense>
+                                        <ListItemText
+                                          primary={
+                                            orderRegistration.registration
+                                              .entity.lastname
+                                              ? orderRegistration.registration
+                                                  .entity.firstname +
+                                                " " +
+                                                orderRegistration.registration
+                                                  .entity.lastname
+                                              : orderRegistration.registration
+                                                  .entity.firstname
+                                          }
+                                        />
+                                        <Typography
+                                          variant="body2"
+                                          component="span"
+                                        >
+                                          {orderRegistration.amount.amount}{" "}
+                                          {orderRegistration.amount.currency}
+                                        </Typography>
+                                      </ListItemButton>
+                                    </Box>
+                                  ),
+                                )}
+                            </List>
+                          </Collapse>
 
-                            {i + 1 < row.length && <Divider />}
-                          </Box>
-                        ))}
+                          {i + 1 < row.length && <Divider />}
+                        </Box>
+                      ))}
                     </List>
                   ) : (
                     <Box className={styles.userFamilyEmpty}>

@@ -13,9 +13,10 @@ from django.db.models import (
     Value,
     When,
 )
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Cast, Coalesce
 
 from comunicat.utils.managers import MoneyOutput
+from order.enums import OrderStatus
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 
 
@@ -34,6 +35,30 @@ class MembershipQuerySet(QuerySet):
                 Value(0),
                 output_field=MoneyOutput(),
             )
+        )
+
+
+class MembershipModuleQuerySet(QuerySet):
+    def with_amount_pending(self):
+        OrderMembership = apps.get_model("order", "OrderMembership")
+
+        return self.annotate(
+            amount_paid=Coalesce(
+                Subquery(
+                    OrderMembership.objects.filter(
+                        module_id=OuterRef("id"),
+                        order__status__gte=OrderStatus.REQUESTED,
+                    )
+                    .values("order_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            amount_pending=Cast(
+                F("amount") - F("amount_paid"), output_field=MoneyOutput()
+            ),
         )
 
 

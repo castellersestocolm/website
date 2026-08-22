@@ -16,7 +16,7 @@ from django.utils import translation
 
 from comunicat.utils.managers import MoneyOutput
 from event.enums import RegistrationStatus
-from order.enums import OrderType
+from order.enums import OrderStatus, OrderType
 
 
 class OrderQuerySet(QuerySet):
@@ -204,6 +204,26 @@ class OrderRegistrationQuerySet(QuerySet):
 class OrderMembershipQuerySet(QuerySet):
     def with_amount(self):
         return self.annotate(amount_vat=F("vat") * F("amount") / 100)
+
+    def with_amount_pending(self):
+        OrderMembership = apps.get_model("order", "OrderMembership")
+
+        return self.annotate(
+            amount_paid=Coalesce(
+                Subquery(
+                    OrderMembership.objects.filter(
+                        module_id=OuterRef("module_id"),
+                        order__status__gte=OrderStatus.REQUESTED,
+                    )
+                    .values("order_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1]
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            amount_pending=F("amount") - F("amount_paid"),
+        )
 
 
 class DeliveryPriceQuerySet(QuerySet):

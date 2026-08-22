@@ -12,7 +12,7 @@ import {
   API_DOCUMENTS_LIST_PAGE_SIZE,
   API_NEWSLETTER_LIST_PAGE_SIZE,
 } from "../consts";
-import { ContactMessageType } from "../enums";
+import { ContactMessageType, OrderType } from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_ORG_API_URL;
 
@@ -81,6 +81,28 @@ export const apiActivityProgramList = async () => {
 export const apiMembershipList = async () => {
   try {
     return await instance.get("/membership/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiMembershipRenewList = async () => {
+  try {
+    return await instance.get("/membership/renew/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiMembershipRenewCreate = async (modules: number[]) => {
+  try {
+    return await instance.post("/membership/renew/", {
+      modules: modules,
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called
@@ -171,14 +193,94 @@ export const apiPaymentExpenseList = async (page: number = undefined) => {
   }
 };
 
-export const apiOrderList = async (page: number = undefined) => {
+export const apiOrderList = async (
+  page: number = undefined,
+  filterTypes: number[] = undefined,
+) => {
   try {
     return await instance.get("/order/", {
       params: {
         page_size: API_ORDERS_LIST_PAGE_SIZE,
         page: page,
+        filter_types: filterTypes && filterTypes.join(","),
       },
     });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderRetrieve = async (id: string) => {
+  try {
+    return await instance.get("/order/" + id);
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiPaymentProviderList = async () => {
+  try {
+    return await instance.get("/payment/provider/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderDelete = async (orderId: string) => {
+  try {
+    return await instance.delete("/order/" + orderId + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderProviderUpdate = async (
+  orderId: string,
+  providerId: string,
+) => {
+  try {
+    return await instance.patch("/order/" + orderId + "/provider/", {
+      provider_id: providerId,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderComplete = async (
+  orderId: string,
+  datePaid: string = undefined,
+  transactionId: string = undefined,
+  transactionReference: string = undefined,
+) => {
+  try {
+    return await instance.post("/order/" + orderId + "/complete/", {
+      date_paid: datePaid,
+      transaction: {
+        id: transactionId,
+        reference: transactionReference,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderRestart = async (orderId: string) => {
+  try {
+    return await instance.post("/order/" + orderId + "/restart/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called
@@ -193,6 +295,40 @@ export const apiPaymentList = async (page: number = undefined) => {
         page_size: API_PAYMENTS_LIST_PAGE_SIZE,
         page: page,
       },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiUserCreate = async (
+  firstname: string,
+  lastname: string,
+  email: string,
+  phone: string,
+  password: string,
+  password2: string,
+  birthday: string,
+  consent_pictures: boolean,
+  preferred_language: string,
+  consentTypes: number[],
+) => {
+  try {
+    return await instance.post("/user/", {
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      phone: phone,
+      password: password,
+      password2: password2,
+      birthday: birthday,
+      consent_pictures: consent_pictures,
+      preferred_language: preferred_language,
+      towers: {},
+      organisation: {},
+      consent_types: consentTypes,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -560,6 +696,19 @@ export const apiConsentEntityCreate = async (
       consents: consents.map((consent: any) => {
         return { type: consent.type, newsletter_id: consent.newsletterId };
       }),
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderMembershipCreate = async (modules: any[]) => {
+  try {
+    return await instance.post("/order/", {
+      cart: { modules: modules },
+      type: OrderType.MEMBERSHIP,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

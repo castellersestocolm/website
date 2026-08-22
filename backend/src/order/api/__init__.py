@@ -137,6 +137,16 @@ def get_list(
                     "registration__entity__lastname",
                 ),
             ),
+            Prefetch(
+                "memberships",
+                OrderMembership.objects.select_related(
+                    "module",
+                    "module__membership",
+                ).order_by(
+                    "module__module",
+                    "amount",
+                ),
+            ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )
         .with_amount()
@@ -291,7 +301,9 @@ def create(  # noqa: C901
             membership_module_obj.id: membership_module_obj
             for membership_module_obj in MembershipModule.objects.filter(
                 id__in=[cart_module["id"] for cart_module in cart_modules]
-            ).select_related("membership")
+            )
+            .with_amount_pending()
+            .select_related("membership")
         }
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
@@ -342,11 +354,11 @@ def create(  # noqa: C901
         for cart_module in cart_modules:
             membership_module_obj = membership_module_obj_by_id[cart_module["id"]]
 
-            OrderMembership.objects.get_or_create(
+            OrderMembership.objects.update_or_create(
                 order=order_obj,
                 module=membership_module_obj,
                 defaults={
-                    "amount": membership_module_obj.amount,
+                    "amount": membership_module_obj.amount_pending,
                     "vat": settings.MODULE_ALL_VAT,
                 },
             )
