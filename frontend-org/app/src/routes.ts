@@ -23,6 +23,9 @@ export const ROUTES = {
   "user-set-password": {
     path: "/user/password/:token",
   },
+  "user-set-verify": {
+    path: "/user/verify/:token",
+  },
   "activity-kids": {
     path: "/activity/kids",
   },
