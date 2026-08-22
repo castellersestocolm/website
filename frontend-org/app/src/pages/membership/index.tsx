@@ -73,6 +73,29 @@ function MembershipPage() {
     });
   }, [setMembershipRenewOptions, i18n.resolvedLanguage]);
 
+  function handleMembershipProcess() {
+    if (membership) {
+      const cartModules = membership.modules.map((module: any) => {
+        return { id: module.id };
+      });
+
+      apiOrderMembershipCreate(cartModules).then((response) => {
+        if (response.status === 201) {
+          navigate(
+            ROUTES["membership-payment"].path.replace(":id", response.data.id),
+          );
+        } else {
+          setMessages([
+            { message: t("pages.order-cart.order.error"), type: "error" },
+          ]);
+          setTimeout(() => setMessages(undefined), 10000);
+        }
+      });
+    } else {
+      navigate(ROUTES.membership.path);
+    }
+  }
+
   function handleRenewSubmit(modules: number[]) {
     apiMembershipRenewCreate(modules).then((response) => {
       if (response.status === 200) {
@@ -236,6 +259,24 @@ function MembershipPage() {
                       </ListItem>
                     )}
                   </List>
+                  {membership.status < MembershipStatus.PROCESSING && (
+                    <>
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        style={{ padding: "8px 0", justifyContent: "center" }}
+                      >
+                        <Button
+                          variant="contained"
+                          type="button"
+                          disableElevation
+                          onClick={handleMembershipProcess}
+                        >
+                          {t("pages.user-dashboard.section.membership.payment")}
+                        </Button>
+                      </Stack>
+                    </>
+                  )}
                 </Box>
               </Card>
             </Grid>
