@@ -9,6 +9,10 @@ const AppContext = React.createContext({
   setFamilyMemberRequests: (requests: any) => {},
   familyMemberRequestsReceived: [],
   setFamilyMemberRequestsReceived: (requests: any) => {},
+  cart: undefined,
+  setCart: (cart: any) => {},
+  order: undefined,
+  setOrder: (order: any) => {},
 } as any);
 
 export const useAppContext = () => React.useContext(AppContext);

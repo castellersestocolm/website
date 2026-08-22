@@ -10,7 +10,11 @@ from djmoney.models.fields import MoneyField
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from membership.enums import MembershipStatus
-from membership.managers import MembershipQuerySet, MembershipUserQuerySet
+from membership.managers import (
+    MembershipModuleQuerySet,
+    MembershipQuerySet,
+    MembershipUserQuerySet,
+)
 
 
 class Membership(StandardModel, Timestamps):
@@ -101,6 +105,8 @@ class MembershipModule(StandardModel, Timestamps):
         content_type_field="item_type",
         related_query_name="membership_module",
     )
+
+    objects = MembershipModuleQuerySet.as_manager()
 
     def __str__(self) -> str:
         return f"{self.membership} [{Module(self.module).name}]"

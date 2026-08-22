@@ -28,10 +28,14 @@ import AboutContactPage from "./pages/about-contact";
 import AboutNewsletterPage from "./pages/about-newsletter";
 import NewsPostPage from "./pages/news-post";
 import PolicyPrivacyPage from "./pages/policy-privacy";
+import PolicyPurchasePage from "./pages/policy-purchase";
 import ActivityKidsPage from "./pages/activity-kids";
 import ResourcesNewslettersPage from "./pages/resources-newsletters";
 import ResourcesReportsPage from "./pages/resources-reports";
 import ResourcesTransparencyPage from "./pages/resources-transparency";
+import MembershipPage from "./pages/membership";
+import MembershipPaymentPage from "./pages/membership-payment";
+import MembershipReceiptPage from "./pages/membership-receipt";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -54,6 +58,10 @@ const App = () => {
     React.useState(undefined);
   const [familyMemberRequestsReceived, setFamilyMemberRequestsReceived] =
     React.useState(undefined);
+  const [cart, setCart] = React.useState<{
+    [key: string]: [number, object];
+  }>({});
+  const [order, setOrder] = useState(undefined);
 
   React.useEffect(() => {
     apiUserMe().then((response) => {
@@ -76,6 +84,10 @@ const App = () => {
         setFamilyMemberRequests,
         familyMemberRequestsReceived,
         setFamilyMemberRequestsReceived,
+        cart,
+        setCart,
+        order,
+        setOrder,
       }}
     >
       <ThemeProvider theme={appTheme}>
@@ -158,6 +170,22 @@ const App = () => {
                   <Route
                     path={ROUTES["resources-transparency"].path}
                     element={<ResourcesTransparencyPage />}
+                  />
+                  <Route
+                    path={ROUTES.membership.path}
+                    element={<MembershipPage />}
+                  />
+                  <Route
+                    path={ROUTES["membership-payment"].path}
+                    element={<MembershipPaymentPage />}
+                  />
+                  <Route
+                    path={ROUTES["membership-receipt"].path}
+                    element={<MembershipReceiptPage />}
+                  />
+                  <Route
+                    path={ROUTES["policy-purchase"].path}
+                    element={<PolicyPurchasePage />}
                   />
                 </Routes>
               </Box>

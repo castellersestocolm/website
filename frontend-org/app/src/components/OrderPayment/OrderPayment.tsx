@@ -36,18 +36,11 @@ import {
   PAYMENT_TRANSFER_OWNER,
   PAYMENT_TRANSFER_PLUSGIRO,
 } from "../../consts";
-import {
-  PayPalScriptProvider,
-  PayPalButtons,
-  usePayPalScriptReducer,
-} from "@paypal/react-paypal-js";
 import { useCallback } from "react";
 import { isMobile } from "react-device-detect";
 
-const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
-const PAYMENT_PROVIDER_PAYPAL_CLIENT_ID =
-  process.env.REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID;
-const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
+const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
+const ORG_BASE_URL = new URL(process.env.REACT_APP_ORG_BASE_URL).origin;
 
 declare global {
   interface Window {
@@ -73,8 +66,6 @@ export default function OrderPayment({
     React.useState(undefined);
   const [formPaymentProviderId, setFormPaymentProviderId] =
     React.useState(undefined);
-  const [paymentPayPalOrderId, setPaymentPayPalOrderId] =
-    React.useState(undefined);
   const [paymentSumUpOrderId, setPaymentSumUpOrderId] =
     React.useState(undefined);
   const [paymentSumUpMounted, setPaymentSumUpMounted] = React.useState(false);
@@ -83,14 +74,8 @@ export default function OrderPayment({
   const [paymentSESwishOrderQR, setPaymentSESwishOrderQR] =
     React.useState(undefined);
 
-  const orderPath =
-    order && order.type === OrderType.MEMBERSHIP
-      ? ROUTES.membership.path
-      : ROUTES.order.path;
-  const orderReceiptPath =
-    order && order.type === OrderType.MEMBERSHIP
-      ? ROUTES["membership-receipt"].path.replace(":id", id)
-      : ROUTES["order-receipt"].path.replace(":id", id);
+  const orderPath = ROUTES.membership.path;
+  const orderReceiptPath = ROUTES["membership-receipt"].path.replace(":id", id);
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {
@@ -122,7 +107,7 @@ export default function OrderPayment({
       } else {
         localStorage.removeItem("orderId");
         localStorage.removeItem("order");
-        navigate(orderPath, { replace: true });
+        navigate(orderPath);
       }
     });
   }, [
@@ -219,12 +204,6 @@ export default function OrderPayment({
 
   React.useEffect(() => {
     if (order && order.payment_order) {
-      if (order.payment_order.provider.code === "PAYPAL") {
-        setPaymentPayPalOrderId(order.payment_order.external_id);
-      } else {
-        setPaymentPayPalOrderId(undefined);
-      }
-
       if (order.payment_order.provider.code === "SUMUP") {
         setPaymentSumUpOrderId(order.payment_order.external_id);
       } else {
@@ -252,15 +231,12 @@ export default function OrderPayment({
         setPaymentSESwishOrderQR(undefined);
       }
     } else {
-      setPaymentPayPalOrderId(undefined);
       setPaymentSumUpOrderId(undefined);
-      setPaymentSESwishOrderId(undefined);
       setPaymentSESwishOrderQR(undefined);
     }
   }, [
     order,
     i18n.resolvedLanguage,
-    setPaymentPayPalOrderId,
     setPaymentSumUpOrderId,
     setPaymentSESwishOrderId,
     setPaymentSESwishOrderQR,
@@ -304,24 +280,6 @@ export default function OrderPayment({
     t,
   ]);
 
-  const ButtonWrapper = ({ showSpinner }: any) => {
-    const [{ isPending }] = usePayPalScriptReducer();
-
-    return (
-      <>
-        {showSpinner && isPending && <div className="spinner" />}
-        <PayPalButtons
-          // style={style}
-          disabled={false}
-          // forceReRender={[style]}
-          fundingSource={undefined}
-          createOrder={() => paymentPayPalOrderId}
-          onApprove={(data: any) => handleCompleteOrder()}
-        />
-      </>
-    );
-  };
-
   const payText =
     order &&
     paymentProvider &&
@@ -331,12 +289,6 @@ export default function OrderPayment({
           ? t("pages.order-payment.providers-card.se-swish.window-phone-1")
           : t("pages.order-payment.providers-card.se-swish.window-1")}
       </Typography>
-    ) : paymentProvider.code === "PAYPAL" ? (
-      <>
-        <Typography variant="body2" component="div" mt={1}>
-          {t("pages.order-payment.providers-card.paypal.window-1")}
-        </Typography>
-      </>
     ) : paymentProvider.code === "SUMUP" ? (
       <>
         <Typography variant="body2" component="div" mt={1}>
@@ -366,7 +318,7 @@ export default function OrderPayment({
       <Typography variant="body2" component="div" mt={1}>
         {t("pages.order-payment.terms-privacy.disclaimer-1")}{" "}
         <Link
-          href={ROUTES["external-casal-policy-privacy"].path}
+          href={ROUTES["policy-privacy"].path}
           color="secondary"
           underline="none"
           target="_blank"
@@ -465,7 +417,7 @@ export default function OrderPayment({
                       "swish://paymentrequest?token=" +
                       order.payment_order.extra.request_token +
                       "&callbackurl=" +
-                      TOWERS_BASE_URL +
+                      ORG_BASE_URL +
                       orderReceiptPath
                     }
                     className={styles.providerSwishButton}
@@ -491,18 +443,6 @@ export default function OrderPayment({
               <LoaderBar />
             </Box>
           )
-        ) : paymentProvider.code === "PAYPAL" && paymentPayPalOrderId ? (
-          <Box className={styles.providerPayPal}>
-            <PayPalScriptProvider
-              options={{
-                clientId: PAYMENT_PROVIDER_PAYPAL_CLIENT_ID,
-                components: "buttons",
-                currency: order.amount.currency,
-              }}
-            >
-              <ButtonWrapper showSpinner={false} />
-            </PayPalScriptProvider>
-          </Box>
         ) : paymentProvider.code === "TRANSFER" ? (
           <Box className={styles.providerTransfer}>
             <List className={styles.providerTransferList}>

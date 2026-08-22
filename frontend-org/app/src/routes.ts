@@ -29,6 +29,9 @@ export const ROUTES = {
   "policy-privacy": {
     path: "/policy/privacy",
   },
+  "policy-purchase": {
+    path: "/policy/purchase",
+  },
   calendar: {
     path: "/calendar",
   },
@@ -59,6 +62,18 @@ export const ROUTES = {
   "news-post": {
     path: "/news/:year/:month/:slug",
   },
+  membership: {
+    path: "/membership",
+  },
+  "membership-payment": {
+    path: "/membership/payment/:id",
+  },
+  "membership-complete": {
+    path: "/membership/complete/:id",
+  },
+  "membership-receipt": {
+    path: "/membership/receipt/:id",
+  },
   "external-login-google": {
     path:
       API_BASE_URL +
@@ -71,6 +86,9 @@ export const ROUTES = {
   },
   "external-towers": {
     path: "https://castellersestocolm.se",
+  },
+  "external-towers-user-join": {
+    path: "https://castellersestocolm.se/user/join",
   },
   "external-gencat": {
     path: "https://gencat.cat",
