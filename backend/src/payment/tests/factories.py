@@ -38,6 +38,7 @@ from payment.models import (
     Source,
     Transaction,
     TransactionImport,
+    TransactionImportLine,
 )
 
 
@@ -94,6 +95,29 @@ class TransactionImportFactory(DjangoModelFactory):
         model = TransactionImport
 
 
+class TransactionImportLineFactory(DjangoModelFactory):
+    transaction_import = SubFactory(TransactionImportFactory)
+
+    row = Sequence(lambda n: n)
+
+    method = FuzzyChoice(PaymentMethod)
+
+    amount = LazyAttribute(lambda n: Money(random.randint(100, 500), "SEK"))
+    vat = 0
+
+    text = Faker("sentence")
+    sender = Faker("sentence")
+    reference = LazyFunction(lambda: fake_string(length=8).upper())
+
+    external_id = LazyFunction(lambda: str(uuid4()))
+
+    date_accounting = LazyFunction(lambda: timezone.localdate())
+    date_interest = SelfAttribute("date_accounting")
+
+    class Meta:
+        model = TransactionImportLine
+
+
 class TransactionFactory(DjangoModelFactory):
     source = SubFactory(SourceFactory)
 
@@ -112,6 +136,7 @@ class TransactionFactory(DjangoModelFactory):
     date_interest = SelfAttribute("date_accounting")
 
     importer = SubFactory(TransactionImportFactory)
+    import_line = SubFactory(TransactionImportLineFactory)
 
     class Meta:
         model = Transaction

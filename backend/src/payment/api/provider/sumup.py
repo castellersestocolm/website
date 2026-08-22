@@ -90,6 +90,35 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         return PaymentStatus.CANCELED
 
+    def refund(self, *args, **kwargs) -> PaymentStatus:
+        assert self.order_obj.status >= OrderStatus.PROCESSING
+
+        try:
+            checkout = self.client.checkouts.get(
+                checkout_id=self.payment_order_obj.external_id,
+            )
+        except APIError as e:
+            _log.exception(e)
+            return PaymentStatus.CANCELED
+
+        if not checkout or not checkout.transactions:
+            return PaymentStatus.CANCELED
+
+        has_error = False
+
+        for checkout_transaction in checkout.transactions:
+            if checkout_transaction.status in ("PENDING", "SUCCESSFUL"):
+                try:
+                    self.client.transactions.refund(
+                        transaction_id=checkout_transaction.id,
+                        merchant_code=checkout.merchant_code,
+                    )
+                except APIError as e:
+                    _log.exception(e)
+                    has_error = True
+
+        return PaymentStatus.PENDING if has_error else PaymentStatus.COMPLETED
+
     def cancel(self, *args, **kwargs) -> bool:
         assert self.order_obj.status == OrderStatus.CREATED
 

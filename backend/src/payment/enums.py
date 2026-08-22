@@ -57,6 +57,7 @@ class AccountCategory(IntEnum):
 
 class TransactionImportStatus(IntEnum):
     CREATED = 10
+    PROCESSED = 15
     RUNNING = 20
     COMPLETED = 30
     ERRORED = 40

@@ -652,11 +652,20 @@ class Transaction(StandardModel, Timestamps):
     date_accounting = models.DateField()
     date_interest = models.DateField(null=True, blank=True)
 
+    # TODO: Deprecate or rename
     importer = models.ForeignKey(
         "TransactionImport",
         null=True,
         blank=True,
         related_name="transactions",
+        on_delete=models.CASCADE,
+    )
+
+    import_line = models.ForeignKey(
+        "TransactionImportLine",
+        related_name="imported_transactions",
+        null=True,
+        blank=True,
         on_delete=models.CASCADE,
     )
 
@@ -704,13 +713,55 @@ class TransactionImport(StandardModel, Timestamps):
     def __str__(self):
         return f"{self.source} - {self.date_from.strftime('%Y-%m-%d')}{' / ' + self.date_to.strftime('%Y-%m-%d') if self.date_to != self.date_from else ''}"
 
-    def save(self, run: bool = True, *args, **kwargs):
+
+class TransactionImportLine(StandardModel, Timestamps):
+    transaction_import = models.ForeignKey(
+        "TransactionImport", related_name="import_lines", on_delete=models.CASCADE
+    )
+
+    row = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    method = models.PositiveIntegerField(
+        choices=((pm.value, pm.name) for pm in PaymentMethod),
+    )
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    text = models.CharField(max_length=255, null=True, blank=True)
+    sender = models.CharField(max_length=255, null=True, blank=True)
+    reference = models.CharField(max_length=255, null=True, blank=True)
+
+    external_id = models.CharField(max_length=255, null=True, blank=True)
+
+    date_accounting = models.DateField()
+    date_interest = models.DateField(null=True, blank=True)
+
+    # For storing extra data such as the token for SE_SWISH
+    extra = models.JSONField(default=dict)
+
+    transactions = models.ManyToManyField(
+        "Transaction",
+        related_name="import_lines",
+        blank=True,
+    )
+
+    def save(self, *args, **kwargs):
+        for transaction_obj in self.transactions.all():
+            transaction_obj.importer = self.transaction_import
+            transaction_obj.import_line = self
+            transaction_obj.save(
+                update_fields=(
+                    "importer",
+                    "import_line",
+                )
+            )
+
         super().save(*args, **kwargs)
-
-        if run:
-            import payment.api.importer
-
-            payment.api.importer.run(transaction_import_id=self.id)
 
 
 def get_statement_file_name(instance, filename):
@@ -756,6 +807,14 @@ class PaymentOrder(StandardModel, Timestamps):
     status = models.PositiveIntegerField(
         choices=((ps.value, ps.name) for ps in PaymentStatus),
         default=PaymentStatus.CREATED,
+    )
+
+    debit_payment_order = models.ForeignKey(
+        "self",
+        related_name="credit_payment_orders",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
     )
 
     external_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
