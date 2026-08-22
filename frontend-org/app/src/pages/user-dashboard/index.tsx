@@ -114,7 +114,9 @@ function UserDashboardPage() {
   }
 
   if (user === null) {
-    navigate(ROUTES["user-login"].path);
+    navigate(
+      ROUTES["user-login"].path + "?next=" + ROUTES["user-dashboard"].path,
+    );
   }
 
   const [familyMembersOpen, setFamilyMembersOpen] = React.useState<{
