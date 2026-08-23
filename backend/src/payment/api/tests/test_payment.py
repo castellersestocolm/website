@@ -111,7 +111,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=17, num_inserts=5, num_updates=4
+            num=0, num_selects=18, num_inserts=5, num_updates=4
         ):
             payment_obj = create_for_order(
                 order_id=self.order_1_obj.id,
@@ -125,7 +125,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         self.assertEqual(payment_obj.status, PaymentStatus.PROCESSING)
 
         with self.assertNumOperations(
-            num=0, num_selects=17, num_inserts=1, num_updates=7
+            num=0, num_selects=18, num_inserts=1, num_updates=7
         ):
             payment_obj = create_for_order(
                 order_id=self.order_1_obj.id,
@@ -215,7 +215,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=17, num_inserts=4, num_updates=1
+            num=0, num_selects=18, num_inserts=4, num_updates=1
         ):
             payment_obj = create_for_order(
                 order_id=self.order_3_obj.id,
@@ -260,7 +260,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=15, num_inserts=4, num_updates=1
+            num=0, num_selects=16, num_inserts=4, num_updates=1
         ):
             payment_obj = create_for_order(
                 order_id=self.order_4_obj.id,
@@ -305,7 +305,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=17, num_inserts=5, num_updates=4
+            num=0, num_selects=18, num_inserts=5, num_updates=4
         ):
             payment_obj = create_for_order(
                 order_id=self.order_2_obj.id,

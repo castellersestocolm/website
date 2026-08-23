@@ -14,11 +14,12 @@ from activity.models import (
     ProgramCourseRegistration,
 )
 from comunicat.enums import Module
+from comunicat.utils.factories import fake_title
 
 
 class ProgramFactory(DjangoModelFactory):
-    # name = LazyFunction(fake_title)
-    # description = LazyFunction(fake_title)
+    name = LazyFunction(fake_title)
+    description = LazyFunction(fake_title)
 
     module = FuzzyChoice(Module)
     type = FuzzyChoice(ProgramType)

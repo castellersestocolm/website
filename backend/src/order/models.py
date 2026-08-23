@@ -15,6 +15,7 @@ from event.enums import RegistrationStatus
 from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.managers import (
     DeliveryPriceQuerySet,
+    OrderCourseQuerySet,
     OrderMembershipQuerySet,
     OrderProductQuerySet,
     OrderQuerySet,
@@ -413,6 +414,68 @@ class OrderMembership(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         return f"{str(self.order)} - {str(self.module)}"
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            if self.line != self.__line:
+                if self.line:
+                    self.line.item = self
+                    self.line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+                if self.__line:
+                    self.__line.item = None
+                    self.__line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+
+        super().save(*args, **kwargs)
+
+
+class OrderCourse(StandardModel, Timestamps):
+    order = models.ForeignKey(
+        "Order",
+        related_name="courses",
+        on_delete=models.CASCADE,
+    )
+
+    registration = models.ForeignKey(
+        "activity.ProgramCourseRegistration",
+        related_name="order_courses",
+        on_delete=models.PROTECT,
+    )
+
+    line = models.OneToOneField(
+        "payment.PaymentLine",
+        related_name="order_course",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    __line = None
+
+    objects = OrderCourseQuerySet.as_manager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__line = self.line
+
+    def __str__(self) -> str:
+        return f"{str(self.order)} - {str(self.registration)}"
 
     def save(self, *args, **kwargs):
         if self.pk:

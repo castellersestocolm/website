@@ -11,10 +11,12 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
+import activity.api.program_course_registration
 import event.api.registration
 import membership.api
 import notify.tasks
 import payment.api.payment_provider
+from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from data.models import Country, Region
@@ -28,6 +30,7 @@ from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
     DeliveryProvider,
     Order,
+    OrderCourse,
     OrderDelivery,
     OrderDeliveryAddress,
     OrderLog,
@@ -147,6 +150,20 @@ def get_list(
                     "amount",
                 ),
             ),
+            Prefetch(
+                "courses",
+                OrderCourse.objects.select_related(
+                    "registration",
+                    "registration__course",
+                    "registration__entity",
+                    "registration__entity__user",
+                ).order_by(
+                    "registration__course__date_from",
+                    "amount",
+                    "registration__entity__firstname",
+                    "registration__entity__lastname",
+                ),
+            ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )
         .with_amount()
@@ -171,6 +188,7 @@ def create(  # noqa: C901
     module: Module,
     cart_sizes: list[dict] | None = None,
     cart_modules: list[dict] | None = None,
+    cart_course_registrations: list[dict] | None = None,
     user_id: UUID | None = None,
     user: dict | None = None,
     delivery: dict | None = None,
@@ -218,6 +236,7 @@ def create(  # noqa: C901
     order_delivery_obj = None
     product_size_obj_by_id = {}
     membership_module_obj_by_id = {}
+    program_course_registration_by_id = {}
 
     if order_type == OrderType.PRODUCT:
         delivery_provider_obj = DeliveryProvider.objects.get(
@@ -305,6 +324,18 @@ def create(  # noqa: C901
             .with_amount_pending()
             .select_related("membership")
         }
+    elif order_type == OrderType.COURSE:
+        program_course_registration_by_id = {
+            program_course_registration_obj.id: program_course_registration_obj
+            for program_course_registration_obj in ProgramCourseRegistration.objects.filter(
+                id__in=[
+                    cart_course_registration["id"]
+                    for cart_course_registration in cart_course_registrations
+                ]
+            ).select_related(
+                "course", "course__program", "entity", "entity__user"
+            )
+        }
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
     if provider_objs:
@@ -359,6 +390,20 @@ def create(  # noqa: C901
                 module=membership_module_obj,
                 defaults={
                     "amount": membership_module_obj.amount_pending,
+                    "vat": settings.MODULE_ALL_VAT,
+                },
+            )
+    elif order_type == OrderType.COURSE:
+        for cart_course_registration in cart_course_registrations:
+            program_course_registration_obj = program_course_registration_by_id[
+                cart_course_registration["id"]
+            ]
+
+            OrderCourse.objects.update_or_create(
+                order=order_obj,
+                registration=program_course_registration_obj,
+                defaults={
+                    "amount": program_course_registration_obj.amount,
                     "vat": settings.MODULE_ALL_VAT,
                 },
             )
@@ -468,7 +513,7 @@ def complete(
 ) -> Order | None:
     order_obj = (
         Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
-        .prefetch_related("registrations", "memberships")
+        .prefetch_related("registrations", "memberships", "courses")
         .with_amount()
         .first()
     )
@@ -545,6 +590,14 @@ def complete(
                 membership_module_ids=membership_module_ids,
                 is_completed=payment_status == PaymentStatus.COMPLETED,
                 with_notify=with_notify,
+            )
+        elif order_obj.type == OrderType.COURSE:
+            program_course_registration_ids = [
+                order_course_obj.registration_id
+                for order_course_obj in order_obj.courses.all()
+            ]
+            activity.api.program_course_registration.complete(
+                registration_ids=program_course_registration_ids,
             )
 
         return get(order_id=order_id, user_id=user_id, module=module)

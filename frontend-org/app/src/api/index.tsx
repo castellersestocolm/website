@@ -78,6 +78,23 @@ export const apiActivityProgramList = async () => {
   }
 };
 
+export const apiActivityProgramCourseList = async (
+  filterProgramTypes: number[] = undefined,
+) => {
+  try {
+    return await instance.get("/activity/program/course/", {
+      params: {
+        filter_program_types:
+          filterProgramTypes && filterProgramTypes.join(","),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiMembershipList = async () => {
   try {
     return await instance.get("/membership/");
@@ -532,6 +549,36 @@ export const apiActivityProgramCourseRegistrationList = async (
   }
 };
 
+export const apiActivityProgramCourseRegistrationCreate = async (
+  userId: string,
+  courseId: string,
+) => {
+  try {
+    return await instance.post("/activity/program/course/registration/", {
+      user_id: userId,
+      course_id: courseId,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiActivityProgramCourseRegistrationDelete = async (
+  id: string,
+) => {
+  try {
+    return await instance.delete(
+      "/activity/program/course/registration/" + id + "/",
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiLegalBylawsList = async () => {
   try {
     return await instance.get("/legal/bylaws/");
@@ -729,6 +776,19 @@ export const apiOrderMembershipCreate = async (modules: any[]) => {
     return await instance.post("/order/", {
       cart: { modules: modules },
       type: OrderType.MEMBERSHIP,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderCourseCreate = async (courseRegistrations: any[]) => {
+  try {
+    return await instance.post("/order/", {
+      cart: { course_registrations: courseRegistrations },
+      type: OrderType.COURSE,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

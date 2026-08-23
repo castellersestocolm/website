@@ -28,6 +28,7 @@ from order.models import (
     DeliveryPrice,
     DeliveryProvider,
     Order,
+    OrderCourse,
     OrderDelivery,
     OrderDeliveryAddress,
     OrderLog,
@@ -51,7 +52,6 @@ from payment.models import Account
 class OrderProductInline(admin.TabularInline):
     model = OrderProduct
     raw_id_fields = ("line",)
-    # form = OrderProductInlineFormAdmin
     extra = 0
     ordering = ("size__product__type", "size__product__created_at")
 
@@ -78,7 +78,7 @@ class OrderProductInline(admin.TabularInline):
 class OrderRegistrationInline(admin.TabularInline):
     model = OrderRegistration
     raw_id_fields = ("registration", "line")
-    # form = OrderProductInlineFormAdmin
+    readonly_fields = ("entity_link", "event_link")
     extra = 0
     ordering = (
         "registration__event__time_from",
@@ -93,6 +93,7 @@ class OrderRegistrationInline(admin.TabularInline):
             .get_queryset(request)
             .select_related(
                 "registration",
+                "registration__event",
                 "registration__entity",
                 "registration__entity__user",
             )
@@ -107,11 +108,29 @@ class OrderRegistrationInline(admin.TabularInline):
     def has_delete_permission(self, request, obj=None):
         return obj and obj.status <= OrderStatus.PROCESSING
 
+    def entity_link(self, obj):
+        if hasattr(obj, "registration"):
+            entity_link = reverse(
+                "admin:payment_entity_change", args=(obj.registration.entity_id,)
+            )
+            return mark_safe(f'<a href="{entity_link}">{obj.registration.entity}</a>')
+        return "-"
+
+    def event_link(self, obj):
+        if hasattr(obj, "registration"):
+            event_link = reverse(
+                "admin:event_event_change", args=(obj.registration.event_id,)
+            )
+            return mark_safe(f'<a href="{event_link}">{obj.registration.event}</a>')
+        return "-"
+
+    entity_link.short_description = _("entity")
+    event_link.short_description = _("event")
+
 
 class OrderMembershipInline(admin.TabularInline):
     model = OrderMembership
     raw_id_fields = ("module", "line")
-    # form = OrderProductInlineFormAdmin
     readonly_fields = ("membership_link",)
     extra = 0
     ordering = (
@@ -138,12 +157,6 @@ class OrderMembershipInline(admin.TabularInline):
     def has_delete_permission(self, request, obj=None):
         return obj and obj.status <= OrderStatus.PROCESSING
 
-    def entity_link(self, obj):
-        if hasattr(obj, "entity"):
-            entity_link = reverse("admin:payment_entity_change", args=(obj.entity.id,))
-            return mark_safe(f'<a href="{entity_link}">{obj.entity}</a>')
-        return "-"
-
     def membership_link(self, obj):
         if hasattr(obj, "module"):
             membership_link = reverse(
@@ -153,6 +166,60 @@ class OrderMembershipInline(admin.TabularInline):
         return "-"
 
     membership_link.short_description = _("membership")
+
+
+class OrderCourseInline(admin.TabularInline):
+    model = OrderCourse
+    raw_id_fields = ("registration", "line")
+    readonly_fields = ("entity_link", "course_link")
+    extra = 0
+    ordering = (
+        "registration__entity__firstname",
+        "registration__entity__lastname",
+        "amount",
+    )
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "registration",
+                "registration__course",
+                "registration__course__program",
+                "registration__entity",
+                "registration__entity__user",
+            )
+        )
+
+    def has_add_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_change_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_delete_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def entity_link(self, obj):
+        if hasattr(obj, "registration"):
+            entity_link = reverse(
+                "admin:payment_entity_change", args=(obj.registration.entity_id,)
+            )
+            return mark_safe(f'<a href="{entity_link}">{obj.registration.entity}</a>')
+        return "-"
+
+    def course_link(self, obj):
+        if hasattr(obj, "registration"):
+            course_link = reverse(
+                "admin:activity_programcourse_change",
+                args=(obj.registration.course_id,),
+            )
+            return mark_safe(f'<a href="{course_link}">{obj.registration.course}</a>')
+        return "-"
+
+    entity_link.short_description = _("entity")
+    course_link.short_description = _("course")
 
 
 class OrderLogInline(admin.TabularInline):
@@ -251,6 +318,8 @@ class OrderAdmin(admin.ModelAdmin):
                 inlines = (OrderRegistrationInline,) + inlines
             elif obj.type == OrderType.MEMBERSHIP:
                 inlines = (OrderMembershipInline,) + inlines
+            elif obj.type == OrderType.COURSE:
+                inlines = (OrderCourseInline,) + inlines
 
         return inlines
 

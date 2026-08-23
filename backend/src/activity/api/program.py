@@ -1,5 +1,3 @@
-from typing import List
-
 from django.db.models import Prefetch
 
 from activity.models import Program, ProgramCourse, ProgramCoursePrice
@@ -9,7 +7,7 @@ from event.models import Event
 
 
 # TODO: Perhaps allow programs to be multi-module
-def get_list(module: Module) -> List[Program]:
+def get_list(module: Module) -> list[Program]:
     return list(
         Program.objects.filter(
             module=module,

@@ -14,6 +14,7 @@ export default function PageImageHero({
   contentPost,
   hero,
   loading = false,
+  mobileFull = false,
 }: any) {
   return (
     <>
@@ -21,8 +22,8 @@ export default function PageImageHero({
         component="section"
         className={styles.page}
         sx={{
-          marginTop: { xs: "56px", md: "65px" },
-          padding: { xs: "32px 0", md: "64px 0" },
+          marginTop: { xs: mobileFull ? "0" : "56px", md: "65px" },
+          padding: { xs: mobileFull ? "0" : "32px 0", md: "64px 0" },
           ...(loading
             ? {
                 position: "absolute",
@@ -60,9 +61,11 @@ export default function PageImageHero({
             <Container
               maxWidth="xl"
               sx={{
-                marginTop: { xs: "16px", md: "32px" },
-                paddingTop: { xs: "32px", md: "64px" },
-                paddingBottom: { xs: "24px", md: "32px" },
+                marginTop: { xs: mobileFull ? "0" : "16px", md: "32px" },
+                paddingTop: { xs: mobileFull ? "0" : "32px", md: "64px" },
+                paddingBottom: { xs: mobileFull ? "0" : "24px", md: "32px" },
+                paddingLeft: { xs: mobileFull ? "0" : "inherit" },
+                paddingRight: { xs: mobileFull ? "0" : "inherit" },
                 position: "relative",
                 ...(loading
                   ? {

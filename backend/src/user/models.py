@@ -59,10 +59,16 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
     REQUIRED_FIELDS = ("firstname", "lastname")
 
     def __str__(self) -> str:
+        email_str = ""
+
+        if self.can_manage:
+            email_str = f" <{self.email}>"
+
         if self.firstname:
             if self.lastname:
-                return f"{self.firstname} {self.lastname} <{self.email}>"
-            return f"{self.firstname} <{self.email}>"
+                return f"{self.firstname} {self.lastname}{email_str}"
+            return f"{self.firstname}{email_str}"
+
         return self.email
 
     def get_fullname_or_email(self) -> str:

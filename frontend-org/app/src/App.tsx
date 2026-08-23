@@ -37,6 +37,8 @@ import ResourcesTransparencyPage from "./pages/resources-transparency";
 import MembershipPage from "./pages/membership";
 import MembershipPaymentPage from "./pages/membership-payment";
 import MembershipReceiptPage from "./pages/membership-receipt";
+import CoursePaymentPage from "./pages/course-payment";
+import CourseReceiptPage from "./pages/course-receipt";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -191,6 +193,14 @@ const App = () => {
                   <Route
                     path={ROUTES["membership-receipt"].path}
                     element={<MembershipReceiptPage />}
+                  />
+                  <Route
+                    path={ROUTES["course-payment"].path}
+                    element={<CoursePaymentPage />}
+                  />
+                  <Route
+                    path={ROUTES["course-receipt"].path}
+                    element={<CourseReceiptPage />}
                   />
                   <Route
                     path={ROUTES["policy-purchase"].path}

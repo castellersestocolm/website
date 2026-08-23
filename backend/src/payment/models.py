@@ -153,11 +153,16 @@ class Entity(StandardModel, Timestamps):
         )
 
     def __str__(self) -> str:
-        end_str = f" <{self.email}>" if self.email else ""
+        email_str = ""
+
+        if self.user and self.user.can_manage and self.email:
+            email_str = f" <{self.email}>"
+
         if self.firstname:
             if self.lastname:
-                return f"{self.firstname} {self.lastname}{end_str}"
-            return f"{self.firstname}{end_str}"
+                return f"{self.firstname} {self.lastname}{email_str}"
+            return f"{self.firstname}{email_str}"
+
         return self.email or self.id
 
     def save(self, *args, **kwargs):

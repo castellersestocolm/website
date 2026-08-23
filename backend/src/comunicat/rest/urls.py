@@ -55,6 +55,9 @@ router.register("data/location", data.LocationAPI, "data_location")
 router.register("media/release", media.ReleaseAPI, "media_release")
 router.register("document", document.DocumentAPI, "document")
 router.register("activity/program", activity.ProgramAPI, "activity_program")
+router.register(
+    "activity/program/course", activity.ProgramCourseAPI, "activity_program_course"
+)
 router.register("consent/entity", consent.EntityConsentAPI, "consent_entity")
 router.register(
     "activity/program/course/registration",

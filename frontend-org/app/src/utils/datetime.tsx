@@ -33,6 +33,13 @@ export function datetimeToString(language: string, date: Date) {
   });
 }
 
+export function timeToString(language: string, date: Date) {
+  return new Date(date).toLocaleDateString(languageToLocale(language).code, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function datetimeToLongString(language: string, date: Date) {
   return capitalizeFirstLetter(
     new Date(date).toLocaleDateString(language, {

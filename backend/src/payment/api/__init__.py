@@ -21,8 +21,14 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 
 from comunicat.enums import Module
-from order.enums import OrderStatus
-from order.models import Order, OrderMembership, OrderProduct, OrderRegistration
+from order.enums import OrderStatus, OrderType
+from order.models import (
+    Order,
+    OrderCourse,
+    OrderMembership,
+    OrderProduct,
+    OrderRegistration,
+)
 from payment.enums import PaymentStatus, PaymentType
 from payment.models import Payment, PaymentLine, PaymentLog, Transaction
 from user.enums import FamilyMemberStatus
@@ -103,7 +109,7 @@ def get_list(user_id: UUID, module: Module) -> list[Payment]:
 
 
 @transaction.atomic
-def create_for_order(
+def create_for_order(  # noqa: C901
     order_id: UUID,
     status: PaymentStatus,
     date_accounting: datetime.datetime,
@@ -142,6 +148,17 @@ def create_for_order(
                 ),
                 to_attr="all_memberships",
             ),
+            Prefetch(
+                "courses",
+                OrderCourse.objects.select_related(
+                    "registration",
+                    "registration__course",
+                    "registration__course__program",
+                    "registration__entity",
+                    "registration__entity__user",
+                ),
+                to_attr="all_courses",
+            ),
         )
         .first()
     )
@@ -156,12 +173,20 @@ def create_for_order(
     order_product_updates = []
     order_registration_updates = []
     order_membership_updates = []
+    order_course_updates = []
 
     with translation.override(
         language=order_obj.origin_language or settings.LANGUAGE_CODE
     ):
-        text_order = _("Order")
-        text = f"{text_order} #{order_obj.reference}"
+        if order_obj.type == OrderType.MEMBERSHIP:
+            text_order = _("Membership")
+            text_year = order_obj.all_memberships[0].module.membership.date_from.year
+            text = f"{text_order} {text_year}"
+        elif order_obj.type == OrderType.COURSE:
+            text = order_obj.all_courses[0].registration.course.program.name_locale
+        else:
+            text_order = _("Order")
+            text = f"{text_order} #{order_obj.reference}"
 
         transaction_obj, __ = Transaction.objects.update_or_create(
             source=source_obj,
@@ -195,6 +220,9 @@ def create_for_order(
         )
         item_type_order_membership = ContentType.objects.get_by_natural_key(
             "order", "ordermembership"
+        )
+        item_type_order_course = ContentType.objects.get_by_natural_key(
+            "order", "ordercourse"
         )
         item_type_order_delivery = ContentType.objects.get_by_natural_key(
             "order", "orderdelivery"
@@ -253,6 +281,18 @@ def create_for_order(
             order_membership_obj.line = payment_line_obj
             order_membership_updates.append(order_membership_obj)
 
+        for order_course_obj in order_obj.all_courses:
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_course_obj.amount,
+                vat=order_course_obj.vat,
+                text=f"{order_course_obj.registration.course.program.name_locale} — {order_course_obj.registration.entity.name}",
+                item_type=item_type_order_course,
+                item_id=order_course_obj.id,
+            )
+            order_course_obj.line = payment_line_obj
+            order_course_updates.append(order_course_obj)
+
         if order_obj.delivery:
             text_delivery = _("Delivery")
             account_delivery_obj = (
@@ -286,6 +326,9 @@ def create_for_order(
             OrderMembership.objects.bulk_update(
                 order_membership_updates, fields=("line",)
             )
+
+        if order_course_updates:
+            OrderCourse.objects.bulk_update(order_course_updates, fields=("line",))
 
         if fee_amount:
             account_fees_obj = (

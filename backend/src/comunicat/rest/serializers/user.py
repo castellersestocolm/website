@@ -11,6 +11,7 @@ from rest_framework.exceptions import ValidationError
 
 from comunicat.rest.serializers.consent import EntityConsentSerializer
 from comunicat.rest.serializers.legal import MemberWithTeamSerializer
+from comunicat.rest.serializers.payment import EntitySuperSlimSerializer
 from comunicat.rest.utils.fields import EnumField, IntEnumField
 from consent.enums import ConsentType
 from legal.enums import PermissionLevel
@@ -58,6 +59,7 @@ class TowersUserSerializer(s.ModelSerializer):
 
 
 class UserExtraSlimSerializer(UserSuperSlimSerializer):
+    entity = EntitySuperSlimSerializer(read_only=True)
     towers = TowersUserSerializer(read_only=True)
     members = MemberWithTeamSerializer(many=True, read_only=True)
     consents = s.SerializerMethodField(read_only=True)
@@ -68,6 +70,7 @@ class UserExtraSlimSerializer(UserSuperSlimSerializer):
             "id",
             "firstname",
             "lastname",
+            "entity",
             "can_manage",
             "members",
             "towers",
@@ -77,6 +80,7 @@ class UserExtraSlimSerializer(UserSuperSlimSerializer):
             "id",
             "firstname",
             "lastname",
+            "entity",
             "can_manage",
             "members",
             "towers",
@@ -152,6 +156,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "email",
             "emails",
             "phone",
+            "entity",
             "birthday",
             "consent_pictures",
             "preferred_language",
@@ -168,6 +173,7 @@ class UserSlimSerializer(UserExtraSlimSerializer):
             "email",
             "emails",
             "phone",
+            "entity",
             "birthday",
             "consent_pictures",
             "preferred_language",
@@ -243,6 +249,7 @@ class UserSerializer(UserSlimSerializer):
             "email",
             "emails",
             "phone",
+            "entity",
             "birthday",
             "consent_pictures",
             "preferred_language",
@@ -262,6 +269,7 @@ class UserSerializer(UserSlimSerializer):
             "email",
             "emails",
             "phone",
+            "entity",
             "birthday",
             "consent_pictures",
             "preferred_language",

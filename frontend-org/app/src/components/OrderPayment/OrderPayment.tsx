@@ -74,8 +74,14 @@ export default function OrderPayment({
   const [paymentSESwishOrderQR, setPaymentSESwishOrderQR] =
     React.useState(undefined);
 
-  const orderPath = ROUTES.membership.path;
-  const orderReceiptPath = ROUTES["membership-receipt"].path.replace(":id", id);
+  const orderPath =
+    order && order.type === OrderType.COURSE
+      ? ROUTES["user-dashboard"].path
+      : ROUTES.membership.path;
+  const orderReceiptPath =
+    order && order.type === OrderType.COURSE
+      ? ROUTES["course-receipt"].path.replace(":id", id)
+      : ROUTES["membership-receipt"].path.replace(":id", id);
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {
@@ -402,7 +408,9 @@ export default function OrderPayment({
                   ? t("swish.payment.membership") +
                     " " +
                     new Date().getFullYear()
-                  : t("swish.payment.order") + " " + order.reference}
+                  : order.type === OrderType.COURSE
+                    ? t("swish.payment.course") + " " + new Date().getFullYear()
+                    : t("swish.payment.order") + " " + order.reference}
               </Typography>
               {isMobile ? (
                 order.payment_order &&

@@ -36,3 +36,27 @@ def get_list(
         .select_related("course", "course__program", "entity", "entity__user")
         .order_by("-course__date_from", "created_at")
     )
+
+
+def complete(registration_ids: list[UUID]) -> None:
+    ProgramCourseRegistration.objects.filter(id__in=registration_ids).update(
+        status=ProgramCourseRegistrationStatus.ACTIVE
+    )
+
+    return None
+
+
+def delete(registration_id: UUID, user_id: UUID, module: Module) -> bool:
+    program_course_registration_obj = ProgramCourseRegistration.objects.filter(
+        id=registration_id,
+        entity__user__family_member__family__members__user_id=user_id,
+        status=ProgramCourseRegistrationStatus.REQUESTED,
+    ).first()
+
+    if not program_course_registration_obj:
+        return False
+
+    program_course_registration_obj.status = ProgramCourseRegistrationStatus.CANCELLED
+    program_course_registration_obj.save(update_fields=("status",))
+
+    return True

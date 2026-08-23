@@ -77,6 +77,12 @@ export const ROUTES = {
   "membership-receipt": {
     path: "/membership/receipt/:id",
   },
+  "course-payment": {
+    path: "/course/payment/:id",
+  },
+  "course-receipt": {
+    path: "/course/receipt/:id",
+  },
   "external-login-google": {
     path:
       API_BASE_URL +

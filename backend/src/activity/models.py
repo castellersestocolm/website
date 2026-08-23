@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from django.db import models, transaction
 from django.db.models import JSONField
 from django.utils import translation
@@ -27,6 +29,10 @@ class Program(StandardModel, Timestamps):
     objects = ProgramQuerySet.as_manager()
 
     def __str__(self) -> str:
+        return self.name_locale
+
+    @cached_property
+    def name_locale(self) -> str:
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
 
@@ -99,6 +105,9 @@ class ProgramCourseRegistration(StandardModel, Timestamps):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__line = self.line
+
+    def __str__(self) -> str:
+        return f"{self.course} - {self.entity}"
 
     def save(self, *args, **kwargs):
         if self.pk:
