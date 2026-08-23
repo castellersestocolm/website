@@ -50,5 +50,5 @@ coverage:
     --cov=. \
 	--cov-report=xml \
 	--cov-report=term \
-    --cov-fail-under=54 \
+    --cov-fail-under=55 \
 	$(coverage)
