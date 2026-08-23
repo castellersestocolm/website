@@ -2,7 +2,6 @@ import random
 import string
 
 from django.conf import settings
-from factory import Faker
 
 
 def fake_telephone(*args, **kwargs):
@@ -13,8 +12,11 @@ def fake_string(*args, length: int = 10, **kwargs):
     return "".join(random.choices(string.ascii_letters, k=length))
 
 
-def fake_title(*args, **kwargs):
-    return {language_code: Faker("name") for language_code, __ in settings.LANGUAGES}
+def fake_title(*args, length: int = 10, **kwargs):
+    return {
+        language_code: fake_string(length=length)
+        for language_code, __ in settings.LANGUAGES
+    }
 
 
 def fake_authorized_user_info(*args, **kwargs):

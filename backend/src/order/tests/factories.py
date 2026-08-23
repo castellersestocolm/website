@@ -14,6 +14,7 @@ from order.models import (
     DeliveryPrice,
     DeliveryProvider,
     Order,
+    OrderCourse,
     OrderDelivery,
     OrderDeliveryAddress,
     OrderMembership,
@@ -157,3 +158,17 @@ class OrderMembershipFactory(DjangoModelFactory):
 
     class Meta:
         model = OrderMembership
+
+
+class OrderCourseFactory(DjangoModelFactory):
+    order = SubFactory(OrderFactory)
+
+    registration = SubFactory("activity.tests.factories.ProgramCourseRegistration")
+
+    line = SubFactory("payment.tests.factories.PaymentLineFactory")
+
+    amount = LazyAttribute(lambda n: Money(random.randint(100, 500), "SEK"))
+    vat = 0
+
+    class Meta:
+        model = OrderCourse
