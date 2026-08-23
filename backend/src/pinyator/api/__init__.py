@@ -1,6 +1,7 @@
 import re
 from uuid import UUID
 
+from django.conf import settings
 from django.db import connections, transaction
 from django.db.models import Prefetch
 from django.utils import timezone
@@ -26,19 +27,11 @@ from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 
 
-def select_table(table_name: str) -> tuple[tuple]:
-    cursor = connections["pinyator"].cursor()
-
-    cursor.execute("SELECT * FROM CASTELLER")
-    results = cursor.fetchall()
-
-    cursor.close()
-
-    return results
-
-
 @transaction.atomic
 def update_or_create_user(user_id: UUID) -> None:
+    if not settings.PINYATOR_ENABLED:
+        return None
+
     user_obj = (
         User.objects.with_has_active_membership(
             with_pending=True, modules=[Module.TOWERS], only_check=True
@@ -71,6 +64,9 @@ def update_or_create_user(user_id: UUID) -> None:
 
 @transaction.atomic
 def update_or_create_event(event_id: UUID) -> None:
+    if not settings.PINYATOR_ENABLED:
+        return None
+
     event_obj = (
         Event.objects.filter(id=event_id)
         .select_related("location")
@@ -135,6 +131,9 @@ def update_or_create_event(event_id: UUID) -> None:
 
 @transaction.atomic
 def update_or_create_registration(registration_id: UUID) -> None:
+    if not settings.PINYATOR_ENABLED:
+        return None
+
     registration_obj = (
         Registration.objects.filter(id=registration_id)
         .filter_with_user()
@@ -198,6 +197,9 @@ def update_or_create_registration(registration_id: UUID) -> None:
 
 
 def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[Tower]:
+    if not settings.PINYATOR_ENABLED:
+        return []
+
     user_by_id = {
         str(user_obj.id): user_obj for user_obj in User.objects.select_related("towers")
     }
@@ -428,6 +430,9 @@ def get_towers_for_event(event_id: UUID, user_id: UUID | None = None) -> list[To
 
 
 def get_stats_for_position(position_type: PositionType) -> tuple[tuple[str, int]]:
+    if not settings.PINYATOR_ENABLED:
+        return tuple()
+
     cursor = connections["pinyator"].cursor()
 
     pinyator_positions = POSITION_TYPE_TO_PINYATOR_POSITIONS[position_type]

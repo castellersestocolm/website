@@ -89,7 +89,7 @@ TEMPLATE_BY_MODULE = {
                 "html": "email/org/payment/paid.html",
             },
             EmailType.COURSE_REGISTRATION_PAID: {
-                "subject": _("Your payment has been processed — %s"),
+                "subject": _("Your registration is now paid — %s"),
                 "html": "email/org/courseregistration/paid.html",
             },
         }

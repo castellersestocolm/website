@@ -630,6 +630,10 @@ PAYMENT_PROVIDER_SE_SWISH_ENVIRONMENT = os.getenv(
 )
 PAYMENT_PROVIDER_SE_SWISH_CERT_DIR = os.path.join(ROOT_DIR, "cert/se_swish/")
 
+# Pinyator
+
+PINYATOR_ENABLED = os.getenv("PINYATOR_ENABLED", "true").lower() == "true"
+
 # Slack
 
 SLACK_ORG_ENABLED = os.getenv("SLACK_ORG_ENABLED", "false").lower() == "true"

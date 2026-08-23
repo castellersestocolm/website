@@ -38,14 +38,6 @@ def get_list(
     )
 
 
-def complete(registration_ids: list[UUID]) -> None:
-    ProgramCourseRegistration.objects.filter(id__in=registration_ids).update(
-        status=ProgramCourseRegistrationStatus.ACTIVE
-    )
-
-    return None
-
-
 def delete(registration_id: UUID, user_id: UUID, module: Module) -> bool:
     program_course_registration_obj = ProgramCourseRegistration.objects.filter(
         id=registration_id,

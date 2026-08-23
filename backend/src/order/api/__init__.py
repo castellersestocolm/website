@@ -11,7 +11,7 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
-import activity.api.program_course_registration
+import activity.api.course
 import event.api.registration
 import membership.api
 import notify.tasks
@@ -502,7 +502,7 @@ def clean_pending_orders() -> None:
 
 # TODO: Should run a background sync to "capture" pending orders
 @transaction.atomic
-def complete(
+def complete(  # noqa: C901
     order_id: UUID,
     module: Module,
     date_paid: datetime.datetime | None = None,
@@ -561,44 +561,47 @@ def complete(
         )
         order_obj.save(update_fields=("status",))
 
-        if order_obj.type == OrderType.PRODUCT:
-            if with_notify:
-                notify.tasks.send_order_email.delay(
-                    order_id=order_obj.id,
-                    email_type=EmailType.ORDER_CREATED,
-                    module=module,
-                    locale=translation.get_language(),
-                )
+        if payment_status == PaymentStatus.COMPLETED:
+            if order_obj.type == OrderType.PRODUCT:
+                if with_notify:
+                    notify.tasks.send_order_email.delay(
+                        order_id=order_obj.id,
+                        email_type=EmailType.ORDER_PAID,
+                        module=module,
+                        locale=translation.get_language(),
+                    )
 
-            notify.tasks.send_order_message_slack.delay(
-                order_id=order_obj.id,
-            )
-        elif order_obj.type == OrderType.REGISTRATION:
-            registration_ids = [
-                order_registration_obj.registration_id
-                for order_registration_obj in order_obj.registrations.all()
-            ]
-            event.api.registration.complete(
-                registration_ids=registration_ids, with_notify=with_notify
-            )
-        elif order_obj.type == OrderType.MEMBERSHIP:
-            membership_module_ids = [
-                order_membership_obj.module_id
-                for order_membership_obj in order_obj.memberships.all()
-            ]
-            membership.api.complete(
-                membership_module_ids=membership_module_ids,
-                is_completed=payment_status == PaymentStatus.COMPLETED,
-                with_notify=with_notify,
-            )
-        elif order_obj.type == OrderType.COURSE:
-            program_course_registration_ids = [
-                order_course_obj.registration_id
-                for order_course_obj in order_obj.courses.all()
-            ]
-            activity.api.program_course_registration.complete(
-                registration_ids=program_course_registration_ids,
-            )
+                notify.tasks.send_order_message_slack.delay(
+                    order_id=order_obj.id,
+                )
+            elif order_obj.type == OrderType.REGISTRATION:
+                registration_ids = [
+                    order_registration_obj.registration_id
+                    for order_registration_obj in order_obj.registrations.all()
+                ]
+                event.api.registration.complete(
+                    registration_ids=registration_ids, with_notify=with_notify
+                )
+            elif order_obj.type == OrderType.MEMBERSHIP:
+                membership_module_ids = [
+                    order_membership_obj.module_id
+                    for order_membership_obj in order_obj.memberships.all()
+                ]
+                membership.api.complete(
+                    membership_module_ids=membership_module_ids,
+                    is_completed=payment_status == PaymentStatus.COMPLETED,
+                    with_notify=with_notify,
+                )
+            elif order_obj.type == OrderType.COURSE:
+                program_course_registration_ids = [
+                    order_course_obj.registration_id
+                    for order_course_obj in order_obj.courses.all()
+                ]
+                activity.api.course.complete_registrations(
+                    registration_ids=program_course_registration_ids,
+                    is_completed=payment_status == PaymentStatus.COMPLETED,
+                    with_notify=with_notify,
+                )
 
         return get(order_id=order_id, user_id=user_id, module=module)
 
