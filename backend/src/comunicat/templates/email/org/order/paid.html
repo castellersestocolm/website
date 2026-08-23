@@ -1,0 +1,35 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_body %}
+    <p>{% trans "Your order has been marked as paid! You will find a summary of the products you have purchased right below." %}</p>
+    <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+</style>
+<h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
+<table class="tg" style="margin-bottom:20px;">
+                    {% for order_product_obj in order_obj.products.all %}
+  <tr>
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><img style="max-height: 2em; width: 2em; margin: 0; padding-right: 8px;" alt="{{ order_product_obj.size.product.name|localise }}"
+                                                                                                              class="styles_eventCardImage__sN8Xw"
+                                                                                                              src="{% full_media order_product_obj.size.product.images.first.picture.url %}"> <p style="margin: 0 !important;">{{ order_product_obj.quantity }} x {{ order_product_obj.size.product.name|localise }} — {{ order_product_obj.size.size }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ order_product_obj.amount|format_money_2f }}</p></td>
+  </tr>
+                    {% endfor %}
+    {% if order_obj.delivery %}
+      <tr>
+          <td class="tg-hfk9"><p style="margin: 0 !important;">{{ order_obj.delivery.provider.name|localise }}</p></td>
+          <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ order_obj.delivery.amount|format_money_2f }}</p></td>
+      </tr>
+    {% endif %}
+  <tr>
+      <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ order_obj|order_amount|format_money_2f }}</strong></p></td>
+  </tr>
+</table>
+{% endblock %}

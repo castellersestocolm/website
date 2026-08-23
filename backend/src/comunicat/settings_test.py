@@ -49,6 +49,10 @@ CELERY_TASK_EAGER_PROPAGATES = True
 
 EMAIL_PROVIDER = None
 
+# Pinyator
+
+PINYATOR_ENABLED = False
+
 # Logging
 
 LOGGING["loggers"]["celery.app.trace"] = {  # noqa: F405

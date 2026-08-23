@@ -1,20 +1,29 @@
 from unittest import mock
 
 import pytest
+from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
 from djmoney.money import Money
 from httpx._client import Response
 
 from activity.enums import ProgramCourseRegistrationStatus
-from activity.tests.factories import ProgramCourseRegistrationFactory
+from activity.tests.factories import (
+    ProgramCourseFactory,
+    ProgramCourseRegistrationFactory,
+)
 from comunicat.enums import Module
+from comunicat.utils.test import run_commit_hooks
 from comunicat.utils.test.mocks import MockSumUpApiClientExecute
 from conftest import NumOperationsMixin
 from event.enums import RegistrationStatus
 from event.tests.factories import RegistrationFactory
 from membership.enums import MembershipStatus
-from membership.tests.factories import MembershipFactory, MembershipModuleFactory
+from membership.tests.factories import (
+    MembershipFactory,
+    MembershipModuleFactory,
+    MembershipUserFactory,
+)
 from order.api import clean_pending_orders, complete, delete, update_provider
 from order.enums import OrderStatus, OrderType
 from order.tests.factories import (
@@ -28,7 +37,9 @@ from order.tests.factories import (
 )
 from payment.enums import PaymentMethod, PaymentStatus, PaymentType, SourceType
 from payment.models import Payment, PaymentLine, Transaction
-from payment.tests.factories import PaymentProviderFactory, SourceFactory
+from payment.tests.factories import EntityFactory, PaymentProviderFactory, SourceFactory
+from user.enums import FamilyMemberRole, FamilyMemberStatus
+from user.tests.factories import FamilyFactory, FamilyMemberFactory, UserFactory
 
 
 @pytest.mark.django_db
@@ -321,6 +332,49 @@ class TestComplete(NumOperationsMixin, TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
 
+        cls.user_member_1_obj = UserFactory(
+            firstname="firstname-1",
+            lastname="lastname-1",
+            email="user-member-1@domain-test.org",
+        )
+        cls.user_member_2_obj = UserFactory(
+            firstname="firstname-2",
+            lastname="lastname-2",
+            email="user-member-1+user-member-2@domain-test.org",
+            birthday=timezone.localdate().replace(year=timezone.localdate().year - 8),
+        )
+        cls.user_member_3_obj = UserFactory(
+            firstname="firstname-3",
+            lastname="lastname-3",
+            email="user-member-1+user-member-3@domain-test.org",
+            birthday=timezone.localdate().replace(year=timezone.localdate().year - 6),
+        )
+
+        cls.entity_member_1_obj = EntityFactory(user=cls.user_member_1_obj)
+        cls.entity_member_2_obj = EntityFactory(user=cls.user_member_2_obj)
+        cls.entity_member_3_obj = EntityFactory(user=cls.user_member_3_obj)
+
+        cls.family_1_obj = FamilyFactory()
+
+        cls.family_1_user_1_obj = FamilyMemberFactory(
+            user=cls.user_member_1_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MANAGER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_1_user_2_obj = FamilyMemberFactory(
+            user=cls.user_member_2_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MEMBER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_1_user_3_obj = FamilyMemberFactory(
+            user=cls.user_member_3_obj,
+            family=cls.family_1_obj,
+            role=FamilyMemberRole.MEMBER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+
         cls.payment_provider_1_obj = PaymentProviderFactory(
             method=PaymentMethod.SUMUP, code="SUMUP"
         )
@@ -362,30 +416,35 @@ class TestComplete(NumOperationsMixin, TestCase):
         cls.order_delivery_2_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
 
         cls.order_1_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             delivery=cls.order_delivery_1_obj,
             payment_order=cls.payment_order_1_obj,
             type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
         )
         cls.order_2_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             delivery=cls.order_delivery_2_obj,
             payment_order=cls.payment_order_2_obj,
             type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
         )
         cls.order_3_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             delivery=None,
             payment_order=cls.payment_order_3_obj,
             type=OrderType.REGISTRATION,
             status=OrderStatus.CREATED,
         )
         cls.order_4_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             delivery=None,
             payment_order=cls.payment_order_4_obj,
             type=OrderType.MEMBERSHIP,
             status=OrderStatus.CREATED,
         )
         cls.order_5_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             delivery=None,
             payment_order=cls.payment_order_5_obj,
             type=OrderType.COURSE,
@@ -432,6 +491,22 @@ class TestComplete(NumOperationsMixin, TestCase):
             amount=Money(200, "SEK"),
         )
 
+        MembershipUserFactory(
+            family=cls.family_1_obj,
+            user=cls.user_member_1_obj,
+            membership=cls.membership_1_obj,
+        )
+        MembershipUserFactory(
+            family=cls.family_1_obj,
+            user=cls.user_member_2_obj,
+            membership=cls.membership_1_obj,
+        )
+        MembershipUserFactory(
+            family=cls.family_1_obj,
+            user=cls.user_member_3_obj,
+            membership=cls.membership_1_obj,
+        )
+
         OrderMembershipFactory(
             order=cls.order_4_obj,
             module=cls.membership_module_1_obj,
@@ -443,11 +518,17 @@ class TestComplete(NumOperationsMixin, TestCase):
             amount=Money(200, "SEK"),
         )
 
+        cls.program_course_1_obj = ProgramCourseFactory()
+
         cls.program_course_registration_1_obj = ProgramCourseRegistrationFactory(
-            status=ProgramCourseRegistrationStatus.REQUESTED
+            status=ProgramCourseRegistrationStatus.REQUESTED,
+            entity=cls.entity_member_2_obj,
+            course=cls.program_course_1_obj,
         )
         cls.program_course_registration_2_obj = ProgramCourseRegistrationFactory(
-            status=ProgramCourseRegistrationStatus.REQUESTED
+            status=ProgramCourseRegistrationStatus.REQUESTED,
+            entity=cls.entity_member_3_obj,
+            course=cls.program_course_1_obj,
         )
 
         OrderCourseFactory(
@@ -462,18 +543,21 @@ class TestComplete(NumOperationsMixin, TestCase):
         )
 
         cls.order_6_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
             payment_order=None,
         )
 
         cls.order_7_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             type=OrderType.PRODUCT,
             status=OrderStatus.COMPLETED,
             payment_order=None,
         )
 
         cls.order_8_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
             type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
             payment_order=cls.payment_order_6_obj,
@@ -507,7 +591,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=72, num_inserts=10, num_updates=6
+                num=0, num_selects=50, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -570,7 +654,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=72, num_inserts=4, num_updates=12
+                num=0, num_selects=70, num_inserts=4, num_updates=12
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -644,11 +728,24 @@ class TestComplete(NumOperationsMixin, TestCase):
             self.assertEqual(payment_line_credit_obj.amount, Money(50, "SEK"))
             self.assertEqual(payment_line_credit_obj.payment, payment_credit_obj)
 
+        run_commit_hooks()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        email_subject = mail.outbox[0].subject
+        email_text = mail.outbox[0].body
+
+        self.assertEqual(
+            email_subject, f"Your order #{self.order_1_obj.reference} is now paid"
+        )
+        self.assertIn("firstname-1 lastname-1", email_text)
+        self.assertIn("paid", email_text)
+
     def test_complete__order_created_autocapture(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=50, num_inserts=2, num_updates=2
+            num=0, num_selects=28, num_inserts=1, num_updates=2
         ):
             order_obj = complete(
                 order_id=self.order_2_obj.id,
@@ -749,6 +846,10 @@ class TestComplete(NumOperationsMixin, TestCase):
             transaction_debit_obj.text, f"Order #{self.order_3_obj.reference}"
         )
 
+        run_commit_hooks()
+
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_complete__order_membership(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
@@ -781,7 +882,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=44, num_inserts=8, num_updates=6
+                num=0, num_selects=62, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -823,6 +924,17 @@ class TestComplete(NumOperationsMixin, TestCase):
             transaction_debit_obj.text, f"Membership {timezone.localdate().year}"
         )
 
+        run_commit_hooks()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        email_subject = mail.outbox[0].subject
+        email_text = mail.outbox[0].body
+
+        self.assertEqual(email_subject, "Your membership is now paid")
+        self.assertIn("firstname-1 lastname-1", email_text)
+        self.assertIn("paid", email_text)
+
     def test_complete__order_course(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
@@ -855,7 +967,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=51, num_inserts=8, num_updates=4
+                num=0, num_selects=69, num_inserts=9, num_updates=4
             ):
                 order_obj = complete(
                     order_id=self.order_5_obj.id,
@@ -896,6 +1008,27 @@ class TestComplete(NumOperationsMixin, TestCase):
         self.assertEqual(
             transaction_debit_obj.text,
             self.program_course_registration_1_obj.course.program.name_locale,
+        )
+
+        run_commit_hooks()
+
+        for m in mail.outbox:
+            print(m.subject, m.to)
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        email_subject = mail.outbox[0].subject
+        email_text = mail.outbox[0].body
+
+        self.assertEqual(
+            email_subject,
+            f"Your registration is now paid — {self.program_course_registration_1_obj.course.program.name_locale} {timezone.localdate().year}",
+        )
+        self.assertIn("firstname-1 lastname-1", email_text)
+        self.assertIn("paid", email_text)
+        self.assertIn(
+            self.program_course_registration_1_obj.course.program.name_locale,
+            email_text,
         )
 
     def test_complete__order_created_no_payment_order(self, *args, **kwargs):

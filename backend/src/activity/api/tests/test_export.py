@@ -59,13 +59,13 @@ class TestExportProgramCourse(NumOperationsMixin, TestCase):
         cls.user_member_2_obj = UserFactory(
             firstname="firstname-2",
             lastname="lastname-2",
-            email="user-member-2+user-member-1@domain-test.org",
+            email="user-member-1+user-member-2@domain-test.org",
             birthday=timezone.localdate().replace(year=timezone.localdate().year - 8),
         )
         cls.user_member_3_obj = UserFactory(
             firstname="firstname-3",
             lastname="lastname-3",
-            email="user-member-3+user-member-1@domain-test.org",
+            email="user-member-1+user-member-3@domain-test.org",
             birthday=timezone.localdate().replace(year=timezone.localdate().year - 12),
         )
         cls.user_member_4_obj = UserFactory(

@@ -1,13 +1,16 @@
+import itertools
 from uuid import UUID
 
 from django.db.models import Prefetch, Q
 from django.utils import timezone
 
+import notify.tasks
 from activity.enums import ProgramCourseRegistrationStatus, ProgramType
 from activity.models import ProgramCourse, ProgramCoursePrice, ProgramCourseRegistration
 from comunicat.enums import Module
 from event.enums import EventStatus
 from event.models import Event
+from notify.enums import EmailType
 from payment.models import Entity
 
 
@@ -49,6 +52,54 @@ def get_list(
         )
         .order_by("date_from", "date_to")
     )
+
+
+def complete_registrations(
+    registration_ids: list[UUID],
+    is_completed: bool = True,
+    with_notify: bool = True,
+) -> bool:
+    course_registration_objs = list(
+        ProgramCourseRegistration.objects.filter(
+            id__in=registration_ids,
+            status__lte=ProgramCourseRegistrationStatus.PROCESSING,
+        )
+        .select_related("course", "course__program")
+        .distinct()
+    )
+
+    if not course_registration_objs:
+        return False
+
+    for course_registration_obj in course_registration_objs:
+        course_registration_obj.status = (
+            ProgramCourseRegistrationStatus.ACTIVE
+            if is_completed
+            else ProgramCourseRegistrationStatus.PROCESSING
+        )
+
+    ProgramCourseRegistration.objects.bulk_update(
+        course_registration_objs, fields=("status",)
+    )
+
+    if with_notify:
+        for (
+            program_course_obj,
+            program_course_registration_objs,
+        ) in itertools.groupby(
+            course_registration_objs,
+            lambda course_registration_obj: course_registration_obj.course,
+        ):
+            notify.tasks.send_program_course_registration_email.delay(
+                program_course_registration_ids=[
+                    program_course_registration_obj.id
+                    for program_course_registration_obj in program_course_registration_objs
+                ],
+                email_type=EmailType.COURSE_REGISTRATION_PAID,
+                module=program_course_obj.program.module,
+            )
+
+    return True
 
 
 def register_entity(

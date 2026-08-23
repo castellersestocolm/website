@@ -303,6 +303,9 @@ def complete(
 
     if with_notify:
         for membership_user_obj in membership_obj.membership_users.all():
+            if not membership_user_obj.user.can_manage:
+                continue
+
             notify.tasks.send_user_email.delay(
                 user_id=membership_user_obj.user_id,
                 email_type=EmailType.MEMBERSHIP_PAID,
