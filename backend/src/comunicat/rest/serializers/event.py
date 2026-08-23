@@ -360,7 +360,7 @@ class EventQuestionSerializer(s.ModelSerializer):
         return obj.title.get(translation.get_language())
 
 
-class EventSlimSerializer(s.ModelSerializer):
+class EventSuperSlimSerializer(s.ModelSerializer):
     title = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
 
@@ -398,8 +398,38 @@ class EventSlimSerializer(s.ModelSerializer):
         return obj.description.get(translation.get_language())
 
 
-class EventSerializer(EventSlimSerializer):
+class EventSlimSerializer(EventSuperSlimSerializer):
     location = LocationSerializer(read_only=True)
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "title",
+            "code",
+            "time_from",
+            "time_to",
+            "location",
+            "description",
+            "type",
+            "module",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "code",
+            "time_from",
+            "time_to",
+            "location",
+            "description",
+            "type",
+            "module",
+            "created_at",
+        )
+
+
+class EventSerializer(EventSlimSerializer):
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
     registrations = RegistrationWithAmountSerializer(many=True, read_only=True)
@@ -568,7 +598,7 @@ class CreateRegistrationSerializer(s.Serializer):
 
 
 class RegistrationWithEventSerializer(RegistrationSlimSerializer):
-    event = EventSlimSerializer(read_only=True)
+    event = EventSuperSlimSerializer(read_only=True)
     entity = EntitySuperSlimSerializer(read_only=True)
     # TODO: Should deprecate this
     user = UserSuperSlimSerializer(read_only=True, source="entity.user")

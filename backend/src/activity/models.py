@@ -100,6 +100,9 @@ class ProgramCourseRegistration(StandardModel, Timestamps):
         super().__init__(*args, **kwargs)
         self.__line = self.line
 
+    def __str__(self) -> str:
+        return f"{self.course} - {self.entity}"
+
     def save(self, *args, **kwargs):
         if self.pk:
             if self.line != self.__line:

@@ -9,6 +9,7 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
+from comunicat.rest.serializers.activity import ProgramCourseRegistrationSlimSerializer
 from comunicat.rest.serializers.data import (
     CountrySerializer,
     RegionSerializer,
@@ -28,6 +29,7 @@ from order.models import (
     DeliveryPrice,
     DeliveryProvider,
     Order,
+    OrderCourse,
     OrderDelivery,
     OrderLog,
     OrderProduct,
@@ -247,6 +249,29 @@ class OrderMembershipSerializer(s.ModelSerializer):
         )
 
 
+class OrderCourseSerializer(s.ModelSerializer):
+    registration = ProgramCourseRegistrationSlimSerializer(read_only=True)
+    line = PaymentLineSerializer(read_only=True)
+    amount = MoneyField(read_only=True)
+
+    class Meta:
+        model = OrderCourse
+        fields = (
+            "id",
+            "registration",
+            "line",
+            "amount",
+            "vat",
+        )
+        read_only_fields = (
+            "id",
+            "registration",
+            "line",
+            "amount",
+            "vat",
+        )
+
+
 class OrderLogSerializer(s.ModelSerializer):
     class Meta:
         model = OrderLog
@@ -287,6 +312,7 @@ class OrderSerializer(OrderSlimSerializer):
     products = OrderProductSerializer(many=True, read_only=True)
     registrations = OrderRegistrationSerializer(many=True, read_only=True)
     memberships = OrderMembershipSerializer(many=True, read_only=True)
+    courses = OrderCourseSerializer(many=True, read_only=True)
     logs = OrderLogSerializer(many=True, read_only=True)
 
     class Meta:
@@ -303,6 +329,7 @@ class OrderSerializer(OrderSlimSerializer):
             "products",
             "registrations",
             "memberships",
+            "courses",
             "logs",
             "created_at",
         )
@@ -328,7 +355,11 @@ class CreateOrderSizeSerializer(s.Serializer):
     quantity = s.IntegerField(min_value=1, max_value=100)
 
 
-class CreateOrderModulesSerializer(s.Serializer):
+class CreateOrderModuleSerializer(s.Serializer):
+    id = s.UUIDField()
+
+
+class CreateOrderCourseRegistrationSerializer(s.Serializer):
     id = s.UUIDField()
 
 
@@ -340,7 +371,13 @@ class CreateCartSerializer(s.Serializer):
         required=False,
     )
     modules = s.ListSerializer(
-        child=CreateOrderModulesSerializer(),
+        child=CreateOrderModuleSerializer(),
+        min_length=0,
+        max_length=10,
+        required=False,
+    )
+    course_registrations = s.ListSerializer(
+        child=CreateOrderCourseRegistrationSerializer(),
         min_length=0,
         max_length=10,
         required=False,

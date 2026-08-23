@@ -62,6 +62,7 @@ export enum OrderType {
   PRODUCT = 10,
   REGISTRATION = 20,
   MEMBERSHIP = 30,
+  COURSE = 40,
 }
 
 export enum OrderStatus {
@@ -183,4 +184,18 @@ export enum ConsentType {
   COMMUNICATION = 30,
   NEWSLETTER = 40,
   HEALTH = 50,
+}
+
+export enum ProgramType {
+  GENERAL = 10,
+  ESPLAI = 20,
+  TEACHING = 30,
+}
+
+export enum ProgramCourseRegistrationStatus {
+  REQUESTED = 0,
+  PROCESSING = 1,
+  ACTIVE = 2,
+  EXPIRED = 3,
+  CANCELLED = 4,
 }

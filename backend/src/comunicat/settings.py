@@ -310,6 +310,9 @@ REST_FRAMEWORK = {
         "entity-consent.create": os.getenv(
             "CONSENT_ENTITY_CONSENT_CREATE_THROTTLE_RATE", "5/minute"
         ),
+        "program-course-registration.create": os.getenv(
+            "PROGRAM_COURSE_REGISTRATION_CREATE_THROTTLE_RATE", "5/second"
+        ),
     },
     "EXCEPTION_HANDLER": "comunicat.utils.exceptions.full_details_exception_handler",
 }

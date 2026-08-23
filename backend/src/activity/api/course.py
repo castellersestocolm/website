@@ -1,7 +1,54 @@
 from uuid import UUID
 
-from activity.models import ProgramCoursePrice, ProgramCourseRegistration
+from django.db.models import Prefetch, Q
+from django.utils import timezone
+
+from activity.enums import ProgramCourseRegistrationStatus, ProgramType
+from activity.models import ProgramCourse, ProgramCoursePrice, ProgramCourseRegistration
+from comunicat.enums import Module
+from event.enums import EventStatus
+from event.models import Event
 from payment.models import Entity
+
+
+def get_list(
+    module: Module,
+    request_user_id: UUID | None = None,
+    filter_program_types: list[ProgramType] | None = None,
+) -> list[ProgramCourse]:
+    course_filter = Q()
+
+    if filter_program_types:
+        course_filter &= Q(program__type__in=filter_program_types)
+
+    return list(
+        ProgramCourse.objects.filter(
+            course_filter, program__module=module, date_to__gte=timezone.localdate()
+        )
+        .prefetch_related(
+            Prefetch(
+                "prices",
+                ProgramCoursePrice.objects.order_by("amount"),
+            ),
+            Prefetch(
+                "registrations",
+                ProgramCourseRegistration.objects.filter_with_user()
+                .filter(
+                    entity__user__family_member__family__members__user_id=request_user_id
+                )
+                .exclude(status=ProgramCourseRegistrationStatus.CANCELLED)
+                .select_related("entity", "entity__user")
+                .order_by("created_at"),
+            ),
+            Prefetch(
+                "events",
+                Event.objects.filter(status=EventStatus.PUBLISHED)
+                .order_by("time_from")
+                .select_related("location"),
+            ),
+        )
+        .order_by("date_from", "date_to")
+    )
 
 
 def register_entity(
@@ -27,6 +74,22 @@ def register_entity(
                 },
             )
         )
+
+        if (
+            program_course_registration_obj.status
+            == ProgramCourseRegistrationStatus.CANCELLED
+            or program_course_price_obj.amount > program_course_registration_obj.amount
+        ):
+            program_course_registration_obj.status = (
+                ProgramCourseRegistrationStatus.REQUESTED
+            )
+        program_course_registration_obj.price = program_course_price_obj
+        program_course_registration_obj.amount = program_course_price_obj.amount
+
+        program_course_registration_obj.save(
+            update_fields=("status", "price", "amount")
+        )
+
         program_course_registration_objs.append(program_course_registration_obj)
 
     return program_course_registration_objs

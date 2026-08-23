@@ -32,3 +32,4 @@ class OrderType(IntEnum):
     PRODUCT = 10
     REGISTRATION = 20
     MEMBERSHIP = 30
+    COURSE = 40

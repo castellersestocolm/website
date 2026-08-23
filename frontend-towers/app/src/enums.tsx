@@ -81,6 +81,7 @@ export enum OrderType {
   PRODUCT = 10,
   REGISTRATION = 20,
   MEMBERSHIP = 30,
+  COURSE = 40,
 }
 
 export enum OrderStatus {

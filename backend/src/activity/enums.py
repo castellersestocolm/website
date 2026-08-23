@@ -21,6 +21,7 @@ class ProgramCourseRegistrationStatus(IntEnum):
     PROCESSING = 1
     ACTIVE = 2
     EXPIRED = 3
+    CANCELLED = 4
 
 
 ProgramCourseRegistrationStatus.labels = {
@@ -28,4 +29,5 @@ ProgramCourseRegistrationStatus.labels = {
     ProgramCourseRegistrationStatus.PROCESSING: _("Processing"),
     ProgramCourseRegistrationStatus.ACTIVE: _("Active"),
     ProgramCourseRegistrationStatus.EXPIRED: _("Expired"),
+    ProgramCourseRegistrationStatus.CANCELLED: _("Cancelled"),
 }
