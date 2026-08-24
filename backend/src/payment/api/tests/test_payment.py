@@ -111,7 +111,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         date_accounting = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=18, num_inserts=5, num_updates=4
+            num=0, num_selects=23, num_inserts=5, num_updates=4
         ):
             payment_obj = create_for_order(
                 order_id=self.order_1_obj.id,
@@ -125,7 +125,7 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
         self.assertEqual(payment_obj.status, PaymentStatus.PROCESSING)
 
         with self.assertNumOperations(
-            num=0, num_selects=18, num_inserts=1, num_updates=7
+            num=0, num_selects=22, num_inserts=4, num_updates=7
         ):
             payment_obj = create_for_order(
                 order_id=self.order_1_obj.id,
@@ -133,19 +133,38 @@ class TestCreateForOrder(NumOperationsMixin, TestCase):
                 date_accounting=date_accounting,
                 external_id="external-order-1",
                 reference="ORDER-1",
+                fee_amount=Money(50, "SEK"),
             )
 
         self.assertIsNotNone(payment_obj)
 
-        transaction_count = Transaction.objects.filter(reference="ORDER-1").count()
-        payment_count = Payment.objects.filter(transaction__reference="ORDER-1").count()
-        payment_line_count = PaymentLine.objects.filter(
-            payment__transaction__reference="ORDER-1"
+        transaction_debit_count = Transaction.objects.filter(
+            reference="ORDER-1", amount__gt=0
+        ).count()
+        payment_debit_count = Payment.objects.filter(
+            transaction__reference="ORDER-1", type=PaymentType.DEBIT
+        ).count()
+        payment_line_debit_count = PaymentLine.objects.filter(
+            payment__transaction__reference="ORDER-1", payment__type=PaymentType.DEBIT
         ).count()
 
-        self.assertEqual(transaction_count, 1)
-        self.assertEqual(payment_count, 1)
-        self.assertEqual(payment_line_count, 3)
+        self.assertEqual(transaction_debit_count, 1)
+        self.assertEqual(payment_debit_count, 1)
+        self.assertEqual(payment_line_debit_count, 3)
+
+        transaction_credit_count = Transaction.objects.filter(
+            reference="ORDER-1", amount__lt=0
+        ).count()
+        payment_credit_count = Payment.objects.filter(
+            transaction__reference="ORDER-1", type=PaymentType.CREDIT
+        ).count()
+        payment_line_credit_count = PaymentLine.objects.filter(
+            payment__transaction__reference="ORDER-1", payment__type=PaymentType.CREDIT
+        ).count()
+
+        self.assertEqual(transaction_credit_count, 1)
+        self.assertEqual(payment_credit_count, 1)
+        self.assertEqual(payment_line_credit_count, 1)
 
         self.assertEqual(payment_obj.type, PaymentType.DEBIT)
         self.assertEqual(payment_obj.status, PaymentStatus.COMPLETED)
