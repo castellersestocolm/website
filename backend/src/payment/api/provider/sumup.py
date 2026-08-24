@@ -158,7 +158,7 @@ class PaymentProviderSumUp(PaymentProviderBase):
         transactions = []
 
         for checkout_transaction in checkout.transactions:
-            if checkout_transaction.status in ("PENDING", "SUCCESSFUL"):
+            if checkout_transaction.status not in ("FAILED", "CANCELLED"):
                 try:
                     transaction = self.client.transactions.get(
                         id=checkout_transaction.id,

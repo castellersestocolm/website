@@ -182,11 +182,15 @@ def create_for_order(  # noqa: C901
             text_order = _("Membership")
             text_year = order_obj.all_memberships[0].module.membership.date_from.year
             text = f"{text_order} {text_year}"
+            text_fee = f"{text} fee"
         elif order_obj.type == OrderType.COURSE:
             text = order_obj.all_courses[0].registration.course.program.name_locale
+            text_fee = f"{text} fee"
         else:
             text_order = _("Order")
             text = f"{text_order} #{order_obj.reference}"
+            text_order_fee = _("Order fee")
+            text_fee = f"{text_order_fee} #{order_obj.reference}"
 
         transaction_obj, __ = Transaction.objects.update_or_create(
             source=source_obj,
@@ -336,9 +340,6 @@ def create_for_order(  # noqa: C901
                 if hasattr(payment_order_obj.provider, "accounts")
                 else None
             )
-
-            text_order_fee = _("Order fee")
-            text_fee = f"{text_order_fee} #{order_obj.reference}"
 
             transaction_fee_obj, __ = Transaction.objects.update_or_create(
                 source=source_obj,

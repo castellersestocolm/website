@@ -13,6 +13,8 @@ PAYMENT_LINE_CONTENT_TYPES = (
     ("order", "orderdelivery"),
     ("order", "orderproduct"),
     ("order", "orderregistration"),
+    ("order", "ordermembership"),
+    ("order", "ordercourse"),
     ("order", "orderdelivery"),
     ("event", "registration"),
 )

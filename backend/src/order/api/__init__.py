@@ -473,7 +473,6 @@ def update_provider(
     return get(order_id=order_id, user_id=user_id, module=module)
 
 
-# TODO: Membership orders perhaps delete it entirely as 1-to-1 relationship to module
 def clean_pending_orders() -> None:
     # TODO: Move delta to a setting perhaps
     # TODO: Check what happens when payment order and order are out of sync
