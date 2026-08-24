@@ -368,13 +368,7 @@ def get_payment_email_render(
 ) -> EmailRender:
     payment_obj = (
         Payment.objects.filter(id=payment_id)
-        .select_related("entity", "transaction", "transaction__source")
-        .prefetch_related(
-            Prefetch(
-                "lines", PaymentLine.objects.with_description().order_by("amount")
-            ),
-        )
-        .with_amount()
+        .select_related("entity", "entity__user")
         .first()
     )
 
@@ -389,6 +383,20 @@ def get_payment_email_render(
     )
 
     with translation.override(locale):
+        payment_obj = (
+            Payment.objects.filter(id=payment_id)
+            .select_related(
+                "entity", "entity__user", "entity", "transaction", "transaction__source"
+            )
+            .prefetch_related(
+                Prefetch(
+                    "lines", PaymentLine.objects.with_description().order_by("amount")
+                ),
+            )
+            .with_amount()
+            .first()
+        )
+
         context = {
             **SETTINGS_BY_MODULE[module],
             **(context or {}),

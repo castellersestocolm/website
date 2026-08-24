@@ -2,15 +2,24 @@ import styles from "./styles.module.css";
 import { Typography, Link, ListItem, List, ListItemText } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { apiEventPage } from "../../api";
+import {
+  apiEventPage,
+  apiMembershipList,
+  apiUserFamilyMemberRequestList,
+  apiUserFamilyMemberRequestReceivedList,
+} from "../../api";
 import markdown from "@wcj/markdown-to-html";
 import PageBase from "../../components/PageBase/PageBase";
+import { useAppContext } from "../../components/AppContext/AppContext";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import FormEventRegister from "../../components/FormEventRegister/FormEventRegister";
 import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { datetimeToLongString } from "../../utils/datetime";
+import { compareEventSignup } from "../../utils/sort";
+import { ROUTES } from "../../routes";
+import IconEast from "@mui/icons-material/East";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
@@ -19,6 +28,9 @@ function CalendarEventPage() {
   const { year, month, day, code } = useParams();
 
   const [event, setEvent] = React.useState(undefined);
+  const [membership, setMembership] = React.useState(undefined);
+
+  const { user } = useAppContext();
 
   React.useEffect(() => {
     const date = new Date(year + "-" + month + "-" + day);
@@ -28,6 +40,35 @@ function CalendarEventPage() {
       }
     });
   }, [setEvent, year, month, day, code, i18n.resolvedLanguage]);
+
+  React.useEffect(() => {
+    if (user) {
+      apiMembershipList().then((response) => {
+        if (response.status === 200) {
+          const currentMembership = response.data.results.find(
+            (membership: any) => {
+              return membership.is_active;
+            },
+          );
+          setMembership(currentMembership);
+        }
+      });
+    }
+  }, [user, i18n.resolvedLanguage, setMembership, t]);
+
+  const userMembershipModules =
+    membership &&
+    membership.modules.map((membershipModule: any) => membershipModule.module);
+  const eventSignup =
+    event &&
+    event.signups
+      .sort(compareEventSignup)
+      .find(
+        (eventSignup: any) =>
+          !eventSignup.module ||
+          (userMembershipModules &&
+            userMembershipModules.includes(eventSignup.module)),
+      );
 
   const eventSubtitle = event && (
     <>
@@ -151,15 +192,81 @@ function CalendarEventPage() {
 
           {event.require_signup && (
             <Box mt={5}>
-              <Typography
-                variant="h4"
-                fontWeight="700"
-                align="center"
-                marginBottom="48px"
-              >
+              <Typography variant="h4" fontWeight="700" align="center" mb={2}>
                 {t("pages.calendar-event.register")}
               </Typography>
-              <FormEventRegister event={event} />
+              {eventSignup ? (
+                eventSignup.is_open ? (
+                  <FormEventRegister event={event} />
+                ) : (
+                  <>
+                    <Typography variant="body1" align="center" mb={1}>
+                      {eventSignup.time_from && eventSignup.time_to
+                        ? t("pages.calendar-event.register-opening-dates-1") +
+                          " " +
+                          datetimeToLongString(
+                            i18n.resolvedLanguage,
+                            new Date(eventSignup.time_from),
+                          ) +
+                          " " +
+                          t("pages.calendar-event.register-opening-dates-2") +
+                          " " +
+                          datetimeToLongString(
+                            i18n.resolvedLanguage,
+                            new Date(eventSignup.time_from),
+                          ) +
+                          "."
+                        : eventSignup.time_from
+                          ? t(
+                              "pages.calendar-event.register-opening-future-1",
+                            ) +
+                            " " +
+                            datetimeToLongString(
+                              i18n.resolvedLanguage,
+                              new Date(eventSignup.time_from),
+                            ) +
+                            "."
+                          : eventSignup.time_to
+                            ? t(
+                                "pages.calendar-event.register-opening-past-1",
+                              ) +
+                              " " +
+                              datetimeToLongString(
+                                i18n.resolvedLanguage,
+                                new Date(eventSignup.time_from),
+                              ) +
+                              "."
+                            : t("pages.calendar-event.register-closed")}{" "}
+                      {t("pages.calendar-event.register-opening-login")}
+                    </Typography>
+                    <Typography variant="body1" align="center">
+                      <Link
+                        color="secondary"
+                        underline="none"
+                        href={
+                          user
+                            ? ROUTES.membership.path
+                            : ROUTES["user-login"].path
+                        }
+                        className={styles.link}
+                      >
+                        {user
+                          ? t(
+                              "pages.calendar-event.register-opening-login.text-login-membership",
+                            )
+                          : t(
+                              "pages.activity-kids.content.section-register.text-login-link",
+                            )}
+                        <IconEast className={styles.iconEast} />
+                      </Link>
+                    </Typography>
+                  </>
+                )
+              ) : (
+                <Typography variant="body2" align="center">
+                  {t("pages.calendar-event.register-closed")}
+                </Typography>
+              )}
             </Box>
           )}
         </Box>

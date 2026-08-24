@@ -102,10 +102,14 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
 
     # TODO: For now make old event registrations "read only"
     def has_change_permission(self, request, obj=None):
-        return not obj or obj.time_to <= timezone.now() + timezone.timedelta(days=7)
+        return not obj or obj.time_to >= timezone.now() - timezone.timedelta(days=7)
 
     def get_queryset(self, request):
-        return super().get_queryset(request=request).select_related("entity", "event")
+        return (
+            super()
+            .get_queryset(request=request)
+            .select_related("entity", "entity__user", "event")
+        )
 
     def data_nice(self, obj):
         if not obj.data:
@@ -114,7 +118,7 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
         return mark_safe(beautify_dict(data=obj.data))
 
     def get_inline_actions(self, request, obj=None):
-        actions = super().get_inline_actions(request, obj=None)
+        actions = super().get_inline_actions(request, obj=obj)
         if obj.line and self.has_change_permission(request, obj):
             actions.append("action_send_paid_email")
         return actions
