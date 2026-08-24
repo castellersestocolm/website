@@ -64,8 +64,12 @@ export default function PageImageHero({
                 marginTop: { xs: mobileFull ? "0" : "16px", md: "32px" },
                 paddingTop: { xs: mobileFull ? "0" : "32px", md: "64px" },
                 paddingBottom: { xs: mobileFull ? "0" : "24px", md: "32px" },
-                paddingLeft: { xs: mobileFull ? "0" : "calc(2 * var(--mui-spacing))" },
-                paddingRight: { xs: mobileFull ? "0" : "calc(2 * var(--mui-spacing))" },
+                paddingLeft: {
+                  xs: mobileFull ? "0" : "calc(2 * var(--mui-spacing))",
+                },
+                paddingRight: {
+                  xs: mobileFull ? "0" : "calc(2 * var(--mui-spacing))",
+                },
                 position: "relative",
                 ...(loading
                   ? {
