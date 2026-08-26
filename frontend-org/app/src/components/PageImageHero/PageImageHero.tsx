@@ -22,7 +22,7 @@ export default function PageImageHero({
         component="section"
         className={styles.page}
         sx={{
-          marginTop: { xs: mobileFull ? "0" : "56px", md: "65px" },
+          marginTop: { xs: "56px", md: "65px" },
           padding: { xs: mobileFull ? "0" : "32px 0", md: "64px 0" },
           ...(loading
             ? {
