@@ -331,7 +331,9 @@ def create(
 
     if entity_obj:
         # Create the associated consents
-        consent.api.add_consents(entity_id=entity_obj.id, consent_types=consent_types)
+        consent.api.add_consents(
+            entity_id=entity_obj.id, consent_types=consent_types, module=module
+        )
 
     return user_obj
 
@@ -449,7 +451,9 @@ def update(
     if hasattr(user_obj, "entity"):
         # Create the associated consents
         consent.api.add_consents(
-            entity_id=user_obj.entity.id, consent_types=consent_types
+            entity_id=user_obj.entity.id,
+            consent_types=consent_types,
+            module=module,
         )
 
     if not had_registration_finished and user_obj.registration_finished(module=module):

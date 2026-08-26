@@ -192,13 +192,13 @@ class OrderAPI(ComuniCatViewSet):
         return Response(serializer.data)
 
     @swagger_auto_schema(
-        responses={204: Serializer(), 401: Serializer()},
+        responses={204: Serializer(), 403: Serializer()},
     )
     def destroy(self, request, id):
         is_deleted = order.api.delete(order_id=id, module=self.module)
 
         if not is_deleted:
-            return Response(status=401)
+            return Response(status=403)
 
         return Response(status=204)
 
