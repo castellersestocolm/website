@@ -172,17 +172,17 @@ class ProgramCourseRegistrationAPI(ComuniCatViewSet):
         return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(
-        responses={204: Serializer(), 400: Serializer(), 401: Serializer()},
+        responses={204: Serializer(), 401: Serializer(), 403: Serializer()},
     )
     def destroy(self, request, id):
         if not request.user.is_authenticated:
-            return Response(status=400)
+            return Response(status=401)
 
         is_deleted = activity.api.program_course_registration.delete(
             registration_id=id, user_id=request.user.id, module=self.module
         )
 
         if not is_deleted:
-            return Response(status=401)
+            return Response(status=403)
 
         return Response(status=204)

@@ -306,7 +306,10 @@ class UserFamilyMemberAPI(ComuniCatViewSet):
         validated_data = serializer.validated_data
 
         family_member_obj = user.api.family_member.update(
-            id=id, user_id=request.user.id, **validated_data
+            id=id,
+            user_id=request.user.id,
+            **validated_data,
+            module=self.module,
         )
 
         if not family_member_obj:
@@ -340,13 +343,13 @@ class UserFamilyMemberAPI(ComuniCatViewSet):
         return Response(serializer.data, status=201)
 
     @swagger_auto_schema(
-        responses={204: Serializer(), 401: Serializer()},
+        responses={204: Serializer(), 403: Serializer()},
     )
     def destroy(self, request, id):
         is_deleted = user.api.family_member.delete(id=id, user_id=request.user.id)
 
         if not is_deleted:
-            return Response(status=401)
+            return Response(status=403)
 
         return Response(status=204)
 

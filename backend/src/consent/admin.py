@@ -11,7 +11,7 @@ class EntityConsentAdmin(admin.ModelAdmin):
         "entity__lastname",
         "entity__email",
     )
-    list_display = ("entity", "type", "created_at")
+    list_display = ("entity", "type", "deleted_at", "created_at")
     list_filter = ("type",)
     raw_id_fields = ("entity",)
     readonly_fields = ("google_group_user",)

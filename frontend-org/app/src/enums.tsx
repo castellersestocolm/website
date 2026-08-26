@@ -184,6 +184,7 @@ export enum ConsentType {
   COMMUNICATION = 30,
   NEWSLETTER = 40,
   HEALTH = 50,
+  SIGNUP = 60,
 }
 
 export enum ProgramType {

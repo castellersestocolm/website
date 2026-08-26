@@ -3,7 +3,9 @@ from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 
 from comunicat.db.mixins import StandardModel, Timestamps
+from comunicat.enums import Module
 from consent.enums import ConsentType
+from consent.managers import EntityConsentQuerySet
 from notify.enums import NewsletterType
 
 
@@ -13,6 +15,10 @@ class EntityConsent(StandardModel, Timestamps):
     )
     type = models.PositiveSmallIntegerField(
         choices=((ct.value, ct.name) for ct in ConsentType),
+    )
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
     )
 
     newsletter = models.ForeignKey(
@@ -32,6 +38,8 @@ class EntityConsent(StandardModel, Timestamps):
     )
 
     deleted_at = models.DateTimeField(blank=True, null=True)
+
+    objects = EntityConsentQuerySet.as_manager()
 
     def clean(self):
         validation_errors = {}

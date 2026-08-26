@@ -11,6 +11,7 @@ import {
   API_LEGAL_GROUP_LIST_PAGE_SIZE,
   API_DOCUMENTS_LIST_PAGE_SIZE,
   API_NEWSLETTER_LIST_PAGE_SIZE,
+  API_CONSENT_ENTITY_LIST_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, OrderType } from "../enums";
 
@@ -745,6 +746,24 @@ export const apiNewsletterList = async (
   }
 };
 
+export const apiConsentEntityList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+) => {
+  try {
+    return await instance.get("/consent/entity/", {
+      params: {
+        page_size: pageSize ? pageSize : API_CONSENT_ENTITY_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiConsentEntityCreate = async (
   firstname: string,
   lastname: string,
@@ -761,7 +780,11 @@ export const apiConsentEntityCreate = async (
         phone: phone,
       },
       consents: consents.map((consent: any) => {
-        return { type: consent.type, newsletter_id: consent.newsletterId };
+        return {
+          type: consent.type,
+          newsletter_id: consent.newsletterId,
+          is_active: consent.isActive,
+        };
       }),
     });
   } catch (error) {

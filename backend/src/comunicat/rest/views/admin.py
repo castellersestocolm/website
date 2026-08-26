@@ -352,7 +352,7 @@ class AdminHistoryEventAPI(ComuniCatViewSet):
         return Response(status=202)
 
     @swagger_auto_schema(
-        responses={204: Serializer(), 403: Serializer()},
+        responses={204: Serializer()},
     )
     def destroy(self, request, id):
         history.api.history_event.delete(history_event_id=id, module=self.module)

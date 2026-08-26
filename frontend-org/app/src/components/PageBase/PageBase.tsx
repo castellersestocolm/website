@@ -3,6 +3,7 @@ import { Container, Typography } from "@mui/material";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
+import Alerts from "../Alerts/Alerts";
 
 export default function PageBase({
   title,
@@ -66,6 +67,7 @@ export default function PageBase({
                 : {}),
             }}
           >
+            <Alerts />
             <Box className={styles.pageHeader}>
               <Typography
                 variant="h3"

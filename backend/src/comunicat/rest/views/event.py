@@ -235,7 +235,7 @@ class RegistrationAPI(ComuniCatViewSet):
 
     @swagger_auto_schema(
         query_serializer=DestroyRegistrationSerializer(),
-        responses={204: Serializer(), 401: Serializer()},
+        responses={204: Serializer(), 401: Serializer(), 403: Serializer()},
     )
     def destroy(self, request, id):
         serializer = DestroyRegistrationSerializer(data=request.query_params)
@@ -260,7 +260,7 @@ class RegistrationAPI(ComuniCatViewSet):
         )
 
         if not is_deleted:
-            return Response(status=401)
+            return Response(status=403)
 
         return Response(status=204)
 

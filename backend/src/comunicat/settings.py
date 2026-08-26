@@ -20,6 +20,7 @@ from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from comunicat.enums import Module
+from consent.enums import ConsentType
 from event.enums import EventType
 from legal.enums import TeamType
 
@@ -505,6 +506,13 @@ MODULE_ORG_GOOGLE_DRIVE = {
         ),
     },
 }
+MODULE_ORG_REQUIRED_CONSENT_TYPES = [
+    ConsentType[consent_name]
+    for consent_name in filter(
+        None,
+        os.getenv("MODULE_ORG_REQUIRED_CONSENT_TYPES", "GENERAL").split(","),
+    )
+]
 
 MODULE_TOWERS_NAME = os.getenv("MODULE_TOWERS_NAME")
 MODULE_TOWERS_SHORT_NAME = os.getenv("MODULE_TOWERS_SHORT_NAME", MODULE_TOWERS_NAME)
@@ -601,6 +609,15 @@ MODULE_TOWERS_GOOGLE_DRIVE = {
         ),
     },
 }
+MODULE_TOWERS_REQUIRED_CONSENT_TYPES = [
+    ConsentType[consent_name]
+    for consent_name in filter(
+        None,
+        os.getenv("MODULE_TOWERS_REQUIRED_CONSENT_TYPES", "GENERAL,MEDIA,HEALTH").split(
+            ","
+        ),
+    )
+]
 
 # Payment providers
 

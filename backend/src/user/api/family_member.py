@@ -83,6 +83,7 @@ def update(
     firstname: str,
     lastname: str,
     birthday: datetime.date,
+    module: Module,
     towers: dict | None,
     organisation: dict | None,
     consent_types: list[ConsentType] = list,
@@ -123,10 +124,12 @@ def update(
         update_fields=("height_shoulders", "height_arms")
     )
 
-    if family_member_obj.user.entity:
+    if family_member_obj.user.entity and consent_types:
         # Create the associated consents
         consent.api.add_consents(
-            entity_id=family_member_obj.user.entity.id, consent_types=consent_types
+            entity_id=family_member_obj.user.entity.id,
+            consent_types=consent_types,
+            module=module,
         )
 
     return family_member_obj

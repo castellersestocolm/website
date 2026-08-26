@@ -13,6 +13,7 @@ from comunicat.rest.serializers.consent import (
     EntityConsentSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
+from consent.fields import Consent
 
 _log = logging.getLogger(__name__)
 
@@ -65,14 +66,52 @@ class EntityConsentAPI(ComuniCatViewSet):
             if entity_obj.user:
                 return Response(status=201)
 
-        consent.api.add_consents(
+        consent.api.update_consents(
             entity_id=entity_obj.id,
-            consent_types=[consent["type"] for consent in validated_data["consents"]],
-            newsletter_ids=[
-                consent["newsletter_id"]
-                for consent in validated_data["consents"]
-                if consent.get("newsletter_id") is not None
+            consents=[
+                Consent(
+                    consent_type=entity_consent["type"],
+                    is_active=entity_consent["is_active"],
+                    newsletter_id=entity_consent.get("newsletter_id"),
+                )
+                for entity_consent in validated_data["consents"]
             ],
+            module=self.module,
         )
 
         return Response(status=201)
+
+    @swagger_auto_schema(
+        responses={200: EntityConsentSerializer(many=True)},
+    )
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=401)
+
+        entity_consent_objs = consent.api.get_list(
+            user_id=request.user.id,
+            module=self.module,
+        )
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(entity_consent_objs, request)
+        serializer = self.serializer_class(
+            result_page, context={"module": self.module}, many=True
+        )
+        return paginator.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        responses={204: Serializer(), 401: Serializer(), 403: Serializer()},
+    )
+    def destroy(self, request, id):
+        if not request.user.is_authenticated:
+            return Response(status=401)
+
+        is_deleted = consent.api.remove_consent(
+            consent_id=id, user_id=request.user.id, module=self.module
+        )
+
+        if not is_deleted:
+            return Response(status=403)
+
+        return Response(status=204)
