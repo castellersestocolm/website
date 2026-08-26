@@ -210,12 +210,14 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
             newsletter=cls.newsletter_obj,
             entity=cls.entity_member_2_obj,
             type=ConsentType.NEWSLETTER,
+            module=Module.ORG,
             google_group_user=None,
         )
         cls.entity_consent_entity_2_obj = EntityConsentFactory(
             newsletter=cls.newsletter_obj,
             entity=cls.entity_external_2_obj,
             type=ConsentType.NEWSLETTER,
+            module=Module.ORG,
             google_group_user=None,
         )
 

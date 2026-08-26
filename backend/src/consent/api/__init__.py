@@ -32,14 +32,18 @@ def add_consents(
         entity_id=entity_id,
         module=module,
         consents=[Consent(consent_type=ct, is_active=True) for ct in consent_types]
-        + [
-            Consent(
-                consent_type=ConsentType.NEWSLETTER,
-                is_active=True,
-                newsletter_id=newsletter_id,
-            )
-            for newsletter_id in newsletter_ids
-        ],
+        + (
+            [
+                Consent(
+                    consent_type=ConsentType.NEWSLETTER,
+                    is_active=True,
+                    newsletter_id=newsletter_id,
+                )
+                for newsletter_id in newsletter_ids
+            ]
+            if newsletter_ids
+            else []
+        ),
     )
 
 

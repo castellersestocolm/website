@@ -329,7 +329,7 @@ def create(
     # Create the associated entity
     entity_obj = payment.api.entity.get_entity_by_key(user_id=user_obj.id)
 
-    if entity_obj:
+    if entity_obj and consent_types:
         # Create the associated consents
         consent.api.add_consents(
             entity_id=entity_obj.id, consent_types=consent_types, module=module
@@ -448,7 +448,7 @@ def update(
             },
         )
 
-    if hasattr(user_obj, "entity"):
+    if hasattr(user_obj, "entity") and consent_types:
         # Create the associated consents
         consent.api.add_consents(
             entity_id=user_obj.entity.id,

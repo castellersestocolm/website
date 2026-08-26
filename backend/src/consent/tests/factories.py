@@ -2,6 +2,7 @@ from factory import SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
+from comunicat.enums import Module
 from consent.enums import ConsentType
 from consent.models import EntityConsent
 
@@ -9,6 +10,7 @@ from consent.models import EntityConsent
 class EntityConsentFactory(DjangoModelFactory):
     entity = SubFactory("payment.tests.factories.EntityFactory")
 
+    module = FuzzyChoice(Module)
     type = FuzzyChoice(ConsentType)
 
     newsletter = SubFactory("notify.tests.factories.NewsletterFactory")
