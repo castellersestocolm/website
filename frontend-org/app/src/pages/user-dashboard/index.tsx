@@ -523,6 +523,18 @@ function UserDashboardPage() {
           <Link
             color="secondary"
             underline="none"
+            href={ROUTES["user-consent"].path}
+            className={styles.link}
+          >
+            {t("pages.user-dashboard.link-consent")}
+            <IconEast className={styles.iconEast} />
+          </Link>
+        </Box>
+        <Divider />
+        <Box className={styles.userLogoutBox}>
+          <Link
+            color="secondary"
+            underline="none"
             component="button"
             onClick={handleLogoutSubmit}
             className={styles.link}

@@ -179,6 +179,7 @@
   "language.selector.sv": "På svenska",
   "pages.home-join.payment-list": "Swish: 123 068 88 20\nPlusGirot: 97 09 16-3\nIBAN: SE84 9500 0099 6042 0970 9163",
   "pages.user-dashboard.title": "Les meves dades",
+  "pages.user-dashboard.link-consent": "Gestiona les subscripcions",
   "pages.user-dashboard.link-logout": "Tanca la sessió",
   "pages.user-dashboard.section.profile.title": "El meu perfil",
   "pages.user-dashboard.section.emails.title": "Correus secundaris",

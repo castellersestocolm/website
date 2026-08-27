@@ -26,6 +26,9 @@ export const ROUTES = {
   "user-set-verify": {
     path: "/user/verify/:token",
   },
+  "user-consent": {
+    path: "/user/consent",
+  },
   "activity-kids": {
     path: "/activity/kids",
   },
@@ -49,9 +52,6 @@ export const ROUTES = {
   },
   "about-contact": {
     path: "/about/contact",
-  },
-  "about-newsletter": {
-    path: "/about/newsletter",
   },
   "resources-newsletters": {
     path: "/resources/newsletters",
