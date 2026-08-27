@@ -34,9 +34,11 @@ import {
   apiActivityProgramCourseList,
   apiActivityProgramCourseRegistrationCreate,
   apiActivityProgramCourseRegistrationDelete,
+  apiMembershipList,
   apiOrderCourseCreate,
 } from "../../api";
 import { datetimeToLongString, dateToString } from "../../utils/datetime";
+import { userAge } from "../../utils/user";
 import IconAccountCircle from "@mui/icons-material/AccountCircle";
 import IconCalendarMonth from "@mui/icons-material/CalendarMonth";
 import { ROUTES } from "../../routes";
@@ -50,6 +52,7 @@ function ActivityKidsPage() {
 
   let navigate = useNavigate();
 
+  const [membership, setMembership] = useState(undefined);
   const [programCourses, setProgramCourses] = useState(undefined);
 
   const userFamilyMemberCannotManage =
@@ -66,6 +69,21 @@ function ActivityKidsPage() {
       }
     });
   }, [setProgramCourses, i18n.resolvedLanguage]);
+
+  React.useEffect(() => {
+    if (user) {
+      apiMembershipList().then((response) => {
+        if (response.status === 200) {
+          const currentMembership = response.data.results.find(
+            (membership: any) => {
+              return membership.is_active;
+            },
+          );
+          setMembership(currentMembership);
+        }
+      });
+    }
+  }, [user, setMembership]);
 
   function handleRegistrationCreate(userId: string, courseId: string) {
     apiActivityProgramCourseRegistrationCreate(userId, courseId).then(
@@ -278,7 +296,8 @@ function ActivityKidsPage() {
         {t("pages.activity-kids.content.section-register.title")}
       </Typography>
       {(!userFamilyMemberCannotManage ||
-        userFamilyMemberCannotManage.length === 0) && (
+        userFamilyMemberCannotManage.length === 0 ||
+        !membership) && (
         <>
           <Typography variant="body1" mb={1}>
             {t("pages.activity-kids.content.section-register.text-login")}
@@ -288,14 +307,22 @@ function ActivityKidsPage() {
               color="secondary"
               underline="none"
               href={
-                user ? ROUTES["user-dashboard"].path : ROUTES["user-login"].path
+                user
+                  ? membership
+                    ? ROUTES["user-dashboard"].path
+                    : ROUTES.membership.path
+                  : ROUTES["user-login"].path
               }
               className={styles.link}
             >
               {user
-                ? t(
-                    "pages.activity-kids.content.section-register.text-login-family",
-                  )
+                ? membership
+                  ? t(
+                      "pages.activity-kids.content.section-register.text-login-family",
+                    )
+                  : t(
+                      "pages.activity-kids.content.section-register.text-login-membership",
+                    )
                 : t(
                     "pages.activity-kids.content.section-register.text-login-link",
                   )}
@@ -308,7 +335,8 @@ function ActivityKidsPage() {
         programCourses.results &&
         programCourses.results.length > 0 &&
         userFamilyMemberCannotManage &&
-        userFamilyMemberCannotManage.length > 0 && (
+        userFamilyMemberCannotManage.length > 0 &&
+        membership && (
           <>
             {programCourses.results.map((programCourse: any) => {
               const registrationsRequested = programCourse.registrations.filter(
@@ -446,6 +474,10 @@ function ActivityKidsPage() {
                                           member.user.entity.id,
                                       );
 
+                                    const age =
+                                      member.user.birthday &&
+                                      userAge(member.user.birthday);
+
                                     return (
                                       <>
                                         <Box key={member.id}>
@@ -471,16 +503,32 @@ function ActivityKidsPage() {
                                             >
                                               <ListItemText
                                                 primary={
-                                                  <Typography
-                                                    variant="body2"
-                                                    component="span"
-                                                  >
-                                                    {member.user.lastname
-                                                      ? member.user.firstname +
-                                                        " " +
-                                                        member.user.lastname
-                                                      : member.user.firstname}
-                                                  </Typography>
+                                                  <>
+                                                    <Typography
+                                                      variant="body2"
+                                                      component="span"
+                                                    >
+                                                      {member.user.lastname
+                                                        ? member.user
+                                                            .firstname +
+                                                          " " +
+                                                          member.user.lastname
+                                                        : member.user.firstname}
+                                                    </Typography>
+                                                    {age && (
+                                                      <Typography
+                                                        variant="body2"
+                                                        component="span"
+                                                        color="textSecondary"
+                                                      >
+                                                        {" — "}
+                                                        {age}{" "}
+                                                        {t(
+                                                          "pages.activity-kids.content.section-register.age",
+                                                        )}
+                                                      </Typography>
+                                                    )}
+                                                  </>
                                                 }
                                                 secondary={
                                                   registration && (
@@ -497,9 +545,14 @@ function ActivityKidsPage() {
                                                     >
                                                       {registration.status ===
                                                       ProgramCourseRegistrationStatus.ACTIVE
-                                                        ? t(
-                                                            "pages.activity-kids.content.section-register.status-active",
-                                                          )
+                                                        ? registration.amount
+                                                            .amount === 0
+                                                          ? t(
+                                                              "pages.activity-kids.content.section-register.status-active-free",
+                                                            )
+                                                          : t(
+                                                              "pages.activity-kids.content.section-register.status-active",
+                                                            )
                                                         : registration.status ===
                                                             ProgramCourseRegistrationStatus.PROCESSING
                                                           ? t(
@@ -532,7 +585,9 @@ function ActivityKidsPage() {
                                                   disabled={
                                                     registration &&
                                                     registration.status >
-                                                      ProgramCourseRegistrationStatus.REQUESTED
+                                                      ProgramCourseRegistrationStatus.REQUESTED &&
+                                                    registration.amount.amount >
+                                                      0
                                                   }
                                                   onClick={() => {
                                                     if (registration) {

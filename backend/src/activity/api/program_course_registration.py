@@ -5,6 +5,7 @@ from django.db.models import Q
 import user.api.family
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
+from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 
 
@@ -40,9 +41,12 @@ def get_list(
 
 def delete(registration_id: UUID, user_id: UUID, module: Module) -> bool:
     program_course_registration_obj = ProgramCourseRegistration.objects.filter(
+        Q(
+            Q(status=ProgramCourseRegistrationStatus.REQUESTED)
+            | Q(status=ProgramCourseRegistrationStatus.ACTIVE, amount=ZERO_MONEY)
+        ),
         id=registration_id,
         entity__user__family_member__family__members__user_id=user_id,
-        status=ProgramCourseRegistrationStatus.REQUESTED,
     ).first()
 
     if not program_course_registration_obj:

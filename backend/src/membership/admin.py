@@ -26,7 +26,12 @@ def renew_membership(modeladmin, request, queryset):
 
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
-    search_fields = ("id",)
+    search_fields = (
+        "id",
+        "membership_users__user__firstname",
+        "membership_users__user__lastname",
+        "membership_users__user__email",
+    )
     list_display = (
         "id",
         "user_list",
