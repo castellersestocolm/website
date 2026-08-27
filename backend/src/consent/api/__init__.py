@@ -1,7 +1,9 @@
 from uuid import UUID
 
+from django.db import transaction
 from django.utils import timezone
 
+import user.tasks
 from comunicat.enums import Module
 from consent.consts import REQUIRED_CONSENT_TYPE_BY_MODULE
 from consent.enums import ConsentType
@@ -47,6 +49,7 @@ def add_consents(
     )
 
 
+@transaction.atomic
 def update_consents(
     entity_id: UUID,
     module: Module,
@@ -74,12 +77,27 @@ def update_consents(
             )
             entity_consent_objs.append(entity_consent_obj)
         else:
-            EntityConsent.objects.filter(
-                entity_id=entity_id,
-                deleted_at=None,
-                module=module,
-                **entity_consent_data,
-            ).update(deleted_at=time_now)
+            current_entity_consent_objs = list(
+                EntityConsent.objects.filter(
+                    entity_id=entity_id,
+                    deleted_at=None,
+                    module=module,
+                    **entity_consent_data,
+                )
+            )
+
+            for current_entity_consent_obj in current_entity_consent_objs:
+                current_entity_consent_obj.deleted_at = time_now
+                current_entity_consent_obj.save(update_fields=("deleted_at",))
+
+            entity_consent_objs += current_entity_consent_objs
+
+    for entity_consent_obj in entity_consent_objs:
+        transaction.on_commit(
+            lambda: user.tasks.sync_from_consent(
+                entity_consent_id=entity_consent_obj.id
+            )
+        )
 
     return entity_consent_objs
 
