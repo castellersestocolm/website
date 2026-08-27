@@ -114,8 +114,8 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
                 )
             MembershipUserFactory(membership=membership_obj, user=user_obj)
 
-        cls.entity_external_1_obj = EntityFactory()
-        cls.entity_external_2_obj = EntityFactory()
+        cls.entity_external_1_obj = EntityFactory(email="external-1@domain-test.org")
+        cls.entity_external_2_obj = EntityFactory(email="external-2@domain-test.org")
 
         cls.google_integration_obj = GoogleIntegrationFactory(module=Module.ORG)
 
@@ -513,3 +513,193 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         self.assertIn(
             self.entity_external_2_obj.email, google_group_newsletter_user_by_email
         )
+
+
+
+
+@pytest.mark.django_db
+@mock.patch("user.api.google_group.Credentials.before_request", return_value=None)
+@mock.patch("user.api.google_group.Credentials.refresh", return_value=None)
+class TestGoogleGroupSyncFromConsent(NumOperationsMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.user_board_1_obj = UserFactory(email="user-board-1@domain-test.org")
+        cls.user_member_1_obj = UserFactory(email="user-member-1@domain-test.org")
+        cls.user_member_2_obj = UserFactory(email="user-member-2@domain-test.org")
+
+        cls.entity_board_1_obj = EntityFactory(user=cls.user_board_1_obj)
+        cls.entity_member_1_obj = EntityFactory(user=cls.user_member_1_obj)
+        cls.entity_member_2_obj = EntityFactory(user=cls.user_member_2_obj)
+
+        cls.user_email_board_1_obj = UserEmailFactory(
+            user=cls.user_board_1_obj,
+            email=f"user-board-1@{settings.MODULE_ORG_DOMAIN}",
+        )
+
+        cls.entity_external_1_obj = EntityFactory(email="external-1@domain-test.org")
+        cls.entity_external_2_obj = EntityFactory(email="external-2@domain-test.org")
+
+        cls.google_integration_obj = GoogleIntegrationFactory(module=Module.ORG)
+
+        cls.google_group_newsletter_obj = GoogleGroupFactory(
+            google_integration=cls.google_integration_obj
+        )
+
+        cls.google_group_user_member_1_obj = GoogleGroupUserFactory(
+            group=cls.google_group_newsletter_obj, user=cls.user_member_1_obj
+        )
+        cls.google_group_external_1_obj = GoogleGroupUserFactory(
+            group=cls.google_group_newsletter_obj, user=None, email=cls.entity_external_1_obj.email
+        )
+
+        cls.newsletter_obj = NewsletterFactory(
+            module=Module.ORG,
+            type=NewsletterType.GOOGLE,
+            google_group=cls.google_group_newsletter_obj,
+        )
+
+        cls.entity_consent_board_1_obj = EntityConsentFactory(
+            newsletter=cls.newsletter_obj,
+            entity=cls.entity_board_1_obj,
+            type=ConsentType.NEWSLETTER,
+            module=Module.ORG,
+            google_group_user=None,
+        )
+        cls.entity_consent_member_1_obj = EntityConsentFactory(
+            newsletter=cls.newsletter_obj,
+            entity=cls.entity_member_1_obj,
+            type=ConsentType.NEWSLETTER,
+            module=Module.ORG,
+            google_group_user=cls.google_group_user_member_1_obj,
+            deleted_at=timezone.now(),
+        )
+        cls.entity_consent_member_2_obj = EntityConsentFactory(
+            newsletter=cls.newsletter_obj,
+            entity=cls.entity_member_2_obj,
+            type=ConsentType.NEWSLETTER,
+            module=Module.ORG,
+            google_group_user=None,
+        )
+        cls.entity_consent_external_1_obj = EntityConsentFactory(
+            newsletter=cls.newsletter_obj,
+            entity=cls.entity_external_1_obj,
+            type=ConsentType.NEWSLETTER,
+            module=Module.ORG,
+            google_group_user=cls.google_group_external_1_obj,
+            deleted_at=timezone.now(),
+        )
+        cls.entity_consent_external_2_obj = EntityConsentFactory(
+            newsletter=cls.newsletter_obj,
+            entity=cls.entity_external_2_obj,
+            type=ConsentType.NEWSLETTER,
+            module=Module.ORG,
+            google_group_user=None,
+        )
+
+    def test_sync_from_consent__board(self, *args, **kwargs):
+        with mock.patch(
+            "googleapiclient.http.HttpRequest.execute",
+            side_effect=MockGoogleApiClientExecute(
+                {},
+            ),
+        ):
+            with self.assertNumOperations(
+                num=0,
+                num_selects=5,
+                num_inserts=1,
+                num_updates=1,
+            ):
+                google_group_user_board_1_obj = user.api.google_group.sync_from_consent(
+                    entity_consent_id=self.entity_consent_board_1_obj.id
+                )
+
+        self.assertIsNotNone(google_group_user_board_1_obj)
+        self.assertEqual(google_group_user_board_1_obj.group, self.google_group_newsletter_obj)
+        self.assertEqual(google_group_user_board_1_obj.user, self.user_board_1_obj)
+        self.assertEqual(google_group_user_board_1_obj.email, self.user_board_1_obj.email)
+        self.assertEqual(google_group_user_board_1_obj.role, GoogleGroupUserRole.MANAGER)
+
+    def test_sync_from_consent__members(self, *args, **kwargs):
+        with mock.patch(
+            "googleapiclient.http.HttpRequest.execute",
+            side_effect=MockGoogleApiClientExecute(
+                {"isMember": True},
+                {},
+            ),
+        ):
+            with self.assertNumOperations(
+                num=0,
+                num_selects=5,
+                num_deletes=2,
+            ):
+                google_group_user_member_1_obj = user.api.google_group.sync_from_consent(
+                    entity_consent_id=self.entity_consent_member_1_obj.id
+                )
+
+        self.assertIsNone(google_group_user_member_1_obj)
+
+        with mock.patch(
+            "googleapiclient.http.HttpRequest.execute",
+            side_effect=MockGoogleApiClientExecute(
+                {},
+            ),
+        ):
+            with self.assertNumOperations(
+                num=0,
+                num_selects=5,
+                num_inserts=1,
+                num_updates=1,
+            ):
+                google_group_user_member_2_obj = user.api.google_group.sync_from_consent(
+                    entity_consent_id=self.entity_consent_member_2_obj.id
+                )
+
+        self.assertIsNotNone(google_group_user_member_2_obj)
+        self.assertEqual(google_group_user_member_2_obj.group, self.google_group_newsletter_obj)
+        self.assertEqual(google_group_user_member_2_obj.user, self.user_member_2_obj)
+        self.assertEqual(google_group_user_member_2_obj.email, self.user_member_2_obj.email)
+        self.assertEqual(google_group_user_member_2_obj.role, GoogleGroupUserRole.MEMBER)
+
+
+    def test_sync_from_consent__externals(self, *args, **kwargs):
+        with mock.patch(
+            "googleapiclient.http.HttpRequest.execute",
+            side_effect=MockGoogleApiClientExecute(
+                {"isMember": True},
+                {},
+            ),
+        ):
+            with self.assertNumOperations(
+                num=0,
+                num_selects=3,
+                num_deletes=2,
+            ):
+                google_group_external_1_obj = user.api.google_group.sync_from_consent(
+                    entity_consent_id=self.entity_consent_external_1_obj.id
+                )
+
+        self.assertIsNone(google_group_external_1_obj)
+
+        with mock.patch(
+            "googleapiclient.http.HttpRequest.execute",
+            side_effect=MockGoogleApiClientExecute(
+                {},
+            ),
+        ):
+            with self.assertNumOperations(
+                num=0,
+                num_selects=3,
+                num_inserts=1,
+                num_updates=1,
+            ):
+                google_group_external_2_obj = user.api.google_group.sync_from_consent(
+                    entity_consent_id=self.entity_consent_external_2_obj.id
+                )
+
+        self.assertIsNotNone(google_group_external_2_obj)
+        self.assertEqual(google_group_external_2_obj.group, self.google_group_newsletter_obj)
+        self.assertIsNone(google_group_external_2_obj.user)
+        self.assertEqual(google_group_external_2_obj.email, self.entity_external_2_obj.email)
+        self.assertEqual(google_group_external_2_obj.role, GoogleGroupUserRole.MEMBER)

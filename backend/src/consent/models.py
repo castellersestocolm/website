@@ -44,19 +44,7 @@ class EntityConsent(StandardModel, Timestamps):
     def clean(self):
         validation_errors = {}
         if self.type == ConsentType.NEWSLETTER:
-            if self.newsletter:
-                if (
-                    self.newsletter.type == NewsletterType.GOOGLE
-                    and not self.deleted_at
-                ):
-                    import user.api.google_group
-
-                    transaction.on_commit(
-                        lambda: user.api.google_group.sync_from_consent(
-                            entity_consent_id=self.id
-                        )
-                    )
-            else:
+            if not self.newsletter:
                 validation_errors["newsletter"] = _(
                     "The newsletter is mandatory for newsletter consents."
                 )
@@ -70,12 +58,11 @@ class EntityConsent(StandardModel, Timestamps):
             and self.type == ConsentType.NEWSLETTER
             and self.newsletter
             and self.newsletter.type == NewsletterType.GOOGLE
-            and not self.deleted_at
         ):
-            import user.api.google_group
+            import user.tasks
 
             transaction.on_commit(
-                lambda: user.api.google_group.sync_from_consent(
+                lambda: user.tasks.sync_from_consent(
                     entity_consent_id=self.id
                 )
             )
