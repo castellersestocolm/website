@@ -11,8 +11,15 @@ class EntityConsentAdmin(admin.ModelAdmin):
         "entity__lastname",
         "entity__email",
     )
-    list_display = ("entity", "type", "deleted_at", "created_at")
-    list_filter = ("type",)
+    list_display = (
+        "entity",
+        "module",
+        "type",
+        "newsletter",
+        "deleted_at",
+        "created_at",
+    )
+    list_filter = ("module", "type", "newsletter")
     raw_id_fields = ("entity",)
     readonly_fields = ("google_group_user",)
     ordering = ("-created_at",)

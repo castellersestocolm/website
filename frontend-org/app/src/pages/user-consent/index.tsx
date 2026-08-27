@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import PageBase from "../../components/PageBase/PageBase";
 import FormNewsletter from "../../components/FormNewsletter/FormNewsletter";
 
-function AboutNewsletterPage() {
+function UserConsentPage() {
   const { t } = useTranslation("common");
 
   const content = (
@@ -19,4 +19,4 @@ function AboutNewsletterPage() {
   );
 }
 
-export default AboutNewsletterPage;
+export default UserConsentPage;

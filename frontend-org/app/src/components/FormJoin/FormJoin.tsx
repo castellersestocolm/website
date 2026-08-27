@@ -70,7 +70,7 @@ export default function FormJoin() {
       event.currentTarget.elements.birthday.value,
       event.currentTarget.elements.consent_pictures.checked,
       i18n.resolvedLanguage,
-      [ConsentType.GENERAL, ConsentType.MEDIA, ConsentType.HEALTH],
+      [ConsentType.GENERAL, ConsentType.MEDIA],
     ).then((response) => {
       if (response.status === 201) {
         setValidationErrors(undefined);

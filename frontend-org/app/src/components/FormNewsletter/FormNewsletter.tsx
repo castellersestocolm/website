@@ -46,6 +46,7 @@ export default function FormNewsletter() {
     React.useState(undefined);
   const [consentGeneralChecked, setConsentGeneralChecked] =
     React.useState(false);
+  const [consentMediaChecked, setConsentMediaChecked] = React.useState(false);
 
   const { user, setMessages } = useAppContext();
 
@@ -89,6 +90,12 @@ export default function FormNewsletter() {
                   consentEntity.type === ConsentType.GENERAL,
               ).length > 0,
             );
+            setConsentMediaChecked(
+              consentEntitiesData.results.filter(
+                (consentEntity: any) =>
+                  consentEntity.type === ConsentType.MEDIA,
+              ).length > 0,
+            );
             setNewslettersIdsSelected(
               consentEntitiesData.results
                 .filter(
@@ -103,7 +110,12 @@ export default function FormNewsletter() {
     } else {
       setNewslettersIdsSelected([]);
     }
-  }, [user, setNewslettersIdsSelected, setConsentGeneralChecked]);
+  }, [
+    user,
+    setNewslettersIdsSelected,
+    setConsentGeneralChecked,
+    setConsentMediaChecked,
+  ]);
 
   function handleSubmit(event: React.FormEvent<CreateFormElement>) {
     event.preventDefault();
@@ -129,6 +141,7 @@ export default function FormNewsletter() {
           };
         }),
         { type: ConsentType.GENERAL, isActive: true },
+        ...(user ? [{ type: ConsentType.MEDIA, isActive: true }] : []),
       ],
     ).then((response) => {
       if (response.status === 201) {
@@ -285,11 +298,28 @@ export default function FormNewsletter() {
               </FormGrid>
             );
           })}
+        {user && (
+          <FormGrid size={{ xs: 12 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="confirmCasalMedia"
+                  value="yes"
+                  checked={consentMediaChecked}
+                  disabled={consentMediaChecked}
+                  onChange={(e) => setConsentMediaChecked(e.target.checked)}
+                />
+              }
+              label={t("pages.user-join.form.checkbox-image")}
+              required={true}
+            />
+          </FormGrid>
+        )}
         <FormGrid size={{ xs: 12 }}>
           <FormControlLabel
             control={
               <Checkbox
-                name="confirmCasal"
+                name="confirmCasalGeneral"
                 value="yes"
                 checked={consentGeneralChecked}
                 disabled={consentGeneralChecked}
