@@ -14,7 +14,7 @@ from notify.enums import NewsletterType
 from notify.models import Newsletter
 from user.consts import GOOGLE_GROUP_SCOPES
 from user.enums import GoogleGroupUserRole
-from user.models import GoogleGroup, GoogleGroupUser, User, UserEmail
+from user.models import GoogleGroup, GoogleGroupUser, User
 
 _log = logging.getLogger(__name__)
 
@@ -34,10 +34,8 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
             "newsletter__google_group",
             "newsletter__google_group__google_integration",
             "entity",
-            "entity__user"
-        ).prefetch_related(Prefetch("entity__user__emails", UserEmail.objects.filter(
-                    email_verified=True,
-                ), to_attr="all_emails"))
+            "entity__user",
+        )
         .first()
     )
 
@@ -53,15 +51,6 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
     )
     service = build("admin", "directory_v1", credentials=creds)
 
-    emails = set()
-
-    if entity_consent_obj.entity.email:
-        emails.add(entity_consent_obj.entity.email)
-
-    if entity_consent_obj.entity.user:
-        emails.add(entity_consent_obj.entity.user.email)
-        emails = emails.union({user_email_obj.email for user_email_obj in entity_consent_obj.entity.user.all_emails})
-
     user_domain_emails = (
         # TODO: Perhaps limit here by entity_consent_obj.module too
         get_module_emails_from_user(user_obj=entity_consent_obj.entity.user)
@@ -76,10 +65,14 @@ def sync_from_consent(entity_consent_id: UUID) -> GoogleGroupUser | None:
         ).delete()
 
         try:
-            has_member = service.members().hasMember(
-                groupKey=entity_consent_obj.newsletter.google_group.external_id,
-                memberKey=entity_consent_obj.entity.email,
-            ).execute()
+            has_member = (
+                service.members()
+                .hasMember(
+                    groupKey=entity_consent_obj.newsletter.google_group.external_id,
+                    memberKey=entity_consent_obj.entity.email,
+                )
+                .execute()
+            )
 
             if has_member.get("isMember"):
                 service.members().delete(

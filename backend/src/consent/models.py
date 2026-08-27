@@ -62,9 +62,7 @@ class EntityConsent(StandardModel, Timestamps):
             import user.tasks
 
             transaction.on_commit(
-                lambda: user.tasks.sync_from_consent(
-                    entity_consent_id=self.id
-                )
+                lambda: user.tasks.sync_from_consent(entity_consent_id=self.id)
             )
 
         super().save(*args, **kwargs)
