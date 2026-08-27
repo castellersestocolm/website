@@ -142,9 +142,7 @@ def register_entity(
                 program_course_registration_obj.status = (
                     ProgramCourseRegistrationStatus.ACTIVE
                 )
-            elif (
-                program_course_price_obj.amount > program_course_registration_obj.amount
-            ):
+            else:
                 program_course_registration_obj.status = (
                     ProgramCourseRegistrationStatus.REQUESTED
                 )
