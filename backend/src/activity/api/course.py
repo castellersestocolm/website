@@ -7,6 +7,7 @@ from django.utils import timezone
 import notify.tasks
 from activity.enums import ProgramCourseRegistrationStatus, ProgramType
 from activity.models import ProgramCourse, ProgramCoursePrice, ProgramCourseRegistration
+from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from event.enums import EventStatus
 from event.models import Event
@@ -115,6 +116,8 @@ def register_entity(
         if not program_course_price_obj:
             continue
 
+        is_free = program_course_price_obj.amount.amount == ZERO_MONEY.amount
+
         program_course_registration_obj, __ = (
             ProgramCourseRegistration.objects.get_or_create(
                 course_id=course_id,
@@ -122,6 +125,11 @@ def register_entity(
                 defaults={
                     "price_id": program_course_price_obj.id,
                     "amount": program_course_price_obj.amount,
+                    "status": (
+                        ProgramCourseRegistrationStatus.ACTIVE
+                        if is_free
+                        else ProgramCourseRegistrationStatus.REQUESTED
+                    ),
                 },
             )
         )
@@ -129,11 +137,17 @@ def register_entity(
         if (
             program_course_registration_obj.status
             == ProgramCourseRegistrationStatus.CANCELLED
-            or program_course_price_obj.amount > program_course_registration_obj.amount
         ):
-            program_course_registration_obj.status = (
-                ProgramCourseRegistrationStatus.REQUESTED
-            )
+            if is_free:
+                program_course_registration_obj.status = (
+                    ProgramCourseRegistrationStatus.ACTIVE
+                )
+            elif (
+                program_course_price_obj.amount > program_course_registration_obj.amount
+            ):
+                program_course_registration_obj.status = (
+                    ProgramCourseRegistrationStatus.REQUESTED
+                )
         program_course_registration_obj.price = program_course_price_obj
         program_course_registration_obj.amount = program_course_price_obj.amount
 
