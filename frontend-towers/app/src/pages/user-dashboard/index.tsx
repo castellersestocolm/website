@@ -606,7 +606,9 @@ function UserDashboardPage() {
                 onClick={handleAdminSubmit}
                 className={styles.link}
               >
-                {t("pages.user-dashboard.link-admin")}
+                <Typography variant="body1" component="span">
+                  {t("pages.user-dashboard.link-admin")}
+                </Typography>
                 <IconEast className={styles.iconEast} />
               </Link>
             </Box>
@@ -621,7 +623,9 @@ function UserDashboardPage() {
             onClick={handleLogoutSubmit}
             className={styles.link}
           >
-            {t("pages.user-dashboard.link-logout")}
+            <Typography variant="body1" component="span">
+              {t("pages.user-dashboard.link-logout")}
+            </Typography>
             <IconEast className={styles.iconEast} />
           </Link>
         </Box>
@@ -745,12 +749,18 @@ function UserDashboardPage() {
                             "pages.user-dashboard.section.membership.renew-now",
                           ) +
                           " " +
-                          membership.date_to
+                          dateToString(
+                            i18n.resolvedLanguage,
+                            membership.date_to,
+                          )
                         : t(
                             "pages.user-dashboard.section.membership.renew-date",
                           ) +
                           " " +
-                          membership.date_renewal
+                          dateToString(
+                            i18n.resolvedLanguage,
+                            membership.date_renewal,
+                          )
                     }
                   />
                 </ListItem>

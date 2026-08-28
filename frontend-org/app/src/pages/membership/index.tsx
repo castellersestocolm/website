@@ -248,12 +248,18 @@ function MembershipPage() {
                                   "pages.user-dashboard.section.membership.renew-now",
                                 ) +
                                 " " +
-                                membership.date_to
+                                dateToString(
+                                  i18n.resolvedLanguage,
+                                  membership.date_to,
+                                )
                               : t(
                                   "pages.user-dashboard.section.membership.renew-date",
                                 ) +
                                 " " +
-                                membership.date_renewal
+                                dateToString(
+                                  i18n.resolvedLanguage,
+                                  membership.date_renewal,
+                                )
                           }
                         />
                       </ListItem>
