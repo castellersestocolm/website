@@ -1167,7 +1167,7 @@ function UserDashboardPage() {
 
               {events ? (
                 <Box className={styles.userFamilyBox}>
-                  {events.results.length > 0 && false ? (
+                  {events.results.length > 0 ? (
                     <List className={styles.userFamilyList}>
                       {events.results.map((event: any, i: number, row: any) => {
                         return (
