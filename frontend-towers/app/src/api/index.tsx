@@ -19,6 +19,8 @@ import {
   API_ADMIN_REGISTRATION_LIST_PAGE_SIZE,
   API_REGISTRATIONS_LIST_PAGE_SIZE,
   API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
+  API_NEWSLETTER_LIST_PAGE_SIZE,
+  API_CONSENT_ENTITY_LIST_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, RegistrationStatus, OrderType } from "../enums";
 
@@ -1075,6 +1077,72 @@ export const apiActivityProgramCourseRegistrationList = async (
           : API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
         page: page,
       },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiNewsletterList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+) => {
+  try {
+    return await instance.get("/notify/newsletter/", {
+      params: {
+        page_size: pageSize ? pageSize : API_NEWSLETTER_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiConsentEntityList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+) => {
+  try {
+    return await instance.get("/consent/entity/", {
+      params: {
+        page_size: pageSize ? pageSize : API_CONSENT_ENTITY_LIST_PAGE_SIZE,
+        page: page,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiConsentEntityCreate = async (
+  firstname: string,
+  lastname: string,
+  email: string,
+  phone: string,
+  consents: any[],
+) => {
+  try {
+    return await instance.post("/consent/entity/", {
+      entity: email && {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        phone: phone,
+      },
+      consents: consents.map((consent: any) => {
+        return {
+          type: consent.type,
+          newsletter_id: consent.newsletterId,
+          is_active: consent.isActive,
+        };
+      }),
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

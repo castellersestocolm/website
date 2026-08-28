@@ -26,6 +26,9 @@ export const ROUTES = {
   "user-dashboard": {
     path: "/user/dashboard",
   },
+  "user-consent": {
+    path: "/user/consent",
+  },
   "about-team": {
     path: "/about/team",
   },

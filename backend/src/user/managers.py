@@ -26,12 +26,33 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from comunicat.enums import Module
+from consent.enums import ConsentType
 from legal.enums import PermissionLevel, TeamType
 from membership.enums import MembershipStatus
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 
 
 class UserQuerySet(QuerySet):
+    def with_consent(self, consent_type: ConsentType, module: Module):
+        return self.with_consents(consent_types=[consent_type], module=module)
+
+    def with_consents(self, consent_types: list[ConsentType], module: Module):
+        EntityConsent = apps.get_model("consent", "EntityConsent")
+
+        return self.annotate(
+            **{
+                f"has_active_consent_{Module(module).name.lower()}_{ConsentType(consent_type).name.lower()}": Exists(
+                    EntityConsent.objects.filter(
+                        entity__user_id=OuterRef("id"),
+                        module=module,
+                        type=consent_type,
+                        deleted_at__isnull=True,
+                    )
+                )
+                for consent_type in consent_types
+            }
+        )
+
     def with_family_name(self):
         Family = apps.get_model("user", "Family")
 
@@ -326,6 +347,16 @@ class UserQuerySet(QuerySet):
 class UserManager(BaseUserManager):
     def get_queryset(self):
         return UserQuerySet(model=self.model, using=self._db, hints=self._hints)
+
+    def with_consent(self, consent_type: ConsentType, module: Module):
+        return self.get_queryset().with_consent(
+            consent_type=consent_type, module=module
+        )
+
+    def with_consents(self, consent_types: list[ConsentType], module: Module):
+        return self.get_queryset().with_consents(
+            consent_types=consent_types, module=module
+        )
 
     def with_family_name(self):
         return self.get_queryset().with_family_name()

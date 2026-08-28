@@ -11,6 +11,7 @@ import legal.api.team
 import user.api
 import user.api.event
 from comunicat.enums import Module
+from consent.enums import ConsentType
 from event.enums import EventStatus, EventType, RegistrationStatus
 from event.models import (
     AgendaItem,
@@ -283,7 +284,7 @@ def get(
     )[0]
 
 
-def send_events_signup(
+def send_events_signup(  # noqa: C901
     user_ids: list[UUID] | None = None,
     event_types: list[EventType] | None = None,
     range_days: tuple[int, int] | None = None,
@@ -328,7 +329,9 @@ def send_events_signup(
         exclude_event_team_types = getattr(
             settings, f"MODULE_{m.name}_NOTIFY_EVENT_SIGNUP_SKIP_TEAM_TYPES"
         )
-        user_objs = user.api.get_list(user_ids=user_ids, modules=[m])
+        user_objs = user.api.get_list(
+            user_ids=user_ids, modules=[m], with_consents_types=[ConsentType.SIGNUP]
+        )
 
         team_objs = legal.api.team.get_list(module=m)
 
@@ -343,6 +346,13 @@ def send_events_signup(
 
         for user_obj in user_objs:
             if not user_obj.can_manage:
+                continue
+
+            # Only users with an active consent for signup
+            if not getattr(
+                user_obj,
+                f"has_active_consent_{Module(m).name.lower()}_{ConsentType.SIGNUP.name.lower()}",
+            ):
                 continue
 
             token = user.api.event.get_events_signup_token(user_id=user_obj.id)
