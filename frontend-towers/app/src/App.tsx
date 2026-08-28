@@ -22,6 +22,7 @@ import { useState } from "react";
 import UserDashboardPage from "./pages/user-dashboard";
 import { ROUTES } from "./routes";
 import UserVerifyPage from "./pages/user-verify";
+import UserConsentPage from "./pages/user-consent";
 import CalendarPage from "./pages/calendar";
 import AboutTeamPage from "./pages/about-team";
 import AboutBylawsPage from "./pages/about-bylaws";
@@ -165,6 +166,10 @@ const App = () => {
                   <Route
                     path={ROUTES["user-dashboard"].path}
                     element={<UserDashboardPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-consent"].path}
+                    element={<UserConsentPage />}
                   />
                   <Route
                     path={ROUTES["about-team"].path}

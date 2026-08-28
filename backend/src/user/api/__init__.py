@@ -93,7 +93,7 @@ def get(user_id: UUID, module: Module | None = None) -> User:
     )
 
 
-def get_list(
+def get_list(  # noqa: C901
     user_ids: list[UUID] | None = None,
     team_ids: list[UUID] | None = None,
     team_types: list[TeamType] | None = None,
@@ -105,6 +105,7 @@ def get_list(
     with_orders: bool = False,
     with_teams: bool = False,
     with_products: bool = False,
+    with_consents_types: list[ConsentType] | None = None,
     modules: list[Module] | None = None,
     ordering: list[str] | None = None,
 ) -> list[User]:
@@ -213,6 +214,13 @@ def get_list(
                 ),
             ),
         )
+
+    if modules:
+        if with_consents_types:
+            for module in modules:
+                user_qs = user_qs.with_consents(
+                    consent_types=with_consents_types, module=module
+                )
 
     return list(user_qs)
 

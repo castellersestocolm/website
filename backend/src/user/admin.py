@@ -52,14 +52,12 @@ class UserProductInline(admin.TabularInline):
 
 @admin.action(description="Send event sign-up email")
 def send_signup_email(modeladmin, request, queryset):
-    event.tasks.send_events_signup.delay(
-        user_ids=list(queryset.values_list("id", flat=True))
-    )
+    event.tasks.send_events_signup(user_ids=list(queryset.values_list("id", flat=True)))
 
 
 @admin.action(description="Send performance sign-up email")
 def send_signup_performances_email(modeladmin, request, queryset):
-    event.tasks.send_event_performances_signup.delay(
+    event.tasks.send_event_performances_signup(
         user_ids=list(queryset.values_list("id", flat=True))
     )
 

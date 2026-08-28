@@ -6,9 +6,9 @@ import Grid from "@mui/material/Grid";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
-import { ROUTES } from "../../routes";
 import { Button, FormHelperText, Link, Stack, Typography } from "@mui/material";
 import styles from "./styles.module.css";
+import { ROUTES } from "../../routes";
 import {
   apiConsentEntityCreate,
   apiConsentEntityList,
@@ -46,6 +46,8 @@ export default function FormNewsletter() {
   const [consentGeneralChecked, setConsentGeneralChecked] =
     React.useState(false);
   const [consentMediaChecked, setConsentMediaChecked] = React.useState(false);
+  const [consentHealthChecked, setConsentHealthChecked] = React.useState(false);
+  const [consentSignupChecked, setConsentSignupChecked] = React.useState(false);
 
   const { user, setMessages } = useAppContext();
 
@@ -95,6 +97,18 @@ export default function FormNewsletter() {
                   consentEntity.type === ConsentType.MEDIA,
               ).length > 0,
             );
+            setConsentHealthChecked(
+              consentEntitiesData.results.filter(
+                (consentEntity: any) =>
+                  consentEntity.type === ConsentType.HEALTH,
+              ).length > 0,
+            );
+            setConsentSignupChecked(
+              consentEntitiesData.results.filter(
+                (consentEntity: any) =>
+                  consentEntity.type === ConsentType.SIGNUP,
+              ).length > 0,
+            );
             setNewslettersIdsSelected(
               consentEntitiesData.results
                 .filter(
@@ -114,6 +128,8 @@ export default function FormNewsletter() {
     setNewslettersIdsSelected,
     setConsentGeneralChecked,
     setConsentMediaChecked,
+    setConsentHealthChecked,
+    setConsentSignupChecked,
   ]);
 
   function handleSubmit(event: React.FormEvent<CreateFormElement>) {
@@ -140,7 +156,13 @@ export default function FormNewsletter() {
           };
         }),
         { type: ConsentType.GENERAL, isActive: true },
-        ...(user ? [{ type: ConsentType.MEDIA, isActive: true }] : []),
+        ...(user
+          ? [
+              { type: ConsentType.MEDIA, isActive: true },
+              { type: ConsentType.HEALTH, isActive: true },
+              { type: ConsentType.SIGNUP, isActive: consentSignupChecked },
+            ]
+          : []),
       ],
     ).then((response) => {
       if (response.status === 201) {
@@ -298,27 +320,66 @@ export default function FormNewsletter() {
             );
           })}
         {user && (
-          <FormGrid size={{ xs: 12 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="confirmCasalMedia"
-                  value="yes"
-                  checked={consentMediaChecked}
-                  disabled={consentMediaChecked}
-                  onChange={(e) => setConsentMediaChecked(e.target.checked)}
-                />
-              }
-              label={t("pages.user-join.form.checkbox-image")}
-              required={true}
-            />
-          </FormGrid>
+          <>
+            <FormGrid size={{ xs: 12 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="confirmCastellsSignup"
+                    value="yes"
+                    checked={consentSignupChecked}
+                    onChange={(e) => setConsentSignupChecked(e.target.checked)}
+                  />
+                }
+                label={
+                  <>
+                    <Typography variant="body1">
+                      {t("pages.user-join.form.checkbox-signup-title")}
+                    </Typography>
+                    <Typography variant="body2">
+                      {t("pages.user-join.form.checkbox-signup-description")}
+                    </Typography>
+                  </>
+                }
+              />
+            </FormGrid>
+            <FormGrid size={{ xs: 12 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="confirmCastellsMedia"
+                    value="yes"
+                    checked={consentMediaChecked}
+                    disabled={consentMediaChecked}
+                    onChange={(e) => setConsentMediaChecked(e.target.checked)}
+                  />
+                }
+                label={t("pages.user-join.form.checkbox-image")}
+                required={true}
+              />
+            </FormGrid>
+            <FormGrid size={{ xs: 12 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="confirmCastellsHealth"
+                    value="yes"
+                    checked={consentHealthChecked}
+                    disabled={consentHealthChecked}
+                    onChange={(e) => setConsentHealthChecked(e.target.checked)}
+                  />
+                }
+                label={t("pages.user-join.form.checkbox-responsibility")}
+                required={true}
+              />
+            </FormGrid>
+          </>
         )}
         <FormGrid size={{ xs: 12 }}>
           <FormControlLabel
             control={
               <Checkbox
-                name="confirmCasalGeneral"
+                name="confirmCastellsGeneral"
                 value="yes"
                 checked={consentGeneralChecked}
                 disabled={consentGeneralChecked}
@@ -330,7 +391,7 @@ export default function FormNewsletter() {
           />
           <Typography>
             <Link
-              href={ROUTES["policy-privacy"].path}
+              href={ROUTES["external-casal-policy-privacy"].path}
               color="secondary"
               underline="none"
               target="_blank"
