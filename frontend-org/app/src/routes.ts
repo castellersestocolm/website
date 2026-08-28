@@ -96,6 +96,9 @@ export const ROUTES = {
   "external-towers": {
     path: "https://castellersestocolm.se",
   },
+  "external-towers-user-dashboard": {
+    path: "https://castellersestocolm.se/user/dashboard",
+  },
   "external-towers-user-join": {
     path: "https://castellersestocolm.se/user/join",
   },

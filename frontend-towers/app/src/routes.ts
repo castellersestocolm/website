@@ -151,6 +151,9 @@ export const ROUTES = {
   "external-gencat": {
     path: "https://gencat.cat",
   },
+  "external-casal-user-dashboard": {
+    path: "https://lesquatrebarres.org/user/dashboard",
+  },
   "external-casal-form-membership": {
     path: "https://lesquatrebarres.org/user/join",
   },

@@ -70,6 +70,7 @@ import {
   RegistrationStatus,
   FamilyMemberRequestStatus,
   OrderType,
+  Module,
 } from "../../enums";
 import { capitalizeFirstLetter, lowerFirstLetter } from "../../utils/string";
 import IconDowload from "@mui/icons-material/Download";
@@ -90,6 +91,7 @@ import { dateToString, datetimeToString } from "../../utils/datetime";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
+const TOWERS_BASE_HOST = new URL(process.env.REACT_APP_TOWERS_BASE_URL).host;
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
@@ -964,6 +966,27 @@ function UserDashboardPage() {
                   <LoaderClip />
                 </Box>
               )}
+              {membership &&
+                membership.modules.filter(
+                  (membershipModule: any) =>
+                    membershipModule.module === Module.TOWERS,
+                ).length > 0 && (
+                  <>
+                    <Divider />
+                    <Box className={styles.userBottomBox}>
+                      <Typography variant="body2" component="span">
+                        {t("pages.user-dashboard.section.registrations.more")}{" "}
+                        <Link
+                          color="textSecondary"
+                          href={ROUTES["external-towers-user-dashboard"].path}
+                        >
+                          {TOWERS_BASE_HOST}
+                        </Link>
+                        {"."}
+                      </Typography>
+                    </Box>
+                  </>
+                )}
             </Card>
             {events &&
               events.results.length > 0 &&

@@ -71,6 +71,7 @@ import {
   OrderType,
   OrderStatus,
   ORDER_STATUS_ICON,
+  Module,
 } from "../../enums";
 import FormMemberRequest from "../../components/FormMemberRequest/FormMemberRequest";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
@@ -99,6 +100,7 @@ import { datetimeToString, dateToString } from "../../utils/datetime";
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const TOWERS_INFO_EMAIL = process.env.REACT_APP_TOWERS_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
+const ORG_BASE_HOST = new URL(process.env.REACT_APP_ORG_BASE_URL).host;
 
 function UserDashboardPage() {
   const [t, i18n] = useTranslation("common");
@@ -1165,7 +1167,7 @@ function UserDashboardPage() {
 
               {events ? (
                 <Box className={styles.userFamilyBox}>
-                  {events.results.length > 0 ? (
+                  {events.results.length > 0 && false ? (
                     <List className={styles.userFamilyList}>
                       {events.results.map((event: any, i: number, row: any) => {
                         return (
@@ -1285,6 +1287,27 @@ function UserDashboardPage() {
                   <LoaderClip />
                 </Box>
               )}
+              {membership &&
+                membership.modules.filter(
+                  (membershipModule: any) =>
+                    membershipModule.module === Module.ORG,
+                ).length > 0 && (
+                  <>
+                    <Divider />
+                    <Box className={styles.userBottomBox}>
+                      <Typography variant="body2" component="span">
+                        {t("pages.user-dashboard.section.registrations.more")}{" "}
+                        <Link
+                          color="textSecondary"
+                          href={ROUTES["external-casal-user-dashboard"].path}
+                        >
+                          {ORG_BASE_HOST}
+                        </Link>
+                        {"."}
+                      </Typography>
+                    </Box>
+                  </>
+                )}
             </Card>
             {events &&
               events.results.length > 0 &&
