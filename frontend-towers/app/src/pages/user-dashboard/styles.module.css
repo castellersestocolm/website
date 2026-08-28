@@ -88,6 +88,10 @@
   background-color: var(--mui-palette-primary-main);
 }
 
+.userBottomBox {
+  padding: 12px 16px;
+}
+
 .userInsideBox {
   padding: 8px 16px;
   background-color: var(--mui-palette-primary-light);

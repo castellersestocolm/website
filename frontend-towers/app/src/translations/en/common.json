@@ -145,6 +145,7 @@
   "pages.user-dashboard.section.events.show-drive-album": "Google Drive",
   "pages.user-dashboard.section.registrations.title": "Registrations",
   "pages.user-dashboard.section.registrations.empty": "You don't have any registered registration.",
+  "pages.user-dashboard.section.registrations.more": "The registrations to Les Quatre Barres events can be found in",
   "pages.user-dashboard.section.payments.title": "Payments",
   "pages.user-dashboard.section.payments.empty": "You don't have any registered payment.",
   "pages.user-dashboard.section.orders.title": "Orders",

@@ -188,6 +188,7 @@
   "pages.user-dashboard.section.emails.description": "Podeu demanar de canviar el correu principal a través de",
   "pages.user-dashboard.section.registrations.title": "Inscripcions",
   "pages.user-dashboard.section.registrations.empty": "No tens cap inscripció enregistrada.",
+  "pages.user-dashboard.section.registrations.more": "Les inscripcions als esdeveniments dels Castellers d'Estocolm les trobareu a",
   "pages.user-dashboard.section.payments.title": "Pagaments",
   "pages.user-dashboard.section.payments.empty": "No tens cap pagament enregistrat.",
   "pages.user-dashboard.section.orders.title": "Comandes",

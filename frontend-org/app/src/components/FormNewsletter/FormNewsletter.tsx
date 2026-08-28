@@ -160,7 +160,10 @@ export default function FormNewsletter() {
     });
   }
 
-  return newslettersIdsSelected !== undefined ? (
+  return newslettersIdsSelected !== undefined &&
+    newsletters !== undefined &&
+    consentGeneralChecked !== undefined &&
+    consentMediaChecked !== undefined ? (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
         {!user && (
