@@ -280,6 +280,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = (
         "reference",
         "entity",
+        "type",
         "notes",
         "delivery_type",
         "payment_type",
@@ -287,7 +288,7 @@ class OrderAdmin(admin.ModelAdmin):
         "products_pending",
         "created_at",
     )
-    list_filter = ("status", "created_at")
+    list_filter = ("type", "status", "created_at")
     raw_id_fields = ("entity", "delivery", "payment_order")
     readonly_fields = ("type",)
     ordering = ("-created_at",)

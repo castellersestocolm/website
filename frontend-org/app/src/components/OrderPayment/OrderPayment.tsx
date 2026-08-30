@@ -75,13 +75,19 @@ export default function OrderPayment({
     React.useState(undefined);
 
   const orderPath =
-    order && order.type === OrderType.COURSE
+    order &&
+    (order.type === OrderType.COURSE
       ? ROUTES["user-dashboard"].path
-      : ROUTES.membership.path;
+      : order.type === OrderType.REGISTRATION
+        ? ROUTES.home.path
+        : ROUTES.membership.path);
   const orderReceiptPath =
-    order && order.type === OrderType.COURSE
+    order &&
+    (order.type === OrderType.COURSE
       ? ROUTES["course-receipt"].path.replace(":id", id)
-      : ROUTES["membership-receipt"].path.replace(":id", id);
+      : order.type === OrderType.REGISTRATION
+        ? ROUTES["calendar-event-receipt"].path.replace(":id", id)
+        : ROUTES["membership-receipt"].path.replace(":id", id));
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {
@@ -123,6 +129,7 @@ export default function OrderPayment({
     navigate,
     paymentProviderById,
     orderReceiptPath,
+    orderPath,
   ]);
 
   React.useEffect(() => {
@@ -410,7 +417,11 @@ export default function OrderPayment({
                     new Date().getFullYear()
                   : order.type === OrderType.COURSE
                     ? t("swish.payment.course") + " " + new Date().getFullYear()
-                    : t("swish.payment.order") + " " + order.reference}
+                    : order.type === OrderType.REGISTRATION
+                      ? t("swish.payment.registration") +
+                        " " +
+                        new Date().getFullYear()
+                      : t("swish.payment.order") + " " + order.reference}
               </Typography>
               {isMobile ? (
                 order.payment_order &&

@@ -1063,16 +1063,16 @@ function UserDashboardPage() {
                                     rehearsalUsers &&
                                     rehearsalUsers.filter(
                                       (rehearsalUser: any) =>
-                                        rehearsalUser.id ===
-                                        registration.user.id,
+                                        rehearsalUser.entity.id ===
+                                        registration.entity.id,
                                     ).length > 0,
                                 )
                                 .map((registration: any) =>
-                                  registration.user.lastname
-                                    ? registration.user.firstname +
+                                  registration.entity.lastname
+                                    ? registration.entity.firstname +
                                       " " +
-                                      registration.user.lastname
-                                    : registration.user.firstname,
+                                      registration.entity.lastname
+                                    : registration.entity.firstname,
                                 )
                                 .join(", ")
                             : t(
@@ -1245,12 +1245,13 @@ function UserDashboardPage() {
                                           >
                                             <ListItemText
                                               primary={
-                                                registration.user.lastname
-                                                  ? registration.user
+                                                registration.entity.lastname
+                                                  ? registration.entity
                                                       .firstname +
                                                     " " +
-                                                    registration.user.lastname
-                                                  : registration.user.firstname
+                                                    registration.entity.lastname
+                                                  : registration.entity
+                                                      .firstname
                                               }
                                             />
                                             {registration.amount && (

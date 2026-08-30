@@ -24,6 +24,7 @@ from event.models import (
 )
 from legal.enums import TeamType
 from notify.enums import EmailType
+from payment.models import Entity
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 
@@ -94,6 +95,11 @@ def get_list(  # noqa: C901
             registrations__price__isnull=False,
         )
 
+    registration_filter = Q(entity__user_id__in=family_user_ids)
+
+    if request_user_id:
+        registration_filter |= Q(owner__user_id=request_user_id)
+
     event_qs = (
         Event.objects.filter(
             event_filter,
@@ -139,7 +145,7 @@ def get_list(  # noqa: C901
                 "registrations",
                 (
                     Registration.objects.filter(
-                        entity__user_id__in=family_user_ids,
+                        registration_filter,
                         **(
                             {"status": RegistrationStatus.ACTIVE}
                             if filter_is_registered
@@ -272,6 +278,7 @@ def get(
     event_id: UUID | None = None,
     date: datetime.date | None = None,
     code: str | None = None,
+    request_user_id: UUID | None = None,
 ) -> Event | None:
     return (
         get_list(
@@ -279,6 +286,7 @@ def get(
             date=date,
             code=code,
             module=module,
+            request_user_id=request_user_id,
         )
         + [None]
     )[0]
@@ -417,3 +425,70 @@ def send_events_signup(  # noqa: C901
                     "token": token,
                 },
             )
+
+
+def get_event_price(entity_id: UUID, event_id: UUID) -> EventPrice | None:
+    entity_obj = (
+        Entity.objects.filter(id=entity_id)
+        .select_related("user", "user__family_member", "user__family_member__family")
+        .with_has_active_membership()
+        .first()
+    )
+
+    if not entity_obj:
+        return None
+
+    user_obj = entity_obj.user
+
+    family_obj = user_obj.family_member.family if user_obj else None
+    if family_obj:
+        # TODO: Store in the model if it should ignore free
+        existing_family_members_registered = (
+            Registration.objects.exclude(entity_id=entity_id)
+            .filter(entity__user__family_member__family=family_obj, price__amount__gt=0)
+            .count()
+        )
+    else:
+        existing_family_members_registered = 0
+
+    modules = [
+        module
+        for module in Module
+        if getattr(entity_obj, f"has_active_membership_{module.name.lower()}")
+    ]
+
+    event_price_objs = list(
+        EventPrice.objects.filter(
+            Q(module__isnull=True) | Q(module__in=modules),
+            event_id=event_id,
+            min_registrations__lte=existing_family_members_registered,
+        ).order_by("min_registrations", "amount")
+    )
+
+    if entity_obj.age:
+        for event_price_obj in event_price_objs:
+            if event_price_obj.age_from and (
+                entity_obj.age is None or event_price_obj.age_from > entity_obj.age
+            ):
+                continue
+            if event_price_obj.age_to and (
+                entity_obj.age is None or event_price_obj.age_to < entity_obj.age
+            ):
+                continue
+            return event_price_obj
+    else:
+        min_event_price_obj_by_module: dict[Module, EventPrice] = {}
+        for event_price_obj in event_price_objs:
+            current_min_event_price_obj = min_event_price_obj_by_module.get(
+                event_price_obj.module
+            )
+            if (
+                not current_min_event_price_obj
+                or current_min_event_price_obj.amount <= event_price_obj.amount
+            ):
+                min_event_price_obj_by_module[event_price_obj.module] = event_price_obj
+
+        if min_event_price_obj_by_module:
+            return min(min_event_price_obj_by_module.values(), key=lambda ep: ep.amount)
+
+    return None

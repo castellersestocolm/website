@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import JSONField, Q, UniqueConstraint
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from phonenumber_field.phonenumber import PhoneNumber
@@ -39,6 +39,7 @@ from payment.managers import (
     PaymentQuerySet,
     SourceQuerySet,
 )
+from user.utils import is_over_minimum_age
 
 
 class Payment(StandardModel, Timestamps):
@@ -117,6 +118,7 @@ class Entity(StandardModel, Timestamps):
     lastname = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
+    birthday = models.DateField(null=True, blank=True)
 
     preferred_language = models.CharField(max_length=255, null=True, blank=True)
 
@@ -152,6 +154,33 @@ class Entity(StandardModel, Timestamps):
             PhoneNumber.from_string(phone_number=self.phone).national_number
         )
 
+    @cached_property
+    def is_adult(self) -> bool:
+        if self.user:
+            return self.user.is_adult
+
+        return self.birthday is None or is_over_minimum_age(date=self.birthday)
+
+    @cached_property
+    def can_manage(self) -> bool:
+        if self.user:
+            return self.user.can_manage
+
+        return self.is_adult and "+" not in self.email
+
+    @cached_property
+    def age(self) -> int | None:
+        if not self.birthday:
+            return None
+
+        today = timezone.localdate()
+
+        return (
+            today.year
+            - self.birthday.year
+            - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
+        )
+
     def __str__(self) -> str:
         email_str = ""
 
@@ -175,6 +204,8 @@ class Entity(StandardModel, Timestamps):
             self.lastname = self.user.lastname
             self.email = self.user.email
             self.phone = self.user.phone
+            if self.user.birthday:
+                self.birthday = self.user.birthday
             if self.user.preferred_language:
                 self.preferred_language = self.user.preferred_language
         super().save(*args, **kwargs)

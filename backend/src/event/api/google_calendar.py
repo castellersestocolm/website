@@ -172,6 +172,9 @@ def import_events() -> None:  # noqa: C901
                                                     entity=entity_by_email[
                                                         attendee["email"]
                                                     ],
+                                                    owner=entity_by_email[
+                                                        attendee["email"]
+                                                    ],
                                                     status=registration_status,
                                                 )
                                             )
@@ -247,6 +250,9 @@ def import_events() -> None:  # noqa: C901
                                             Registration(
                                                 event=event_obj,
                                                 entity=entity_by_email[
+                                                    attendee["email"]
+                                                ],
+                                                owner=entity_by_email[
                                                     attendee["email"]
                                                 ],
                                                 status=registration_status,

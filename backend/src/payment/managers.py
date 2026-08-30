@@ -7,6 +7,7 @@ from django.db.models import (
     Count,
     DateField,
     Exists,
+    ExpressionWrapper,
     F,
     Func,
     IntegerField,
@@ -27,6 +28,7 @@ from django.utils.translation import gettext_lazy as _
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
 from consent.enums import ConsentType
+from membership.enums import MembershipStatus
 from payment.enums import PaymentStatus, PaymentType, SourceType
 
 
@@ -855,4 +857,54 @@ class EntityQuerySet(QuerySet):
                 )
                 for consent_type in ConsentType
             }
+        )
+
+    def with_has_active_membership(
+        self,
+        modules: list[Module] | None = None,
+    ):
+        MembershipModule = apps.get_model("membership", "MembershipModule")
+
+        module_filter = Q()
+        if modules is not None:
+            module_filter = Q(module__in=modules)
+
+        date_today = timezone.localdate()
+
+        return self.annotate(
+            membership_id=Subquery(
+                MembershipModule.objects.filter(
+                    module_filter,
+                    Q(membership__date_end__isnull=True)
+                    | Q(membership__date_end__gte=date_today),
+                    status=MembershipStatus.ACTIVE,
+                    membership__status=MembershipStatus.ACTIVE,
+                    membership__date_from__lte=date_today,
+                    membership__date_to__gte=date_today,
+                    membership__membership_users__user_id=OuterRef("id"),
+                )
+                .order_by("-membership__date_to")
+                .values_list("membership_id", flat=True)[:1]
+            ),
+            has_active_membership=ExpressionWrapper(
+                Q(membership_id__isnull=False), output_field=BooleanField()
+            ),
+            **{
+                f"has_active_membership_{module.name.lower()}": Exists(
+                    MembershipModule.objects.filter(
+                        Q(membership__date_end__isnull=True)
+                        | Q(membership__date_end__gte=date_today),
+                        module=module,
+                        status=MembershipStatus.ACTIVE,
+                        membership__status=MembershipStatus.ACTIVE,
+                        membership__date_from__lte=date_today,
+                        membership__date_to__gte=date_today,
+                        membership__membership_users__user_id=OuterRef("id"),
+                    )
+                    .order_by("-membership__date_to")
+                    .values_list("membership_id", flat=True)[:1]
+                )
+                for module in Module
+                if not modules or module in modules
+            },
         )

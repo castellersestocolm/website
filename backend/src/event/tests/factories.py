@@ -2,7 +2,7 @@ import random
 
 from django.utils import timezone
 from djmoney.money import Money
-from factory import Faker, LazyAttribute, LazyFunction, SubFactory
+from factory import Faker, LazyAttribute, LazyFunction, SelfAttribute, SubFactory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
@@ -73,6 +73,8 @@ class EventPriceFactory(DjangoModelFactory):
 class RegistrationFactory(DjangoModelFactory):
     event = SubFactory(EventFactory)
     entity = SubFactory("payment.tests.factories.EntityFactory")
+
+    owner = SelfAttribute("entity")
 
     status = FuzzyChoice(RegistrationStatus)
 

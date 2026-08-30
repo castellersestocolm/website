@@ -3,12 +3,13 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_serializer_method
 from paypalserversdk.configuration import Environment
-from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from comunicat.rest.utils.fields import MoneyField
+from comunicat.utils.admin import FIELD_LOCALE
 from payment.enums import PaymentStatus
 from payment.models import (
     Entity,
@@ -22,13 +23,16 @@ from payment.models import (
     Receipt,
     Transaction,
 )
+from user.utils import is_over_minimum_age
 
 
 class CreateEntitySerializer(s.Serializer):
     firstname = s.CharField(allow_null=True)
     lastname = s.CharField(allow_null=True)
-    email = s.EmailField()
-    phone = PhoneNumberField(empty_value=True)
+    email = s.CharField(required=False)
+    phone = PhoneNumberField(required=False)
+    birthday = s.DateField(required=False)
+    preferred_language = FIELD_LOCALE(required=False)
 
     def validate_firstname(self, value: str | None):
         user_obj = self.context.get("user")
@@ -49,6 +53,25 @@ class CreateEntitySerializer(s.Serializer):
             )
 
         return value
+
+    def validate(self, data):
+        validation_errors = {}
+        print("aaaa", data)
+
+        if "birthday" not in data or is_over_minimum_age(date=data["birthday"]):
+            if "email" not in data or not data["email"]:
+                validation_errors["email"] = _(
+                    "The email is required for non-logged in and non-minor users."
+                )
+            if "phone" not in data or not data["phone"]:
+                validation_errors["phone"] = _(
+                    "The phone is required for non-logged in and non-minor users."
+                )
+
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+        return data
 
 
 class EntitySuperSlimSerializer(s.ModelSerializer):

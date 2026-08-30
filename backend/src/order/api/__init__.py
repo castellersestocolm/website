@@ -20,6 +20,7 @@ from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from data.models import Country, Region
+from event.models import Registration
 from membership.models import MembershipModule
 from notify.enums import EmailType
 from order.consts import (
@@ -189,6 +190,7 @@ def create(  # noqa: C901
     cart_sizes: list[dict] | None = None,
     cart_modules: list[dict] | None = None,
     cart_course_registrations: list[dict] | None = None,
+    cart_event_registrations: list[dict] | None = None,
     user_id: UUID | None = None,
     user: dict | None = None,
     delivery: dict | None = None,
@@ -237,6 +239,7 @@ def create(  # noqa: C901
     product_size_obj_by_id = {}
     membership_module_obj_by_id = {}
     program_course_registration_by_id = {}
+    registration_obj_by_id = {}
 
     if order_type == OrderType.PRODUCT:
         delivery_provider_obj = DeliveryProvider.objects.get(
@@ -336,6 +339,16 @@ def create(  # noqa: C901
                 "course", "course__program", "entity", "entity__user"
             )
         }
+    elif order_type == OrderType.REGISTRATION:
+        registration_obj_by_id = {
+            registration_obj.id: registration_obj
+            for registration_obj in Registration.objects.filter(
+                id__in=[
+                    cart_event_registration["id"]
+                    for cart_event_registration in cart_event_registrations
+                ]
+            ).select_related("event", "entity", "entity__user")
+        }
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
     if provider_objs:
@@ -407,6 +420,18 @@ def create(  # noqa: C901
                     "vat": settings.MODULE_ALL_VAT,
                 },
             )
+    elif order_type == OrderType.REGISTRATION:
+        for cart_event_registration in cart_event_registrations:
+            registration_obj = registration_obj_by_id[cart_event_registration["id"]]
+
+            OrderRegistration.objects.update_or_create(
+                order=order_obj,
+                registration=registration_obj,
+                defaults={
+                    "amount": registration_obj.price.amount,
+                    "vat": settings.MODULE_ALL_VAT,
+                },
+            )
 
     if payment_order_obj:
         # Initialise external_id
@@ -474,7 +499,6 @@ def update_provider(
 
 
 def clean_pending_orders() -> None:
-    # TODO: Move delta to a setting perhaps
     # TODO: Check what happens when payment order and order are out of sync
     order_ids = list(
         Order.objects.filter(
@@ -512,7 +536,7 @@ def complete(  # noqa: C901
 ) -> Order | None:
     order_obj = (
         Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
-        .prefetch_related("registrations", "memberships", "courses")
+        .prefetch_related("registrations", "memberships", "courses", "registrations")
         .with_amount()
         .first()
     )
@@ -553,8 +577,14 @@ def complete(  # noqa: C901
         payment_order_obj.status = payment_status
         payment_order_obj.save(update_fields=("status",))
 
-        order_obj.status = (
+        order_status_if_completed = (
             OrderStatus.PROCESSING
+            if order_obj.type == OrderType.PRODUCT
+            else OrderStatus.COMPLETED
+        )
+
+        order_obj.status = (
+            order_status_if_completed
             if payment_status == PaymentStatus.COMPLETED
             else OrderStatus.REQUESTED
         )

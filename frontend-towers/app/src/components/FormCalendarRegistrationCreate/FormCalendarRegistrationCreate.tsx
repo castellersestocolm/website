@@ -74,7 +74,7 @@ export default function FormCalendarRegistrationCreate({
       const registrationId = registrationIdByUserId[userId];
       apiEventRegistrationDelete(registrationId, eventToken).then(
         (response) => {
-          if (response.status === 204) {
+          if (response.status === 200) {
             const newRegistrations = registrations.filter(
               (registration: any) => registration.id !== registrationId,
             );
