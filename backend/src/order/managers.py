@@ -213,6 +213,7 @@ class OrderMembershipQuerySet(QuerySet):
                     OrderMembership.objects.filter(
                         module_id=OuterRef("module_id"),
                         order__status__gte=OrderStatus.REQUESTED,
+                        order__status__lte=OrderStatus.COMPLETED,
                     )
                     .values("order_id")
                     .annotate(amount=Sum("amount"))
