@@ -92,7 +92,7 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
         "entity__lastname",
         "-created_at",
     )
-    readonly_fields = ("data_nice",)
+    readonly_fields = ("owner", "data_nice",)
     raw_id_fields = ("entity", "line")
     exclude = ("data",)
     form = RegistrationInlineForm

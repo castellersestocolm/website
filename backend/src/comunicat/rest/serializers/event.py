@@ -1,10 +1,12 @@
 from django.utils import timezone, translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
+from rest_framework.exceptions import ValidationError
 from versatileimagefield.serializers import VersatileImageFieldSerializer
+from django.utils.translation import gettext_lazy as _
 
 from comunicat.rest.serializers.legal import TeamSerializer
-from comunicat.rest.serializers.payment import EntitySuperSlimSerializer
+from comunicat.rest.serializers.payment import EntitySuperSlimSerializer, CreateEntitySerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.enums import EventType, RegistrationStatus
@@ -184,6 +186,29 @@ class LocationSerializer(s.ModelSerializer):
         return obj.description.get(translation.get_language())
 
 
+class EventPriceSerializer(s.ModelSerializer):
+    amount = MoneyField(read_only=True)
+
+    class Meta:
+        model = EventPrice
+        fields = (
+            "id",
+            "module",
+            "age_from",
+            "age_to",
+            "min_registrations",
+            "amount",
+        )
+        read_only_fields = (
+            "id",
+            "module",
+            "age_from",
+            "age_to",
+            "min_registrations",
+            "amount",
+        )
+
+
 class RegistrationSlimSerializer(s.ModelSerializer):
     entity = EntitySuperSlimSerializer(read_only=True)
     # TODO: Should deprecate this
@@ -196,6 +221,7 @@ class RegistrationSlimSerializer(s.ModelSerializer):
             "entity",
             "user",
             "status",
+            "data",
             "created_at",
         )
         read_only_fields = (
@@ -203,12 +229,14 @@ class RegistrationSlimSerializer(s.ModelSerializer):
             "entity",
             "user",
             "status",
+            "data",
             "created_at",
         )
 
 
 class RegistrationWithAmountSerializer(RegistrationSlimSerializer):
     amount = MoneyField(required=False, read_only=True)
+    price = EventPriceSerializer(read_only=True)
 
     class Meta:
         model = Registration
@@ -218,6 +246,8 @@ class RegistrationWithAmountSerializer(RegistrationSlimSerializer):
             "user",
             "status",
             "amount",
+            "price",
+            "data",
             "created_at",
         )
         read_only_fields = (
@@ -226,6 +256,8 @@ class RegistrationWithAmountSerializer(RegistrationSlimSerializer):
             "user",
             "status",
             "amount",
+            "price",
+            "data",
             "created_at",
         )
 
@@ -307,29 +339,6 @@ class EventSignupSerializer(s.ModelSerializer):
         # TODO: Perhaps also regarding user membership
         return (not obj.time_from or timezone.localtime() >= obj.time_from) and (
             not obj.time_to or timezone.localtime() < obj.time_to
-        )
-
-
-class EventPriceSerializer(s.ModelSerializer):
-    amount = MoneyField(read_only=True)
-
-    class Meta:
-        model = EventPrice
-        fields = (
-            "id",
-            "module",
-            "age_from",
-            "age_to",
-            "min_registrations",
-            "amount",
-        )
-        read_only_fields = (
-            "id",
-            "module",
-            "age_from",
-            "age_to",
-            "min_registrations",
-            "amount",
         )
 
 
@@ -432,7 +441,6 @@ class EventSlimSerializer(EventSuperSlimSerializer):
 class EventSerializer(EventSlimSerializer):
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
-    registrations = RegistrationWithAmountSerializer(many=True, read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
     signups = EventSignupSerializer(read_only=True, many=True)
     prices = EventPriceSerializer(read_only=True, many=True)
@@ -517,6 +525,61 @@ class EventSerializer(EventSlimSerializer):
         )
 
 
+class EventWithRegistrationsSerializer(EventSerializer):
+    registrations = RegistrationWithAmountSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "title",
+            "code",
+            "time_from",
+            "time_to",
+            "location",
+            "description",
+            "type",
+            "module",
+            "require_signup",
+            "require_approve",
+            "registrations",
+            "modules",
+            "signups",
+            "prices",
+            "questions",
+            "agenda_items",
+            "poster",
+            "picture",
+            "google_event",
+            "google_album",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "code",
+            "time_from",
+            "time_to",
+            "location",
+            "description",
+            "type",
+            "module",
+            "require_signup",
+            "require_approve",
+            "signups",
+            "prices",
+            "questions",
+            "registrations",
+            "modules",
+            "agenda_items",
+            "poster",
+            "picture",
+            "google_event",
+            "google_album",
+            "created_at",
+        )
+
+
 class RegistrationItemCountsSerializer(s.Serializer):
     total = s.IntegerField(read_only=True)
     active = s.IntegerField(read_only=True)
@@ -528,7 +591,7 @@ class RegistrationCountsSerializer(s.Serializer):
     children = RegistrationItemCountsSerializer(read_only=True)
 
 
-class EventWithCountsSerializer(EventSerializer):
+class EventWithCountsSerializer(EventWithRegistrationsSerializer):
     registration_counts = s.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -591,10 +654,30 @@ class EventWithCountsSerializer(EventSerializer):
 
 
 class CreateRegistrationSerializer(s.Serializer):
-    user_id = s.UUIDField(required=True)
+    user_id = s.UUIDField(required=False)
+    entity_id = s.UUIDField(required=False)
+    entity = CreateEntitySerializer(required=False)
+    owner_id = s.UUIDField(required=False)
     event_id = s.UUIDField(required=True)
     status = IntEnumField(RegistrationStatus, required=False)
     token = s.CharField(required=False)
+    data = s.DictField(required=False)
+
+    def validate(self, data):
+        if (
+            "user_id" not in data
+            and "entity_id" not in data
+            and "entity" not in data
+        ):
+            raise ValidationError(
+                {
+                    "entity": _(
+                        "The entity must be provided if no user or entity is given."
+                    )
+                }
+            )
+
+        return data
 
 
 class RegistrationWithEventSerializer(RegistrationSlimSerializer):
@@ -623,11 +706,11 @@ class RegistrationWithEventSerializer(RegistrationSlimSerializer):
         )
 
 
-class RegistrationSerializer(RegistrationSlimSerializer):
-    event = EventSerializer(read_only=True)
+class RegistrationSerializer(RegistrationWithAmountSerializer):
     entity = EntitySuperSlimSerializer(read_only=True)
     # TODO: Should deprecate this
     user = UserSuperSlimSerializer(read_only=True, source="entity.user")
+    price = EventPriceSerializer(read_only=True)
 
     class Meta:
         model = Registration
@@ -636,7 +719,10 @@ class RegistrationSerializer(RegistrationSlimSerializer):
             "event",
             "entity",
             "user",
+            "amount",
             "status",
+            "price",
+            "data",
             "created_at",
         )
         read_only_fields = (
@@ -644,7 +730,10 @@ class RegistrationSerializer(RegistrationSlimSerializer):
             "event",
             "entity",
             "user",
+            "amount",
             "status",
+            "price",
+            "data",
             "created_at",
         )
 

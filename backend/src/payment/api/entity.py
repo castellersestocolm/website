@@ -1,3 +1,4 @@
+import datetime
 from uuid import UUID
 
 from django.db import transaction
@@ -118,20 +119,25 @@ def merge(entity_ids: list[UUID]) -> Entity | None:
 def get_entity_by_key(
     email: str | None = None,
     user_id: UUID | None = None,
+    entity_id: UUID | None = None,
     firstname: str | None = None,
     lastname: str | None = None,
     phone: str | None = None,
+    birthday: datetime.date | None = None,
+    preferred_language: str | None = None,
 ) -> Entity:
     if email:
         user_obj = User.objects.filter(email=email).first()
-    else:
+    elif user_id:
         user_obj = User.objects.get(id=user_id)
+    else:
+        user_obj = None
 
     if user_obj and hasattr(user_obj, "entity"):
         return user_obj.entity
 
     entity_obj, __ = Entity.objects.update_or_create(
-        **({"email": email} if email else {"user_id": user_obj.id} if user_obj else {}),
+        **({"email": email} if email else {"user_id": user_obj.id} if user_obj else {"id": entity_id} if entity_id else {"firstname": firstname, "lastname": lastname, "birthday": birthday} if firstname and lastname and birthday else {}),
         defaults={
             **({"user_id": user_obj.id} if email and user_obj else {}),
             **(
@@ -147,6 +153,16 @@ def get_entity_by_key(
             **(
                 {"phone": user_obj and user_obj.phone or phone}
                 if user_obj or phone is not None
+                else {}
+            ),
+            **(
+                {"birthday": user_obj and user_obj.birthday or birthday}
+                if user_obj or birthday is not None
+                else {}
+            ),
+            **(
+                {"preferred_language": user_obj and user_obj.preferred_language or preferred_language}
+                if user_obj or preferred_language is not None
                 else {}
             ),
         },

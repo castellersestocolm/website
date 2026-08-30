@@ -1,12 +1,19 @@
+from djmoney.money import Money
+
 from comunicat.enums import Module
 from comunicat.rest.utils.translation import get_translated_string
 from event.enums import EventType, RegistrationStatus
 from legal.enums import TeamType
 
 
-def get_registration_initial_status(require_approve: bool) -> RegistrationStatus:
+# TODO: Instead of just marking it as ACTIVE we should also check there's already an adult attending
+def get_registration_initial_status(require_approve: bool, amount: Money | None = None) -> RegistrationStatus:
+    if amount is not None and not amount:
+        return RegistrationStatus.ACTIVE
+
     if require_approve:
         return RegistrationStatus.REQUESTED
+
     return RegistrationStatus.ACTIVE
 
 

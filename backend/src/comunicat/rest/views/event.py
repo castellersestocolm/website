@@ -3,7 +3,7 @@ import datetime
 
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, cache_control
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.decorators import action
@@ -11,13 +11,14 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
+import payment.api.entity
 import event.api
 import event.api.registration
 import user.api.event
 from comunicat.rest.serializers.event import (
     CreateRegistrationSerializer,
     DestroyRegistrationSerializer,
-    EventSerializer,
+    EventWithRegistrationsSerializer,
     EventWithCountsSerializer,
     ListEventCalendarSerializer,
     ListEventSerializer,
@@ -41,14 +42,14 @@ class RegistrationResultsSetPagination(PageNumberPagination):
 
 
 class EventAPI(ComuniCatViewSet):
-    serializer_class = EventSerializer
+    serializer_class = EventWithRegistrationsSerializer
     permission_classes = (permissions.AllowAny,)
     pagination_class = EventResultsSetPagination
     lookup_field = "id"
 
     @swagger_auto_schema(
         query_serializer=ListEventSerializer(),
-        responses={200: EventSerializer(many=True)},
+        responses={200: EventWithRegistrationsSerializer(many=True)},
     )
     def list(self, request):
         serializer = ListEventSerializer(data=request.query_params)
@@ -102,7 +103,7 @@ class EventAPI(ComuniCatViewSet):
         return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(
-        responses={200: EventSerializer(), 404: Serializer()},
+        responses={200: EventWithRegistrationsSerializer(), 404: Serializer()},
     )
     def retrieve(self, request, id):
         event_obj = event.api.get(
@@ -118,10 +119,11 @@ class EventAPI(ComuniCatViewSet):
 
     @swagger_auto_schema(
         query_serializer=PageEventSerializer,
-        responses={200: EventSerializer(), 404: Serializer()},
+        responses={200: EventWithRegistrationsSerializer(), 404: Serializer()},
     )
     @action(methods=["get"], detail=False, url_path="page", url_name="page")
-    @method_decorator(cache_page(60))
+    @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
     def page(self, request):
         serializer = PageEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -129,6 +131,7 @@ class EventAPI(ComuniCatViewSet):
         event_obj = event.api.get(
             date=serializer.validated_data["date"],
             code=serializer.validated_data["code"],
+            request_user_id=request.user.id if request.user.is_authenticated else None,
             module=self.module,
         )
 
@@ -140,13 +143,13 @@ class EventAPI(ComuniCatViewSet):
 
 
 class CalendarAPI(ComuniCatViewSet):
-    serializer_class = EventSerializer
+    serializer_class = EventWithRegistrationsSerializer
     permission_classes = (permissions.AllowAny,)
     lookup_field = "id"
 
     @swagger_auto_schema(
         query_serializer=ListEventCalendarSerializer,
-        responses={200: EventSerializer(many=True)},
+        responses={200: EventWithRegistrationsSerializer(many=True)},
     )
     def list(self, request):
         serializer = ListEventCalendarSerializer(data=request.query_params)
@@ -197,9 +200,10 @@ class RegistrationAPI(ComuniCatViewSet):
             self.throttle_scope = f"event-registration.{self.action}"
         return super().get_throttles()
 
+    # TODO: Prevent from returning a registration that already exists for an entity
     @swagger_auto_schema(
         request_body=CreateRegistrationSerializer,
-        responses={200: RegistrationSerializer, 401: Serializer()},
+        responses={200: RegistrationSerializer, 403: Serializer()},
     )
     def create(self, request):
         serializer = CreateRegistrationSerializer(data=request.data)
@@ -217,25 +221,45 @@ class RegistrationAPI(ComuniCatViewSet):
             )
         )
 
-        if not user_obj:
-            return Response(status=401)
+        if "user_id" in validated_data:
+            entity_obj = payment.api.entity.get_entity_by_key(user_id=validated_data["user_id"])
+        elif "entity_id" in validated_data:
+            entity_obj = payment.api.entity.get_entity_by_key(entity_id=validated_data["entity_id"])
+        else:
+            entity_obj = payment.api.entity.get_entity_by_key(
+                email=validated_data["entity"].get("email"),
+                firstname=validated_data["entity"].get("firstname"),
+                lastname=validated_data["entity"].get("lastname"),
+                phone=(
+                    str(validated_data["entity"]["phone"])
+                    if "phone" in validated_data["entity"]
+                    else None
+                ),
+                birthday=validated_data["entity"].get("birthday"),
+                preferred_language=validated_data["entity"].get("preferred_language"),
+            )
 
-        registration_objs = event.api.registration.create(
+        registration_obj = event.api.registration.create(
             event_id=validated_data["event_id"],
-            user_id=validated_data["user_id"],
-            request_user_id=user_obj.id,
+            entity_id=entity_obj.id,
+            owner_id=validated_data.get("owner_id"),
+            request_user_id=user_obj.id if user_obj else None,
             module=self.module,
             status=validated_data.get("status"),
+            data=validated_data.get("data"),
         )
 
+        if not registration_obj:
+            return Response(status=403)
+
         serializer = self.serializer_class(
-            registration_objs, context={"module": self.module}
+            registration_obj, context={"module": self.module}
         )
         return Response(serializer.data)
 
     @swagger_auto_schema(
         query_serializer=DestroyRegistrationSerializer(),
-        responses={204: Serializer(), 401: Serializer(), 403: Serializer()},
+        responses={200: Serializer(), 401: Serializer(), 403: Serializer()},
     )
     def destroy(self, request, id):
         serializer = DestroyRegistrationSerializer(data=request.query_params)
@@ -255,14 +279,17 @@ class RegistrationAPI(ComuniCatViewSet):
         if not user_obj:
             return Response(status=401)
 
-        is_deleted = event.api.registration.delete(
+        registration_obj = event.api.registration.delete(
             registration_id=id, request_user_id=user_obj.id, module=self.module
         )
 
-        if not is_deleted:
+        if not registration_obj:
             return Response(status=403)
 
-        return Response(status=204)
+        serializer = self.serializer_class(
+            registration_obj, context={"module": self.module}
+        )
+        return Response(serializer.data)
 
     @swagger_auto_schema(
         responses={200: RegistrationSlimSerializer(many=True), 400: Serializer()},
@@ -284,11 +311,12 @@ class RegistrationAPI(ComuniCatViewSet):
         return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(
-        query_serializer=CreateRegistrationSerializer,
+        query_serializer=CreateRegistrationSerializer(),
         responses={200: RegistrationSerializer(many=True)},
     )
     @action(methods=["get"], detail=False, url_path="request", url_name="request")
     @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def request(self, request):
         serializer = PageEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)

@@ -363,6 +363,10 @@ class CreateOrderCourseRegistrationSerializer(s.Serializer):
     id = s.UUIDField()
 
 
+class CreateOrderEventRegistrationSerializer(s.Serializer):
+    id = s.UUIDField()
+
+
 class CreateCartSerializer(s.Serializer):
     sizes = s.ListSerializer(
         child=CreateOrderSizeSerializer(),
@@ -378,6 +382,12 @@ class CreateCartSerializer(s.Serializer):
     )
     course_registrations = s.ListSerializer(
         child=CreateOrderCourseRegistrationSerializer(),
+        min_length=0,
+        max_length=10,
+        required=False,
+    )
+    event_registrations = s.ListSerializer(
+        child=CreateOrderEventRegistrationSerializer(),
         min_length=0,
         max_length=10,
         required=False,

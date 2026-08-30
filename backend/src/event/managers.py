@@ -41,6 +41,16 @@ class EventQuerySet(QuerySet):
                 Value(False),
                 output_field=BooleanField(),
             ),
+            require_user=Coalesce(
+                Subquery(
+                    EventModule.objects.filter(
+                        event_id=OuterRef("id"),
+                        module=module,
+                    ).values_list("require_user", flat=True)[:1]
+                ),
+                Value(False),
+                output_field=BooleanField(),
+            ),
         )
 
     def with_title(self, locale: str | None = None):

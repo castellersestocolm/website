@@ -272,6 +272,7 @@ class EventModule(StandardModel, Timestamps):
 
     require_signup = models.BooleanField(default=True)
     require_approve = models.BooleanField(default=False)
+    require_user = models.BooleanField(default=True)
 
     def clean(self):
         if self.team and self.module != self.team.group.module:
@@ -449,6 +450,11 @@ class Registration(StandardModel, Timestamps):
     )
     entity = models.ForeignKey(
         "payment.Entity", related_name="registrations", on_delete=models.CASCADE
+    )
+
+    # Track who made the registration
+    owner = models.ForeignKey(
+        "payment.Entity", related_name="owned_registrations", on_delete=models.CASCADE
     )
 
     status = models.PositiveSmallIntegerField(

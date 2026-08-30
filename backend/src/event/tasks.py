@@ -4,6 +4,7 @@ from uuid import UUID
 from celery import shared_task
 
 import event.api
+import event.api.registration
 import event.api.google_album
 import event.api.google_calendar
 from comunicat.enums import Module
@@ -54,3 +55,8 @@ def create_or_update_event(event_id: UUID, registration_id: UUID | None = None) 
 @shared_task
 def create_or_update_album(event_id: UUID) -> None:
     event.api.google_album.create_or_update_album(event_id=event_id)
+
+
+@shared_task
+def clean_pending_registrations() -> None:
+    event.api.registration.clean_pending_registrations()

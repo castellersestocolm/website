@@ -13,7 +13,7 @@ import {
   API_NEWSLETTER_LIST_PAGE_SIZE,
   API_CONSENT_ENTITY_LIST_PAGE_SIZE,
 } from "../consts";
-import { ContactMessageType, OrderType } from "../enums";
+import {ContactMessageType, OrderType, RegistrationStatus} from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_ORG_API_URL;
 
@@ -478,6 +478,52 @@ export const apiEventRegistrationList = async (page: number = undefined) => {
   }
 };
 
+export const apiEventRegistrationCreate = async (
+  userId: string = undefined,
+  entityId: string = undefined,
+  ownerId: string = undefined,
+  eventId: string,
+  entityFirstname: string = undefined,
+  entityLastname: string = undefined,
+  entityEmail: string = undefined,
+  entityPhone: string = undefined,
+  entityBirthday: string = undefined,
+  entityLanguage: string = undefined,
+  token: string = undefined,
+  status: RegistrationStatus = undefined,
+  data: any = undefined,
+) => {
+  console.log("dataaa", data);
+  try {
+    return await instance.post("/event/registration/", {
+      ...(userId ? {user_id: userId} : entityId ? {entity_id: entityId} : {entity: {firstname: entityFirstname, lastname: entityLastname, ...(entityEmail ? {email: entityEmail} : {}), ...(entityPhone ? {phone: entityPhone} : {}), preferred_language: entityLanguage, ...(entityBirthday ? {birthday: entityBirthday} : {})}}),
+      ...(ownerId ? {owner_id: ownerId} : {}),
+      event_id: eventId,
+      token: token,
+      status: status,
+      data: data,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiEventRegistrationDelete = async (
+  id: string,
+) => {
+  try {
+    return await instance.delete(
+      "/event/registration/" + id + "/",
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiEventList = async (
   page: number = undefined,
   pageSize: number = undefined,
@@ -812,6 +858,19 @@ export const apiOrderCourseCreate = async (courseRegistrations: any[]) => {
     return await instance.post("/order/", {
       cart: { course_registrations: courseRegistrations },
       type: OrderType.COURSE,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderEventCreate = async (eventRegistrations: any[]) => {
+  try {
+    return await instance.post("/order/", {
+      cart: { event_registrations: eventRegistrations },
+      type: OrderType.REGISTRATION,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-25 09:56+0200\n"
+"POT-Creation-Date: 2026-08-30 10:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,22 +130,36 @@ msgstr "create"
 msgid "updated"
 msgstr "actualitzat"
 
-#: comunicat/rest/serializers/consent.py:36
+#: comunicat/rest/serializers/consent.py:65
 msgid "The entity is required for non-logged in users."
 msgstr ""
+
+#: comunicat/rest/serializers/event.py:669
+#, fuzzy
+#| msgid "End time must be greater than start time."
+msgid "The entity must be provided if no user is given."
+msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
 #: comunicat/rest/serializers/order.py:439
 #: comunicat/rest/serializers/order.py:445
 msgid "This field is required."
-msgstr ""
+msgstr "Aquest camp és obligatori."
 
-#: comunicat/rest/serializers/payment.py:38
+#: comunicat/rest/serializers/payment.py:42
 msgid "The first name is required for non-logged in users."
-msgstr ""
+msgstr "El nom és obligatori per als usuaris que no han iniciat la sessió."
 
-#: comunicat/rest/serializers/payment.py:48
+#: comunicat/rest/serializers/payment.py:52
 msgid "The last name is required for non-logged in users."
-msgstr ""
+msgstr "El cognom és obligatori per als usuaris que no han iniciat la sessió."
+
+#: comunicat/rest/serializers/payment.py:62
+msgid "The email is required for non-logged in and non-minor users."
+msgstr "El correu electrònic és obligatori per als usuaris que no han iniciat la sessió o són menors d'edat."
+
+#: comunicat/rest/serializers/payment.py:64
+msgid "The phone is required for non-logged in and non-minor users."
+msgstr "El telèfon és obligatori per als usuaris que no han iniciat la sessió o són menors d'edat."
 
 #: comunicat/rest/serializers/user.py:337
 #, python-format
@@ -584,8 +598,8 @@ msgid ""
 "questions you may have regarding the system."
 msgstr ""
 "Estem molt contents d'introduïr la nostra nova web, una manera nova "
-"d'administrar la teva quota i registrar-te als esdeveniments. T'enviem aquest "
-"correu per donar-te un resum ràpid d'algunes de les funcions i alhora "
+"d'administrar la teva quota i registrar-te als esdeveniments. T'enviem "
+"aquest correu per donar-te un resum ràpid d'algunes de les funcions i alhora "
 "resoldre qualsevol dubte que hi pugui haver sobre el sistema."
 
 #: comunicat/templates/email/org/user/imported.html:6
@@ -861,7 +875,7 @@ msgstr "Telèfon"
 msgid "Quantity"
 msgstr "entitat"
 
-#: consent/models.py:53
+#: consent/models.py:49
 msgid "The newsletter is mandatory for newsletter consents."
 msgstr ""
 
@@ -918,15 +932,15 @@ msgstr ""
 msgid "The start time must be within the course dates."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:278 product/models.py:142 product/models.py:147
+#: event/models.py:279 product/models.py:142 product/models.py:147
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:360 payment/models.py:232
+#: event/models.py:361 payment/models.py:263
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
-#: event/models.py:441 event/models.py:442
+#: event/models.py:442 event/models.py:443
 msgid "event accounts"
 msgstr ""
 
@@ -946,15 +960,15 @@ msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 msgid "bylaws"
 msgstr ""
 
-#: membership/admin.py:110
+#: membership/admin.py:115
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:111 user/admin.py:324 user/models.py:206
+#: membership/admin.py:116 user/admin.py:322 user/models.py:206
 msgid "family"
 msgstr "família"
 
-#: membership/admin.py:112
+#: membership/admin.py:117
 msgid "modules"
 msgstr "mòduls"
 
@@ -963,8 +977,8 @@ msgid "Members"
 msgstr "Membres"
 
 #: membership/api/export.py:56 payment/api/__init__.py:182
-#: payment/api/provider/se_swish.py:49 payment/managers.py:208
-#: payment/managers.py:565 payment/managers.py:590
+#: payment/api/provider/se_swish.py:49 payment/managers.py:210
+#: payment/managers.py:567 payment/managers.py:592
 msgid "Membership"
 msgstr "Quota"
 
@@ -1094,7 +1108,7 @@ msgid "The Google group is mandatory for Google newsletters."
 msgstr ""
 
 #: order/admin.py:127 order/admin.py:221 payment/admin.py:465
-#: payment/models.py:183 user/admin.py:323
+#: payment/models.py:214 user/admin.py:321
 msgid "entity"
 msgstr "entitat"
 
@@ -1207,7 +1221,7 @@ msgid "file"
 msgstr "fitxer"
 
 #: payment/api/__init__.py:190 payment/api/provider/se_swish.py:52
-#: payment/managers.py:221 payment/managers.py:226
+#: payment/managers.py:223 payment/managers.py:228
 msgid "Order"
 msgstr "Comanda"
 
@@ -1217,7 +1231,7 @@ msgstr "Comanda"
 msgid "Order fee"
 msgstr "Comanda"
 
-#: payment/api/__init__.py:301 payment/managers.py:733
+#: payment/api/__init__.py:301 payment/managers.py:735
 msgid "Delivery"
 msgstr "Entrega"
 
@@ -1245,67 +1259,67 @@ msgstr "Número de compte"
 msgid "Clearing number"
 msgstr "Número d’autorització"
 
-#: payment/managers.py:202 payment/managers.py:563
+#: payment/managers.py:204 payment/managers.py:565
 msgid "Membership update"
 msgstr "Actualització quota"
 
-#: payment/managers.py:231
+#: payment/managers.py:233
 msgid "Payment"
 msgstr "Pagament"
 
-#: payment/managers.py:747
+#: payment/managers.py:749
 msgid "Unspecified"
 msgstr "Sense especificar"
 
-#: payment/managers.py:779
+#: payment/managers.py:781
 msgid "(and more)"
 msgstr "(i més)"
 
-#: payment/managers.py:782
+#: payment/managers.py:784
 msgid "Expense"
 msgstr "Despesa"
 
-#: payment/models.py:103
+#: payment/models.py:104
 #, fuzzy
 #| msgid "Category must be set for accounts with parent."
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:141
+#: payment/models.py:143
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: payment/models.py:184
+#: payment/models.py:215
 #, fuzzy
 #| msgid "entity"
 msgid "entities"
 msgstr "entitat"
 
-#: payment/models.py:200
+#: payment/models.py:231
 #, fuzzy
 #| msgid "entity"
 msgid "entity alias"
 msgstr "entitat"
 
-#: payment/models.py:201
+#: payment/models.py:232
 #, fuzzy
 #| msgid "entity"
 msgid "entity aliases"
 msgstr "entitat"
 
-#: payment/models.py:248
+#: payment/models.py:279
 msgid "entity payment method"
 msgstr ""
 
-#: payment/models.py:249
+#: payment/models.py:280
 msgid "entity payment methods"
 msgstr ""
 
-#: payment/models.py:476
+#: payment/models.py:507
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:569 payment/models.py:570
+#: payment/models.py:600 payment/models.py:601
 #, fuzzy
 #| msgid "delivery"
 msgid "payment provider accounts"
@@ -1339,7 +1353,7 @@ msgstr ""
 msgid "product accounts"
 msgstr ""
 
-#: user/admin.py:157
+#: user/admin.py:155
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 

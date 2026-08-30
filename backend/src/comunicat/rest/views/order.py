@@ -60,11 +60,15 @@ class OrderAPI(ComuniCatViewSet):
         validated_data = serializer.validated_data
 
         try:
+            # TODO: Registrations at least one above-age or email
             order_obj = order.api.create(
                 cart_sizes=validated_data["cart"].get("sizes"),
                 cart_modules=validated_data["cart"].get("modules"),
                 cart_course_registrations=validated_data["cart"].get(
                     "course_registrations"
+                ),
+                cart_event_registrations=validated_data["cart"].get(
+                    "event_registrations"
                 ),
                 delivery=validated_data.get("delivery"),
                 order_type=validated_data["type"],
