@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-30 10:12+0200\n"
+"POT-Creation-Date: 2026-08-30 20:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,12 +20,12 @@ msgstr ""
 
 #: activity/admin.py:56 activity/admin.py:145 data/admin.py:38 data/admin.py:69
 #: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
-#: notify/admin.py:272 order/admin.py:522 payment/admin.py:678
+#: notify/admin.py:272 order/admin.py:523 payment/admin.py:678
 #: payment/admin.py:1132 product/admin.py:110
 msgid "name"
 msgstr "namn"
 
-#: activity/admin.py:120 event/admin.py:344 history/admin.py:31
+#: activity/admin.py:120 event/admin.py:347 history/admin.py:31
 #: media/admin.py:35
 msgid "title"
 msgstr "titel"
@@ -134,14 +134,14 @@ msgstr "uppdaterad"
 msgid "The entity is required for non-logged in users."
 msgstr ""
 
-#: comunicat/rest/serializers/event.py:669
+#: comunicat/rest/serializers/event.py:675
 #, fuzzy
 #| msgid "End time must be greater than start time."
-msgid "The entity must be provided if no user is given."
+msgid "The entity must be provided if no user or entity is given."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: comunicat/rest/serializers/order.py:439
-#: comunicat/rest/serializers/order.py:445
+#: comunicat/rest/serializers/order.py:449
+#: comunicat/rest/serializers/order.py:455
 msgid "This field is required."
 msgstr "Detta fält är obligatoriskt."
 
@@ -153,11 +153,11 @@ msgstr "Förnamnet krävs för icke-inloggade användare."
 msgid "The last name is required for non-logged in users."
 msgstr "Efternamnet krävs för icke-inloggade användare."
 
-#: comunicat/rest/serializers/payment.py:62
+#: comunicat/rest/serializers/payment.py:64
 msgid "The email is required for non-logged in and non-minor users."
 msgstr "E-postadressen krävs för icke-inloggade och mindreåriga användare."
 
-#: comunicat/rest/serializers/payment.py:64
+#: comunicat/rest/serializers/payment.py:68
 msgid "The phone is required for non-logged in and non-minor users."
 msgstr "Telefonen krävs för icke-inloggade och mindreåriga användare."
 
@@ -209,6 +209,18 @@ msgstr "Inte ett betalningsmedel."
 #: comunicat/rest/utils/fields.py:84
 msgid "Missing amount or currency."
 msgstr "Det saknas mängd eller valuta."
+
+#: comunicat/rest/utils/translation.py:8
+msgid "Rehearsal with musicians"
+msgstr "Repetition med musiker"
+
+#: comunicat/rest/utils/translation.py:9
+msgid "Rehearsal"
+msgstr "Repetition"
+
+#: comunicat/rest/utils/translation.py:10
+msgid "Musicians rehearsal"
+msgstr "Musikerns repetition"
 
 #: comunicat/rest/views/org.py:110
 msgid "The amount of children you entered is incorrect."
@@ -877,30 +889,30 @@ msgstr "enhet"
 msgid "The newsletter is mandatory for newsletter consents."
 msgstr ""
 
-#: event/admin.py:132 payment/admin.py:276
+#: event/admin.py:135 payment/admin.py:276
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:134
+#: event/admin.py:137
 msgid "Data"
 msgstr ""
 
-#: event/admin.py:135 order/admin.py:252 payment/admin.py:207
+#: event/admin.py:138 order/admin.py:252 payment/admin.py:207
 msgid "Send paid email"
 msgstr ""
 
-#: event/admin.py:237
+#: event/admin.py:240
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:345 order/admin.py:523 payment/admin.py:1133
+#: event/admin.py:348 order/admin.py:524 payment/admin.py:1133
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
 msgid "accounts"
 msgstr "Belopp"
 
-#: event/admin.py:453
+#: event/admin.py:456
 msgid "time from"
 msgstr ""
 
@@ -1128,19 +1140,19 @@ msgstr "Kurs"
 msgid "Send created email"
 msgstr ""
 
-#: order/admin.py:432
+#: order/admin.py:433
 msgid "pending"
 msgstr "väntande"
 
-#: order/admin.py:433
+#: order/admin.py:434
 msgid "delivery"
 msgstr "leverans"
 
-#: order/admin.py:434 payment/admin.py:487
+#: order/admin.py:435 payment/admin.py:487
 msgid "payment"
 msgstr "betalning"
 
-#: order/api/__init__.py:371
+#: order/api/__init__.py:384
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
@@ -1399,15 +1411,6 @@ msgstr "familjer"
 #~ msgstr ""
 #~ "Du har nu slutfört din registrering och är nu en del av Les Quatre "
 #~ "Barres, hjärtligt välkommen!"
-
-#~ msgid "Rehearsal with musicians"
-#~ msgstr "Repetition med musiker"
-
-#~ msgid "Rehearsal"
-#~ msgstr "Repetition"
-
-#~ msgid "Musicians rehearsal"
-#~ msgstr "Musikerns repetition"
 
 #~ msgid ""
 #~ "Your membership is expired and therefore you are not currently a member of"

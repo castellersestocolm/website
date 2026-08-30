@@ -25,10 +25,6 @@ function CalendarEventReceiptPage() {
 
   let navigate = useNavigate();
 
-  if (user === null) {
-    navigate(ROUTES["user-login"].path);
-  }
-
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {
       if (response.status === 200) {

@@ -804,7 +804,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=49, num_inserts=8, num_updates=3
+                num=0, num_selects=50, num_inserts=8, num_updates=5
             ):
                 order_obj = complete(
                     order_id=self.order_3_obj.id,
@@ -818,7 +818,7 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         self.assertIsNotNone(order_obj)
 
-        self.assertEqual(order_obj.status, OrderStatus.PROCESSING)
+        self.assertEqual(order_obj.status, OrderStatus.COMPLETED)
         self.assertEqual(order_obj.payment_order.status, PaymentStatus.COMPLETED)
 
         transaction_objs = list(
@@ -882,7 +882,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=62, num_inserts=9, num_updates=6
+                num=0, num_selects=65, num_inserts=9, num_updates=8
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -896,7 +896,7 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         self.assertIsNotNone(order_obj)
 
-        self.assertEqual(order_obj.status, OrderStatus.PROCESSING)
+        self.assertEqual(order_obj.status, OrderStatus.COMPLETED)
         self.assertEqual(order_obj.payment_order.status, PaymentStatus.COMPLETED)
 
         transaction_objs = list(
@@ -967,7 +967,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=69, num_inserts=9, num_updates=4
+                num=0, num_selects=72, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_5_obj.id,
@@ -981,7 +981,7 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         self.assertIsNotNone(order_obj)
 
-        self.assertEqual(order_obj.status, OrderStatus.PROCESSING)
+        self.assertEqual(order_obj.status, OrderStatus.COMPLETED)
         self.assertEqual(order_obj.payment_order.status, PaymentStatus.COMPLETED)
 
         transaction_objs = list(

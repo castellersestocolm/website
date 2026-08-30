@@ -189,6 +189,9 @@ export default function FormEventRegister({ event }: any) {
             [response.data.entity, undefined],
           ]);
         }
+        if (!ownerEntity) {
+          setOwnerEntity(formData);
+        }
         setFormDataEmpty();
         setExtraOpen(false);
         setValidationErrors(undefined);
@@ -283,6 +286,9 @@ export default function FormEventRegister({ event }: any) {
             ),
             response.data,
           ]);
+          if (!ownerEntity) {
+            setOwnerEntity(response.data.entity);
+          }
         }
       });
     }
@@ -306,10 +312,15 @@ export default function FormEventRegister({ event }: any) {
             ),
             response.data,
           ]);
+          if (!ownerEntity) {
+            setOwnerEntity(response.data.entity);
+          }
         }
       });
     }
   }
+
+  console.log(ownerEntity);
 
   function handleRegistrationDelete(registrationId: string) {
     apiEventRegistrationDelete(registrationId).then((response) => {
@@ -332,21 +343,23 @@ export default function FormEventRegister({ event }: any) {
         },
       );
 
-      apiOrderEventCreate(cartEventRegistrations).then((response) => {
-        if (response.status === 201) {
-          navigate(
-            ROUTES["calendar-event-payment"].path.replace(
-              ":id",
-              response.data.id,
-            ),
-          );
-        } else {
-          setMessages([
-            { message: t("pages.order-cart.order.error"), type: "error" },
-          ]);
-          setTimeout(() => setMessages(undefined), 10000);
-        }
-      });
+      apiOrderEventCreate(cartEventRegistrations, ownerEntity).then(
+        (response) => {
+          if (response.status === 201) {
+            navigate(
+              ROUTES["calendar-event-payment"].path.replace(
+                ":id",
+                response.data.id,
+              ),
+            );
+          } else {
+            setMessages([
+              { message: t("pages.order-cart.order.error"), type: "error" },
+            ]);
+            setTimeout(() => setMessages(undefined), 10000);
+          }
+        },
+      );
     }
   }
 
@@ -378,7 +391,13 @@ export default function FormEventRegister({ event }: any) {
           ...registration.price.amount,
           amount: totalAmount.amount + registration.price.amount.amount,
         }),
-        { amount: 0, currency: registrations[0].price.amount.currency },
+        {
+          amount: 0,
+          currency:
+            registrationsRequested &&
+            registrationsRequested.length > 0 &&
+            registrationsRequested[0].price.amount.currency,
+        },
       );
 
   return (
@@ -436,7 +455,9 @@ export default function FormEventRegister({ event }: any) {
                 component="span"
                 sx={{ flexGrow: 1 }}
               >
-                {t("pages.calendar-event.register-list.title")}
+                {user
+                  ? t("pages.calendar-event.register-list.title")
+                  : t("pages.calendar-event.register-list.title-external")}
               </Typography>
             </Box>
             <Divider />
@@ -446,202 +467,213 @@ export default function FormEventRegister({ event }: any) {
               </Box>
             ) : (
               <Box className={styles.userFamilyBox}>
-                <List className={styles.userFamilyList}>
-                  {allEntityUsers &&
-                    allEntityUsers.map(
-                      (entityUser: any, i: number, row: any) => {
-                        const entity = entityUser[0];
-                        const registrationUser = entityUser[1];
-                        const registration =
-                          registrations &&
-                          registrations.find(
-                            (registration: any) =>
-                              registration.entity.id === entity.id,
-                          );
+                {allEntityUsers && allEntityUsers.length > 0 ? (
+                  <List className={styles.userFamilyList}>
+                    {allEntityUsers &&
+                      allEntityUsers.map(
+                        (entityUser: any, i: number, row: any) => {
+                          const entity = entityUser[0];
+                          const registrationUser = entityUser[1];
+                          const registration =
+                            registrations &&
+                            registrations.find(
+                              (registration: any) =>
+                                registration.entity.id === entity.id,
+                            );
 
-                        return (
-                          <>
-                            <Box
-                              key={entity.id}
-                              className={
-                                formData.entity &&
-                                formData.entity.id === entity.id &&
-                                styles.userRowActive
-                              }
-                            >
-                              <ListItemButton disableTouchRipple dense>
-                                <ListItemIcon>
-                                  <IconAccountCircle />
-                                </ListItemIcon>
-                                <Box
-                                  className={styles.userFamilyListInner}
-                                  flexDirection={{
-                                    xs: "column",
-                                    lg: "row",
-                                  }}
-                                  alignItems={{
-                                    xs: "start",
-                                    lg: "center",
-                                  }}
-                                >
-                                  <ListItemText
-                                    primary={
-                                      <>
-                                        <Typography
-                                          variant="body2"
-                                          component="span"
-                                        >
-                                          {entity.lastname
-                                            ? entity.firstname +
-                                              " " +
-                                              entity.lastname
-                                            : entity.firstname}
-                                        </Typography>
-                                        {registration &&
-                                          registration.price &&
-                                          registration.status !==
-                                            RegistrationStatus.CANCELLED && (
-                                            <Typography
-                                              variant="body2"
-                                              component="span"
-                                              color="textSecondary"
-                                            >
-                                              {" — "}
-                                              {
-                                                registration.price.amount.amount
-                                              }{" "}
-                                              {
-                                                registration.price.amount
-                                                  .currency
-                                              }
-                                            </Typography>
-                                          )}
-                                      </>
-                                    }
-                                    secondary={
-                                      registration && (
-                                        <Typography
-                                          variant="body2"
-                                          style={{
-                                            color:
-                                              registration.status ===
-                                              RegistrationStatus.ACTIVE
-                                                ? "var(--mui-palette-success-main)"
-                                                : registration.status ===
-                                                    RegistrationStatus.CANCELLED
-                                                  ? "var(--mui-palette-text-secondary)"
-                                                  : "var(--mui-palette-error-main)",
-                                            whiteSpace: "nowrap",
-                                          }}
-                                        >
-                                          {registration.status ===
-                                          RegistrationStatus.ACTIVE
-                                            ? registration.price &&
-                                              registration.price.amount
-                                                .amount === 0
-                                              ? t(
-                                                  "pages.activity-kids.content.section-register.status-active-free",
-                                                )
-                                              : t(
-                                                  "pages.activity-kids.content.section-register.status-active",
-                                                )
-                                            : registration.status ===
-                                                RegistrationStatus.CANCELLED
-                                              ? t(
-                                                  "pages.activity-kids.content.section-register.status-cancelled",
-                                                )
-                                              : t(
-                                                  "pages.activity-kids.content.section-register.status-requested",
-                                                )}
-                                        </Typography>
-                                      )
-                                    }
-                                  ></ListItemText>
-
-                                  {(!registration ||
-                                    registration.status !==
-                                      RegistrationStatus.ACTIVE ||
-                                    !registration.price ||
-                                    registration.price.amount.amount === 0) && (
-                                    <Stack
-                                      direction="row"
-                                      spacing={2}
-                                      marginLeft={{
-                                        xs: "0",
-                                        lg: "16px",
-                                      }}
-                                      marginTop="8px"
-                                      marginBottom="8px"
-                                      whiteSpace="nowrap"
-                                    >
-                                      <Button
-                                        variant="contained"
-                                        type="submit"
-                                        style={{ width: "auto" }}
-                                        disableElevation
-                                        color={
-                                          registration &&
-                                          registration.status <=
-                                            RegistrationStatus.ACTIVE
-                                            ? "error"
-                                            : "primary"
-                                        }
-                                        disabled={
-                                          !user ||
-                                          (formData.entity &&
-                                            formData.entity.id === entity.id) ||
-                                          (registration &&
-                                            registration.status ===
-                                              RegistrationStatus.ACTIVE &&
+                          return (
+                            <>
+                              <Box
+                                key={entity.id}
+                                className={
+                                  formData.entity &&
+                                  formData.entity.id === entity.id &&
+                                  styles.userRowActive
+                                }
+                              >
+                                <ListItemButton disableTouchRipple dense>
+                                  <ListItemIcon>
+                                    <IconAccountCircle />
+                                  </ListItemIcon>
+                                  <Box
+                                    className={styles.userFamilyListInner}
+                                    flexDirection={{
+                                      xs: "column",
+                                      lg: "row",
+                                    }}
+                                    alignItems={{
+                                      xs: "start",
+                                      lg: "center",
+                                    }}
+                                  >
+                                    <ListItemText
+                                      primary={
+                                        <>
+                                          <Typography
+                                            variant="body2"
+                                            component="span"
+                                          >
+                                            {entity.lastname
+                                              ? entity.firstname +
+                                                " " +
+                                                entity.lastname
+                                              : entity.firstname}
+                                          </Typography>
+                                          {registration &&
                                             registration.price &&
-                                            registration.price.amount.amount >
-                                              0)
-                                        }
-                                        onClick={() => {
-                                          if (
+                                            registration.status !==
+                                              RegistrationStatus.CANCELLED && (
+                                              <Typography
+                                                variant="body2"
+                                                component="span"
+                                                color="textSecondary"
+                                              >
+                                                {" — "}
+                                                {
+                                                  registration.price.amount
+                                                    .amount
+                                                }{" "}
+                                                {
+                                                  registration.price.amount
+                                                    .currency
+                                                }
+                                              </Typography>
+                                            )}
+                                        </>
+                                      }
+                                      secondary={
+                                        registration && (
+                                          <Typography
+                                            variant="body2"
+                                            style={{
+                                              color:
+                                                registration.status ===
+                                                RegistrationStatus.ACTIVE
+                                                  ? "var(--mui-palette-success-main)"
+                                                  : registration.status ===
+                                                      RegistrationStatus.CANCELLED
+                                                    ? "var(--mui-palette-text-secondary)"
+                                                    : "var(--mui-palette-error-main)",
+                                              whiteSpace: "nowrap",
+                                            }}
+                                          >
+                                            {registration.status ===
+                                            RegistrationStatus.ACTIVE
+                                              ? registration.price &&
+                                                registration.price.amount
+                                                  .amount === 0
+                                                ? t(
+                                                    "pages.activity-kids.content.section-register.status-active-free",
+                                                  )
+                                                : t(
+                                                    "pages.activity-kids.content.section-register.status-active",
+                                                  )
+                                              : registration.status ===
+                                                  RegistrationStatus.CANCELLED
+                                                ? t(
+                                                    "pages.activity-kids.content.section-register.status-cancelled",
+                                                  )
+                                                : t(
+                                                    "pages.activity-kids.content.section-register.status-requested",
+                                                  )}
+                                          </Typography>
+                                        )
+                                      }
+                                    ></ListItemText>
+
+                                    {(!registration ||
+                                      registration.status !==
+                                        RegistrationStatus.ACTIVE ||
+                                      !registration.price ||
+                                      registration.price.amount.amount ===
+                                        0) && (
+                                      <Stack
+                                        direction="row"
+                                        spacing={2}
+                                        marginLeft={{
+                                          xs: "0",
+                                          lg: "16px",
+                                        }}
+                                        marginTop="8px"
+                                        marginBottom="8px"
+                                        whiteSpace="nowrap"
+                                      >
+                                        <Button
+                                          variant="contained"
+                                          type="submit"
+                                          style={{ width: "auto" }}
+                                          disableElevation
+                                          color={
                                             registration &&
                                             registration.status <=
                                               RegistrationStatus.ACTIVE
-                                          ) {
-                                            handleRegistrationDelete(
-                                              registration.id,
-                                            );
-                                          } else {
-                                            if (registrationUser) {
-                                              handleRegistrationUserCreate(
-                                                registrationUser.id,
-                                                event.id,
+                                              ? "error"
+                                              : "primary"
+                                          }
+                                          disabled={
+                                            !user ||
+                                            (formData.entity &&
+                                              formData.entity.id ===
+                                                entity.id) ||
+                                            (registration &&
+                                              registration.status ===
+                                                RegistrationStatus.ACTIVE &&
+                                              registration.price &&
+                                              registration.price.amount.amount >
+                                                0)
+                                          }
+                                          onClick={() => {
+                                            if (
+                                              registration &&
+                                              registration.status <=
+                                                RegistrationStatus.ACTIVE
+                                            ) {
+                                              handleRegistrationDelete(
+                                                registration.id,
                                               );
                                             } else {
-                                              handleRegistrationEntityCreate(
-                                                entity.id,
-                                                event.id,
-                                              );
+                                              if (registrationUser) {
+                                                handleRegistrationUserCreate(
+                                                  registrationUser.id,
+                                                  event.id,
+                                                );
+                                              } else {
+                                                handleRegistrationEntityCreate(
+                                                  entity.id,
+                                                  event.id,
+                                                );
+                                              }
                                             }
-                                          }
-                                        }}
-                                      >
-                                        {registration &&
-                                        registration.status <=
-                                          RegistrationStatus.ACTIVE
-                                          ? t(
-                                              "pages.calendar-event.register-list.deregister",
-                                            )
-                                          : t(
-                                              "pages.calendar-event.register-list.register",
-                                            )}
-                                      </Button>
-                                    </Stack>
-                                  )}
-                                </Box>
-                              </ListItemButton>
-                            </Box>
-                            {i + 1 < row.length && <Divider />}
-                          </>
-                        );
-                      },
-                    )}
-                </List>
+                                          }}
+                                        >
+                                          {registration &&
+                                          registration.status <=
+                                            RegistrationStatus.ACTIVE
+                                            ? t(
+                                                "pages.calendar-event.register-list.deregister",
+                                              )
+                                            : t(
+                                                "pages.calendar-event.register-list.register",
+                                              )}
+                                        </Button>
+                                      </Stack>
+                                    )}
+                                  </Box>
+                                </ListItemButton>
+                              </Box>
+                              {i + 1 < row.length && <Divider />}
+                            </>
+                          );
+                        },
+                      )}
+                  </List>
+                ) : (
+                  <Box className={styles.userFamilyEmpty}>
+                    <Typography variant="body2">
+                      {t("pages.calendar-event.register-list.empty")}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             )}
           </Card>
@@ -677,12 +709,24 @@ export default function FormEventRegister({ event }: any) {
                         }}
                       >
                         <ListItemText
-                          primary={t(
-                            "pages.calendar-event.register-list.register-extra.title",
-                          )}
-                          secondary={t(
-                            "pages.calendar-event.register-list.register-extra.subtitle",
-                          )}
+                          primary={
+                            user
+                              ? t(
+                                  "pages.calendar-event.register-list.register-extra.title",
+                                )
+                              : t(
+                                  "pages.calendar-event.register-list.register-extra.title-external",
+                                )
+                          }
+                          secondary={
+                            user
+                              ? t(
+                                  "pages.calendar-event.register-list.register-extra.subtitle",
+                                )
+                              : t(
+                                  "pages.calendar-event.register-list.register-extra.subtitle-external",
+                                )
+                          }
                         />
                         {extraOpen ? <IconExpandLess /> : <IconExpandMore />}
                       </ListItemButton>

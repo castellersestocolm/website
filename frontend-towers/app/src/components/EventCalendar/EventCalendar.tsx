@@ -216,7 +216,7 @@ export default function EventCalendar({
                             user &&
                             (event.registrations.filter(
                               (registration: any) =>
-                                registration.user.id === user.id &&
+                                registration.entity.id === user.entity.id &&
                                 registration.status ===
                                   RegistrationStatus.ACTIVE,
                             ).length > 0 ||
@@ -237,8 +237,8 @@ export default function EventCalendar({
                                         ] === RegistrationStatus.ACTIVE
                                       : event.registrations.filter(
                                           (registration: any) =>
-                                            registration.user.id ===
-                                              eventUser.id &&
+                                            registration.entity.id ===
+                                              eventUser.entity.id &&
                                             registration.status ===
                                               RegistrationStatus.ACTIVE,
                                         ).length > 0),

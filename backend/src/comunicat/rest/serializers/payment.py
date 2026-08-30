@@ -3,7 +3,7 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_serializer_method
 from paypalserversdk.configuration import Environment
-from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 from versatileimagefield.serializers import VersatileImageFieldSerializer
@@ -30,7 +30,7 @@ class CreateEntitySerializer(s.Serializer):
     firstname = s.CharField(allow_null=True)
     lastname = s.CharField(allow_null=True)
     email = s.CharField(required=False)
-    phone = PhoneNumberField(empty_value=True, required=False)
+    phone = PhoneNumberField(required=False)
     birthday = s.DateField(required=False)
     preferred_language = FIELD_LOCALE(required=False)
 
@@ -56,6 +56,7 @@ class CreateEntitySerializer(s.Serializer):
 
     def validate(self, data):
         validation_errors = {}
+        print("aaaa", data)
 
         if "birthday" not in data or is_over_minimum_age(date=data["birthday"]):
             if "email" not in data or not data["email"]:

@@ -875,10 +875,14 @@ export const apiOrderCourseCreate = async (courseRegistrations: any[]) => {
   }
 };
 
-export const apiOrderEventCreate = async (eventRegistrations: any[]) => {
+export const apiOrderEventCreate = async (
+  eventRegistrations: any[],
+  userData: any,
+) => {
   try {
     return await instance.post("/order/", {
       cart: { event_registrations: eventRegistrations },
+      user: userData,
       type: OrderType.REGISTRATION,
     });
   } catch (error) {

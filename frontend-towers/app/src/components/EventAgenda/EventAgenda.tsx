@@ -328,9 +328,9 @@ export default function EventAgenda({
           )
         : undefined;
 
-      const registrationByUserId = Object.fromEntries(
+      const registrationByEntityId = Object.fromEntries(
         event.registrations.map((registration: any) => [
-          registration.user.id,
+          registration.entity.id,
           registration,
         ]),
       );
@@ -446,7 +446,7 @@ export default function EventAgenda({
                           <Box className={styles.eventRegistrationsBox}>
                             {eventUsers.map((eventUser: any) => {
                               const registration =
-                                registrationByUserId[eventUser.id];
+                                registrationByEntityId[eventUser.entity.id];
                               return (
                                 <Box
                                   key={eventUser.id}

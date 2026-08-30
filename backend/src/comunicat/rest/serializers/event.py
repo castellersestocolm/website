@@ -667,6 +667,7 @@ class CreateRegistrationSerializer(s.Serializer):
     data = s.DictField(required=False)
 
     def validate(self, data):
+        print("ccc", data)
         if "user_id" not in data and "entity_id" not in data and "entity" not in data:
             raise ValidationError(
                 {

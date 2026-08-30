@@ -206,6 +206,7 @@ class RegistrationAPI(ComuniCatViewSet):
         responses={200: RegistrationSerializer, 403: Serializer()},
     )
     def create(self, request):
+        print("bbbb", request.data)
         serializer = CreateRegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data

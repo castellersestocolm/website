@@ -168,3 +168,7 @@ input:-webkit-autofill:active {
 .alert {
   margin-bottom: 24px;
 }
+
+.userFamilyEmpty {
+  padding: 12px 16px 16px 16px;
+}

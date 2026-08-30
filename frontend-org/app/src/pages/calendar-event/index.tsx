@@ -322,7 +322,7 @@ function CalendarEventPage() {
                   </>
                 )
               ) : (
-                <Typography variant="body2" align="center">
+                <Typography variant="body2">
                   {t("pages.calendar-event.register-closed")}
                 </Typography>
               )}

@@ -882,11 +882,11 @@ function UserDashboardPage() {
                                       ": " +
                                       event.registrations
                                         .map((registration: any) =>
-                                          registration.user.lastname
-                                            ? registration.user.firstname +
+                                          registration.entity.lastname
+                                            ? registration.entity.firstname +
                                               " " +
-                                              registration.user.lastname
-                                            : registration.user.firstname,
+                                              registration.entity.lastname
+                                            : registration.entity.firstname,
                                         )
                                         .join(", ")
                                     : t(

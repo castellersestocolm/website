@@ -10,16 +10,8 @@ function CalendarEventPaymentPage() {
   const { id } = useParams();
   const { t } = useTranslation("common");
 
-  const { user } = useAppContext();
-
   const [order, setOrder] = React.useState(undefined);
   const [paymentProvider, setPaymentProvider] = React.useState(undefined);
-
-  let navigate = useNavigate();
-
-  if (user === null) {
-    navigate(ROUTES["user-login"].path);
-  }
 
   const content = (
     <OrderPayment
