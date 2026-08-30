@@ -137,7 +137,27 @@ def get_entity_by_key(
         return user_obj.entity
 
     entity_obj, __ = Entity.objects.update_or_create(
-        **({"email": email} if email else {"user_id": user_obj.id} if user_obj else {"id": entity_id} if entity_id else {"firstname": firstname, "lastname": lastname, "birthday": birthday} if firstname and lastname and birthday else {}),
+        **(
+            {"email": email}
+            if email
+            else (
+                {"user_id": user_obj.id}
+                if user_obj
+                else (
+                    {"id": entity_id}
+                    if entity_id
+                    else (
+                        {
+                            "firstname": firstname,
+                            "lastname": lastname,
+                            "birthday": birthday,
+                        }
+                        if firstname and lastname and birthday
+                        else {}
+                    )
+                )
+            )
+        ),
         defaults={
             **({"user_id": user_obj.id} if email and user_obj else {}),
             **(
@@ -161,7 +181,11 @@ def get_entity_by_key(
                 else {}
             ),
             **(
-                {"preferred_language": user_obj and user_obj.preferred_language or preferred_language}
+                {
+                    "preferred_language": user_obj
+                    and user_obj.preferred_language
+                    or preferred_language
+                }
                 if user_obj or preferred_language is not None
                 else {}
             ),

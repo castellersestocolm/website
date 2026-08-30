@@ -1,12 +1,15 @@
 from django.utils import timezone, translation
+from django.utils.translation import gettext_lazy as _
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 from rest_framework.exceptions import ValidationError
 from versatileimagefield.serializers import VersatileImageFieldSerializer
-from django.utils.translation import gettext_lazy as _
 
 from comunicat.rest.serializers.legal import TeamSerializer
-from comunicat.rest.serializers.payment import EntitySuperSlimSerializer, CreateEntitySerializer
+from comunicat.rest.serializers.payment import (
+    CreateEntitySerializer,
+    EntitySuperSlimSerializer,
+)
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.enums import EventType, RegistrationStatus
@@ -664,11 +667,7 @@ class CreateRegistrationSerializer(s.Serializer):
     data = s.DictField(required=False)
 
     def validate(self, data):
-        if (
-            "user_id" not in data
-            and "entity_id" not in data
-            and "entity" not in data
-        ):
+        if "user_id" not in data and "entity_id" not in data and "entity" not in data:
             raise ValidationError(
                 {
                     "entity": _(

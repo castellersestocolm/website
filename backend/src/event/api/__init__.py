@@ -428,7 +428,12 @@ def send_events_signup(  # noqa: C901
 
 
 def get_event_price(entity_id: UUID, event_id: UUID) -> EventPrice | None:
-    entity_obj = Entity.objects.filter(id=entity_id).select_related("user", "user__family_member", "user__family_member__family").with_has_active_membership().first()
+    entity_obj = (
+        Entity.objects.filter(id=entity_id)
+        .select_related("user", "user__family_member", "user__family_member__family")
+        .with_has_active_membership()
+        .first()
+    )
 
     if not entity_obj:
         return None
@@ -446,7 +451,11 @@ def get_event_price(entity_id: UUID, event_id: UUID) -> EventPrice | None:
     else:
         existing_family_members_registered = 0
 
-    modules = [module for module in Module if getattr(entity_obj, f"has_active_membership_{module.name.lower()}")]
+    modules = [
+        module
+        for module in Module
+        if getattr(entity_obj, f"has_active_membership_{module.name.lower()}")
+    ]
 
     event_price_objs = list(
         EventPrice.objects.filter(
@@ -459,21 +468,24 @@ def get_event_price(entity_id: UUID, event_id: UUID) -> EventPrice | None:
     if entity_obj.age:
         for event_price_obj in event_price_objs:
             if event_price_obj.age_from and (
-                entity_obj.age is None
-                or event_price_obj.age_from > entity_obj.age
+                entity_obj.age is None or event_price_obj.age_from > entity_obj.age
             ):
                 continue
             if event_price_obj.age_to and (
-                entity_obj.age is None
-                or event_price_obj.age_to < entity_obj.age
+                entity_obj.age is None or event_price_obj.age_to < entity_obj.age
             ):
                 continue
             return event_price_obj
     else:
         min_event_price_obj_by_module: dict[Module, EventPrice] = {}
         for event_price_obj in event_price_objs:
-            current_min_event_price_obj = min_event_price_obj_by_module.get(event_price_obj.module)
-            if not current_min_event_price_obj or current_min_event_price_obj.amount <= event_price_obj.amount:
+            current_min_event_price_obj = min_event_price_obj_by_module.get(
+                event_price_obj.module
+            )
+            if (
+                not current_min_event_price_obj
+                or current_min_event_price_obj.amount <= event_price_obj.amount
+            ):
                 min_event_price_obj_by_module[event_price_obj.module] = event_price_obj
 
         if min_event_price_obj_by_module:

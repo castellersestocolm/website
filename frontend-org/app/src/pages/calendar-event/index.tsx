@@ -1,11 +1,15 @@
 import styles from "./styles.module.css";
-import {Typography, Link, ListItem, List, ListItemText, Card} from "@mui/material";
+import {
+  Typography,
+  Link,
+  ListItem,
+  List,
+  ListItemText,
+  Card,
+} from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  apiEventPage,
-  apiMembershipList,
-} from "../../api";
+import { apiEventPage, apiMembershipList } from "../../api";
 import markdown from "@wcj/markdown-to-html";
 import PageBase from "../../components/PageBase/PageBase";
 import { useAppContext } from "../../components/AppContext/AppContext";
@@ -112,7 +116,7 @@ function CalendarEventPage() {
         <Box className={styles.pressContainerBox}>
           {(event.description ||
             (event.agenda_items && event.agenda_items.length > 0)) && (
-            <Box mb={3}>
+            <Box>
               <Typography
                 variant="body1"
                 component="div"
@@ -168,7 +172,7 @@ function CalendarEventPage() {
           )}
 
           {((event.poster && event.poster.large) || event.location) && (
-            <Grid container spacing={{ xs: 3, md: 4 }} mb={3}>
+            <Grid container spacing={{ xs: 3, md: 4 }} mt={4}>
               {event.poster && event.poster.large && (
                 <Grid
                   size={{
@@ -187,44 +191,66 @@ function CalendarEventPage() {
                 </Grid>
               )}
               {event.location && (
-                  <Grid
-                      size={{
-                        xs: 12,
-                        sm: event.poster && event.poster.large ? 6 : 12,
-                        md: event.poster && event.poster.large ? 8 : 12,
-                      }}
-                  > <Card variant="outlined" className={styles.mapCard} sx={{
-                          minHeight: event.poster && event.poster.large
-                                  ? "300px"
-                                  : "500px !important",
-                        }}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: event.poster && event.poster.large ? 6 : 12,
+                    md: event.poster && event.poster.large ? 8 : 12,
+                  }}
+                >
+                  {" "}
+                  <Card
+                    variant="outlined"
+                    className={styles.mapCard}
+                    sx={{
+                      minHeight:
+                        event.poster && event.poster.large
+                          ? "300px"
+                          : "500px !important",
+                    }}
+                  >
                     <iframe
-                        src={"https://maps.google.com/maps?q=" + event.location.coordinate_lat + "," + event.location.coordinate_lon + "&t=&z=13&ie=UTF8&iwloc=&output=embed"}
-                        width="100%" height="300" loading="lazy" frameBorder="0"
-                        referrerPolicy="strict-origin-when-cross-origin" style={{
-                          minHeight: event.poster && event.poster.large
-                                  ? "300px"
-                                  : "500px !important",
-                    }}></iframe></Card>
-                  </Grid>
+                      src={
+                        "https://maps.google.com/maps?q=" +
+                        event.location.coordinate_lat +
+                        "," +
+                        event.location.coordinate_lon +
+                        "&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                      }
+                      width="100%"
+                      height="300"
+                      loading="lazy"
+                      frameBorder="0"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      style={{
+                        minHeight:
+                          event.poster && event.poster.large
+                            ? "300px"
+                            : "500px !important",
+                      }}
+                    ></iframe>
+                  </Card>
+                </Grid>
               )}
             </Grid>
           )}
 
-          {event.prices && event.prices.length > 0 &&
-              <Box mt={3}>
-                <Box mb={3}>
-                  <Typography variant="h5" fontWeight="600" align="center" mb={1}>
+          {event.prices && event.prices.length > 0 && (
+            <Box mt={4}>
+              <Box mb={3}>
+                <Typography variant="h5" fontWeight="600" align="center" mb={1}>
                   {t("pages.calendar-event.register.prices.title")}
                 </Typography>
                 <Typography variant="body1" align="center">
                   {t("pages.calendar-event.register.prices.description")}
-                </Typography></Box>
+                </Typography>
+              </Box>
               <FormEventPrices event={event} />
-            </Box>}
+            </Box>
+          )}
 
           {event.require_signup && (
-            <Box mt={5}>
+            <Box mt={4}>
               <Typography variant="h4" fontWeight="700" align="center" mb={3}>
                 {t("pages.calendar-event.register")}
               </Typography>

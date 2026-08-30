@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import JSONField, Q, UniqueConstraint
-from django.utils import translation, timezone
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from phonenumber_field.phonenumber import PhoneNumber

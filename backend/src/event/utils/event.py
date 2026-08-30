@@ -7,7 +7,9 @@ from legal.enums import TeamType
 
 
 # TODO: Instead of just marking it as ACTIVE we should also check there's already an adult attending
-def get_registration_initial_status(require_approve: bool, amount: Money | None = None) -> RegistrationStatus:
+def get_registration_initial_status(
+    require_approve: bool, amount: Money | None = None
+) -> RegistrationStatus:
     if amount is not None and not amount:
         return RegistrationStatus.ACTIVE
 

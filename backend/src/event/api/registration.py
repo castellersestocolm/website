@@ -2,7 +2,7 @@ import itertools
 from uuid import UUID
 
 from django.db import transaction
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch, Q
 from django.utils import timezone
 
 import notify.tasks
@@ -84,9 +84,7 @@ def get_list(
             Prefetch(
                 "event__registrations",
                 (
-                    Registration.objects.filter(
-                        event_registration_filter
-                    )
+                    Registration.objects.filter(event_registration_filter)
                     .select_related("entity", "entity__user")
                     .with_amount()
                     if user_id
@@ -112,7 +110,9 @@ def get(
     )[0]
 
 
-def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> Registration | None:
+def delete(
+    registration_id: UUID, request_user_id: UUID, module: Module
+) -> Registration | None:
     registration_obj = (
         Registration.objects.filter(id=registration_id)
         .select_related("entity", "entity__user")
@@ -144,7 +144,7 @@ def delete(registration_id: UUID, request_user_id: UUID, module: Module) -> Regi
 # TODO: Check if over the limit of registrations AND if registration already opened
 # TODO: Add limit of registrations per person
 # TODO: Don't allow if the registration exists, has an owner and doesn't match
-def create(
+def create(  # noqa: C901
     entity_id: UUID,
     event_id: UUID,
     module: Module,
@@ -183,7 +183,8 @@ def create(
 
     if event_obj.require_approve:
         event_price_obj = get_event_price(
-            entity_id=entity_id, event_id=event_id,
+            entity_id=entity_id,
+            event_id=event_id,
         )
         if not event_price_obj:
             return None
@@ -195,7 +196,8 @@ def create(
         registration_status = status
     else:
         registration_status = get_registration_initial_status(
-            require_approve=event_obj.require_approve, amount=event_price_obj and event_price_obj.amount
+            require_approve=event_obj.require_approve,
+            amount=event_price_obj and event_price_obj.amount,
         )
 
     if request_user_id:
@@ -215,7 +217,12 @@ def create(
         registration_obj.save(update_fields=("status", "price", "data", "owner"))
     else:
         registration_obj = Registration.objects.create(
-            entity_id=entity_id, owner_id=owner_id, event_id=event_id, status=registration_status, price=event_price_obj, data=data
+            entity_id=entity_id,
+            owner_id=owner_id,
+            event_id=event_id,
+            status=registration_status,
+            price=event_price_obj,
+            data=data,
         )
 
     notify.tasks.send_registration_message_slack.delay(
@@ -276,4 +283,6 @@ def clean_pending_registrations() -> None:
         ).values_list("id", flat=True)
     )
 
-    Registration.objects.filter(id__in=registration_ids).update(status=RegistrationStatus.CANCELLED)
+    Registration.objects.filter(id__in=registration_ids).update(
+        status=RegistrationStatus.CANCELLED
+    )

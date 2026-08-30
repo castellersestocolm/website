@@ -59,9 +59,13 @@ class CreateEntitySerializer(s.Serializer):
 
         if "birthday" not in data or is_over_minimum_age(date=data["birthday"]):
             if "email" not in data or not data["email"]:
-                validation_errors["email"]: _("The email is required for non-logged in and non-minor users.")
+                validation_errors["email"] = _(
+                    "The email is required for non-logged in and non-minor users."
+                )
             if "phone" not in data or not data["phone"]:
-                validation_errors["phone"]: _("The phone is required for non-logged in and non-minor users.")
+                validation_errors["phone"] = _(
+                    "The phone is required for non-logged in and non-minor users."
+                )
 
         if validation_errors:
             raise ValidationError(validation_errors)

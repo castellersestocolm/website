@@ -7,6 +7,7 @@ from django.db.models import (
     Count,
     DateField,
     Exists,
+    ExpressionWrapper,
     F,
     Func,
     IntegerField,
@@ -18,7 +19,6 @@ from django.db.models import (
     UUIDField,
     Value,
     When,
-    ExpressionWrapper,
 )
 from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce, Concat, Substr
@@ -863,7 +863,6 @@ class EntityQuerySet(QuerySet):
         self,
         modules: list[Module] | None = None,
     ):
-        Membership = apps.get_model("membership", "Membership")
         MembershipModule = apps.get_model("membership", "MembershipModule")
 
         module_filter = Q()

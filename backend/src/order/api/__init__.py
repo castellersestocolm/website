@@ -16,11 +16,11 @@ import event.api.registration
 import membership.api
 import notify.tasks
 import payment.api.payment_provider
-from event.models import Registration
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from data.models import Country, Region
+from event.models import Registration
 from membership.models import MembershipModule
 from notify.enums import EmailType
 from order.consts import (
@@ -347,9 +347,7 @@ def create(  # noqa: C901
                     cart_event_registration["id"]
                     for cart_event_registration in cart_event_registrations
                 ]
-            ).select_related(
-                "event", "entity", "entity__user"
-            )
+            ).select_related("event", "entity", "entity__user")
         }
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
@@ -424,9 +422,7 @@ def create(  # noqa: C901
             )
     elif order_type == OrderType.REGISTRATION:
         for cart_event_registration in cart_event_registrations:
-            registration_obj = registration_obj_by_id[
-                cart_event_registration["id"]
-            ]
+            registration_obj = registration_obj_by_id[cart_event_registration["id"]]
 
             OrderRegistration.objects.update_or_create(
                 order=order_obj,
@@ -581,7 +577,11 @@ def complete(  # noqa: C901
         payment_order_obj.status = payment_status
         payment_order_obj.save(update_fields=("status",))
 
-        order_status_if_completed = OrderStatus.PROCESSING if order_obj.type == OrderType.PRODUCT else OrderStatus.COMPLETED
+        order_status_if_completed = (
+            OrderStatus.PROCESSING
+            if order_obj.type == OrderType.PRODUCT
+            else OrderStatus.COMPLETED
+        )
 
         order_obj.status = (
             order_status_if_completed
@@ -609,8 +609,7 @@ def complete(  # noqa: C901
                     for order_registration_obj in order_obj.registrations.all()
                 ]
                 event.api.registration.complete(
-                    registration_ids=registration_ids,
-                    with_notify=with_notify
+                    registration_ids=registration_ids, with_notify=with_notify
                 )
             elif order_obj.type == OrderType.MEMBERSHIP:
                 membership_module_ids = [

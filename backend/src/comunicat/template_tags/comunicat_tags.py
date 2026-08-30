@@ -183,7 +183,11 @@ def registrations_amount(registration_objs: list[Registration]) -> Money:
     return (
         sum(
             [
-                registration_obj.line.amount if registration_obj.line else registration_obj.price.amount
+                (
+                    registration_obj.line.amount
+                    if registration_obj.line
+                    else registration_obj.price.amount
+                )
                 for registration_obj in registration_objs
                 if registration_obj.line or registration_obj.price
             ]

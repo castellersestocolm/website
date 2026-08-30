@@ -3,7 +3,7 @@ import datetime
 
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, cache_control
+from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.decorators import action
@@ -11,15 +11,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
-import payment.api.entity
 import event.api
 import event.api.registration
+import payment.api.entity
 import user.api.event
 from comunicat.rest.serializers.event import (
     CreateRegistrationSerializer,
     DestroyRegistrationSerializer,
-    EventWithRegistrationsSerializer,
     EventWithCountsSerializer,
+    EventWithRegistrationsSerializer,
     ListEventCalendarSerializer,
     ListEventSerializer,
     PageEventSerializer,
@@ -222,9 +222,13 @@ class RegistrationAPI(ComuniCatViewSet):
         )
 
         if "user_id" in validated_data:
-            entity_obj = payment.api.entity.get_entity_by_key(user_id=validated_data["user_id"])
+            entity_obj = payment.api.entity.get_entity_by_key(
+                user_id=validated_data["user_id"]
+            )
         elif "entity_id" in validated_data:
-            entity_obj = payment.api.entity.get_entity_by_key(entity_id=validated_data["entity_id"])
+            entity_obj = payment.api.entity.get_entity_by_key(
+                entity_id=validated_data["entity_id"]
+            )
         else:
             entity_obj = payment.api.entity.get_entity_by_key(
                 email=validated_data["entity"].get("email"),

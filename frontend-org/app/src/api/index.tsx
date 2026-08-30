@@ -13,7 +13,7 @@ import {
   API_NEWSLETTER_LIST_PAGE_SIZE,
   API_CONSENT_ENTITY_LIST_PAGE_SIZE,
 } from "../consts";
-import {ContactMessageType, OrderType, RegistrationStatus} from "../enums";
+import { ContactMessageType, OrderType, RegistrationStatus } from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_ORG_API_URL;
 
@@ -496,8 +496,21 @@ export const apiEventRegistrationCreate = async (
   console.log("dataaa", data);
   try {
     return await instance.post("/event/registration/", {
-      ...(userId ? {user_id: userId} : entityId ? {entity_id: entityId} : {entity: {firstname: entityFirstname, lastname: entityLastname, ...(entityEmail ? {email: entityEmail} : {}), ...(entityPhone ? {phone: entityPhone} : {}), preferred_language: entityLanguage, ...(entityBirthday ? {birthday: entityBirthday} : {})}}),
-      ...(ownerId ? {owner_id: ownerId} : {}),
+      ...(userId
+        ? { user_id: userId }
+        : entityId
+          ? { entity_id: entityId }
+          : {
+              entity: {
+                firstname: entityFirstname,
+                lastname: entityLastname,
+                ...(entityEmail ? { email: entityEmail } : {}),
+                ...(entityPhone ? { phone: entityPhone } : {}),
+                preferred_language: entityLanguage,
+                ...(entityBirthday ? { birthday: entityBirthday } : {}),
+              },
+            }),
+      ...(ownerId ? { owner_id: ownerId } : {}),
       event_id: eventId,
       token: token,
       status: status,
@@ -510,13 +523,9 @@ export const apiEventRegistrationCreate = async (
   }
 };
 
-export const apiEventRegistrationDelete = async (
-  id: string,
-) => {
+export const apiEventRegistrationDelete = async (id: string) => {
   try {
-    return await instance.delete(
-      "/event/registration/" + id + "/",
-    );
+    return await instance.delete("/event/registration/" + id + "/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called
