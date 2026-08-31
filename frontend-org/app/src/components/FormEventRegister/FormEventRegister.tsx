@@ -39,7 +39,6 @@ import IconExpandLess from "@mui/icons-material/ExpandLess";
 import IconExpandMore from "@mui/icons-material/ExpandMore";
 import Checkbox from "@mui/material/Checkbox";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
-import IconPriorityHigh from "@mui/icons-material/PriorityHigh";
 import Alert from "@mui/material/Alert";
 
 const FormGrid = styled(Grid)(() => ({
@@ -410,12 +409,7 @@ export default function FormEventRegister({ event }: any) {
       >
         <Grid container spacing={3} justifyContent="center">
           <Grid size={{ xs: 12, sm: 10, md: 7, lg: 10, xl: 8 }}>
-            <Alert
-              variant="outlined"
-              icon={<IconPriorityHigh fontSize="inherit" />}
-              severity="error"
-              className={styles.alert}
-            >
+            <Alert severity="error" className={styles.alert}>
               {t("pages.calendar-event.register.alert.payment-pending")}
               <Stack
                 direction="row"

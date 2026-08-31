@@ -30,7 +30,12 @@ from event.enums import (
     RegistrationStatus,
     TransportMode,
 )
-from event.managers import AgendaItemQuerySet, EventQuerySet, RegistrationQuerySet
+from event.managers import (
+    AgendaItemQuerySet,
+    EventQuerySet,
+    EventSignupQuerySet,
+    RegistrationQuerySet,
+)
 from event.utils.event import get_event_title
 
 
@@ -390,6 +395,8 @@ class EventSignup(StandardModel, Timestamps):
     time_to = models.DateTimeField(blank=True, null=True)
 
     max_registrations = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    objects = EventSignupQuerySet.as_manager()
 
     def __str__(self) -> str:
         if self.module:

@@ -248,6 +248,7 @@
   "pages.user-dashboard.section.membership-renew.renew.success": "La renovació de quota s'ha iniciat correctament, a baix trobaràs la informació pel pagament.",
   "pages.user-dashboard.section.membership-renew.renew.error": "Hi ha hagut un error intentant renovar la teva quota.",
   "pages.calendar-event.register": "Inscriu-te a l'esdeveniment",
+  "pages.calendar-event.register.description-token": "Recorda que la propera vegada cal inscriure's i realitzar el pagament amb antelació.",
   "pages.calendar-event.register-closed": "Les inscripcions estan tancades en aquest moment però esperem poder obrir-les aviat!",
   "pages.calendar-event.register-opening-dates-1": "Les inscripcions estan obertes del",
   "pages.calendar-event.register-opening-dates-2": "al",

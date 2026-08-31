@@ -6,6 +6,8 @@ import {
   List,
   ListItemText,
   Card,
+  Stack,
+  Button,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -23,12 +25,14 @@ import { datetimeToLongString } from "../../utils/datetime";
 import { compareEventSignup } from "../../utils/sort";
 import { ROUTES } from "../../routes";
 import IconEast from "@mui/icons-material/East";
+import Alert from "@mui/material/Alert";
+import IconPriorityHigh from "@mui/icons-material/PriorityHigh";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
 function CalendarEventPage() {
   const [t, i18n] = useTranslation("common");
-  const { year, month, day, code } = useParams();
+  const { year, month, day, code, token } = useParams();
 
   const [event, setEvent] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
@@ -36,13 +40,23 @@ function CalendarEventPage() {
   const { user } = useAppContext();
 
   React.useEffect(() => {
-    const date = new Date(year + "-" + month + "-" + day);
-    apiEventPage(date.toISOString().substring(0, 10), code).then((response) => {
-      if (response.status === 200) {
-        setEvent(response.data);
-      }
-    });
-  }, [setEvent, year, month, day, code, i18n.resolvedLanguage]);
+    if (token) {
+      apiEventPage(undefined, undefined, token).then((response) => {
+        if (response.status === 200) {
+          setEvent(response.data);
+        }
+      });
+    } else {
+      const date = new Date(year + "-" + month + "-" + day);
+      apiEventPage(date.toISOString().substring(0, 10), code).then(
+        (response) => {
+          if (response.status === 200) {
+            setEvent(response.data);
+          }
+        },
+      );
+    }
+  }, [setEvent, year, month, day, code, token, i18n.resolvedLanguage]);
 
   React.useEffect(() => {
     if (user) {
@@ -114,128 +128,134 @@ function CalendarEventPage() {
     <>
       {event && (
         <Box className={styles.pressContainerBox}>
-          {(event.description ||
-            (event.agenda_items && event.agenda_items.length > 0)) && (
-            <Box>
-              <Typography
-                variant="body1"
-                component="div"
-                className={styles.calendarEventDescription}
-              >
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: markdown(event.description).toString(),
-                  }}
-                ></div>
-              </Typography>
-              {event.agenda_items && event.agenda_items.length > 0 && (
-                <Box>
-                  <Typography variant="h6" fontWeight={700} textAlign="center">
-                    {t("pages.calendar-event.agenda.title")}
-                  </Typography>
-
-                  <List dense={true}>
-                    {event.agenda_items.map((agendaItem: any) => (
-                      <ListItem className={styles.calendarEventListItem}>
-                        <ListItemText
-                          primary={
-                            <Typography variant="body1" fontWeight={700}>
-                              {new Date(
-                                agendaItem.time_from,
-                              ).toLocaleTimeString(i18n.resolvedLanguage, {
-                                hour12: false,
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              }) +
-                                " — " +
-                                agendaItem.name}
-                            </Typography>
-                          }
-                          secondary={
-                            <Typography variant="body2" component="div">
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: markdown(
-                                    agendaItem.description,
-                                  ).toString(),
-                                }}
-                              ></div>
-                            </Typography>
-                          }
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              )}
-            </Box>
-          )}
-
-          {((event.poster && event.poster.large) || event.location) && (
-            <Grid container spacing={{ xs: 3, md: 4 }} mt={4}>
-              {event.poster && event.poster.large && (
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: 6,
-                    md: 4,
-                  }}
+          {!token &&
+            (event.description ||
+              (event.agenda_items && event.agenda_items.length > 0)) && (
+              <Box>
+                <Typography
+                  variant="body1"
+                  component="div"
+                  className={styles.calendarEventDescription}
                 >
-                  <Link href={BACKEND_BASE_URL + event.poster.large}>
-                    <img
-                      src={BACKEND_BASE_URL + event.poster.large}
-                      className={styles.calendarEventPoster}
-                      alt="poster"
-                    />
-                  </Link>
-                </Grid>
-              )}
-              {event.location && (
-                <Grid
-                  size={{
-                    xs: 12,
-                    sm: event.poster && event.poster.large ? 6 : 12,
-                    md: event.poster && event.poster.large ? 8 : 12,
-                  }}
-                >
-                  {" "}
-                  <Card
-                    variant="outlined"
-                    className={styles.mapCard}
-                    sx={{
-                      minHeight:
-                        event.poster && event.poster.large
-                          ? "300px"
-                          : "500px !important",
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: markdown(event.description).toString(),
+                    }}
+                  ></div>
+                </Typography>
+                {event.agenda_items && event.agenda_items.length > 0 && (
+                  <Box>
+                    <Typography
+                      variant="h6"
+                      fontWeight={700}
+                      textAlign="center"
+                    >
+                      {t("pages.calendar-event.agenda.title")}
+                    </Typography>
+
+                    <List dense={true}>
+                      {event.agenda_items.map((agendaItem: any) => (
+                        <ListItem className={styles.calendarEventListItem}>
+                          <ListItemText
+                            primary={
+                              <Typography variant="body1" fontWeight={700}>
+                                {new Date(
+                                  agendaItem.time_from,
+                                ).toLocaleTimeString(i18n.resolvedLanguage, {
+                                  hour12: false,
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }) +
+                                  " — " +
+                                  agendaItem.name}
+                              </Typography>
+                            }
+                            secondary={
+                              <Typography variant="body2" component="div">
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: markdown(
+                                      agendaItem.description,
+                                    ).toString(),
+                                  }}
+                                ></div>
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </Box>
+            )}
+
+          {!token &&
+            ((event.poster && event.poster.large) || event.location) && (
+              <Grid container spacing={{ xs: 3, md: 4 }} mt={4}>
+                {event.poster && event.poster.large && (
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 4,
                     }}
                   >
-                    <iframe
-                      src={
-                        "https://maps.google.com/maps?q=" +
-                        event.location.coordinate_lat +
-                        "," +
-                        event.location.coordinate_lon +
-                        "&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                      }
-                      width="100%"
-                      height="300"
-                      loading="lazy"
-                      frameBorder="0"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      style={{
+                    <Link href={BACKEND_BASE_URL + event.poster.large}>
+                      <img
+                        src={BACKEND_BASE_URL + event.poster.large}
+                        className={styles.calendarEventPoster}
+                        alt="poster"
+                      />
+                    </Link>
+                  </Grid>
+                )}
+                {event.location && (
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: event.poster && event.poster.large ? 6 : 12,
+                      md: event.poster && event.poster.large ? 8 : 12,
+                    }}
+                  >
+                    {" "}
+                    <Card
+                      variant="outlined"
+                      className={styles.mapCard}
+                      sx={{
                         minHeight:
                           event.poster && event.poster.large
                             ? "300px"
                             : "500px !important",
                       }}
-                    ></iframe>
-                  </Card>
-                </Grid>
-              )}
-            </Grid>
-          )}
+                    >
+                      <iframe
+                        src={
+                          "https://maps.google.com/maps?q=" +
+                          event.location.coordinate_lat +
+                          "," +
+                          event.location.coordinate_lon +
+                          "&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        }
+                        width="100%"
+                        height="300"
+                        loading="lazy"
+                        frameBorder="0"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        style={{
+                          minHeight:
+                            event.poster && event.poster.large
+                              ? "300px"
+                              : "500px !important",
+                        }}
+                      ></iframe>
+                    </Card>
+                  </Grid>
+                )}
+              </Grid>
+            )}
 
-          {event.prices && event.prices.length > 0 && (
+          {!token && event.prices && event.prices.length > 0 && (
             <Box mt={4}>
               <Box mb={3}>
                 <Typography variant="h5" fontWeight="600" align="center" mb={1}>
@@ -250,10 +270,21 @@ function CalendarEventPage() {
           )}
 
           {event.require_signup && (
-            <Box mt={4}>
-              <Typography variant="h4" fontWeight="700" align="center" mb={3}>
-                {t("pages.calendar-event.register")}
-              </Typography>
+            <Box mt={token ? 0 : 4}>
+              <Box mb={3}>
+                <Typography variant="h4" fontWeight="700" align="center">
+                  {t("pages.calendar-event.register")}
+                </Typography>
+                {event.has_token && (
+                  <Grid container spacing={3} justifyContent="center">
+                    <Grid size={{ xs: 12, sm: 10, md: 7, lg: 10, xl: 8 }}>
+                      <Alert severity="warning" className={styles.alert}>
+                        {t("pages.calendar-event.register.description-token")}
+                      </Alert>
+                    </Grid>
+                  </Grid>
+                )}
+              </Box>
               {eventSignup ? (
                 eventSignup.is_open ? (
                   <FormEventRegister event={event} />
@@ -272,7 +303,7 @@ function CalendarEventPage() {
                           " " +
                           datetimeToLongString(
                             i18n.resolvedLanguage,
-                            new Date(eventSignup.time_from),
+                            new Date(eventSignup.time_to),
                           ) +
                           "."
                         : eventSignup.time_from
@@ -292,7 +323,7 @@ function CalendarEventPage() {
                               " " +
                               datetimeToLongString(
                                 i18n.resolvedLanguage,
-                                new Date(eventSignup.time_from),
+                                new Date(eventSignup.time_to),
                               ) +
                               "."
                             : t("pages.calendar-event.register-closed")}{" "}

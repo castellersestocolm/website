@@ -247,6 +247,7 @@
   "pages.user-dashboard.section.membership-renew.renew.success": "Din begäran om medlemskapsförnyelse har skapats, nedan hittar du betalningsuppgifterna.",
   "pages.user-dashboard.section.membership-renew.renew.error": "Det uppstod ett fel med medlemskapsförnyelsen.",
   "pages.calendar-event.register": "Registrera dig för evenemanget",
+  "pages.calendar-event.register.description-token": "Kom ihåg nästa gång att du behöver registrera dig och betala i förskott.",
   "pages.calendar-event.register-closed": "Registreringen är för närvarande stängd men vi hoppas kunna öppna den snart!",
   "pages.calendar-event.register-opening-dates-1": "Registreringen är öppen från",
   "pages.calendar-event.register-opening-dates-2": "till",

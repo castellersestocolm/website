@@ -3,6 +3,7 @@ from collections import defaultdict
 from uuid import UUID
 
 from django.conf import settings
+from django.core import signing
 from django.db.models import Count, IntegerField, OuterRef, Prefetch, Q, Subquery, Value
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -20,6 +21,7 @@ from event.models import (
     EventModule,
     EventPrice,
     EventQuestion,
+    EventSignup,
     Registration,
 )
 from legal.enums import TeamType
@@ -34,6 +36,7 @@ def get_list(  # noqa: C901
     event_ids: list[UUID] | None = None,
     date: datetime.date | None = None,
     code: str | None = None,
+    token: str | None = None,
     request_user_id: UUID | None = None,
     date_from: datetime.date | None = None,
     date_to: datetime.date | None = None,
@@ -66,6 +69,16 @@ def get_list(  # noqa: C901
 
     if code:
         event_filter &= Q(code=code)
+
+    event_data = {}
+    if token:
+        event_data = get_event_data_by_event_registration_token(token=token)
+
+        if "event_id" not in event_data:
+            return []
+
+    if "event_id" in event_data:
+        event_filter &= Q(id=event_data["event_id"])
 
     if for_musicians is not None:
         if for_musicians:
@@ -142,6 +155,14 @@ def get_list(  # noqa: C901
                 ),
             ),
             Prefetch(
+                "signups",
+                (
+                    EventSignup.objects.with_is_open(
+                        is_open=event_data.get("signup_is_open")
+                    ).order_by("module", "time_from", "time_to")
+                ),
+            ),
+            Prefetch(
                 "registrations",
                 (
                     Registration.objects.filter(
@@ -168,6 +189,7 @@ def get_list(  # noqa: C901
             ),
         )
         .with_module_information(module=module)
+        .with_has_token(has_token=token is not None)
         .order_by("time_from", "id")
         .distinct("time_from", "id")
     )
@@ -278,6 +300,7 @@ def get(
     event_id: UUID | None = None,
     date: datetime.date | None = None,
     code: str | None = None,
+    token: str | None = None,
     request_user_id: UUID | None = None,
 ) -> Event | None:
     return (
@@ -285,6 +308,7 @@ def get(
             event_ids=[event_id] if event_id else None,
             date=date,
             code=code,
+            token=token,
             module=module,
             request_user_id=request_user_id,
         )
@@ -492,3 +516,28 @@ def get_event_price(entity_id: UUID, event_id: UUID) -> EventPrice | None:
             return min(min_event_price_obj_by_module.values(), key=lambda ep: ep.amount)
 
     return None
+
+
+def get_event_registration_token(
+    event_id: UUID, signup_is_open: bool | None = None
+) -> str:
+    return signing.dumps(
+        {
+            "event_id": str(event_id),
+            **(
+                {"signup_is_open": signup_is_open} if signup_is_open is not None else {}
+            ),
+        },
+        salt="events-registration",
+    )
+
+
+def get_event_data_by_event_registration_token(token: str) -> dict | None:
+    try:
+        data: dict = signing.loads(
+            token, salt="events-registration", max_age=timezone.timedelta(days=365)
+        )
+    except Exception:
+        return None
+
+    return data
