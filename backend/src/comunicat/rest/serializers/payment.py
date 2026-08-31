@@ -56,7 +56,6 @@ class CreateEntitySerializer(s.Serializer):
 
     def validate(self, data):
         validation_errors = {}
-        print("aaaa", data)
 
         if "birthday" not in data or is_over_minimum_age(date=data["birthday"]):
             if "email" not in data or not data["email"]:

@@ -129,8 +129,9 @@ class EventAPI(ComuniCatViewSet):
         serializer.is_valid(raise_exception=True)
 
         event_obj = event.api.get(
-            date=serializer.validated_data["date"],
-            code=serializer.validated_data["code"],
+            date=serializer.validated_data.get("date"),
+            code=serializer.validated_data.get("code"),
+            token=serializer.validated_data.get("token"),
             request_user_id=request.user.id if request.user.is_authenticated else None,
             module=self.module,
         )
@@ -206,7 +207,6 @@ class RegistrationAPI(ComuniCatViewSet):
         responses={200: RegistrationSerializer, 403: Serializer()},
     )
     def create(self, request):
-        print("bbbb", request.data)
         serializer = CreateRegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -323,7 +323,7 @@ class RegistrationAPI(ComuniCatViewSet):
     @method_decorator(cache_page(60))
     @method_decorator(cache_control(private=True))
     def request(self, request):
-        serializer = PageEventSerializer(data=request.query_params)
+        serializer = CreateRegistrationSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
         registration_objs = []

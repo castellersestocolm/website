@@ -149,6 +149,10 @@ const App = () => {
                     element={<CalendarEventPage />}
                   />
                   <Route
+                    path={ROUTES["calendar-event-signup"].path}
+                    element={<CalendarEventPage />}
+                  />
+                  <Route
                     path={ROUTES["calendar-event-payment"].path}
                     element={<CalendarEventPaymentPage />}
                   />

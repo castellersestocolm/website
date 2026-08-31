@@ -1,8 +1,10 @@
 from django.apps import apps
 from django.db.models import (
     BooleanField,
+    ExpressionWrapper,
     F,
     OuterRef,
+    Q,
     QuerySet,
     Subquery,
     Sum,
@@ -10,7 +12,7 @@ from django.db.models import (
     Value,
 )
 from django.db.models.functions import Cast, Coalesce
-from django.utils import translation
+from django.utils import timezone, translation
 
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
@@ -65,6 +67,29 @@ class EventQuerySet(QuerySet):
 
         return self.annotate(
             description_locale=F(f"description__{locale}"),
+        )
+
+    def with_has_token(self, has_token: bool = False):
+        return self.annotate(
+            has_token=Value(has_token),
+        )
+
+
+class EventSignupQuerySet(QuerySet):
+    # TODO: Account for registration limits and also event in the past
+    def with_is_open(self, is_open: bool = False):
+        time_now = timezone.now()
+
+        return self.annotate(
+            is_open=(
+                Value(is_open)
+                if is_open
+                else ExpressionWrapper(
+                    Q(Q(time_from__isnull=True) | Q(time_from__lte=time_now))
+                    & Q(Q(time_to__isnull=True) | Q(time_to__gte=time_now)),
+                    output_field=BooleanField(),
+                )
+            ),
         )
 
 

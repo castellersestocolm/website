@@ -340,6 +340,9 @@ class EventSignupSerializer(s.ModelSerializer):
     def get_is_open(self, obj):
         # TODO: Add check for registrations limit here too
         # TODO: Perhaps also regarding user membership
+        if hasattr(obj, "is_open"):
+            return obj.is_open
+
         return (not obj.time_from or timezone.localtime() >= obj.time_from) and (
             not obj.time_to or timezone.localtime() < obj.time_to
         )
@@ -475,6 +478,7 @@ class EventSerializer(EventSlimSerializer):
     )
     google_event = GoogleEventSerializer(required=False, read_only=True)
     google_album = GoogleAlbumSerializer(required=False, read_only=True)
+    has_token = s.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Event
@@ -500,6 +504,7 @@ class EventSerializer(EventSlimSerializer):
             "picture",
             "google_event",
             "google_album",
+            "has_token",
             "created_at",
         )
         read_only_fields = (
@@ -524,8 +529,15 @@ class EventSerializer(EventSlimSerializer):
             "picture",
             "google_event",
             "google_album",
+            "has_token",
             "created_at",
         )
+
+    is_open_token = s.SerializerMethodField(read_only=True)
+
+    @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
+    def get_has_token(self, obj):
+        return getattr(obj, "has_token", False)
 
 
 class EventWithRegistrationsSerializer(EventSerializer):
@@ -555,6 +567,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "picture",
             "google_event",
             "google_album",
+            "has_token",
             "created_at",
         )
         read_only_fields = (
@@ -579,6 +592,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "picture",
             "google_event",
             "google_album",
+            "has_token",
             "created_at",
         )
 
@@ -667,7 +681,6 @@ class CreateRegistrationSerializer(s.Serializer):
     data = s.DictField(required=False)
 
     def validate(self, data):
-        print("ccc", data)
         if "user_id" not in data and "entity_id" not in data and "entity" not in data:
             raise ValidationError(
                 {
@@ -767,8 +780,24 @@ class ListEventSerializer(s.Serializer):
 
 
 class PageEventSerializer(s.Serializer):
-    date = s.DateField()
-    code = s.CharField()
+    date = s.DateField(required=False)
+    code = s.CharField(required=False)
+    token = s.CharField(required=False)
+
+    def validate(self, data):
+        if ("date" not in data or "code" not in data) and "token" not in data:
+            raise ValidationError(
+                {
+                    "date": _(
+                        "The date and code must be provided if no token is given."
+                    ),
+                    "code": _(
+                        "The date and code must be provided if no token is given."
+                    ),
+                }
+            )
+
+        return data
 
 
 class DestroyRegistrationSerializer(s.Serializer):

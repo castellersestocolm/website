@@ -1012,9 +1012,6 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         run_commit_hooks()
 
-        for m in mail.outbox:
-            print(m.subject, m.to)
-
         self.assertEqual(len(mail.outbox), 1)
 
         email_subject = mail.outbox[0].subject

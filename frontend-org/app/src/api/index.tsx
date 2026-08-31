@@ -570,13 +570,19 @@ export const apiEventList = async (
   }
 };
 
-export const apiEventPage = async (date: string, code: string) => {
+export const apiEventPage = async (
+  date: string = undefined,
+  code: string = undefined,
+  token: string = undefined,
+) => {
   try {
     return await instance.get("/event/page/", {
-      params: {
-        date: date,
-        code: code,
-      },
+      params: token
+        ? { token: token }
+        : {
+            date: date,
+            code: code,
+          },
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
