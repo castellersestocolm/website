@@ -287,7 +287,7 @@
   "pages.calendar-event.register.checkbox-processing-link.title": "Política de privacitat",
   "pages.calendar-event.register.button-add": "Afegir",
   "pages.calendar-event.register.button-pay": "Paga",
-  "pages.calendar-event.register.alert.payment-pending": "La teva inscripció no s'ha completat encara, per confirmar-la cal realitzar el pagament. Si no feu el pagament la inscripció es cancel·larà automàticament i no serà possible assistir a l'esdeveniment.",
+  "pages.calendar-event.register.alert.payment-pending": "La teva inscripció no s'ha completat encara, per confirmar-la cal realitzar el pagament. Si no fas el pagament la inscripció es cancel·larà automàticament i no serà possible assistir a l'esdeveniment.",
   "pages.membership.title": "La teva quota",
   "pages.membership.title-renew": "Paga o renova la teva quota",
   "pages.membership.renew.message-1": "Pots pagar o renovar la teva quota seleccionant una de les opcions a continuació. Si us plau, tingues cura del contingut de cada opció en funció de la quota que vulguis renovar. És possible que puguis renovar només una part de la quota o afegir-ne de noves.",
