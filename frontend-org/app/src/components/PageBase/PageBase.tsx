@@ -6,11 +6,12 @@ import { LoaderClip } from "../LoaderClip/LoaderClip";
 import Alerts from "../Alerts/Alerts";
 
 export default function PageBase({
-  title,
+  title = undefined,
   subtitle = undefined,
   content,
   finishedRegistration = false,
   loading = false,
+  screenFull = false,
 }: any) {
   // const { user } = useAppContext();
 
@@ -36,8 +37,14 @@ export default function PageBase({
           component="section"
           className={styles.page}
           sx={{
-            marginTop: { xs: "56px", md: "65px" },
-            padding: { xs: "32px 0", md: "64px 0" },
+            marginTop: {
+              xs: screenFull ? "0" : "56px",
+              md: screenFull ? "0" : "65px",
+            },
+            padding: {
+              xs: screenFull ? "0" : "32px 0",
+              md: screenFull ? "0" : "64px 0",
+            },
             ...(loading
               ? {
                   position: "absolute",
@@ -55,9 +62,9 @@ export default function PageBase({
           }}
         >
           <Container
-            maxWidth="lg"
+            maxWidth={screenFull ? false : "lg"}
             sx={{
-              position: "relative",
+              position: screenFull ? "unset" : "relative",
               ...(loading
                 ? {
                     display: "flex",
@@ -68,24 +75,28 @@ export default function PageBase({
             }}
           >
             <Alerts />
-            <Box className={styles.pageHeader}>
-              <Typography
-                variant="h3"
-                fontWeight="700"
-                className={styles.pageTitle}
-              >
-                {title}
-              </Typography>
-              {subtitle && (
-                <Typography
-                  variant="h6"
-                  fontWeight="700"
-                  className={styles.pageSubtitle}
-                >
-                  {subtitle}
-                </Typography>
-              )}
-            </Box>
+            {(title || subtitle) && (
+              <Box className={styles.pageHeader}>
+                {title && (
+                  <Typography
+                    variant="h3"
+                    fontWeight="700"
+                    className={styles.pageTitle}
+                  >
+                    {title}
+                  </Typography>
+                )}
+                {subtitle && (
+                  <Typography
+                    variant="h6"
+                    fontWeight="700"
+                    className={styles.pageSubtitle}
+                  >
+                    {subtitle}
+                  </Typography>
+                )}
+              </Box>
+            )}
             {content}
           </Container>
         </Box>

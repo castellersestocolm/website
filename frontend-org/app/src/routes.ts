@@ -92,6 +92,9 @@ export const ROUTES = {
   "course-receipt": {
     path: "/course/receipt/:id",
   },
+  "admin-event-token": {
+    path: "/admin/event/token/:id",
+  },
   "external-login-google": {
     path:
       API_BASE_URL +

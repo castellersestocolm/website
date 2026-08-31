@@ -897,3 +897,20 @@ export const apiOrderEventCreate = async (
     throw error;
   }
 };
+
+export const apiAdminEventTokenGet = async (
+  eventId: string,
+  signupIsOpen: boolean = undefined,
+) => {
+  try {
+    return await instance.get("/admin/event/" + eventId + "/token/", {
+      params: {
+        ...(signupIsOpen !== undefined ? { signup_is_open: signupIsOpen } : {}),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

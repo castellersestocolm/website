@@ -535,7 +535,7 @@ def get_event_registration_token(
 def get_event_data_by_event_registration_token(token: str) -> dict | None:
     try:
         data: dict = signing.loads(
-            token, salt="events-registration", max_age=timezone.timedelta(days=365)
+            token, salt="events-registration", max_age=timezone.timedelta(days=7)
         )
     except Exception:
         return None

@@ -19,6 +19,8 @@ import user.api.family_member_request
 from comunicat.rest.permissions import AllowLevelAdmin, AllowLevelSuperAdmin
 from comunicat.rest.serializers.admin import (
     AdminEventSerializer,
+    AdminEventTokenRequestSerializer,
+    AdminEventTokenSerializer,
     AdminHistoryEventSerializer,
     AdminHistoryEventUpdateSerializer,
     AdminListEventSerializer,
@@ -224,6 +226,25 @@ class AdminEventAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        query_serializer=AdminEventTokenRequestSerializer,
+        responses={200: AdminEventTokenSerializer(many=True)},
+    )
+    @action(methods=["get"], detail=True, url_path="token", url_name="token")
+    @method_decorator(cache_page(60 * 60))
+    def token(self, request, id):
+        serializer = AdminEventTokenRequestSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        token = event.api.get_event_registration_token(
+            event_id=id, **serializer.validated_data
+        )
+
+        serializer = AdminEventTokenSerializer(
+            {"token": token}, context={"module": self.module}
+        )
+        return Response(serializer.data)
 
 
 class AdminRegistrationAPI(ComuniCatViewSet):
