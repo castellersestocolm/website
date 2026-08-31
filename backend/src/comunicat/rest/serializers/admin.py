@@ -270,6 +270,14 @@ class AdminEventSerializer(s.ModelSerializer):
         return obj.title.get(translation.get_language())
 
 
+class AdminEventTokenRequestSerializer(s.Serializer):
+    signup_is_open = s.BooleanField(required=False)
+
+
+class AdminEventTokenSerializer(s.Serializer):
+    token = s.CharField(read_only=True)
+
+
 class AdminListRegistrationSerializer(s.Serializer):
     event_id = s.UUIDField(required=True)
 

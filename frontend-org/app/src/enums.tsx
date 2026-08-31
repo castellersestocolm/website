@@ -200,3 +200,10 @@ export enum ProgramCourseRegistrationStatus {
   EXPIRED = 3,
   CANCELLED = 4,
 }
+
+export enum PermissionLevel {
+  NONE = 10,
+  USER = 20,
+  ADMIN = 30,
+  SUPERADMIN = 40,
+}

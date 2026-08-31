@@ -6,8 +6,6 @@ import {
   List,
   ListItemText,
   Card,
-  Stack,
-  Button,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -26,7 +24,6 @@ import { compareEventSignup } from "../../utils/sort";
 import { ROUTES } from "../../routes";
 import IconEast from "@mui/icons-material/East";
 import Alert from "@mui/material/Alert";
-import IconPriorityHigh from "@mui/icons-material/PriorityHigh";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 
@@ -190,71 +187,6 @@ function CalendarEventPage() {
               </Box>
             )}
 
-          {!token &&
-            ((event.poster && event.poster.large) || event.location) && (
-              <Grid container spacing={{ xs: 3, md: 4 }} mt={4}>
-                {event.poster && event.poster.large && (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      sm: 6,
-                      md: 4,
-                    }}
-                  >
-                    <Link href={BACKEND_BASE_URL + event.poster.large}>
-                      <img
-                        src={BACKEND_BASE_URL + event.poster.large}
-                        className={styles.calendarEventPoster}
-                        alt="poster"
-                      />
-                    </Link>
-                  </Grid>
-                )}
-                {event.location && (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      sm: event.poster && event.poster.large ? 6 : 12,
-                      md: event.poster && event.poster.large ? 8 : 12,
-                    }}
-                  >
-                    {" "}
-                    <Card
-                      variant="outlined"
-                      className={styles.mapCard}
-                      sx={{
-                        minHeight:
-                          event.poster && event.poster.large
-                            ? "300px"
-                            : "500px !important",
-                      }}
-                    >
-                      <iframe
-                        src={
-                          "https://maps.google.com/maps?q=" +
-                          event.location.coordinate_lat +
-                          "," +
-                          event.location.coordinate_lon +
-                          "&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                        }
-                        width="100%"
-                        height="300"
-                        loading="lazy"
-                        frameBorder="0"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        style={{
-                          minHeight:
-                            event.poster && event.poster.large
-                              ? "300px"
-                              : "500px !important",
-                        }}
-                      ></iframe>
-                    </Card>
-                  </Grid>
-                )}
-              </Grid>
-            )}
-
           {!token && event.prices && event.prices.length > 0 && (
             <Box mt={4}>
               <Box mb={3}>
@@ -359,6 +291,71 @@ function CalendarEventPage() {
               )}
             </Box>
           )}
+
+          {!token &&
+            ((event.poster && event.poster.large) || event.location) && (
+              <Grid container spacing={{ xs: 3, md: 4 }} mt={6}>
+                {event.poster && event.poster.large && (
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 4,
+                    }}
+                  >
+                    <Link href={BACKEND_BASE_URL + event.poster.large}>
+                      <img
+                        src={BACKEND_BASE_URL + event.poster.large}
+                        className={styles.calendarEventPoster}
+                        alt="poster"
+                      />
+                    </Link>
+                  </Grid>
+                )}
+                {event.location && (
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: event.poster && event.poster.large ? 6 : 12,
+                      md: event.poster && event.poster.large ? 8 : 12,
+                    }}
+                  >
+                    {" "}
+                    <Card
+                      variant="outlined"
+                      className={styles.mapCard}
+                      sx={{
+                        minHeight:
+                          event.poster && event.poster.large
+                            ? "300px"
+                            : "500px !important",
+                      }}
+                    >
+                      <iframe
+                        src={
+                          "https://maps.google.com/maps?q=" +
+                          event.location.coordinate_lat +
+                          "," +
+                          event.location.coordinate_lon +
+                          "&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        }
+                        width="100%"
+                        height="300"
+                        loading="lazy"
+                        frameBorder="0"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        style={{
+                          minHeight:
+                            event.poster && event.poster.large
+                              ? "300px"
+                              : "500px !important",
+                        }}
+                      ></iframe>
+                    </Card>
+                  </Grid>
+                )}
+              </Grid>
+            )}
         </Box>
       )}
     </>

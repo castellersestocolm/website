@@ -1,0 +1,21 @@
+.qrBox {
+  z-index: 2000;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: var(--mui-palette-common-white);
+  height: 100vh;
+  overflow: hidden;
+
+  img {
+    padding: 64px;
+    object-fit: contain;
+    max-width: calc(100% - 2 * 64px);
+    max-height: calc(100vh - 2 * 64px);
+  }
+}
