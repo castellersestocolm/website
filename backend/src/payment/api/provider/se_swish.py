@@ -4,7 +4,7 @@ from uuid import UUID
 
 from django.conf import settings
 from django.urls import reverse
-from django.utils import timezone, translation
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from requests import HTTPError
 from swish import Environment, SwishClient

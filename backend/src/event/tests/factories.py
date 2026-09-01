@@ -7,7 +7,7 @@ from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
-from comunicat.utils.factories import fake_string
+from comunicat.utils.factories import fake_string, fake_title
 from event.enums import EventStatus, EventType, RegistrationStatus
 from event.models import Event, EventPrice, Location, Registration
 
@@ -16,7 +16,7 @@ class LocationFactory(DjangoModelFactory):
     name = Faker("name")
     address = Faker("address")
 
-    # description = LazyFunction(fake_title)
+    description = LazyFunction(fake_title)
 
     coordinate_lat = Faker("latitude")
     coordinate_lon = Faker("longitude")
@@ -26,7 +26,7 @@ class LocationFactory(DjangoModelFactory):
 
 
 class EventFactory(DjangoModelFactory):
-    # title = LazyFunction(fake_title)
+    title = LazyFunction(fake_title)
 
     code = LazyFunction(lambda: fake_string(length=10))
 
@@ -37,7 +37,7 @@ class EventFactory(DjangoModelFactory):
 
     location = SubFactory(LocationFactory)
 
-    # description = LazyFunction(fake_title)
+    description = LazyFunction(fake_title)
 
     series = None
 

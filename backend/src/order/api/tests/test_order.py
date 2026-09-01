@@ -17,7 +17,7 @@ from comunicat.utils.test import run_commit_hooks
 from comunicat.utils.test.mocks import MockSumUpApiClientExecute
 from conftest import NumOperationsMixin
 from event.enums import RegistrationStatus
-from event.tests.factories import RegistrationFactory
+from event.tests.factories import EventFactory, RegistrationFactory
 from membership.enums import MembershipStatus
 from membership.tests.factories import (
     MembershipFactory,
@@ -181,7 +181,7 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
 
     def test_update_provider__existing_payment_order(self, *args, **kwargs):
         with self.assertNumOperations(
-            num=0, num_selects=23, num_inserts=1, num_updates=1
+            num=0, num_selects=29, num_inserts=1, num_updates=1
         ):
             order_obj = update_provider(
                 order_id=self.order_1_obj.id,
@@ -196,7 +196,7 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
 
     def test_update_provider__new_payment_order(self, *args, **kwargs):
         with self.assertNumOperations(
-            num=0, num_selects=17, num_inserts=1, num_updates=2
+            num=0, num_selects=20, num_inserts=1, num_updates=2
         ):
             order_obj = update_provider(
                 order_id=self.order_2_obj.id,
@@ -459,11 +459,15 @@ class TestComplete(NumOperationsMixin, TestCase):
                 order=order_obj, quantity=2, amount_unit=Money(50, "SEK")
             )
 
+        cls.event_1_obj = EventFactory()
+
         cls.registration_1_obj = RegistrationFactory(
-            status=RegistrationStatus.REQUESTED
+            status=RegistrationStatus.REQUESTED,
+            event=cls.event_1_obj,
         )
         cls.registration_2_obj = RegistrationFactory(
-            status=RegistrationStatus.REQUESTED
+            status=RegistrationStatus.REQUESTED,
+            event=cls.event_1_obj,
         )
 
         OrderRegistrationFactory(
@@ -591,7 +595,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=50, num_inserts=9, num_updates=6
+                num=0, num_selects=58, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -654,7 +658,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=70, num_inserts=4, num_updates=12
+                num=0, num_selects=73, num_inserts=4, num_updates=12
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -745,7 +749,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=28, num_inserts=1, num_updates=2
+            num=0, num_selects=31, num_inserts=1, num_updates=2
         ):
             order_obj = complete(
                 order_id=self.order_2_obj.id,
@@ -804,7 +808,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=50, num_inserts=8, num_updates=5
+                num=0, num_selects=57, num_inserts=8, num_updates=5
             ):
                 order_obj = complete(
                     order_id=self.order_3_obj.id,
@@ -842,9 +846,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         self.assertEqual(transaction_debit_obj.external_id, "external-order-3")
         self.assertEqual(transaction_debit_obj.reference, "ORDER-3")
         self.assertEqual(transaction_debit_obj.amount, Money(500, "SEK"))
-        self.assertEqual(
-            transaction_debit_obj.text, f"Order #{self.order_3_obj.reference}"
-        )
+        self.assertEqual(transaction_debit_obj.text, self.event_1_obj.title_locale)
 
         run_commit_hooks()
 
@@ -882,7 +884,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=65, num_inserts=9, num_updates=8
+                num=0, num_selects=70, num_inserts=9, num_updates=8
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -967,7 +969,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=72, num_inserts=9, num_updates=6
+                num=0, num_selects=79, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_5_obj.id,
@@ -1081,7 +1083,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                 ),
             ),
         ):
-            with self.assertNumOperations(num=0, num_selects=12):
+            with self.assertNumOperations(num=0, num_selects=15):
                 order_obj = complete(
                     order_id=self.order_8_obj.id,
                     module=Module.ORG,
