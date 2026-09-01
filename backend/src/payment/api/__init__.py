@@ -186,6 +186,9 @@ def create_for_order(  # noqa: C901
         elif order_obj.type == OrderType.COURSE:
             text = order_obj.all_courses[0].registration.course.program.name_locale
             text_fee = f"{text} fee"
+        elif order_obj.type == OrderType.REGISTRATION:
+            text = order_obj.all_registrations[0].registration.event.title_locale
+            text_fee = f"{text} fee"
         else:
             text_order = _("Order")
             text = f"{text_order} #{order_obj.reference}"

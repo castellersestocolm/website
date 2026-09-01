@@ -4,7 +4,7 @@ from uuid import UUID
 
 from django.conf import settings
 from django.urls import reverse
-from django.utils import timezone, translation
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from requests import HTTPError
 from swish import Environment, SwishClient
@@ -47,7 +47,18 @@ class PaymentProviderSESwish(PaymentProviderBase):
         with translation.override(self.order_obj.origin_language):
             if self.order_obj.type == OrderType.MEMBERSHIP:
                 text_order = _("Membership")
-                text = f"{text_order} {timezone.localdate().year}"
+                text_year = self.order_obj.all_memberships[
+                    0
+                ].module.membership.date_from.year
+                text = f"{text_order} {text_year}"
+            elif self.order_obj.type == OrderType.COURSE:
+                text = self.order_obj.all_courses[
+                    0
+                ].registration.course.program.name_locale
+            elif self.order_obj.type == OrderType.REGISTRATION:
+                text = self.order_obj.all_registrations[
+                    0
+                ].registration.event.title_locale
             else:
                 text_order = _("Order")
                 text = f"{text_order} {self.order_obj.reference}"
