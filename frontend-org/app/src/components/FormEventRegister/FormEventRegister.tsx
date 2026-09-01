@@ -664,7 +664,18 @@ export default function FormEventRegister({ event }: any) {
                 ) : (
                   <Box className={styles.userFamilyEmpty}>
                     <Typography variant="body2">
-                      {t("pages.calendar-event.register-list.empty")}
+                      {t("pages.calendar-event.register-list.empty")}{" "}
+                      <Link
+                        color="secondary"
+                        underline="none"
+                        href={ROUTES["user-login"].path}
+                        className={styles.link}
+                      >
+                        {t(
+                          "pages.calendar-event.register-opening-login.text-login-link",
+                        )}
+                        <IconEast className={styles.iconEast} />
+                      </Link>
                     </Typography>
                   </Box>
                 )}

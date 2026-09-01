@@ -188,7 +188,7 @@ function CalendarEventPage() {
             )}
 
           {!token && event.prices && event.prices.length > 0 && (
-            <Box mt={4}>
+            <Box mt={5}>
               <Box mb={3}>
                 <Typography variant="h5" fontWeight="600" align="center" mb={1}>
                   {t("pages.calendar-event.register.prices.title")}
@@ -202,7 +202,7 @@ function CalendarEventPage() {
           )}
 
           {event.require_signup && (
-            <Box mt={token ? 0 : 4}>
+            <Box mt={token ? 0 : 5}>
               <Box mb={3}>
                 <Typography variant="h4" fontWeight="700" align="center">
                   {t("pages.calendar-event.register")}

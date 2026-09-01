@@ -258,7 +258,7 @@
   "pages.calendar-event.register-opening-login.text-login-membership": "Kontrollera medlemskapet",
   "pages.calendar-event.register-list.title": "Familj och registreringar",
   "pages.calendar-event.register-list.title-external": "Registreringar",
-  "pages.calendar-event.register-list.empty": "Kom ihåg att du måste vara inloggad om du vill registrera dig eller andra familjemedlemmar till evenemanget.",
+  "pages.calendar-event.register-list.empty": "Du måste vara inloggad om du vill registrera dig eller andra familjemedlemmar till evenemanget.",
   "pages.calendar-event.register-list.register": "Registrera",
   "pages.calendar-event.register-list.change": "Redigera",
   "pages.calendar-event.register-list.deregister": "Avregistrera",
