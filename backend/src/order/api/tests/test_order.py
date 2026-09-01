@@ -595,7 +595,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=58, num_inserts=9, num_updates=6
+                num=0, num_selects=53, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
