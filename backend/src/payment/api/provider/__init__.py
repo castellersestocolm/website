@@ -4,7 +4,14 @@ from django.db.models import Prefetch
 from djmoney.money import Money
 
 from comunicat.consts import ZERO_MONEY
-from order.models import Order, OrderDelivery, OrderProduct
+from order.models import (
+    Order,
+    OrderCourse,
+    OrderDelivery,
+    OrderMembership,
+    OrderProduct,
+    OrderRegistration,
+)
 from payment.enums import PaymentStatus
 from payment.models import Entity, PaymentOrder, PaymentProvider
 
@@ -30,16 +37,47 @@ class PaymentProviderBase:
             .prefetch_related(
                 Prefetch(
                     "products",
-                    OrderProduct.objects.order_by(
+                    OrderProduct.objects.select_related(
+                        "size", "size__product", "size__product__accounts"
+                    )
+                    .prefetch_related("size__product__images")
+                    .with_name()
+                    .with_description()
+                    .order_by(
                         "size__product__type",
                         "size__order",
                         "size__category",
                         "size__size",
-                    )
-                    .select_related("size", "size__product", "line")
-                    .prefetch_related("size__product__images")
-                    .with_name()
-                    .with_description(),
+                    ),
+                    to_attr="all_products",
+                ),
+                Prefetch(
+                    "registrations",
+                    OrderRegistration.objects.select_related(
+                        "registration",
+                        "registration__event",
+                        "registration__event__accounts",
+                    ),
+                    to_attr="all_registrations",
+                ),
+                Prefetch(
+                    "memberships",
+                    OrderMembership.objects.select_related(
+                        "module",
+                        "module__membership",
+                    ),
+                    to_attr="all_memberships",
+                ),
+                Prefetch(
+                    "courses",
+                    OrderCourse.objects.select_related(
+                        "registration",
+                        "registration__course",
+                        "registration__course__program",
+                        "registration__entity",
+                        "registration__entity__user",
+                    ),
+                    to_attr="all_courses",
                 ),
             )
             .with_amount()

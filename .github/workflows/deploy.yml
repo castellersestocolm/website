@@ -29,9 +29,9 @@ jobs:
         name: backend
         github_token: ${{ secrets.GITHUB_TOKEN }}
         build_target: ${{ env.BUILD_TARGET }}
-        cert_swish_cert: "${{ secrets.CERT_SWISH_CERT }}"
-        cert_swish_key: "${{ secrets.CERT_SWISH_KEY }}"
-        cert_swish_verify: "${{ secrets.CERT_SWISH_VERIFY }}"
+        cert_swish_cert: ${{ secrets.CERT_SWISH_CERT }}
+        cert_swish_key: ${{ secrets.CERT_SWISH_KEY }}
+        cert_swish_verify: ${{ secrets.CERT_SWISH_VERIFY }}
 
   build-frontend-org:
     runs-on: ubuntu-latest
