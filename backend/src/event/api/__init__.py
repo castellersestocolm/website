@@ -489,15 +489,11 @@ def get_event_price(entity_id: UUID, event_id: UUID) -> EventPrice | None:
         ).order_by("min_registrations", "amount")
     )
 
-    if entity_obj.age:
+    if entity_obj.age is not None:
         for event_price_obj in event_price_objs:
-            if event_price_obj.age_from and (
-                entity_obj.age is None or event_price_obj.age_from > entity_obj.age
-            ):
+            if event_price_obj.age_from and event_price_obj.age_from > entity_obj.age:
                 continue
-            if event_price_obj.age_to and (
-                entity_obj.age is None or event_price_obj.age_to < entity_obj.age
-            ):
+            if event_price_obj.age_to and event_price_obj.age_to < entity_obj.age:
                 continue
             return event_price_obj
     else:
