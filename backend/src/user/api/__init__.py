@@ -486,7 +486,7 @@ def request_password(email: str, module: Module, locale: str | None = None) -> N
         salt="forgot-password",
     )
 
-    send_user_email(
+    send_user_email.delay(
         user_id=user_obj.id,
         email_type=EmailType.PASSWORD,
         module=module,

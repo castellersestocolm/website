@@ -193,6 +193,10 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
         "get_payment_email_render",
         ("payment_id",),
     ),
+    EmailType.COURSE_REGISTRATION_PAID: (
+        "get_program_course_registration_email_renders",
+        ("registration_ids",),
+    ),
 }
 
 GOOGLE_EMAIL_SCOPES = [

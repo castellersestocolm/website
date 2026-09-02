@@ -46,19 +46,17 @@ class PaymentProviderSESwish(PaymentProviderBase):
 
         with translation.override(self.order_obj.origin_language):
             if self.order_obj.type == OrderType.MEMBERSHIP:
-                text_order = _("Membership")
+                text_membership = _("Membership")
                 text_year = self.order_obj.all_memberships[
                     0
                 ].module.membership.date_from.year
-                text = f"{text_order} {text_year}"
+                text = f"{text_membership} {text_year}"
             elif self.order_obj.type == OrderType.COURSE:
-                text = self.order_obj.all_courses[
-                    0
-                ].registration.course.program.name_locale
+                program_course_obj = self.order_obj.all_courses[0].registration.course
+                text = f"{program_course_obj.program.name_locale} {program_course_obj.date_from.year}"
             elif self.order_obj.type == OrderType.REGISTRATION:
-                text = self.order_obj.all_registrations[
-                    0
-                ].registration.event.title_locale
+                event_obj = self.order_obj.all_registrations[0].registration.event
+                text = f"{event_obj.title_locale} {event_obj.time_from.year}"
             else:
                 text_order = _("Order")
                 text = f"{text_order} {self.order_obj.reference}"

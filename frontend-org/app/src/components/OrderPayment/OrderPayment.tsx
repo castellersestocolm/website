@@ -406,23 +406,6 @@ export default function OrderPayment({
               >
                 {amountToString(order.amount.amount)} {order.amount.currency}
               </Typography>
-              <Typography
-                variant="body1"
-                component="span"
-                className={styles.providerSwishText}
-              >
-                {order.type === OrderType.MEMBERSHIP
-                  ? t("swish.payment.membership") +
-                    " " +
-                    new Date().getFullYear()
-                  : order.type === OrderType.COURSE
-                    ? t("swish.payment.course") + " " + new Date().getFullYear()
-                    : order.type === OrderType.REGISTRATION
-                      ? t("swish.payment.registration") +
-                        " " +
-                        new Date().getFullYear()
-                      : t("swish.payment.order") + " " + order.reference}
-              </Typography>
               {isMobile ? (
                 order.payment_order &&
                 order.payment_order.extra &&

@@ -1,6 +1,7 @@
 import itertools
 from uuid import UUID
 
+from django.db import transaction
 from django.db.models import Prefetch, Q
 from django.utils import timezone
 
@@ -55,6 +56,7 @@ def get_list(
     )
 
 
+@transaction.atomic
 def complete_registrations(
     registration_ids: list[UUID],
     is_completed: bool = True,
@@ -91,13 +93,16 @@ def complete_registrations(
             course_registration_objs,
             lambda course_registration_obj: course_registration_obj.course,
         ):
-            notify.tasks.send_program_course_registration_email.delay(
-                program_course_registration_ids=[
-                    program_course_registration_obj.id
-                    for program_course_registration_obj in program_course_registration_objs
-                ],
-                email_type=EmailType.COURSE_REGISTRATION_PAID,
-                module=program_course_obj.program.module,
+            program_course_registration_ids = [
+                program_course_registration_obj.id
+                for program_course_registration_obj in program_course_registration_objs
+            ]
+            transaction.on_commit(
+                lambda: notify.tasks.send_program_course_registration_email.delay(
+                    registration_ids=program_course_registration_ids,
+                    email_type=EmailType.COURSE_REGISTRATION_PAID,
+                    module=program_course_obj.program.module,
+                )
             )
 
     return True

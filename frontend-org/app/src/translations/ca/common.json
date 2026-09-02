@@ -224,6 +224,8 @@
   "pages.user-family.request.reject.error": "Hi ha hagut un error intentant rebutjar la sol·licitud.",
   "pages.user-family.request.accept.success": "La sol·licitud s'ha acceptat correctament.",
   "pages.user-family.request.accept.error": "Hi ha hagut un error intentant acceptar la sol·licitud.",
+  "pages.user-verify.alert.success": "El teu correu s'ha confirmat correctament, gràcies per registrar-te!",
+  "pages.user-verify.alert.error": "Hi ha hagut un error intentant confirmar el correu, si us plau, contacta amb nosaltres i et donarem un cop de mà!",
   "pages.user-payments.payment.refund": "Devolució",
   "pages.user-payments.payment.date-doing": "des del",
   "pages.user-payments.payment.date-done": "el",

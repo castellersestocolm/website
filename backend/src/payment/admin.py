@@ -242,7 +242,7 @@ def send_paid_email(modeladmin, request, queryset):
                     lambda course_registration_obj: course_registration_obj.course,
                 ):
                     notify.tasks.send_program_course_registration_email.delay(
-                        program_course_registration_ids=[
+                        registration_ids=[
                             program_course_registration_obj.id
                             for program_course_registration_obj in program_course_registration_objs
                         ],
