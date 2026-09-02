@@ -1277,7 +1277,7 @@ function UserDashboardPage() {
                     </List>
                   ) : (
                     <Box className={styles.userFamilyEmpty}>
-                      <Typography component="div">
+                      <Typography variant="body2">
                         {t("pages.user-dashboard.section.registrations.empty")}
                       </Typography>
                     </Box>
@@ -1468,7 +1468,7 @@ function UserDashboardPage() {
                     </List>
                   ) : (
                     <Box className={styles.userFamilyEmpty}>
-                      <Typography component="div">
+                      <Typography variant="body2">
                         {t("pages.user-dashboard.section.payments.empty")}
                       </Typography>
                     </Box>
@@ -1694,7 +1694,7 @@ function UserDashboardPage() {
                     </List>
                   ) : (
                     <Box className={styles.userFamilyEmpty}>
-                      <Typography component="div">
+                      <Typography variant="body2">
                         {t("pages.user-dashboard.section.orders.empty")}
                       </Typography>
                     </Box>
@@ -1894,7 +1894,7 @@ function UserDashboardPage() {
                     </List>
                   ) : (
                     <Box className={styles.userFamilyEmpty}>
-                      <Typography component="div">
+                      <Typography variant="body2">
                         {t("pages.user-dashboard.section.expenses.empty")}
                       </Typography>
                     </Box>

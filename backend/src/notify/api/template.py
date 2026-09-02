@@ -190,27 +190,7 @@ def get_user_email_render(  # noqa: C901
             else:
                 user_ids = []
 
-            if email_type in (EmailType.MEMBERSHIP_PAID, EmailType.MEMBERSHIP_CHECK):
-                program_course_registration_objs = list(
-                    ProgramCourseRegistration.objects.filter(
-                        entity__user__id__in=user_ids,
-                        course__date_to__gte=timezone.localdate(),
-                    )
-                    .select_related("course", "course__program")
-                    .with_course_program_name()
-                    .order_by(
-                        "course_program_name_locale",
-                        "-amount",
-                        "entity__user__firstname",
-                        "entity__user__lastname",
-                        "entity__firstname",
-                        "entity__lastname",
-                    )
-                )
-                context_full["program_course_registration_objs"] = (
-                    program_course_registration_objs
-                )
-            elif email_type in (
+            if email_type in (
                 EmailType.MEMBERSHIP_RENEW,
                 EmailType.MEMBERSHIP_EXPIRED,
             ):
@@ -542,24 +522,16 @@ def get_registration_email_renders(
 
 
 def get_program_course_registration_email_renders(
-    program_course_registration_ids: list[UUID],
+    registration_ids: list[UUID],
     email_type: EmailType,
     module: Module,
     email: str | None = None,
     context: dict | None = None,
     locale: str | None = None,
 ) -> list[EmailRender]:
-    program_course_registration_objs = list(
-        ProgramCourseRegistration.objects.filter(id__in=program_course_registration_ids)
-        .select_related("entity", "entity__user", "course", "course__program", "line")
-        .order_by(
-            "-line__amount",
-            "entity__user__firstname",
-            "entity__user__lastname",
-            "entity__firstname",
-            "entity__lastname",
-        )
-    )
+    program_course_registration_objs = ProgramCourseRegistration.objects.filter(
+        id__in=registration_ids
+    ).select_related("entity", "entity__user")
 
     # Registrations must belong to the same program course
     assert (
@@ -570,12 +542,6 @@ def get_program_course_registration_email_renders(
             }
         )
         == 1
-    )
-
-    program_course_obj = (
-        ProgramCourse.objects.filter(id=program_course_registration_objs[0].course_id)
-        .with_program_name()
-        .first()
     )
 
     # TODO: Fix this, also allow to split emails per groups or families
@@ -615,13 +581,35 @@ def get_program_course_registration_email_renders(
             continue
 
         with translation.override(current_locale):
+            program_course_registration_objs = list(
+                ProgramCourseRegistration.objects.filter(id__in=registration_ids)
+                .select_related(
+                    "entity", "entity__user", "course", "course__program", "line"
+                )
+                .order_by(
+                    "-line__amount",
+                    "entity__user__firstname",
+                    "entity__user__lastname",
+                    "entity__firstname",
+                    "entity__lastname",
+                )
+            )
+
+            program_course_obj = (
+                ProgramCourse.objects.filter(
+                    id=program_course_registration_objs[0].course_id
+                )
+                .with_program_name()
+                .first()
+            )
+
             context = {
                 **SETTINGS_BY_MODULE[module],
                 **(context or {}),
                 "email_index": entity_i,
                 "registration_ids": [
                     str(current_program_course_registration_id)
-                    for current_program_course_registration_id in program_course_registration_ids
+                    for current_program_course_registration_id in registration_ids
                 ],
             }
             context_full = {
@@ -761,6 +749,8 @@ def get_email_render(email_id: UUID) -> EmailRender | None:
         return get_generic_email_render(email_id=email_id)
 
     function, params = EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE[email_obj.type]
+
+    print(email_obj.context)
 
     if not all([param in email_obj.context for param in params]):
         return None

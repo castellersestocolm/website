@@ -16,6 +16,7 @@ import {
   Stack,
   Button,
   Link,
+  Collapse,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -44,6 +45,7 @@ import IconCalendarMonth from "@mui/icons-material/CalendarMonth";
 import { ROUTES } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import IconEast from "@mui/icons-material/East";
+import Alert from "@mui/material/Alert";
 
 function ActivityKidsPage() {
   const [t, i18n] = useTranslation("common");
@@ -344,6 +346,23 @@ function ActivityKidsPage() {
                   registration.status ===
                   ProgramCourseRegistrationStatus.REQUESTED,
               );
+              const pendingAmount =
+                registrationsRequested &&
+                registrationsRequested
+                  .filter((registration: any) => registration.amount)
+                  .reduce(
+                    (totalAmount: any, registration: any) => ({
+                      ...registration.amount,
+                      amount: totalAmount.amount + registration.amount.amount,
+                    }),
+                    {
+                      amount: 0,
+                      currency:
+                        registrationsRequested &&
+                        registrationsRequested.length > 0 &&
+                        registrationsRequested[0].amount.currency,
+                    },
+                  );
 
               return (
                 <>
@@ -363,270 +382,337 @@ function ActivityKidsPage() {
                         programCourse.date_to,
                       )}
                   </Typography>
-
-                  <Grid container gap={3} mt={3} mb={3} justifyContent="center">
-                    {programCourse.events &&
-                      programCourse.events.length > 0 && (
-                        <Grid size={{ xs: 12, sm: 10, md: 7, lg: 5, xl: 4 }}>
-                          <Card variant="outlined">
-                            <Box className={styles.userTopBox}>
-                              <Typography
-                                variant="h6"
-                                fontWeight="600"
-                                component="div"
-                              >
-                                {t(
-                                  "pages.activity-kids.content.section-register.title-events",
-                                )}
-                              </Typography>
-                            </Box>
-                            <Divider />
-                            <Box className={styles.userFamilyBox}>
-                              <List className={styles.userFamilyList}>
-                                {programCourse.events.map(
-                                  (event: any, i: number, row: any) => (
-                                    <>
-                                      <Box key={event.id}>
-                                        <ListItemButton
-                                          disableTouchRipple
-                                          dense
-                                        >
-                                          <ListItemIcon>
-                                            <IconCalendarMonth />
-                                          </ListItemIcon>
-                                          <ListItemText
-                                            primary={
-                                              <Typography
-                                                variant="body2"
-                                                component="span"
-                                              >
-                                                {datetimeToLongString(
-                                                  i18n.resolvedLanguage,
-                                                  event.time_from,
-                                                )}
-                                              </Typography>
-                                            }
-                                            secondary={
-                                              event.location &&
-                                              event.location.name
-                                            }
-                                          ></ListItemText>
-                                        </ListItemButton>
-                                      </Box>
-                                      {i + 1 < row.length && <Divider />}
-                                    </>
-                                  ),
-                                )}
-                              </List>
-                            </Box>
-                          </Card>
-                        </Grid>
-                      )}
-                    {userFamilyMemberCannotManage &&
-                      userFamilyMemberCannotManage.length > 0 && (
-                        <Grid size={{ xs: 12, sm: 10, md: 7, lg: 5, xl: 4 }}>
-                          <Card variant="outlined">
-                            <Box
-                              className={styles.userTopBox}
-                              display="flex"
-                              flexDirection={{ xs: "column", lg: "row" }}
-                              alignItems={{ xs: "start", lg: "center" }}
+                  <>
+                    <Collapse
+                      in={
+                        registrationsRequested &&
+                        registrationsRequested.length > 0
+                      }
+                      timeout="auto"
+                      unmountOnExit
+                      className={styles.registrationCollapse}
+                    >
+                      <Grid container spacing={3} justifyContent="center">
+                        <Grid size={{ xs: 12, sm: 10, md: 7, lg: 10, xl: 8 }}>
+                          <Alert severity="error" className={styles.alert}>
+                            {t(
+                              "pages.calendar-event.register.alert.payment-pending",
+                            )}
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              marginTop="8px"
+                              whiteSpace="nowrap"
                             >
-                              <Typography
-                                variant="h6"
-                                fontWeight="600"
-                                component="span"
-                                sx={{ flexGrow: 1 }}
+                              <Button
+                                variant="contained"
+                                type="submit"
+                                style={{ width: "auto" }}
+                                color="primary"
+                                disableElevation
+                                onClick={() =>
+                                  handleCourseRegistrationProcess(
+                                    programCourse.id,
+                                  )
+                                }
                               >
                                 {t(
-                                  "pages.activity-kids.content.section-register.title-registrations",
+                                  "pages.activity-kids.content.section-register.button-pay",
                                 )}
-                              </Typography>
-                              {registrationsRequested &&
-                                registrationsRequested.length > 0 && (
-                                  <Button
-                                    variant="outlined"
-                                    type="submit"
-                                    style={{ width: "auto" }}
-                                    color="secondary"
-                                    disableElevation
-                                    onClick={() =>
-                                      handleCourseRegistrationProcess(
-                                        programCourse.id,
-                                      )
-                                    }
-                                  >
-                                    {t(
-                                      "pages.activity-kids.content.section-register.button-pay",
-                                    )}
-                                  </Button>
-                                )}
-                            </Box>
-                            <Divider />
-                            <Box className={styles.userFamilyBox}>
-                              <List className={styles.userFamilyList}>
-                                {userFamilyMemberCannotManage.map(
-                                  (member: any, i: number, row: any) => {
-                                    const registration =
-                                      programCourse.registrations.find(
-                                        (registration: any) =>
-                                          registration.entity.id ===
-                                          member.user.entity.id,
-                                      );
-
-                                    const age =
-                                      member.user.birthday &&
-                                      userAge(member.user.birthday);
-
-                                    return (
+                                {pendingAmount &&
+                                  " " +
+                                    pendingAmount.amount +
+                                    " " +
+                                    pendingAmount.currency}
+                              </Button>
+                            </Stack>
+                          </Alert>
+                        </Grid>
+                      </Grid>
+                    </Collapse>
+                    <Grid container spacing={3} mt={3} justifyContent="center">
+                      {programCourse.events &&
+                        programCourse.events.length > 0 && (
+                          <Grid size={{ xs: 12, sm: 10, md: 7, lg: 5, xl: 4 }}>
+                            <Card variant="outlined">
+                              <Box className={styles.userTopBox}>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="600"
+                                  component="div"
+                                >
+                                  {t(
+                                    "pages.activity-kids.content.section-register.title-events",
+                                  )}
+                                </Typography>
+                              </Box>
+                              <Divider />
+                              <Box className={styles.userFamilyBox}>
+                                <List className={styles.userFamilyList}>
+                                  {programCourse.events.map(
+                                    (event: any, i: number, row: any) => (
                                       <>
-                                        <Box key={member.id}>
+                                        <Box key={event.id}>
                                           <ListItemButton
                                             disableTouchRipple
                                             dense
                                           >
                                             <ListItemIcon>
-                                              <IconAccountCircle />
+                                              <IconCalendarMonth />
                                             </ListItemIcon>
-                                            <Box
-                                              className={
-                                                styles.userFamilyListInner
-                                              }
-                                              flexDirection={{
-                                                xs: "column",
-                                                lg: "row",
-                                              }}
-                                              alignItems={{
-                                                xs: "start",
-                                                lg: "center",
-                                              }}
-                                            >
-                                              <ListItemText
-                                                primary={
-                                                  <>
-                                                    <Typography
-                                                      variant="body2"
-                                                      component="span"
-                                                    >
-                                                      {member.user.lastname
-                                                        ? member.user
-                                                            .firstname +
-                                                          " " +
-                                                          member.user.lastname
-                                                        : member.user.firstname}
-                                                    </Typography>
-                                                    {age && (
-                                                      <Typography
-                                                        variant="body2"
-                                                        component="span"
-                                                        color="textSecondary"
-                                                      >
-                                                        {" — "}
-                                                        {age}{" "}
-                                                        {t(
-                                                          "pages.activity-kids.content.section-register.age",
-                                                        )}
-                                                      </Typography>
-                                                    )}
-                                                  </>
-                                                }
-                                                secondary={
-                                                  registration && (
-                                                    <Typography
-                                                      variant="body2"
-                                                      style={{
-                                                        color:
-                                                          registration.status ===
-                                                          ProgramCourseRegistrationStatus.ACTIVE
-                                                            ? "var(--mui-palette-success-main)"
-                                                            : "var(--mui-palette-error-main)",
-                                                        whiteSpace: "nowrap",
-                                                      }}
-                                                    >
-                                                      {registration.status ===
-                                                      ProgramCourseRegistrationStatus.ACTIVE
-                                                        ? registration.amount
-                                                            .amount === 0
-                                                          ? t(
-                                                              "pages.activity-kids.content.section-register.status-active-free",
-                                                            )
-                                                          : t(
-                                                              "pages.activity-kids.content.section-register.status-active",
-                                                            )
-                                                        : registration.status ===
-                                                            ProgramCourseRegistrationStatus.PROCESSING
-                                                          ? t(
-                                                              "pages.activity-kids.content.section-register.status-processing",
-                                                            )
-                                                          : t(
-                                                              "pages.activity-kids.content.section-register.status-requested",
-                                                            )}
-                                                    </Typography>
-                                                  )
-                                                }
-                                              ></ListItemText>
-
-                                              <Stack
-                                                direction="row"
-                                                spacing={2}
-                                                marginLeft={{
-                                                  xs: "0",
-                                                  lg: "16px",
-                                                }}
-                                                marginTop="8px"
-                                                marginBottom="8px"
-                                                whiteSpace="nowrap"
-                                              >
-                                                <Button
-                                                  variant="contained"
-                                                  type="submit"
-                                                  style={{ width: "auto" }}
-                                                  disableElevation
-                                                  disabled={
-                                                    registration &&
-                                                    registration.status >
-                                                      ProgramCourseRegistrationStatus.REQUESTED &&
-                                                    registration.amount.amount >
-                                                      0
-                                                  }
-                                                  onClick={() => {
-                                                    if (registration) {
-                                                      handleRegistrationDelete(
-                                                        registration.id,
-                                                      );
-                                                    } else {
-                                                      handleRegistrationCreate(
-                                                        member.user.id,
-                                                        programCourse.id,
-                                                      );
-                                                    }
-                                                  }}
+                                            <ListItemText
+                                              primary={
+                                                <Typography
+                                                  variant="body2"
+                                                  component="span"
                                                 >
-                                                  {registration &&
-                                                  registration.status >=
-                                                    ProgramCourseRegistrationStatus.REQUESTED
-                                                    ? t(
-                                                        "pages.activity-kids.content.section-register.button-deregister",
-                                                      )
-                                                    : t(
-                                                        "pages.activity-kids.content.section-register.button-register",
-                                                      )}
-                                                </Button>
-                                              </Stack>
-                                            </Box>
+                                                  {datetimeToLongString(
+                                                    i18n.resolvedLanguage,
+                                                    event.time_from,
+                                                  )}
+                                                </Typography>
+                                              }
+                                              secondary={
+                                                event.location &&
+                                                event.location.name
+                                              }
+                                            ></ListItemText>
                                           </ListItemButton>
                                         </Box>
                                         {i + 1 < row.length && <Divider />}
                                       </>
-                                    );
-                                  },
-                                )}
-                              </List>
-                            </Box>
-                          </Card>
-                        </Grid>
-                      )}
-                  </Grid>
+                                    ),
+                                  )}
+                                </List>
+                              </Box>
+                            </Card>
+                          </Grid>
+                        )}
+                      {userFamilyMemberCannotManage &&
+                        userFamilyMemberCannotManage.length > 0 && (
+                          <Grid size={{ xs: 12, sm: 10, md: 7, lg: 5, xl: 4 }}>
+                            <Card variant="outlined">
+                              <Box
+                                className={styles.userTopBox}
+                                display="flex"
+                                flexDirection={{ xs: "column", lg: "row" }}
+                                alignItems={{ xs: "start", lg: "center" }}
+                              >
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="600"
+                                  component="span"
+                                  sx={{ flexGrow: 1 }}
+                                >
+                                  {t(
+                                    "pages.activity-kids.content.section-register.title-registrations",
+                                  )}
+                                </Typography>
+                              </Box>
+                              <Divider />
+                              <Box className={styles.userFamilyBox}>
+                                <List className={styles.userFamilyList}>
+                                  {userFamilyMemberCannotManage.map(
+                                    (member: any, i: number, row: any) => {
+                                      const registration =
+                                        programCourse.registrations.find(
+                                          (registration: any) =>
+                                            registration.entity.id ===
+                                            member.user.entity.id,
+                                        );
+
+                                      const age =
+                                        member.user.birthday &&
+                                        userAge(member.user.birthday);
+
+                                      return (
+                                        <>
+                                          <Box key={member.id}>
+                                            <ListItemButton
+                                              disableTouchRipple
+                                              dense
+                                            >
+                                              <ListItemIcon>
+                                                <IconAccountCircle />
+                                              </ListItemIcon>
+                                              <Box
+                                                className={
+                                                  styles.userFamilyListInner
+                                                }
+                                                flexDirection={{
+                                                  xs: "column",
+                                                  lg: "row",
+                                                }}
+                                                alignItems={{
+                                                  xs: "start",
+                                                  lg: "center",
+                                                }}
+                                              >
+                                                <ListItemText
+                                                  primary={
+                                                    <>
+                                                      <Typography
+                                                        variant="body2"
+                                                        component="span"
+                                                      >
+                                                        {member.user.lastname
+                                                          ? member.user
+                                                              .firstname +
+                                                            " " +
+                                                            member.user.lastname
+                                                          : member.user
+                                                              .firstname}
+                                                      </Typography>
+                                                      {age && (
+                                                        <Typography
+                                                          variant="body2"
+                                                          component="span"
+                                                          color="textSecondary"
+                                                        >
+                                                          {" — "}
+                                                          {age}{" "}
+                                                          {t(
+                                                            "pages.activity-kids.content.section-register.age",
+                                                          )}
+                                                        </Typography>
+                                                      )}
+                                                    </>
+                                                  }
+                                                  secondary={
+                                                    registration && (
+                                                      <Typography
+                                                        variant="body2"
+                                                        style={{
+                                                          color:
+                                                            registration.status ===
+                                                            ProgramCourseRegistrationStatus.ACTIVE
+                                                              ? "var(--mui-palette-success-main)"
+                                                              : "var(--mui-palette-error-main)",
+                                                          whiteSpace: "nowrap",
+                                                        }}
+                                                      >
+                                                        {registration.status ===
+                                                        ProgramCourseRegistrationStatus.ACTIVE
+                                                          ? registration.amount
+                                                              .amount === 0
+                                                            ? t(
+                                                                "pages.activity-kids.content.section-register.status-active-free",
+                                                              )
+                                                            : t(
+                                                                "pages.activity-kids.content.section-register.status-active",
+                                                              )
+                                                          : registration.status ===
+                                                              ProgramCourseRegistrationStatus.PROCESSING
+                                                            ? t(
+                                                                "pages.activity-kids.content.section-register.status-processing",
+                                                              )
+                                                            : t(
+                                                                "pages.activity-kids.content.section-register.status-requested",
+                                                              )}
+                                                      </Typography>
+                                                    )
+                                                  }
+                                                ></ListItemText>
+
+                                                <Stack
+                                                  direction="row"
+                                                  spacing={2}
+                                                  marginLeft={{
+                                                    xs: "0",
+                                                    lg: "16px",
+                                                  }}
+                                                  marginTop="8px"
+                                                  marginBottom="8px"
+                                                  whiteSpace="nowrap"
+                                                >
+                                                  <Button
+                                                    variant="contained"
+                                                    type="submit"
+                                                    style={{ width: "auto" }}
+                                                    disableElevation
+                                                    disabled={
+                                                      registration &&
+                                                      registration.status >
+                                                        ProgramCourseRegistrationStatus.REQUESTED &&
+                                                      registration.amount
+                                                        .amount > 0
+                                                    }
+                                                    onClick={() => {
+                                                      if (registration) {
+                                                        handleRegistrationDelete(
+                                                          registration.id,
+                                                        );
+                                                      } else {
+                                                        handleRegistrationCreate(
+                                                          member.user.id,
+                                                          programCourse.id,
+                                                        );
+                                                      }
+                                                    }}
+                                                  >
+                                                    {registration &&
+                                                    registration.status >=
+                                                      ProgramCourseRegistrationStatus.REQUESTED
+                                                      ? t(
+                                                          "pages.activity-kids.content.section-register.button-deregister",
+                                                        )
+                                                      : t(
+                                                          "pages.activity-kids.content.section-register.button-register",
+                                                        )}
+                                                  </Button>
+                                                </Stack>
+                                              </Box>
+                                            </ListItemButton>
+                                          </Box>
+                                          {i + 1 < row.length && <Divider />}
+                                        </>
+                                      );
+                                    },
+                                  )}
+                                </List>
+                              </Box>
+                            </Card>
+                          </Grid>
+                        )}
+                    </Grid>
+
+                    <Collapse
+                      in={
+                        registrationsRequested &&
+                        registrationsRequested.length > 0
+                      }
+                      timeout="auto"
+                      unmountOnExit
+                      className={styles.registrationCollapse}
+                    >
+                      <Grid
+                        container
+                        spacing={3}
+                        mt={3}
+                        justifyContent="center"
+                      >
+                        <Stack direction="row" spacing={2} whiteSpace="nowrap">
+                          <Button
+                            variant="contained"
+                            type="submit"
+                            style={{ width: "auto" }}
+                            color="primary"
+                            disableElevation
+                            onClick={() =>
+                              handleCourseRegistrationProcess(programCourse.id)
+                            }
+                          >
+                            {t("pages.calendar-event.register.button-pay")}
+                            {pendingAmount &&
+                              " " +
+                                pendingAmount.amount +
+                                " " +
+                                pendingAmount.currency}
+                          </Button>
+                        </Stack>
+                      </Grid>
+                    </Collapse>
+                  </>
                 </>
               );
             })}

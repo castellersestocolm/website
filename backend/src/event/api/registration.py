@@ -232,7 +232,6 @@ def create(  # noqa: C901
     return get(registration_id=registration_obj.id, module=module)
 
 
-# TODO registrations: Send emails
 @transaction.atomic
 def complete(registration_ids: list[UUID], with_notify: bool = True) -> bool:
     registration_objs = list(
@@ -260,13 +259,16 @@ def complete(registration_ids: list[UUID], with_notify: bool = True) -> bool:
             registration_objs,
             lambda registration_obj: registration_obj.event,
         ):
-            notify.tasks.send_registration_email.delay(
-                registration_ids=[
-                    event_registration_obj.id
-                    for event_registration_obj in event_registration_objs
-                ],
-                email_type=EmailType.REGISTRATION_PAID,
-                module=event_obj.module,
+            registration_ids = [
+                event_registration_obj.id
+                for event_registration_obj in event_registration_objs
+            ]
+            transaction.on_commit(
+                lambda: notify.tasks.send_registration_email.delay(
+                    registration_ids=registration_ids,
+                    email_type=EmailType.REGISTRATION_PAID,
+                    module=event_obj.module,
+                )
             )
 
     return True

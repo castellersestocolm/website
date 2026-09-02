@@ -306,10 +306,12 @@ def complete(
             if not membership_user_obj.user.can_manage:
                 continue
 
-            notify.tasks.send_user_email.delay(
-                user_id=membership_user_obj.user_id,
-                email_type=EmailType.MEMBERSHIP_PAID,
-                module=membership_user_obj.user.origin_module,
+            transaction.on_commit(
+                lambda: notify.tasks.send_user_email.delay(
+                    user_id=membership_user_obj.user_id,
+                    email_type=EmailType.MEMBERSHIP_PAID,
+                    module=membership_user_obj.user.origin_module,
+                )
             )
 
     return True

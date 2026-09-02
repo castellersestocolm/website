@@ -593,15 +593,19 @@ def complete(  # noqa: C901
         if payment_status == PaymentStatus.COMPLETED:
             if order_obj.type == OrderType.PRODUCT:
                 if with_notify:
-                    notify.tasks.send_order_email.delay(
-                        order_id=order_obj.id,
-                        email_type=EmailType.ORDER_PAID,
-                        module=module,
-                        locale=translation.get_language(),
+                    transaction.on_commit(
+                        lambda: notify.tasks.send_order_email.delay(
+                            order_id=order_obj.id,
+                            email_type=EmailType.ORDER_PAID,
+                            module=module,
+                            locale=translation.get_language(),
+                        )
                     )
 
-                notify.tasks.send_order_message_slack.delay(
-                    order_id=order_obj.id,
+                transaction.on_commit(
+                    lambda: notify.tasks.send_order_message_slack.delay(
+                        order_id=order_obj.id,
+                    )
                 )
             elif order_obj.type == OrderType.REGISTRATION:
                 registration_ids = [

@@ -196,7 +196,7 @@ def send_registration_email(
 # TODO: Check here if registrations ever allow no-users (like entities)
 @shared_task
 def send_program_course_registration_email(
-    program_course_registration_ids: list[UUID],
+    registration_ids: list[UUID],
     email_type: EmailType,
     module: Module,
     email: str | None = None,
@@ -204,7 +204,7 @@ def send_program_course_registration_email(
     locale: str | None = None,
 ) -> list[Email]:
     email_renders = get_program_course_registration_email_renders(
-        program_course_registration_ids=program_course_registration_ids,
+        registration_ids=registration_ids,
         email_type=email_type,
         module=module,
         email=email,
