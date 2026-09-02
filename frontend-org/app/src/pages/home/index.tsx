@@ -19,6 +19,7 @@ import {
   Pagination,
   Button,
   Link,
+  Collapse,
 } from "@mui/material";
 import { datetimeToLongString } from "../../utils/datetime";
 import { useAppContext } from "../../components/AppContext/AppContext";
@@ -225,76 +226,84 @@ function HomePage() {
           </Container>
         </Box>
       </Box>
-      {highligtedEvent && (
-        <Hero
-          title={highligtedEvent.title}
-          subtitle={datetimeToLongString(
-            i18n.resolvedLanguage,
-            highligtedEvent.time_from,
-          )}
-          hero={
-            highligtedEvent.picture &&
-            BACKEND_BASE_URL + highligtedEvent.picture.medium
-          }
-          content={
-            <Box>
-              {highligtedEvent.location && (
-                <Typography
-                  variant="h6"
-                  fontWeight={700}
-                  color="white"
-                  align="center"
-                  mt={1}
-                >
-                  <Link
+      <Collapse in={highligtedEvent} timeout="auto" unmountOnExit>
+        {highligtedEvent && (
+          <Hero
+            title={highligtedEvent.title}
+            subtitle={datetimeToLongString(
+              i18n.resolvedLanguage,
+              highligtedEvent.time_from,
+            )}
+            hero={
+              highligtedEvent.picture &&
+              BACKEND_BASE_URL + highligtedEvent.picture.medium
+            }
+            content={
+              <Box>
+                {highligtedEvent.location && (
+                  <Typography
+                    variant="h6"
+                    fontWeight={700}
                     color="white"
-                    underline="none"
-                    href={
-                      "http://google.com/maps/place/" +
-                      highligtedEvent.location.coordinate_lat +
-                      "," +
-                      highligtedEvent.location.coordinate_lon
-                    }
-                    target="_blank"
+                    align="center"
+                    mt={1}
                   >
-                    {highligtedEvent.location.name}
-                  </Link>
-                </Typography>
-              )}
-              <Grid size={12} marginTop="24px">
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  className={styles.joinButtons}
-                >
-                  <Button
-                    variant="contained"
-                    href={
-                      (highligtedEvent.module === Module.TOWERS
-                        ? TOWERS_BASE_URL
-                        : "") +
-                      ROUTES["calendar-event"].path
-                        .replace(":year", highligtedEvent.time_from.slice(0, 4))
-                        .replace(
-                          ":month",
-                          highligtedEvent.time_from.slice(5, 7),
-                        )
-                        .replace(":day", highligtedEvent.time_from.slice(8, 10))
-                        .replace(":code", highligtedEvent.code)
-                    }
-                    disableElevation
+                    <Link
+                      color="white"
+                      underline="none"
+                      href={
+                        "http://google.com/maps/place/" +
+                        highligtedEvent.location.coordinate_lat +
+                        "," +
+                        highligtedEvent.location.coordinate_lon
+                      }
+                      target="_blank"
+                    >
+                      {highligtedEvent.location.name}
+                    </Link>
+                  </Typography>
+                )}
+                <Grid size={12} marginTop="24px">
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    className={styles.joinButtons}
                   >
-                    {t("pages.home-highlight.button-info")}
-                    {highligtedEvent.module === Module.TOWERS && (
-                      <IconArrowOutward className={styles.joinExternalIcon} />
-                    )}
-                  </Button>
-                </Stack>
-              </Grid>
-            </Box>
-          }
-        />
-      )}
+                    <Button
+                      variant="contained"
+                      href={
+                        (highligtedEvent.module === Module.TOWERS
+                          ? TOWERS_BASE_URL
+                          : "") +
+                        ROUTES["calendar-event"].path
+                          .replace(
+                            ":year",
+                            highligtedEvent.time_from.slice(0, 4),
+                          )
+                          .replace(
+                            ":month",
+                            highligtedEvent.time_from.slice(5, 7),
+                          )
+                          .replace(
+                            ":day",
+                            highligtedEvent.time_from.slice(8, 10),
+                          )
+                          .replace(":code", highligtedEvent.code)
+                      }
+                      disableElevation
+                    >
+                      {t("pages.home-highlight.button-info")}
+                      {highligtedEvent.module === Module.TOWERS && (
+                        <IconArrowOutward className={styles.joinExternalIcon} />
+                      )}
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Box>
+            }
+          />
+        )}
+      </Collapse>
     </>
   );
 
@@ -325,128 +334,132 @@ function HomePage() {
 
   const content = (
     <>
-      <Box component="section" className={styles.postsGrid}>
-        <Container maxWidth="lg">
-          <Typography
-            variant="h4"
-            fontWeight="700"
-            className={styles.postsTitle}
-          >
-            {t("pages.home-posts.title")}
-          </Typography>
-          {wpPosts ? (
-            <>
-              <Grid container spacing={4} className={styles.postsInnerGrid}>
-                {wpPosts &&
-                  wpPosts.data &&
-                  wpPosts.data.length > 0 &&
-                  wpPosts.data.map((wpPost: any) => {
-                    return (
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <Card
-                          className={styles.postCard}
-                          elevation={0}
-                          onClick={() =>
-                            handleWpPostClick(
-                              wpPost.date.slice(0, 4),
-                              wpPost.date.slice(5, 7),
-                              wpPost.slug,
-                            )
-                          }
-                        >
-                          <CardActionArea>
-                            {wpMediaById &&
-                            wpPost.featured_media &&
-                            wpPost.featured_media in wpMediaById ? (
-                              <CardMedia
-                                component="img"
-                                height="300"
-                                image={
-                                  wpMediaById[wpPost.featured_media].data
-                                    .source_url
-                                }
-                              />
-                            ) : undefined}
-                            <CardContent className={styles.postCardContent}>
-                              <Typography
-                                gutterBottom
-                                variant="h5"
-                                fontWeight={700}
-                                mb={1}
-                                lineHeight={1.2}
-                              >
-                                {wpPost.title.rendered}
-                              </Typography>
-                              <Typography gutterBottom variant="body2" mb={0}>
-                                {datetimeToLongString(
-                                  i18n.resolvedLanguage,
-                                  wpPost.date,
-                                )}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{ color: "text.secondary" }}
-                                component="div"
-                              >
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: wpPost.excerpt.rendered,
-                                  }}
-                                ></div>
-                              </Typography>
-                              <Stack direction="column" spacing={1} mb={1}>
-                                <Link
-                                  onClick={() =>
-                                    handleWpPostClick(
-                                      wpPost.date.slice(0, 4),
-                                      wpPost.date.slice(5, 7),
-                                      wpPost.slug,
-                                    )
+      <Collapse in={wpPosts} timeout="auto" unmountOnExit>
+        <Box component="section" className={styles.postsGrid}>
+          <Container maxWidth="lg">
+            <Typography
+              variant="h4"
+              fontWeight="700"
+              className={styles.postsTitle}
+            >
+              {t("pages.home-posts.title")}
+            </Typography>
+            {wpPosts && (
+              <>
+                <Grid container spacing={4} className={styles.postsInnerGrid}>
+                  {wpPosts &&
+                    wpPosts.data &&
+                    wpPosts.data.length > 0 &&
+                    wpPosts.data.map((wpPost: any) => {
+                      return (
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <Card
+                            className={styles.postCard}
+                            elevation={0}
+                            onClick={() =>
+                              handleWpPostClick(
+                                wpPost.date.slice(0, 4),
+                                wpPost.date.slice(5, 7),
+                                wpPost.slug,
+                              )
+                            }
+                          >
+                            <CardActionArea>
+                              {wpMediaById &&
+                              wpPost.featured_media &&
+                              wpPost.featured_media in wpMediaById ? (
+                                <CardMedia
+                                  component="img"
+                                  height="300"
+                                  image={
+                                    wpMediaById[wpPost.featured_media].data
+                                      .source_url
                                   }
-                                  color="secondary"
-                                  underline="none"
-                                  className={styles.link}
+                                />
+                              ) : undefined}
+                              <CardContent className={styles.postCardContent}>
+                                <Typography
+                                  gutterBottom
+                                  variant="h5"
+                                  fontWeight={700}
+                                  mb={1}
+                                  lineHeight={1.2}
                                 >
-                                  <Typography variant="body1" component="span">
-                                    {t("pages.home-posts.link-more")}
-                                  </Typography>
-                                  <IconEast className={styles.iconEast} />
-                                </Link>
-                              </Stack>
-                            </CardContent>
-                          </CardActionArea>
-                        </Card>
-                      </Grid>
-                    );
-                  })}
-              </Grid>
-              {wpPosts.data.length > 0 &&
-                (wpPostsPage !== 1 ||
-                  wpPosts.headers["x-wp-total"] > wpPosts.data.length) && (
-                  <Stack alignItems="center">
-                    <Pagination
-                      page={wpPostsPage}
-                      count={wpPosts.headers["x-wp-totalpages"]}
-                      onChange={(e: any, value: number) =>
-                        setWpPostsPage(value)
-                      }
-                    />
-                  </Stack>
-                )}
-            </>
-          ) : (
-            <Box className={styles.pageLoader}>
-              <LoaderClip />
-            </Box>
-          )}
-        </Container>
-      </Box>
+                                  {wpPost.title.rendered}
+                                </Typography>
+                                <Typography gutterBottom variant="body2" mb={0}>
+                                  {datetimeToLongString(
+                                    i18n.resolvedLanguage,
+                                    wpPost.date,
+                                  )}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: "text.secondary" }}
+                                  component="div"
+                                >
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: wpPost.excerpt.rendered,
+                                    }}
+                                  ></div>
+                                </Typography>
+                                <Stack direction="column" spacing={1} mb={1}>
+                                  <Link
+                                    onClick={() =>
+                                      handleWpPostClick(
+                                        wpPost.date.slice(0, 4),
+                                        wpPost.date.slice(5, 7),
+                                        wpPost.slug,
+                                      )
+                                    }
+                                    color="secondary"
+                                    underline="none"
+                                    className={styles.link}
+                                  >
+                                    <Typography
+                                      variant="body1"
+                                      component="span"
+                                    >
+                                      {t("pages.home-posts.link-more")}
+                                    </Typography>
+                                    <IconEast className={styles.iconEast} />
+                                  </Link>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        </Grid>
+                      );
+                    })}
+                </Grid>
+                {wpPosts.data.length > 0 &&
+                  (wpPostsPage !== 1 ||
+                    wpPosts.headers["x-wp-total"] > wpPosts.data.length) && (
+                    <Stack alignItems="center">
+                      <Pagination
+                        page={wpPostsPage}
+                        count={wpPosts.headers["x-wp-totalpages"]}
+                        onChange={(e: any, value: number) =>
+                          setWpPostsPage(value)
+                        }
+                      />
+                    </Stack>
+                  )}
+              </>
+            )}
+          </Container>
+        </Box>
+      </Collapse>
+      {!wpPosts && (
+        <Box className={styles.pageLoader}>
+          <LoaderClip />
+        </Box>
+      )}
     </>
   );
 
-  return (
-    <Page hero={hero} content={content} footer={footer} loading={!wpPosts} />
-  );
+  return <Page hero={hero} content={content} footer={footer} />;
 }
 
 export default HomePage;
