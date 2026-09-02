@@ -3,7 +3,6 @@ from django.test import TestCase
 from django.utils import timezone
 from djmoney.money import Money
 from openpyxl.reader.excel import load_workbook
-from social_core.utils import first
 
 from comunicat.enums import Module
 from conftest import NumOperationsMixin
