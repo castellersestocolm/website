@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
 from weasyprint import HTML
 
+import event.tasks
 import notify.tasks
 from activity.models import ProgramCourse
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
@@ -241,6 +242,14 @@ def publish_events(modeladmin, request, queryset):
         event_obj.save(update_fields=("status",))
 
 
+@admin.action(description="Sync events to Google Drive")
+def sync_events_google_drive(modeladmin, request, queryset):
+    for event_obj in queryset:
+        event.tasks.sync_event.delay(
+            event_id=event_obj.id,
+        )
+
+
 @admin.register(Event)
 class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelAdmin):
     search_fields = ("id", "title")
@@ -266,7 +275,7 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
         AccountEventInline,
         RegistrationInline,
     )
-    actions = (publish_events,)
+    actions = (publish_events, sync_events_google_drive)
     readonly_fields = ("accounts_link", "google_event", "google_album")
     raw_id_fields = ("course",)
     form = EventForm
