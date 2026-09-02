@@ -184,6 +184,8 @@ class Event(StandardModel, Timestamps):
             raise ValidationError(validation_errors)
 
     def save(self, *args, **kwargs):  # noqa: C901
+        import event.tasks
+
         if self.series:
             self.series.events.exclude(id=self.id).update(type=self.type)
 
@@ -205,7 +207,6 @@ class Event(StandardModel, Timestamps):
             ).lower()
 
         if self.module and self.status == EventStatus.PUBLISHED:
-            import event.tasks
 
             if GOOGLE_ENABLED_BY_MODULE[self.module]["calendar"]:
                 transaction.on_commit(
@@ -232,6 +233,11 @@ class Event(StandardModel, Timestamps):
                 lambda: activity.tasks.sync_program.delay(
                     program_id=self.course.program_id
                 )
+            )
+        else:
+            # Sync event with Google Drive
+            transaction.on_commit(
+                lambda: event.tasks.sync_event.delay(event_id=self.id)
             )
 
         if self.module == Module.TOWERS:

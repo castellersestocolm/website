@@ -4,13 +4,13 @@ from uuid import UUID
 from django.db.models import Prefetch
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
-from openpyxl.styles import Font, numbers
+from openpyxl.styles import DEFAULT_FONT, Font, numbers
 from openpyxl.utils import get_column_letter
 from openpyxl.workbook import Workbook
 
 from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourse, ProgramCourseRegistration
-from comunicat.consts import LOCALE_BY_MODULE
+from comunicat.consts import FONT_NAME_BY_MODULE, LOCALE_BY_MODULE
 from event.enums import EventStatus
 from event.models import Event
 from user.enums import FamilyMemberRole, FamilyMemberStatus
@@ -48,8 +48,13 @@ def export_program_course(course_id: UUID) -> BytesIO:
         .first()
     )
 
+    font_name = FONT_NAME_BY_MODULE[program_course_obj.program.module]
+
     wb = Workbook()
     ws = wb.active
+
+    DEFAULT_FONT.name = font_name
+    font_fold = Font(name=font_name, bold=True)
 
     with translation.override(LOCALE_BY_MODULE[program_course_obj.program.module]):
         ws.title = str(_("Registrations"))
@@ -80,8 +85,6 @@ def export_program_course(course_id: UUID) -> BytesIO:
 
         ws.column_dimensions["C"].number_format = numbers.FORMAT_NUMBER_00
         ws.column_dimensions["I"].number_format = "[$SEK ]#,##0.00_-"
-
-        font_fold = Font(bold=True)
 
         for cell in ws["1:1"]:
             cell.font = font_fold

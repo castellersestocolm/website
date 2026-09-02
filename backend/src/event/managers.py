@@ -1,6 +1,8 @@
 from django.apps import apps
+from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import (
     BooleanField,
+    CharField,
     ExpressionWrapper,
     F,
     OuterRef,
@@ -16,6 +18,7 @@ from django.utils import timezone, translation
 
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
+from user.enums import FamilyMemberRole, FamilyMemberStatus
 
 
 class EventQuerySet(QuerySet):
@@ -140,5 +143,32 @@ class RegistrationQuerySet(QuerySet):
                 ),
                 Value(0),
                 output_field=MoneyOutput(),
+            )
+        )
+
+    def with_family_name(self):
+        Family = apps.get_model("user", "Family")
+
+        return self.annotate(
+            family_name=Coalesce(
+                Subquery(
+                    Family.objects.filter(
+                        id=OuterRef("entity__user__family_member__family_id")
+                    )
+                    .annotate(
+                        family_name=StringAgg(
+                            "members__user__lastname",
+                            filter=Q(
+                                members__status=FamilyMemberStatus.ACTIVE,
+                                members__role=FamilyMemberRole.MANAGER,
+                            ),
+                            delimiter="-",
+                            order_by="members__user__lastname",
+                        )
+                    )
+                    .values("family_name")[:1]
+                ),
+                F("entity__lastname"),
+                output_field=CharField(),
             )
         )

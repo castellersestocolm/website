@@ -6,6 +6,7 @@ from celery import shared_task
 import event.api
 import event.api.google_album
 import event.api.google_calendar
+import event.api.google_drive
 import event.api.registration
 from comunicat.enums import Module
 from event.enums import EventType
@@ -60,3 +61,8 @@ def create_or_update_album(event_id: UUID) -> None:
 @shared_task
 def clean_pending_registrations() -> None:
     event.api.registration.clean_pending_registrations()
+
+
+@shared_task(rate_limit="1/m")
+def sync_event(event_id: UUID) -> None:
+    event.api.google_drive.sync_event(event_id=event_id)

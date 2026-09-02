@@ -24,6 +24,11 @@ LOCALE_BY_MODULE = {
     Module.TOWERS: settings.MODULE_TOWERS_LOCALE,
 }
 
+FONT_NAME_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_FONT_NAME,
+    Module.TOWERS: settings.MODULE_TOWERS_FONT_NAME,
+}
+
 GOOGLE_ENABLED_BY_MODULE = {
     Module.ORG: {
         "calendar": settings.MODULE_ORG_GOOGLE_CALENDAR_ENABLED,

@@ -120,7 +120,7 @@ msgstr "Utgången"
 
 #: activity/enums.py:32 event/enums.py:44 order/enums.py:20
 msgid "Cancelled"
-msgstr ""
+msgstr "Avbruten"
 
 #: comunicat/db/mixins.py:15
 msgid "created"
