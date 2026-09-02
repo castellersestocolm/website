@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from comunicat.enums import Module
 from event.enums import EventQuestionType, RegistrationStatus
 
 GOOGLE_CALENDAR_SCOPES = [
@@ -27,6 +29,11 @@ GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS = {
     "accepted": RegistrationStatus.ACTIVE,
     "declined": RegistrationStatus.CANCELLED,
     "tentative": RegistrationStatus.CANCELLED,
+}
+
+GOOGLE_DRIVE_BY_MODULE = {
+    module: getattr(settings, f"MODULE_{Module(module).name}_GOOGLE_DRIVE")["event"]
+    for module in Module
 }
 
 # GOOGLE_RESPONSE_STATUS_TO_REGISTRATION_STATUS = {

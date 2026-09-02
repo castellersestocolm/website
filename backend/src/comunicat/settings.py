@@ -491,6 +491,13 @@ MODULE_ORG_GOOGLE_DRIVE = {
             os.getenv("MODULE_ORG_ACTIVITY_GOOGLE_DRIVE_ID", None),
         ),
     },
+    "event": {
+        "drive_id": os.getenv("MODULE_ORG_EVENT_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_ORG_EVENT_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_ORG_EVENT_GOOGLE_DRIVE_ID", None),
+        ),
+    },
     "membership": {
         "drive_id": os.getenv("MODULE_ORG_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
         "folder_id": os.getenv(
@@ -513,6 +520,7 @@ MODULE_ORG_REQUIRED_CONSENT_TYPES = [
         os.getenv("MODULE_ORG_REQUIRED_CONSENT_TYPES", "GENERAL").split(","),
     )
 ]
+MODULE_ORG_FONT_NAME = os.getenv("MODULE_ORG_FONT_NAME", "Lexend")
 
 MODULE_TOWERS_NAME = os.getenv("MODULE_TOWERS_NAME")
 MODULE_TOWERS_SHORT_NAME = os.getenv("MODULE_TOWERS_SHORT_NAME", MODULE_TOWERS_NAME)
@@ -594,6 +602,13 @@ MODULE_TOWERS_GOOGLE_DRIVE = {
             os.getenv("MODULE_TOWERS_ACTIVITY_GOOGLE_DRIVE_ID", None),
         ),
     },
+    "event": {
+        "drive_id": os.getenv("MODULE_TOWERS_EVENT_GOOGLE_DRIVE_ID", None),
+        "folder_id": os.getenv(
+            "MODULE_TOWERS_EVENT_GOOGLE_DRIVE_FOLDER_ID",
+            os.getenv("MODULE_TOWERS_EVENT_GOOGLE_DRIVE_ID", None),
+        ),
+    },
     "membership": {
         "drive_id": os.getenv("MODULE_TOWERS_MEMBERSHIP_GOOGLE_DRIVE_ID", None),
         "folder_id": os.getenv(
@@ -618,6 +633,7 @@ MODULE_TOWERS_REQUIRED_CONSENT_TYPES = [
         ),
     )
 ]
+MODULE_TOWERS_FONT_NAME = os.getenv("MODULE_TOWERS_FONT_NAME", "DM Sans")
 
 # Payment providers
 

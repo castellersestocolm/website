@@ -233,6 +233,13 @@ class Event(StandardModel, Timestamps):
                     program_id=self.course.program_id
                 )
             )
+        else:
+            import event.tasks
+
+            # Sync event with Google Drive
+            transaction.on_commit(
+                lambda: event.tasks.sync_event.delay(event_id=self.id)
+            )
 
         if self.module == Module.TOWERS:
             import pinyator.tasks

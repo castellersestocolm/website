@@ -1,20 +1,19 @@
 import itertools
 from uuid import UUID
 
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 from activity.api.export import export_program_course
 from activity.consts import GOOGLE_DRIVE_BY_MODULE
 from activity.models import Program
+from comunicat.consts import LOCALE_BY_MODULE
 from integration.api.google.drive import create_folder, get_service, upload_file
 
 
 def sync_program(program_id: UUID) -> None:
     program_obj = (
-        Program.objects.filter(id=program_id)
-        .prefetch_related("courses")
-        .with_name()
-        .first()
+        Program.objects.filter(id=program_id).prefetch_related("courses").first()
     )
 
     if not program_obj:
@@ -43,22 +42,25 @@ def sync_program(program_id: UUID) -> None:
         )
 
         for program_course_obj in program_course_objs:
-            folder_course_id = create_folder(
-                service=service,
-                drive_id=google_drive_id,
-                folder_name=program_obj.name_locale,
-                parent_id=folder_year_id,
-            )
+            with translation.override(
+                LOCALE_BY_MODULE[program_course_obj.program.module]
+            ):
+                folder_course_id = create_folder(
+                    service=service,
+                    drive_id=google_drive_id,
+                    folder_name=program_obj.name_locale,
+                    parent_id=folder_year_id,
+                )
 
-            course_file = export_program_course(course_id=program_course_obj.id)
-            payments_name = f"{str(_('Registrations'))}.xlsx"
-            upload_file(
-                service=service,
-                drive_id=google_drive_id,
-                file_bytes=course_file,
-                file_name=payments_name,
-                folder_id=folder_course_id,
-                mime_type="application/vnd.google-apps.spreadsheet",
-            )
+                course_file = export_program_course(course_id=program_course_obj.id)
+                payments_name = f"{str(_('Registrations'))}.xlsx"
+                upload_file(
+                    service=service,
+                    drive_id=google_drive_id,
+                    file_bytes=course_file,
+                    file_name=payments_name,
+                    folder_id=folder_course_id,
+                    mime_type="application/vnd.google-apps.spreadsheet",
+                )
 
     return None

@@ -85,14 +85,14 @@ def complete_registrations(
         course_registration_objs, fields=("status",)
     )
 
-    if with_notify:
-        for (
-            program_course_obj,
-            program_course_registration_objs,
-        ) in itertools.groupby(
-            course_registration_objs,
-            lambda course_registration_obj: course_registration_obj.course,
-        ):
+    for (
+        program_course_obj,
+        program_course_registration_objs,
+    ) in itertools.groupby(
+        course_registration_objs,
+        lambda course_registration_obj: course_registration_obj.course,
+    ):
+        if with_notify:
             program_course_registration_ids = [
                 program_course_registration_obj.id
                 for program_course_registration_obj in program_course_registration_objs
@@ -104,6 +104,14 @@ def complete_registrations(
                     module=program_course_obj.program.module,
                 )
             )
+
+        import activity.tasks
+
+        transaction.on_commit(
+            lambda: activity.tasks.sync_program.delay(
+                program_id=program_course_obj.program_id
+            )
+        )
 
     return True
 
