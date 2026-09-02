@@ -29,12 +29,19 @@ def sync_event(event_id: UUID) -> None:
     if not google_drive_id or not google_folder_id:
         return None
 
+    folder_year_id = create_folder(
+        service=service,
+        drive_id=google_drive_id,
+        folder_name=str(event_obj.time_from.year),
+        parent_id=google_folder_id,
+    )
+
     with translation.override(LOCALE_BY_MODULE[event_obj.module]):
         folder_event_id = create_folder(
             service=service,
             drive_id=google_drive_id,
-            folder_name=event_obj.name_locale,
-            parent_id=google_folder_id,
+            folder_name=event_obj.title_locale,
+            parent_id=folder_year_id,
         )
 
         event_file = export_event(event_id=event_id)
