@@ -658,7 +658,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=73, num_inserts=4, num_updates=12
+                num=0, num_selects=53, num_inserts=3, num_updates=12
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -884,7 +884,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=70, num_inserts=9, num_updates=8
+                num=0, num_selects=53, num_inserts=8, num_updates=8
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -969,7 +969,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=79, num_inserts=9, num_updates=6
+                num=0, num_selects=64, num_inserts=8, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_5_obj.id,
