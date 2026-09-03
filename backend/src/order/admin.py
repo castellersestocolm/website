@@ -3,7 +3,7 @@ import tempfile
 
 from django import forms
 from django.contrib import admin
-from django.db.models import JSONField
+from django.db.models import JSONField, Q
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path, reverse
@@ -21,6 +21,7 @@ from comunicat.utils.admin import FIELD_LOCALE
 from event.enums import RegistrationStatus
 from event.models import Event, Registration
 from notify.enums import EmailType
+from order.consts import ORDER_ADMIN_SHOW_ABANDONED_HOURS
 from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
     DeliveryAccounts,
@@ -300,6 +301,14 @@ class OrderAdmin(admin.ModelAdmin):
         return (
             super()
             .get_queryset(request)
+            .filter(
+                Q(
+                    status=OrderStatus.ABANDONED,
+                    created_at__gte=timezone.now()
+                    - timezone.timedelta(hours=ORDER_ADMIN_SHOW_ABANDONED_HOURS),
+                )
+                | ~Q(status=OrderStatus.ABANDONED)
+            )
             .with_products_pending()
             .select_related(
                 "delivery",

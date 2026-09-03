@@ -16,6 +16,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Collapse,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -187,66 +188,74 @@ function HomePage() {
           </Box>
         </Box>
       </Box>
-      {highligtedEvent && (
-        <Hero
-          title={highligtedEvent.title}
-          subtitle={new Date(highligtedEvent.time_from).toLocaleDateString(
-            languageToLocale(i18n.resolvedLanguage).code,
-            {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            },
-          )}
-          hero={
-            highligtedEvent.picture &&
-            BACKEND_BASE_URL + highligtedEvent.picture.medium
-          }
-          content={
-            <Box>
-              <Typography
-                variant="h4"
-                className={styles.heroSectionSubtitle}
-                marginTop="12px"
-              >
-                {highligtedEvent.description}
-              </Typography>
-              <Grid size={12} marginTop="24px">
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  className={styles.joinButtons}
+      <Collapse in={highligtedEvent} timeout="auto" unmountOnExit>
+        {highligtedEvent && (
+          <Hero
+            title={highligtedEvent.title}
+            subtitle={new Date(highligtedEvent.time_from).toLocaleDateString(
+              languageToLocale(i18n.resolvedLanguage).code,
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              },
+            )}
+            hero={
+              highligtedEvent.picture &&
+              BACKEND_BASE_URL + highligtedEvent.picture.medium
+            }
+            content={
+              <Box>
+                <Typography
+                  variant="h4"
+                  className={styles.heroSectionSubtitle}
+                  marginTop="12px"
                 >
-                  <Button
-                    variant="contained"
-                    href={
-                      (highligtedEvent.module === Module.ORG
-                        ? ORG_BASE_URL
-                        : "") +
-                      ROUTES["calendar-event"].path
-                        .replace(":year", highligtedEvent.time_from.slice(0, 4))
-                        .replace(
-                          ":month",
-                          highligtedEvent.time_from.slice(5, 7),
-                        )
-                        .replace(":day", highligtedEvent.time_from.slice(8, 10))
-                        .replace(":code", highligtedEvent.code)
-                    }
-                    disableElevation
+                  {highligtedEvent.description}
+                </Typography>
+                <Grid size={12} marginTop="24px">
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    className={styles.joinButtons}
                   >
-                    {t("pages.home-highlight.button-info")}
-                    {highligtedEvent.module === Module.ORG && (
-                      <IconArrowOutward className={styles.joinExternalIcon} />
-                    )}
-                  </Button>
-                </Stack>
-              </Grid>
-            </Box>
-          }
-        />
-      )}
+                    <Button
+                      variant="contained"
+                      href={
+                        (highligtedEvent.module === Module.ORG
+                          ? ORG_BASE_URL
+                          : "") +
+                        ROUTES["calendar-event"].path
+                          .replace(
+                            ":year",
+                            highligtedEvent.time_from.slice(0, 4),
+                          )
+                          .replace(
+                            ":month",
+                            highligtedEvent.time_from.slice(5, 7),
+                          )
+                          .replace(
+                            ":day",
+                            highligtedEvent.time_from.slice(8, 10),
+                          )
+                          .replace(":code", highligtedEvent.code)
+                      }
+                      disableElevation
+                    >
+                      {t("pages.home-highlight.button-info")}
+                      {highligtedEvent.module === Module.ORG && (
+                        <IconArrowOutward className={styles.joinExternalIcon} />
+                      )}
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Box>
+            }
+          />
+        )}
+      </Collapse>
       <Box
         component="section"
         className={styles.rehearsals}
