@@ -10,6 +10,7 @@ import {
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { apiEventPage, apiMembershipList } from "../../api";
+import { Module } from "../../enums";
 import markdown from "@wcj/markdown-to-html";
 import PageBase from "../../components/PageBase/PageBase";
 import { useAppContext } from "../../components/AppContext/AppContext";
@@ -26,6 +27,7 @@ import IconEast from "@mui/icons-material/East";
 import Alert from "@mui/material/Alert";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
+const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
 
 function CalendarEventPage() {
   const [t, i18n] = useTranslation("common");
@@ -40,7 +42,15 @@ function CalendarEventPage() {
     if (token) {
       apiEventPage(undefined, undefined, token).then((response) => {
         if (response.status === 200) {
-          setEvent(response.data);
+          const currentEvent = response.data;
+
+          if (currentEvent.module === Module.TOWERS) {
+            window.location.href =
+              TOWERS_BASE_URL +
+              ROUTES["calendar-event-signup"].path.replace(":token", token);
+          }
+
+          setEvent(currentEvent);
         }
       });
     } else {
@@ -48,7 +58,19 @@ function CalendarEventPage() {
       apiEventPage(date.toISOString().substring(0, 10), code).then(
         (response) => {
           if (response.status === 200) {
-            setEvent(response.data);
+            const currentEvent = response.data;
+
+            if (currentEvent.module === Module.TOWERS) {
+              window.location.href =
+                TOWERS_BASE_URL +
+                ROUTES["calendar-event"].path
+                  .replace(":year", year)
+                  .replace(":month", month)
+                  .replace(":day", day)
+                  .replace(":code", code);
+            }
+
+            setEvent(currentEvent);
           }
         },
       );

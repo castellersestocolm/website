@@ -51,6 +51,8 @@ import AdminUserIdPage from "./pages/admin-user-id";
 import AboutContactPage from "./pages/about-contact";
 import PolicyPurchasePage from "./pages/policy-purchase";
 import MembershipPage from "./pages/membership";
+import CalendarEventPaymentPage from "./pages/calendar-event-payment";
+import CalendarEventReceiptPage from "./pages/calendar-event-receipt";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -142,6 +144,18 @@ const App = () => {
                   <Route
                     path={ROUTES["calendar-event"].path}
                     element={<CalendarEventPage />}
+                  />
+                  <Route
+                    path={ROUTES["calendar-event-signup"].path}
+                    element={<CalendarEventPage />}
+                  />
+                  <Route
+                    path={ROUTES["calendar-event-payment"].path}
+                    element={<CalendarEventPaymentPage />}
+                  />
+                  <Route
+                    path={ROUTES["calendar-event-receipt"].path}
+                    element={<CalendarEventReceiptPage />}
                   />
                   <Route
                     path={ROUTES["user-login"].path}

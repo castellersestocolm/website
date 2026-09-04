@@ -47,6 +47,15 @@ export const ROUTES = {
   "calendar-event": {
     path: "/calendar/event/:year/:month/:day/:code",
   },
+  "calendar-event-signup": {
+    path: "/calendar/event/:token",
+  },
+  "calendar-event-payment": {
+    path: "/calendar/event/payment/:id",
+  },
+  "calendar-event-receipt": {
+    path: "/calendar/event/receipt/:id",
+  },
   association: {
     path: "/association",
   },
