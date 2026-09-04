@@ -7,7 +7,7 @@ import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../AppContext/AppContext";
 import {
-  apiEventRegistrationCreate,
+  apiEventRegistrationForEntityCreate,
   apiEventRegistrationDelete,
   apiOrderEventCreate,
 } from "../../api";
@@ -155,7 +155,7 @@ export default function FormEventRegister({ event }: any) {
 
   function handleSubmit(e: React.FormEvent<CreateFormElement>) {
     e.preventDefault();
-    apiEventRegistrationCreate(
+    apiEventRegistrationForEntityCreate(
       formData.user && formData.user.id,
       formData.entity && formData.entity.id,
       ownerEntity && ownerEntity.id,
@@ -272,7 +272,7 @@ export default function FormEventRegister({ event }: any) {
       setFormDataUser(userId);
       setExtraOpen(true);
     } else {
-      apiEventRegistrationCreate(
+      apiEventRegistrationForEntityCreate(
         userId,
         undefined,
         ownerEntity && ownerEntity.id,
@@ -298,7 +298,7 @@ export default function FormEventRegister({ event }: any) {
       setFormDataEntity(entityId);
       setExtraOpen(true);
     } else {
-      apiEventRegistrationCreate(
+      apiEventRegistrationForEntityCreate(
         undefined,
         entityId,
         ownerEntity && ownerEntity.id,
@@ -1159,7 +1159,9 @@ export default function FormEventRegister({ event }: any) {
                                 "pages.calendar-event.register.checkbox-processing",
                               )}{" "}
                               <Link
-                                href={ROUTES["policy-privacy"].path}
+                                href={
+                                  ROUTES["external-casal-policy-privacy"].path
+                                }
                                 color="secondary"
                                 underline="none"
                                 target="_blank"

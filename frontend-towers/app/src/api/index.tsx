@@ -514,13 +514,19 @@ export const apiEventList = async (
   }
 };
 
-export const apiEventPage = async (date: string, code: string) => {
+export const apiEventPage = async (
+  date: string = undefined,
+  code: string = undefined,
+  token: string = undefined,
+) => {
   try {
     return await instance.get("/event/page/", {
-      params: {
-        date: date,
-        code: code,
-      },
+      params: token
+        ? { token: token }
+        : {
+            date: date,
+            code: code,
+          },
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -556,6 +562,50 @@ export const apiEventRegistrationCreate = async (
       event_id: eventId,
       token: token,
       status: status,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiEventRegistrationForEntityCreate = async (
+  userId: string = undefined,
+  entityId: string = undefined,
+  ownerId: string = undefined,
+  eventId: string,
+  entityFirstname: string = undefined,
+  entityLastname: string = undefined,
+  entityEmail: string = undefined,
+  entityPhone: string = undefined,
+  entityBirthday: string = undefined,
+  entityLanguage: string = undefined,
+  token: string = undefined,
+  status: RegistrationStatus = undefined,
+  data: any = undefined,
+) => {
+  try {
+    return await instance.post("/event/registration/", {
+      ...(userId
+        ? { user_id: userId }
+        : entityId
+          ? { entity_id: entityId }
+          : {
+              entity: {
+                firstname: entityFirstname,
+                lastname: entityLastname,
+                ...(entityEmail ? { email: entityEmail } : {}),
+                ...(entityPhone ? { phone: entityPhone } : {}),
+                preferred_language: entityLanguage,
+                ...(entityBirthday ? { birthday: entityBirthday } : {}),
+              },
+            }),
+      ...(ownerId ? { owner_id: ownerId } : {}),
+      event_id: eventId,
+      token: token,
+      status: status,
+      data: data,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -712,6 +762,23 @@ export const apiOrderMembershipCreate = async (modules: any[]) => {
     return await instance.post("/order/", {
       cart: { modules: modules },
       type: OrderType.MEMBERSHIP,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiOrderEventCreate = async (
+  eventRegistrations: any[],
+  userData: any,
+) => {
+  try {
+    return await instance.post("/order/", {
+      cart: { event_registrations: eventRegistrations },
+      user: userData,
+      type: OrderType.REGISTRATION,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -1003,6 +1070,23 @@ export const apiAdminHistoryEventCreate = async (
 export const apiAdminHistoryEventDelete = async (id: string) => {
   try {
     return await instance.delete("/admin/history/event/" + id + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventTokenGet = async (
+  eventId: string,
+  signupIsOpen: boolean = undefined,
+) => {
+  try {
+    return await instance.get("/admin/event/" + eventId + "/token/", {
+      params: {
+        ...(signupIsOpen !== undefined ? { signup_is_open: signupIsOpen } : {}),
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

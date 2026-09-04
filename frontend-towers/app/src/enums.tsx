@@ -309,3 +309,10 @@ export enum ConsentType {
   HEALTH = 50,
   SIGNUP = 60,
 }
+
+export enum EventQuestionType {
+  SHORT = 10,
+  LONG = 20,
+  BOOLEAN = 30,
+  CHOICE = 40,
+}
