@@ -25,11 +25,13 @@ class MemberUserSerializer(s.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "id",
             "firstname",
             "lastname",
             "contact",
         )
         read_only_fields = (
+            "id",
             "firstname",
             "lastname",
             "contact",

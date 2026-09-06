@@ -73,87 +73,76 @@ function AboutTeamPage() {
               : new Date().getFullYear().toString();
             return (
               <>
-                {group.teams.map((team: any, i: number, row: any) => (
-                  <>
-                    <Box className={styles.aboutTeamBox} key={team.id}>
-                      <Typography
-                        variant="h5"
-                        fontWeight="600"
-                        component="div"
-                        className={styles.aboutTeamBoxTitle}
-                      >
-                        {team.name}
-                        {isReady &&
-                          groupsPage !== 1 &&
-                          " " +
-                            teamYearFrom +
-                            (teamYearFrom !== teamYearTo &&
-                              "/" + teamYearTo.slice(2, 4))}
-                      </Typography>
-                      <Grid
-                        container
-                        spacing={3}
-                        className={styles.aboutTeamGrid}
-                      >
-                        {team.members &&
-                          team.members.length > 0 &&
-                          team.members.map((member: any) => {
-                            const memberDateFrom =
-                              member.date_from &&
-                              member.date_from !== group.date_from &&
-                              new Date(member.date_from) < new Date()
-                                ? new Date(member.date_from).toLocaleDateString(
-                                    languageToLocale(i18n.resolvedLanguage)
-                                      .code,
-                                    {
-                                      day: "2-digit",
-                                      month: "2-digit",
-                                      year: "numeric",
-                                    },
-                                  )
-                                : undefined;
-                            const memberDateTo =
-                              member.date_to &&
-                              (!group.date_to ||
-                                member.date_to !== group.date_to) &&
-                              new Date(member.date_to) < new Date()
-                                ? new Date(member.date_to).toLocaleDateString(
-                                    languageToLocale(i18n.resolvedLanguage)
-                                      .code,
-                                    {
-                                      day: "2-digit",
-                                      month: "2-digit",
-                                      year: "numeric",
-                                    },
-                                  )
-                                : undefined;
+                {group.teams.map((team: any, i: number, row: any) => {
+                  const teamUserMembers = Object.values(
+                    team.members &&
+                      team.members.length > 0 &&
+                      team.members.reduce((foundMembers: any, member: any) => {
+                        if (!foundMembers[member.user.id]) {
+                          foundMembers[member.user.id] = {
+                            user: member.user,
+                            members: [],
+                          };
+                        }
+                        foundMembers[member.user.id].members.push(member);
+                        return foundMembers;
+                      }, {}),
+                  );
+                  return (
+                    <>
+                      <Box className={styles.aboutTeamBox} key={team.id}>
+                        <Typography
+                          variant="h5"
+                          fontWeight="600"
+                          component="div"
+                          className={styles.aboutTeamBoxTitle}
+                        >
+                          {team.name}
+                          {isReady &&
+                            groupsPage !== 1 &&
+                            " " +
+                              teamYearFrom +
+                              (teamYearFrom !== teamYearTo &&
+                                "/" + teamYearTo.slice(2, 4))}
+                        </Typography>
+                        <Grid
+                          container
+                          spacing={3}
+                          className={styles.aboutTeamGrid}
+                        >
+                          {teamUserMembers.map((userMember: any) => {
                             return (
                               <Grid
-                                key={member.id}
+                                key={userMember.id}
                                 direction="column"
                                 display="flex"
                                 alignItems="center"
                                 flexDirection="column"
                                 ref={(ref) => {
-                                  refMembers.current[member.id] = ref;
+                                  refMembers.current[userMember.members[0].id] =
+                                    ref;
                                 }}
                               >
                                 <Avatar
                                   alt={
-                                    member.user.firstname +
+                                    userMember.user.firstname +
                                     " " +
-                                    member.user.lastname
+                                    userMember.user.lastname
                                   }
-                                  src={BACKEND_BASE_URL + member.picture}
+                                  src={
+                                    BACKEND_BASE_URL +
+                                    userMember.members[0].picture
+                                  }
                                   className={styles.aboutTeamAvatar}
                                 />
                                 <Typography variant="body1" fontWeight="600">
-                                  {member.user.firstname} {member.user.lastname}
+                                  {userMember.user.firstname}{" "}
+                                  {userMember.user.lastname}
                                 </Typography>
                                 {groupsPage === 1 &&
-                                  member.user.contact &&
-                                  member.user.contact.emails.length > 0 &&
-                                  member.user.contact.emails.map(
+                                  userMember.user.contact &&
+                                  userMember.user.contact.emails.length > 0 &&
+                                  userMember.user.contact.emails.map(
                                     (contactEmail: any) => (
                                       <Typography variant="body2">
                                         <Link
@@ -166,30 +155,74 @@ function AboutTeamPage() {
                                       </Typography>
                                     ),
                                   )}
-                                <Typography
-                                  variant="body2"
-                                  color="textSecondary"
-                                >
-                                  {member.role.name}
-                                </Typography>
-                                {(memberDateFrom || memberDateTo) && (
-                                  <Typography
-                                    variant="caption"
-                                    color="textSecondary"
-                                  >
-                                    {memberDateFrom && memberDateFrom + " "}
-                                    {"-"}
-                                    {memberDateTo && " " + memberDateTo}
-                                  </Typography>
-                                )}
+                                {userMember.members.map((member: any) => {
+                                  const memberDateFrom =
+                                    member.date_from &&
+                                    member.date_from !== group.date_from &&
+                                    new Date(member.date_from) < new Date()
+                                      ? new Date(
+                                          member.date_from,
+                                        ).toLocaleDateString(
+                                          languageToLocale(
+                                            i18n.resolvedLanguage,
+                                          ).code,
+                                          {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                          },
+                                        )
+                                      : undefined;
+                                  const memberDateTo =
+                                    member.date_to &&
+                                    (!group.date_to ||
+                                      member.date_to !== group.date_to) &&
+                                    new Date(member.date_to) < new Date()
+                                      ? new Date(
+                                          member.date_to,
+                                        ).toLocaleDateString(
+                                          languageToLocale(
+                                            i18n.resolvedLanguage,
+                                          ).code,
+                                          {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                          },
+                                        )
+                                      : undefined;
+
+                                  return (
+                                    <>
+                                      <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                      >
+                                        {member.role.name}
+                                      </Typography>
+                                      {(memberDateFrom || memberDateTo) && (
+                                        <Typography
+                                          variant="caption"
+                                          color="textSecondary"
+                                        >
+                                          {memberDateFrom &&
+                                            memberDateFrom + " "}
+                                          {"-"}
+                                          {memberDateTo && " " + memberDateTo}
+                                        </Typography>
+                                      )}
+                                    </>
+                                  );
+                                })}
                               </Grid>
                             );
                           })}
-                      </Grid>
-                    </Box>
-                    {i + 1 < row.length && <Divider />}
-                  </>
-                ))}
+                        </Grid>
+                      </Box>
+                      {i + 1 < row.length && <Divider />}
+                    </>
+                  );
+                })}
               </>
             );
           })}
