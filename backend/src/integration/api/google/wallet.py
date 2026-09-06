@@ -116,10 +116,10 @@ class GoogleWalletLoyalty:
             "issuerName": name,
             "reviewStatus": "UNDER_REVIEW",
             "localizedProgramName": {
-                "defaultValue": {"language": "ca", "value": "Carnet de membre"},
+                "defaultValue": {"language": "ca", "value": "Membre"},
                 "translatedValues": [
-                    {"language": "en-GB", "value": "Member card"},
-                    {"language": "sv", "value": "Medlemskort"},
+                    {"language": "en-GB", "value": "Member"},
+                    {"language": "sv", "value": "Medlem"},
                 ],
             },
             "programLogo": {"sourceUri": {"uri": file_logo}},
@@ -179,29 +179,29 @@ class GoogleWalletLoyalty:
                 "start": {"date": self.membership_start},
                 "end": {"date": self.membership_end},
             },
-            "messages": [
-                {
-                    "id": "modules",
-                    "localizedHeader": {
-                        "defaultValue": {"language": "ca", "value": "Membre"},
-                        "translatedValues": [
-                            {"language": "en-GB", "value": "Member"},
-                            {"language": "sv", "value": "Medlem"},
-                        ],
-                    },
-                    "body": ", ".join(
-                        [
-                            NAME_BY_MODULE[membership_module_obj.module]
-                            for membership_module_obj in self.membership_obj.all_modules
-                        ]
-                    ),
-                    "displayInterval": {
-                        "start": {"date": self.membership_start},
-                        "end": {"date": self.membership_end},
-                    },
-                    "messageType": "TEXT",
-                }
-            ],
+            # "messages": [
+            #     {
+            #         "id": "modules",
+            #         "localizedHeader": {
+            #             "defaultValue": {"language": "ca", "value": "Membre"},
+            #             "translatedValues": [
+            #                 {"language": "en-GB", "value": "Member"},
+            #                 {"language": "sv", "value": "Medlem"},
+            #             ],
+            #         },
+            #         "body": ", ".join(
+            #             [
+            #                 NAME_BY_MODULE[membership_module_obj.module]
+            #                 for membership_module_obj in self.membership_obj.all_modules
+            #             ]
+            #         ),
+            #         "displayInterval": {
+            #             "start": {"date": self.membership_start},
+            #             "end": {"date": self.membership_end},
+            #         },
+            #         "messageType": "TEXT",
+            #     }
+            # ],
         }
 
         return new_object

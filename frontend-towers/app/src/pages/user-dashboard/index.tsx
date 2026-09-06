@@ -55,6 +55,7 @@ import IconReplay from "@mui/icons-material/Replay";
 import FormMemberUpdate from "../../components/FormMemberUpdate/FormMemberUpdate";
 import FormMemberCreate from "../../components/FormMemberCreate/FormMemberCreate";
 import PageBase from "../../components/PageBase/PageBase";
+import WalletGoogle from "../../components/WalletGoogle/WalletGoogle";
 import {
   EventType,
   EXPENSE_STATUS_ICON,
@@ -802,6 +803,9 @@ function UserDashboardPage() {
             </>
           )}
         </Box>
+        {user &&
+          user.permission_level >= PermissionLevel.ADMIN &&
+          membership.status === MembershipStatus.ACTIVE && <WalletGoogle />}
         <Divider />
         {programCourses && (
           <>
