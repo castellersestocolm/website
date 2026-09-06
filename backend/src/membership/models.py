@@ -43,7 +43,10 @@ class Membership(StandardModel, Timestamps):
 
     @cached_property
     def is_active(self) -> bool:
-        return self.date_from <= timezone.localdate() <= self.date_to
+        return (
+            self.status == MembershipStatus.ACTIVE
+            and self.date_from <= timezone.localdate() <= self.date_to
+        )
 
     @cached_property
     def date_renewal(self) -> datetime.date:

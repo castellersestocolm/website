@@ -493,7 +493,6 @@ export const apiEventRegistrationCreate = async (
   status: RegistrationStatus = undefined,
   data: any = undefined,
 ) => {
-  console.log("dataaa", data);
   try {
     return await instance.post("/event/registration/", {
       ...(userId

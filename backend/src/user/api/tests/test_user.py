@@ -108,7 +108,7 @@ class TestRegister(NumOperationsMixin, TestCase):
 
     def test_register(self, *args, **kwargs):
         with self.assertNumOperations(
-            num=0, num_selects=27, num_inserts=13, num_updates=1
+            num=0, num_selects=28, num_inserts=13, num_updates=1
         ):
             user_obj = register(
                 firstname="name-2",

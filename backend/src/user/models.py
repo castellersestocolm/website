@@ -17,7 +17,7 @@ from user.enums import (
     UserProductSource,
 )
 from user.managers import FamilyMemberQuerySet, FamilyQuerySet, UserManager
-from user.utils import is_over_minimum_age
+from user.utils import generate_membership_number, is_over_minimum_age
 
 
 def user_picture_filename(instance, filename):
@@ -51,6 +51,10 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
     )
 
     email_verified = models.BooleanField(default=False)
+
+    membership_number = models.CharField(
+        unique=True, max_length=12, default=generate_membership_number
+    )
 
     objects = UserManager()
 

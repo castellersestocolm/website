@@ -9,6 +9,11 @@ CODE_NAME_BY_MODULE = {
     Module.TOWERS: settings.MODULE_TOWERS_CODE_NAME,
 }
 
+NAME_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_NAME,
+    Module.TOWERS: settings.MODULE_TOWERS_NAME,
+}
+
 SHORT_NAME_BY_MODULE = {
     Module.ORG: settings.MODULE_ORG_SHORT_NAME,
     Module.TOWERS: settings.MODULE_TOWERS_SHORT_NAME,
@@ -27,6 +32,31 @@ LOCALE_BY_MODULE = {
 FONT_NAME_BY_MODULE = {
     Module.ORG: settings.MODULE_ORG_FONT_NAME,
     Module.TOWERS: settings.MODULE_TOWERS_FONT_NAME,
+}
+
+PALETTE_BY_MODULE = {
+    Module.ORG: {
+        "primary": {
+            "main": settings.MODULE_ORG_PALETTE_PRIMARY_MAIN,
+            "light": settings.MODULE_ORG_PALETTE_PRIMARY_LIGHT,
+        }
+    },
+    Module.TOWERS: {
+        "primary": {
+            "main": settings.MODULE_TOWERS_PALETTE_PRIMARY_MAIN,
+            "light": settings.MODULE_TOWERS_PALETTE_PRIMARY_LIGHT,
+        }
+    },
+}
+
+FILE_LOGO_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_FILE_LOGO,
+    Module.TOWERS: settings.MODULE_TOWERS_FILE_LOGO,
+}
+
+FILE_HERO_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_FILE_HERO,
+    Module.TOWERS: settings.MODULE_TOWERS_FILE_HERO,
 }
 
 GOOGLE_ENABLED_BY_MODULE = {

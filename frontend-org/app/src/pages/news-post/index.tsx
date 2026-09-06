@@ -44,8 +44,6 @@ function NewsPostPage() {
     });
   }, [setWpPost, setWpMedia, slug, i18n.resolvedLanguage]);
 
-  console.log(wpMedia);
-
   const content = (
     <>
       {wpPost && (

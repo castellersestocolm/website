@@ -8,6 +8,7 @@ from django.template.defaulttags import register
 from django.utils import timezone, translation
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework.exceptions import ValidationError
@@ -350,3 +351,11 @@ def order_event_title(title: str) -> str:
         return title
 
     return title[:15].strip() + "..."
+
+
+@register.filter
+def list_to_str(elements: list[str]) -> str:
+    if len(elements) == 1:
+        return elements[0]
+
+    return ", ".join(elements[:-1]) + " " + _("and") + " " + elements[-1]
