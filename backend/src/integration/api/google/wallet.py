@@ -1,16 +1,26 @@
 import datetime
+import logging
 from uuid import UUID
 
 from django.conf import settings
 from django.db.models import Prefetch
 from django.utils import timezone
-from googleapiclient.discovery import build, Resource
+from google.auth import crypt, jwt
 from google.oauth2.service_account import Credentials
-from google.auth import jwt, crypt
+from googleapiclient.discovery import Resource, build
 
-from comunicat.consts import NAME_BY_MODULE
+from comunicat.consts import (
+    FILE_HERO_BY_MODULE,
+    FILE_LOGO_BY_MODULE,
+    NAME_BY_MODULE,
+    PALETTE_BY_MODULE,
+)
+from comunicat.enums import Module
+from comunicat.template_tags.comunicat_tags import full_url
 from integration.consts import GOOGLE_WALLET_SCOPES
 from membership.enums import MembershipStatus
+
+_log = logging.getLogger(__name__)
 
 
 # https://github.com/google-wallet/rest-samples/blob/main/python/demo_loyalty.py
@@ -19,194 +29,175 @@ class GoogleWalletLoyalty:
     credentials: Credentials
     client: Resource
 
-    issuer_id = "3388000000023199314"
-    class_suffix = "loyalty"
-
-    def __init__(self):
+    def __init__(self, user_id: UUID, module: Module | None):
         self.key_file_path = f"{settings.INTEGRATION_GOOGLE_CRED_DIR}app.json"
         self.auth()
 
+        from membership.models import Membership, MembershipModule
+        from user.models import User
+
+        self.user_obj = (
+            User.objects.filter(id=user_id).with_has_active_membership().first()
+        )
+
+        if not self.user_obj or not self.user_obj.membership_id:
+            return
+
+        self.membership_obj = (
+            Membership.objects.filter(id=self.user_obj.membership_id)
+            .prefetch_related(
+                Prefetch(
+                    "modules",
+                    MembershipModule.objects.filter(
+                        status=MembershipStatus.ACTIVE
+                    ).order_by("module"),
+                    to_attr="all_modules",
+                )
+            )
+            .first()
+        )
+
+        if (
+            not self.membership_obj
+            or self.membership_obj.status != MembershipStatus.ACTIVE
+        ):
+            return
+
+        self.membership_start = timezone.make_aware(
+            datetime.datetime.combine(
+                self.membership_obj.date_from, datetime.time(0, 0, 0)
+            )
+        ).isoformat()
+        self.membership_end = timezone.make_aware(
+            datetime.datetime.combine(
+                self.membership_obj.date_to, datetime.time(23, 59, 59)
+            )
+        ).isoformat()
+
+        modules = [
+            membership_module_obj.module
+            for membership_module_obj in self.membership_obj.all_modules
+        ]
+
+        self.module = (
+            module if module and module in modules else settings.MODULE_DEFAULT
+        )
+
     def auth(self):
         self.credentials = Credentials.from_service_account_file(
-            self.key_file_path,
-            scopes=GOOGLE_WALLET_SCOPES)
+            self.key_file_path, scopes=GOOGLE_WALLET_SCOPES
+        )
 
         self.client = build("walletobjects", "v1", credentials=self.credentials)
 
     # https://developers.google.com/wallet/retail/loyalty-cards/rest/v1/loyaltyclass
     def get_class(self) -> dict:
+
+        name = NAME_BY_MODULE[self.module]
+        file_logo = full_url(
+            path=FILE_LOGO_BY_MODULE[self.module],
+            module=self.module,
+        )
+        file_hero = (
+            full_url(
+                path=FILE_HERO_BY_MODULE[self.module],
+                module=self.module,
+            )
+            if FILE_HERO_BY_MODULE[self.module]
+            else None
+        )
+        palette_colour = PALETTE_BY_MODULE[self.module]["primary"]["light"]
+        url_homepage = full_url(module=self.module)
+        url_calendar = full_url(path="calendar", module=self.module)
+        url_dashboard = full_url(path="user/dashboard", module=self.module)
+
         new_class = {
-            "id": f"{self.issuer_id}.{self.class_suffix}",
+            "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}",
+            "issuerName": name,
             "reviewStatus": "UNDER_REVIEW",
-            "localizedIssuerName": {
-                "defaultValue": {
-                    "language": "ca",
-                    "value": "Les Quatre Barres"
-                },
-                "translatedValues": [
-                    {
-                        "language": "en-GB",
-                        "value": "Les Quatre Barres"
-                    },
-                    {
-                        "language": "sv",
-                        "value": "Les Quatre Barres"
-                    }
-                ],
-            },
             "localizedProgramName": {
-                "defaultValue": {
-                    "language": "ca",
-                    "value": "Carnet de membre"
-                },
+                "defaultValue": {"language": "ca", "value": "Carnet de membre"},
                 "translatedValues": [
-                    {
-                        "language": "en-GB",
-                        "value": "Member card"
-                    },
-                    {
-                        "language": "sv",
-                        "value": "Medlemskort"
-                    }
+                    {"language": "en-GB", "value": "Member card"},
+                    {"language": "sv", "value": "Medlemskort"},
                 ],
             },
-            "programLogo": {
-                "sourceUri": {
-                    "uri": "https://lesquatrebarres.org/logo512.png"
-                }
-            },
-            "hexBackgroundColor": "#fac01a",  # "#f9b900",
-            "heroImage": {
-                "sourceUri": {
-                    "uri": "https://lesquatrebarres.org/static/media/hero8.a8e20234beae6c132070.jpg"
-                }
-            },
+            "programLogo": {"sourceUri": {"uri": file_logo}},
+            "hexBackgroundColor": palette_colour,
+            **({"heroImage": {"sourceUri": {"uri": file_hero}}} if file_hero else {}),
             "homepageUri": {
-                "uri": "https://lesquatrebarres.org",
+                "uri": url_homepage,
                 "localizedDescription": {
-                    "defaultValue": {
-                        "language": "ca",
-                        "value": "Pàgina web"
-                    },
+                    "defaultValue": {"language": "ca", "value": "Pàgina web"},
                     "translatedValues": [
-                        {
-                            "language": "en-GB",
-                            "value": "Website"
-                        },
-                        {
-                            "language": "sv",
-                            "value": "Hemsida"
-                        }
+                        {"language": "en-GB", "value": "Website"},
+                        {"language": "sv", "value": "Hemsida"},
                     ],
                 },
             },
             "linksModuleData": {
                 "uris": [
                     {
-                        "uri": "https://lesquatrebarres.org/user/dashboard",
+                        "uri": url_dashboard,
                         "localizedDescription": {
                             "defaultValue": {
                                 "language": "ca",
-                                "value": "Panell d'usuari"
+                                "value": "Panell d'usuari",
                             },
                             "translatedValues": [
-                                {
-                                    "language": "en-GB",
-                                    "value": "Dashboard"
-                                },
-                                {
-                                    "language": "sv",
-                                    "value": "Användarpanel"
-                                }
+                                {"language": "en-GB", "value": "Dashboard"},
+                                {"language": "sv", "value": "Användarpanel"},
                             ],
                         },
                     },
                     {
-                        "uri": "https://lesquatrebarres.org/calendar",
+                        "uri": url_calendar,
                         "localizedDescription": {
-                            "defaultValue": {
-                                "language": "ca",
-                                "value": "Calendari"
-                            },
+                            "defaultValue": {"language": "ca", "value": "Calendari"},
                             "translatedValues": [
-                                {
-                                    "language": "en-GB",
-                                    "value": "Calendar"
-                                },
-                                {
-                                    "language": "sv",
-                                    "value": "Kalender"
-                                }
+                                {"language": "en-GB", "value": "Calendar"},
+                                {"language": "sv", "value": "Kalender"},
                             ],
                         },
-                    }
+                    },
                 ]
             },
         }
 
         return new_class
 
-    def get_object(self, user_id: UUID) -> dict | None:
-        from user.models import User
-        from membership.models import Membership
-        from membership.models import MembershipModule
-
-        user_obj = User.objects.filter(id=user_id).with_has_active_membership().first()
-
-        if not user_obj or not user_obj.membership_id:
-            return None
-
-        membership_obj = Membership.objects.filter(id=user_obj.membership_id).prefetch_related(
-            Prefetch(
-                "modules",
-                MembershipModule.objects.filter(status=MembershipStatus.ACTIVE).order_by("module"),
-                to_attr="all_modules"
-            )
-        ).first()
-
-        if not membership_obj or membership_obj.status != MembershipStatus.ACTIVE:
-            return None
-
-        membership_start = timezone.make_aware(datetime.datetime.combine(membership_obj.date_from, datetime.time(0, 0, 0))).isoformat()
-        membership_end = timezone.make_aware(datetime.datetime.combine(membership_obj.date_to, datetime.time(23, 59, 59))).isoformat()
+    def get_object(self) -> dict | None:
 
         new_object = {
-            'id': f'{self.issuer_id}.loyalty.{user_obj.membership_number}',
-            'classId': f'{self.issuer_id}.{self.class_suffix}',
-            'state': 'ACTIVE',  # EXPIRED
-            'barcode': {
-                'type': 'QR_CODE',
-                'value': user_obj.membership_number
+            "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}.{self.user_obj.membership_number}",
+            "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}",
+            "state": "ACTIVE" if self.membership_obj.is_active else "EXPIRED",
+            "barcode": {"type": "QR_CODE", "value": self.user_obj.membership_number},
+            "accountId": self.user_obj.membership_number,
+            "accountName": self.user_obj.name,
+            "validTimeInterval": {
+                "start": {"date": self.membership_start},
+                "end": {"date": self.membership_end},
             },
-            'accountId': user_obj.membership_number,
-            'accountName': user_obj.name,
-            "validTimeInterval":{
-                        "start": {"date": membership_start},
-                        "end": {"date": membership_end},
-                    },
             "messages": [
                 {
                     "id": "modules",
                     "localizedHeader": {
-                        "defaultValue": {
-                            "language": "ca",
-                            "value": "Membre"
-                        },
+                        "defaultValue": {"language": "ca", "value": "Membre"},
                         "translatedValues": [
-                            {
-                                "language": "en-GB",
-                                "value": "Member"
-                            },
-                            {
-                                "language": "sv",
-                                "value": "Medlem"
-                            }
+                            {"language": "en-GB", "value": "Member"},
+                            {"language": "sv", "value": "Medlem"},
                         ],
                     },
-                    "body": ", ".join([NAME_BY_MODULE[membership_module_obj.module] for membership_module_obj in membership_obj.all_modules]),
+                    "body": ", ".join(
+                        [
+                            NAME_BY_MODULE[membership_module_obj.module]
+                            for membership_module_obj in self.membership_obj.all_modules
+                        ]
+                    ),
                     "displayInterval": {
-                        "start": {"date": membership_start},
-                        "end": {"date": membership_end},
+                        "start": {"date": self.membership_start},
+                        "end": {"date": self.membership_end},
                     },
                     "messageType": "TEXT",
                 }
@@ -215,26 +206,34 @@ class GoogleWalletLoyalty:
 
         return new_object
 
-    def get_url(self, user_id: UUID) -> str:
+    def get_url(self) -> str:
         new_class = self.get_class()
-        new_object = self.get_object(user_id=user_id)
+        new_object = self.get_object()
 
-        # INTEGRATION_GOOGLE_EMAIL
-        EMAIL = "les-quatre-barres@website-450311.iam.gserviceaccount.com"
+        origin_url = full_url(module=self.module)
 
         claims = {
-            'iss': EMAIL,
-            'aud': 'google',
-            'origins': ['www.example.com'],
-            'typ': 'savetowallet',
-            'payload': {
-                # The listed classes and objects will be created
-                'loyaltyClasses': [new_class],
-                'loyaltyObjects': [new_object]
+            "iss": settings.INTEGRATION_GOOGLE_EMAIL,
+            "aud": "google",
+            "origins": [origin_url],
+            "typ": "savetowallet",
+            "payload": {
+                "loyaltyClasses": [new_class],
+                "loyaltyObjects": [new_object],
             },
         }
 
         signer = crypt.RSASigner.from_service_account_file(self.key_file_path)
-        token = jwt.encode(signer, claims).decode('utf-8')
+        token = jwt.encode(signer, claims).decode("utf-8")
 
         return f"https://pay.google.com/gp/v/save/{token}"
+
+
+def get_pass_loyalty_url(user_id: UUID, module: Module) -> str | None:
+    try:
+        google_wallet_loyalty = GoogleWalletLoyalty(user_id=user_id, module=module)
+    except Exception as e:
+        _log.exception(e)
+        return None
+
+    return google_wallet_loyalty.get_url()

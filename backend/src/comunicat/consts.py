@@ -34,6 +34,31 @@ FONT_NAME_BY_MODULE = {
     Module.TOWERS: settings.MODULE_TOWERS_FONT_NAME,
 }
 
+PALETTE_BY_MODULE = {
+    Module.ORG: {
+        "primary": {
+            "main": settings.MODULE_ORG_PALETTE_PRIMARY_MAIN,
+            "light": settings.MODULE_ORG_PALETTE_PRIMARY_LIGHT,
+        }
+    },
+    Module.TOWERS: {
+        "primary": {
+            "main": settings.MODULE_TOWERS_PALETTE_PRIMARY_MAIN,
+            "light": settings.MODULE_TOWERS_PALETTE_PRIMARY_LIGHT,
+        }
+    },
+}
+
+FILE_LOGO_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_FILE_LOGO,
+    Module.TOWERS: settings.MODULE_TOWERS_FILE_LOGO,
+}
+
+FILE_HERO_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_FILE_HERO,
+    Module.TOWERS: settings.MODULE_TOWERS_FILE_HERO,
+}
+
 GOOGLE_ENABLED_BY_MODULE = {
     Module.ORG: {
         "calendar": settings.MODULE_ORG_GOOGLE_CALENDAR_ENABLED,

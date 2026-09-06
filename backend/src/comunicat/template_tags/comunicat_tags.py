@@ -8,6 +8,7 @@ from django.template.defaulttags import register
 from django.utils import timezone, translation
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework.exceptions import ValidationError
@@ -29,8 +30,6 @@ from order.models import Order, OrderProduct
 from payment.consts import PAYMENT_METHOD_FIELD_LABELS, PAYMENT_METHOD_FIELDS
 from payment.models import EntityPaymentMethod
 from user.models import User
-
-from django.utils.translation import gettext_lazy as _
 
 
 @register.simple_tag

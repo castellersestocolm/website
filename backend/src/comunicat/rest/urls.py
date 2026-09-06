@@ -12,6 +12,7 @@ from comunicat.rest.views import (
     document,
     event,
     history,
+    integration,
     legal,
     media,
     membership,
@@ -67,6 +68,11 @@ router.register(
 router.register("contact/message", notify.ContactMessageAPI, "contact_message")
 router.register("notify/newsletter", notify.NewsletterAPI, "notify_newsletter")
 router.register("history/event", history.HistoryEventAPI, "history_event")
+router.register(
+    "integration/google/wallet",
+    integration.IntegrationGoogleWalletAPI,
+    "integration_google_wallet",
+)
 
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
 router.register("admin/order", admin.AdminOrderAPI, "admin_order")

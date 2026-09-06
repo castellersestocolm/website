@@ -15,10 +15,8 @@ import PageAdmin from "../../components/PageAdmin/PageAdmin";
 import { useParams } from "react-router-dom";
 
 function AdminUserIdPage() {
-  const [t, i18n] = useTranslation("common");
+  const { t } = useTranslation("common");
   const { id } = useParams();
-
-  console.log("idddd", id);
 
   const { user } = useAppContext();
 
