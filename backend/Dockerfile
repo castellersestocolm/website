@@ -2,7 +2,7 @@
 ######################################
 # Builder step #######################
 ######################################
-FROM python:3.12.8-slim-bullseye AS builder
+FROM python:3.12.8-slim-bookworm AS builder
 
 ARG BUILD_TARGET=live
 
@@ -17,12 +17,12 @@ ENV PATH="/backend/venv/bin:$PATH"
 # Pinned versions
 ENV PIP_PIP_VERSION 25.0.1
 ENV PIP_SETUPTOOLS_VERSION 75.8.0
-ENV APT_LIBMEMCACHED_DEV_VERSION 1.0.18-4.2
-ENV APT_CMAKE_VERSION 3.18.4-2+deb11u1
-ENV APT_GCC_VERSION 4:10.2.1-1
+ENV APT_LIBMEMCACHED_DEV_VERSION 1.1.4-1
+ENV APT_CMAKE_VERSION 3.25.1-1
+ENV APT_GCC_VERSION 4:12.2.0-*
 ENV APT_BUILD_ESSENTIAL 12.9*
-ENV APT_DEFAULT_LIB_MYSQL_CLIENT_DEV 1.0.7*
-ENV APT_PKG_CONFIG 0.29.2-*
+ENV APT_DEFAULT_LIB_MYSQL_CLIENT_DEV 1.1.0*
+ENV APT_PKG_CONFIG 1.8.1-*
 
 # Install sys dependencies
 RUN set -x && apt-get update && apt-get install -y --no-install-recommends \
@@ -54,7 +54,7 @@ RUN set -x && \
 ######################################
 # Runtime step #######################
 ######################################
-FROM python:3.12.8-slim-bullseye AS runtime
+FROM python:3.12.8-slim-bookworm AS runtime
 
 # Extra Python environment variables
 ENV XDG_CACHE_HOME /tmp/pip/.cache
@@ -69,16 +69,16 @@ ENV APT_GETTEXT_VERSION 0.21-*
 ENV APT_MAKE_VERSION 4.3-*
 ENV APT_WAIT_FOR_IT_VERSION 0.0~git20180723-1
 ENV APT_MIME_SUPPORT 3.*
-ENV APT_LIB_MAGIC_DEV 1:5.39-*
+ENV APT_LIB_MAGIC_DEV 1:5.44-*
 ENV APT_WATCHMAN 4.9.0*
-ENV APT_GDAL_VERSION 3.2.2*
+ENV APT_GDAL_VERSION 3.6.2*
 ENV APT_LIB_MYSQL_CLIENT_DEV 8.0.41-*
 ENV APT_BUILD_ESSENTIAL 12.9*
-ENV APT_DEFAULT_LIB_MYSQL_CLIENT_DEV 1.0.7*
-ENV APT_LIBPANGO_VERSION 1.46.2-3
-ENV APT_LIBPANGOFT2_VERSION 1.46.2-3
-ENV APT_PKG_CONFIG 0.29.2-*
-ENV APT_WGET 1.21-*
+ENV APT_DEFAULT_LIB_MYSQL_CLIENT_DEV 1.1.0*
+ENV APT_LIBPANGO_VERSION 1.50.12*
+ENV APT_LIBPANGOFT2_VERSION 1.50.12*
+ENV APT_PKG_CONFIG 1.8.1-*
+ENV APT_WGET 1.21.3-*
 
 # Django settings
 ENV DJANGO_SETTINGS_MODULE comunicat.settings
