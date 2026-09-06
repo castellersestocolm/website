@@ -138,7 +138,7 @@ RUN echo "${CERT_SWISH_VERIFY}" > /backend/cert/se_swish/verify.pem
 
 RUN mkdir /backend/cred && mkdir /backend/cred/google && chown -R backend:backend /backend/cred
 
-RUN echo "${CRED_GOOGLE_APP}" > /backend/cred/google/app.json
+RUN echo "${CRED_GOOGLE_APP}" | base64 -d > /backend/cred/google/app.json
 
 WORKDIR /backend/src
 
