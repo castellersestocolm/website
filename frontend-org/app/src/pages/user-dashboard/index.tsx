@@ -71,6 +71,7 @@ import {
   FamilyMemberRequestStatus,
   OrderType,
   Module,
+  PermissionLevel,
 } from "../../enums";
 import { capitalizeFirstLetter, lowerFirstLetter } from "../../utils/string";
 import IconDowload from "@mui/icons-material/Download";
@@ -88,6 +89,7 @@ import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
 import { dateToString, datetimeToString } from "../../utils/datetime";
+import WalletGoogle from "../../components/WalletGoogle/WalletGoogle";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
@@ -706,6 +708,9 @@ function UserDashboardPage() {
             </>
           )}
         </Box>
+        {user &&
+          user.permission_level >= PermissionLevel.ADMIN &&
+          membership.status === MembershipStatus.ACTIVE && <WalletGoogle />}
         <Divider />
         {programCourses && (
           <>

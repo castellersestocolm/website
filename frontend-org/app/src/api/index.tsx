@@ -913,3 +913,13 @@ export const apiAdminEventTokenGet = async (
     throw error;
   }
 };
+
+export const apiIntegrationGoogleWalletPassLoyaltyGet = async () => {
+  try {
+    return await instance.get("integration/google/wallet/pass/loyalty/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
