@@ -89,6 +89,9 @@ ARG CERT_SWISH_CERT
 ARG CERT_SWISH_KEY
 ARG CERT_SWISH_VERIFY
 
+# Credentials
+ARG CRED_GOOGLE_APP
+
 # Setup app user and directory
 RUN set -x && groupadd -g 8000 backend && useradd -r -u 8000 -g backend backend -d /backend && \
     mkdir -p /backend/media && mkdir -p /backend/internal_media && chown -R backend:backend /backend
@@ -132,6 +135,10 @@ RUN mkdir /backend/cert && mkdir /backend/cert/se_swish && chown -R backend:back
 RUN echo "${CERT_SWISH_CERT}" > /backend/cert/se_swish/cert.pem
 RUN echo "${CERT_SWISH_KEY}" > /backend/cert/se_swish/key.pem
 RUN echo "${CERT_SWISH_VERIFY}" > /backend/cert/se_swish/verify.pem
+
+RUN mkdir /backend/cred && mkdir /backend/cred/google && chown -R backend:backend /backend/cred
+
+RUN echo "${CRED_GOOGLE_APP}" > /backend/cred/google/app.json
 
 WORKDIR /backend/src
 

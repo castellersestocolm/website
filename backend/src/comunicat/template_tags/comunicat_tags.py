@@ -30,6 +30,8 @@ from payment.consts import PAYMENT_METHOD_FIELD_LABELS, PAYMENT_METHOD_FIELDS
 from payment.models import EntityPaymentMethod
 from user.models import User
 
+from django.utils.translation import gettext_lazy as _
+
 
 @register.simple_tag
 def full_url(path: str = "", module: Module | None = None):
@@ -350,3 +352,11 @@ def order_event_title(title: str) -> str:
         return title
 
     return title[:15].strip() + "..."
+
+
+@register.filter
+def list_to_str(elements: list[str]) -> str:
+    if len(elements) == 1:
+        return elements[0]
+
+    return ", ".join(elements[:-1]) + " " + _("and") + " " + elements[-1]

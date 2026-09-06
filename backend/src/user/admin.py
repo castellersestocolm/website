@@ -192,6 +192,7 @@ class UserAdmin(admin.ModelAdmin):
     )
     list_filter = ("email_verified", "is_active", "consent_pictures")
     readonly_fields = (
+        "membership_number",
         "groups",
         "last_login",
         "created_at",
@@ -229,6 +230,7 @@ class UserAdmin(admin.ModelAdmin):
                     "lastname",
                     "phone",
                     "birthday",
+                    "membership_number",
                     "entity_link",
                     "family_link",
                     "preferred_language",

@@ -663,6 +663,13 @@ PAYMENT_PROVIDER_SE_SWISH_ENVIRONMENT = os.getenv(
 )
 PAYMENT_PROVIDER_SE_SWISH_CERT_DIR = os.path.join(ROOT_DIR, "cert/se_swish/")
 
+# Google
+
+INTEGRATION_GOOGLE_CRED_DIR = os.path.join(ROOT_DIR, "cred/google/")
+INTEGRATION_GOOGLE_EMAIL = os.getenv(
+    "INTEGRATION_GOOGLE_EMAIL"
+)
+
 # Pinyator
 
 PINYATOR_ENABLED = os.getenv("PINYATOR_ENABLED", "true").lower() == "true"

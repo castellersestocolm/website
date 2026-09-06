@@ -9,6 +9,11 @@ CODE_NAME_BY_MODULE = {
     Module.TOWERS: settings.MODULE_TOWERS_CODE_NAME,
 }
 
+NAME_BY_MODULE = {
+    Module.ORG: settings.MODULE_ORG_NAME,
+    Module.TOWERS: settings.MODULE_TOWERS_NAME,
+}
+
 SHORT_NAME_BY_MODULE = {
     Module.ORG: settings.MODULE_ORG_SHORT_NAME,
     Module.TOWERS: settings.MODULE_TOWERS_SHORT_NAME,

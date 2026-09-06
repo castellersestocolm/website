@@ -32,6 +32,7 @@ jobs:
         cert_swish_cert: "${{ secrets.CERT_SWISH_CERT }}"
         cert_swish_key: "${{ secrets.CERT_SWISH_KEY }}"
         cert_swish_verify: "${{ secrets.CERT_SWISH_VERIFY }}"
+        cred_google_app: "${{ secrets.CRED_GOOGLE_APP }}"
 
   build-frontend-org:
     runs-on: ubuntu-latest

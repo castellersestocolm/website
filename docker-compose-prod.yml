@@ -10,6 +10,7 @@ services:
         - CERT_SWISH_CERT=${CERT_SWISH_CERT}
         - CERT_SWISH_KEY=${CERT_SWISH_KEY}
         - CERT_SWISH_VERIFY=${CERT_SWISH_VERIFY}
+        - CRED_GOOGLE_APP=${CRED_GOOGLE_APP}
     deploy:
       replicas: 1
       update_config:
@@ -58,6 +59,7 @@ services:
         - CERT_SWISH_CERT=${CERT_SWISH_CERT}
         - CERT_SWISH_KEY=${CERT_SWISH_KEY}
         - CERT_SWISH_VERIFY=${CERT_SWISH_VERIFY}
+        - CRED_GOOGLE_APP=${CRED_GOOGLE_APP}
     deploy:
       replicas: 1
       update_config:

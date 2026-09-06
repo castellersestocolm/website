@@ -66,6 +66,9 @@ inputs:
   cert_swish_verify:
     description: The Swish certificate verify
     required: false
+  cred_google_app:
+    description: The Google application JSON credentials
+    required: false
 
 runs:
   using: "composite"
@@ -100,6 +103,7 @@ runs:
         --build-arg CERT_SWISH_CERT="${{ inputs.cert_swish_cert }}" \
         --build-arg CERT_SWISH_KEY="${{ inputs.cert_swish_key }}" \
         --build-arg CERT_SWISH_VERIFY="${{ inputs.cert_swish_verify }}" \
+        --build-arg CRED_GOOGLE_APP="${{ inputs.cred_google_app }}" \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ inputs.build_target }} \
