@@ -235,7 +235,7 @@ function CalendarEventPage() {
             </Box>
           )}
 
-          {event.require_signup && (
+          {event.require_signup && event.require_approve && (
             <Box mt={token ? 0 : 5}>
               <Box mb={3}>
                 <Typography variant="h4" fontWeight="700" align="center">
