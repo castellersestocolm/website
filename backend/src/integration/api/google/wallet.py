@@ -8,6 +8,7 @@ from django.utils import timezone, translation
 from google.auth import crypt, jwt
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import Resource, build
+from googleapiclient.errors import HttpError
 
 from comunicat.consts import (
     FILE_HERO_BY_MODULE,
@@ -185,6 +186,16 @@ class GoogleWalletLoyalty:
         new_class = self.get_class()
         new_object = self.get_object()
 
+        # try:
+        #     self.client.loyaltyclass().get(resourceId=new_class["id"]).execute()
+        # except HttpError as e:
+        #     _log.exception(e)
+        # else:
+        #     try:
+        #         self.client.loyaltyclass().insert(body=new_class).execute()
+        #     except HttpError as e:
+        #         _log.exception(e)
+
         origin_url = full_url(module=self.module)
 
         claims = {
@@ -229,8 +240,8 @@ class GoogleWalletEvent:
 
         self.event_obj = self.registration_obj.event
 
-        self.event_start = self.event_obj.time_from.isoformat()
-        self.event_end = self.event_obj.time_to.isoformat()
+        self.event_start = timezone.localtime(self.event_obj.time_from).isoformat()
+        self.event_end = timezone.localtime(self.event_obj.time_to).isoformat()
 
         self.registration_key = str(self.registration_obj.id).replace("-", "").lower()
         self.event_key = str(self.event_obj.id).replace("-", "").lower()
@@ -251,6 +262,10 @@ class GoogleWalletEvent:
         palette_colour = PALETTE_BY_MODULE[self.module]["primary"]["light"]
         file_logo = full_url(
             path=FILE_LOGO_BY_MODULE[self.module],
+            module=self.module,
+        )
+        file_hero = self.event_obj.picture and full_url(
+            path=self.event_obj.picture.url,
             module=self.module,
         )
 
@@ -280,8 +295,8 @@ class GoogleWalletEvent:
             "multipleDevicesAndHoldersAllowedStatus": "ONE_USER_ALL_DEVICES",
             "hexBackgroundColor": palette_colour,
             "dateTime": {
-                "start": {"date": self.event_start},
-                "end": {"date": self.event_end},
+                "start": self.event_start,
+                "end": self.event_end,
             },
             **(
                 {
@@ -295,11 +310,7 @@ class GoogleWalletEvent:
                 if self.event_obj.location
                 else {}
             ),
-            **(
-                {"heroImage": self.event_obj.picture.url}
-                if self.event_obj.picture
-                else {}
-            ),
+            **({"heroImage": file_hero} if file_hero else {}),
         }
 
         return new_class
@@ -342,6 +353,16 @@ class GoogleWalletEvent:
     def get_url(self) -> str:
         new_class = self.get_class()
         new_object = self.get_object()
+
+        # try:
+        #     self.client.eventticketclass().get(resourceId=new_class["id"]).execute()
+        # except HttpError as e:
+        #     pass
+        # else:
+        #     try:
+        #         self.client.eventticketclass().insert(body=new_class).execute()
+        #     except HttpError as e:
+        #         _log.exception(e)
 
         origin_url = full_url(module=self.module)
 
