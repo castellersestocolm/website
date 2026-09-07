@@ -214,7 +214,7 @@ class GoogleWalletEvent:
         self.key_file_path = f"{settings.INTEGRATION_GOOGLE_CRED_DIR}app.json"
         self.auth()
 
-        from event.models import Event, Registration
+        from event.models import Registration
 
         self.registration_obj = (
             Registration.objects.filter(id=registration_id)
