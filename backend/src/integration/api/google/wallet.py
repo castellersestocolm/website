@@ -371,8 +371,8 @@ class GoogleWalletEvent:
             "origins": [origin_url],
             "typ": "savetowallet",
             "payload": {
-                "loyaltyClasses": [new_class],
-                "loyaltyObjects": [new_object],
+                "eventTicketClasses": [new_class],
+                "eventTicketObjects": [new_object],
             },
         }
 
