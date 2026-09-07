@@ -2,7 +2,7 @@
 ######################################
 # Builder step #######################
 ######################################
-FROM nginx:1.31.5-alpinee as build
+FROM nginx:1.31.5-alpine as build
 
 WORKDIR /pinyator
 
