@@ -259,6 +259,11 @@ class GoogleWalletEvent:
         name = NAME_BY_MODULE[self.module]
         locale = translation.get_language()
         palette_colour = PALETTE_BY_MODULE[self.module]["primary"]["light"]
+        url_homepage = full_url(module=self.module)
+        url_event = full_url(
+            path=f"calendar/event/{timezone.localdate(self.event_obj.time_from).strftime('%Y/%m/%d')}/{self.event_obj.code}",
+            module=self.module,
+        )
         file_logo = full_url(
             path=FILE_LOGO_BY_MODULE[self.module],
             module=self.module,
@@ -267,29 +272,57 @@ class GoogleWalletEvent:
             path=self.event_obj.picture.url,
             module=self.module,
         )
+        event_name = {
+            "defaultValue": {
+                "language": LANGUAGE_TO_GOOGLE_LANGUAGE.get(
+                    locale, LANGUAGE_TO_GOOGLE_LANGUAGE[settings.LANGUAGE_CODE]
+                ),
+                "value": self.event_obj.title_locale,
+            },
+            "translatedValues": [
+                {
+                    "language": LANGUAGE_TO_GOOGLE_LANGUAGE[current_locale],
+                    "value": current_title,
+                }
+                for current_locale, current_title in self.event_obj.title.items()
+                if current_locale != locale
+                and current_locale in LANGUAGE_TO_GOOGLE_LANGUAGE
+            ],
+        }
 
         new_class = {
             "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.event.{self.event_key}",
             "eventId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.event.{self.event_key}",
-            "eventName": {
-                "defaultValue": {
-                    "language": LANGUAGE_TO_GOOGLE_LANGUAGE.get(
-                        locale, LANGUAGE_TO_GOOGLE_LANGUAGE[settings.LANGUAGE_CODE]
-                    ),
-                    "value": self.event_obj.title_locale,
-                },
-                "translatedValues": [
-                    {
-                        "language": LANGUAGE_TO_GOOGLE_LANGUAGE[current_locale],
-                        "value": current_title,
-                    }
-                    for current_locale, current_title in self.event_obj.title.items()
-                    if current_locale != locale
-                    and current_locale in LANGUAGE_TO_GOOGLE_LANGUAGE
-                ],
-            },
+            "eventName": event_name,
             "issuerName": name,
             "logo": {"sourceUri": {"uri": file_logo}},
+            "homepageUri": {
+                "uri": url_homepage,
+                "localizedDescription": {
+                    "defaultValue": {"language": "ca", "value": "Pàgina web"},
+                    "translatedValues": [
+                        {"language": "en-GB", "value": "Website"},
+                        {"language": "sv", "value": "Hemsida"},
+                    ],
+                },
+            },
+            "appLinkData": {
+                "webAppLinkInfo": {
+                    "appTarget": {
+                        "targetUri": {
+                            "uri": url_event,
+                            "localizedDescription": event_name,
+                        },
+                    }
+                },
+                "displayText": {
+                    "defaultValue": {"language": "ca", "value": "Més informació"},
+                    "translatedValues": [
+                        {"language": "en-GB", "value": "More information"},
+                        {"language": "sv", "value": "Mer information"},
+                    ],
+                },
+            },
             "reviewStatus": "UNDER_REVIEW",
             "multipleDevicesAndHoldersAllowedStatus": "ONE_USER_ALL_DEVICES",
             "hexBackgroundColor": palette_colour,
@@ -297,6 +330,32 @@ class GoogleWalletEvent:
                 "start": self.event_start,
                 "end": self.event_end,
             },
+            **(
+                {
+                    "venue": {
+                        "name": {
+                            "defaultValue": {
+                                "language": LANGUAGE_TO_GOOGLE_LANGUAGE[
+                                    settings.LANGUAGE_CODE
+                                ],
+                                "value": self.event_obj.location.name,
+                            },
+                        },
+                        "address": {
+                            "defaultValue": {
+                                "language": LANGUAGE_TO_GOOGLE_LANGUAGE[
+                                    settings.LANGUAGE_CODE
+                                ],
+                                "value": self.event_obj.location.address,
+                            },
+                        },
+                    }
+                }
+                if self.event_obj.location
+                and self.event_obj.location.name
+                and self.event_obj.location.address
+                else {}
+            ),
             **(
                 {
                     "merchantLocations": [
