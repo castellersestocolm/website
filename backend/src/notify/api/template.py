@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
+import integration.api.google.wallet
 import membership.utils
 import payment.api.entity
 import user.api.family
@@ -15,6 +16,7 @@ from document.enums import DocumentStatus
 from document.models import EmailAttachment
 from event.enums import EventType
 from event.models import EventModule, Registration
+from legal.enums import PermissionLevel
 from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipModule, MembershipUser
 from notify.consts import (
@@ -78,9 +80,17 @@ def get_user_email_render(  # noqa: C901
     locale: str | None = None,
 ) -> EmailRender | None:
     if user_id:
-        user_obj = User.objects.get(id=user_id)
+        user_obj = (
+            User.objects.filter(id=user_id)
+            .with_permission_level(modules=[module])
+            .first()
+        )
     elif email:
-        user_obj = User.objects.filter_by_email(email=email).first()
+        user_obj = (
+            User.objects.filter_by_email(email=email)
+            .with_permission_level(modules=[module])
+            .first()
+        )
     else:
         return None
 
@@ -190,7 +200,17 @@ def get_user_email_render(  # noqa: C901
             else:
                 user_ids = []
 
-            if email_type in (
+            if email_type == EmailType.MEMBERSHIP_PAID:
+                if membership_obj and membership_obj.status == MembershipStatus.ACTIVE:
+                    if user_obj.permission_level >= PermissionLevel.ADMIN:
+                        google_wallet_url = (
+                            integration.api.google.wallet.get_pass_loyalty_url(
+                                user_id=user_obj.id, module=module
+                            )
+                        )
+
+                        context_full["google_wallet_url"] = google_wallet_url
+            elif email_type in (
                 EmailType.MEMBERSHIP_RENEW,
                 EmailType.MEMBERSHIP_EXPIRED,
             ):
