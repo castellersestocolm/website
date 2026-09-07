@@ -22,6 +22,7 @@ from activity.enums import ProgramCourseRegistrationStatus
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
+from comunicat.utils.qr import generate_qr_code_base_64
 from event.models import Event, Registration
 from membership.enums import MembershipStatus
 from membership.models import Membership
@@ -367,3 +368,10 @@ def list_to_str(elements: list[str]) -> str:
         return elements[0]
 
     return ", ".join(elements[:-1]) + " " + _("and") + " " + elements[-1]
+
+
+@register.filter
+def qr_code_src(text: str) -> str:
+    img_b64 = generate_qr_code_base_64(text=text)
+
+    return f"data:image/png;base64,{img_b64}"

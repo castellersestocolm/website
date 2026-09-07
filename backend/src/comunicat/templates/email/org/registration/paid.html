@@ -27,12 +27,22 @@
       <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ registration_objs|registrations_amount|format_money_2f }}</strong></p></td>
   </tr>
 </table>
+{% if registration_objs %}
+    <table style="margin-bottom: 20px;">
+        <tr>
+            <td align="center">
+                <h5 style="margin-bottom:15px;">{% trans "Entrance ticket" %}</h5>
+                <img style="border-radius: 4px;border: 1px solid #d4d4d4;width: 256px;" src="{{ registration_objs.0.id|qr_code_src }}" />
+            </td>
+        </tr>
+    </table>
+{% endif %}
 {% if google_wallet_url %}
     <table style="margin-bottom: 20px;">
         <tr>
             <td align="center">
                 <a href="{{ google_wallet_url }}">
-                    <img style="height: 50px;" src="{% full_static "org/img/google/wallet/wallet.png" %}" alt="Google Wallet"/>
+                    <img style="height: 42px;" src="{% full_static "org/img/google/wallet/wallet.png" %}" alt="Google Wallet"/>
                 </a>
             </td>
         </tr>
