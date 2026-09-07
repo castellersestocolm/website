@@ -249,6 +249,10 @@ class GoogleWalletEvent:
         name = NAME_BY_MODULE[self.module]
         locale = translation.get_language()
         palette_colour = PALETTE_BY_MODULE[self.module]["primary"]["light"]
+        file_logo = full_url(
+            path=FILE_LOGO_BY_MODULE[self.module],
+            module=self.module,
+        )
 
         new_class = {
             "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.event.{self.event_key}",
@@ -271,6 +275,7 @@ class GoogleWalletEvent:
                 ],
             },
             "issuerName": name,
+            "logo": {"sourceUri": {"uri": file_logo}},
             "reviewStatus": "UNDER_REVIEW",
             "multipleDevicesAndHoldersAllowedStatus": "ONE_USER_ALL_DEVICES",
             "hexBackgroundColor": palette_colour,
