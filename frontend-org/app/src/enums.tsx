@@ -207,3 +207,9 @@ export enum PermissionLevel {
   ADMIN = 30,
   SUPERADMIN = 40,
 }
+
+export enum GoogleLocaleCountry {
+  en = "enGB",
+  ca = "ca",
+  sv = "se",
+}

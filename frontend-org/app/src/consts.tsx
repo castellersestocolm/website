@@ -17,3 +17,9 @@ export const PAYMENT_TRANSFER_PLUSGIRO = "97 09 16-3";
 export const PAYMENT_TRANSFER_BIC = "NDEASESS";
 export const PAYMENT_TRANSFER_IBAN = "SE84 9500 0099 6042 0970 9163";
 export const PAYMENT_TRANSFER_OWNER = "FÖRENINGEN LES QUATRE BARRES";
+
+export const LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY = {
+  en: "enGB",
+  ca: "ca",
+  sv: "se",
+};

@@ -709,7 +709,8 @@ function UserDashboardPage() {
           )}
         </Box>
         {user &&
-          user.permission_level >= PermissionLevel.ADMIN && membership &&
+          user.permission_level >= PermissionLevel.ADMIN &&
+          membership &&
           membership.status === MembershipStatus.ACTIVE && <WalletGoogle />}
         <Divider />
         {programCourses && (
