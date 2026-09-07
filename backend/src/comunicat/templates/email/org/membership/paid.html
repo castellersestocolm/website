@@ -32,4 +32,15 @@
       <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ membership_obj|membership_amount|format_money_2f }}</strong></p></td>
   </tr>
 </table>
+{% if google_wallet_url %}
+    <table style="margin-bottom: 20px;">
+        <tr>
+            <td align="center">
+                <a href="{{ google_wallet_url }}">
+                    <img style="height: 50px;" src="{% full_static "org/img/google/wallet/wallet.png" %}" alt="Google Wallet"/>
+                </a>
+            </td>
+        </tr>
+    </table>
+{% endif %}
 {% endblock %}
