@@ -14,7 +14,7 @@ from activity.models import ProgramCourse, ProgramCourseRegistration
 from comunicat.enums import Module
 from document.enums import DocumentStatus
 from document.models import EmailAttachment
-from event.enums import EventType
+from event.enums import EventType, RegistrationStatus
 from event.models import EventModule, Registration
 from legal.enums import PermissionLevel
 from membership.enums import MembershipStatus
@@ -202,7 +202,7 @@ def get_user_email_render(  # noqa: C901
 
             if email_type == EmailType.MEMBERSHIP_PAID:
                 if membership_obj and membership_obj.status == MembershipStatus.ACTIVE:
-                    if user_obj.permission_level >= PermissionLevel.ADMIN:
+                    if user_obj and user_obj.permission_level >= PermissionLevel.ADMIN:
                         google_wallet_url = (
                             integration.api.google.wallet.get_pass_loyalty_url(
                                 user_id=user_obj.id, module=module
@@ -511,6 +511,29 @@ def get_registration_email_renders(
                 "entity_obj": entity_obj,
                 "user_obj": user_obj,
             }
+
+            if email_type == EmailType.REGISTRATION_PAID:
+                if user_obj:
+                    user_obj = (
+                        User.objects.filter(id=user_obj.id)
+                        .with_permission_level(modules=[module])
+                        .first()
+                    )
+                    if (
+                        registration_obj
+                        and registration_obj.status == RegistrationStatus.ACTIVE
+                    ):
+                        if (
+                            user_obj
+                            and user_obj.permission_level >= PermissionLevel.ADMIN
+                        ):
+                            google_wallet_url = (
+                                integration.api.google.wallet.get_pass_event_url(
+                                    registration_id=registration_obj.id
+                                )
+                            )
+
+                            context_full["google_wallet_url"] = google_wallet_url
 
             template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
             from_email = EMAIL_BY_MODULE[module]
