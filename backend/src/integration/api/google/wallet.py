@@ -16,7 +16,7 @@ from comunicat.consts import (
     PALETTE_BY_MODULE,
 )
 from comunicat.enums import Module
-from comunicat.template_tags.comunicat_tags import full_url
+from comunicat.template_tags.comunicat_tags import full_api_url, full_url
 from integration.consts import GOOGLE_WALLET_SCOPES, LANGUAGE_TO_GOOGLE_LANGUAGE
 from membership.enums import MembershipStatus
 
@@ -263,7 +263,7 @@ class GoogleWalletEvent:
             path=FILE_LOGO_BY_MODULE[self.module],
             module=self.module,
         )
-        file_hero = self.event_obj.picture and full_url(
+        file_hero = self.event_obj.picture and full_api_url(
             path=self.event_obj.picture.url,
             module=self.module,
         )

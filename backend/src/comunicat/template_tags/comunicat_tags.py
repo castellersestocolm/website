@@ -51,6 +51,14 @@ def full_towers_url(path: str = ""):
 
 
 @register.simple_tag
+def full_api_url(path: str = "", module: Module | None = None):
+    return urljoin(
+        f"{settings.HTTP_PROTOCOL}://api.{getattr(settings, f"MODULE_{Module(module).name}_DOMAIN")if module is not None else settings.DOMAIN}/",
+        path,
+    )
+
+
+@register.simple_tag
 def full_static(path: str):
     return urljoin(
         f"{settings.HTTP_PROTOCOL}://{settings.DOMAIN}{settings.STATIC_URL}/", path
