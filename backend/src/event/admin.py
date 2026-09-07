@@ -403,7 +403,7 @@ def send_registration_paid_email(modeladmin, request, queryset):
     for registration_obj in queryset.filter(
         status=RegistrationStatus.ACTIVE
     ).select_related("event"):
-        notify.tasks.send_registration_email(
+        notify.tasks.send_registration_email.delay(
             registration_ids=[registration_obj.id],
             email_type=EmailType.REGISTRATION_PAID,
             module=registration_obj.event.module,
