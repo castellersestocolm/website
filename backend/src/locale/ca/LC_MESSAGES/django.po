@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 10:05+0200\n"
+"POT-Creation-Date: 2026-09-07 16:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,68 +20,68 @@ msgstr ""
 
 #: activity/admin.py:56 activity/admin.py:145 data/admin.py:38 data/admin.py:69
 #: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
-#: notify/admin.py:272 order/admin.py:523 payment/admin.py:678
+#: notify/admin.py:272 order/admin.py:532 payment/admin.py:678
 #: payment/admin.py:1132 product/admin.py:110
 msgid "name"
 msgstr "nom"
 
-#: activity/admin.py:120 event/admin.py:344 history/admin.py:31
+#: activity/admin.py:120 event/admin.py:353 history/admin.py:31
 #: media/admin.py:35
 msgid "title"
 msgstr "títol"
 
-#: activity/api/export.py:55
+#: activity/api/export.py:60 event/api/export.py:38
 msgid "Registrations"
 msgstr "Inscripcions"
 
-#: activity/api/export.py:59 comunicat/templates/pdf/org/registration.html:77
-#: comunicat/templates/pdf/towers/registration.html:77
+#: activity/api/export.py:64 comunicat/templates/pdf/org/registration.html:77
+#: comunicat/templates/pdf/towers/registration.html:77 event/api/export.py:42
 #: membership/api/export.py:51
 msgid "First name"
 msgstr "Nom"
 
-#: activity/api/export.py:60 comunicat/templates/pdf/org/registration.html:80
-#: comunicat/templates/pdf/towers/registration.html:80
+#: activity/api/export.py:65 comunicat/templates/pdf/org/registration.html:80
+#: comunicat/templates/pdf/towers/registration.html:80 event/api/export.py:43
 #: membership/api/export.py:52
 msgid "Last name"
 msgstr "Cognom"
 
-#: activity/api/export.py:61
+#: activity/api/export.py:66 event/api/export.py:44
 msgid "Age"
 msgstr "Edat"
 
-#: activity/api/export.py:62 membership/api/export.py:55
+#: activity/api/export.py:67 event/api/export.py:45 membership/api/export.py:55
 msgid "Family"
 msgstr "Família"
 
-#: activity/api/export.py:63
+#: activity/api/export.py:68
 msgid "Parents"
 msgstr "Pares"
 
-#: activity/api/export.py:64
+#: activity/api/export.py:69
 msgid "Emails"
 msgstr "Correus electrònics"
 
-#: activity/api/export.py:65
+#: activity/api/export.py:70
 msgid "Phones"
 msgstr "Telèfons"
 
-#: activity/api/export.py:66 comunicat/templates/pdf/org/registration.html:86
+#: activity/api/export.py:71 comunicat/templates/pdf/org/registration.html:86
 #: comunicat/templates/pdf/towers/order.html:86
-#: comunicat/templates/pdf/towers/registration.html:86
+#: comunicat/templates/pdf/towers/registration.html:86 event/api/export.py:48
 #: membership/api/export.py:59
 msgid "Status"
 msgstr "Estat"
 
-#: activity/api/export.py:67 membership/api/export.py:60
+#: activity/api/export.py:72 event/api/export.py:49 membership/api/export.py:60
 msgid "Price"
 msgstr "Preu"
 
-#: activity/api/export.py:145
+#: activity/api/export.py:148
 msgid "Attendance"
 msgstr "Assistència"
 
-#: activity/api/export.py:149
+#: activity/api/export.py:152
 #: comunicat/templates/email/org/contact/message.html:18
 #: comunicat/templates/email/towers/contact/message.html:18
 #: comunicat/templates/pdf/org/order.html:116
@@ -238,6 +238,16 @@ msgstr "Assaig de músics"
 msgid "The amount of children you entered is incorrect."
 msgstr "El nombre de nens que has introduït és incorrecte."
 
+#: comunicat/template_tags/comunicat_tags.py:370
+#: comunicat/templates/email/org/membership/check.html:8
+#: comunicat/templates/email/org/membership/check.html:10
+#: comunicat/templates/email/org/membership/check.html:12
+#: comunicat/templates/email/towers/membership/check.html:8
+#: comunicat/templates/email/towers/membership/check.html:10
+#: comunicat/templates/email/towers/membership/check.html:12
+msgid "and"
+msgstr "i"
+
 #: comunicat/templates/admin/event/event/submit_line.html:5
 #: comunicat/templates/admin/payment/entity/submit_line.html:5
 #: comunicat/templates/admin/payment/expense/submit_line.html:5
@@ -336,7 +346,7 @@ msgstr "per"
 
 #: comunicat/templates/email/org/contact/message.html:22
 #: comunicat/templates/email/towers/contact/message.html:22
-#: membership/api/export.py:53
+#: event/api/export.py:46 membership/api/export.py:53
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -393,15 +403,6 @@ msgstr "La teva quota està activa fins el"
 #: comunicat/templates/email/towers/membership/check.html:8
 msgid "and therefore you are currently a member of"
 msgstr "i per tant actualment ets membre de"
-
-#: comunicat/templates/email/org/membership/check.html:8
-#: comunicat/templates/email/org/membership/check.html:10
-#: comunicat/templates/email/org/membership/check.html:12
-#: comunicat/templates/email/towers/membership/check.html:8
-#: comunicat/templates/email/towers/membership/check.html:10
-#: comunicat/templates/email/towers/membership/check.html:12
-msgid "and"
-msgstr "i"
 
 #: comunicat/templates/email/org/membership/check.html:10
 #: comunicat/templates/email/org/membership/check.html:12
@@ -607,6 +608,11 @@ msgstr ""
 msgid "Your registration has been paid! You will find a summary right below."
 msgstr "La teva inscripció s'ha pagat! En trobaràs un resum a continuació."
 
+#: comunicat/templates/email/org/registration/paid.html:34
+#: comunicat/templates/email/towers/registration/paid.html:34
+msgid "Entrance ticket"
+msgstr "Entrada"
+
 #: comunicat/templates/email/org/user/imported.html:5
 msgid ""
 "We are very excited to introduce to you our new website, a new way of "
@@ -700,8 +706,8 @@ msgstr ""
 msgid ""
 "In order to accept this invitation you first need to become a member which "
 "you can do directly in our website. After having registered and confirmed "
-"your email you will be able to accept this invitation under \"Family requests"
-"\" on your dashboard."
+"your email you will be able to accept this invitation under \"Family "
+"requests\" on your dashboard."
 msgstr ""
 "Per tal d'acceptar aquesta invitació primer has de fer-te membre, ho pots "
 "fer directament a la nostra web. Una vegada registrat i confirmat el teu "
@@ -881,7 +887,7 @@ msgid "Yes"
 msgstr ""
 
 #: comunicat/templates/pdf/org/registration.html:83
-#: comunicat/templates/pdf/towers/registration.html:83
+#: comunicat/templates/pdf/towers/registration.html:83 event/api/export.py:47
 #: membership/api/export.py:54 payment/consts.py:47
 msgid "Phone"
 msgstr "Telèfon"
@@ -896,34 +902,34 @@ msgstr "entitat"
 msgid "The newsletter is mandatory for newsletter consents."
 msgstr ""
 
-#: event/admin.py:132 payment/admin.py:276
+#: event/admin.py:133 payment/admin.py:276
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:134
+#: event/admin.py:135
 msgid "Data"
 msgstr ""
 
-#: event/admin.py:135 order/admin.py:252 payment/admin.py:207
+#: event/admin.py:136 order/admin.py:253 payment/admin.py:207
 msgid "Send paid email"
 msgstr ""
 
-#: event/admin.py:237
+#: event/admin.py:238
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:345 order/admin.py:524 payment/admin.py:1133
+#: event/admin.py:354 order/admin.py:533 payment/admin.py:1133
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
 msgid "accounts"
 msgstr "Quantitat"
 
-#: event/admin.py:453
+#: event/admin.py:479
 msgid "time from"
 msgstr ""
 
-#: event/consts.py:44
+#: event/consts.py:51
 msgid "Choices"
 msgstr ""
 
@@ -949,15 +955,15 @@ msgstr ""
 msgid "The start time must be within the course dates."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:284 product/models.py:142 product/models.py:147
+#: event/models.py:290 product/models.py:142 product/models.py:147
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:366 payment/models.py:263
+#: event/models.py:372 payment/models.py:263
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
-#: event/models.py:449 event/models.py:450
+#: event/models.py:455 event/models.py:456
 msgid "event accounts"
 msgstr ""
 
@@ -981,7 +987,7 @@ msgstr ""
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:116 user/admin.py:322 user/models.py:206
+#: membership/admin.py:116 user/admin.py:324 user/models.py:210
 msgid "family"
 msgstr "família"
 
@@ -1031,11 +1037,11 @@ msgstr ""
 msgid "View attendance"
 msgstr "Mostra l'assistència"
 
-#: notify/api/template.py:233
+#: notify/api/template.py:253
 msgid "Sign-up for the upcoming performances"
 msgstr "Confirma l'assistència a les properes actuacions"
 
-#: notify/api/template.py:407
+#: notify/api/template.py:427
 msgid "receipt"
 msgstr "rebut"
 
@@ -1124,38 +1130,38 @@ msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 msgid "The Google group is mandatory for Google newsletters."
 msgstr ""
 
-#: order/admin.py:127 order/admin.py:221 payment/admin.py:465
-#: payment/models.py:214 user/admin.py:321
+#: order/admin.py:128 order/admin.py:222 payment/admin.py:465
+#: payment/models.py:214 user/admin.py:323
 msgid "entity"
 msgstr "entitat"
 
-#: order/admin.py:128
+#: order/admin.py:129
 msgid "event"
 msgstr ""
 
-#: order/admin.py:168
+#: order/admin.py:169
 msgid "membership"
 msgstr "quota"
 
-#: order/admin.py:222
+#: order/admin.py:223
 #, fuzzy
 #| msgid "Course"
 msgid "course"
 msgstr "Curs"
 
-#: order/admin.py:241
+#: order/admin.py:242
 msgid "Send created email"
 msgstr ""
 
-#: order/admin.py:433
+#: order/admin.py:442
 msgid "pending"
 msgstr "pendent"
 
-#: order/admin.py:434
+#: order/admin.py:443
 msgid "delivery"
 msgstr "entrega"
 
-#: order/admin.py:435 payment/admin.py:487
+#: order/admin.py:444 payment/admin.py:487
 msgid "payment"
 msgstr "pagament"
 
@@ -1402,13 +1408,13 @@ msgstr "personal"
 msgid "active"
 msgstr "actiu"
 
-#: user/models.py:176
+#: user/models.py:180
 #, fuzzy, python-format
 #| msgid "Category must be set for accounts with parent."
 msgid "Order must be set for source %s."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: user/models.py:207
+#: user/models.py:211
 msgid "families"
 msgstr "famílies"
 

@@ -20,7 +20,7 @@ from activity.models import ProgramCourse
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import beautify_dict
-from event.enums import EventStatus
+from event.enums import EventStatus, RegistrationStatus
 from event.models import (
     AgendaItem,
     Connection,
@@ -398,13 +398,32 @@ class RegistrationLogInline(admin.TabularInline):
         return False
 
 
+@admin.action(description="Send registration paid email")
+def send_registration_paid_email(modeladmin, request, queryset):
+    for registration_obj in queryset.filter(
+        status=RegistrationStatus.ACTIVE
+    ).select_related("event"):
+        notify.tasks.send_registration_email(
+            registration_ids=[registration_obj.id],
+            email_type=EmailType.REGISTRATION_PAID,
+            module=registration_obj.event.module,
+        )
+
+
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
-    search_fields = ("id",)
+    search_fields = (
+        "id",
+        "event__title",
+        "entity__firstname",
+        "entity__lastname",
+        "entity__email",
+    )
     list_display = ("id", "event", "entity", "status")
     list_filter = ("status",)
     ordering = ("-created_at",)
     inlines = (RegistrationLogInline,)
+    actions = (send_registration_paid_email,)
 
 
 class GoogleCalendarDefaultInline(admin.TabularInline):
