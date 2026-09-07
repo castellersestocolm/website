@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from rest_framework.decorators import action
@@ -5,14 +7,15 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 from comunicat.rest.serializers.integration import (
+    IntegrationGoogleWalletPassEventSerializer,
     IntegrationGoogleWalletPassLoyaltySerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
-from integration.api.google.wallet import get_pass_loyalty_url
+from integration.api.google.wallet import get_pass_event_url, get_pass_loyalty_url
 
 
 class IntegrationGoogleWalletAPI(ComuniCatViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     lookup_field = "id"
 
     @swagger_auto_schema(
@@ -38,5 +41,30 @@ class IntegrationGoogleWalletAPI(ComuniCatViewSet):
 
         serializer = IntegrationGoogleWalletPassLoyaltySerializer(
             {"url": pass_loyalty_url}, context={"module": self.module}
+        )
+        return Response(serializer.data)
+
+    # TODO: Check if further checks with a token need to be done
+    @swagger_auto_schema(
+        responses={
+            200: IntegrationGoogleWalletPassEventSerializer(),
+            400: Serializer(),
+            401: Serializer(),
+        },
+    )
+    @action(
+        methods=["get"],
+        detail=False,
+        url_path=r"pass/event/(?P<registration_id>[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12})",
+        url_name="pass_event",
+    )
+    def pass_event(self, request, registration_id: UUID):
+        pass_event_url = get_pass_event_url(registration_id=registration_id)
+
+        if not pass_event_url:
+            return Response(status=400)
+
+        serializer = IntegrationGoogleWalletPassEventSerializer(
+            {"url": pass_event_url}, context={"module": self.module}
         )
         return Response(serializer.data)

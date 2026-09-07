@@ -506,6 +506,10 @@ class Registration(StandardModel, Timestamps):
     def __str__(self) -> str:
         return f"{self.event} - {self.entity}"
 
+    @cached_property
+    def is_active(self) -> bool:
+        return self.status == RegistrationStatus.ACTIVE
+
     def save(self, *args, **kwargs):
         if self.pk:
             if self.status != self.__status:

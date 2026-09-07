@@ -4,3 +4,5 @@ GOOGLE_DRIVE_SCOPES = [
 ]
 
 GOOGLE_WALLET_SCOPES = ["https://www.googleapis.com/auth/wallet_object.issuer"]
+
+LANGUAGE_TO_GOOGLE_LANGUAGE = {"en": "en-GB", "ca": "ca", "sv": "sv"}

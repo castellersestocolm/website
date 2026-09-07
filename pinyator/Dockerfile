@@ -1,4 +1,4 @@
-FROM nginx:1.17.8-alpine
+FROM nginx:1.31.5-alpine
 
 # Copy the public directory
 COPY ./src/ /pinyator/pinyator/
