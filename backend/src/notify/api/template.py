@@ -16,7 +16,6 @@ from document.enums import DocumentStatus
 from document.models import EmailAttachment
 from event.enums import EventType, RegistrationStatus
 from event.models import EventModule, Registration
-from legal.enums import PermissionLevel
 from membership.enums import MembershipStatus
 from membership.models import Membership, MembershipModule, MembershipUser
 from notify.consts import (
