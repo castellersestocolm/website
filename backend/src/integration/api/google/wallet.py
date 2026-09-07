@@ -8,7 +8,6 @@ from django.utils import timezone, translation
 from google.auth import crypt, jwt
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import Resource, build
-from googleapiclient.errors import HttpError
 
 from comunicat.consts import (
     FILE_HERO_BY_MODULE,
