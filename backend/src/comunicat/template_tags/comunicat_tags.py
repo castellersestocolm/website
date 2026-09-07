@@ -24,6 +24,7 @@ from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from comunicat.utils.qr import generate_qr_code_base_64
 from event.models import Event, Registration
+from integration.consts import LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY
 from membership.enums import MembershipStatus
 from membership.models import Membership
 from notify.consts import SETTINGS_BY_MODULE
@@ -375,3 +376,15 @@ def qr_code_src(text: str) -> str:
     img_b64 = generate_qr_code_base_64(text=text)
 
     return f"data:image/png;base64,{img_b64}"
+
+
+@register.filter
+def language_to_google_locale_country(locale: str) -> str:
+    if locale not in LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY:
+        return LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY[settings.LANGUAGE_CODE]
+    return LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY[locale]
+
+
+@register.simple_tag
+def current_language_to_google_locale_country() -> str:
+    return language_to_google_locale_country(locale=translation.get_language())

@@ -37,12 +37,13 @@
         </tr>
     </table>
 {% endif %}
-{% if google_wallet_url %}
+{% if google_wallet_url or True %}
     <table style="margin-bottom: 20px;">
         <tr>
             <td align="center">
                 <a href="{{ google_wallet_url }}">
-                    <img style="height: 42px;" src="{% full_static "towers/img/google/wallet/wallet.png" %}" alt="Google Wallet"/>
+                    {% current_language_to_google_locale_country as google_locale_country %}
+                    <img style="height: 42px;" src="{% full_static "integration/google/wallet/png/"|add:google_locale_country|add:"_add_to_google_wallet_add-wallet-badge.png" %}" alt="Google Wallet"/>
                 </a>
             </td>
         </tr>

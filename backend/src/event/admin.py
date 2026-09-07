@@ -1,3 +1,4 @@
+import itertools
 import tempfile
 from uuid import UUID
 
@@ -400,13 +401,25 @@ class RegistrationLogInline(admin.TabularInline):
 
 @admin.action(description="Send registration paid email")
 def send_registration_paid_email(modeladmin, request, queryset):
-    for registration_obj in queryset.filter(
-        status=RegistrationStatus.ACTIVE
-    ).select_related("event"):
+    registration_objs = list(
+        queryset.filter(status=RegistrationStatus.ACTIVE).select_related("event")
+    )
+
+    for (
+        event_obj,
+        event_registration_objs,
+    ) in itertools.groupby(
+        registration_objs,
+        lambda registration_obj: registration_obj.event,
+    ):
+        registration_ids = [
+            event_registration_obj.id
+            for event_registration_obj in event_registration_objs
+        ]
         notify.tasks.send_registration_email.delay(
-            registration_ids=[registration_obj.id],
+            registration_ids=registration_ids,
             email_type=EmailType.REGISTRATION_PAID,
-            module=registration_obj.event.module,
+            module=event_obj.module,
         )
 
 
