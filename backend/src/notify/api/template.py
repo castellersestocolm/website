@@ -79,15 +79,9 @@ def get_user_email_render(  # noqa: C901
     locale: str | None = None,
 ) -> EmailRender | None:
     if user_id:
-        user_obj = (
-            User.objects.filter(id=user_id)
-            .first()
-        )
+        user_obj = User.objects.filter(id=user_id).first()
     elif email:
-        user_obj = (
-            User.objects.filter_by_email(email=email)
-            .first()
-        )
+        user_obj = User.objects.filter_by_email(email=email).first()
     else:
         return None
 
