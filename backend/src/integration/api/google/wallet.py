@@ -309,7 +309,7 @@ class GoogleWalletEvent:
                 if self.event_obj.location
                 else {}
             ),
-            **({"heroImage": file_hero} if file_hero else {}),
+            **({"heroImage": {"sourceUri": {"uri": file_hero}}} if file_hero else {}),
         }
 
         return new_class
