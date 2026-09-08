@@ -223,7 +223,7 @@ class UserQuerySet(QuerySet):
         member_filter = (
             Q(team__group__date_from__lte=date)
             & (Q(team__group__date_to__isnull=True) | Q(team__group__date_to__gte=date))
-            & (Q(date_from__isnull=True) | Q(date_from__gte=date))
+            & (Q(date_from__isnull=True) | Q(date_from__lte=date))
             & (Q(date_to__isnull=True) | Q(date_to__gte=date))
             & Q(team__type__in=team_types)
         )
