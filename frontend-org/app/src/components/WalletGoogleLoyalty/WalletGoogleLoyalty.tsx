@@ -6,7 +6,7 @@ import { Box, Link } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY } from "../../consts";
 
-export default function WalletGoogle() {
+export default function WalletGoogleLoyalty() {
   const { i18n } = useTranslation("common");
 
   const { user } = useAppContext();

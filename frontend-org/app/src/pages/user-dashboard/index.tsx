@@ -89,7 +89,8 @@ import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
 import { dateToString, datetimeToString } from "../../utils/datetime";
-import WalletGoogle from "../../components/WalletGoogle/WalletGoogle";
+import WalletGoogleLoyalty from "../../components/WalletGoogleLoyalty/WalletGoogleLoyalty";
+import WalletGoogleEvent from "../../components/WalletGoogleEvent/WalletGoogleEvent";
 
 const ORG_INFO_EMAIL = process.env.REACT_APP_ORG_INFO_EMAIL;
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
@@ -708,8 +709,9 @@ function UserDashboardPage() {
             </>
           )}
         </Box>
-        {membership &&
-          membership.status === MembershipStatus.ACTIVE && <WalletGoogle />}
+        {membership && membership.status === MembershipStatus.ACTIVE && (
+          <WalletGoogleLoyalty />
+        )}
         <Divider />
         {programCourses && (
           <>
@@ -852,6 +854,14 @@ function UserDashboardPage() {
                   {events.results.length > 0 ? (
                     <List className={styles.userFamilyList}>
                       {events.results.map((event: any, i: number, row: any) => {
+                        const registrationForUser =
+                          user &&
+                          event.registrations &&
+                          event.registrations.find(
+                            (registration: any) =>
+                              registration.user &&
+                              registration.user.id === user.id,
+                          );
                         return (
                           <Box key={event.id}>
                             <ListItemButton
@@ -865,39 +875,50 @@ function UserDashboardPage() {
                               <ListItemIcon>
                                 <IconHowToReg />
                               </ListItemIcon>
-                              <ListItemText
-                                primary={
-                                  event.title +
-                                  " — " +
-                                  datetimeToString(
-                                    i18n.resolvedLanguage,
-                                    event.time_from,
-                                  )
-                                }
-                                secondary={
-                                  event.registrations.filter(
-                                    (registration: any) =>
-                                      registration.status ===
-                                      RegistrationStatus.ACTIVE,
-                                  ).length > 0
-                                    ? t(
-                                        "pages.user-registrations.registration.attending-list",
-                                      ) +
-                                      ": " +
-                                      event.registrations
-                                        .map((registration: any) =>
-                                          registration.entity.lastname
-                                            ? registration.entity.firstname +
-                                              " " +
-                                              registration.entity.lastname
-                                            : registration.entity.firstname,
+                              <Box>
+                                <ListItemText
+                                  primary={
+                                    event.title +
+                                    " — " +
+                                    datetimeToString(
+                                      i18n.resolvedLanguage,
+                                      event.time_from,
+                                    )
+                                  }
+                                  secondary={
+                                    event.registrations.filter(
+                                      (registration: any) =>
+                                        registration.status ===
+                                        RegistrationStatus.ACTIVE,
+                                    ).length > 0
+                                      ? t(
+                                          "pages.user-registrations.registration.attending-list",
+                                        ) +
+                                        ": " +
+                                        event.registrations
+                                          .map((registration: any) =>
+                                            registration.entity.lastname
+                                              ? registration.entity.firstname +
+                                                " " +
+                                                registration.entity.lastname
+                                              : registration.entity.firstname,
+                                          )
+                                          .join(", ")
+                                      : t(
+                                          "pages.user-registrations.registration.attending-empty",
                                         )
-                                        .join(", ")
-                                    : t(
-                                        "pages.user-registrations.registration.attending-empty",
-                                      )
-                                }
-                              />
+                                  }
+                                />
+
+                                {registrationForUser &&
+                                  registrationForUser.status ===
+                                    RegistrationStatus.ACTIVE &&
+                                  new Date() < new Date(event.time_to) && (
+                                    <WalletGoogleEvent
+                                      registrationId={registrationForUser.id}
+                                    />
+                                  )}
+                              </Box>
                               {event.registrations &&
                                 event.registrations.length > 0 &&
                                 (eventsOpen[event.id] ? (
