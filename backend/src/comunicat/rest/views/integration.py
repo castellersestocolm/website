@@ -90,10 +90,8 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         if not request.user.is_authenticated:
             return Response(status=401)
 
-        from comunicat.enums import Module
-
         pass_loyalty_bundle = get_pass_loyalty_bundle(
-            user_id=request.user.id, module=Module.TOWERS
+            user_id=request.user.id, module=self.module
         )
 
         if not pass_loyalty_bundle:
