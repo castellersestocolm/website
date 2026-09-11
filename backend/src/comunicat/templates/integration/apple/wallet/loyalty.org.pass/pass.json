@@ -11,7 +11,7 @@
     "messageEncoding": "utf-8"
   },
   "organizationName": "{{ 'NAME_BY_MODULE'|consts_comunicat|get_value:10 }}",
-  "description": "{{ 'NAME_BY_MODULE'|consts_comunicat|get_value:20 }}",
+  "description": "{{ 'NAME_BY_MODULE'|consts_comunicat|get_value:10 }}",
   "logoText": "{{ 'SHORT_NAME_BY_MODULE'|consts_comunicat|get_value:10 }}",
   "labelColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:10|get_value:'contrast'|get_value:'text' }}",
   "foregroundColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:10|get_value:'secondary'|get_value:'main' }}",
