@@ -10,6 +10,7 @@ import integration.api.google.wallet
 import membership.utils
 import payment.api.entity
 import user.api.family
+import user.api.integration
 from activity.models import ProgramCourse, ProgramCourseRegistration
 from comunicat.enums import Module
 from document.enums import DocumentStatus
@@ -199,7 +200,14 @@ def get_user_email_render(  # noqa: C901
                         )
                     )
 
+                    apple_wallet_token = (
+                        user.api.integration.get_integration_apple_wallet_token(
+                            user_id=user_obj.id
+                        )
+                    )
+
                     context_full["google_wallet_url"] = google_wallet_url
+                    context_full["apple_wallet_token"] = apple_wallet_token
             elif email_type in (
                 EmailType.MEMBERSHIP_RENEW,
                 EmailType.MEMBERSHIP_EXPIRED,

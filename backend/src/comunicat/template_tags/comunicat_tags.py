@@ -5,6 +5,7 @@ from uuid import UUID
 
 from django.conf import settings
 from django.template.defaulttags import register
+from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -25,7 +26,10 @@ from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
 from comunicat.utils.qr import generate_qr_code_base_64
 from event.models import Event, Registration
-from integration.consts import LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY
+from integration.consts import (
+    LANGUAGE_TO_APPLE_WALLET_FILE,
+    LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY,
+)
 from membership.enums import MembershipStatus
 from membership.models import Membership
 from notify.consts import SETTINGS_BY_MODULE
@@ -394,3 +398,22 @@ def language_to_google_locale_country(locale: str) -> str:
 @register.simple_tag
 def current_language_to_google_locale_country() -> str:
     return language_to_google_locale_country(locale=translation.get_language())
+
+
+@register.simple_tag
+def integration_apple_wallet_url_from_token(token: str) -> str:
+    path = reverse("api:1.0:integration_apple_wallet-pass_loyalty") + "?token=" + token
+
+    return full_api_url(path=path)
+
+
+@register.filter
+def language_to_apple_wallet_file(locale: str) -> str:
+    if locale not in LANGUAGE_TO_APPLE_WALLET_FILE:
+        return LANGUAGE_TO_APPLE_WALLET_FILE[settings.LANGUAGE_CODE]
+    return LANGUAGE_TO_APPLE_WALLET_FILE[locale]
+
+
+@register.simple_tag
+def current_language_to_apple_wallet_file() -> str:
+    return language_to_apple_wallet_file(locale=translation.get_language())

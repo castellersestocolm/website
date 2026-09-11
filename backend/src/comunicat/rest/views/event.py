@@ -211,7 +211,7 @@ class RegistrationAPI(ComuniCatViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        token = serializer.validated_data.get("token")
+        token = validated_data.get("token")
         user_obj = (
             request.user
             if request.user.is_authenticated
