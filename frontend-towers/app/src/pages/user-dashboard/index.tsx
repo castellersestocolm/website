@@ -1247,7 +1247,7 @@ function UserDashboardPage() {
 
                               {event.registrations &&
                                 event.registrations.length > 0 && (
-                                  <Box clasName={styles.userFamilyArrow}>
+                                  <Box className={styles.userFamilyArrow}>
                                     {eventsOpen[event.id] ? (
                                       <IconExpandLess />
                                     ) : (
