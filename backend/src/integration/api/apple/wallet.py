@@ -95,7 +95,7 @@ class AppleWalletLoyalty:
             for root, dirs, files in os.walk(zip_path):
                 for file in files:
                     if file == "pass.json":
-                        bytes_string = json_string.encode("utf-16")
+                        bytes_string = json_string.encode("utf-8")
                         manifest["pass.json"] = hashlib.sha1(bytes_string).hexdigest()
                         zip_file.writestr(file, bytes_string)
                     else:
@@ -106,7 +106,7 @@ class AppleWalletLoyalty:
                         manifest[path_rel] = hashlib.sha1(bytes_file).hexdigest()
                         zip_file.write(path_abs, path_rel)
 
-            bytes_manifest = json.dumps(manifest).encode("utf-16")
+            bytes_manifest = json.dumps(manifest).encode("utf-8")
             zip_file.writestr("manifest.json", bytes_manifest)
 
             bytes_signature = comunicat.utils.crypto.pkcs7_sign(
