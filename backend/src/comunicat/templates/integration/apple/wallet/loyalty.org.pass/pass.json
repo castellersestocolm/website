@@ -1,0 +1,79 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.loyalty.org",
+  "serialNumber": "{{ user_obj.membership_number }}",
+  "teamIdentifier": "{{ 'INTEGRATION_APPLE_WALLET_TEAM_ID'|settings_value }}",
+  "authenticationToken": "{{ user_obj.token }}",
+  "webServiceURL": "{% full_org_url %}",
+  "barcode": {
+    "message": "{{ user_obj.membership_number }}",
+    "format": "PKBarcodeFormatQR",
+    "messageEncoding": "utf-8"
+  },
+  "organizationName": "{{ 'NAME_BY_MODULE'|consts_comunicat|get_value:10 }}",
+  "description": "{{ 'NAME_BY_MODULE'|consts_comunicat|get_value:20 }}",
+  "logoText": "{{ 'SHORT_NAME_BY_MODULE'|consts_comunicat|get_value:10 }}",
+  "labelColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:10|get_value:'contrast'|get_value:'text' }}",
+  "foregroundColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:10|get_value:'secondary'|get_value:'main' }}",
+  "backgroundColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:10|get_value:'primary'|get_value:'main' }}",
+  "posterGeneric": {
+    "headerFields": [
+      {
+        "key": "membership_number",
+        "label": "membership_number",
+        "value": "{{ user_obj.membership_number }}"
+      }
+    ],
+    "primaryFields": [
+      {
+        "key": "user_name",
+        "label": "user_name",
+        "value": "{{ user_obj.name }}"
+      }
+    ],
+    "auxiliaryFields" : [
+      {
+        "key" : "membership_start",
+        "dateStyle" : "PKDateStyleShort",
+        "label" : "membership_start",
+        "value" : "{{ membership_start }}"
+      },
+      {
+        "key" : "membership_end",
+        "dateStyle" : "PKDateStyleShort",
+        "label" : "membership_end",
+        "value" : "{{ membership_end }}"
+      }
+    ]
+  },
+  "generic": {
+    "primaryFields": [
+      {
+        "key": "user_name",
+        "label": "user_name",
+        "value": "{{ user_obj.name }}"
+      }
+    ],
+    "secondaryFields": [
+      {
+        "key": "membership_number",
+        "label": "membership_number",
+        "value": "{{ user_obj.membership_number }}"
+      }
+    ],
+    "auxiliaryFields" : [
+      {
+        "key" : "membership_start",
+        "dateStyle" : "PKDateStyleShort",
+        "label" : "membership_start",
+        "value" : "{{ membership_start }}"
+      },
+      {
+        "key" : "membership_end",
+        "dateStyle" : "PKDateStyleShort",
+        "label" : "membership_end",
+        "value" : "{{ membership_end }}"
+      }
+    ]
+  }
+}

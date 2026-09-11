@@ -14,6 +14,7 @@ from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework.exceptions import ValidationError
 
 import activity.enums
+import comunicat.consts
 import event.enums
 import membership.enums
 import order.enums
@@ -103,6 +104,11 @@ def get_attr(obj: Any, name: str):
 @register.filter
 def get_value(data: dict, value: Any):
     return data.get(value, "")
+
+
+@register.filter
+def consts_comunicat(name: str):
+    return getattr(comunicat.consts, name, "")
 
 
 @register.filter

@@ -39,13 +39,27 @@ PALETTE_BY_MODULE = {
         "primary": {
             "main": settings.MODULE_ORG_PALETTE_PRIMARY_MAIN,
             "light": settings.MODULE_ORG_PALETTE_PRIMARY_LIGHT,
-        }
+        },
+        "secondary": {
+            "main": settings.MODULE_ORG_PALETTE_SECONDARY_MAIN,
+            "light": settings.MODULE_ORG_PALETTE_SECONDARY_LIGHT,
+        },
+        "contrast": {
+            "text": settings.MODULE_ORG_PALETTE_CONTRAST_TEXT,
+        },
     },
     Module.TOWERS: {
         "primary": {
             "main": settings.MODULE_TOWERS_PALETTE_PRIMARY_MAIN,
             "light": settings.MODULE_TOWERS_PALETTE_PRIMARY_LIGHT,
-        }
+        },
+        "secondary": {
+            "main": settings.MODULE_TOWERS_PALETTE_SECONDARY_MAIN,
+            "light": settings.MODULE_TOWERS_PALETTE_SECONDARY_LIGHT,
+        },
+        "contrast": {
+            "text": settings.MODULE_TOWERS_PALETTE_CONTRAST_TEXT,
+        },
     },
 }
 

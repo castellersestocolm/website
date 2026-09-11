@@ -88,6 +88,12 @@ ENV DJANGO_STATIC_ROOT /backend/static
 ARG CERT_SWISH_CERT
 ARG CERT_SWISH_KEY
 ARG CERT_SWISH_VERIFY
+ARG CERT_APPLE_ORG_CERT
+ARG CERT_APPLE_ORG_KEY
+ARG CERT_APPLE_ORG_VERIFY
+ARG CERT_APPLE_TOWERS_CERT
+ARG CERT_APPLE_TOWERS_KEY
+ARG CERT_APPLE_TOWERS_VERIFY
 
 # Credentials
 ARG CRED_GOOGLE_APP
@@ -130,11 +136,17 @@ COPY --from=builder --chown=backend:backend /backend/Makefile /backend/Makefile
 # Copy the setup
 COPY --from=builder --chown=backend:backend /backend/setup.cfg /backend/setup.cfg
 
-RUN mkdir /backend/cert && mkdir /backend/cert/se_swish && chown -R backend:backend /backend/cert
+RUN mkdir /backend/cert && mkdir /backend/cert/se_swish && mkdir /backend/cert/apple && chown -R backend:backend /backend/cert
 
 RUN echo "${CERT_SWISH_CERT}" > /backend/cert/se_swish/cert.pem
 RUN echo "${CERT_SWISH_KEY}" > /backend/cert/se_swish/key.pem
 RUN echo "${CERT_SWISH_VERIFY}" > /backend/cert/se_swish/verify.pem
+RUN echo "${CERT_APPLE_ORG_CERT}" > /backend/cert/apple/org_cert.pem
+RUN echo "${CERT_APPLE_ORG_KEY}" > /backend/cert/apple/org_key.pem
+RUN echo "${CERT_APPLE_ORG_VERIFY}" > /backend/cert/apple/org_verify.pem
+RUN echo "${CERT_APPLE_TOWERS_CERT}" > /backend/cert/apple/towers_cert.pem
+RUN echo "${CERT_APPLE_TOWERS_KEY}" > /backend/cert/apple/towers_key.pem
+RUN echo "${CERT_APPLE_TOWERS_VERIFY}" > /backend/cert/apple/towers_verify.pem
 
 RUN mkdir /backend/cred && mkdir /backend/cred/google && chown -R backend:backend /backend/cred
 

@@ -55,6 +55,7 @@ import IconReplay from "@mui/icons-material/Replay";
 import FormMemberUpdate from "../../components/FormMemberUpdate/FormMemberUpdate";
 import FormMemberCreate from "../../components/FormMemberCreate/FormMemberCreate";
 import PageBase from "../../components/PageBase/PageBase";
+import WalletAppleLoyalty from "../../components/WalletAppleLoyalty/WalletAppleLoyalty";
 import WalletGoogleLoyalty from "../../components/WalletGoogleLoyalty/WalletGoogleLoyalty";
 import WalletGoogleEvent from "../../components/WalletGoogleEvent/WalletGoogleEvent";
 import {
@@ -805,7 +806,10 @@ function UserDashboardPage() {
           )}
         </Box>
         {membership && membership.status === MembershipStatus.ACTIVE && (
-          <WalletGoogleLoyalty />
+          <Box className={styles.userWalletBox}>
+            <WalletAppleLoyalty />
+            <WalletGoogleLoyalty />
+          </Box>
         )}
         <Divider />
         {programCourses && (
