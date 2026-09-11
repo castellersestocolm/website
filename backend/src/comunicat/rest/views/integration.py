@@ -120,8 +120,10 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         if not user_obj:
             return Response(status=401)
 
+        module = validated_data.get("module", self.module)
+
         pass_loyalty_bundle = get_pass_loyalty_bundle(
-            user_id=user_obj.id, module=self.module
+            user_id=user_obj.id, module=module
         )
 
         if not pass_loyalty_bundle:
