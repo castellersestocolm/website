@@ -32,3 +32,9 @@ export const LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY = {
   ca: "ca",
   sv: "se",
 };
+
+export const LANGUAGE_TO_APPLE_WALLET_FILE = {
+  en: ["US_UK", "US-UK_Add_to_Apple_Wallet_RGB_101421"],
+  ca: ["CAES", "CAES_Add_to_Apple_Wallet_RGB_101421"],
+  sv: ["SE", "SE_Add_to_Apple_Wallet_RGB_102021"],
+};

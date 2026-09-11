@@ -89,6 +89,7 @@ import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import FormDashboardUpdate from "../../components/FormDashboardUpdate/FormDashboardUpdate";
 import { dateToString, datetimeToString } from "../../utils/datetime";
+import WalletAppleLoyalty from "../../components/WalletAppleLoyalty/WalletAppleLoyalty";
 import WalletGoogleLoyalty from "../../components/WalletGoogleLoyalty/WalletGoogleLoyalty";
 import WalletGoogleEvent from "../../components/WalletGoogleEvent/WalletGoogleEvent";
 
@@ -710,7 +711,10 @@ function UserDashboardPage() {
           )}
         </Box>
         {membership && membership.status === MembershipStatus.ACTIVE && (
-          <WalletGoogleLoyalty />
+          <Box className={styles.userWalletBox}>
+            <WalletAppleLoyalty />
+            <WalletGoogleLoyalty />
+          </Box>
         )}
         <Divider />
         {programCourses && (

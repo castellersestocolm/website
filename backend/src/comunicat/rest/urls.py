@@ -73,6 +73,11 @@ router.register(
     integration.IntegrationGoogleWalletAPI,
     "integration_google_wallet",
 )
+router.register(
+    "integration/apple/wallet",
+    integration.IntegrationAppleWalletAPI,
+    "integration_apple_wallet",
+)
 
 router.register("admin/user", admin.AdminUserAPI, "admin_user")
 router.register("admin/order", admin.AdminOrderAPI, "admin_order")

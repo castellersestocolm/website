@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
+import comunicat.utils.crypto
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from user.enums import (
@@ -54,6 +55,10 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
 
     membership_number = models.CharField(
         unique=True, max_length=12, default=generate_membership_number
+    )
+
+    token = models.CharField(
+        max_length=255, default=comunicat.utils.crypto.gen_random_token
     )
 
     objects = UserManager()

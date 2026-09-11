@@ -1258,3 +1258,15 @@ export const apiIntegrationGoogleWalletPassEventGet = async (
     throw error;
   }
 };
+
+export const apiIntegrationAppleWalletPassLoyaltyGet = async () => {
+  try {
+    return await instance.get("integration/apple/wallet/pass/loyalty/", {
+      responseType: "blob",
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

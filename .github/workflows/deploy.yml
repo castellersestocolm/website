@@ -32,6 +32,12 @@ jobs:
         cert_swish_cert: "${{ secrets.CERT_SWISH_CERT }}"
         cert_swish_key: "${{ secrets.CERT_SWISH_KEY }}"
         cert_swish_verify: "${{ secrets.CERT_SWISH_VERIFY }}"
+        cert_apple_org_cert: "${{ secrets.CERT_APPLE_ORG_CERT }}"
+        cert_apple_org_key: "${{ secrets.CERT_APPLE_ORG_KEY }}"
+        cert_apple_org_verify: "${{ secrets.CERT_APPLE_ORG_VERIFY }}"
+        cert_apple_towers_cert: "${{ secrets.CERT_APPLE_TOWERS_CERT }}"
+        cert_apple_towers_key: "${{ secrets.CERT_APPLE_TOWERS_KEY }}"
+        cert_apple_towers_verify: "${{ secrets.CERT_APPLE_TOWERS_VERIFY }}"
         cred_google_app: "${{ secrets.CRED_GOOGLE_APP }}"
 
   build-frontend-org:
