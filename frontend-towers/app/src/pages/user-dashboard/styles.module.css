@@ -41,6 +41,10 @@
 .userFamilyBox {
 }
 
+.userFamilyArrow {
+  margin-left: auto;
+}
+
 .userFamilyList {
   width: 100%;
   padding: 0 !important;

@@ -1244,13 +1244,17 @@ function UserDashboardPage() {
                                     />
                                   )}
                               </Box>
+
                               {event.registrations &&
-                                event.registrations.length > 0 &&
-                                (eventsOpen[event.id] ? (
-                                  <IconExpandLess />
-                                ) : (
-                                  <IconExpandMore />
-                                ))}
+                                event.registrations.length > 0 && (
+                                  <Box clasName={styles.userFamilyArrow}>
+                                    {eventsOpen[event.id] ? (
+                                      <IconExpandLess />
+                                    ) : (
+                                      <IconExpandMore />
+                                    )}
+                                  </Box>
+                                )}
                             </ListItemButton>
                             {event.registrations &&
                               event.registrations.length > 0 && (
