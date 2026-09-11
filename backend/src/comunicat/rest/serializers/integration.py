@@ -7,3 +7,7 @@ class IntegrationGoogleWalletPassLoyaltySerializer(s.Serializer):
 
 class IntegrationGoogleWalletPassEventSerializer(s.Serializer):
     url = s.CharField(read_only=True)
+
+
+class IntegrationAppleWalletPassLoyaltyRequestSerializer(s.Serializer):
+    token = s.CharField(required=False)

@@ -32,14 +32,22 @@
       <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ membership_obj|membership_amount|format_money_2f }}</strong></p></td>
   </tr>
 </table>
-{% if google_wallet_url %}
+{% if google_wallet_url or apple_wallet_token %}
     <table style="margin-bottom: 20px;">
         <tr>
-            <td align="center">
-                <a href="{{ google_wallet_url }}">
-                    {% current_language_to_google_locale_country as google_locale_country %}
-                    <img style="height: 42px;" src="{% full_static "integration/google/wallet/png/"|add:google_locale_country|add:"_add_to_google_wallet_add-wallet-badge.png" %}" alt="Google Wallet"/>
-                </a>
+            <td align="center" style="display: flex;align-items: center;justify-content: center;gap: 8px;">
+                {% if google_wallet_url %}
+                    <a href="{{ google_wallet_url }}">
+                        {% current_language_to_google_locale_country as google_locale_country %}
+                        <img style="height: 42px;" src="{% full_static "integration/google/wallet/png/"|add:google_locale_country|add:"_add_to_google_wallet_add-wallet-badge.png" %}" alt="Google Wallet"/>
+                    </a>
+                {% endif %}
+                {% if apple_wallet_token %}
+                    <a href="{% integration_apple_wallet_url_from_token apple_wallet_token %}">
+                        {% current_language_to_apple_wallet_file as apple_wallet_file %}
+                        <img style="height: 42px;" src="{% full_static "integration/apple/wallet/"|add:apple_wallet_file.0|add:"/RGB/"|add:apple_wallet_file.1|add:".svg" %}" alt="Apple Wallet"/>
+                    </a>
+                {% endif %}
             </td>
         </tr>
     </table>
