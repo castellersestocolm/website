@@ -18,6 +18,7 @@
 .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
 .tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+.wallet-section{display:flex;justify-content:center;gap:8px;}
 </style>
 <h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
 <table class="tg" style="margin-bottom:20px;">
@@ -36,9 +37,9 @@
     <table style="margin-bottom: 20px;">
         <tr>
             <td align="center">
-                <div style="display:flex;justify-content:center;gap:8px;">
+                <div class="wallet-section">
                     {% if apple_wallet_token %}
-                        <a href="{% integration_apple_wallet_url_from_token apple_wallet_token %}&module={{ module.value }}">
+                        <a href="{% integration_apple_wallet_url_from_token apple_wallet_token %}">
                             {% current_language_to_apple_wallet_file as apple_wallet_file %}
                             <img style="height: 42px;" src="{% full_static "integration/apple/wallet/"|add:apple_wallet_file.0|add:"/RGB/"|add:apple_wallet_file.1|add:".svg" %}" alt="Apple Wallet"/>
                         </a>
