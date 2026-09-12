@@ -109,7 +109,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         module = self.module
 
         token = validated_data.get("token")
-        if not user_id and token:
+        if token:
             data = user.api.integration.get_user_data_by_integration_apple_wallet_token(
                 token=token
             )
