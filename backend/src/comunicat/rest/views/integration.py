@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 import user.api.integration
+from comunicat.enums import Module
 from comunicat.rest.serializers.integration import (
     IntegrationAppleWalletPassLoyaltyRequestSerializer,
     IntegrationGoogleWalletPassEventSerializer,
@@ -104,27 +105,22 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        token = validated_data.get("token")
-        user_obj = (
-            request.user
-            if request.user.is_authenticated
-            else (
-                user.api.integration.get_user_by_integration_apple_wallet_token(
-                    token=token
-                )
-                if token
-                else None
-            )
-        )
+        user_id = request.user.is_authenticated and request.user.id
+        module = self.module
 
-        if not user_obj:
+        token = validated_data.get("token")
+        if not user_id and token:
+            data = user.api.integration.get_user_data_by_integration_apple_wallet_token(
+                token=token
+            )
+            if data:
+                user_id = data["user_id"]
+                module = Module(data.get("module", module))
+
+        if not user_id:
             return Response(status=401)
 
-        module = validated_data.get("module", self.module)
-
-        pass_loyalty_bundle = get_pass_loyalty_bundle(
-            user_id=user_obj.id, module=module
-        )
+        pass_loyalty_bundle = get_pass_loyalty_bundle(user_id=user_id, module=module)
 
         if not pass_loyalty_bundle:
             return Response(status=400)
