@@ -202,7 +202,7 @@ def get_user_email_render(  # noqa: C901
 
                     apple_wallet_token = (
                         user.api.integration.get_integration_apple_wallet_token(
-                            user_id=user_obj.id
+                            user_id=user_obj.id, module=module
                         )
                     )
 
