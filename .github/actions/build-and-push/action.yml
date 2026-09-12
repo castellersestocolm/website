@@ -15,48 +15,6 @@ inputs:
   build_target:
     description: The build target (dev/live)
     required: false
-  react_app_api_base_url:
-    description: The base URL for the API
-    required: false
-  react_app_org_api_url:
-    description: The API URL for the org site
-    required: false
-  react_app_org_base_url:
-    description: The base URL for the org site
-    required: false
-  react_app_org_info_email:
-    description: The email for the org site
-    required: false
-  react_app_towers_api_url:
-    description: The API URL for the towers site
-    required: false
-  react_app_towers_base_url:
-    description: The base URL for the towers site
-    required: false
-  react_app_towers_info_email:
-    description: The email for the towers site
-    required: false
-  react_app_pinyator_base_url:
-    description: The base URL for the pinyator site
-    required: false
-  react_app_org_wp_api_base_url:
-    description: The base URL for the WordPress API
-    required: false
-  react_app_org_wp_api_username:
-    description: The username for the WordPress API
-    required: false
-  react_app_org_wp_api_password:
-    description: The password for the WordPress API
-    required: false
-  react_app_org_wp_categories_ca:
-    description: The categories list [ca] for the WordPress API
-    required: false
-  react_app_org_wp_categories_sv:
-    description: The categories list [sv] for the WordPress API
-    required: false
-  react_app_payment_provider_paypal_client_id:
-    description: The client ID for the PayPal payment provider
-    required: false
   cert_swish_cert:
     description: The Swish certificate
     required: false

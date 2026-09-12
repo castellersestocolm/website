@@ -40,101 +40,11 @@ jobs:
         cert_apple_towers_verify: "${{ secrets.CERT_APPLE_TOWERS_VERIFY }}"
         cred_google_app: "${{ secrets.CRED_GOOGLE_APP }}"
 
-  build-frontend-org:
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
-    name: Build frontend-org
-    
-    steps:
-    - name: Checkout source
-      uses: actions/checkout@v4
-
-    - uses: ./.github/actions/build-and-push
-      name: Build frontend-org
-      with:
-        name: frontend-org
-        dockerfile: Dockerfile-prod
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        build_target: ${{ env.BUILD_TARGET }}
-        react_app_api_base_url: ${{ vars.REACT_APP_API_BASE_URL }}
-        react_app_org_api_url: ${{ vars.REACT_APP_ORG_API_URL }}
-        react_app_org_base_url: ${{ vars.REACT_APP_ORG_BASE_URL }}
-        react_app_org_info_email: ${{ vars.REACT_APP_ORG_INFO_EMAIL }}
-        react_app_towers_api_url: ${{ vars.REACT_APP_TOWERS_API_URL }}
-        react_app_towers_base_url: ${{ vars.REACT_APP_TOWERS_BASE_URL }}
-        react_app_towers_info_email: ${{ vars.REACT_APP_TOWERS_INFO_EMAIL }}
-        react_app_pinyator_base_url: ${{ vars.REACT_APP_PINYATOR_BASE_URL }}
-        react_app_org_wp_api_base_url: ${{ vars.REACT_APP_ORG_WP_API_BASE_URL }}
-        react_app_org_wp_api_username: ${{ vars.REACT_APP_ORG_WP_API_USERNAME }}
-        react_app_org_wp_api_password: ${{ vars.REACT_APP_ORG_WP_API_PASSWORD }}
-        react_app_org_wp_categories_ca: ${{ vars.REACT_APP_ORG_WP_CATEGORIES_CA }}
-        react_app_org_wp_categories_sv: ${{ vars.REACT_APP_ORG_WP_CATEGORIES_SV }}
-
-  build-frontend-towers:
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
-    name: Build frontend-towers
-
-    steps:
-    - name: Checkout source
-      uses: actions/checkout@v4
-
-    - uses: ./.github/actions/build-and-push
-      name: Build frontend-towers
-      with:
-        name: frontend-towers
-        dockerfile: Dockerfile-prod
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        build_target: ${{ env.BUILD_TARGET }}
-        react_app_api_base_url: ${{ vars.REACT_APP_API_BASE_URL }}
-        react_app_org_api_url: ${{ vars.REACT_APP_ORG_API_URL }}
-        react_app_org_base_url: ${{ vars.REACT_APP_ORG_BASE_URL }}
-        react_app_org_info_email: ${{ vars.REACT_APP_ORG_INFO_EMAIL }}
-        react_app_towers_api_url: ${{ vars.REACT_APP_TOWERS_API_URL }}
-        react_app_towers_base_url: ${{ vars.REACT_APP_TOWERS_BASE_URL }}
-        react_app_towers_info_email: ${{ vars.REACT_APP_TOWERS_INFO_EMAIL }}
-        react_app_pinyator_base_url: ${{ vars.REACT_APP_PINYATOR_BASE_URL }}
-        react_app_payment_provider_paypal_client_id: ${{ vars.REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID }}
-
-  build-pinyator:
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
-    name: Build pinyator
-    
-    steps:
-    - name: Checkout source
-      uses: actions/checkout@v4
-
-    - uses: ./.github/actions/build-and-push
-      name: Build pinyator
-      with:
-        name: pinyator
-        dockerfile: Dockerfile-prod
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        build_target: ${{ env.BUILD_TARGET }}
-      
-  build-php:
-    runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
-    name: Build php
-    
-    steps:
-    - name: Checkout source
-      uses: actions/checkout@v4
-
-    - uses: ./.github/actions/build-and-push
-      name: Build php
-      with:
-        name: php
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        build_target: ${{ env.BUILD_TARGET }}
-
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment: ${{ github.ref_name }}
-    # needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
-    needs: [ build-backend, build-frontend-org, build-frontend-towers, build-pinyator, build-php ]
+    needs: [ build-backend ]
     name: Deploy
 
     steps:
