@@ -5,13 +5,13 @@ from uuid import UUID
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Prefetch, Q
-from django.utils import timezone
+from django.utils import timezone, translation
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 import payment.api.entity
-from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
+from comunicat.consts import GOOGLE_ENABLED_BY_MODULE, LOCALE_BY_MODULE
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 from event.consts import (
@@ -310,30 +310,33 @@ def import_events() -> None:  # noqa: C901
 def create_or_update_event(  # noqa: C901
     event_id: UUID, registration_id: UUID | None = None
 ) -> GoogleEvent | None:
-    event_obj = (
-        Event.objects.filter(id=event_id)
-        .select_related("location", "google_event")
-        .prefetch_related(
-            "modules",
-            "registrations",
-            Prefetch(
-                "agenda_items",
-                (
-                    AgendaItem.objects.with_name()
-                    .with_description()
-                    .order_by("time_from")
-                ),
-            ),
-        )
-        .with_title()
-        .first()
-    )
+    event_obj = Event.objects.filter(id=event_id).first()
 
     if not event_obj or not event_obj.module:
         return None
 
     if not GOOGLE_ENABLED_BY_MODULE[event_obj.module]["calendar"]:
         return None
+
+    with translation.override(LOCALE_BY_MODULE[event_obj.module]):
+        event_obj = (
+            Event.objects.filter(id=event_id)
+            .select_related("location", "google_event")
+            .prefetch_related(
+                "modules",
+                "registrations",
+                Prefetch(
+                    "agenda_items",
+                    (
+                        AgendaItem.objects.with_name()
+                        .with_description()
+                        .order_by("time_from")
+                    ),
+                ),
+            )
+            .with_title()
+            .first()
+        )
 
     google_integration_obj = GoogleIntegration.objects.filter(
         module=event_obj.module
