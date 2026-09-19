@@ -362,7 +362,7 @@ function ActivityKidsPage() {
                   );
 
               return (
-                <>
+                <Box mt={4}>
                   <Typography
                     variant="h6"
                     fontWeight={700}
@@ -711,7 +711,7 @@ function ActivityKidsPage() {
                       </Grid>
                     </Collapse>
                   </>
-                </>
+                </Box>
               );
             })}
           </>
