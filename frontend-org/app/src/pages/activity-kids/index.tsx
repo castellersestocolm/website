@@ -335,10 +335,7 @@ function ActivityKidsPage() {
       )}
       {programCourses &&
         programCourses.results &&
-        programCourses.results.length > 0 &&
-        userFamilyMemberCannotManage &&
-        userFamilyMemberCannotManage.length > 0 &&
-        membership && (
+        programCourses.results.length > 0 && (
           <>
             {programCourses.results.map((programCourse: any) => {
               const registrationsRequested = programCourse.registrations.filter(
@@ -488,7 +485,8 @@ function ActivityKidsPage() {
                             </Card>
                           </Grid>
                         )}
-                      {userFamilyMemberCannotManage &&
+                      {membership &&
+                        userFamilyMemberCannotManage &&
                         userFamilyMemberCannotManage.length > 0 && (
                           <Grid size={{ xs: 12, sm: 10, md: 7, lg: 5, xl: 4 }}>
                             <Card variant="outlined">
