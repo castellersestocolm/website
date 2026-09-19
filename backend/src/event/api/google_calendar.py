@@ -385,7 +385,8 @@ def create_or_update_event(  # noqa: C901
         service = build("calendar", "v3", credentials=creds)
 
         if (
-            event_obj.type in (EventType.REHEARSAL, EventType.WORKSHOP)
+            event_obj.type
+            in (EventType.REHEARSAL, EventType.WORKSHOP, EventType.COURSE)
             and event_obj.location
         ):
             event_title = f"{event_obj.title_locale} - {event_obj.location.name}"
