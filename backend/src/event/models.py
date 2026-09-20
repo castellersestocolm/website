@@ -590,6 +590,8 @@ class GoogleCalendar(StandardModel, Timestamps):
     name = models.CharField(max_length=255)
     external_id = models.CharField(max_length=255, unique=True)
 
+    language = models.CharField(max_length=255)
+
     is_primary = models.BooleanField(default=False)
 
     google_integration = models.ForeignKey(

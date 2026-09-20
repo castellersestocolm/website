@@ -20,7 +20,7 @@ import notify.tasks
 from activity.models import ProgramCourse
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
-from comunicat.utils.admin import beautify_dict
+from comunicat.utils.admin import beautify_dict, FIELD_LOCALE
 from event.enums import EventStatus, RegistrationStatus
 from event.models import (
     AgendaItem,
@@ -445,6 +445,14 @@ class GoogleCalendarDefaultInline(admin.TabularInline):
     extra = 0
 
 
+class GoogleCalendarAdminForm(forms.ModelForm):
+    language = FIELD_LOCALE(required=False)
+
+    class Meta:
+        model = GoogleCalendar
+        fields = "__all__"
+
+
 @admin.register(GoogleCalendar)
 class GoogleCalendarAdmin(admin.ModelAdmin):
     search_fields = ("id", "name", "external_id")
@@ -452,6 +460,7 @@ class GoogleCalendarAdmin(admin.ModelAdmin):
     list_filter = ("is_primary", "google_integration")
     ordering = ("google_integration__module", "name")
     inlines = (GoogleCalendarDefaultInline,)
+    form = GoogleCalendarAdminForm
 
 
 @admin.register(GoogleEvent)
