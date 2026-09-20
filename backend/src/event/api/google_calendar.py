@@ -11,7 +11,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 import payment.api.entity
-from comunicat.consts import GOOGLE_ENABLED_BY_MODULE, LOCALE_BY_MODULE
+from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
 from event.consts import (
@@ -318,26 +318,6 @@ def create_or_update_event(  # noqa: C901
     if not GOOGLE_ENABLED_BY_MODULE[event_obj.module]["calendar"]:
         return None
 
-    with translation.override(LOCALE_BY_MODULE[event_obj.module]):
-        event_obj = (
-            Event.objects.filter(id=event_id)
-            .select_related("location", "google_event")
-            .prefetch_related(
-                "modules",
-                "registrations",
-                Prefetch(
-                    "agenda_items",
-                    (
-                        AgendaItem.objects.with_name()
-                        .with_description()
-                        .order_by("time_from")
-                    ),
-                ),
-            )
-            .with_title()
-            .first()
-        )
-
     google_integration_obj = GoogleIntegration.objects.filter(
         module=event_obj.module
     ).first()
@@ -356,6 +336,26 @@ def create_or_update_event(  # noqa: C901
 
     if not google_calendar_obj:
         return None
+
+    with translation.override(google_calendar_obj.language):
+        event_obj = (
+            Event.objects.filter(id=event_id)
+            .select_related("location", "google_event")
+            .prefetch_related(
+                "modules",
+                "registrations",
+                Prefetch(
+                    "agenda_items",
+                    (
+                        AgendaItem.objects.with_name()
+                        .with_description()
+                        .order_by("time_from")
+                    ),
+                ),
+            )
+            .with_title()
+            .first()
+        )
 
     event_modules = list(
         set(settings.MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES).intersection(
