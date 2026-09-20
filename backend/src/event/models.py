@@ -17,7 +17,7 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
-from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
+from comunicat.consts import GOOGLE_ENABLED_BY_MODULE, LOCALE_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
 from comunicat.utils.models import language_field_default
@@ -197,12 +197,15 @@ class Event(StandardModel, Timestamps):
             self.type = EventType.COURSE
 
         if not self.code:
+            locale = (
+                LOCALE_BY_MODULE[self.module] if self.module else settings.LANGUAGE_CODE
+            )
             self.code = unicodedata.normalize(
                 "NFKD",
                 re.sub(
                     r"[^\w\-]",
                     "",
-                    self.title.get(settings.LANGUAGE_CODE).replace(" ", "-"),
+                    self.title.get(locale).replace(" ", "-"),
                 ),
             ).lower()
 
@@ -586,6 +589,8 @@ class AgendaItem(StandardModel, Timestamps):
 class GoogleCalendar(StandardModel, Timestamps):
     name = models.CharField(max_length=255)
     external_id = models.CharField(max_length=255, unique=True)
+
+    language = models.CharField(max_length=255)
 
     is_primary = models.BooleanField(default=False)
 
