@@ -408,7 +408,7 @@ function MembershipPage() {
           : t("pages.membership.title-renew")
       }
       content={content}
-      loading={!membership || !membershipRenewOptions}
+      loading={!membershipRenewOptions}
     />
   );
 }
