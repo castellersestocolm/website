@@ -86,7 +86,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     lookup_field = "id"
 
     @swagger_auto_schema(
-        request_body=IntegrationAppleWalletPassLoyaltyRequestSerializer,
+        query_serializer=IntegrationAppleWalletPassLoyaltyRequestSerializer(),
         responses={
             200: Serializer(),
             400: Serializer(),

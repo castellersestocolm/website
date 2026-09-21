@@ -54,6 +54,16 @@ export default function NavBar() {
           path: ROUTES["activity-kids"].path,
           target: "_self",
         },
+        {
+          name: t("components.navbar-menu.activity.dinners"),
+          path: ROUTES["activity-dinners"].path,
+          target: "_self",
+        },
+        {
+          name: t("components.navbar-menu.activity.lunches"),
+          path: ROUTES["activity-lunches"].path,
+          target: "_self",
+        },
       ],
     },
     {

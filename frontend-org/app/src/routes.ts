@@ -32,6 +32,12 @@ export const ROUTES = {
   "activity-kids": {
     path: "/activity/kids",
   },
+  "activity-dinners": {
+    path: "/activity/dinners",
+  },
+  "activity-lunches": {
+    path: "/activity/lunches",
+  },
   "policy-privacy": {
     path: "/policy/privacy",
   },

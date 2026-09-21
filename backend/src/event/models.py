@@ -33,6 +33,7 @@ from event.enums import (
 from event.managers import (
     AgendaItemQuerySet,
     EventQuerySet,
+    EventSeriesQuerySet,
     EventSignupQuerySet,
     RegistrationQuerySet,
 )
@@ -72,7 +73,43 @@ class Connection(StandardModel, Timestamps):
 
 
 class EventSeries(StandardModel, Timestamps):
-    name = models.CharField(max_length=255)
+    title = JSONField(default=language_field_default)
+
+    description = JSONField(default=language_field_default)
+
+    code = models.CharField(max_length=255)
+
+    type = models.PositiveSmallIntegerField(
+        choices=((et.value, et.name) for et in EventType),
+        default=EventType.GENERAL,
+    )
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+        null=True,
+        blank=True,
+    )
+
+    objects = EventSeriesQuerySet.as_manager()
+
+    @cached_property
+    def title_locale(self) -> str:
+        return (
+            self.title.get(translation.get_language()) or list(self.title.values())[0]
+        )
+
+    @cached_property
+    def description_locale(self) -> str:
+        return (
+            self.description.get(translation.get_language())
+            or list(self.description.values())[0]
+        )
+
+    def __str__(self) -> str:
+        return self.title_locale
+
+    class Meta:
+        verbose_name = _("event series")
+        verbose_name_plural = _("event series")
 
 
 def get_event_poster_name(instance, filename):
@@ -171,6 +208,8 @@ class Event(StandardModel, Timestamps):
                 validation_errors["module"] = _(
                     "The module must match the course program module."
                 )
+            if self.type != EventType.COURSE:
+                validation_errors["type"] = _("The type must be COURSE.")
             if (
                 self.course.date_from
                 > timezone.localdate(self.time_from)
@@ -179,6 +218,13 @@ class Event(StandardModel, Timestamps):
                 validation_errors["time_from"] = _(
                     "The start time must be within the course dates."
                 )
+        if self.series:
+            if self.series.module != self.module:
+                validation_errors["module"] = _(
+                    "The module must match the series module."
+                )
+            if self.series.type != self.type:
+                validation_errors["type"] = _("The type must match the series type.")
 
         if validation_errors:
             raise ValidationError(validation_errors)
@@ -187,7 +233,12 @@ class Event(StandardModel, Timestamps):
         import event.tasks
 
         if self.series:
-            self.series.events.exclude(id=self.id).update(type=self.type)
+            if not any(self.title.values()):
+                self.title = self.series.title
+            if not any(self.description.values()):
+                self.description = self.series.description
+            if not self.module:
+                self.module = self.series.module
 
         if self.course:
             if not any(self.title.values()):
@@ -210,7 +261,6 @@ class Event(StandardModel, Timestamps):
             ).lower()
 
         if self.module and self.status == EventStatus.PUBLISHED:
-
             if GOOGLE_ENABLED_BY_MODULE[self.module]["calendar"]:
                 transaction.on_commit(
                     lambda: event.tasks.create_or_update_event.delay(event_id=self.id)

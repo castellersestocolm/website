@@ -182,7 +182,7 @@ function ActivityKidsPage() {
           </Typography>
         </li>
       </ul>
-      <Grid container gap={3} mt={5} mb={5} justifyContent="center">
+      <Grid container gap={3} mt={4} mb={4} justifyContent="center">
         <Grid size={{ xs: 12, sm: 10, md: 7, lg: 5, xl: 4 }}>
           <Card variant="outlined" className={styles.pricesCard}>
             <Box className={styles.pricesTopBox}>
