@@ -31,6 +31,8 @@ import NewsPostPage from "./pages/news-post";
 import PolicyPrivacyPage from "./pages/policy-privacy";
 import PolicyPurchasePage from "./pages/policy-purchase";
 import ActivityKidsPage from "./pages/activity-kids";
+import ActivityDinnersPage from "./pages/activity-dinners";
+import ActivityLunchesPage from "./pages/activity-lunches";
 import ResourcesNewslettersPage from "./pages/resources-newsletters";
 import ResourcesReportsPage from "./pages/resources-reports";
 import ResourcesTransparencyPage from "./pages/resources-transparency";
@@ -184,6 +186,14 @@ const App = () => {
                   <Route
                     path={ROUTES["activity-kids"].path}
                     element={<ActivityKidsPage />}
+                  />
+                  <Route
+                    path={ROUTES["activity-dinners"].path}
+                    element={<ActivityDinnersPage />}
+                  />
+                  <Route
+                    path={ROUTES["activity-lunches"].path}
+                    element={<ActivityLunchesPage />}
                   />
                   <Route
                     path={ROUTES["resources-newsletters"].path}

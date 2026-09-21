@@ -78,6 +78,22 @@ class EventQuerySet(QuerySet):
         )
 
 
+class EventSeriesQuerySet(QuerySet):
+    def with_title(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            title_locale=F(f"title__{locale}"),
+        )
+
+    def with_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            description_locale=F(f"description__{locale}"),
+        )
+
+
 class EventSignupQuerySet(QuerySet):
     # TODO: Account for registration limits and also event in the past
     def with_is_open(self, is_open: bool = False):

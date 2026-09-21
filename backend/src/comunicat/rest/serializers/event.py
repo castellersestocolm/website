@@ -20,6 +20,7 @@ from event.models import (
     EventModule,
     EventPrice,
     EventQuestion,
+    EventSeries,
     EventSignup,
     GoogleAlbum,
     GoogleCalendar,
@@ -800,5 +801,57 @@ class PageEventSerializer(s.Serializer):
         return data
 
 
+class EventSeriesPageSerializer(s.Serializer):
+    code = s.CharField(required=False)
+    token = s.CharField(required=False)
+
+    def validate(self, data):
+        if "code" not in data and "token" not in data:
+            raise ValidationError(
+                {
+                    "code": _("The code must be provided if no token is given."),
+                }
+            )
+
+        return data
+
+
 class DestroyRegistrationSerializer(s.Serializer):
     token = s.CharField(required=False)
+
+
+class EventSeriesSerializer(s.ModelSerializer):
+    title = s.SerializerMethodField(read_only=True)
+    description = s.SerializerMethodField(read_only=True)
+    events = EventSlimSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = EventSeries
+        fields = (
+            "id",
+            "title",
+            "description",
+            "code",
+            "type",
+            "module",
+            "events",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "description",
+            "code",
+            "type",
+            "module",
+            "events",
+            "created_at",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_title(self, obj):
+        return obj.title.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())

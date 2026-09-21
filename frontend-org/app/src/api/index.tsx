@@ -949,3 +949,17 @@ export const apiIntegrationAppleWalletPassLoyaltyGet = async () => {
     throw error;
   }
 };
+
+export const apiEventSeriesPage = async (code: string = undefined) => {
+  try {
+    return await instance.get("/event/series/page/", {
+      params: {
+        code: code,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};

@@ -12,12 +12,15 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
 import event.api
+import event.api.event_series
 import event.api.registration
 import payment.api.entity
 import user.api.event
 from comunicat.rest.serializers.event import (
     CreateRegistrationSerializer,
     DestroyRegistrationSerializer,
+    EventSeriesPageSerializer,
+    EventSeriesSerializer,
     EventWithCountsSerializer,
     EventWithRegistrationsSerializer,
     ListEventCalendarSerializer,
@@ -30,6 +33,12 @@ from comunicat.rest.viewsets import ComuniCatViewSet
 
 
 class EventResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class EventSeriesResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -140,6 +149,37 @@ class EventAPI(ComuniCatViewSet):
             return Response(status=404)
 
         serializer = self.serializer_class(event_obj, context={"module": self.module})
+        return Response(serializer.data)
+
+
+class EventSeriesAPI(ComuniCatViewSet):
+    serializer_class = EventSeriesSerializer
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = EventSeriesResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        query_serializer=EventSeriesPageSerializer,
+        responses={200: EventSeriesSerializer(), 404: Serializer()},
+    )
+    @action(methods=["get"], detail=False, url_path="page", url_name="page")
+    @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
+    def page(self, request):
+        serializer = EventSeriesPageSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        event_series_obj = event.api.event_series.get(
+            code=serializer.validated_data.get("code"),
+            module=self.module,
+        )
+
+        if not event_series_obj:
+            return Response(status=404)
+
+        serializer = self.serializer_class(
+            event_series_obj, context={"module": self.module}
+        )
         return Response(serializer.data)
 
 

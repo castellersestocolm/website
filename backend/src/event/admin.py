@@ -31,6 +31,7 @@ from event.models import (
     EventPrice,
     EventQuestion,
     EventRequirement,
+    EventSeries,
     EventSignup,
     GoogleAlbum,
     GoogleCalendar,
@@ -353,6 +354,51 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
 
     title_locale.short_description = _("title")
     accounts_link.short_description = _("accounts")
+
+
+class EventInline(admin.TabularInline):
+    model = Event
+    ordering = ("time_from", "time_to")
+    fields = (
+        "title_locale",
+        "time_from",
+        "time_to",
+        "location",
+        "status",
+    )
+    readonly_fields = ("title_locale",)
+    extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_title()
+
+    def title_locale(self, obj):
+        return obj.title_locale
+
+    title_locale.short_description = _("title")
+
+
+@admin.register(EventSeries)
+class EventSeriesAdmin(admin.ModelAdmin):
+    search_fields = ("id", "title")
+    list_display = (
+        "title_locale",
+        "type",
+        "module",
+    )
+    list_filter = ("type", "module")
+    ordering = ("-created_at",)
+    inlines = (EventInline,)
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_title()
+
+    def title_locale(self, obj):
+        return obj.title_locale
 
 
 class EventAccountsForm(forms.ModelForm):

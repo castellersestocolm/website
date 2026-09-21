@@ -90,9 +90,14 @@ class EventInlineForm(forms.ModelForm):
         cleaned_data = super().clean()
         event_title = cleaned_data.get("title")
         if not event_title:
-            self.instance.title = cleaned_data["course"].program.name.get(
-                settings.LANGUAGE_CODE
-            )
+            if "course" in cleaned_data:
+                self.instance.title = cleaned_data["course"].program.name.get(
+                    settings.LANGUAGE_CODE
+                )
+            if "series" in cleaned_data:
+                self.instance.title = cleaned_data["series"].title.get(
+                    settings.LANGUAGE_CODE
+                )
         self.instance.type = EventType.COURSE
         self.instance.module = cleaned_data["course"].program.module
 
