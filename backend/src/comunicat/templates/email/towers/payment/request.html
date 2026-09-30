@@ -26,6 +26,6 @@
 </table>
 {% endblock %}
 
-{% block email_button_url %}{% with "payment/request/"|add:payment_request_obj.id as payment_request_link %}{% full_org_url payment_request_link %}{% endwith %}{% endblock %}
+{% block email_button_url %}{% with payment_request_obj.id|stringformat:"s" as payment_request_id %}{% with "payment/request/"|add:payment_request_id as payment_request_link %}{% full_org_url payment_request_link %}{% endwith %}{% endwith %}{% endblock %}
 
 {% block email_button_text %}{% trans "Make the payment" %}{% endblock %}
