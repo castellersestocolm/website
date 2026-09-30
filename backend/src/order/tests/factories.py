@@ -20,6 +20,7 @@ from order.models import (
     OrderMembership,
     OrderProduct,
     OrderRegistration,
+    OrderRequest,
 )
 from payment.enums import PaymentStatus
 from payment.models import PaymentOrder
@@ -172,3 +173,17 @@ class OrderCourseFactory(DjangoModelFactory):
 
     class Meta:
         model = OrderCourse
+
+
+class OrderRequestFactory(DjangoModelFactory):
+    order = SubFactory(OrderFactory)
+
+    request = SubFactory("payment.tests.factories.PaymentRequestLineFactory")
+
+    line = SubFactory("payment.tests.factories.PaymentLineFactory")
+
+    amount = LazyAttribute(lambda n: Money(random.randint(100, 500), "SEK"))
+    vat = 0
+
+    class Meta:
+        model = OrderRequest

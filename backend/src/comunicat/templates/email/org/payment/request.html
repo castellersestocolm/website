@@ -1,0 +1,31 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "You have received a payment request, please pay as soon as you can! You will find a summary right below." %}</p>
+    <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+</style>
+<h4 style="margin-bottom:15px;">{% trans "Summary" %}</h4>
+<table class="tg" style="margin-bottom:20px;">
+                    {% for payment_request_line_obj in payment_request_obj.lines.all %}
+  <tr>
+    <td class="tg-hfk9" style="display: flex; justify-content: start; align-items: center;"><p style="margin: 0 !important;">{{ payment_request_line_obj.text }}</p></td>
+    <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 0 !important;">{{ payment_request_line_obj.amount|format_money_2f }}</p></td>
+  </tr>
+                    {% endfor %}
+  <tr>
+      <td class="tg-hfk9"><p style="margin: 10px 0 0 0 !important;"><strong>{% trans "Total" %}</strong></p></td>
+      <td class="tg-hfk9"><p style="text-align: right;white-space:nowrap;margin: 10px 0 0 0 !important;"><strong>{{ payment_request_obj.amount|format_money_2f }}</strong></p></td>
+  </tr>
+</table>
+{% endblock %}
+
+{% block email_button_url %}{% with "payment/request/"|add:payment_request_obj.id as payment_request_link %}{% full_org_url payment_request_link %}{% endwith %}{% endblock %}
+
+{% block email_button_text %}{% trans "Make the payment" %}{% endblock %}

@@ -24,6 +24,7 @@ class OrderQuerySet(QuerySet):
         OrderRegistration = apps.get_model("order", "OrderRegistration")
         OrderMembership = apps.get_model("order", "OrderMembership")
         OrderCourse = apps.get_model("order", "OrderCourse")
+        OrderRequest = apps.get_model("order", "OrderRequest")
 
         return self.annotate(
             amount_items=Case(
@@ -71,6 +72,19 @@ class OrderQuerySet(QuerySet):
                     then=Coalesce(
                         Subquery(
                             OrderCourse.objects.filter(order_id=OuterRef("id"))
+                            .values("order_id")
+                            .annotate(amount=Sum("amount"))
+                            .values("amount")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
+                ),
+                When(
+                    type=OrderType.REQUEST,
+                    then=Coalesce(
+                        Subquery(
+                            OrderRequest.objects.filter(order_id=OuterRef("id"))
                             .values("order_id")
                             .annotate(amount=Sum("amount"))
                             .values("amount")[:1]
@@ -130,6 +144,20 @@ class OrderQuerySet(QuerySet):
                     then=Coalesce(
                         Subquery(
                             OrderCourse.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount_vat=Sum("amount_vat"))
+                            .values("amount_vat")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
+                ),
+                When(
+                    type=OrderType.REQUEST,
+                    then=Coalesce(
+                        Subquery(
+                            OrderRequest.objects.filter(order_id=OuterRef("id"))
                             .with_amount()
                             .values("order_id")
                             .annotate(amount_vat=Sum("amount_vat"))
@@ -227,6 +255,11 @@ class OrderMembershipQuerySet(QuerySet):
 
 
 class OrderCourseQuerySet(QuerySet):
+    def with_amount(self):
+        return self.annotate(amount_vat=F("vat") * F("amount") / 100)
+
+
+class OrderRequestQuerySet(QuerySet):
     def with_amount(self):
         return self.annotate(amount_vat=F("vat") * F("amount") / 100)
 

@@ -20,6 +20,7 @@ from order.managers import (
     OrderProductQuerySet,
     OrderQuerySet,
     OrderRegistrationQuerySet,
+    OrderRequestQuerySet,
 )
 from user.enums import UserProductSource
 
@@ -476,6 +477,68 @@ class OrderCourse(StandardModel, Timestamps):
 
     def __str__(self) -> str:
         return f"{str(self.order)} - {str(self.registration)}"
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            if self.line != self.__line:
+                if self.line:
+                    self.line.item = self
+                    self.line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+                if self.__line:
+                    self.__line.item = None
+                    self.__line.save(
+                        update_fields=(
+                            "item_type",
+                            "item_id",
+                        )
+                    )
+
+        super().save(*args, **kwargs)
+
+
+class OrderRequest(StandardModel, Timestamps):
+    order = models.ForeignKey(
+        "Order",
+        related_name="requests",
+        on_delete=models.CASCADE,
+    )
+
+    request = models.ForeignKey(
+        "payment.PaymentRequestLine",
+        related_name="order_requests",
+        on_delete=models.PROTECT,
+    )
+
+    line = models.OneToOneField(
+        "payment.PaymentLine",
+        related_name="order_requests",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    __line = None
+
+    objects = OrderRequestQuerySet.as_manager()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__line = self.line
+
+    def __str__(self) -> str:
+        return f"{str(self.order)} - {str(self.request)}"
 
     def save(self, *args, **kwargs):
         if self.pk:

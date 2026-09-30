@@ -16,6 +16,7 @@ import event.api.registration
 import membership.api
 import notify.tasks
 import payment.api.payment_provider
+import payment.api.payment_request
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
@@ -38,11 +39,12 @@ from order.models import (
     OrderMembership,
     OrderProduct,
     OrderRegistration,
+    OrderRequest,
 )
 from order.utils.delivery import get_delivery_price
 from payment.consts import PAYMENT_CODE_REQUIRE_SOURCE
 from payment.enums import PaymentStatus
-from payment.models import Entity, PaymentOrder
+from payment.models import Entity, PaymentOrder, PaymentRequestLine
 from product.models import ProductSize
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
@@ -165,6 +167,18 @@ def get_list(
                     "registration__entity__lastname",
                 ),
             ),
+            Prefetch(
+                "requests",
+                OrderRequest.objects.select_related(
+                    "request",
+                    "request__request",
+                    "request__request__entity",
+                    "request__request__entity__user",
+                ).order_by(
+                    "amount",
+                    "request__text",
+                ),
+            ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )
         .with_amount()
@@ -191,6 +205,7 @@ def create(  # noqa: C901
     cart_modules: list[dict] | None = None,
     cart_course_registrations: list[dict] | None = None,
     cart_event_registrations: list[dict] | None = None,
+    cart_request_lines: list[dict] | None = None,
     user_id: UUID | None = None,
     user: dict | None = None,
     delivery: dict | None = None,
@@ -240,6 +255,7 @@ def create(  # noqa: C901
     membership_module_obj_by_id = {}
     program_course_registration_by_id = {}
     registration_obj_by_id = {}
+    payment_request_line_obj_by_id = {}
 
     if order_type == OrderType.PRODUCT:
         delivery_provider_obj = DeliveryProvider.objects.get(
@@ -349,6 +365,15 @@ def create(  # noqa: C901
                 ]
             ).select_related("event", "entity", "entity__user")
         }
+    elif order_type == OrderType.REQUEST:
+        payment_request_line_obj_by_id = {
+            payment_request_line_obj.id: payment_request_line_obj
+            for payment_request_line_obj in PaymentRequestLine.objects.filter(
+                id__in=[
+                    cart_request_line["id"] for cart_request_line in cart_request_lines
+                ]
+            ).select_related("request", "request__entity", "request__entity__user")
+        }
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
     if provider_objs:
@@ -430,6 +455,20 @@ def create(  # noqa: C901
                 defaults={
                     "amount": registration_obj.price.amount,
                     "vat": settings.MODULE_ALL_VAT,
+                },
+            )
+    elif order_type == OrderType.REQUEST:
+        for cart_request_line in cart_request_lines:
+            payment_request_line_obj = payment_request_line_obj_by_id[
+                cart_request_line["id"]
+            ]
+
+            OrderRequest.objects.update_or_create(
+                order=order_obj,
+                request=payment_request_line_obj,
+                defaults={
+                    "amount": payment_request_line_obj.amount,
+                    "vat": payment_request_line_obj.vat,
                 },
             )
 
@@ -632,6 +671,16 @@ def complete(  # noqa: C901
                 ]
                 activity.api.course.complete_registrations(
                     registration_ids=program_course_registration_ids,
+                    is_completed=payment_status == PaymentStatus.COMPLETED,
+                    with_notify=with_notify,
+                )
+            elif order_obj.type == OrderType.REQUEST:
+                payment_request_line_ids = [
+                    order_request_obj.request_id
+                    for order_request_obj in order_obj.requests.all()
+                ]
+                payment.api.payment_request.complete_lines(
+                    request_line_ids=payment_request_line_ids,
                     is_completed=payment_status == PaymentStatus.COMPLETED,
                     with_notify=with_notify,
                 )

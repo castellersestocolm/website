@@ -37,6 +37,7 @@ from payment.managers import (
     PaymentLineQuerySet,
     PaymentProviderQuerySet,
     PaymentQuerySet,
+    PaymentRequestQuerySet,
     SourceQuerySet,
 )
 from user.utils import is_over_minimum_age
@@ -111,6 +112,62 @@ class Payment(StandardModel, Timestamps):
 
     class Meta:
         indexes = [models.Index(fields=("-created_at",))]
+
+
+class PaymentRequest(StandardModel, Timestamps):
+    entity = models.ForeignKey(
+        "Entity",
+        related_name="payment_requests",
+        on_delete=models.CASCADE,
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((ps.value, ps.name) for ps in PaymentStatus),
+        default=PaymentStatus.CREATED,
+    )
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module)
+    )
+
+    objects = PaymentRequestQuerySet.as_manager()
+
+    __status = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__status = self.status
+
+    def save(self, *args, **kwargs):
+        if self.pk and self.status != self.__status:
+            PaymentRequestLog.objects.create(request_id=self.id, status=self.status)
+        super().save(*args, **kwargs)
+
+
+class PaymentRequestLine(StandardModel, Timestamps):
+    request = models.ForeignKey(
+        "PaymentRequest", related_name="lines", on_delete=models.CASCADE
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((ps.value, ps.name) for ps in PaymentStatus),
+        default=PaymentStatus.CREATED,
+    )
+
+    text = models.CharField(max_length=255, null=True, blank=True)
+
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="SEK",
+    )
+    vat = models.PositiveSmallIntegerField(default=0)
+
+    line = models.OneToOneField(
+        "PaymentLine",
+        null=True,
+        blank=True,
+        related_name="request_line",
+        on_delete=models.SET_NULL,
+    )
 
 
 class Entity(StandardModel, Timestamps):
@@ -447,6 +504,15 @@ class PaymentLine(StandardModel, Timestamps):
 class PaymentLog(StandardModel, Timestamps):
     payment = models.ForeignKey(
         "Payment", related_name="logs", on_delete=models.CASCADE
+    )
+    status = models.PositiveSmallIntegerField(
+        choices=((ps.value, ps.name) for ps in PaymentStatus),
+    )
+
+
+class PaymentRequestLog(StandardModel, Timestamps):
+    request = models.ForeignKey(
+        "PaymentRequest", related_name="logs", on_delete=models.CASCADE
     )
     status = models.PositiveSmallIntegerField(
         choices=((ps.value, ps.name) for ps in PaymentStatus),

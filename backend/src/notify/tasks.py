@@ -14,6 +14,7 @@ from notify.api.template import (
     get_generic_email_render,
     get_order_email_render,
     get_payment_email_render,
+    get_payment_request_email_render,
     get_program_course_registration_email_renders,
     get_registration_email_renders,
     get_user_email_render,
@@ -117,6 +118,48 @@ def send_payment_email(
 ) -> None:
     email_render = get_payment_email_render(
         payment_id=payment_id,
+        email_type=email_type,
+        module=module,
+        email=email,
+        context=context,
+        locale=locale,
+    )
+
+    email_obj = Email.objects.create(
+        entity=email_render.entity_obj,
+        type=email_type,
+        subject=email_render.subject,
+        context=email_render.context,
+        module=module,
+        locale=email_render.locale,
+        status=EmailStatus.SENT,
+    )
+
+    send_email(
+        subject=email_render.subject,
+        body=email_render.body,
+        from_email=email_render.from_email,
+        to=email_render.to_email,
+        reply_to=email_render.from_email,
+        attachments=email_render.attachments,
+        module=module,
+    )
+
+    return email_obj
+
+
+# TODO: Include cases for partial payment with status on each line
+@shared_task
+def send_payment_request_email(
+    payment_request_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> None:
+    email_render = get_payment_request_email_render(
+        payment_request_id=payment_request_id,
         email_type=email_type,
         module=module,
         email=email,

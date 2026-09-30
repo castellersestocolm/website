@@ -78,14 +78,15 @@ export default function OrderPayment({
     order &&
     (order.type === OrderType.COURSE
       ? ROUTES["user-dashboard"].path
-      : order.type === OrderType.REGISTRATION
+      : order.type === OrderType.REGISTRATION || order.type === OrderType.REQUEST
         ? ROUTES.home.path
         : ROUTES.membership.path);
   const orderReceiptPath =
     order &&
     (order.type === OrderType.COURSE
       ? ROUTES["course-receipt"].path.replace(":id", id)
-      : order.type === OrderType.REGISTRATION
+      : order.type === OrderType.REQUEST
+        ? ROUTES["request-receipt"].path.replace(":id", id) : order.type === OrderType.REGISTRATION
         ? ROUTES["calendar-event-receipt"].path.replace(":id", id)
         : ROUTES["membership-receipt"].path.replace(":id", id));
 

@@ -33,7 +33,7 @@ from event.models import Registration
 from notify.enums import EmailType
 from order.models import Order
 from payment.consts import PAYMENT_LINE_CONTENT_TYPES
-from payment.enums import PaymentType
+from payment.enums import PaymentStatus, PaymentType
 from payment.models import (
     Account,
     AccountEvent,
@@ -50,6 +50,9 @@ from payment.models import (
     PaymentOrderProviderLog,
     PaymentProvider,
     PaymentProviderAccounts,
+    PaymentRequest,
+    PaymentRequestLine,
+    PaymentRequestLog,
     Receipt,
     Source,
     Statement,
@@ -1193,6 +1196,65 @@ class PaymentOrderAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
     inlines = (PaymentOrderProviderLogInline,)
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+
+class PaymentRequestLineInline(admin.TabularInline):
+    model = PaymentRequestLine
+    ordering = ("-created_at",)
+    raw_id_fields = ("line",)
+    extra = 0
+
+
+class PaymentRequestLogInline(admin.TabularInline):
+    model = PaymentRequestLog
+    readonly_fields = ("status", "created_at")
+    ordering = ("-created_at",)
+    extra = 0
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.action(description="Send payment request email")
+def send_payment_request_email(modeladmin, request, queryset):
+    for payment_request_obj in queryset.filter(status=PaymentStatus.CREATED):
+        notify.tasks.send_payment_request_email.delay(
+            payment_request_id=payment_request_obj.id,
+            email_type=EmailType.PAYMENT_REQUEST,
+            module=payment_request_obj.module,
+        )
+
+
+@admin.register(PaymentRequest)
+class PaymentRequestAdmin(admin.ModelAdmin):
+    search_fields = (
+        "id",
+        "entity__email",
+        "entity__firstname",
+        "entity__lastname",
+    )
+    list_display = (
+        "id",
+        "entity",
+        "status",
+        "module",
+    )
+    list_filter = ("status", "module")
+    readonly_fields = ("created_at",)
+    ordering = ("-created_at",)
+    raw_id_fields = ("entity",)
+    inlines = (PaymentRequestLineInline, PaymentRequestLogInline)
+    actions = (send_payment_request_email,)
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},

@@ -908,3 +908,21 @@ class EntityQuerySet(QuerySet):
                 if not modules or module in modules
             },
         )
+
+
+class PaymentRequestQuerySet(QuerySet):
+    def with_amount(self):
+        PaymentRequestLine = apps.get_model("payment", "PaymentRequestLine")
+
+        return self.annotate(
+            amount=Coalesce(
+                Subquery(
+                    PaymentRequestLine.objects.filter(request_id=OuterRef("id"))
+                    .values("request")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+        )

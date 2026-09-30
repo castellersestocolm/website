@@ -20,6 +20,7 @@ from comunicat.rest.serializers.membership import MembershipModuleSerializer
 from comunicat.rest.serializers.payment import (
     PaymentLineSerializer,
     PaymentOrderSerializer,
+    PaymentRequestSerializer,
 )
 from comunicat.rest.serializers.product import ProductSizeSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
@@ -34,6 +35,7 @@ from order.models import (
     OrderLog,
     OrderProduct,
     OrderRegistration,
+    OrderRequest,
 )
 from user.models import User
 
@@ -272,6 +274,29 @@ class OrderCourseSerializer(s.ModelSerializer):
         )
 
 
+class OrderRequestSerializer(s.ModelSerializer):
+    request = PaymentRequestSerializer(read_only=True)
+    line = PaymentLineSerializer(read_only=True)
+    amount = MoneyField(read_only=True)
+
+    class Meta:
+        model = OrderRequest
+        fields = (
+            "id",
+            "request",
+            "line",
+            "amount",
+            "vat",
+        )
+        read_only_fields = (
+            "id",
+            "request",
+            "line",
+            "amount",
+            "vat",
+        )
+
+
 class OrderLogSerializer(s.ModelSerializer):
     class Meta:
         model = OrderLog
@@ -313,6 +338,7 @@ class OrderSerializer(OrderSlimSerializer):
     registrations = OrderRegistrationSerializer(many=True, read_only=True)
     memberships = OrderMembershipSerializer(many=True, read_only=True)
     courses = OrderCourseSerializer(many=True, read_only=True)
+    requests = OrderRequestSerializer(many=True, read_only=True)
     logs = OrderLogSerializer(many=True, read_only=True)
 
     class Meta:
@@ -330,6 +356,7 @@ class OrderSerializer(OrderSlimSerializer):
             "registrations",
             "memberships",
             "courses",
+            "requests",
             "logs",
             "created_at",
         )
@@ -345,6 +372,8 @@ class OrderSerializer(OrderSlimSerializer):
             "products",
             "registrations",
             "memberships",
+            "courses",
+            "requests",
             "logs",
             "created_at",
         )
@@ -364,6 +393,10 @@ class CreateOrderCourseRegistrationSerializer(s.Serializer):
 
 
 class CreateOrderEventRegistrationSerializer(s.Serializer):
+    id = s.UUIDField()
+
+
+class CreateOrderRequestLineSerializer(s.Serializer):
     id = s.UUIDField()
 
 
@@ -388,6 +421,12 @@ class CreateCartSerializer(s.Serializer):
     )
     event_registrations = s.ListSerializer(
         child=CreateOrderEventRegistrationSerializer(),
+        min_length=0,
+        max_length=10,
+        required=False,
+    )
+    request_lines = s.ListSerializer(
+        child=CreateOrderRequestLineSerializer(),
         min_length=0,
         max_length=10,
         required=False,

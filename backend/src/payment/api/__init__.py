@@ -28,6 +28,7 @@ from order.models import (
     OrderMembership,
     OrderProduct,
     OrderRegistration,
+    OrderRequest,
 )
 from payment.enums import PaymentStatus, PaymentType
 from payment.models import Payment, PaymentLine, PaymentLog, Transaction
@@ -159,6 +160,16 @@ def create_for_order(  # noqa: C901
                 ),
                 to_attr="all_courses",
             ),
+            Prefetch(
+                "requests",
+                OrderRequest.objects.select_related(
+                    "request",
+                    "request__request",
+                    "request__request__entity",
+                    "request__request__entity__user",
+                ),
+                to_attr="all_requests",
+            ),
         )
         .first()
     )
@@ -174,6 +185,7 @@ def create_for_order(  # noqa: C901
     order_registration_updates = []
     order_membership_updates = []
     order_course_updates = []
+    order_request_updates = []
 
     with translation.override(
         language=order_obj.origin_language or settings.LANGUAGE_CODE
@@ -189,6 +201,11 @@ def create_for_order(  # noqa: C901
         elif order_obj.type == OrderType.REGISTRATION:
             text = order_obj.all_registrations[0].registration.event.title_locale
             text_fee = f"{text} fee"
+        elif order_obj.type == OrderType.REQUEST:
+            text_order = _("Payment")
+            text = f"{text_order} #{order_obj.reference}"
+            text_order_fee = _("Payment fee")
+            text_fee = f"{text_order_fee} #{order_obj.reference}"
         else:
             text_order = _("Order")
             text = f"{text_order} #{order_obj.reference}"
@@ -230,6 +247,9 @@ def create_for_order(  # noqa: C901
         )
         item_type_order_course = ContentType.objects.get_by_natural_key(
             "order", "ordercourse"
+        )
+        item_type_order_request = ContentType.objects.get_by_natural_key(
+            "order", "orderrequest"
         )
         item_type_order_delivery = ContentType.objects.get_by_natural_key(
             "order", "orderdelivery"
@@ -300,6 +320,18 @@ def create_for_order(  # noqa: C901
             order_course_obj.line = payment_line_obj
             order_course_updates.append(order_course_obj)
 
+        for order_request_obj in order_obj.all_requests:
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_request_obj.amount,
+                vat=order_request_obj.vat,
+                text=order_request_obj.request.text,
+                item_type=item_type_order_request,
+                item_id=order_request_obj.id,
+            )
+            order_request_obj.line = payment_line_obj
+            order_request_updates.append(order_request_obj)
+
         if order_obj.delivery:
             text_delivery = _("Delivery")
             account_delivery_obj = (
@@ -336,6 +368,9 @@ def create_for_order(  # noqa: C901
 
         if order_course_updates:
             OrderCourse.objects.bulk_update(order_course_updates, fields=("line",))
+
+        if order_request_updates:
+            OrderRequest.objects.bulk_update(order_request_updates, fields=("line",))
 
         if fee_amount:
             account_fees_obj = (

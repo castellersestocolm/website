@@ -33,11 +33,18 @@ from order.tests.factories import (
     OrderMembershipFactory,
     OrderProductFactory,
     OrderRegistrationFactory,
+    OrderRequestFactory,
     PaymentOrderFactory,
 )
 from payment.enums import PaymentMethod, PaymentStatus, PaymentType, SourceType
 from payment.models import Payment, PaymentLine, Transaction
-from payment.tests.factories import EntityFactory, PaymentProviderFactory, SourceFactory
+from payment.tests.factories import (
+    EntityFactory,
+    PaymentProviderFactory,
+    PaymentRequestFactory,
+    PaymentRequestLineFactory,
+    SourceFactory,
+)
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.tests.factories import FamilyFactory, FamilyMemberFactory, UserFactory
 
@@ -182,7 +189,7 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
     # TODO: Check if this makes a call outside
     def test_update_provider__existing_payment_order(self, *args, **kwargs):
         with self.assertNumOperations(
-            num=0, num_selects=29, num_inserts=1, num_updates=1
+            num=0, num_selects=30, num_inserts=1, num_updates=1
         ):
             order_obj = update_provider(
                 order_id=self.order_1_obj.id,
@@ -197,7 +204,7 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
 
     def test_update_provider__new_payment_order(self, *args, **kwargs):
         with self.assertNumOperations(
-            num=0, num_selects=20, num_inserts=1, num_updates=2
+            num=0, num_selects=21, num_inserts=1, num_updates=2
         ):
             order_obj = update_provider(
                 order_id=self.order_2_obj.id,
@@ -412,6 +419,9 @@ class TestComplete(NumOperationsMixin, TestCase):
         cls.payment_order_6_obj = PaymentOrderFactory(
             provider=cls.payment_provider_1_obj, status=PaymentStatus.CREATED
         )
+        cls.payment_order_7_obj = PaymentOrderFactory(
+            provider=cls.payment_provider_1_obj, status=PaymentStatus.CREATED
+        )
 
         cls.order_delivery_1_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
         cls.order_delivery_2_obj = OrderDeliveryFactory(price__price=Money(100, "SEK"))
@@ -449,6 +459,13 @@ class TestComplete(NumOperationsMixin, TestCase):
             delivery=None,
             payment_order=cls.payment_order_5_obj,
             type=OrderType.COURSE,
+            status=OrderStatus.CREATED,
+        )
+        cls.order_6_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
+            delivery=None,
+            payment_order=cls.payment_order_6_obj,
+            type=OrderType.REQUEST,
             status=OrderStatus.CREATED,
         )
 
@@ -547,25 +564,53 @@ class TestComplete(NumOperationsMixin, TestCase):
             amount=Money(200, "SEK"),
         )
 
-        cls.order_6_obj = OrderFactory(
-            entity=cls.entity_member_1_obj,
-            type=OrderType.PRODUCT,
-            status=OrderStatus.CREATED,
-            payment_order=None,
+        cls.payment_request_1_obj = PaymentRequestFactory(
+            entity=cls.entity_member_1_obj, status=PaymentStatus.CREATED
+        )
+
+        cls.payment_request_line_1_obj = PaymentRequestLineFactory(
+            request=cls.payment_request_1_obj,
+            status=PaymentStatus.CREATED,
+            text="payment-request-line-1",
+            amount=Money(300, "SEK"),
+        )
+        cls.payment_request_line_2_obj = PaymentRequestLineFactory(
+            request=cls.payment_request_1_obj,
+            status=PaymentStatus.CREATED,
+            text="payment-request-line-2",
+            amount=Money(200, "SEK"),
+        )
+
+        OrderRequestFactory(
+            order=cls.order_6_obj,
+            request=cls.payment_request_line_1_obj,
+            amount=Money(300, "SEK"),
+        )
+        OrderRequestFactory(
+            order=cls.order_6_obj,
+            request=cls.payment_request_line_2_obj,
+            amount=Money(200, "SEK"),
         )
 
         cls.order_7_obj = OrderFactory(
             entity=cls.entity_member_1_obj,
             type=OrderType.PRODUCT,
-            status=OrderStatus.COMPLETED,
+            status=OrderStatus.CREATED,
             payment_order=None,
         )
 
         cls.order_8_obj = OrderFactory(
             entity=cls.entity_member_1_obj,
             type=OrderType.PRODUCT,
+            status=OrderStatus.COMPLETED,
+            payment_order=None,
+        )
+
+        cls.order_9_obj = OrderFactory(
+            entity=cls.entity_member_1_obj,
+            type=OrderType.PRODUCT,
             status=OrderStatus.CREATED,
-            payment_order=cls.payment_order_6_obj,
+            payment_order=cls.payment_order_7_obj,
         )
 
     def test_complete__order_created_capture(self, *args, **kwargs):
@@ -596,7 +641,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=53, num_inserts=9, num_updates=6
+                num=0, num_selects=55, num_inserts=9, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -659,7 +704,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=53, num_inserts=3, num_updates=12
+                num=0, num_selects=55, num_inserts=3, num_updates=12
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -750,7 +795,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(
-            num=0, num_selects=31, num_inserts=1, num_updates=2
+            num=0, num_selects=32, num_inserts=1, num_updates=2
         ):
             order_obj = complete(
                 order_id=self.order_2_obj.id,
@@ -809,7 +854,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=57, num_inserts=8, num_updates=5
+                num=0, num_selects=59, num_inserts=8, num_updates=5
             ):
                 order_obj = complete(
                     order_id=self.order_3_obj.id,
@@ -885,7 +930,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=53, num_inserts=8, num_updates=8
+                num=0, num_selects=55, num_inserts=8, num_updates=8
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -970,7 +1015,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=64, num_inserts=8, num_updates=6
+                num=0, num_selects=67, num_inserts=8, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_5_obj.id,
@@ -1031,12 +1076,104 @@ class TestComplete(NumOperationsMixin, TestCase):
             email_text,
         )
 
+    def test_complete__order_request(self, *args, **kwargs):
+        date_paid = timezone.localdate() + timezone.timedelta(days=1)
+
+        with mock.patch(
+            "httpx._client.Client.get",
+            side_effect=MockSumUpApiClientExecute(
+                Response(
+                    status_code=200,
+                    json={
+                        "status": "PAID",
+                    },
+                ),
+                Response(
+                    status_code=200,
+                    json={
+                        "status": "PAID",
+                        "transactions": [
+                            {"id": "transaction-1", "status": "SUCCESSFUL"},
+                        ],
+                    },
+                ),
+                Response(
+                    status_code=200,
+                    json={
+                        "id": "transaction-1",
+                        "amount": 500,
+                        "transaction_events": [{"event_type": "PAYOUT", "amount": 450}],
+                    },
+                ),
+            ),
+        ):
+            with self.assertNumOperations(
+                num=0, num_selects=52, num_inserts=8, num_updates=7
+            ):
+                order_obj = complete(
+                    order_id=self.order_6_obj.id,
+                    module=Module.ORG,
+                    date_paid=date_paid,
+                    transaction_id="external-order-6",
+                    transaction_reference="ORDER-6",
+                    user_id=None,
+                    with_notify=True,
+                )
+
+        self.assertIsNotNone(order_obj)
+
+        self.assertEqual(order_obj.status, OrderStatus.COMPLETED)
+        self.assertEqual(order_obj.payment_order.status, PaymentStatus.COMPLETED)
+
+        transaction_objs = list(
+            Transaction.objects.filter(reference="ORDER-6").order_by("-amount")
+        )
+        payment_objs = list(
+            Payment.objects.filter(transaction__reference="ORDER-6").order_by("type")
+        )
+        payment_line_objs = list(
+            PaymentLine.objects.filter(
+                payment__transaction__reference="ORDER-6"
+            ).order_by("payment__type")
+        )
+
+        self.assertEqual(len(transaction_objs), 2)
+        self.assertEqual(len(payment_objs), 2)
+        self.assertEqual(len(payment_line_objs), 3)
+
+        transaction_debit_obj = transaction_objs[0]
+
+        self.assertEqual(transaction_debit_obj.external_id, "external-order-6")
+        self.assertEqual(transaction_debit_obj.reference, "ORDER-6")
+        self.assertEqual(transaction_debit_obj.amount, Money(500, "SEK"))
+        self.assertEqual(
+            transaction_debit_obj.text, f"Payment #{self.order_6_obj.reference}"
+        )
+
+        run_commit_hooks()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        email_subject = mail.outbox[0].subject
+        email_text = mail.outbox[0].body
+
+        self.assertEqual(
+            email_subject,
+            "Your payment request has been processed",
+        )
+        self.assertIn("firstname-1 lastname-1", email_text)
+        self.assertIn("received", email_text)
+        self.assertIn(
+            self.payment_request_line_1_obj.text,
+            email_text,
+        )
+
     def test_complete__order_created_no_payment_order(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)
 
         with self.assertNumOperations(num=0, num_selects=4):
             order_obj = complete(
-                order_id=self.order_6_obj.id,
+                order_id=self.order_7_obj.id,
                 module=Module.ORG,
                 date_paid=date_paid,
                 transaction_id="external-order-6",
@@ -1051,7 +1188,7 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         with self.assertNumOperations(num=0, num_selects=1):
             order_obj = complete(
-                order_id=self.order_7_obj.id,
+                order_id=self.order_8_obj.id,
                 module=Module.ORG,
                 date_paid=date_paid,
                 transaction_id="external-order-7",
@@ -1086,7 +1223,7 @@ class TestComplete(NumOperationsMixin, TestCase):
         ):
             with self.assertNumOperations(num=0, num_selects=15):
                 order_obj = complete(
-                    order_id=self.order_8_obj.id,
+                    order_id=self.order_9_obj.id,
                     module=Module.ORG,
                     date_paid=date_paid,
                     transaction_id="external-order-8",
