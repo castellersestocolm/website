@@ -70,6 +70,7 @@ class OrderAPI(ComuniCatViewSet):
                 cart_event_registrations=validated_data["cart"].get(
                     "event_registrations"
                 ),
+                cart_request_lines=validated_data["cart"].get("request_lines"),
                 delivery=validated_data.get("delivery"),
                 order_type=validated_data["type"],
                 user=validated_data.get("user"),

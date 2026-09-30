@@ -36,6 +36,7 @@ from order.models import (
     OrderMembership,
     OrderProduct,
     OrderRegistration,
+    OrderRequest,
 )
 from payment.enums import PaymentType
 from payment.models import Account
@@ -223,6 +224,60 @@ class OrderCourseInline(admin.TabularInline):
     course_link.short_description = _("course")
 
 
+class OrderRequestInline(admin.TabularInline):
+    model = OrderRequest
+    raw_id_fields = ("request", "line")
+    readonly_fields = ("entity_link", "request_link")
+    extra = 0
+    ordering = (
+        "request__text",
+        "amount",
+    )
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "request",
+                "request__request",
+                "request__request__entity",
+                "request__request__entity__user",
+            )
+        )
+
+    def has_add_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_change_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_delete_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def entity_link(self, obj):
+        if hasattr(obj, "request"):
+            entity_link = reverse(
+                "admin:payment_entity_change", args=(obj.request.request.entity_id,)
+            )
+            return mark_safe(
+                f'<a href="{entity_link}">{obj.request.request.entity}</a>'
+            )
+        return "-"
+
+    def request_link(self, obj):
+        if hasattr(obj, "request"):
+            request_link = reverse(
+                "admin:payment_paymentrequest_change",
+                args=(obj.request.request_id,),
+            )
+            return mark_safe(f'<a href="{request_link}">{obj.request.request}</a>')
+        return "-"
+
+    entity_link.short_description = _("entity")
+    request_link.short_description = _("request")
+
+
 class OrderLogInline(admin.TabularInline):
     model = OrderLog
     readonly_fields = ("status", "created_at")
@@ -330,6 +385,8 @@ class OrderAdmin(admin.ModelAdmin):
                 inlines = (OrderMembershipInline,) + inlines
             elif obj.type == OrderType.COURSE:
                 inlines = (OrderCourseInline,) + inlines
+            elif obj.type == OrderType.REQUEST:
+                inlines = (OrderRequestInline,) + inlines
 
         return inlines
 

@@ -92,6 +92,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Your registration is now paid — %s"),
                 "html": "email/org/courseregistration/paid.html",
             },
+            EmailType.PAYMENT_REQUEST: {
+                "subject": _("You have a new payment request"),
+                "html": "email/org/payment/request.html",
+            },
         }
     },
     Module.TOWERS: {
@@ -163,6 +167,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Your registration is now paid — %s"),
                 "html": "email/towers/courseregistration/paid.html",
             },
+            EmailType.PAYMENT_REQUEST: {
+                "subject": _("You have a new payment request"),
+                "html": "email/towers/payment/request.html",
+            },
         }
     },
 }
@@ -196,6 +204,10 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
     EmailType.COURSE_REGISTRATION_PAID: (
         "get_program_course_registration_email_renders",
         ("registration_ids",),
+    ),
+    EmailType.PAYMENT_REQUEST: (
+        "get_payment_request_email_render",
+        ("payment_request_id",),
     ),
 }
 

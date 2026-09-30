@@ -41,9 +41,12 @@ import MembershipPaymentPage from "./pages/membership-payment";
 import MembershipReceiptPage from "./pages/membership-receipt";
 import CoursePaymentPage from "./pages/course-payment";
 import CourseReceiptPage from "./pages/course-receipt";
+import RequestPaymentPage from "./pages/request-payment";
+import RequestReceiptPage from "./pages/request-receipt";
 import CalendarEventPaymentPage from "./pages/calendar-event-payment";
 import CalendarEventReceiptPage from "./pages/calendar-event-receipt";
 import AdminEventTokenPage from "./pages/admin-event-token";
+import PaymentRequestPage from "./pages/payment-request";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -226,6 +229,18 @@ const App = () => {
                   <Route
                     path={ROUTES["course-receipt"].path}
                     element={<CourseReceiptPage />}
+                  />
+                  <Route
+                    path={ROUTES["request-payment"].path}
+                    element={<RequestPaymentPage />}
+                  />
+                  <Route
+                    path={ROUTES["request-receipt"].path}
+                    element={<RequestReceiptPage />}
+                  />
+                  <Route
+                    path={ROUTES["payment-request"].path}
+                    element={<PaymentRequestPage />}
                   />
                   <Route
                     path={ROUTES["policy-purchase"].path}

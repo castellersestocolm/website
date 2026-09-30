@@ -20,6 +20,9 @@ from payment.models import (
     PaymentLog,
     PaymentOrder,
     PaymentProvider,
+    PaymentRequest,
+    PaymentRequestLine,
+    PaymentRequestLog,
     Receipt,
     Transaction,
 )
@@ -260,6 +263,72 @@ class PaymentSerializer(s.ModelSerializer):
             "transaction",
             "lines",
             # "receipts",
+            "logs",
+            "created_at",
+        )
+
+
+class PaymentRequestLineSerializer(s.ModelSerializer):
+    amount = MoneyField(read_only=True)
+    description = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = PaymentRequestLine
+        fields = (
+            "id",
+            "description",
+            "amount",
+            "vat",
+        )
+        read_only_fields = (
+            "id",
+            "description",
+            "amount",
+            "vat",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.text
+
+
+class PaymentRequestLogSerializer(s.ModelSerializer):
+    class Meta:
+        model = PaymentRequestLog
+        fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "status",
+            "created_at",
+        )
+
+
+class PaymentRequestSerializer(s.ModelSerializer):
+    amount = MoneyField(read_only=True)
+    lines = PaymentRequestLineSerializer(many=True, read_only=True)
+    logs = PaymentRequestLogSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = PaymentRequest
+        fields = (
+            "id",
+            "status",
+            "module",
+            "amount",
+            "lines",
+            "logs",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "status",
+            "module",
+            "amount",
+            "lines",
             "logs",
             "created_at",
         )

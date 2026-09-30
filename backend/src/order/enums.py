@@ -33,3 +33,4 @@ class OrderType(IntEnum):
     REGISTRATION = 20
     MEMBERSHIP = 30
     COURSE = 40
+    REQUEST = 50

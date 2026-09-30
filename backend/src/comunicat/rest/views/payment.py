@@ -9,15 +9,23 @@ from rest_framework.serializers import Serializer
 import payment.api
 import payment.api.expense
 import payment.api.payment_provider
+import payment.api.payment_request
 from comunicat.rest.serializers.payment import (
     ExpenseSerializer,
     PaymentProviderSerializer,
+    PaymentRequestSerializer,
     PaymentSerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 
 
 class PaymentResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class PaymentRequestResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -92,4 +100,42 @@ class PaymentProviderAPI(ComuniCatViewSet):
         serializer = self.serializer_class(
             payment_provider_objs, context={"module": self.module}, many=True
         )
+        return Response(serializer.data)
+
+
+class PaymentRequestAPI(ComuniCatViewSet):
+    serializer_class = PaymentRequestSerializer
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = PaymentRequestResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        responses={200: PaymentRequestSerializer(many=True), 400: Serializer()},
+    )
+    @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
+    def list(self, request):
+        payment_objs = payment.api.payment_request.get_list(
+            user_id=request.user.id, module=self.module
+        )
+
+        serializer = self.serializer_class(
+            payment_objs, context={"module": self.module}, many=True
+        )
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        responses={200: PaymentRequestSerializer(), 404: Serializer()},
+    )
+    @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
+    def retrieve(self, request, id):
+        payment_obj = payment.api.payment_request.get(
+            payment_request_id=id, user_id=request.user.id, module=self.module
+        )
+
+        if not payment_obj:
+            return Response(status=404)
+
+        serializer = self.serializer_class(payment_obj, context={"module": self.module})
         return Response(serializer.data)

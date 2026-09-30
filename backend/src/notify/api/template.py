@@ -28,7 +28,13 @@ from notify.consts import (
 from notify.enums import ContactMessageType, EmailType, NotificationType
 from notify.models import ContactMessage, Email
 from order.models import Order, OrderLog, OrderProduct
-from payment.models import Entity, Payment, PaymentLine
+from payment.models import (
+    Entity,
+    Payment,
+    PaymentLine,
+    PaymentRequest,
+    PaymentRequestLine,
+)
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 
@@ -384,7 +390,7 @@ def get_payment_email_render(
         payment_obj = (
             Payment.objects.filter(id=payment_id)
             .select_related(
-                "entity", "entity__user", "entity", "transaction", "transaction__source"
+                "entity", "entity__user", "transaction", "transaction__source"
             )
             .prefetch_related(
                 Prefetch(
@@ -442,6 +448,73 @@ def get_payment_email_render(
         locale=locale,
         entity_obj=entity_obj,
         attachments=attachments,
+    )
+
+
+def get_payment_request_email_render(
+    payment_request_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> EmailRender:
+    payment_request_obj = (
+        PaymentRequest.objects.filter(id=payment_request_id)
+        .select_related("entity", "entity__user")
+        .first()
+    )
+
+    entity_obj = payment_request_obj.entity
+    user_obj = entity_obj.user
+    email = email or (user_obj.email if user_obj else entity_obj.email)
+    locale = (
+        locale
+        or (user_obj.preferred_language if user_obj else None)
+        or (entity_obj.preferred_language if entity_obj else None)
+        or settings.LANGUAGE_CODE
+    )
+
+    with translation.override(locale):
+        payment_request_obj = (
+            PaymentRequest.objects.filter(id=payment_request_id)
+            .select_related("entity", "entity__user")
+            .prefetch_related(
+                Prefetch("lines", PaymentRequestLine.objects.order_by("amount")),
+            )
+            .with_amount()
+            .first()
+        )
+
+        context = {
+            **SETTINGS_BY_MODULE[module],
+            **(context or {}),
+            "payment_request_id": str(payment_request_id),
+        }
+        context_full = {
+            **context,
+            "payment_request_obj": payment_request_obj,
+            "entity_obj": entity_obj,
+            "user_obj": user_obj,
+        }
+
+        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
+        from_email = EMAIL_BY_MODULE[module]
+        body = render_to_string(template["html"], context_full)
+
+        subject = str(template["subject"])
+
+    entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
+
+    return EmailRender(
+        subject=subject,
+        body=body,
+        to_email=email or user_obj.email,
+        from_email=from_email,
+        context=context,
+        module=module,
+        locale=locale,
+        entity_obj=entity_obj,
     )
 
 

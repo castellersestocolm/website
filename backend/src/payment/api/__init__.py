@@ -28,6 +28,7 @@ from order.models import (
     OrderMembership,
     OrderProduct,
     OrderRegistration,
+    OrderRequest,
 )
 from payment.enums import PaymentStatus, PaymentType
 from payment.models import Payment, PaymentLine, PaymentLog, Transaction
@@ -159,6 +160,16 @@ def create_for_order(  # noqa: C901
                 ),
                 to_attr="all_courses",
             ),
+            Prefetch(
+                "requests",
+                OrderRequest.objects.select_related(
+                    "request",
+                    "request__request",
+                    "request__request__entity",
+                    "request__request__entity__user",
+                ),
+                to_attr="all_requests",
+            ),
         )
         .first()
     )
@@ -189,6 +200,11 @@ def create_for_order(  # noqa: C901
         elif order_obj.type == OrderType.REGISTRATION:
             text = order_obj.all_registrations[0].registration.event.title_locale
             text_fee = f"{text} fee"
+        elif order_obj.type == OrderType.REQUEST:
+            text_order = _("Payment")
+            text = f"{text_order} #{order_obj.reference}"
+            text_order_fee = _("Payment fee")
+            text_fee = f"{text_order_fee} #{order_obj.reference}"
         else:
             text_order = _("Order")
             text = f"{text_order} #{order_obj.reference}"
@@ -230,6 +246,9 @@ def create_for_order(  # noqa: C901
         )
         item_type_order_course = ContentType.objects.get_by_natural_key(
             "order", "ordercourse"
+        )
+        item_type_order_request = ContentType.objects.get_by_natural_key(
+            "order", "orderrequest"
         )
         item_type_order_delivery = ContentType.objects.get_by_natural_key(
             "order", "orderdelivery"
@@ -296,6 +315,18 @@ def create_for_order(  # noqa: C901
                 text=f"{order_course_obj.registration.course.program.name_locale} — {order_course_obj.registration.entity.name}",
                 item_type=item_type_order_course,
                 item_id=order_course_obj.id,
+            )
+            order_course_obj.line = payment_line_obj
+            order_course_updates.append(order_course_obj)
+
+        for order_request_obj in order_obj.all_requests:
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_request_obj.amount,
+                vat=order_request_obj.vat,
+                text=order_request_obj.text,
+                item_type=item_type_order_request,
+                item_id=order_request_obj.id,
             )
             order_course_obj.line = payment_line_obj
             order_course_updates.append(order_course_obj)

@@ -880,6 +880,19 @@ export const apiOrderCourseCreate = async (courseRegistrations: any[]) => {
   }
 };
 
+export const apiOrderRequestCreate = async (requestLines: any[]) => {
+  try {
+    return await instance.post("/order/", {
+      cart: { request_lines: requestLines },
+      type: OrderType.REQUEST,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiOrderEventCreate = async (
   eventRegistrations: any[],
   userData: any,
@@ -957,6 +970,18 @@ export const apiEventSeriesPage = async (code: string = undefined) => {
         code: code,
       },
     });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiPaymentRequestGet = async (
+  paymentRequestId: string,
+) => {
+  try {
+    return await instance.get("/payment/request/" + paymentRequestId);
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

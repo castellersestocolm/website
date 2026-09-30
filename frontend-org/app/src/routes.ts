@@ -98,6 +98,15 @@ export const ROUTES = {
   "course-receipt": {
     path: "/course/receipt/:id",
   },
+  "request-payment": {
+    path: "/request/payment/:id",
+  },
+  "request-receipt": {
+    path: "/request/receipt/:id",
+  },
+  "payment-request": {
+    path: "/payment/request/:id",
+  },
   "admin-event-token": {
     path: "/admin/event/token/:id",
   },
