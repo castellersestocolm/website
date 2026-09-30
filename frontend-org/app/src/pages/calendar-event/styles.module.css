@@ -3,6 +3,8 @@
 }
 
 .calendarEventDescription {
+  text-align: center;
+
   p {
     margin-top: 0;
   }
