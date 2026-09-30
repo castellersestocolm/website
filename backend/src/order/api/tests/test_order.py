@@ -179,20 +179,21 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
             status=OrderStatus.PROCESSING,
         )
 
-    # def test_update_provider__existing_payment_order(self, *args, **kwargs):
-    #     with self.assertNumOperations(
-    #         num=0, num_selects=29, num_inserts=1, num_updates=1
-    #     ):
-    #         order_obj = update_provider(
-    #             order_id=self.order_1_obj.id,
-    #             provider_id=self.payment_provider_2_obj.id,
-    #             module=Module.ORG,
-    #             user_id=None,
-    #         )
-    #
-    #     self.assertIsNotNone(order_obj)
-    #     self.assertIsNotNone(order_obj.payment_order)
-    #     self.assertEqual(order_obj.payment_order.provider, self.payment_provider_2_obj)
+    # TODO: Check if this makes a call outside
+    def test_update_provider__existing_payment_order(self, *args, **kwargs):
+        with self.assertNumOperations(
+            num=0, num_selects=29, num_inserts=1, num_updates=1
+        ):
+            order_obj = update_provider(
+                order_id=self.order_1_obj.id,
+                provider_id=self.payment_provider_2_obj.id,
+                module=Module.ORG,
+                user_id=None,
+            )
+
+        self.assertIsNotNone(order_obj)
+        self.assertIsNotNone(order_obj.payment_order)
+        self.assertEqual(order_obj.payment_order.provider, self.payment_provider_2_obj)
 
     def test_update_provider__new_payment_order(self, *args, **kwargs):
         with self.assertNumOperations(
