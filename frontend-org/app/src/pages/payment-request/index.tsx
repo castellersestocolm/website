@@ -99,18 +99,20 @@ function PaymentRequestPage() {
                 </List>
               </Box>
             </Card>
-            <Grid container spacing={3} mt={3} justifyContent="center">
-              <Stack direction="row" spacing={2} whiteSpace="nowrap">
-                <Button
-                  variant="contained"
-                  type="button"
-                  disableElevation
-                  onClick={handlePaymentRequestSubmit}
-                >
-                  {t("pages.payment-request.payment")}
-                </Button>
-              </Stack>
-            </Grid>
+            {paymentRequest.status <= PaymentStatus.PENDING && (
+              <Grid container spacing={3} mt={3} justifyContent="center">
+                <Stack direction="row" spacing={2} whiteSpace="nowrap">
+                  <Button
+                    variant="contained"
+                    type="button"
+                    disableElevation
+                    onClick={handlePaymentRequestSubmit}
+                  >
+                    {t("pages.payment-request.payment")}
+                  </Button>
+                </Stack>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       )}
