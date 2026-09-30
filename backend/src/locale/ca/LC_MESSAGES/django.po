@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 15:23+0200\n"
+"POT-Creation-Date: 2026-09-30 17:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1169,13 +1169,11 @@ msgstr "La teva inscripció s'ha pagat — %s"
 
 #: notify/consts.py:96 notify/consts.py:175
 msgid "You have a new payment request"
-msgstr "Tens una sol·licitud de pagament nova"
+msgstr "Teniu una sol·licitud de pagament nova"
 
 #: notify/consts.py:100 notify/consts.py:179
-#, fuzzy
-#| msgid "Your payment has been processed — %s"
-msgid "Your payment request has been processed"
-msgstr "El vostre pagament s'ha processat — %s"
+msgid "Your payment has been processed"
+msgstr "El vostre pagament s'ha processat"
 
 #: notify/consts.py:119
 msgid "Welcome to Castellers d'Estocolm"
@@ -1312,7 +1310,8 @@ msgstr ""
 msgid "file"
 msgstr "fitxer"
 
-#: payment/api/__init__.py:205 payment/managers.py:233
+#: payment/api/__init__.py:205 payment/api/provider/se_swish.py:61
+#: payment/managers.py:233
 msgid "Payment"
 msgstr "Pagament"
 
@@ -1322,7 +1321,7 @@ msgstr "Pagament"
 msgid "Payment fee"
 msgstr "Pagament"
 
-#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:61
+#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:64
 #: payment/managers.py:223 payment/managers.py:228
 msgid "Order"
 msgstr "Comanda"
@@ -1492,6 +1491,9 @@ msgstr "La categoria és obligatòria per comptes amb matrius."
 #: user/models.py:226
 msgid "families"
 msgstr "famílies"
+
+#~ msgid "Your payment request has been processed"
+#~ msgstr "El vostre pagament s'ha processat"
 
 #~ msgid ""
 #~ "You have now completed the registration process and are part of Les "

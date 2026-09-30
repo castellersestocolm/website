@@ -97,7 +97,7 @@ TEMPLATE_BY_MODULE = {
                 "html": "email/org/payment/request.html",
             },
             EmailType.PAYMENT_REQUEST_PAID: {
-                "subject": _("Your payment request has been processed"),
+                "subject": _("Your payment has been processed"),
                 "html": "email/org/payment/request_paid.html",
             },
         }
@@ -176,7 +176,7 @@ TEMPLATE_BY_MODULE = {
                 "html": "email/towers/payment/request.html",
             },
             EmailType.PAYMENT_REQUEST_PAID: {
-                "subject": _("Your payment request has been processed"),
+                "subject": _("Your payment has been processed"),
                 "html": "email/org/payment/request_paid.html",
             },
         }

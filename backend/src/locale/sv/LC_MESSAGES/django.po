@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 15:22+0200\n"
+"POT-Creation-Date: 2026-09-30 17:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1167,10 +1167,8 @@ msgid "You have a new payment request"
 msgstr "Du har en ny betalningsbegäran"
 
 #: notify/consts.py:100 notify/consts.py:179
-#, fuzzy
-#| msgid "Your payment has been processed — %s"
-msgid "Your payment request has been processed"
-msgstr "Din betalning har behandlats — %s"
+msgid "Your payment has been processed"
+msgstr "Din betalning har behandlats"
 
 #: notify/consts.py:119
 msgid "Welcome to Castellers d'Estocolm"
@@ -1307,7 +1305,8 @@ msgstr ""
 msgid "file"
 msgstr "fil"
 
-#: payment/api/__init__.py:205 payment/managers.py:233
+#: payment/api/__init__.py:205 payment/api/provider/se_swish.py:61
+#: payment/managers.py:233
 msgid "Payment"
 msgstr "Betalning"
 
@@ -1317,7 +1316,7 @@ msgstr "Betalning"
 msgid "Payment fee"
 msgstr "Betalning"
 
-#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:61
+#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:64
 #: payment/managers.py:223 payment/managers.py:228
 msgid "Order"
 msgstr "Beställning"
@@ -1487,6 +1486,11 @@ msgstr "Kategorin måste vara inställd för konto med förälder."
 #: user/models.py:226
 msgid "families"
 msgstr "familjer"
+
+#, fuzzy
+#~| msgid "Your payment has been processed — %s"
+#~ msgid "Your payment request has been processed"
+#~ msgstr "Din betalning har behandlats — %s"
 
 #~ msgid ""
 #~ "You have now completed the registration process and are part of Les "
