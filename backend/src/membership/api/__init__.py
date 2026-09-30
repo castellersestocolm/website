@@ -101,26 +101,42 @@ def renew(membership_id: UUID) -> Membership | None:
     return new_membership_obj
 
 
-def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
+def create_or_update(  # noqa: C901
+    user_id: UUID, modules: list[Module], user_ids: list[UUID] | None = None
+) -> Membership | None:
     user_obj = User.objects.filter(id=user_id).select_related("family_member").first()
     family_id = (
         user_obj.family_member.family_id if hasattr(user_obj, "family_member") else None
     )
 
-    if family_id is None:
-        user_ids = [user_id]
-    else:
-        user_ids = list(
-            {user_id}
-            | {
-                family_member_obj.user_id
+    if not user_obj:
+        return None
+
+    user_obj_by_id = {user_obj.id: user_obj}
+
+    if family_id:
+        user_obj_by_id = {
+            **user_obj_by_id,
+            **{
+                family_member_obj.user_id: family_member_obj.user
                 for family_member_obj in FamilyMember.objects.filter(
                     family_id=family_id, status=FamilyMemberStatus.ACTIVE
-                )
-            }
-        )
+                ).select_related("user")
+            },
+        }
 
-    membership_length = get_membership_length(member_count=len(user_ids))
+    if user_ids:
+        user_obj_by_id = {
+            user_id: user_obj
+            for user_id, user_obj in user_obj_by_id.items()
+            if user_id in user_ids
+        }
+
+    # At least one member needs to be able to hold a membership by themselves
+    if not any([user_obj.can_membership for user_obj in user_obj_by_id.values()]):
+        return None
+
+    membership_length = get_membership_length(member_count=len(user_obj_by_id))
 
     if not membership_length:
         return None
@@ -135,7 +151,7 @@ def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
 
     membership_user_objs = list(
         MembershipUser.objects.filter(
-            user_id__in=user_ids,
+            user_id__in=user_obj_by_id.keys(),
             membership__date_end__isnull=True,
             membership__date_to__gte=timezone.localdate()
             + timezone.timedelta(days=settings.MODULE_ALL_MEMBERSHIP_RENEW_DAYS),
@@ -162,7 +178,7 @@ def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
 
         for module in modules:
             membership_amount = get_membership_amount(
-                member_count=len(user_ids), module=module
+                member_count=len(user_obj_by_id), module=module
             )
             new_amount = Money(
                 amount=membership_amount, currency=settings.MODULE_ALL_CURRENCY
@@ -183,7 +199,7 @@ def create_or_update(user_id: UUID, modules: list[Module]) -> Membership | None:
             membership_obj.status = membership_status
             membership_obj.save(update_fields=("status",))
 
-        for user_id in user_ids:
+        for user_id in user_obj_by_id.keys():
             MembershipUser.objects.get_or_create(
                 user_id=user_id,
                 membership_id=membership_obj.id,

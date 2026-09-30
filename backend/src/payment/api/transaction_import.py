@@ -550,10 +550,6 @@ def run(transaction_import_id: UUID) -> TransactionImport | None:  # noqa: C901
                     )
 
                 if has_membership_payment and found_user_obj:
-                    family_id = None
-                    if hasattr(found_user_obj, "family_member"):
-                        family_id = found_user_obj.family_member.family.id
-
                     membership.api.create_or_update(
                         user_id=found_user_obj.id,
                         modules=list(
@@ -564,7 +560,6 @@ def run(transaction_import_id: UUID) -> TransactionImport | None:  # noqa: C901
                                 ]
                             )
                         ),
-                        family_id=family_id,
                     )
 
         transaction_import_obj.status = TransactionImportStatus.COMPLETED

@@ -85,8 +85,15 @@ class MembershipRenewSerializer(s.Serializer):
     date_to = s.DateField(read_only=True)
 
 
+class MembershipRenewUserRequestSerializer(s.Serializer):
+    id = s.UUIDField()
+
+
 class MembershipRenewRequestSerializer(s.Serializer):
     modules = s.ListSerializer(child=IntEnumField(Module))
+    users = s.ListSerializer(
+        child=MembershipRenewUserRequestSerializer(), required=False
+    )
 
 
 class ListMembershipSerializer(s.Serializer):

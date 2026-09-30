@@ -179,6 +179,7 @@ class TestUpdateProvider(NumOperationsMixin, TestCase):
             status=OrderStatus.PROCESSING,
         )
 
+    # TODO: Check if this makes a call outside
     def test_update_provider__existing_payment_order(self, *args, **kwargs):
         with self.assertNumOperations(
             num=0, num_selects=29, num_inserts=1, num_updates=1

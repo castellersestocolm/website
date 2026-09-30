@@ -70,7 +70,7 @@ class PaymentProviderFactory(DjangoModelFactory):
 
 
 class SourceFactory(DjangoModelFactory):
-    name = Faker("name")
+    name = Sequence(lambda n: f"Source #{n}")
 
     # TODO: Factory random provider depending on type
     type = SourceType.BANK

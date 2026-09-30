@@ -445,6 +445,15 @@ class TestCreateOrUpdate(NumOperationsMixin, TestCase):
         cls.user_member_5_obj = UserFactory(email="user-member-5@domain-test.org")
         cls.user_member_6_obj = UserFactory(email="user-member-6@domain-test.org")
         cls.user_member_7_obj = UserFactory(email="user-member-7@domain-test.org")
+        cls.user_member_8_obj = UserFactory(email="user-member-8@domain-test.org")
+        cls.user_member_9_obj = UserFactory(
+            email="user-member-8+user-member-9@domain-test.org",
+            birthday=timezone.localdate().replace(year=timezone.localdate().year - 17),
+        )
+        cls.user_member_10_obj = UserFactory(
+            email="user-member-8+user-member-10@domain-test.org",
+            birthday=timezone.localdate().replace(year=timezone.localdate().year - 7),
+        )
 
         cls.membership_1_user_1_obj = MembershipFactory(
             status=MembershipStatus.ACTIVE,
@@ -505,6 +514,7 @@ class TestCreateOrUpdate(NumOperationsMixin, TestCase):
         )
 
         cls.family_1_obj = FamilyFactory()
+        cls.family_2_obj = FamilyFactory()
 
         cls.family_1_user_3_obj = FamilyMemberFactory(
             user=cls.user_member_3_obj,
@@ -521,6 +531,24 @@ class TestCreateOrUpdate(NumOperationsMixin, TestCase):
         cls.family_1_user_5_obj = FamilyMemberFactory(
             user=cls.user_member_5_obj,
             family=cls.family_1_obj,
+            role=FamilyMemberRole.MEMBER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_2_user_8_obj = FamilyMemberFactory(
+            user=cls.user_member_8_obj,
+            family=cls.family_2_obj,
+            role=FamilyMemberRole.MANAGER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_2_user_9_obj = FamilyMemberFactory(
+            user=cls.user_member_9_obj,
+            family=cls.family_2_obj,
+            role=FamilyMemberRole.MEMBER,
+            status=FamilyMemberStatus.ACTIVE,
+        )
+        cls.family_2_user_10_obj = FamilyMemberFactory(
+            user=cls.user_member_10_obj,
+            family=cls.family_2_obj,
             role=FamilyMemberRole.MEMBER,
             status=FamilyMemberStatus.ACTIVE,
         )
@@ -775,6 +803,51 @@ class TestCreateOrUpdate(NumOperationsMixin, TestCase):
             membership_module_towers_obj.status, MembershipStatus.REQUESTED
         )
         self.assertEqual(membership_module_towers_obj.amount, Money(250, "SEK"))
+
+    def test_create_or_update__no_active_family(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=10, num_inserts=5):
+            membership_obj = create_or_update(
+                user_id=self.user_member_8_obj.id,
+                modules=[Module.ORG],
+            )
+
+        self.assertIsNotNone(membership_obj)
+        self.assertEqual(membership_obj.status, MembershipStatus.REQUESTED)
+
+        membership_user_objs = list(
+            MembershipUser.objects.filter(membership=membership_obj)
+        )
+
+        self.assertEqual(len(membership_user_objs), 3)
+
+    def test_create_or_update__no_active_family_partial(self, *args, **kwargs):
+        with self.assertNumOperations(num=0, num_selects=9, num_inserts=4):
+            membership_obj = create_or_update(
+                user_id=self.user_member_8_obj.id,
+                modules=[Module.ORG],
+                user_ids=[self.user_member_9_obj.id, self.user_member_10_obj.id],
+            )
+
+        self.assertIsNotNone(membership_obj)
+        self.assertEqual(membership_obj.status, MembershipStatus.REQUESTED)
+
+        membership_user_objs = list(
+            MembershipUser.objects.filter(membership=membership_obj)
+        )
+
+        self.assertEqual(len(membership_user_objs), 2)
+
+    def test_create_or_update__no_active_family_partial_error_age(
+        self, *args, **kwargs
+    ):
+        with self.assertNumOperations(num=0, num_selects=2):
+            membership_obj = create_or_update(
+                user_id=self.user_member_8_obj.id,
+                modules=[Module.ORG],
+                user_ids=[self.user_member_10_obj.id],
+            )
+
+        self.assertIsNone(membership_obj)
 
 
 @pytest.mark.django_db
