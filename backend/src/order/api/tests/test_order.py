@@ -1159,7 +1159,7 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         self.assertEqual(
             email_subject,
-            "Your payment request has been processed",
+            "Your payment has been processed",
         )
         self.assertIn("firstname-1 lastname-1", email_text)
         self.assertIn("received", email_text)
