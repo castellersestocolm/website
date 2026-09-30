@@ -977,9 +977,7 @@ export const apiEventSeriesPage = async (code: string = undefined) => {
   }
 };
 
-export const apiPaymentRequestGet = async (
-  paymentRequestId: string,
-) => {
+export const apiPaymentRequestGet = async (paymentRequestId: string) => {
   try {
     return await instance.get("/payment/request/" + paymentRequestId);
   } catch (error) {

@@ -57,6 +57,9 @@ class PaymentProviderSESwish(PaymentProviderBase):
             elif self.order_obj.type == OrderType.REGISTRATION:
                 event_obj = self.order_obj.all_registrations[0].registration.event
                 text = f"{event_obj.title_locale} {event_obj.time_from.year}"
+            elif self.order_obj.type == OrderType.REQUEST:
+                text_order = _("Payment")
+                text = f"{text_order} {self.order_obj.reference}"
             else:
                 text_order = _("Order")
                 text = f"{text_order} {self.order_obj.reference}"
