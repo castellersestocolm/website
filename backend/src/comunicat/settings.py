@@ -363,6 +363,9 @@ MODULE_ALL_USER_FIELDS = list(
     filter(None, os.getenv("MODULE_ALL_USER_FIELDS", "").split(","))
 )
 MODULE_ALL_USER_MINIMUM_AGE = int(os.getenv("MODULE_ALL_USER_MINIMUM_AGE", 18))
+MODULE_ALL_USER_MINIMUM_MEMBERSHIP_AGE = int(
+    os.getenv("MODULE_ALL_USER_MINIMUM_MEMBERSHIP_AGE", 14)
+)
 MODULE_ALL_MEMBERSHIP_REQUIRED = [
     Module[module.upper()]
     for module in filter(

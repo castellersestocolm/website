@@ -18,7 +18,11 @@ from user.enums import (
     UserProductSource,
 )
 from user.managers import FamilyMemberQuerySet, FamilyQuerySet, UserManager
-from user.utils import generate_membership_number, is_over_minimum_age
+from user.utils import (
+    generate_membership_number,
+    is_over_minimum_age,
+    is_over_minimum_membership_age,
+)
 
 
 def user_picture_filename(instance, filename):
@@ -102,6 +106,12 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
     @cached_property
     def is_adult(self) -> bool:
         return self.birthday is None or is_over_minimum_age(date=self.birthday)
+
+    @cached_property
+    def can_membership(self) -> bool:
+        return self.birthday is None or is_over_minimum_membership_age(
+            date=self.birthday
+        )
 
     @cached_property
     def can_manage(self) -> bool:

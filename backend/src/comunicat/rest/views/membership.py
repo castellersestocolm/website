@@ -77,7 +77,12 @@ class MembershipAPI(ComuniCatViewSet):
             validated_data = serializer.validated_data
 
             membership_obj = membership.api.create_or_update(
-                user_id=request.user.id, modules=validated_data["modules"]
+                user_id=request.user.id,
+                modules=validated_data["modules"],
+                user_ids="users" in validated_data
+                and [
+                    membership_user["id"] for membership_user in validated_data["users"]
+                ],
             )
 
             serializer = MembershipSerializer(
