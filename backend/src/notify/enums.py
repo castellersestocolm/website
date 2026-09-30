@@ -24,6 +24,7 @@ class EmailType(enum.IntEnum):
     PAYMENT_PAID = 82
     COURSE_REGISTRATION_PAID = 92
     PAYMENT_REQUEST = 100
+    PAYMENT_REQUEST_PAID = 101
 
 
 class EmailStatus(enum.IntEnum):

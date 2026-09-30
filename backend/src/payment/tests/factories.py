@@ -34,6 +34,8 @@ from payment.models import (
     Payment,
     PaymentLine,
     PaymentProvider,
+    PaymentRequest,
+    PaymentRequestLine,
     Receipt,
     Source,
     Transaction,
@@ -219,3 +221,29 @@ class PaymentLineFactory(DjangoModelFactory):
 
     class Meta:
         model = PaymentLine
+
+
+class PaymentRequestFactory(DjangoModelFactory):
+    entity = SubFactory(EntityFactory)
+
+    status = FuzzyChoice(PaymentStatus)
+    module = FuzzyChoice(Module)
+
+    class Meta:
+        model = PaymentRequest
+
+
+class PaymentRequestLineFactory(DjangoModelFactory):
+    request = SubFactory(PaymentRequestFactory)
+
+    status = FuzzyChoice(PaymentStatus)
+
+    text = Faker("sentence")
+
+    amount = LazyAttribute(lambda n: Money(random.randint(100, 500), "SEK"))
+    vat = 0
+
+    line = None
+
+    class Meta:
+        model = PaymentRequestLine

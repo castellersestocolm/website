@@ -96,6 +96,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("You have a new payment request"),
                 "html": "email/org/payment/request.html",
             },
+            EmailType.PAYMENT_REQUEST_PAID: {
+                "subject": _("Your payment request has been processed"),
+                "html": "email/org/payment/request_paid.html",
+            },
         }
     },
     Module.TOWERS: {
@@ -171,6 +175,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("You have a new payment request"),
                 "html": "email/towers/payment/request.html",
             },
+            EmailType.PAYMENT_REQUEST_PAID: {
+                "subject": _("Your payment request has been processed"),
+                "html": "email/org/payment/request_paid.html",
+            },
         }
     },
 }
@@ -206,6 +214,10 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
         ("registration_ids",),
     ),
     EmailType.PAYMENT_REQUEST: (
+        "get_payment_request_email_render",
+        ("payment_request_id",),
+    ),
+    EmailType.PAYMENT_REQUEST_PAID: (
         "get_payment_request_email_render",
         ("payment_request_id",),
     ),

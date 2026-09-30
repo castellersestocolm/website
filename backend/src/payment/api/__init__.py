@@ -185,6 +185,7 @@ def create_for_order(  # noqa: C901
     order_registration_updates = []
     order_membership_updates = []
     order_course_updates = []
+    order_request_updates = []
 
     with translation.override(
         language=order_obj.origin_language or settings.LANGUAGE_CODE
@@ -324,12 +325,12 @@ def create_for_order(  # noqa: C901
                 payment=payment_obj,
                 amount=order_request_obj.amount,
                 vat=order_request_obj.vat,
-                text=order_request_obj.text,
+                text=order_request_obj.request.text,
                 item_type=item_type_order_request,
                 item_id=order_request_obj.id,
             )
-            order_course_obj.line = payment_line_obj
-            order_course_updates.append(order_course_obj)
+            order_request_obj.line = payment_line_obj
+            order_request_updates.append(order_request_obj)
 
         if order_obj.delivery:
             text_delivery = _("Delivery")
@@ -367,6 +368,9 @@ def create_for_order(  # noqa: C901
 
         if order_course_updates:
             OrderCourse.objects.bulk_update(order_course_updates, fields=("line",))
+
+        if order_request_updates:
+            OrderRequest.objects.bulk_update(order_request_updates, fields=("line",))
 
         if fee_amount:
             account_fees_obj = (

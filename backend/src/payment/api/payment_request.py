@@ -113,25 +113,20 @@ def complete_lines(
 
     # TODO: This can produce wrong results but for now this will only be called for a single payment request
     for (
-        __,
+        current_payment_request_id,
         current_payment_request_line_objs,
     ) in itertools.groupby(
         payment_request_line_objs,
-        lambda payment_request_line_obj: payment_request_line_obj.line
-        and payment_request_line_obj.line.payment,
+        lambda payment_request_line_obj: payment_request_line_obj.request_id,
     ):
         if with_notify:
             current_payment_request_line_objs = list(current_payment_request_line_objs)
             payment_request_obj = current_payment_request_line_objs[0].request
-            payment_line_obj = current_payment_request_line_objs[0].line
-
-            if not payment_line_obj:
-                continue
 
             transaction.on_commit(
-                lambda: notify.tasks.send_payment_email.delay(
-                    payment_id=payment_line_obj.payment_id,
-                    email_type=EmailType.PAYMENT_PAID,
+                lambda: notify.tasks.send_payment_request_email.delay(
+                    payment_request_id=current_payment_request_id,
+                    email_type=EmailType.PAYMENT_REQUEST_PAID,
                     module=payment_request_obj.module,
                 )
             )
