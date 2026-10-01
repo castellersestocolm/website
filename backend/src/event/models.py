@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
+import comunicat.utils.crypto
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE, LOCALE_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
@@ -551,6 +552,10 @@ class Registration(StandardModel, Timestamps):
     )
 
     data = models.JSONField(default=dict, blank=True)
+
+    token = models.CharField(
+        max_length=255, default=comunicat.utils.crypto.gen_random_token
+    )
 
     __status = None
     __line = None
