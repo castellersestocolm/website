@@ -594,7 +594,14 @@ def get_registration_email_renders(
                         )
                     )
 
+                    apple_wallet_token = (
+                        user.api.integration.get_integration_apple_wallet_token_event(
+                            registration_id=registration_obj.id
+                        )
+                    )
+
                     context_full["google_wallet_url"] = google_wallet_url
+                    context_full["apple_wallet_token"] = apple_wallet_token
 
             template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
             from_email = EMAIL_BY_MODULE[module]

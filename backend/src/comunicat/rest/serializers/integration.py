@@ -11,3 +11,7 @@ class IntegrationGoogleWalletPassEventSerializer(s.Serializer):
 
 class IntegrationAppleWalletPassLoyaltyRequestSerializer(s.Serializer):
     token = s.CharField(required=False)
+
+
+class IntegrationAppleWalletPassEventRequestSerializer(s.Serializer):
+    token = s.CharField(required=False)

@@ -22,3 +22,23 @@ def get_user_data_by_integration_apple_wallet_token(token: str) -> dict | None:
         return None
 
     return data
+
+
+def get_integration_apple_wallet_token_event(registration_id: UUID) -> str:
+    return signing.dumps(
+        {"registration_id": str(registration_id)},
+        salt="integration-apple-wallet-event",
+    )
+
+
+def get_registration_data_by_integration_apple_wallet_token(token: str) -> dict | None:
+    try:
+        data: dict = signing.loads(
+            token,
+            salt="integration-apple-wallet-event",
+            max_age=timezone.timedelta(days=30),
+        )
+    except Exception:
+        return None
+
+    return data

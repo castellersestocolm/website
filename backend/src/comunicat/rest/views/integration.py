@@ -12,12 +12,13 @@ from rest_framework.serializers import Serializer
 import user.api.integration
 from comunicat.enums import Module
 from comunicat.rest.serializers.integration import (
+    IntegrationAppleWalletPassEventRequestSerializer,
     IntegrationAppleWalletPassLoyaltyRequestSerializer,
     IntegrationGoogleWalletPassEventSerializer,
     IntegrationGoogleWalletPassLoyaltySerializer,
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
-from integration.api.apple.wallet import get_pass_loyalty_bundle
+from integration.api.apple.wallet import get_pass_event_bundle, get_pass_loyalty_bundle
 from integration.api.google.wallet import get_pass_event_url, get_pass_loyalty_url
 
 
@@ -128,5 +129,51 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         response = HttpResponse(pass_loyalty_bundle.getvalue())
         response["Content-Type"] = "application/vnd.apple.pkpass"
         response["Content-Disposition"] = "attachment; filename=loyalty.pkpass"
+
+        return response
+
+    # TODO: Check if further checks with a token need to be done
+    @swagger_auto_schema(
+        query_serializer=IntegrationAppleWalletPassEventRequestSerializer(),
+        responses={
+            200: Serializer(),
+            400: Serializer(),
+            401: Serializer(),
+        },
+    )
+    @action(
+        methods=["get"],
+        detail=False,
+        url_path="pass/event",
+        url_name="pass_event",
+    )
+    @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
+    def pass_event(self, request):
+        serializer = IntegrationAppleWalletPassEventRequestSerializer(data=request.GET)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        registration_id = None
+
+        token = validated_data.get("token")
+        if token:
+            data = user.api.integration.get_registration_data_by_integration_apple_wallet_token(
+                token=token
+            )
+            if data:
+                registration_id = data["registration_id"]
+
+        if not registration_id:
+            return Response(status=401)
+
+        pass_event_bundle = get_pass_event_bundle(registration_id=registration_id)
+
+        if not pass_event_bundle:
+            return Response(status=400)
+
+        response = HttpResponse(pass_event_bundle.getvalue())
+        response["Content-Type"] = "application/vnd.apple.pkpass"
+        response["Content-Disposition"] = "attachment; filename=event.pkpass"
 
         return response

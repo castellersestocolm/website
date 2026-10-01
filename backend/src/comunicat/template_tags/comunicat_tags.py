@@ -407,6 +407,13 @@ def integration_apple_wallet_url_from_token(token: str) -> str:
     return full_api_url(path=path)
 
 
+@register.simple_tag
+def integration_apple_wallet_url_from_token_event(token: str) -> str:
+    path = reverse("api:1.0:integration_apple_wallet-pass_event") + "?token=" + token
+
+    return full_api_url(path=path)
+
+
 @register.filter
 def language_to_apple_wallet_file(locale: str) -> str:
     if locale not in LANGUAGE_TO_APPLE_WALLET_FILE:

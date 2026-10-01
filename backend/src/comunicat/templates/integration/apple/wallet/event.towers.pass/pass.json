@@ -1,0 +1,62 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.event.towers",
+  "serialNumber": "{{ registration_key }}",
+  "teamIdentifier": "{{ 'INTEGRATION_APPLE_WALLET_TEAM_ID'|settings_value }}",
+  "webServiceURL": "{% full_org_url %}",
+  "barcode": {
+    "message": "{{ registration_key }}",
+    "format": "PKBarcodeFormatQR",
+    "messageEncoding": "utf-8"
+  },
+  "organizationName": "{{ 'NAME_BY_MODULE'|consts_comunicat|get_value:20 }}",
+  "description": "{{ event_obj.title_locale }}",
+  "logoText": "{{ 'SHORT_NAME_BY_MODULE'|consts_comunicat|get_value:20 }}",
+  "labelColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:20|get_value:'contrast'|get_value:'text' }}",
+  "foregroundColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:20|get_value:'secondary'|get_value:'main' }}",
+  "backgroundColor": "{{ 'PALETTE_BY_MODULE'|consts_comunicat|get_value:20|get_value:'primary'|get_value:'main' }}",
+  "eventTicket": {
+    "primaryFields": [
+      {
+        "key": "event_name",
+        "label": "event_name",
+        "value": "{{ event_obj.title_locale }}"
+      }
+    ],
+    "auxiliaryFields" : [
+      {
+        "key" : "event_start",
+        "dateStyle" : "PKDateStyleShort",
+        "label" : "event_start",
+        "value" : "{{ event_start }}"
+      },
+      {
+        "key" : "event_end",
+        "dateStyle" : "PKDateStyleShort",
+        "label" : "event_end",
+        "value" : "{{ event_end }}"
+      }
+    ]
+  },
+  "relevantDates": [
+      {
+          "startDate": "{{ event_start }}",
+          "endDate": "{{ event_end }}"
+      }
+  ],
+  "preferredStyleSchemes": [
+      "posterEventTicket",
+      "eventTicket"
+  ],
+  "semantics": {
+    "eventType": "PKEventTypeGeneric",
+    "eventStartDate": "{{ event_start }}",
+    "eventEndDate": "{{ event_end }}",
+    "eventName": "General event name"{% if event_obj.location and event_obj.location.name %},
+    "venueName": "{{ event_obj.location.name }}"{% endif %}{% if event_obj.location %},
+    "venueLocation": {
+      "latitude": {{ event_obj.location.coordinate_lat }},
+      "longitude": {{ event_obj.location.coordinate_lon }}
+    }{% endif %}
+  }
+}
