@@ -68,7 +68,7 @@ class AppleWalletLoyalty:
             for membership_module_obj in self.membership_obj.all_modules
         ]
 
-        self.module = (
+        self.module = Module(
             module if module and module in modules else settings.MODULE_DEFAULT
         )
 
@@ -122,6 +122,84 @@ class AppleWalletLoyalty:
         return zip_buffer
 
 
+# https://developer.apple.com/documentation/walletpasses/building-a-pass
+class AppleWalletEvent:
+    def __init__(self, registration_id: UUID):
+        from event.models import Registration
+
+        self.registration_obj = (
+            Registration.objects.filter(id=registration_id)
+            .select_related(
+                "event", "event__location", "entity", "entity__user", "price"
+            )
+            .first()
+        )
+
+        if not self.registration_obj:
+            return
+
+        self.event_obj = self.registration_obj.event
+
+        self.event_start = timezone.localtime(self.event_obj.time_from).isoformat()
+        self.event_end = timezone.localtime(self.event_obj.time_to).isoformat()
+
+        self.registration_key = str(self.registration_obj.id).replace("-", "").lower()
+        self.event_key = str(self.event_obj.id).replace("-", "").lower()
+
+        self.module = Module(self.registration_obj.event.module)
+
+    def get_bundle(self) -> BytesIO | None:
+        context = {
+            "registration_obj": self.registration_obj,
+            "event_obj": self.event_obj,
+            "event_start": self.event_start,
+            "event_end": self.event_end,
+            "registration_key": self.registration_key,
+            "event_key": self.event_key,
+            "module": self.module,
+        }
+
+        json_string = render_to_string(
+            template_name=f"integration/apple/wallet/event.{self.module.name.lower()}.pass/pass.json",
+            context=context,
+        )
+
+        zip_buffer = BytesIO()
+
+        manifest = {}
+
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+            zip_path = f"{settings.BASE_DIR}/comunicat/templates/integration/apple/wallet/event.{self.module.name.lower()}.pass"
+            for root, dirs, files in os.walk(zip_path):
+                for file in files:
+                    if file == "pass.json":
+                        bytes_string = json_string.encode("utf-8")
+                        manifest["pass.json"] = hashlib.sha1(bytes_string).hexdigest()
+                        zip_file.writestr(file, bytes_string)
+                    else:
+                        path_abs = os.path.join(root, file)
+                        path_rel = os.path.relpath(os.path.join(root, file), zip_path)
+                        with open(path_abs, "rb") as f:
+                            bytes_file = f.read()
+                        manifest[path_rel] = hashlib.sha1(bytes_file).hexdigest()
+                        zip_file.write(path_abs, path_rel)
+
+            bytes_manifest = json.dumps(manifest).encode("utf-8")
+            zip_file.writestr("manifest.json", bytes_manifest)
+
+            bytes_signature = comunicat.utils.crypto.pkcs7_sign(
+                path_cert=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_cert.pem",
+                path_key=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_key.pem",
+                path_verify=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_verify.pem",
+                data=bytes_manifest,
+            )
+            zip_file.writestr("signature", bytes_signature)
+
+        zip_file.close()
+
+        return zip_buffer
+
+
 def get_pass_loyalty_bundle(user_id: UUID, module: Module) -> BytesIO | None:
     try:
         apple_wallet_loyalty = AppleWalletLoyalty(user_id=user_id, module=module)
@@ -130,3 +208,13 @@ def get_pass_loyalty_bundle(user_id: UUID, module: Module) -> BytesIO | None:
         return None
 
     return apple_wallet_loyalty.get_bundle()
+
+
+def get_pass_event_bundle(registration_id: UUID) -> BytesIO | None:
+    try:
+        apple_wallet_event = AppleWalletEvent(registration_id=registration_id)
+    except Exception as e:
+        _log.exception(e)
+        return None
+
+    return apple_wallet_event.get_bundle()
