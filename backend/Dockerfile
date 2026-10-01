@@ -154,7 +154,7 @@ RUN echo "${CERT_APPLE_TOWERS_LOYALTY_KEY}" > /backend/cert/apple/towers_loyalty
 RUN echo "${CERT_APPLE_ORG_EVENT_CERT}" > /backend/cert/apple/org_event_cert.pem
 RUN echo "${CERT_APPLE_ORG_EVENT_KEY}" > /backend/cert/apple/org_event_key.pem
 RUN echo "${CERT_APPLE_TOWERS_EVENT_CERT}" > /backend/cert/apple/towers_event_cert.pem
-RUN echo "${CERT_APPLE_TOWERS_EVENT_KEY}" > /backend/cert/apple/towers_key.pem
+RUN echo "${CERT_APPLE_TOWERS_EVENT_KEY}" > /backend/cert/apple/towers_event_key.pem
 
 RUN echo "${CERT_APPLE_ORG_VERIFY}" > /backend/cert/apple/org_verify.pem
 RUN echo "${CERT_APPLE_TOWERS_VERIFY}" > /backend/cert/apple/towers_verify.pem
