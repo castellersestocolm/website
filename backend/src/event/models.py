@@ -406,6 +406,12 @@ class EventQuestion(StandardModel, Timestamps):
 
     data = models.JSONField(default=dict, blank=True)
 
+    @cached_property
+    def title_locale(self) -> str:
+        return (
+            self.title.get(translation.get_language()) or list(self.title.values())[0]
+        )
+
     def __str__(self) -> str:
         return f"{self.event} - {self.title.get(translation.get_language()) or list(self.title.values())[0]}"
 

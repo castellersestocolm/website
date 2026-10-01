@@ -7,8 +7,13 @@ from openpyxl.reader.excel import load_workbook
 from comunicat.enums import Module
 from conftest import NumOperationsMixin
 from event.api.export import export_event
-from event.enums import EventType, RegistrationStatus
-from event.tests.factories import EventFactory, EventPriceFactory, RegistrationFactory
+from event.enums import EventQuestionType, EventType, RegistrationStatus
+from event.tests.factories import (
+    EventFactory,
+    EventPriceFactory,
+    EventQuestionFactory,
+    RegistrationFactory,
+)
 from payment.tests.factories import EntityFactory
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 from user.tests.factories import FamilyFactory, FamilyMemberFactory, UserFactory
@@ -28,6 +33,36 @@ class TestExportEvent(NumOperationsMixin, TestCase):
         )
         cls.event_price_2_obj = EventPriceFactory(
             event=cls.event_1_obj, amount=Money(500, "SEK")
+        )
+
+        cls.event_question_1_obj = EventQuestionFactory(
+            event=cls.event_1_obj,
+            type=EventQuestionType.SHORT,
+            order=0,
+        )
+        cls.event_question_2_obj = EventQuestionFactory(
+            event=cls.event_1_obj,
+            type=EventQuestionType.LONG,
+            order=1,
+        )
+        cls.event_question_3_obj = EventQuestionFactory(
+            event=cls.event_1_obj,
+            type=EventQuestionType.BOOLEAN,
+            order=2,
+        )
+        cls.event_question_4_obj = EventQuestionFactory(
+            event=cls.event_1_obj,
+            type=EventQuestionType.CHOICE,
+            order=3,
+            data={
+                "choices": {
+                    "en": [
+                        "choice-1",
+                        "choice-2",
+                        "choice-3",
+                    ],
+                }
+            },
         )
 
         cls.user_member_1_obj = UserFactory(
@@ -114,24 +149,28 @@ class TestExportEvent(NumOperationsMixin, TestCase):
             entity=cls.entity_member_1_obj,
             status=RegistrationStatus.ACTIVE,
             price=cls.event_price_1_obj,
+            data={"questions": {"0": "short-1", "1": "long-1", "2": True, "3": 0}},
         )
         cls.registration_event_1_user_2_obj = RegistrationFactory(
             event=cls.event_1_obj,
             entity=cls.entity_member_2_obj,
             status=RegistrationStatus.ACTIVE,
             price=cls.event_price_1_obj,
+            data={"questions": {"0": "short-2", "1": "long-2", "2": False, "3": 1}},
         )
         cls.registration_event_1_user_3_obj = RegistrationFactory(
             event=cls.event_1_obj,
             entity=cls.entity_member_3_obj,
             status=RegistrationStatus.CANCELLED,
             price=cls.event_price_1_obj,
+            data={"questions": {"0": "short-3", "1": "long-3", "2": True, "3": 2}},
         )
         cls.registration_event_1_external_1_obj = RegistrationFactory(
             event=cls.event_1_obj,
             entity=cls.entity_external_1_obj,
             status=RegistrationStatus.ACTIVE,
             price=cls.event_price_1_obj,
+            data={"questions": {"0": "short-4", "1": "long-4", "2": False, "3": 0}},
         )
         cls.registration_event_2_user_4_obj = RegistrationFactory(
             event=cls.event_2_obj,
@@ -153,7 +192,7 @@ class TestExportEvent(NumOperationsMixin, TestCase):
         )
 
     def test_export_event__event_1(self, *args, **kwargs):
-        with self.assertNumOperations(num=0, num_selects=6):
+        with self.assertNumOperations(num=0, num_selects=7):
             event_file = export_event(event_id=self.event_1_obj.id)
 
         self.assertIsNotNone(event_file)
@@ -177,6 +216,10 @@ class TestExportEvent(NumOperationsMixin, TestCase):
                 "Telèfon",
                 "Estat",
                 "Preu",
+                self.event_question_1_obj.title["ca"],
+                self.event_question_2_obj.title["ca"],
+                self.event_question_3_obj.title["ca"],
+                self.event_question_4_obj.title["ca"],
             ],
         )
         self.assertEqual(
@@ -190,6 +233,10 @@ class TestExportEvent(NumOperationsMixin, TestCase):
                 self.user_member_1_obj.phone,
                 "Actiu",
                 100,
+                "short-1",
+                "long-1",
+                "Sí",
+                "choice-1",
             ],
         )
         self.assertEqual(
@@ -203,6 +250,10 @@ class TestExportEvent(NumOperationsMixin, TestCase):
                 self.user_member_2_obj.phone,
                 "Actiu",
                 100,
+                "short-2",
+                "long-2",
+                "No",
+                "choice-2",
             ],
         )
         self.assertEqual(
@@ -216,6 +267,10 @@ class TestExportEvent(NumOperationsMixin, TestCase):
                 self.user_member_3_obj.phone,
                 "Cancel·lat",
                 100,
+                "short-3",
+                "long-3",
+                "Sí",
+                "choice-3",
             ],
         )
         self.assertEqual(
@@ -229,11 +284,15 @@ class TestExportEvent(NumOperationsMixin, TestCase):
                 self.entity_external_1_obj.phone,
                 "Actiu",
                 100,
+                "short-4",
+                "long-4",
+                "No",
+                "choice-1",
             ],
         )
 
     def test_export_event__event_2(self, *args, **kwargs):
-        with self.assertNumOperations(num=0, num_selects=5):
+        with self.assertNumOperations(num=0, num_selects=6):
             event_file = export_event(event_id=self.event_2_obj.id)
 
         self.assertIsNotNone(event_file)
