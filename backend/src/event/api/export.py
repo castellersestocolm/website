@@ -5,11 +5,13 @@ from django.db.models import Prefetch
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from openpyxl.styles import DEFAULT_FONT, Font, numbers
+from openpyxl.utils import get_column_letter
 from openpyxl.workbook import Workbook
 
 from comunicat.consts import FONT_NAME_BY_MODULE, LOCALE_BY_MODULE
 from event.enums import RegistrationStatus
-from event.models import Event, Registration
+from event.models import Event, EventQuestion, Registration
+from event.utils.event_question import get_event_question_answer
 
 
 def export_event(event_id: UUID) -> BytesIO:
@@ -21,6 +23,10 @@ def export_event(event_id: UUID) -> BytesIO:
                 Registration.objects.select_related("entity", "entity__user", "price")
                 .with_family_name()
                 .order_by("entity__firstname", "entity__lastname"),
+            ),
+            Prefetch(
+                "questions",
+                EventQuestion.objects.order_by("order"),
             ),
         )
         .first()
@@ -48,6 +54,10 @@ def export_event(event_id: UUID) -> BytesIO:
                 str(_("Status")),
                 str(_("Price")),
             ]
+            + [
+                event_question_obj.title_locale
+                for event_question_obj in event_obj.questions.all()
+            ]
         )
 
         ws.column_dimensions["A"].width = 15
@@ -58,6 +68,9 @@ def export_event(event_id: UUID) -> BytesIO:
         ws.column_dimensions["F"].width = 20
         ws.column_dimensions["G"].width = 15
         ws.column_dimensions["H"].width = 10
+
+        for i in range(9, event_obj.questions.count() + 9):
+            ws.column_dimensions[get_column_letter(i)].width = 30
 
         ws.column_dimensions["C"].number_format = numbers.FORMAT_NUMBER_00
         ws.column_dimensions["H"].number_format = "[$SEK ]#,##0.00_-"
@@ -100,6 +113,15 @@ def export_event(event_id: UUID) -> BytesIO:
                     phone,
                     str(RegistrationStatus.labels[registration_obj.status]),
                     registration_obj.price.amount.amount,
+                ]
+                + [
+                    get_event_question_answer(
+                        event_question_obj=event_question_obj,
+                        value=registration_obj.data.get("questions", {}).get(
+                            str(event_question_obj.order)
+                        ),
+                    )
+                    for event_question_obj in event_obj.questions.all()
                 ]
             )
 

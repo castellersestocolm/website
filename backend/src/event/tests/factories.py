@@ -2,14 +2,21 @@ import random
 
 from django.utils import timezone
 from djmoney.money import Money
-from factory import Faker, LazyAttribute, LazyFunction, SelfAttribute, SubFactory
+from factory import (
+    Faker,
+    LazyAttribute,
+    LazyFunction,
+    SelfAttribute,
+    Sequence,
+    SubFactory,
+)
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
 from comunicat.utils.factories import fake_string, fake_title
-from event.enums import EventStatus, EventType, RegistrationStatus
-from event.models import Event, EventPrice, Location, Registration
+from event.enums import EventQuestionType, EventStatus, EventType, RegistrationStatus
+from event.models import Event, EventPrice, EventQuestion, Location, Registration
 
 
 class LocationFactory(DjangoModelFactory):
@@ -68,6 +75,19 @@ class EventPriceFactory(DjangoModelFactory):
 
     class Meta:
         model = EventPrice
+
+
+class EventQuestionFactory(DjangoModelFactory):
+    event = SubFactory(EventFactory)
+
+    title = LazyFunction(fake_title)
+    type = FuzzyChoice(EventQuestionType)
+
+    is_required = False
+    order = Sequence(lambda n: n)
+
+    class Meta:
+        model = EventQuestion
 
 
 class RegistrationFactory(DjangoModelFactory):

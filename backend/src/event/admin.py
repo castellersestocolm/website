@@ -21,6 +21,7 @@ from activity.models import ProgramCourse
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import FIELD_LOCALE, beautify_dict
+from event.api.export import export_event
 from event.enums import EventStatus, RegistrationStatus
 from event.models import (
     AgendaItem,
@@ -97,7 +98,7 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
     )
     readonly_fields = ("data_nice",)
     raw_id_fields = ("entity", "owner", "line")
-    exclude = ("data",)
+    # exclude = ("data",)
     form = RegistrationInlineForm
     extra = 0
 
@@ -308,7 +309,12 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
                 "<path:object_id>/print/",
                 self.print,
                 name="event_event_print",
-            )
+            ),
+            path(
+                "<path:object_id>/export/",
+                self.export,
+                name="event_event_export",
+            ),
         ] + urls
 
     def print(self, request, object_id: UUID):
@@ -349,6 +355,18 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
 
             output = open(output.name, "rb")
             response.write(output.read())
+
+        return response
+
+    def export(self, request, object_id: UUID):
+        event_export = export_event(event_id=object_id)
+
+        response = HttpResponse(
+            event_export.getvalue(),
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response["Content-Disposition"] = f"attachment; filename=Event_{object_id}.xlsx"
+        response["Content-Transfer-Encoding"] = "binary"
 
         return response
 
