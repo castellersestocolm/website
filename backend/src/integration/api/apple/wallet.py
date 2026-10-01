@@ -20,6 +20,7 @@ _log = logging.getLogger(__name__)
 
 
 # https://developer.apple.com/documentation/walletpasses/building-a-pass
+# https://gist.github.com/rlanyi/f3edad3bd2f1753a937f8a0c6182d55a
 class AppleWalletLoyalty:
     def __init__(self, user_id: UUID, module: Module | None):
         from membership.models import Membership, MembershipModule
@@ -110,8 +111,8 @@ class AppleWalletLoyalty:
             zip_file.writestr("manifest.json", bytes_manifest)
 
             bytes_signature = comunicat.utils.crypto.pkcs7_sign(
-                path_cert=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_cert.pem",
-                path_key=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_key.pem",
+                path_cert=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_loyalty_cert.pem",
+                path_key=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_loyalty_key.pem",
                 path_verify=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_verify.pem",
                 data=bytes_manifest,
             )
@@ -188,8 +189,8 @@ class AppleWalletEvent:
             zip_file.writestr("manifest.json", bytes_manifest)
 
             bytes_signature = comunicat.utils.crypto.pkcs7_sign(
-                path_cert=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_cert.pem",
-                path_key=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_key.pem",
+                path_cert=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_event_cert.pem",
+                path_key=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_event_key.pem",
                 path_verify=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_verify.pem",
                 data=bytes_manifest,
             )

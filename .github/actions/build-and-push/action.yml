@@ -66,20 +66,32 @@ inputs:
   cert_swish_verify:
     description: The Swish certificate verify
     required: false
-  cert_apple_org_cert:
-    description: The Apple ORG certificate
+  cert_apple_org_loyalty_cert:
+    description: The Apple ORG LOYALTY certificate
     required: false
-  cert_apple_org_key:
-    description: The Apple ORG certificate key
+  cert_apple_org_loyalty_key:
+    description: The Apple ORG LOYALTY certificate key
+    required: false
+  cert_apple_org_event_cert:
+    description: The Apple ORG EVENT certificate
+    required: false
+  cert_apple_org_event_key:
+    description: The Apple ORG EVENT certificate key
+    required: false
+  cert_apple_towers_loyalty_cert:
+    description: The Apple TOWERS LOYALTY certificate
+    required: false
+  cert_apple_towers_loyalty_key:
+    description: The Apple TOWERS LOYALTY certificate key
+    required: false
+  cert_apple_towers_event_cert:
+    description: The Apple TOWERS EVENT certificate
+    required: false
+  cert_apple_towers_event_key:
+    description: The Apple TOWERS EVENT certificate key
     required: false
   cert_apple_org_verify:
     description: The Apple ORG certificate verify
-    required: false
-  cert_apple_towers_cert:
-    description: The Apple TOWERS certificate
-    required: false
-  cert_apple_towers_key:
-    description: The Apple TOWERS certificate key
     required: false
   cert_apple_towers_verify:
     description: The Apple TOWERS certificate verify
@@ -121,11 +133,15 @@ runs:
         --build-arg CERT_SWISH_CERT="${{ inputs.cert_swish_cert }}" \
         --build-arg CERT_SWISH_KEY="${{ inputs.cert_swish_key }}" \
         --build-arg CERT_SWISH_VERIFY="${{ inputs.cert_swish_verify }}" \
-        --build-arg CERT_APPLE_ORG_CERT="${{ inputs.cert_apple_org_cert }}" \
-        --build-arg CERT_APPLE_ORG_KEY="${{ inputs.cert_apple_org_key }}" \
+        --build-arg CERT_APPLE_ORG_LOYALTY_CERT="${{ inputs.cert_apple_org_loyalty_cert }}" \
+        --build-arg CERT_APPLE_ORG_LOYALTY_KEY="${{ inputs.cert_apple_org_loyalty_key }}" \
+        --build-arg CERT_APPLE_ORG_EVENT_CERT="${{ inputs.cert_apple_org_event_cert }}" \
+        --build-arg CERT_APPLE_ORG_EVENT_KEY="${{ inputs.cert_apple_org_event_key }}" \
+        --build-arg CERT_APPLE_TOWERS_LOYALTY_CERT="${{ inputs.cert_apple_towers_loyalty_cert }}" \
+        --build-arg CERT_APPLE_TOWERS_LOYALTY_KEY="${{ inputs.cert_apple_towers_loyalty_key }}" \
+        --build-arg CERT_APPLE_TOWERS_EVENT_CERT="${{ inputs.cert_apple_towers_event_cert }}" \
+        --build-arg CERT_APPLE_TOWERS_EVENT_KEY="${{ inputs.cert_apple_towers_event_key }}" \
         --build-arg CERT_APPLE_ORG_VERIFY="${{ inputs.cert_apple_org_verify }}" \
-        --build-arg CERT_APPLE_TOWERS_CERT="${{ inputs.cert_apple_towers_cert }}" \
-        --build-arg CERT_APPLE_TOWERS_KEY="${{ inputs.cert_apple_towers_key }}" \
         --build-arg CERT_APPLE_TOWERS_VERIFY="${{ inputs.cert_apple_towers_verify }}" \
         --build-arg CRED_GOOGLE_APP="${{ inputs.cred_google_app }}" \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \

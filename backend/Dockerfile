@@ -88,11 +88,15 @@ ENV DJANGO_STATIC_ROOT /backend/static
 ARG CERT_SWISH_CERT
 ARG CERT_SWISH_KEY
 ARG CERT_SWISH_VERIFY
-ARG CERT_APPLE_ORG_CERT
-ARG CERT_APPLE_ORG_KEY
+ARG CERT_APPLE_ORG_LOYALTY_CERT
+ARG CERT_APPLE_ORG_LOYALTY_KEY
+ARG CERT_APPLE_ORG_EVENT_CERT
+ARG CERT_APPLE_ORG_EVENT_KEY
+ARG CERT_APPLE_TOWERS_LOYALTY_CERT
+ARG CERT_APPLE_TOWERS_LOYALTY_KEY
+ARG CERT_APPLE_TOWERS_EVENT_CERT
+ARG CERT_APPLE_TOWERS_EVENT_KEY
 ARG CERT_APPLE_ORG_VERIFY
-ARG CERT_APPLE_TOWERS_CERT
-ARG CERT_APPLE_TOWERS_KEY
 ARG CERT_APPLE_TOWERS_VERIFY
 
 # Credentials
@@ -141,11 +145,18 @@ RUN mkdir /backend/cert && mkdir /backend/cert/se_swish && mkdir /backend/cert/a
 RUN echo "${CERT_SWISH_CERT}" > /backend/cert/se_swish/cert.pem
 RUN echo "${CERT_SWISH_KEY}" > /backend/cert/se_swish/key.pem
 RUN echo "${CERT_SWISH_VERIFY}" > /backend/cert/se_swish/verify.pem
-RUN echo "${CERT_APPLE_ORG_CERT}" > /backend/cert/apple/org_cert.pem
-RUN echo "${CERT_APPLE_ORG_KEY}" > /backend/cert/apple/org_key.pem
+
+RUN echo "${CERT_APPLE_ORG_LOYALTY_CERT}" > /backend/cert/apple/org_loyalty_cert.pem
+RUN echo "${CERT_APPLE_ORG_LOYALTY_KEY}" > /backend/cert/apple/org_loyalty_key.pem
+RUN echo "${CERT_APPLE_TOWERS_LOYALTY_CERT}" > /backend/cert/apple/towers_loyalty_cert.pem
+RUN echo "${CERT_APPLE_TOWERS_LOYALTY_KEY}" > /backend/cert/apple/towers_loyalty_key.pem
+
+RUN echo "${CERT_APPLE_ORG_EVENT_CERT}" > /backend/cert/apple/org_event_cert.pem
+RUN echo "${CERT_APPLE_ORG_EVENT_KEY}" > /backend/cert/apple/org_event_key.pem
+RUN echo "${CERT_APPLE_TOWERS_EVENT_CERT}" > /backend/cert/apple/towers_event_cert.pem
+RUN echo "${CERT_APPLE_TOWERS_EVENT_KEY}" > /backend/cert/apple/towers_event_key.pem
+
 RUN echo "${CERT_APPLE_ORG_VERIFY}" > /backend/cert/apple/org_verify.pem
-RUN echo "${CERT_APPLE_TOWERS_CERT}" > /backend/cert/apple/towers_cert.pem
-RUN echo "${CERT_APPLE_TOWERS_KEY}" > /backend/cert/apple/towers_key.pem
 RUN echo "${CERT_APPLE_TOWERS_VERIFY}" > /backend/cert/apple/towers_verify.pem
 
 RUN mkdir /backend/cred && mkdir /backend/cred/google && chown -R backend:backend /backend/cred
