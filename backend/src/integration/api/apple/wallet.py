@@ -11,6 +11,7 @@ from django.conf import settings
 from django.db.models import Prefetch
 from django.template.loader import render_to_string
 from django.utils import timezone
+from PIL import Image
 
 import comunicat.utils.crypto
 from comunicat.enums import Module
@@ -184,6 +185,46 @@ class AppleWalletEvent:
                             bytes_file = f.read()
                         manifest[path_rel] = hashlib.sha1(bytes_file).hexdigest()
                         zip_file.write(path_abs, path_rel)
+
+            if self.event_obj.picture:
+                thumbnail_og = Image.open(self.event_obj.picture)
+
+                for i in range(1, 4):
+                    thumbnail = thumbnail_og.copy()
+
+                    width, height = thumbnail.size
+                    ratio = width / height
+
+                    width_2, height_2 = i * 312, i * 123
+                    ratio_2 = width_2 / height_2
+
+                    if ratio > ratio_2:
+                        thumbnail = thumbnail.resize(
+                            (int(width * (height_2 / height)), height_2)
+                        )
+                    else:
+                        thumbnail = thumbnail.resize(
+                            (width_2, int(height * (width_2 / width)))
+                        )
+
+                    width, height = thumbnail.size
+
+                    left = (width - width_2) / 2
+                    top = (height - height_2) / 2
+                    right = (width + width_2) / 2
+                    bottom = (height + height_2) / 2
+
+                    thumbnail = thumbnail.crop((left, top, right, bottom))
+
+                    thumbnail_bytes = BytesIO()
+                    thumbnail.save(thumbnail_bytes, format="PNG")
+                    thumbnail_name = f"thumbnail@{i}x.png" if i > 1 else "thumbnail.png"
+                    thumbnail_bytes_string = thumbnail_bytes.getvalue()
+
+                    manifest[thumbnail_name] = hashlib.sha1(
+                        thumbnail_bytes_string
+                    ).hexdigest()
+                    zip_file.writestr(thumbnail_name, thumbnail_bytes_string)
 
             bytes_manifest = json.dumps(manifest).encode("utf-8")
             zip_file.writestr("manifest.json", bytes_manifest)

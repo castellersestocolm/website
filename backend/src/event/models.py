@@ -173,10 +173,16 @@ class Event(StandardModel, Timestamps):
     max_registrations = models.PositiveSmallIntegerField(null=True, blank=True)
 
     poster = VersatileImageField(
-        "Image", blank=True, null=True, upload_to=get_event_poster_name
+        blank=True,
+        null=True,
+        upload_to=get_event_poster_name,
+        verbose_name=_("poster"),
     )
     picture = VersatileImageField(
-        "Image", blank=True, null=True, upload_to=get_event_picture_name
+        blank=True,
+        null=True,
+        upload_to=get_event_picture_name,
+        verbose_name=_("image"),
     )
 
     __title = None
