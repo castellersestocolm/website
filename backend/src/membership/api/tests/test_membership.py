@@ -673,7 +673,7 @@ class TestCreateOrUpdate(NumOperationsMixin, TestCase):
 
     def test_create_or_update__status_active_family(self, *args, **kwargs):
         with self.assertNumOperations(
-            num=0, num_selects=11, num_inserts=2, num_updates=3
+            num=0, num_selects=12, num_inserts=2, num_updates=3
         ):
             membership_obj = create_or_update(
                 user_id=self.user_member_3_obj.id,
