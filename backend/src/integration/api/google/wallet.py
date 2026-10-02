@@ -34,6 +34,9 @@ class GoogleWalletLoyalty:
         self.key_file_path = f"{settings.INTEGRATION_GOOGLE_CRED_DIR}app.json"
         self.auth()
 
+        # Set the initial module, will be reset if the user has an active membership
+        self.module = module if module else settings.MODULE_DEFAULT
+
         from membership.models import Membership, MembershipModule
         from user.models import User
 
@@ -170,14 +173,24 @@ class GoogleWalletLoyalty:
         new_object = {
             "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}.{self.user_obj.membership_number}",
             "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}",
-            "state": "ACTIVE" if self.membership_obj.is_active else "EXPIRED",
+            "state": (
+                "ACTIVE"
+                if self.membership_obj and self.membership_obj.is_active
+                else "EXPIRED"
+            ),
             "barcode": {"type": "QR_CODE", "value": self.user_obj.membership_number},
             "accountId": self.user_obj.membership_number,
             "accountName": self.user_obj.name,
-            "validTimeInterval": {
-                "start": {"date": self.membership_start},
-                "end": {"date": self.membership_end},
-            },
+            **(
+                {
+                    "validTimeInterval": {
+                        "start": {"date": self.membership_start},
+                        "end": {"date": self.membership_end},
+                    }
+                }
+                if self.membership_obj
+                else {}
+            ),
         }
 
         return new_object
