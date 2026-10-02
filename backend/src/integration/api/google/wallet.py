@@ -178,15 +178,18 @@ class GoogleWalletLoyalty:
                 if self.membership_obj and self.membership_obj.is_active
                 else "EXPIRED"
             ),
-            "barcode": {"type": "QR_CODE", "value": self.user_obj.membership_number},
             "accountId": self.user_obj.membership_number,
             "accountName": self.user_obj.name,
             **(
                 {
+                    "barcode": {
+                        "type": "QR_CODE",
+                        "value": self.user_obj.membership_number,
+                    },
                     "validTimeInterval": {
                         "start": {"date": self.membership_start},
                         "end": {"date": self.membership_end},
-                    }
+                    },
                 }
                 if self.membership_obj
                 else {}
@@ -416,32 +419,42 @@ class GoogleWalletEvent:
         new_object = {
             "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}",
             "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.event.{self.event_key}",
-            "state": "ACTIVE" if self.registration_obj.is_active else "INACTIVE",
-            "barcode": {
-                "type": "QR_CODE",
-                "value": str(self.registration_obj.id),
-                "alternateText": self.registration_obj.entity.name,
-            },
-            "ticketHolderName": self.registration_obj.entity.name,
-            # ticketType
-            # groupingInfo
+            "state": (
+                "ACTIVE"
+                if self.registration_obj and self.registration_obj.is_active
+                else "INACTIVE"
+            ),
             **(
                 {
-                    "faceValue": {
-                        "micros": int(
-                            1000000 * self.registration_obj.price.amount.amount
-                        ),
-                        "currencyCode": str(
-                            self.registration_obj.price.amount.currency
-                        ),
-                    }
+                    "barcode": {
+                        "type": "QR_CODE",
+                        "value": str(self.registration_obj.id),
+                        "alternateText": self.registration_obj.entity.name,
+                    },
+                    "ticketHolderName": self.registration_obj.entity.name,
+                    # ticketType
+                    # groupingInfo
+                    **(
+                        {
+                            "faceValue": {
+                                "micros": int(
+                                    1000000 * self.registration_obj.price.amount.amount
+                                ),
+                                "currencyCode": str(
+                                    self.registration_obj.price.amount.currency
+                                ),
+                            }
+                        }
+                        if self.registration_obj.price
+                        else {}
+                    ),
+                    "validTimeInterval": {
+                        "end": {"date": self.event_end},
+                    },
                 }
-                if self.registration_obj.price
+                if self.registration_obj
                 else {}
             ),
-            "validTimeInterval": {
-                "end": {"date": self.event_end},
-            },
             # messages
         }
 
