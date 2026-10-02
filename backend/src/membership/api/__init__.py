@@ -331,3 +331,29 @@ def complete(
             )
 
     return True
+
+
+def expire_old_memberships() -> None:
+    membership_ids = list(
+        Membership.objects.exclude(status=MembershipStatus.EXPIRED)
+        .filter(
+            date_to__lte=timezone.now(),
+        )
+        .values_list("id", flat=True)
+    )
+
+    Membership.objects.filter(id__in=membership_ids).update(
+        status=MembershipStatus.EXPIRED
+    )
+
+    import integration.tasks
+
+    for membership_user_obj in (
+        MembershipUser.objects.filter(membership_id__in=membership_ids)
+        .prefetch_related("membership__modules")
+        .all()
+    ):
+        for membership_module_obj in membership_user_obj.membership.modules.all():
+            integration.tasks.update_wallet_loyalty_passes.delay(
+                user_id=membership_user_obj.user_id, module=membership_module_obj.module
+            )

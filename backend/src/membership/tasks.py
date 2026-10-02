@@ -19,3 +19,10 @@ def sync_memberships_org() -> None:
 @shared_task(rate_limit="1/m")
 def sync_memberships_towers() -> None:
     membership.api.google_drive.sync_memberships(module=Module.TOWERS)
+
+
+# This can be used to trigger expiration membership events, usually memberships are
+# considered expired when the current time is over the end time of the membership
+@shared_task
+def expire_old_memberships() -> None:
+    membership.api.expire_old_memberships()
