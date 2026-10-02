@@ -82,14 +82,12 @@ class Membership(StandardModel, Timestamps):
                 )
             )
             for membership_module_obj in self.modules.all():
-                transaction.on_commit(
-                    lambda: integration.tasks.update_wallet_loyalty_passes.apply_async(
-                        countdown=5,
-                        kwargs=dict(
-                            user_id=membership_user_obj.user_id,
-                            module=membership_module_obj.module,
-                        ),
-                    )
+                integration.tasks.update_wallet_loyalty_passes.apply_async_on_commit(
+                    countdown=10,
+                    kwargs=dict(
+                        user_id=membership_user_obj.user_id,
+                        module=membership_module_obj.module,
+                    ),
                 )
 
         import membership.tasks
