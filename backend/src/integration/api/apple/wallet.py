@@ -243,6 +243,9 @@ class AppleWalletEvent:
 
 
 def get_pass_loyalty_bundle(user_id: UUID, module: Module) -> BytesIO | None:
+    if not settings.INTEGRATION_APPLE_WALLET_ENABLED:
+        return None
+
     try:
         apple_wallet_loyalty = AppleWalletLoyalty(user_id=user_id, module=module)
     except Exception as e:
@@ -253,6 +256,9 @@ def get_pass_loyalty_bundle(user_id: UUID, module: Module) -> BytesIO | None:
 
 
 def get_pass_event_bundle(registration_id: UUID) -> BytesIO | None:
+    if not settings.INTEGRATION_APPLE_WALLET_ENABLED:
+        return None
+
     try:
         apple_wallet_event = AppleWalletEvent(registration_id=registration_id)
     except Exception as e:

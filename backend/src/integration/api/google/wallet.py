@@ -8,6 +8,7 @@ from django.utils import timezone, translation
 from google.auth import crypt, jwt
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import Resource, build
+from googleapiclient.errors import HttpError
 
 from comunicat.consts import (
     FILE_HERO_BY_MODULE,
@@ -212,6 +213,31 @@ class GoogleWalletLoyalty:
         token = jwt.encode(signer, claims).decode("utf-8")
 
         return f"https://pay.google.com/gp/v/save/{token}"
+
+    def update(self) -> bool:
+        try:
+            self.client.loyaltyobject().get(
+                resourceId=f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}.{self.user_obj.membership_number}"
+            ).execute()
+        except HttpError as e:
+            if e.status_code == 404:
+                return True
+            else:
+                _log.exception(e)
+                return False
+
+        new_object = self.get_object()
+
+        try:
+            self.client.loyaltyobject().update(
+                resourceId=f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}.{self.user_obj.membership_number}",
+                body=new_object,
+            ).execute()
+        except HttpError as e:
+            _log.exception(e)
+            return False
+
+        return True
 
 
 # https://github.com/google-wallet/rest-samples/blob/main/python/demo_loyalty.py
@@ -440,8 +466,36 @@ class GoogleWalletEvent:
 
         return f"https://pay.google.com/gp/v/save/{token}"
 
+    def update(self) -> bool:
+        try:
+            self.client.loyaltyobject().get(
+                resourceId=f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}"
+            ).execute()
+        except HttpError as e:
+            if e.status_code == 404:
+                return True
+            else:
+                _log.exception(e)
+                return False
+
+        new_object = self.get_object()
+
+        try:
+            self.client.loyaltyobject().update(
+                resourceId=f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}",
+                body=new_object,
+            ).execute()
+        except HttpError as e:
+            _log.exception(e)
+            return False
+
+        return True
+
 
 def get_pass_loyalty_url(user_id: UUID, module: Module) -> str | None:
+    if not settings.INTEGRATION_GOOGLE_WALLET_ENABLED:
+        return None
+
     try:
         google_wallet_loyalty = GoogleWalletLoyalty(user_id=user_id, module=module)
     except Exception as e:
@@ -451,7 +505,23 @@ def get_pass_loyalty_url(user_id: UUID, module: Module) -> str | None:
     return google_wallet_loyalty.get_url()
 
 
+def update_loyalty_pass(user_id: UUID, module: Module) -> bool:
+    if not settings.INTEGRATION_GOOGLE_WALLET_ENABLED:
+        return True
+
+    try:
+        google_wallet_loyalty = GoogleWalletLoyalty(user_id=user_id, module=module)
+    except Exception as e:
+        _log.exception(e)
+        return False
+
+    return google_wallet_loyalty.update()
+
+
 def get_pass_event_url(registration_id: UUID) -> str | None:
+    if not settings.INTEGRATION_GOOGLE_WALLET_ENABLED:
+        return None
+
     try:
         google_wallet_event = GoogleWalletEvent(registration_id=registration_id)
     except Exception as e:
@@ -459,3 +529,16 @@ def get_pass_event_url(registration_id: UUID) -> str | None:
         return None
 
     return google_wallet_event.get_url()
+
+
+def update_event_pass(registration_id: UUID) -> bool:
+    if not settings.INTEGRATION_GOOGLE_WALLET_ENABLED:
+        return True
+
+    try:
+        google_wallet_event = GoogleWalletEvent(registration_id=registration_id)
+    except Exception as e:
+        _log.exception(e)
+        return False
+
+    return google_wallet_event.update()

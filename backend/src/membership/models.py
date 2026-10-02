@@ -72,6 +72,7 @@ class Membership(StandardModel, Timestamps):
         if self.pk and self.status != self.__status:
             self.modules.update(status=self.status)
 
+        import integration.tasks
         import pinyator.tasks
 
         for membership_user_obj in self.membership_users.all():
@@ -80,6 +81,13 @@ class Membership(StandardModel, Timestamps):
                     user_id=membership_user_obj.user_id
                 )
             )
+            for membership_module_obj in self.modules.all():
+                transaction.on_commit(
+                    lambda: integration.tasks.update_wallet_loyalty_passes.delay(
+                        user_id=membership_user_obj.user_id,
+                        module=membership_module_obj.module,
+                    )
+                )
 
         import membership.tasks
 

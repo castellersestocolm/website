@@ -614,10 +614,17 @@ class Registration(StandardModel, Timestamps):
                     )
                 )
 
+        import integration.tasks
         import pinyator.tasks
 
         transaction.on_commit(
             lambda: pinyator.tasks.update_or_create_registration.delay(
+                registration_id=self.id
+            )
+        )
+
+        transaction.on_commit(
+            lambda: integration.tasks.update_wallet_event_passes.delay(
                 registration_id=self.id
             )
         )
