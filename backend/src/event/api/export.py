@@ -112,7 +112,11 @@ def export_event(event_id: UUID) -> BytesIO:
                     email,
                     phone,
                     str(RegistrationStatus.labels[registration_obj.status]),
-                    registration_obj.price.amount.amount,
+                    (
+                        registration_obj.price.amount.amount
+                        if registration_obj.price
+                        else ""
+                    ),
                 ]
                 + [
                     get_event_question_answer(

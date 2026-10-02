@@ -535,7 +535,7 @@ class GoogleWalletEvent:
 
     def update(self) -> bool:
         try:
-            self.client.loyaltyobject().get(
+            self.client.eventticketobject().get(
                 resourceId=f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}"
             ).execute()
         except HttpError as e:
@@ -548,7 +548,7 @@ class GoogleWalletEvent:
         new_object = self.get_object()
 
         try:
-            self.client.loyaltyobject().update(
+            self.client.eventticketobject().update(
                 resourceId=f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}",
                 body=new_object,
             ).execute()
