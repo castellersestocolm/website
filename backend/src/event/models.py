@@ -624,8 +624,9 @@ class Registration(StandardModel, Timestamps):
         )
 
         transaction.on_commit(
-            lambda: integration.tasks.update_wallet_event_passes.delay(
-                registration_id=self.id
+            lambda: integration.tasks.update_wallet_event_passes.apply_async(
+                countdown=5,
+                kwargs=dict(registration_id=self.id),
             )
         )
 
