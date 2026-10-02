@@ -34,6 +34,9 @@ class GoogleWalletLoyalty:
         self.key_file_path = f"{settings.INTEGRATION_GOOGLE_CRED_DIR}app.json"
         self.auth()
 
+        # Set the initial module, will be reset if the user has an active membership
+        self.module = module if module else settings.MODULE_DEFAULT
+
         from membership.models import Membership, MembershipModule
         from user.models import User
 
@@ -170,14 +173,27 @@ class GoogleWalletLoyalty:
         new_object = {
             "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}.{self.user_obj.membership_number}",
             "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}",
-            "state": "ACTIVE" if self.membership_obj.is_active else "EXPIRED",
-            "barcode": {"type": "QR_CODE", "value": self.user_obj.membership_number},
+            "state": (
+                "ACTIVE"
+                if self.membership_obj and self.membership_obj.is_active
+                else "EXPIRED"
+            ),
             "accountId": self.user_obj.membership_number,
             "accountName": self.user_obj.name,
-            "validTimeInterval": {
-                "start": {"date": self.membership_start},
-                "end": {"date": self.membership_end},
-            },
+            **(
+                {
+                    "barcode": {
+                        "type": "QR_CODE",
+                        "value": self.user_obj.membership_number,
+                    },
+                    "validTimeInterval": {
+                        "start": {"date": self.membership_start},
+                        "end": {"date": self.membership_end},
+                    },
+                }
+                if self.membership_obj
+                else {}
+            ),
         }
 
         return new_object
@@ -403,32 +419,42 @@ class GoogleWalletEvent:
         new_object = {
             "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}",
             "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.event.{self.event_key}",
-            "state": "ACTIVE" if self.registration_obj.is_active else "INACTIVE",
-            "barcode": {
-                "type": "QR_CODE",
-                "value": str(self.registration_obj.id),
-                "alternateText": self.registration_obj.entity.name,
-            },
-            "ticketHolderName": self.registration_obj.entity.name,
-            # ticketType
-            # groupingInfo
+            "state": (
+                "ACTIVE"
+                if self.registration_obj and self.registration_obj.is_active
+                else "INACTIVE"
+            ),
             **(
                 {
-                    "faceValue": {
-                        "micros": int(
-                            1000000 * self.registration_obj.price.amount.amount
-                        ),
-                        "currencyCode": str(
-                            self.registration_obj.price.amount.currency
-                        ),
-                    }
+                    "barcode": {
+                        "type": "QR_CODE",
+                        "value": str(self.registration_obj.id),
+                        "alternateText": self.registration_obj.entity.name,
+                    },
+                    "ticketHolderName": self.registration_obj.entity.name,
+                    # ticketType
+                    # groupingInfo
+                    **(
+                        {
+                            "faceValue": {
+                                "micros": int(
+                                    1000000 * self.registration_obj.price.amount.amount
+                                ),
+                                "currencyCode": str(
+                                    self.registration_obj.price.amount.currency
+                                ),
+                            }
+                        }
+                        if self.registration_obj.price
+                        else {}
+                    ),
+                    "validTimeInterval": {
+                        "end": {"date": self.event_end},
+                    },
                 }
-                if self.registration_obj.price
+                if self.registration_obj
                 else {}
             ),
-            "validTimeInterval": {
-                "end": {"date": self.event_end},
-            },
             # messages
         }
 
