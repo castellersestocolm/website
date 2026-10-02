@@ -5,6 +5,7 @@ from uuid import UUID
 from django.conf import settings
 from django.db.models import Prefetch
 from django.utils import timezone, translation
+from django.utils.translation import gettext_lazy as _
 from google.auth import crypt, jwt
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import Resource, build
@@ -13,11 +14,13 @@ from googleapiclient.errors import HttpError
 from comunicat.consts import (
     FILE_HERO_BY_MODULE,
     FILE_LOGO_BY_MODULE,
+    LOCALE_BY_MODULE,
     NAME_BY_MODULE,
     PALETTE_BY_MODULE,
 )
 from comunicat.enums import Module
 from comunicat.template_tags.comunicat_tags import full_api_url, full_url
+from event.enums import RegistrationStatus
 from integration.consts import GOOGLE_WALLET_SCOPES, LANGUAGE_TO_GOOGLE_LANGUAGE
 from membership.enums import MembershipStatus
 
@@ -172,31 +175,37 @@ class GoogleWalletLoyalty:
         return new_class
 
     def get_object(self) -> dict | None:
-        new_object = {
-            "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}.{self.user_obj.membership_number}",
-            "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}",
-            "state": (
-                "ACTIVE"
-                if self.membership_obj and self.membership_obj.is_active
-                else "EXPIRED"
-            ),
-            "accountId": self.user_obj.membership_number,
-            "accountName": self.user_obj.name,
-            **(
-                {
-                    "barcode": {
-                        "type": "QR_CODE",
-                        "value": self.user_obj.membership_number,
-                    },
-                    "validTimeInterval": {
-                        "start": {"date": self.membership_start},
-                        "end": {"date": self.membership_end},
-                    },
-                }
-                if self.membership_obj
-                else {}
-            ),
-        }
+        with translation.override(
+            self.user_obj.preferred_language
+            if self.user_obj
+            else LOCALE_BY_MODULE[self.module]
+        ):
+            new_object = {
+                "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}.{self.user_obj.membership_number}",
+                "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.loyalty.{Module(self.module).name.lower()}",
+                "state": (
+                    "ACTIVE"
+                    if self.membership_obj and self.membership_obj.is_active
+                    else "EXPIRED"
+                ),
+                "accountId": self.user_obj.membership_number,
+                "accountName": self.user_obj.name,
+                **(
+                    {
+                        "barcode": {
+                            "type": "QR_CODE",
+                            "value": self.user_obj.membership_number,
+                            "alternateText": self.user_obj.name,
+                        },
+                        "validTimeInterval": {
+                            "start": {"date": self.membership_start},
+                            "end": {"date": self.membership_end},
+                        },
+                    }
+                    if self.membership_obj and self.membership_obj.is_active
+                    else {"barcode": {"type": "TEXT_ONLY", "value": str(_("EXPIRED"))}}
+                ),
+            }
 
         return new_object
 
@@ -270,6 +279,10 @@ class GoogleWalletEvent:
 
         from event.models import Registration
 
+        self.module = None
+        self.entity_obj = None
+        self.event_obj = None
+
         self.registration_obj = (
             Registration.objects.filter(id=registration_id)
             .select_related(
@@ -282,6 +295,7 @@ class GoogleWalletEvent:
             return
 
         self.event_obj = self.registration_obj.event
+        self.entity_obj = self.registration_obj.entity
 
         self.event_start = timezone.localtime(self.event_obj.time_from).isoformat()
         self.event_end = timezone.localtime(self.event_obj.time_to).isoformat()
@@ -418,47 +432,72 @@ class GoogleWalletEvent:
         return new_class
 
     def get_object(self) -> dict | None:
-        new_object = {
-            "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}",
-            "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.event.{self.event_key}",
-            "state": (
-                "ACTIVE"
-                if self.registration_obj and self.registration_obj.is_active
-                else "INACTIVE"
-            ),
-            **(
-                {
-                    "barcode": {
-                        "type": "QR_CODE",
-                        "value": str(self.registration_obj.id),
-                        "alternateText": self.registration_obj.entity.name,
-                    },
-                    "ticketHolderName": self.registration_obj.entity.name,
-                    # ticketType
-                    # groupingInfo
-                    **(
-                        {
-                            "faceValue": {
-                                "micros": int(
-                                    1000000 * self.registration_obj.price.amount.amount
-                                ),
-                                "currencyCode": str(
-                                    self.registration_obj.price.amount.currency
-                                ),
-                            }
+        with translation.override(
+            self.entity_obj.preferred_language
+            if self.entity_obj
+            else (
+                LOCALE_BY_MODULE[self.module] if self.module else settings.LANGUAGE_CODE
+            )
+        ):
+            new_object = {
+                "id": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.registration.{self.registration_key}",
+                "classId": f"{settings.INTEGRATION_GOOGLE_WALLET_ISSUER_ID}.event.{self.event_key}",
+                "state": (
+                    "ACTIVE"
+                    if self.registration_obj and self.registration_obj.is_active
+                    else "INACTIVE"
+                ),
+                **(
+                    {
+                        "barcode": {
+                            "type": "QR_CODE",
+                            "value": str(self.registration_obj.id),
+                            "alternateText": self.entity_obj.name,
+                        },
+                    }
+                    if self.registration_obj and self.registration_obj.is_active
+                    else {
+                        "barcode": {
+                            "type": "TEXT_ONLY",
+                            "value": (
+                                str(_("CANCELLED"))
+                                if not self.registration_obj
+                                or self.registration_obj.status
+                                == RegistrationStatus.CANCELLED
+                                else str(_("UNPAID"))
+                            ),
                         }
-                        if self.registration_obj.price
-                        else {}
-                    ),
-                    "validTimeInterval": {
-                        "end": {"date": self.event_end},
-                    },
-                }
-                if self.registration_obj
-                else {}
-            ),
-            # messages
-        }
+                    }
+                ),
+                **(
+                    {
+                        "ticketHolderName": self.entity_obj.name,
+                        # ticketType
+                        # groupingInfo
+                        **(
+                            {
+                                "faceValue": {
+                                    "micros": int(
+                                        1000000
+                                        * self.registration_obj.price.amount.amount
+                                    ),
+                                    "currencyCode": str(
+                                        self.registration_obj.price.amount.currency
+                                    ),
+                                }
+                            }
+                            if self.registration_obj.price
+                            else {}
+                        ),
+                        "validTimeInterval": {
+                            "end": {"date": self.event_end},
+                        },
+                    }
+                    if self.registration_obj
+                    else {}
+                ),
+                # messages
+            }
 
         return new_object
 

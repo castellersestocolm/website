@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 17:32+0200\n"
+"POT-Creation-Date: 2026-10-02 19:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,32 +25,32 @@ msgstr ""
 msgid "name"
 msgstr "nom"
 
-#: activity/admin.py:125 event/admin.py:355 event/admin.py:378
+#: activity/admin.py:125 event/admin.py:373 event/admin.py:396
 #: history/admin.py:31 media/admin.py:35
 msgid "title"
 msgstr "títol"
 
-#: activity/api/export.py:60 event/api/export.py:38
+#: activity/api/export.py:60 event/api/export.py:44
 msgid "Registrations"
 msgstr "Inscripcions"
 
 #: activity/api/export.py:64 comunicat/templates/pdf/org/registration.html:77
-#: comunicat/templates/pdf/towers/registration.html:77 event/api/export.py:42
+#: comunicat/templates/pdf/towers/registration.html:77 event/api/export.py:48
 #: membership/api/export.py:51
 msgid "First name"
 msgstr "Nom"
 
 #: activity/api/export.py:65 comunicat/templates/pdf/org/registration.html:80
-#: comunicat/templates/pdf/towers/registration.html:80 event/api/export.py:43
+#: comunicat/templates/pdf/towers/registration.html:80 event/api/export.py:49
 #: membership/api/export.py:52
 msgid "Last name"
 msgstr "Cognom"
 
-#: activity/api/export.py:66 event/api/export.py:44
+#: activity/api/export.py:66 event/api/export.py:50
 msgid "Age"
 msgstr "Edat"
 
-#: activity/api/export.py:67 event/api/export.py:45 membership/api/export.py:55
+#: activity/api/export.py:67 event/api/export.py:51 membership/api/export.py:55
 msgid "Family"
 msgstr "Família"
 
@@ -68,12 +68,12 @@ msgstr "Telèfons"
 
 #: activity/api/export.py:71 comunicat/templates/pdf/org/registration.html:86
 #: comunicat/templates/pdf/towers/order.html:86
-#: comunicat/templates/pdf/towers/registration.html:86 event/api/export.py:48
+#: comunicat/templates/pdf/towers/registration.html:86 event/api/export.py:54
 #: membership/api/export.py:59
 msgid "Status"
 msgstr "Estat"
 
-#: activity/api/export.py:72 event/api/export.py:49 membership/api/export.py:60
+#: activity/api/export.py:72 event/api/export.py:55 membership/api/export.py:60
 msgid "Price"
 msgstr "Preu"
 
@@ -287,16 +287,20 @@ msgstr ""
 #: comunicat/templates/admin/event/event/submit_line.html:10
 #, fuzzy
 #| msgid "View attendance"
-msgid "Print attendance file"
+msgid "Print attendance"
 msgstr "Mostra l'assistència"
 
-#: comunicat/templates/admin/event/event/submit_line.html:14
+#: comunicat/templates/admin/event/event/submit_line.html:11
+msgid "Download export"
+msgstr ""
+
+#: comunicat/templates/admin/event/event/submit_line.html:15
 #: comunicat/templates/admin/payment/entity/submit_line.html:14
 #: comunicat/templates/admin/payment/expense/submit_line.html:14
 msgid "Close"
 msgstr ""
 
-#: comunicat/templates/admin/event/event/submit_line.html:18
+#: comunicat/templates/admin/event/event/submit_line.html:19
 #: comunicat/templates/admin/payment/entity/submit_line.html:18
 #: comunicat/templates/admin/payment/expense/submit_line.html:18
 msgid "Delete"
@@ -352,7 +356,7 @@ msgstr "per"
 
 #: comunicat/templates/email/org/contact/message.html:22
 #: comunicat/templates/email/towers/contact/message.html:22
-#: event/api/export.py:46 membership/api/export.py:53
+#: event/api/export.py:52 membership/api/export.py:53
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -915,12 +919,13 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: comunicat/templates/pdf/org/order.html:145 payment/utils/admin.py:14
+#: comunicat/templates/pdf/org/order.html:145 event/utils/event_question.py:15
+#: payment/utils/admin.py:14
 msgid "Yes"
 msgstr ""
 
 #: comunicat/templates/pdf/org/registration.html:83
-#: comunicat/templates/pdf/towers/registration.html:83 event/api/export.py:47
+#: comunicat/templates/pdf/towers/registration.html:83 event/api/export.py:53
 #: membership/api/export.py:54 payment/consts.py:47
 msgid "Phone"
 msgstr "Telèfon"
@@ -935,30 +940,30 @@ msgstr "entitat"
 msgid "The newsletter is mandatory for newsletter consents."
 msgstr ""
 
-#: event/admin.py:135 payment/admin.py:279
+#: event/admin.py:136 payment/admin.py:279
 msgid "Action succeeded."
 msgstr ""
 
-#: event/admin.py:137
+#: event/admin.py:138
 msgid "Data"
 msgstr ""
 
-#: event/admin.py:138 order/admin.py:308 payment/admin.py:210
+#: event/admin.py:139 order/admin.py:308 payment/admin.py:210
 msgid "Send paid email"
 msgstr ""
 
-#: event/admin.py:240
+#: event/admin.py:241
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:356 order/admin.py:590 payment/admin.py:1136
+#: event/admin.py:374 order/admin.py:590 payment/admin.py:1136
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
 msgid "accounts"
 msgstr "Quantitat"
 
-#: event/admin.py:549
+#: event/admin.py:567
 msgid "time from"
 msgstr ""
 
@@ -972,53 +977,77 @@ msgstr ""
 msgid "Tentative"
 msgstr "actiu"
 
-#: event/models.py:111 event/models.py:112
+#: event/models.py:112 event/models.py:113
 msgid "event series"
 msgstr ""
 
-#: event/models.py:204
+#: event/models.py:179
+msgid "poster"
+msgstr ""
+
+#: event/models.py:185
+msgid "image"
+msgstr ""
+
+#: event/models.py:211
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The end time must be greater than start time."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: event/models.py:209
+#: event/models.py:216
 msgid "The module must match the course program module."
 msgstr ""
 
-#: event/models.py:212
+#: event/models.py:219
 msgid "The type must be COURSE."
 msgstr ""
 
-#: event/models.py:219
+#: event/models.py:226
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The start time must be within the course dates."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:224
+#: event/models.py:231
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The module must match the series module."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:227
+#: event/models.py:234
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The type must match the series type."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:343 product/models.py:142 product/models.py:147
+#: event/models.py:350 product/models.py:142 product/models.py:147
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:425 payment/models.py:320
+#: event/models.py:438 payment/models.py:320
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
-#: event/models.py:508 event/models.py:509
+#: event/models.py:521 event/models.py:522
 msgid "event accounts"
 msgstr ""
+
+#: event/utils/event_question.py:15 payment/utils/admin.py:15
+msgid "No"
+msgstr "No"
+
+#: integration/api/google/wallet.py:204
+msgid "EXPIRED"
+msgstr "CADUCAT"
+
+#: integration/api/google/wallet.py:456
+msgid "CANCELLED"
+msgstr "CANCEL·LAT"
+
+#: integration/api/google/wallet.py:456
+msgid "UNPAID"
+msgstr "NO PAGAT"
 
 #: legal/models.py:78
 #, fuzzy
@@ -1427,10 +1456,6 @@ msgstr "entrega"
 #| msgid "Payment"
 msgid "has payment"
 msgstr "Pagament"
-
-#: payment/utils/admin.py:15
-msgid "No"
-msgstr ""
 
 #: product/admin.py:40 product/admin.py:112 product/admin.py:149
 msgid "stock"
