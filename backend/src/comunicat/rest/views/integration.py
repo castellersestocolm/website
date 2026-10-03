@@ -186,6 +186,15 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         return response
 
     @swagger_auto_schema(
+        method="get",
+        query_serializer=IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(),
+        responses={
+            200: Serializer(),
+            201: Serializer(),
+            401: Serializer(),
+        },
+    )
+    @swagger_auto_schema(
         method="post",
         request_body=IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(),
         responses={
@@ -202,7 +211,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         },
     )
     @action(
-        methods=["post", "delete"],
+        methods=["get", "post", "delete"],
         detail=False,
         url_path=r"pass/loyalty/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)/(?P<serial_number>.*)",
         url_name="pass_loyalty_register",
@@ -222,9 +231,9 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         if not user_obj:
             return Response(status=401)
 
-        if request.method == "POST":
+        if request.method in ("GET", "POST"):
             serializer = IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(
-                data=request.data
+                data=request.GET if request.method == "GET" else request.data
             )
             serializer.is_valid(raise_exception=True)
             validated_data = serializer.validated_data
