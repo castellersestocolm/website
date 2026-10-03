@@ -575,3 +575,7 @@ def set_verify(token: str, module: Module, request: HttpRequest) -> User | None:
     )
 
     return user_obj
+
+
+def get_by_token(token: str) -> User | None:
+    return User.objects.filter(token=token).first()

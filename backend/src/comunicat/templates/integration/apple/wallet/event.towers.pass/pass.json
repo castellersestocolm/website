@@ -4,7 +4,7 @@
   "serialNumber": "{{ registration_key }}",
   "teamIdentifier": "{{ 'INTEGRATION_APPLE_WALLET_TEAM_ID'|settings_value }}",
   "authenticationToken": "{{ registration_obj.token }}",
-  "webServiceURL": "{% full_org_url %}",
+  "webServiceURL": "{% full_api_url 'api/1.0/integration/apple/wallet/pass/event' %}",
   "barcode": {
     "message": "{{ registration_key }}",
     "format": "PKBarcodeFormatQR",

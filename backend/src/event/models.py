@@ -560,7 +560,7 @@ class Registration(StandardModel, Timestamps):
     data = models.JSONField(default=dict, blank=True)
 
     token = models.CharField(
-        max_length=255, default=comunicat.utils.crypto.gen_random_token
+        max_length=255, default=comunicat.utils.crypto.gen_random_token, unique=True
     )
 
     __status = None

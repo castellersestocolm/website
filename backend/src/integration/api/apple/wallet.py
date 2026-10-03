@@ -15,6 +15,7 @@ from PIL import Image
 
 import comunicat.utils.crypto
 from comunicat.enums import Module
+from integration.models import AppleWalletRegistration
 from membership.enums import MembershipStatus
 
 _log = logging.getLogger(__name__)
@@ -266,3 +267,27 @@ def get_pass_event_bundle(registration_id: UUID) -> BytesIO | None:
         return None
 
     return apple_wallet_event.get_bundle()
+
+
+def register_loyalty_bundle(
+    device_library_id: str, pass_type_id: str, serial_number: str, push_token: str
+) -> tuple[AppleWalletRegistration, bool]:
+    apple_wallet_registration_obj, is_created = (
+        AppleWalletRegistration.objects.update_or_create(
+            pass_type_id=pass_type_id,
+            serial_number=serial_number,
+            defaults={
+                "device_library_id": device_library_id,
+                "push_token": push_token,
+            },
+        )
+    )
+
+    return apple_wallet_registration_obj, is_created
+
+
+def delete_loyalty_bundle(pass_type_id: str, serial_number: str) -> None:
+    AppleWalletRegistration.objects.filter(
+        pass_type_id=pass_type_id,
+        serial_number=serial_number,
+    ).delete()

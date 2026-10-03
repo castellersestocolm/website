@@ -15,3 +15,7 @@ class IntegrationAppleWalletPassLoyaltyRequestSerializer(s.Serializer):
 
 class IntegrationAppleWalletPassEventRequestSerializer(s.Serializer):
     token = s.CharField(required=False)
+
+
+class IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(s.Serializer):
+    pushToken = s.CharField()
