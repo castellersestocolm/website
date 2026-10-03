@@ -217,21 +217,23 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def register_pass_loyalty(
         self, request, device_library_id, pass_type_id, serial_number
     ):
-        request_header = request.headers.get("Authorization")
-
-        if not request_header:
-            print("ERROR: No header", request.headers)
-            return Response(status=402)
-
-        token = request_header.split(" ")[-1]
-
-        user_obj = user.api.get_by_token(token=token)
-
-        if not user_obj:
-            print("ERROR: No user", token)
-            return Response(status=403)
-
+        print("METHOD", request.method)
         if request.method == "POST":
+            print("DATA POST", request.data)
+            request_header = request.headers.get("Authorization")
+
+            if not request_header:
+                print("ERROR: No header", request.headers)
+                return Response(status=401)
+
+            token = request_header.split(" ")[-1]
+
+            user_obj = user.api.get_by_token(token=token)
+
+            if not user_obj:
+                print("ERROR: No user", token)
+                return Response(status=401)
+
             serializer = IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(
                 data=request.data
             )
@@ -249,6 +251,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
             return Response(status=201 if is_created else 200)
         elif request.method == "GET":
+            print("DATA GET", request.GET)
             return Response(status=200)
 
         return Response(status=200)
