@@ -323,7 +323,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         if not user_obj:
             return Response(status=401)
 
-        module = Module[pass_type_id.split(".")[1].upper]
+        module = Module[pass_type_id.split(".")[1].upper()]
 
         pass_loyalty_bundle = get_pass_loyalty_bundle(
             user_id=user_obj.id, module=module
