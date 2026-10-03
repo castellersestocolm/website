@@ -264,6 +264,8 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         if request.method == "POST":
             return Response(200)
 
+        print("REQ", request.__dict__)
+
         request_header = request.headers.get("Authorization")
 
         if not request_header:
