@@ -1376,9 +1376,7 @@ function UserDashboardPage() {
                           <Box key={payment.id}>
                             <ListItemButton
                               onClick={() => handlePaymentClick(payment.id)}
-                              disableTouchRipple={
-                                !payment.lines || !(payment.lines.length > 1)
-                              }
+                              disableTouchRipple={!payment.lines}
                               dense
                             >
                               <ListItemIcon>
@@ -1454,14 +1452,13 @@ function UserDashboardPage() {
                                 }
                               />
                               {payment.lines &&
-                                payment.lines.length > 1 &&
                                 (paymentsOpen[payment.id] ? (
                                   <IconExpandLess />
                                 ) : (
                                   <IconExpandMore />
                                 ))}
                             </ListItemButton>
-                            {payment.lines && payment.lines.length > 1 && (
+                            {payment.lines && (
                               <Collapse
                                 in={paymentsOpen[payment.id]}
                                 timeout="auto"
