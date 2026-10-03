@@ -261,7 +261,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def register_pass_loyalty(
         self, request, device_library_id, pass_type_id, serial_number
     ):
-        if request.method == "POST":
+        if request.method == "GET":
             return Response(200)
 
         print("REQ", request.__dict__)
