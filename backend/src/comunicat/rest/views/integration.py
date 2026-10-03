@@ -193,7 +193,6 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         query_serializer=IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(),
         responses={
             200: Serializer(),
-            204: Serializer(),
         },
     )
     @action(
