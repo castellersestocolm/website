@@ -261,11 +261,17 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def register_pass_loyalty(
         self, request, device_library_id, pass_type_id, serial_number
     ):
+        print("REQ GET/DELETE/POST")
+
         if request.method == "GET":
+            print("REQ GET")
+            return Response(200)
+        elif request.method == "DELETE":
+            print("REQ DELETE")
+            delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
             return Response(200)
 
         print("REQ", request.__dict__)
-        print("REQ2", getattr(request, "_request").__dict__)
 
         request_header = request.headers.get("Authorization")
 
@@ -316,6 +322,8 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_name="pass_loyalty_update",
     )
     def update_pass_loyalty(self, request, pass_type_id, serial_number):
+        print("REQ UPDATE", request.__dict__)
+
         request_header = request.headers.get("Authorization")
 
         if not request_header:
