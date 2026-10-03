@@ -133,6 +133,12 @@ class PaymentRequest(StandardModel, Timestamps):
 
     __status = None
 
+    def __str__(self) -> str:
+        extra_str = ""
+        if self.entity:
+            extra_str += f" - {self.entity}"
+        return f"{self.created_at.strftime('%Y-%m-%d')}{extra_str}"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__status = self.status
@@ -168,6 +174,14 @@ class PaymentRequestLine(StandardModel, Timestamps):
         related_name="request_line",
         on_delete=models.SET_NULL,
     )
+
+    def __str__(self) -> str:
+        extra_str = (
+            f" - {self.request.created_at.strftime('%Y-%m-%d')} - {self.request.entity}"
+        )
+        if self.text:
+            extra_str += f" - {self.text}"
+        return f"{self.amount}{extra_str}"
 
 
 class Entity(StandardModel, Timestamps):
