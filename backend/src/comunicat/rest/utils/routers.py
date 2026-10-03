@@ -6,3 +6,10 @@ class UUIDRouter(SimpleRouter):
         if not hasattr(viewset, "lookup_value_regex"):
             viewset.lookup_value_regex = r"[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}"
         return super().get_lookup_regex(viewset, lookup_prefix)
+
+
+# Required for Apple Wallet pushes which lack the trailing slash
+class OptionalSlashUUIDRouter(UUIDRouter):
+    def __init__(self):
+        super().__init__()
+        self.trailing_slash = "/?"
