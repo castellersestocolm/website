@@ -265,6 +265,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             return Response(200)
 
         print("REQ", request.__dict__)
+        print("REQ2", getattr(request, "_request").__dict__)
 
         request_header = request.headers.get("Authorization")
 
