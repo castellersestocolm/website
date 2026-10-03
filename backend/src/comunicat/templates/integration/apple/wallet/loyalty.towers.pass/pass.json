@@ -31,7 +31,7 @@
         "value": "{{ user_obj.name }}"
       }
     ],
-    "auxiliaryFields" : [
+    "secondaryFields" : [
       {
         "key" : "membership_start",
         "dateStyle" : "PKDateStyleShort",
