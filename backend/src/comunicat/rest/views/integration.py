@@ -221,7 +221,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
         if not request_header:
             print("ERROR: No header", request.headers)
-            return Response(status=401)
+            return Response(status=402)
 
         token = request_header.split(" ")[-1]
 
@@ -229,7 +229,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
         if not user_obj:
             print("ERROR: No user", token)
-            return Response(status=401)
+            return Response(status=403)
 
         if request.method == "POST":
             serializer = IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(
