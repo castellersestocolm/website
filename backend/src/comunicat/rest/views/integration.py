@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from django.http import HttpResponse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
@@ -15,6 +16,8 @@ from comunicat.enums import Module
 from comunicat.rest.serializers.integration import (
     IntegrationAppleWalletPassEventRequestSerializer,
     IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer,
+    IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer,
+    IntegrationAppleWalletPassLoyaltyRegisterRetrieveSerializer,
     IntegrationAppleWalletPassLoyaltyRequestSerializer,
     IntegrationGoogleWalletPassEventSerializer,
     IntegrationGoogleWalletPassLoyaltySerializer,
@@ -22,6 +25,7 @@ from comunicat.rest.serializers.integration import (
 from comunicat.rest.viewsets import ComuniCatViewSet
 from integration.api.apple.wallet import (
     delete_loyalty_bundle,
+    get_loyalty_bundle_serial_numbers,
     get_pass_event_bundle,
     get_pass_loyalty_bundle,
     register_loyalty_bundle,
@@ -186,6 +190,49 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         return response
 
     @swagger_auto_schema(
+        query_serializer=IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(),
+        responses={
+            200: Serializer(),
+            204: Serializer(),
+        },
+    )
+    @action(
+        methods=["get"],
+        detail=False,
+        url_path=r"pass/loyalty/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)",
+        url_name="pass_loyalty_registrations",
+    )
+    def registrations_pass_loyalty(self, request, device_library_id, pass_type_id):
+        print("METHOD", request.method)
+        serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(
+            data=request.GET
+        )
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        last_updated = validated_data.get("previousLastUpdated")
+
+        serial_numbers = get_loyalty_bundle_serial_numbers(
+            device_library_id=device_library_id,
+            pass_type_id=pass_type_id,
+            last_updated=last_updated,
+        )
+
+        print(serial_numbers, str(int(timezone.localtime().timestamp())))
+
+        if not serial_numbers:
+            return Response(204)
+
+        serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveSerializer(
+            {
+                "serialNumbers": serial_numbers,
+                "lastUpdated": str(int(timezone.localtime().timestamp())),
+            },
+            context={"module": self.module},
+        )
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
         method="get",
         responses={
             200: Serializer(),
@@ -253,6 +300,8 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         elif request.method == "GET":
             print("DATA GET", request.GET)
             return Response(status=200)
+
+        delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
 
         return Response(status=200)
 

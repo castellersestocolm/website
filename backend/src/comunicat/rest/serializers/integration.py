@@ -19,3 +19,12 @@ class IntegrationAppleWalletPassEventRequestSerializer(s.Serializer):
 
 class IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(s.Serializer):
     pushToken = s.CharField()
+
+
+class IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(s.Serializer):
+    previousLastUpdated = s.CharField(required=False)
+
+
+class IntegrationAppleWalletPassLoyaltyRegisterRetrieveSerializer(s.Serializer):
+    serialNumbers = s.ListSerializer(child=s.CharField())
+    lastUpdated = s.CharField()

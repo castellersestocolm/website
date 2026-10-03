@@ -8,7 +8,7 @@ from io import BytesIO
 from uuid import UUID
 
 from django.conf import settings
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
 from django.utils import timezone
 from PIL import Image
@@ -285,6 +285,27 @@ def register_loyalty_bundle(
     )
 
     return apple_wallet_registration_obj, is_created
+
+
+def get_loyalty_bundle_serial_numbers(
+    device_library_id: str, pass_type_id: str, last_updated: str | None = None
+) -> list[str]:
+    apple_wallet_registration_filter = Q()
+
+    if last_updated:
+        apple_wallet_registration_filter &= Q(
+            updated_at__gt=timezone.make_aware(
+                datetime.datetime.fromtimestamp(int(last_updated))
+            )
+        )
+
+    return list(
+        AppleWalletRegistration.objects.filter(
+            apple_wallet_registration_filter,
+            device_library_id=device_library_id,
+            pass_type_id=pass_type_id,
+        ).values_list("serial_number", flat=True)
+    )
 
 
 def delete_loyalty_bundle(pass_type_id: str, serial_number: str) -> None:
