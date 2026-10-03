@@ -261,16 +261,12 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def register_pass_loyalty(
         self, request, device_library_id, pass_type_id, serial_number
     ):
-        print("REQ GET/DELETE/POST")
-
         if request.method == "GET":
-            print("REQ GET")
             return Response(200)
 
         request_header = request.headers.get("Authorization")
 
         if not request_header:
-            print("ERROR: No header", request.headers)
             return Response(status=401)
 
         token = request_header.split(" ")[-1]
@@ -278,11 +274,9 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         user_obj = user.api.get_by_token(token=token)
 
         if not user_obj:
-            print("ERROR: No user", token)
             return Response(status=401)
 
         if request.method == "POST":
-            print("REQ POST")
             serializer = IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(
                 data=request.data
             )
@@ -299,8 +293,6 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             )
 
             return Response(status=201 if is_created else 200)
-
-        print("REQ DELETE")
 
         delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
 
@@ -319,8 +311,6 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_name="pass_loyalty_update",
     )
     def update_pass_loyalty(self, request, pass_type_id, serial_number):
-        print("REQ UPDATE", request.__dict__)
-
         request_header = request.headers.get("Authorization")
 
         if not request_header:
@@ -333,7 +323,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         if not user_obj:
             return Response(status=401)
 
-        module = Module(pass_type_id.split(".")[1])
+        module = Module[pass_type_id.split(".")[1].upper]
 
         pass_loyalty_bundle = get_pass_loyalty_bundle(
             user_id=user_obj.id, module=module
