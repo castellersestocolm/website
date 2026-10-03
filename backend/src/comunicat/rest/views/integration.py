@@ -231,6 +231,12 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         return Response(serializer.data, headers={"last-modified": last_updated})
 
     @swagger_auto_schema(
+        method="get",
+        responses={
+            200: Serializer(),
+        },
+    )
+    @swagger_auto_schema(
         method="post",
         request_body=IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(),
         responses={
@@ -247,7 +253,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         },
     )
     @action(
-        methods=["post", "delete"],
+        methods=["get", "post", "delete"],
         detail=False,
         url_path=r"pass/loyalty/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)/(?P<serial_number>.*)",
         url_name="pass_loyalty_register",
@@ -255,10 +261,13 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def register_pass_loyalty(
         self, request, device_library_id, pass_type_id, serial_number
     ):
+        if request.method == "POST":
+            return Response(200)
+
         request_header = request.headers.get("Authorization")
 
         if not request_header:
-            print("ERROR: No header", request_header)
+            print("ERROR: No header", request.headers)
             return Response(status=401)
 
         token = request_header.split(" ")[-1]
@@ -336,17 +345,22 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         return response
 
     @swagger_auto_schema(
+        method="get",
+        responses={
+            200: Serializer(),
+        },
+    )
+    @swagger_auto_schema(
+        method="post",
         responses={
             200: Serializer(),
         },
     )
     @action(
-        methods=["post"],
+        methods=["get", "post"],
         detail=False,
         url_path=r"pass/loyalty/v1/log",
         url_name="pass_log",
     )
     def log_pass_loyalty(self, request):
-        print("LOGS", request.json())
-
         return Response(status=200)
