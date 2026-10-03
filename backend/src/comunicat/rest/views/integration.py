@@ -344,3 +344,20 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         response["Content-Disposition"] = "attachment; filename=loyalty.pkpass"
 
         return response
+
+    @swagger_auto_schema(
+        responses={
+            200: Serializer(),
+            401: Serializer(),
+        },
+    )
+    @action(
+        methods=["post"],
+        detail=False,
+        url_path=r"pass/loyalty/v1/log",
+        url_name="pass_log",
+    )
+    def update_pass_loyalty(self, request):
+        print("LOGS1", request.data)
+
+        return Response(status=200)
