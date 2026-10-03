@@ -261,9 +261,14 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def register_pass_loyalty(
         self, request, device_library_id, pass_type_id, serial_number
     ):
-        print("REQ GET")
+        print("REQ GET/DELETE/POST")
 
         if request.method == "GET":
+            print("REQ GET")
+            return Response(200)
+        elif request.method == "DELETE":
+            print("REQ DELETE")
+            delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
             return Response(200)
 
         print("REQ", request.__dict__)
