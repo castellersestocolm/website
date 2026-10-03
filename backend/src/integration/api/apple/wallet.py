@@ -276,6 +276,7 @@ def register_loyalty_bundle(
         AppleWalletRegistration.objects.update_or_create(
             pass_type_id=pass_type_id,
             serial_number=serial_number,
+            deleted_at=None,
             defaults={
                 "device_library_id": device_library_id,
                 "push_token": push_token,
@@ -290,4 +291,4 @@ def delete_loyalty_bundle(pass_type_id: str, serial_number: str) -> None:
     AppleWalletRegistration.objects.filter(
         pass_type_id=pass_type_id,
         serial_number=serial_number,
-    ).delete()
+    ).update(deleted_at=timezone.now())

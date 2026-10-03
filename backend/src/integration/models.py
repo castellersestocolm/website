@@ -22,5 +22,7 @@ class AppleWalletRegistration(StandardModel, Timestamps):
     serial_number = models.CharField(max_length=255)
     push_token = models.CharField(max_length=255)
 
+    deleted_at = models.DateTimeField(blank=True, null=True)
+
     class Meta:
         unique_together = ("pass_type_id", "serial_number")
