@@ -203,7 +203,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_name="pass_loyalty_registrations",
     )
     def registrations_pass_loyalty(self, request, device_library_id, pass_type_id):
-        print("METHOD", request.method)
+        print("METHOD REGISTRATIONS", request.method)
         serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(
             data=request.GET
         )
@@ -233,6 +233,13 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         return Response(serializer.data)
 
     @swagger_auto_schema(
+        method="head",
+        responses={
+            200: Serializer(),
+            401: Serializer(),
+        },
+    )
+    @swagger_auto_schema(
         method="get",
         responses={
             200: Serializer(),
@@ -256,7 +263,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         },
     )
     @action(
-        methods=["get", "post", "delete"],
+        methods=["head", "get", "post", "delete"],
         detail=False,
         url_path=r"pass/loyalty/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)/(?P<serial_number>.*)",
         url_name="pass_loyalty_register",
@@ -299,6 +306,9 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             return Response(status=201 if is_created else 200)
         elif request.method == "GET":
             print("DATA GET", request.GET)
+            return Response(status=200)
+        elif request.method == "HEAD":
+            print("DATA HEAD", request.HEAD)
             return Response(status=200)
 
         delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
@@ -346,6 +356,13 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         return response
 
     @swagger_auto_schema(
+        method="head",
+        responses={
+            200: Serializer(),
+            401: Serializer(),
+        },
+    )
+    @swagger_auto_schema(
         method="get",
         responses={
             200: Serializer(),
@@ -360,7 +377,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         },
     )
     @action(
-        methods=["get", "post"],
+        methods=["head", "get", "post"],
         detail=False,
         url_path=r"pass/loyalty/v1/log",
         url_name="pass_log",
