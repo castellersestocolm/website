@@ -266,12 +266,6 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         if request.method == "GET":
             print("REQ GET")
             return Response(200)
-        elif request.method == "DELETE":
-            print("REQ DELETE")
-            delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
-            return Response(200)
-
-        print("REQ", request.__dict__)
 
         request_header = request.headers.get("Authorization")
 
@@ -288,6 +282,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             return Response(status=401)
 
         if request.method == "POST":
+            print("REQ POST")
             serializer = IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(
                 data=request.data
             )
@@ -304,6 +299,8 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             )
 
             return Response(status=201 if is_created else 200)
+
+        print("REQ DELETE")
 
         delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
 

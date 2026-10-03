@@ -3,7 +3,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from comunicat.rest.utils.routers import UUIDRouter
+from comunicat.rest.utils.routers import OptionalSlashUUIDRouter
 from comunicat.rest.views import (
     activity,
     admin,
@@ -25,7 +25,7 @@ from comunicat.rest.views import (
     user,
 )
 
-router = UUIDRouter()
+router = OptionalSlashUUIDRouter()
 router.register("user", user.UserAPI, "user")
 router.register("user/family", user.UserFamilyAPI, "user_family")
 router.register("user/family/member", user.UserFamilyMemberAPI, "user_family_member")
