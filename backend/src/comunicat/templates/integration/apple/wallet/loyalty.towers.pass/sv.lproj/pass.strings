@@ -1,4 +1,4 @@
-"membership_number" = "Medlemsnummer";
+"membership_number" = "Medlem";
 "user_name" = "Namn";
-"membership_start" = "Giltig från";
-"membership_end" = "Giltig till";
+"membership_start" = "Från";
+"membership_end" = "Till";

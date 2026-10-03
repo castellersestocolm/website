@@ -1,4 +1,4 @@
-"membership_number" = "Membership number";
+"membership_number" = "Membership";
 "user_name" = "Name";
-"membership_start" = "Valid from";
-"membership_end" = "Valid to";
+"membership_start" = "From";
+"membership_end" = "To";
