@@ -62,7 +62,7 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
     )
 
     token = models.CharField(
-        max_length=255, default=comunicat.utils.crypto.gen_random_token
+        max_length=255, default=comunicat.utils.crypto.gen_random_token, unique=True
     )
 
     objects = UserManager()
