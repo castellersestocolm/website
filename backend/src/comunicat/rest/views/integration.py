@@ -346,18 +346,28 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         return response
 
     @swagger_auto_schema(
+        method="get",
+        responses={
+            200: Serializer(),
+            401: Serializer(),
+        },
+    )
+    @swagger_auto_schema(
+        method="post",
         responses={
             200: Serializer(),
             401: Serializer(),
         },
     )
     @action(
-        methods=["post"],
+        methods=["get", "post"],
         detail=False,
         url_path=r"pass/loyalty/v1/log",
         url_name="pass_log",
     )
     def update_pass_loyalty(self, request):
+        print("LOGS METHOD", request.method)
         print("LOGS1", request.data)
+        print("LOGS2", request.GET)
 
         return Response(status=200)
