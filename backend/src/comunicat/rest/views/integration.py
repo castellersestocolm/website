@@ -187,7 +187,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
     @swagger_auto_schema(
         method="post",
-        query_serializer=IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(),
+        request_body=IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(),
         responses={
             200: Serializer(),
             201: Serializer(),
@@ -210,7 +210,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def register_pass_loyalty(
         self, request, device_library_id, pass_type_id, serial_number
     ):
-        request_header = request.META.get("Authorization")
+        request_header = request.headers.get("Authorization")
 
         if not request_header:
             return Response(status=401)
@@ -224,7 +224,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
         if request.method == "POST":
             serializer = IntegrationAppleWalletPassLoyaltyRegisterRequestSerializer(
-                data=request.POST
+                data=request.data
             )
             serializer.is_valid(raise_exception=True)
             validated_data = serializer.validated_data
