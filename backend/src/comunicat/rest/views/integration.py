@@ -193,7 +193,6 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         query_serializer=IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(),
         responses={
             200: Serializer(),
-            204: Serializer(),
         },
     )
     @action(
@@ -218,11 +217,6 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             last_updated=last_updated,
         )
 
-        print(serial_numbers, str(int(timezone.localtime().timestamp())))
-
-        if not serial_numbers:
-            return Response(204)
-
         serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveSerializer(
             {
                 "serialNumbers": serial_numbers,
@@ -230,6 +224,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             },
             context={"module": self.module},
         )
+        print(serializer.data)
         return Response(serializer.data)
 
     @swagger_auto_schema(
