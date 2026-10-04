@@ -203,24 +203,23 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_name="pass_update_registrations",
     )
     def pass_update_registrations(self, request, device_library_id, pass_type_id):
-        serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(
-            data=request.GET
-        )
-        serializer.is_valid(raise_exception=True)
-        validated_data = serializer.validated_data
+        # serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(
+        #     data=request.GET
+        # )
+        # serializer.is_valid(raise_exception=True)
+        # validated_data = serializer.validated_data
+        #
+        # last_updated = validated_data.get("previousLastUpdated")
 
-        last_updated = validated_data.get("previousLastUpdated")
-
-        serial_numbers, updated_at = get_bundle_serial_numbers(
+        serial_numbers = get_bundle_serial_numbers(
             device_library_id=device_library_id,
             pass_type_id=pass_type_id,
-            last_updated=last_updated,
         )
 
         if not serial_numbers:
             return Response(204)
 
-        last_updated = str(int(updated_at.timestamp()))
+        last_updated = str(int(timezone.localtime().timestamp()))
 
         serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveSerializer(
             {

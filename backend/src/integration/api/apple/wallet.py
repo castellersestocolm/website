@@ -10,7 +10,7 @@ from uuid import UUID
 import httpx
 import jwt
 from django.conf import settings
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch
 from django.template.loader import render_to_string
 from django.utils import timezone
 from PIL import Image
@@ -404,33 +404,13 @@ def register_bundle(
     return apple_wallet_registration_obj, is_created
 
 
-def get_bundle_serial_numbers(
-    device_library_id: str, pass_type_id: str, last_updated: str | None = None
-) -> tuple[list[str], datetime.datetime | None]:
-    apple_wallet_registration_filter = Q()
-
-    if last_updated:
-        apple_wallet_registration_filter &= Q(
-            updated_at__gt=timezone.make_aware(
-                datetime.datetime.fromtimestamp(int(last_updated))
-            )
-        )
-
-    apple_wallet_registration_objs = list(
+def get_bundle_serial_numbers(device_library_id: str, pass_type_id: str) -> list[str]:
+    return list(
         AppleWalletRegistration.objects.filter(
-            apple_wallet_registration_filter,
             device_library_id=device_library_id,
             pass_type_id=pass_type_id,
-        ).order_by("updated_at")
+        ).values_list("serial_number", flat=True)
     )
-
-    if not apple_wallet_registration_objs:
-        return [], None
-
-    return [
-        apple_wallet_registration_obj.serial_number
-        for apple_wallet_registration_obj in apple_wallet_registration_objs
-    ], apple_wallet_registration_objs[0].updated_at
 
 
 def delete_bundle(pass_type_id: str, serial_number: str) -> None:
