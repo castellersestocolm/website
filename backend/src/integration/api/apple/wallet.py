@@ -160,7 +160,7 @@ class AppleWalletLoyalty:
 
         for push_token in push_tokens:
             client.post(
-                url=f"https://api.push.apple.com/3/device/{push_token}",
+                url=f"{settings.INTEGRATION_APPLE_APN_URL}/3/device/{push_token}",
                 data={"hello": "bye"},
                 headers={
                     "authorization": f"bearer {token}",
@@ -322,7 +322,7 @@ class AppleWalletEvent:
 
         for push_token in push_tokens:
             client.post(
-                url=f"https://api.push.apple.com/3/device/{push_token}",
+                url=f"{settings.INTEGRATION_APPLE_APN_URL}/3/device/{push_token}",
                 data={"hello": "bye"},
                 headers={
                     "authorization": f"bearer {token}",
