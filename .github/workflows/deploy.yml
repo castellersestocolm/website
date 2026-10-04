@@ -42,6 +42,7 @@ jobs:
         cert_apple_towers_event_key: "${{ secrets.CERT_APPLE_TOWERS_EVENT_KEY }}"
         cert_apple_org_verify: "${{ secrets.CERT_APPLE_ORG_VERIFY }}"
         cert_apple_towers_verify: "${{ secrets.CERT_APPLE_TOWERS_VERIFY }}"
+        cert_apple_apn_key: "${{ secrets.CERT_APPLE_APN_KEY }}"
         cred_google_app: "${{ secrets.CRED_GOOGLE_APP }}"
 
   build-frontend-org:

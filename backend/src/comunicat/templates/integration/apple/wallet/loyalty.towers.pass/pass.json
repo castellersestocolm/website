@@ -4,7 +4,7 @@
   "serialNumber": "{{ user_obj.membership_number }}",
   "teamIdentifier": "{{ 'INTEGRATION_APPLE_WALLET_TEAM_ID'|settings_value }}",
   "authenticationToken": "{{ user_obj.token }}",
-  "webServiceURL": "{% full_api_url 'api/1.0/integration/apple/wallet/pass/loyalty' %}",
+  "webServiceURL": "{% full_api_url 'api/1.0/integration/apple/wallet/pass/update' %}",
   "barcode": {
     "message": "{{ user_obj.membership_number }}",
     "format": "PKBarcodeFormatQR",

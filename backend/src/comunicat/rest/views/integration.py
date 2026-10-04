@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
+import event.api.registration
 import user.api
 import user.api.integration
 from comunicat.enums import Module
@@ -24,11 +25,11 @@ from comunicat.rest.serializers.integration import (
 )
 from comunicat.rest.viewsets import ComuniCatViewSet
 from integration.api.apple.wallet import (
-    delete_loyalty_bundle,
-    get_loyalty_bundle_serial_numbers,
+    delete_bundle,
+    get_bundle_serial_numbers,
     get_pass_event_bundle,
     get_pass_loyalty_bundle,
-    register_loyalty_bundle,
+    register_bundle,
 )
 from integration.api.google.wallet import get_pass_event_url, get_pass_loyalty_url
 
@@ -198,10 +199,10 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     @action(
         methods=["get"],
         detail=False,
-        url_path=r"pass/loyalty/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)",
-        url_name="pass_loyalty_registrations",
+        url_path=r"pass/update/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)",
+        url_name="pass_update_registrations",
     )
-    def registrations_pass_loyalty(self, request, device_library_id, pass_type_id):
+    def pass_update_registrations(self, request, device_library_id, pass_type_id):
         serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(
             data=request.GET
         )
@@ -210,7 +211,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
         last_updated = validated_data.get("previousLastUpdated")
 
-        serial_numbers, updated_at = get_loyalty_bundle_serial_numbers(
+        serial_numbers, updated_at = get_bundle_serial_numbers(
             device_library_id=device_library_id,
             pass_type_id=pass_type_id,
             last_updated=last_updated,
@@ -255,10 +256,10 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     @action(
         methods=["get", "post", "delete"],
         detail=False,
-        url_path=r"pass/loyalty/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)/(?P<serial_number>.*)",
-        url_name="pass_loyalty_register",
+        url_path=r"pass/update/v1/devices/(?P<device_library_id>.*)/registrations/(?P<pass_type_id>.*)/(?P<serial_number>.*)",
+        url_name="pass_update_register",
     )
-    def register_pass_loyalty(
+    def pass_update_register(
         self, request, device_library_id, pass_type_id, serial_number
     ):
         if request.method == "GET":
@@ -285,7 +286,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
             push_token = validated_data.get("pushToken")
 
-            __, is_created = register_loyalty_bundle(
+            __, is_created = register_bundle(
                 device_library_id=device_library_id,
                 pass_type_id=pass_type_id,
                 serial_number=serial_number,
@@ -294,7 +295,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
             return Response(status=201 if is_created else 200)
 
-        delete_loyalty_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
+        delete_bundle(pass_type_id=pass_type_id, serial_number=serial_number)
 
         return Response(status=200)
 
@@ -307,10 +308,10 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     @action(
         methods=["get"],
         detail=False,
-        url_path=r"pass/loyalty/v1/passes/(?P<pass_type_id>.*)/(?P<serial_number>.*)",
-        url_name="pass_loyalty_update",
+        url_path=r"pass/update/v1/passes/(?P<pass_type_id>.*)/(?P<serial_number>.*)",
+        url_name="pass_update",
     )
-    def update_pass_loyalty(self, request, pass_type_id, serial_number):
+    def pass_update(self, request, pass_type_id, serial_number):
         request_header = request.headers.get("Authorization")
 
         if not request_header:
@@ -318,27 +319,36 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
         token = request_header.split(" ")[-1]
 
-        user_obj = user.api.get_by_token(token=token)
-
-        if not user_obj:
-            return Response(status=401)
-
         module = Module[pass_type_id.split(".")[-1].upper()]
+        pass_type = pass_type_id.split(".")[1]
 
-        pass_loyalty_bundle = get_pass_loyalty_bundle(
-            user_id=user_obj.id, module=module
-        )
+        pass_bundle = None
 
-        if not pass_loyalty_bundle:
+        if pass_type == "event":
+            registration_obj = event.api.registration.get_by_token(token=token)
+
+            if not registration_obj:
+                return Response(status=401)
+
+            pass_bundle = get_pass_event_bundle(registration_id=registration_obj.id)
+        elif pass_type == "loyalty":
+            user_obj = user.api.get_by_token(token=token)
+
+            if not user_obj:
+                return Response(status=401)
+
+            pass_bundle = get_pass_loyalty_bundle(user_id=user_obj.id, module=module)
+
+        if not pass_bundle:
             return Response(status=401)
 
         last_updated = str(int(timezone.localtime().timestamp()))
 
         response = HttpResponse(
-            pass_loyalty_bundle.getvalue(), headers={"last-modified": last_updated}
+            pass_bundle.getvalue(), headers={"last-modified": last_updated}
         )
         response["Content-Type"] = "application/vnd.apple.pkpass"
-        response["Content-Disposition"] = "attachment; filename=loyalty.pkpass"
+        response["Content-Disposition"] = f"attachment; filename={pass_type}.pkpass"
 
         return response
 
@@ -357,8 +367,8 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     @action(
         methods=["get", "post"],
         detail=False,
-        url_path=r"pass/loyalty/v1/log",
-        url_name="pass_log",
+        url_path=r"pass/update/v1/log",
+        url_name="pass_update_log",
     )
     def log_pass_loyalty(self, request):
         return Response(status=200)
