@@ -52,7 +52,7 @@ openpyxl ~= 3.1.5
 
 # Payment methods
 paypal-server-sdk ~= 1.1.0
-sumup ~= 0.3.1
+sumup ~= 0.3.4
 swish ~= 1.6.1
 
 # Slack
@@ -68,6 +68,7 @@ google-auth ~= 2.28.2
 
 # Apple
 PyJWT ~= 2.15.1
+httpx[http2] ~= 0.28.1
 
 # QRs
 qrcode[pil] ~= 8.2
