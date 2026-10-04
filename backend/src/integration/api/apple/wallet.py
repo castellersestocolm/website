@@ -3,10 +3,13 @@ import hashlib
 import json
 import logging
 import os
+import uuid
 import zipfile
 from io import BytesIO
 from uuid import UUID
 
+import jwt
+import requests
 from django.conf import settings
 from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
@@ -23,6 +26,7 @@ _log = logging.getLogger(__name__)
 
 # https://developer.apple.com/documentation/walletpasses/building-a-pass
 # https://gist.github.com/rlanyi/f3edad3bd2f1753a937f8a0c6182d55a
+# https://medium.com/@itsuki.enjoy/apn-server-for-controlling-apple-live-activity-typescript-5c1a70829b04
 class AppleWalletLoyalty:
     def __init__(self, user_id: UUID, module: Module | None):
         from membership.models import Membership, MembershipModule
@@ -123,6 +127,40 @@ class AppleWalletLoyalty:
         zip_file.close()
 
         return zip_buffer
+
+    def update(self) -> bool:
+        pass_type_id = f"pass.loyalty.{Module(self.module).name.lower()}"
+
+        apple_wallet_registration_objs = list(
+            AppleWalletRegistration.objects.filter(
+                pass_type_id=pass_type_id,
+                serial_number=str(self.user_obj.membership_number),
+            )
+        )
+
+        headers = {
+            "alg": "ES256",
+            "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
+            "typ": None,
+        }
+
+        claims = {
+            "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
+            "iat": int(timezone.localtime().timestamp()),
+        }
+
+        private_key = open(
+            f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
+        ).read()
+        token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
+
+        # requests.post(
+        #     "https://api.push.apple.com",
+        #     data={},
+        #     headers={":method": "POST", ":path": f"/3/device/{push_token}", "authorization": f"bearer {token}", "apns-id": str(uuid.uuid4()), "apns-expiration": "0", "apns-push-type": "background", "apns-topic": pass_type_id}
+        # )
+
+        return True
 
 
 # https://developer.apple.com/documentation/walletpasses/building-a-pass
@@ -242,6 +280,9 @@ class AppleWalletEvent:
 
         return zip_buffer
 
+    def update(self) -> bool:
+        return False
+
 
 def get_pass_loyalty_bundle(user_id: UUID, module: Module) -> BytesIO | None:
     if not settings.INTEGRATION_APPLE_WALLET_ENABLED:
@@ -254,6 +295,19 @@ def get_pass_loyalty_bundle(user_id: UUID, module: Module) -> BytesIO | None:
         return None
 
     return apple_wallet_loyalty.get_bundle()
+
+
+def update_loyalty_pass(user_id: UUID, module: Module) -> bool:
+    if not settings.INTEGRATION_APPLE_WALLET_ENABLED:
+        return True
+
+    try:
+        apple_wallet_loyalty = AppleWalletLoyalty(user_id=user_id, module=module)
+    except Exception as e:
+        _log.exception(e)
+        return False
+
+    return apple_wallet_loyalty.update()
 
 
 def get_pass_event_bundle(registration_id: UUID) -> BytesIO | None:
@@ -269,7 +323,20 @@ def get_pass_event_bundle(registration_id: UUID) -> BytesIO | None:
     return apple_wallet_event.get_bundle()
 
 
-def register_loyalty_bundle(
+def update_event_pass(registration_id: UUID) -> bool:
+    if not settings.INTEGRATION_APPLE_WALLET_ENABLED:
+        return True
+
+    try:
+        apple_wallet_event = AppleWalletEvent(registration_id=registration_id)
+    except Exception as e:
+        _log.exception(e)
+        return False
+
+    return apple_wallet_event.update()
+
+
+def register_bundle(
     device_library_id: str, pass_type_id: str, serial_number: str, push_token: str
 ) -> tuple[AppleWalletRegistration, bool]:
     apple_wallet_registration_obj, is_created = (
@@ -287,7 +354,7 @@ def register_loyalty_bundle(
     return apple_wallet_registration_obj, is_created
 
 
-def get_loyalty_bundle_serial_numbers(
+def get_bundle_serial_numbers(
     device_library_id: str, pass_type_id: str, last_updated: str | None = None
 ) -> tuple[list[str], datetime.datetime | None]:
     apple_wallet_registration_filter = Q()
@@ -316,7 +383,7 @@ def get_loyalty_bundle_serial_numbers(
     ], apple_wallet_registration_objs[0].updated_at
 
 
-def delete_loyalty_bundle(pass_type_id: str, serial_number: str) -> None:
+def delete_bundle(pass_type_id: str, serial_number: str) -> None:
     AppleWalletRegistration.objects.filter(
         pass_type_id=pass_type_id,
         serial_number=serial_number,

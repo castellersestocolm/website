@@ -96,6 +96,9 @@ inputs:
   cert_apple_towers_verify:
     description: The Apple TOWERS certificate verify
     required: false
+  cert_apple_apn_key:
+    description: The Apple APN certificate key
+    required: false
   cred_google_app:
     description: The Google application JSON credentials
     required: false
@@ -143,6 +146,7 @@ runs:
         --build-arg CERT_APPLE_TOWERS_EVENT_KEY="${{ inputs.cert_apple_towers_event_key }}" \
         --build-arg CERT_APPLE_ORG_VERIFY="${{ inputs.cert_apple_org_verify }}" \
         --build-arg CERT_APPLE_TOWERS_VERIFY="${{ inputs.cert_apple_towers_verify }}" \
+        --build-arg CERT_APPLE_APN_KEY="${{ inputs.cert_apple_apn_key }}" \
         --build-arg CRED_GOOGLE_APP="${{ inputs.cred_google_app }}" \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.sha }} \
         --tag ghcr.io/castellersestocolm/${{ inputs.name }}:${{ github.ref_name }} \

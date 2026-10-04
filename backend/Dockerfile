@@ -98,6 +98,7 @@ ARG CERT_APPLE_TOWERS_EVENT_CERT
 ARG CERT_APPLE_TOWERS_EVENT_KEY
 ARG CERT_APPLE_ORG_VERIFY
 ARG CERT_APPLE_TOWERS_VERIFY
+ARG CERT_APPLE_APN_KEY
 
 # Credentials
 ARG CRED_GOOGLE_APP
@@ -158,6 +159,8 @@ RUN echo "${CERT_APPLE_TOWERS_EVENT_KEY}" > /backend/cert/apple/towers_event_key
 
 RUN echo "${CERT_APPLE_ORG_VERIFY}" > /backend/cert/apple/org_verify.pem
 RUN echo "${CERT_APPLE_TOWERS_VERIFY}" > /backend/cert/apple/towers_verify.pem
+
+RUN echo "${CERT_APPLE_APN_KEY}" > /backend/cert/apple/apn_key.pem
 
 RUN mkdir /backend/cred && mkdir /backend/cred/google && chown -R backend:backend /backend/cred
 

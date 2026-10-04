@@ -45,7 +45,7 @@ whitenoise ~= 6.9.0
 django-versatileimagefield ~= 3.1
 
 # Sentry
-sentry-sdk[django] ~= 2.25.0
+sentry-sdk[django] ~= 2.71.0
 
 # Excel
 openpyxl ~= 3.1.5
@@ -65,6 +65,10 @@ weasyprint ~= 68.1
 # Google
 google-api-python-client ~= 2.161.0
 google-auth ~= 2.28.2
+
+# Apple
+pyapns-client3 ~= 3.0.6
+PyJWT ~= 2.15.1
 
 # QRs
 qrcode[pil] ~= 8.2
