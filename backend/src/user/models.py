@@ -151,6 +151,17 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
             # Trigger entity to update according to the user
             transaction.on_commit(lambda: self.entity.save())
 
+        import integration.tasks
+
+        for module in Module:
+            integration.tasks.update_wallet_loyalty_passes.apply_async_on_commit(
+                countdown=10,
+                kwargs=dict(
+                    user_id=self.id,
+                    module=module,
+                ),
+            )
+
         super().save(*args, **kwargs)
 
     class Meta:
