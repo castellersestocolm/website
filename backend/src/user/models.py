@@ -164,36 +164,6 @@ class User(AbstractBaseUser, StandardModel, Timestamps, PermissionsMixin):
 
         super().save(*args, **kwargs)
 
-        def save(self, *args, **kwargs):
-            # TODO: Update Google event calendar invitations for membership and membership module
-            if self.pk and self.status != self.__status:
-                self.modules.update(status=self.status)
-
-            import integration.tasks
-            import pinyator.tasks
-
-            for membership_user_obj in self.membership_users.all():
-                transaction.on_commit(
-                    lambda: pinyator.tasks.update_or_create_user.delay(
-                        user_id=membership_user_obj.user_id
-                    )
-                )
-                for membership_module_obj in self.modules.all():
-                    integration.tasks.update_wallet_loyalty_passes.apply_async_on_commit(
-                        countdown=10,
-                        kwargs=dict(
-                            user_id=membership_user_obj.user_id,
-                            module=membership_module_obj.module,
-                        ),
-                    )
-
-            import membership.tasks
-
-            # Sync memberships with Google Drive
-            transaction.on_commit(lambda: membership.tasks.sync_memberships.delay())
-
-            super().save(*args, **kwargs)
-
     class Meta:
         indexes = [models.Index(fields=("-created_at",))]
 
