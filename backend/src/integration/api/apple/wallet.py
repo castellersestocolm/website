@@ -3,10 +3,13 @@ import hashlib
 import json
 import logging
 import os
+import uuid
 import zipfile
 from io import BytesIO
 from uuid import UUID
 
+import httpx
+import jwt
 from django.conf import settings
 from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
@@ -126,36 +129,46 @@ class AppleWalletLoyalty:
         return zip_buffer
 
     def update(self) -> bool:
-        # pass_type_id = f"pass.loyalty.{Module(self.module).name.lower()}"
-        #
-        # apple_wallet_registration_objs = list(
-        #     AppleWalletRegistration.objects.filter(
-        #         pass_type_id=pass_type_id,
-        #         serial_number=str(self.user_obj.membership_number),
-        #     )
-        # )
-        #
-        # headers = {
-        #     "alg": "ES256",
-        #     "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
-        #     "typ": None,
-        # }
-        #
-        # claims = {
-        #     "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
-        #     "iat": int(timezone.localtime().timestamp()),
-        # }
-        #
-        # private_key = open(
-        #     f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
-        # ).read()
-        # token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
+        pass_type_id = f"pass.loyalty.{Module(self.module).name.lower()}"
 
-        # requests.post(
-        #     "https://api.push.apple.com",
-        #     data={},
-        #     headers={":method": "POST", ":path": f"/3/device/{push_token}", "authorization": f"bearer {token}", "apns-id": str(uuid.uuid4()), "apns-expiration": "0", "apns-push-type": "background", "apns-topic": pass_type_id}
-        # )
+        push_tokens = list(
+            set(
+                AppleWalletRegistration.objects.filter(
+                    pass_type_id=pass_type_id,
+                    serial_number=str(self.user_obj.membership_number),
+                ).values_list("push_token", flat=True)
+            )
+        )
+
+        headers = {
+            "alg": "ES256",
+            "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
+            "typ": None,
+        }
+
+        claims = {
+            "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
+            "iat": int(timezone.localtime().timestamp()),
+        }
+
+        private_key = open(
+            f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
+        ).read()
+        token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
+
+        client = httpx.Client(http2=True)
+
+        for push_token in push_tokens:
+            client.post(
+                url=f"https://api.push.apple.com/3/device/{push_token}",
+                data={"hello": "bye"},
+                headers={
+                    "authorization": f"bearer {token}",
+                    "apns-expiration": "0",
+                    "apns-push-type": "background",
+                    "apns-topic": pass_type_id,
+                },
+            )
 
         return True
 
@@ -278,7 +291,48 @@ class AppleWalletEvent:
         return zip_buffer
 
     def update(self) -> bool:
-        return False
+        pass_type_id = f"pass.event.{Module(self.module).name.lower()}"
+
+        push_tokens = list(
+            set(
+                AppleWalletRegistration.objects.filter(
+                    pass_type_id=pass_type_id,
+                    serial_number=self.registration_key,
+                ).values_list("push_token", flat=True)
+            )
+        )
+
+        headers = {
+            "alg": "ES256",
+            "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
+            "typ": None,
+        }
+
+        claims = {
+            "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
+            "iat": int(timezone.localtime().timestamp()),
+        }
+
+        private_key = open(
+            f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
+        ).read()
+        token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
+
+        client = httpx.Client(http2=True)
+
+        for push_token in push_tokens:
+            client.post(
+                url=f"https://api.push.apple.com/3/device/{push_token}",
+                data={"hello": "bye"},
+                headers={
+                    "authorization": f"bearer {token}",
+                    "apns-expiration": "0",
+                    "apns-push-type": "background",
+                    "apns-topic": pass_type_id,
+                },
+            )
+
+        return True
 
 
 def get_pass_loyalty_bundle(user_id: UUID, module: Module) -> BytesIO | None:

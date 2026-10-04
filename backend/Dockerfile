@@ -172,7 +172,7 @@ WORKDIR /backend/src
 RUN set -x && \
     DJANGO_SECRET_KEY=none python manage.py compilemessages --locale ca && \
     DJANGO_SECRET_KEY=none python manage.py compilemessages --locale sv && \
-    DJANGO_SECRET_KEY=none python manage.py collectstatic --no-input --clear
+    DJANGO_SECRET_KEY=none python manage.py collectstatic --no-input --clear --no-post-process
 
 USER backend
 
