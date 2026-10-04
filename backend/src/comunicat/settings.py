@@ -123,7 +123,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
     "private": {
         "BACKEND": "comunicat.storage.SignedStorage",
@@ -715,7 +715,7 @@ INTEGRATION_APPLE_WALLET_TEAM_ID = os.getenv("INTEGRATION_APPLE_WALLET_TEAM_ID")
 INTEGRATION_APPLE_WALLET_ENABLED = (
     os.getenv("INTEGRATION_APPLE_WALLET_ENABLED", "true").lower() == "true"
 )
-INTEGRATION_APPLE_APN_URL = os.getenv("https://api.push.apple.com")
+INTEGRATION_APPLE_APN_URL = "https://api.push.apple.com"
 INTEGRATION_APPLE_APN_KEY_ID = os.getenv("INTEGRATION_APPLE_APN_KEY_ID")
 
 # Pinyator

@@ -719,6 +719,23 @@ class EntityAdmin(admin.ModelAdmin):
     actions = (merge_entities,)
     form = EntityAdminForm
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = []
+
+        if obj is None or not obj.user:
+            return []
+
+        readonly_fields += [
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+            "birthday",
+            "preferred_language",
+        ]
+
+        return readonly_fields
+
     def get_urls(self):
         urls = super().get_urls()
 
