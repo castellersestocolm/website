@@ -10,6 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 
+import event.api.registration
 import user.api
 import user.api.integration
 from comunicat.enums import Module
@@ -318,27 +319,36 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
 
         token = request_header.split(" ")[-1]
 
-        user_obj = user.api.get_by_token(token=token)
-
-        if not user_obj:
-            return Response(status=401)
-
         module = Module[pass_type_id.split(".")[-1].upper()]
+        pass_type = pass_type_id.split(".")[1]
 
-        pass_loyalty_bundle = get_pass_loyalty_bundle(
-            user_id=user_obj.id, module=module
-        )
+        pass_bundle = None
 
-        if not pass_loyalty_bundle:
+        if pass_type == "event":
+            registration_obj = event.api.registration.get_by_token(token=token)
+
+            if not registration_obj:
+                return Response(status=401)
+
+            pass_bundle = get_pass_event_bundle(registration_id=registration_obj.id)
+        elif pass_type == "loyalty":
+            user_obj = user.api.get_by_token(token=token)
+
+            if not user_obj:
+                return Response(status=401)
+
+            pass_bundle = get_pass_loyalty_bundle(user_id=user_obj.id, module=module)
+
+        if not pass_bundle:
             return Response(status=401)
 
         last_updated = str(int(timezone.localtime().timestamp()))
 
         response = HttpResponse(
-            pass_loyalty_bundle.getvalue(), headers={"last-modified": last_updated}
+            pass_bundle.getvalue(), headers={"last-modified": last_updated}
         )
         response["Content-Type"] = "application/vnd.apple.pkpass"
-        response["Content-Disposition"] = "attachment; filename=loyalty.pkpass"
+        response["Content-Disposition"] = f"attachment; filename={pass_type}.pkpass"
 
         return response
 

@@ -288,3 +288,7 @@ def clean_pending_registrations() -> None:
     Registration.objects.filter(id__in=registration_ids).update(
         status=RegistrationStatus.CANCELLED
     )
+
+
+def get_by_token(token: str) -> Registration | None:
+    return Registration.objects.filter(token=token).first()
