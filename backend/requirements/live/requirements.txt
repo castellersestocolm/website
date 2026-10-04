@@ -526,9 +526,7 @@ cryptography==50.0.2 \
     --hash=sha256:f9f6143a8c75945eb960d9eb98905a441394abfa24afaae239d514ffb2586480 \
     --hash=sha256:fa8f5efb344d6908a1ce62f4a24e2e5780f825d6f53f5f50ec5ffacac72936cb \
     --hash=sha256:fdd28f912fccfec1846a94e2e1e8f9b0012f557f0c46fe4f3eb0d7a87afcf90b
-    # via
-    #   pyapns-client3
-    #   pyjwt
+    # via pyjwt
 cssselect2==0.10.1 \
     --hash=sha256:25cc4494d55985d6a6da359be48da6ce98c28dcbafa2314c383ace3fc32ec868 \
     --hash=sha256:83b0d820ef589dabaf693289b647c2f5b410f76d285f56deba911ffa75a7b9d1
@@ -715,14 +713,6 @@ h11==0.16.0 \
     --hash=sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1 \
     --hash=sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86
     # via httpcore
-h2==4.4.1 \
-    --hash=sha256:0e25f1462b23c9cb82d9eb02e28bc706dac2a68cb457c6a0d74d63c8a2a5d0e6 \
-    --hash=sha256:4e866ffb1a869ae14dd9b5e6beb5c24a13da0495ad72b65925ded182521c1516
-    # via httpx
-hpack==4.2.0 \
-    --hash=sha256:0895cfa3b5531fc65fe439c05eb65144f123bf7a394fcaa56aa423548d8e45c0 \
-    --hash=sha256:858ac0b02280fa582b5080d68db0899c62a80375e0e5413a74970c5e518b6986
-    # via h2
 html2text==2024.2.26 \
     --hash=sha256:05f8e367d15aaabc96415376776cdd11afd5127a77fce6e36afc60c563ca2c32
     # via -r requirements/live/requirements.in
@@ -736,16 +726,10 @@ httplib2==0.32.0 \
     # via
     #   google-api-python-client
     #   google-auth-httplib2
-httpx[http2]==0.28.1 \
+httpx==0.28.1 \
     --hash=sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
-    # via
-    #   pyapns-client3
-    #   sumup
-hyperframe==6.1.0 \
-    --hash=sha256:b03380493a519fce58ea5af42e4a42317bf9bd425596f7a0835ffce80f1a42e5 \
-    --hash=sha256:f630908a00854a7adeabd6382b43923a4c4cd4b821fcb527e6ab9e15382a3b08
-    # via h2
+    # via sumup
 idna==3.20 \
     --hash=sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44 \
     --hash=sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c
@@ -1088,10 +1072,6 @@ py-moneyed==3.0 \
     --hash=sha256:4906f0f02cf2b91edba2e156f2d4e9a78f224059ab8c8fa2ff26230c75d894e8 \
     --hash=sha256:9583a14f99c05b46196193d8185206e9b73c8439fc8a5eee9cfc7e733676d9bb
     # via django-money
-pyapns-client3==3.0.6 \
-    --hash=sha256:9acea0356043e6c01fa7642e0ddc3671259927476cd9a0601749c509f7b59b0d \
-    --hash=sha256:efc0fd4bfb5188bc92443876ee4c6cb8f0174110abb76dff651663b46e65efcd
-    # via -r requirements/live/requirements.in
 pyasn1==0.6.4 \
     --hash=sha256:9c447d8431c947fe4c8febc4ed9e760bc29011a5b01e5c74b67025bd9fb8ce81 \
     --hash=sha256:deda9277cfd454080ec40b207fb6df82206a3a2688735233cdcd8d3d565f088b
@@ -1236,11 +1216,11 @@ pydyf==0.12.1 \
     --hash=sha256:ea25b4e1fe7911195cb57067560daaa266639184e8335365cc3ee5214e7eaadc \
     --hash=sha256:fbd7e759541ac725c29c506612003de393249b94310ea78ae44cb1d04b220095
     # via weasyprint
-pyjwt[crypto]==2.12.1 \
-    --hash=sha256:28ca37c070cad8ba8cd9790cd940535d40274d22f80ab87f3ac6a713e6e8454c \
-    --hash=sha256:c74a7a2adf861c04d002db713dd85f84beb242228e671280bf709d765b03672b
+pyjwt[crypto]==2.15.1 \
+    --hash=sha256:42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193 \
+    --hash=sha256:4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8
     # via
-    #   pyapns-client3
+    #   -r requirements/live/requirements.in
     #   social-auth-core
 pymupdf==1.26.7 \
     --hash=sha256:07085718dfdae5ab83b05eb5eb397f863bcc538fe05135318a01ea353e7a1353 \
@@ -1281,9 +1261,7 @@ python3-openid==3.2.0 \
 pytz==2026.5 \
     --hash=sha256:e658af3757f9e26a9d25dd2aff38335acd92bc9104f890a894b2c1ba28311b03 \
     --hash=sha256:fa23724b9c486543b9ff54a327ee7569ac83ade54bb9afd0fc18676620401c86
-    # via
-    #   drf-yasg
-    #   pyapns-client3
+    # via drf-yasg
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
     --hash=sha256:0150219816b6a1fa26fb4699fb7daa9caf09eb1999f3b70fb6e786805e80375a \
@@ -1411,9 +1389,9 @@ social-auth-app-django==5.7.0 \
     --hash=sha256:492b6f64e1e9fa5ed62b24bc19bde31c235fd4eb7fbd5c310e999e752b8f699a \
     --hash=sha256:c0cc118d1bb935dbf02acb8a57fabd7b07694452fce755a5956282c69f019c79
     # via -r requirements/live/requirements.in
-social-auth-core==4.8.7 \
-    --hash=sha256:30f88822d5c72e07a3dd080daff81464e262b83794c75cf636fc81241d2a253c \
-    --hash=sha256:c06d528bde0cf3d21e9e17af31c824c953985732123b005f54b20e67c9d0d8d8
+social-auth-core==4.8.5 \
+    --hash=sha256:2591c2ce71127ad410e7ca9581bd88658031fdf7b209e05be5920d0bcc1c005a \
+    --hash=sha256:fd10d44bff681a128d127f665f203c496658d5bbfc993ad1b5bbaed589eab573
     # via social-auth-app-django
 sqlparse==0.6.0 \
     --hash=sha256:113c35c75365ab9cc9c7231d68c6428fb11c085fc8e9eb1ad659b7ddbf6cd2b9 \

@@ -3,13 +3,10 @@ import hashlib
 import json
 import logging
 import os
-import uuid
 import zipfile
 from io import BytesIO
 from uuid import UUID
 
-import jwt
-import requests
 from django.conf import settings
 from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
@@ -129,30 +126,30 @@ class AppleWalletLoyalty:
         return zip_buffer
 
     def update(self) -> bool:
-        pass_type_id = f"pass.loyalty.{Module(self.module).name.lower()}"
-
-        apple_wallet_registration_objs = list(
-            AppleWalletRegistration.objects.filter(
-                pass_type_id=pass_type_id,
-                serial_number=str(self.user_obj.membership_number),
-            )
-        )
-
-        headers = {
-            "alg": "ES256",
-            "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
-            "typ": None,
-        }
-
-        claims = {
-            "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
-            "iat": int(timezone.localtime().timestamp()),
-        }
-
-        private_key = open(
-            f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
-        ).read()
-        token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
+        # pass_type_id = f"pass.loyalty.{Module(self.module).name.lower()}"
+        #
+        # apple_wallet_registration_objs = list(
+        #     AppleWalletRegistration.objects.filter(
+        #         pass_type_id=pass_type_id,
+        #         serial_number=str(self.user_obj.membership_number),
+        #     )
+        # )
+        #
+        # headers = {
+        #     "alg": "ES256",
+        #     "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
+        #     "typ": None,
+        # }
+        #
+        # claims = {
+        #     "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
+        #     "iat": int(timezone.localtime().timestamp()),
+        # }
+        #
+        # private_key = open(
+        #     f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
+        # ).read()
+        # token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
 
         # requests.post(
         #     "https://api.push.apple.com",
