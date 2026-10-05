@@ -36,6 +36,7 @@ class RegistrationStatus(enum.IntEnum):
     ACTIVE = 20
     CANCELLED = 30
     TENTATIVE = 40
+    ATTENDED = 50
 
 
 RegistrationStatus.labels = {
@@ -43,6 +44,7 @@ RegistrationStatus.labels = {
     RegistrationStatus.ACTIVE: _("Active"),
     RegistrationStatus.CANCELLED: _("Cancelled"),
     RegistrationStatus.TENTATIVE: _("Tentative"),
+    RegistrationStatus.ATTENDED: _("Attended"),
 }
 
 

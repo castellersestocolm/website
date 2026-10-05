@@ -910,6 +910,44 @@ export const apiOrderEventCreate = async (
   }
 };
 
+export const apiAdminEventRegistrationsGet = async (eventId: string) => {
+  try {
+    return await instance.get("/admin/event/registration/?event_id=" + eventId);
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventRegistrationUpdate = async (
+  registrationId: string,
+  hasAttended: boolean = undefined,
+) => {
+  try {
+    return await instance.patch(
+      "/admin/event/registration/" + registrationId + "/",
+      {
+        ...(hasAttended !== undefined ? { has_attended: hasAttended } : {}),
+      },
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventGet = async (eventId: string) => {
+  try {
+    return await instance.get("/admin/event/" + eventId + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiAdminEventTokenGet = async (
   eventId: string,
   signupIsOpen: boolean = undefined,

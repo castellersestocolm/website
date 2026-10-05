@@ -323,11 +323,14 @@ function AdminAttendancePage() {
                   <Box
                     className={
                       registration
-                        ? registration.status === RegistrationStatus.ACTIVE
-                          ? styles.adminTableCellAttending
-                          : registration.status === RegistrationStatus.CANCELLED
-                            ? styles.adminTableCellNotAttending
-                            : styles.adminTableCellUnknown
+                        ? registration.status === RegistrationStatus.ATTENDED
+                          ? styles.adminTableCellAttended
+                          : registration.status === RegistrationStatus.ACTIVE
+                            ? styles.adminTableCellAttending
+                            : registration.status ===
+                                RegistrationStatus.CANCELLED
+                              ? styles.adminTableCellNotAttending
+                              : styles.adminTableCellUnknown
                         : styles.adminTableCellUnknown
                     }
                   >
@@ -402,11 +405,14 @@ function AdminAttendancePage() {
                   <Box
                     className={
                       registration
-                        ? registration.status === RegistrationStatus.ACTIVE
-                          ? styles.adminTableCellAttending
-                          : registration.status === RegistrationStatus.CANCELLED
-                            ? styles.adminTableCellNotAttending
-                            : styles.adminTableCellUnknown
+                        ? registration.status === RegistrationStatus.ATTENDED
+                          ? styles.adminTableCellAttended
+                          : registration.status === RegistrationStatus.ACTIVE
+                            ? styles.adminTableCellAttending
+                            : registration.status ===
+                                RegistrationStatus.CANCELLED
+                              ? styles.adminTableCellNotAttending
+                              : styles.adminTableCellUnknown
                         : styles.adminTableCellUnknown
                     }
                   >
@@ -491,11 +497,14 @@ function AdminAttendancePage() {
                   <Box
                     className={
                       registration
-                        ? registration.status === RegistrationStatus.ACTIVE
-                          ? styles.adminTableCellAttending
-                          : registration.status === RegistrationStatus.CANCELLED
-                            ? styles.adminTableCellNotAttending
-                            : styles.adminTableCellUnknown
+                        ? registration.status === RegistrationStatus.ATTENDED
+                          ? styles.adminTableCellAttended
+                          : registration.status === RegistrationStatus.ACTIVE
+                            ? styles.adminTableCellAttending
+                            : registration.status ===
+                                RegistrationStatus.CANCELLED
+                              ? styles.adminTableCellNotAttending
+                              : styles.adminTableCellUnknown
                         : styles.adminTableCellUnknown
                     }
                   >

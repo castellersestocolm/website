@@ -1,5 +1,5 @@
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -26,6 +26,7 @@ from comunicat.rest.serializers.admin import (
     AdminListEventSerializer,
     AdminListRegistrationSerializer,
     AdminOrderSerializer,
+    AdminRegistrationRequestSerializer,
     AdminRegistrationSerializer,
     AdminTowersEventSerializer,
     AdminTowersStatsPositionSerializer,
@@ -84,6 +85,7 @@ class AdminUserAPI(ComuniCatViewSet):
         responses={200: AdminUserSerializer(many=True), 403: Serializer()},
     )
     @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         ordering = request.query_params.get("ordering")
         if ordering:
@@ -138,6 +140,7 @@ class AdminUserAPI(ComuniCatViewSet):
         responses={200: AdminUserSerializer(), 403: Serializer()},
     )
     @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
     def retrieve(self, request, id):
         user_obj = user.api.get(
             user_id=id,
@@ -174,6 +177,7 @@ class AdminOrderAPI(ComuniCatViewSet):
         responses={200: AdminOrderSerializer(many=True), 403: Serializer()},
     )
     @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         order_objs = order.api.get_list(
             module=self.module,
@@ -202,6 +206,7 @@ class AdminEventAPI(ComuniCatViewSet):
         responses={200: AdminEventSerializer(many=True), 403: Serializer()},
     )
     @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         serializer = AdminListEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -228,11 +233,26 @@ class AdminEventAPI(ComuniCatViewSet):
         return paginator.get_paginated_response(serializer.data)
 
     @swagger_auto_schema(
-        query_serializer=AdminEventTokenRequestSerializer,
+        responses={200: AdminEventSerializer(many=True), 403: Serializer()},
+    )
+    @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
+    def retrieve(self, request, id):
+        event_obj = event.api.get(
+            module=self.module,
+            event_id=id,
+        )
+
+        serializer = AdminEventSerializer(event_obj, context={"module": self.module})
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        query_serializer=AdminEventTokenRequestSerializer(),
         responses={200: AdminEventTokenSerializer(many=True)},
     )
     @action(methods=["get"], detail=True, url_path="token", url_name="token")
     @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_control(private=True))
     def token(self, request, id):
         serializer = AdminEventTokenRequestSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -254,10 +274,11 @@ class AdminRegistrationAPI(ComuniCatViewSet):
     lookup_field = "id"
 
     @swagger_auto_schema(
-        query_serializer=AdminListRegistrationSerializer,
+        query_serializer=AdminListRegistrationSerializer(),
         responses={200: AdminRegistrationSerializer(many=True), 403: Serializer()},
     )
     @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         serializer = AdminListRegistrationSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
@@ -265,7 +286,6 @@ class AdminRegistrationAPI(ComuniCatViewSet):
         registration_objs = event.api.registration.get_list(
             event_ids=[serializer.validated_data["event_id"]],
             module=self.module,
-            user_id=request.user.id,
             for_admin=True,
         )
 
@@ -275,6 +295,24 @@ class AdminRegistrationAPI(ComuniCatViewSet):
             result_page, context={"module": self.module}, many=True
         )
         return paginator.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        request_body=AdminRegistrationRequestSerializer,
+        responses={200: AdminRegistrationSerializer()},
+    )
+    def partial_update(self, request, id):
+        serializer = AdminRegistrationRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        registration_obj = event.api.registration.update(
+            registration_id=id, **validated_data
+        )
+
+        serializer = AdminRegistrationSerializer(
+            registration_obj, context={"module": self.module}
+        )
+        return Response(serializer.data)
 
 
 class AdminTowersEventAPI(ComuniCatViewSet):
@@ -286,6 +324,7 @@ class AdminTowersEventAPI(ComuniCatViewSet):
         responses={200: AdminTowersEventSerializer(), 403: Serializer()},
     )
     @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def retrieve(self, request, id):
         event_towers = towers.api.get_towers_for_event(event_id=id)
 
@@ -307,6 +346,7 @@ class AdminTowersStatsAPI(ComuniCatViewSet):
     )
     @action(methods=["get"], detail=False, url_path="position", url_name="position")
     @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
     def position(self, request):
         position_stats_towers = towers.api.statistics.get_positions()
 
@@ -327,6 +367,7 @@ class AdminHistoryEventAPI(ComuniCatViewSet):
         responses={200: AdminHistoryEventSerializer(many=True), 403: Serializer()},
     )
     @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
     def list(self, request):
         history_event_objs = history.api.history_event.get_list(
             module=self.module,

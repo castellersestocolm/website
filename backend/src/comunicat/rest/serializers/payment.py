@@ -129,6 +129,40 @@ class EntitySlimSerializer(EntitySuperSlimSerializer):
         return obj.user.email if obj.user else obj.email
 
 
+class EntitySerializer(EntitySlimSerializer):
+    phone = s.SerializerMethodField(read_only=True)
+    birthday = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Entity
+        fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+            "birthday",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "firstname",
+            "lastname",
+            "email",
+            "phone",
+            "birthday",
+            "created_at",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_phone(self, obj):
+        return obj.user.phone if obj.user else obj.phone
+
+    @swagger_serializer_method(serializer_or_field=s.DateField(read_only=True))
+    def get_birthday(self, obj):
+        return obj.user.birthday if obj.user else obj.birthday
+
+
 class PaymentLogSerializer(s.ModelSerializer):
     class Meta:
         model = PaymentLog

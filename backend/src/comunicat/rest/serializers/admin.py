@@ -3,7 +3,11 @@ from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
 from comunicat.enums import Module
-from comunicat.rest.serializers.event import EventModuleSerializer, LocationSerializer
+from comunicat.rest.serializers.event import (
+    EventModuleSerializer,
+    EventQuestionSerializer,
+    LocationSerializer,
+)
 from comunicat.rest.serializers.legal import RoleSerializer, TeamSlimSerializer
 from comunicat.rest.serializers.order import OrderProductSerializer, OrderSlimSerializer
 from comunicat.rest.serializers.product import ProductSerializer
@@ -13,6 +17,7 @@ from comunicat.rest.serializers.user import (
     UserSuperSlimSerializer,
 )
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
+from event.enums import RegistrationStatus
 from event.models import Event, Registration
 from history.models import HistoryEvent
 from legal.models import Member
@@ -46,6 +51,7 @@ class AdminEntitySerializer(s.ModelSerializer):
             "email",
             "phone",
             "user",
+            "birthday",
         )
         read_only_fields = (
             "id",
@@ -54,6 +60,7 @@ class AdminEntitySerializer(s.ModelSerializer):
             "email",
             "phone",
             "user",
+            "birthday",
         )
 
 
@@ -235,6 +242,7 @@ class AdminEventSerializer(s.ModelSerializer):
     require_signup = s.BooleanField(read_only=True)
     require_approve = s.BooleanField(read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
+    questions = EventQuestionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Event
@@ -249,6 +257,7 @@ class AdminEventSerializer(s.ModelSerializer):
             "require_signup",
             "require_approve",
             "modules",
+            "questions",
             "created_at",
         )
         read_only_fields = (
@@ -262,6 +271,7 @@ class AdminEventSerializer(s.ModelSerializer):
             "require_signup",
             "require_approve",
             "modules",
+            "questions",
             "created_at",
         )
 
@@ -283,22 +293,41 @@ class AdminListRegistrationSerializer(s.Serializer):
 
 
 class AdminRegistrationSerializer(s.ModelSerializer):
+    entity = AdminEntitySerializer(read_only=True)
+    owner = AdminEntitySerializer(read_only=True)
     user = UserSuperSlimSerializer(read_only=True, source="entity.user")
+    status = s.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Registration
         fields = (
             "id",
             "user",
+            "entity",
+            "owner",
             "status",
+            "data",
             "created_at",
         )
         read_only_fields = (
             "id",
             "user",
+            "entity",
+            "owner",
             "status",
+            "data",
             "created_at",
         )
+
+    @swagger_serializer_method(
+        serializer_or_field=IntEnumField(RegistrationStatus, read_only=True)
+    )
+    def get_status(self, obj):
+        return RegistrationStatus.ATTENDED if obj.has_attended else obj.status
+
+
+class AdminRegistrationRequestSerializer(s.Serializer):
+    has_attended = s.BooleanField(required=False)
 
 
 class AdminTowersEventSerializer(s.Serializer):

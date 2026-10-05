@@ -110,6 +110,9 @@ export const ROUTES = {
   "admin-event-token": {
     path: "/admin/event/token/:id",
   },
+  "admin-event-attendance": {
+    path: "/admin/event/attendance/:id",
+  },
   "external-login-google": {
     path:
       API_BASE_URL +
