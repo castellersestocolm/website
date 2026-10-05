@@ -116,6 +116,7 @@ function AdminEventAttendancePage() {
               event.questions.length > 0 &&
               event.questions.map((eventQuestion: any) => {
                 const registrationAnswer =
+                  params.row["data"].questions &&
                   params.row["data"].questions[eventQuestion.order.toString()];
                 const eventQuestionAnswer = getEventQuestionAnswer(
                   t,
