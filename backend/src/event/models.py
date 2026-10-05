@@ -541,6 +541,8 @@ class Registration(StandardModel, Timestamps):
         default=RegistrationStatus.REQUESTED,
     )
 
+    has_attended = models.BooleanField(default=False)
+
     line = models.OneToOneField(
         "payment.PaymentLine",
         related_name="registration",

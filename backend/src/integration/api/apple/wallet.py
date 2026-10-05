@@ -178,7 +178,7 @@ class AppleWalletLoyalty:
                     "apns-expiration": "0",
                     "apns-push-type": "background",
                     "apns-topic": pass_type_id,
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
             )
 
@@ -335,7 +335,7 @@ class AppleWalletEvent:
                     "apns-expiration": "0",
                     "apns-push-type": "background",
                     "apns-topic": pass_type_id,
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
             )
 

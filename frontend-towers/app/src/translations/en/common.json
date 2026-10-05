@@ -589,6 +589,7 @@
   "enums.registration-status.20": "Attending",
   "enums.registration-status.30": "Not attending",
   "enums.registration-status.40": "Tentative",
+  "enums.registration-status.50": "Attended",
   "enums.product-size-category.0": "Everyone",
   "enums.product-size-category.10": "Children",
   "enums.product-size-category.20": "Adults",

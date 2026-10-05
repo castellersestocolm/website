@@ -104,6 +104,7 @@ export enum RegistrationStatus {
   ACTIVE = 20,
   CANCELLED = 30,
   TENTATIVE = 40,
+  ATTENDED = 50,
 }
 
 export enum Weekday {

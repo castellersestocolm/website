@@ -46,6 +46,7 @@ import RequestReceiptPage from "./pages/request-receipt";
 import CalendarEventPaymentPage from "./pages/calendar-event-payment";
 import CalendarEventReceiptPage from "./pages/calendar-event-receipt";
 import AdminEventTokenPage from "./pages/admin-event-token";
+import AdminEventAttendancePage from "./pages/admin-event-attendance";
 import PaymentRequestPage from "./pages/payment-request";
 
 i18next.use(LngDetector).init({
@@ -249,6 +250,10 @@ const App = () => {
                   <Route
                     path={ROUTES["admin-event-token"].path}
                     element={<AdminEventTokenPage />}
+                  />
+                  <Route
+                    path={ROUTES["admin-event-attendance"].path}
+                    element={<AdminEventAttendancePage />}
                   />
                 </Routes>
               </Box>

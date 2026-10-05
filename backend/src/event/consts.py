@@ -21,6 +21,7 @@ REGISTRATION_STATUS_TO_GOOGLE_RESPONSE_STATUS = {
     RegistrationStatus.ACTIVE: "accepted",
     RegistrationStatus.CANCELLED: "declined",
     RegistrationStatus.TENTATIVE: "declined",
+    RegistrationStatus.ATTENDED: "accepted",
     # RegistrationStatus.TENTATIVE: "tentative",
 }
 

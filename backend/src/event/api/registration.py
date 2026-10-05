@@ -57,10 +57,8 @@ def get_list(
     event_registration_filter = Q(entity__user_id__in=family_user_ids)
 
     if user_id:
-        event_registration_filter |= Q(owner__user_id=user_id)
-
-    if for_admin or user_id:
         registration_queryset = registration_queryset.filter_with_user()
+        event_registration_filter |= Q(owner__user_id=user_id)
 
     return list(
         # TODO: Allow non-user registrations but add support for entity on serializer instead before
@@ -230,6 +228,18 @@ def create(  # noqa: C901
     )
 
     return get(registration_id=registration_obj.id, module=module)
+
+
+@transaction.atomic
+def update(registration_id: UUID, has_attended: bool | None = None) -> Registration:
+    registration_obj = Registration.objects.get(id=registration_id)
+
+    if has_attended is not None:
+        registration_obj.has_attended = has_attended
+
+    registration_obj.save(update_fields=("has_attended",))
+
+    return registration_obj
 
 
 @transaction.atomic

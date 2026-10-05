@@ -1,4 +1,4 @@
-import { Module } from "../enums";
+import { EventQuestionType, Module } from "../enums";
 
 export function getEventUsers(event: any, users: any[]) {
   if (
@@ -47,4 +47,26 @@ export function eventPriceToTitle(t: any, eventPrice: any) {
           " " +
           t("pages.calendar-event.register.prices.years")
         : t("pages.calendar-event.register.prices.general-admission");
+}
+
+export function getEventQuestionAnswer(
+  t: any,
+  locale: string,
+  eventQuestion: any,
+  value: any,
+) {
+  if (value == null) {
+    return value;
+  }
+
+  if (eventQuestion.type === EventQuestionType.BOOLEAN) {
+    return value ? t("common.boolean.yes") : t("common.boolean.no");
+  } else if (eventQuestion.type === EventQuestionType.CHOICE) {
+    const eventAnswers = eventQuestion.data.choices;
+    const eventAnswersLocale = eventAnswers[locale];
+
+    return eventAnswersLocale[value];
+  }
+
+  return value;
 }
