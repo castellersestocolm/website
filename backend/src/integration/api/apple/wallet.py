@@ -10,7 +10,7 @@ from uuid import UUID
 import httpx
 import jwt
 from django.conf import settings
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.template.loader import render_to_string
 from django.utils import timezone
 from PIL import Image

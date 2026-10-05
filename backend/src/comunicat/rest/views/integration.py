@@ -203,6 +203,14 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_name="pass_update_registrations",
     )
     def pass_update_registrations(self, request, device_library_id, pass_type_id):
+        print(
+            "REQ",
+            "pass_update_registrations",
+            request.method,
+            device_library_id,
+            pass_type_id,
+        )
+
         # serializer = IntegrationAppleWalletPassLoyaltyRegisterRetrieveRequestSerializer(
         #     data=request.GET
         # )
@@ -228,7 +236,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
             },
             context={"module": self.module},
         )
-        return Response(serializer.data, headers={"last-modified": last_updated})
+        return Response(serializer.data, headers={"Last-Modified": last_updated})
 
     @swagger_auto_schema(
         method="get",
@@ -261,6 +269,15 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
     def pass_update_register(
         self, request, device_library_id, pass_type_id, serial_number
     ):
+        print(
+            "REQ",
+            "pass_update_register",
+            request.method,
+            device_library_id,
+            pass_type_id,
+            serial_number,
+        )
+
         if request.method == "GET":
             return Response(200)
 
@@ -311,6 +328,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_name="pass_update",
     )
     def pass_update(self, request, pass_type_id, serial_number):
+        print("REQ", "pass_update", pass_type_id, serial_number)
         request_header = request.headers.get("Authorization")
 
         if not request_header:
@@ -344,7 +362,7 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         last_updated = str(int(timezone.localtime().timestamp()))
 
         response = HttpResponse(
-            pass_bundle.getvalue(), headers={"last-modified": last_updated}
+            pass_bundle.getvalue(), headers={"Last-Modified": last_updated}
         )
         response["Content-Type"] = "application/vnd.apple.pkpass"
         response["Content-Disposition"] = f"attachment; filename={pass_type}.pkpass"
@@ -370,4 +388,6 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_name="pass_update_log",
     )
     def log_pass_loyalty(self, request):
+        print("REQ", "pass_update", request.method, request.data)
+        print("REQ", "pass_update", request.method, request.GET)
         return Response(status=200)
