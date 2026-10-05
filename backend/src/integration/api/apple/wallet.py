@@ -318,6 +318,22 @@ class AppleWalletEvent:
             )
         )
 
+        headers = {
+            "alg": "ES256",
+            "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
+            "typ": None,
+        }
+
+        claims = {
+            "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
+            "iat": int(timezone.localtime().timestamp()),
+        }
+
+        private_key = open(
+            f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
+        ).read()
+        token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
+
         ctx = ssl.create_default_context()
         ctx.load_cert_chain(
             certfile=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_event_cert.pem",
