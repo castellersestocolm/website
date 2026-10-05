@@ -411,17 +411,37 @@ def current_language_to_google_locale_country() -> str:
 
 
 @register.simple_tag
-def integration_apple_wallet_url_from_token(token: str) -> str:
+def integration_apple_wallet_url_from_token(token: str, module: Module | None = None) -> str:
     path = reverse("api:1.0:integration_apple_wallet-pass_loyalty") + "?token=" + token
 
-    return full_api_url(path=path)
+    return full_api_url(path=path, module=module)
 
 
 @register.simple_tag
-def integration_apple_wallet_url_from_token_event(token: str) -> str:
+def integration_org_apple_wallet_url_from_token(token: str) -> str:
+    return integration_apple_wallet_url_from_token(token=token, module=Module.ORG)
+
+
+@register.simple_tag
+def integration_towers_apple_wallet_url_from_token(token: str) -> str:
+    return integration_apple_wallet_url_from_token(token=token, module=Module.TOWERS)
+
+
+@register.simple_tag
+def integration_apple_wallet_url_from_token_event(token: str, module: Module | None = None) -> str:
     path = reverse("api:1.0:integration_apple_wallet-pass_event") + "?token=" + token
 
-    return full_api_url(path=path)
+    return full_api_url(path=path, module=module)
+
+
+@register.simple_tag
+def integration_org_apple_wallet_url_from_token_event(token: str) -> str:
+    return integration_apple_wallet_url_from_token_event(token=token, module=Module.ORG)
+
+
+@register.simple_tag
+def integration_towers_apple_wallet_url_from_token_event(token: str) -> str:
+    return integration_apple_wallet_url_from_token_event(token=token, module=Module.TOWERS)
 
 
 @register.filter

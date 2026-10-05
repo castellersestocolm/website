@@ -3,6 +3,7 @@ import hashlib
 import json
 import logging
 import os
+import ssl
 import zipfile
 from io import BytesIO
 from uuid import UUID
@@ -139,32 +140,21 @@ class AppleWalletLoyalty:
             )
         )
 
-        headers = {
-            "alg": "ES256",
-            "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
-            "typ": None,
-        }
-
-        claims = {
-            "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
-            "iat": int(timezone.localtime().timestamp()),
-        }
-
-        private_key = open(
-            f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
-        ).read()
-        token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
-
-        client = httpx.Client(http2=True)
+        ctx = ssl.create_default_context()
+        ctx.load_cert_chain(
+            certfile=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_loyalty_cert.pem",
+            keyfile=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_loyalty_key.pem",
+        )
+        client = httpx.Client(http2=True, verify=ctx)
 
         for push_token in push_tokens:
             client.post(
                 url=f"{settings.INTEGRATION_APPLE_APN_URL}/3/device/{push_token}",
-                data={"hello": "bye"},
+                data={"aps": {}},
                 headers={
-                    "authorization": f"bearer {token}",
-                    "apns-expiration": "0",
-                    "apns-push-type": "background",
+                    "apns-priority": "5",
+                    # "apns-expiration": "0",
+                    # "apns-push-type": "background",
                     "apns-topic": pass_type_id,
                 },
             )
@@ -301,32 +291,21 @@ class AppleWalletEvent:
             )
         )
 
-        headers = {
-            "alg": "ES256",
-            "kid": settings.INTEGRATION_APPLE_APN_KEY_ID,
-            "typ": None,
-        }
-
-        claims = {
-            "iss": settings.INTEGRATION_APPLE_WALLET_TEAM_ID,
-            "iat": int(timezone.localtime().timestamp()),
-        }
-
-        private_key = open(
-            f"{settings.INTEGRATION_APPLE_CERT_DIR}apn_key.pem", mode="rb"
-        ).read()
-        token = jwt.encode(claims, private_key, algorithm="ES256", headers=headers)
-
-        client = httpx.Client(http2=True)
+        ctx = ssl.create_default_context()
+        ctx.load_cert_chain(
+            certfile=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_event_cert.pem",
+            keyfile=f"{settings.INTEGRATION_APPLE_CERT_DIR}{self.module.name.lower()}_event_key.pem",
+        )
+        client = httpx.Client(http2=True, verify=ctx)
 
         for push_token in push_tokens:
             client.post(
                 url=f"{settings.INTEGRATION_APPLE_APN_URL}/3/device/{push_token}",
-                data={"hello": "bye"},
+                data={"aps": {}},
                 headers={
-                    "authorization": f"bearer {token}",
-                    "apns-expiration": "0",
-                    "apns-push-type": "background",
+                    "apns-priority": "5",
+                    # "apns-expiration": "0",
+                    # "apns-push-type": "background",
                     "apns-topic": pass_type_id,
                 },
             )
