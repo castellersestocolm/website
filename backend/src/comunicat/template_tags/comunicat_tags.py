@@ -66,6 +66,16 @@ def full_api_url(path: str = "", module: Module | None = None):
 
 
 @register.simple_tag
+def full_org_api_url(path: str = ""):
+    return full_api_url(path=path, module=Module.ORG)
+
+
+@register.simple_tag
+def full_towers_api_url(path: str = ""):
+    return full_api_url(path=path, module=Module.ORG)
+
+
+@register.simple_tag
 def full_static(path: str):
     return urljoin(
         f"{settings.HTTP_PROTOCOL}://{settings.DOMAIN}{settings.STATIC_URL}/", path
