@@ -387,7 +387,30 @@ class IntegrationAppleWalletAPI(ComuniCatViewSet):
         url_path=r"pass/update/v1/log",
         url_name="pass_update_log",
     )
-    def log_pass_loyalty(self, request):
-        print("REQ", "pass_update", request.method, request.data)
-        print("REQ", "pass_update", request.method, request.GET)
+    def pass_update_log(self, request):
+        print("REQ", "pass_update_log", request.method, request.data)
+        print("REQ", "pass_update_log", request.method, request.GET)
+        return Response(status=200)
+
+    @swagger_auto_schema(
+        method="get",
+        responses={
+            200: Serializer(),
+        },
+    )
+    @swagger_auto_schema(
+        method="post",
+        responses={
+            200: Serializer(),
+        },
+    )
+    @action(
+        methods=["get", "post"],
+        detail=False,
+        url_path=r"pass/loyalty/v1/log",
+        url_name="pass_loyalty_log",
+    )
+    def pass_loyalty_log(self, request):
+        print("REQ", "pass_loyalty_log", request.method, request.data)
+        print("REQ", "pass_loyalty_log", request.method, request.GET)
         return Response(status=200)
