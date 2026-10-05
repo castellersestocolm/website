@@ -32,6 +32,11 @@ class AppleWalletLoyalty:
         from membership.models import Membership, MembershipModule
         from user.models import User
 
+        # Set the initial module, will be reset if the user has an active membership
+        self.module = module if module else settings.MODULE_DEFAULT
+        self.user_obj = None
+        self.membership_obj = None
+
         self.user_obj = (
             User.objects.filter(id=user_id).with_has_active_membership().first()
         )
@@ -150,11 +155,11 @@ class AppleWalletLoyalty:
         for push_token in push_tokens:
             client.post(
                 url=f"{settings.INTEGRATION_APPLE_APN_URL}/3/device/{push_token}",
-                data={"aps": {}},
+                data={"aps": ""},
                 headers={
                     "apns-priority": "5",
-                    # "apns-expiration": "0",
-                    # "apns-push-type": "background",
+                    "apns-expiration": "0",
+                    "apns-push-type": "background",
                     "apns-topic": pass_type_id,
                 },
             )
@@ -166,6 +171,10 @@ class AppleWalletLoyalty:
 class AppleWalletEvent:
     def __init__(self, registration_id: UUID):
         from event.models import Registration
+
+        self.module = None
+        self.entity_obj = None
+        self.event_obj = None
 
         self.registration_obj = (
             Registration.objects.filter(id=registration_id)
@@ -301,11 +310,11 @@ class AppleWalletEvent:
         for push_token in push_tokens:
             client.post(
                 url=f"{settings.INTEGRATION_APPLE_APN_URL}/3/device/{push_token}",
-                data={"aps": {}},
+                data={"aps": ""},
                 headers={
                     "apns-priority": "5",
-                    # "apns-expiration": "0",
-                    # "apns-push-type": "background",
+                    "apns-expiration": "0",
+                    "apns-push-type": "background",
                     "apns-topic": pass_type_id,
                 },
             )
