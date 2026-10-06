@@ -209,7 +209,7 @@ function AdminEventAttendancePage() {
       sortable: false,
       headerAlign: "right",
       align: "right",
-      minWidth: 150,
+      minWidth: 200,
       cellClassName: styles.adminButtonsCell,
       renderHeader: () => (
         <Typography variant="body2" fontWeight={600}>
