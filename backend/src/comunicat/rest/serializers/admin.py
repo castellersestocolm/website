@@ -52,6 +52,7 @@ class AdminEntitySerializer(s.ModelSerializer):
             "phone",
             "user",
             "birthday",
+            "can_manage",
         )
         read_only_fields = (
             "id",
@@ -61,6 +62,7 @@ class AdminEntitySerializer(s.ModelSerializer):
             "phone",
             "user",
             "birthday",
+            "can_manage",
         )
 
 

@@ -386,6 +386,7 @@
   "pages.admin-event-attendance.scan.title": "Hitta registreringar",
   "pages.admin-event-attendance.scan.action": "Skanna QR-kod",
   "pages.admin-event-attendance.scan.search": "Namn eller kod",
+  "pages.admin-event-attendance.scan.table.owner": "Ansvarig",
   "swish.payment.membership": "Medlemskap",
   "swish.payment.order": "Beställning",
   "swish.payment.course": "Aktivitet",
@@ -449,5 +450,6 @@
   "enums.registration-status.40": "Frivillig",
   "enums.registration-status.50": "Deltog",
   "common.boolean.yes": "Ja",
-  "common.boolean.no": "Nej"
+  "common.boolean.no": "Nej",
+  "common.integer.years": "år"
 }
