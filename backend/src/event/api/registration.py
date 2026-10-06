@@ -2,7 +2,7 @@ import itertools
 from uuid import UUID
 
 from django.db import transaction
-from django.db.models import F, Prefetch, Q, Subquery, Value
+from django.db.models import F, Prefetch, Q, Value
 from django.db.models.functions import Concat
 from django.utils import timezone
 
@@ -19,7 +19,7 @@ from notify.enums import EmailType
 from user.models import FamilyMember
 
 
-def get_list(
+def get_list(  # noqa: C901
     module: Module,
     registration_id: UUID | None = None,
     user_id: UUID | None = None,
