@@ -12,6 +12,7 @@ import {
   API_DOCUMENTS_LIST_PAGE_SIZE,
   API_NEWSLETTER_LIST_PAGE_SIZE,
   API_CONSENT_ENTITY_LIST_PAGE_SIZE,
+  API_ADMIN_EVENT_REGISTRATION_PAGE_SIZE,
 } from "../consts";
 import { ContactMessageType, OrderType, RegistrationStatus } from "../enums";
 
@@ -910,9 +911,23 @@ export const apiOrderEventCreate = async (
   }
 };
 
-export const apiAdminEventRegistrationsGet = async (eventId: string) => {
+export const apiAdminEventRegistrationsGet = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+  eventId: string,
+) => {
   try {
-    return await instance.get("/admin/event/registration/?event_id=" + eventId);
+    return await instance.get(
+      "/admin/event/registration/?event_id=" + eventId,
+      {
+        params: {
+          page_size: pageSize
+            ? pageSize
+            : API_ADMIN_EVENT_REGISTRATION_PAGE_SIZE,
+          page: page,
+        },
+      },
+    );
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called
