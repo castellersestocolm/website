@@ -394,6 +394,7 @@
   "pages.admin-event-attendance.scan.title": "Cerca inscripcions",
   "pages.admin-event-attendance.scan.action": "Escaneja un QR",
   "pages.admin-event-attendance.scan.search": "Nom o codi",
+  "pages.admin-event-attendance.scan.table.owner": "Responsable",
   "swish.payment.membership": "Quota",
   "swish.payment.order": "Comanda",
   "swish.payment.course": "Activitat",
@@ -457,5 +458,6 @@
   "enums.registration-status.40": "Opcional",
   "enums.registration-status.50": "Ha assistit",
   "common.boolean.yes": "Sí",
-  "common.boolean.no": "No"
+  "common.boolean.no": "No",
+  "common.integer.years": "any/s"
 }

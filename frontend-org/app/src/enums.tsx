@@ -107,6 +107,14 @@ export enum RegistrationStatus {
   ATTENDED = 50,
 }
 
+export const REGISTRATION_STATUS_ICON: any = {
+  10: <IconPending />,
+  20: <IconCheckCircle />,
+  30: <IconCancel />,
+  40: <IconPending />,
+  50: <IconCheckCircle />,
+};
+
 export enum Weekday {
   MONDAY = 1,
   TUESDAY = 2,

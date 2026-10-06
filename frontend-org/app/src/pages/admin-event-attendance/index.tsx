@@ -23,11 +23,15 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
-  ListItem,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import { RegistrationStatus, getEnumLabel } from "../../enums";
+import {
+  RegistrationStatus,
+  getEnumLabel,
+  REGISTRATION_STATUS_ICON,
+} from "../../enums";
 import { getEventQuestionAnswer } from "../../utils/event";
+import { getAge } from "../../utils/datetime";
 import { isMobile } from "react-device-detect";
 import IconQrCode from "@mui/icons-material/QrCode";
 import IconExpandLess from "@mui/icons-material/ExpandLess";
@@ -36,7 +40,6 @@ import ScannerQR from "../../components/ScannerQR/ScannerQR";
 import FormLabel from "@mui/material/FormLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
-import IconAccountCircle from "@mui/icons-material/AccountCircle";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -77,13 +80,17 @@ function AdminEventAttendancePage() {
   }, [id, setRegistrations]);
 
   React.useEffect(() => {
-    setSearchLoading(true);
-    apiAdminEventRegistrationsSearch(id, searchText).then((response) => {
-      if (response.status === 200) {
-        setFoundRegistrations(response.data);
-      }
-      setSearchLoading(false);
-    });
+    if (searchText) {
+      setSearchLoading(true);
+      apiAdminEventRegistrationsSearch(id, searchText).then((response) => {
+        if (response.status === 200) {
+          setFoundRegistrations(response.data);
+        }
+        setSearchLoading(false);
+      });
+    } else {
+      setFoundRegistrations(undefined);
+    }
   }, [id, searchText, setFoundRegistrations, setSearchLoading]);
 
   function handleSetAttendance(registrationId: string, hasAttended: boolean) {
@@ -92,12 +99,19 @@ function AdminEventAttendancePage() {
         if (response.status === 200) {
           setRegistrations({
             ...registrations,
-            results: [
-              ...registrations.results.filter(
-                (registration: any) => registration.id !== response.data.id,
-              ),
-              response.data,
-            ],
+            results: registrations.results.map((registration: any) =>
+              registration.id === response.data.id
+                ? response.data
+                : registration,
+            ),
+          });
+          setFoundRegistrations({
+            ...foundRegistrations,
+            results: foundRegistrations.results.map((registration: any) =>
+              registration.id === response.data.id
+                ? response.data
+                : registration,
+            ),
           });
         }
       },
@@ -190,6 +204,43 @@ function AdminEventAttendancePage() {
       },
     },
     {
+      field: "actions",
+      headerName: t("pages.admin-event-attendance.table.actions"),
+      sortable: false,
+      headerAlign: "right",
+      align: "right",
+      minWidth: 150,
+      cellClassName: styles.adminButtonsCell,
+      renderHeader: () => (
+        <Typography variant="body2" fontWeight={600}>
+          {t("pages.admin-event-attendance.table.actions")}
+        </Typography>
+      ),
+      renderCell: (params: any) => {
+        return (
+          <Stack direction="row" spacing={2} className={styles.buttons}>
+            <Button
+              variant="contained"
+              type="button"
+              onClick={() =>
+                handleSetAttendance(
+                  params.row["id"],
+                  params.row["status"] !== RegistrationStatus.ATTENDED,
+                )
+              }
+              disableElevation
+            >
+              {params.row["status"] === RegistrationStatus.ATTENDED
+                ? t(
+                    "pages.admin-event-attendance.table.actions.button-not-attend",
+                  )
+                : t("pages.admin-event-attendance.table.actions.button-attend")}
+            </Button>
+          </Stack>
+        );
+      },
+    },
+    {
       field: "status",
       headerName: t("pages.admin-attendance.events-table.status"),
       sortable: false,
@@ -218,47 +269,6 @@ function AdminEventAttendancePage() {
           >
             {getEnumLabel(t, "registration-status", params.row["status"])}
           </Box>
-        );
-      },
-    },
-    {
-      field: "actions",
-      headerName: t("pages.admin-event-attendance.table.actions"),
-      sortable: false,
-      headerAlign: "right",
-      align: "right",
-      minWidth: 150,
-      cellClassName: styles.adminButtonsCell,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin-event-attendance.table.actions")}
-        </Typography>
-      ),
-      renderCell: (params: any) => {
-        return (
-          <Stack direction="row" spacing={2} className={styles.buttons}>
-            {
-              <Button
-                variant="contained"
-                type="button"
-                onClick={() =>
-                  handleSetAttendance(
-                    params.row["id"],
-                    params.row["status"] !== RegistrationStatus.ATTENDED,
-                  )
-                }
-                disableElevation
-              >
-                {params.row["status"] === RegistrationStatus.ATTENDED
-                  ? t(
-                      "pages.admin-event-attendance.table.actions.button-not-attend",
-                    )
-                  : t(
-                      "pages.admin-event-attendance.table.actions.button-attend",
-                    )}
-              </Button>
-            }
-          </Stack>
         );
       },
     },
@@ -364,8 +374,25 @@ function AdminEventAttendancePage() {
                                 <Box className={styles.registrationsDetailsBox}>
                                   <List className={styles.userFamilyList}>
                                     <ListItemButton disableTouchRipple dense>
-                                      <ListItemIcon>
-                                        <IconAccountCircle />
+                                      <ListItemIcon
+                                        className={
+                                          registration.status ===
+                                          RegistrationStatus.ATTENDED
+                                            ? styles.adminIconRegistrationAttended
+                                            : registration.status ===
+                                                RegistrationStatus.ACTIVE
+                                              ? styles.adminIconRegistrationAttending
+                                              : registration.status ===
+                                                  RegistrationStatus.CANCELLED
+                                                ? styles.adminIconRegistrationNotAttending
+                                                : styles.adminIconRegistrationUnknown
+                                        }
+                                      >
+                                        {
+                                          REGISTRATION_STATUS_ICON[
+                                            registration.status
+                                          ]
+                                        }
                                       </ListItemIcon>
                                       <ListItemText
                                         primary={
@@ -373,8 +400,89 @@ function AdminEventAttendancePage() {
                                           " " +
                                           registration.entity.lastname
                                         }
+                                        secondary={
+                                          registration.entity.id ===
+                                          registration.owner.id
+                                            ? t(
+                                                "pages.admin-event-attendance.scan.table.owner",
+                                              )
+                                            : !registration.entity.can_manage &&
+                                              registration.entity.birthday &&
+                                              getAge(
+                                                registration.entity.birthday,
+                                              ) +
+                                                " " +
+                                                t("common.integer.years")
+                                        }
                                       />
+                                      <Stack
+                                        direction="row"
+                                        spacing={2}
+                                        className={styles.buttons}
+                                      >
+                                        <Button
+                                          variant="contained"
+                                          type="button"
+                                          onClick={() =>
+                                            handleSetAttendance(
+                                              registration.id,
+                                              registration.status !==
+                                                RegistrationStatus.ATTENDED,
+                                            )
+                                          }
+                                          disableElevation
+                                        >
+                                          {registration.status ===
+                                          RegistrationStatus.ATTENDED
+                                            ? t(
+                                                "pages.admin-event-attendance.table.actions.button-not-attend",
+                                              )
+                                            : t(
+                                                "pages.admin-event-attendance.table.actions.button-attend",
+                                              )}
+                                        </Button>
+                                      </Stack>
                                     </ListItemButton>
+                                    <Box
+                                      className={
+                                        styles.registrationQuestionsBox
+                                      }
+                                    >
+                                      {event &&
+                                        event.questions &&
+                                        event.questions.length > 0 &&
+                                        event.questions.map(
+                                          (eventQuestion: any) => {
+                                            const registrationAnswer =
+                                              registration.data.questions &&
+                                              registration.data.questions[
+                                                eventQuestion.order.toString()
+                                              ];
+                                            const eventQuestionAnswer =
+                                              getEventQuestionAnswer(
+                                                t,
+                                                i18n.resolvedLanguage,
+                                                eventQuestion,
+                                                registrationAnswer,
+                                              );
+                                            return (
+                                              eventQuestionAnswer != null && (
+                                                <Box pb={1}>
+                                                  <Typography
+                                                    variant="body2"
+                                                    fontWeight={600}
+                                                  >
+                                                    {eventQuestion.title}
+                                                  </Typography>
+                                                  <Typography variant="body2">
+                                                    {eventQuestionAnswer}
+                                                  </Typography>
+                                                </Box>
+                                              )
+                                            );
+                                          },
+                                        )}
+                                    </Box>
                                   </List>
                                 </Box>
                                 {i + 1 < row.length && <Divider />}

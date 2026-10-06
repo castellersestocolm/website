@@ -2,7 +2,8 @@ import itertools
 from uuid import UUID
 
 from django.db import transaction
-from django.db.models import Prefetch, Q
+from django.db.models import F, Prefetch, Q, Subquery, Value
+from django.db.models.functions import Concat
 from django.utils import timezone
 
 import comunicat.utils.string
@@ -42,20 +43,57 @@ def get_list(
             entity__user_id=user_id, status=RegistrationStatus.ACTIVE
         )
 
-    if search:
-        registration_search_filter = Q(
-            Q(owner__user__membership_number=search)
-            | Q(entity__user__membership_number=search)
-        )
+    registration_queryset = Registration.objects.filter(registration_filter)
 
+    if search:
         search_is_valid_uuid = comunicat.utils.string.is_valid_uuid(text=search)
 
         if search_is_valid_uuid:
-            registration_search_filter |= Q(Q(id=search))
+            registration_search_filter = Q(id=search)
+            registration_obj = Registration.objects.filter(id=search).first()
+        else:
+            registration_search_filter = Q(
+                Q(owner__user__membership_number=search)
+                | Q(owner_name__icontains=search)
+                | Q(entity__user__membership_number=search)
+                | Q(entity_name__icontains=search)
+            )
+            registration_obj = (
+                Registration.objects.annotate(
+                    entity_name=Concat(
+                        F("entity__firstname"),
+                        Value(" "),
+                        F("entity__lastname"),
+                    )
+                )
+                .filter(
+                    registration_filter,
+                    Q(
+                        Q(entity__user__membership_number=search)
+                        | Q(entity_name__icontains=search)
+                    ),
+                )
+                .first()
+            )
 
-        registration_filter &= registration_search_filter
+        if registration_obj:
+            registration_search_filter |= Q(
+                Q(owner_id=registration_obj.owner_id)
+                | Q(entity_id=registration_obj.entity_id)
+            )
 
-    registration_queryset = Registration.objects.filter(registration_filter)
+        registration_queryset = registration_queryset.annotate(
+            entity_name=Concat(
+                F("entity__firstname"),
+                Value(" "),
+                F("entity__lastname"),
+            ),
+            owner_name=Concat(
+                F("owner__firstname"),
+                Value(" "),
+                F("owner__lastname"),
+            ),
+        ).filter(registration_search_filter)
 
     if user_id:
         family_user_ids = [
