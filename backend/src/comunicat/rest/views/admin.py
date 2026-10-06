@@ -320,7 +320,7 @@ class AdminRegistrationAPI(ComuniCatViewSet):
         responses={200: AdminRegistrationSerializer(many=True)},
     )
     @action(methods=["get"], detail=False, url_path="search", url_name="search")
-    @method_decorator(cache_page(1))
+    @method_decorator(cache_page(10))
     @method_decorator(cache_control(private=True))
     def search(self, request):
         serializer = AdminSearchRegistrationSerializer(data=request.query_params)
