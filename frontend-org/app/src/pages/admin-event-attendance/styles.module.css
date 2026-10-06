@@ -15,6 +15,11 @@
   background-color: var(--mui-palette-primary-main);
 }
 
+.adminSearchBox {
+  padding: 8px 16px 16px 16px;
+  flex: 1 1 auto;
+}
+
 .adminTableRowLast {
   th,
   td {
@@ -94,5 +99,47 @@
   align-items: center;
   button {
     height: fit-content;
+  }
+}
+
+.userFamilyArrow {
+  margin-left: auto;
+}
+
+.userFamilyList {
+  width: 100%;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  div:first-of-type {
+    min-width: 36px !important;
+  }
+}
+
+.userFamilyListInner {
+  display: flex;
+  flex: 1;
+}
+
+.userFamilyListItem {
+  flex: 1;
+}
+
+.providerLoader {
+  height: calc(100% - 56px - 48px);
+  padding: 24px;
+}
+
+.registrationsDetailsBox {
+  flex: 1 1 auto;
+}
+
+.userFamilyList {
+  width: 100%;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  div:first-of-type {
+    min-width: 36px !important;
   }
 }

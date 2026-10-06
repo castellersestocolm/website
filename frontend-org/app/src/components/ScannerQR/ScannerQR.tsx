@@ -1,8 +1,8 @@
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { useEffect, useRef } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import styles from "./styles.module.css";
 
-export default function ScannerQR({ onClose, onDetected }: any) {
+export default function ScannerQR({ onDetected }: any) {
   const mountId = "html5qr-reader";
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
@@ -40,29 +40,5 @@ export default function ScannerQR({ onClose, onDetected }: any) {
     };
   }, [fps, qrbox, onDetected]);
 
-  return (
-    <>
-      <div id={mountId} style={{ width: "100%", minHeight: 320 }} />
-      <Box>
-        <Typography>
-          Tip: Allow camera permission and prefer a well-lit area for better
-          results.
-        </Typography>
-        <Button
-          onClick={() => {
-            if (scannerRef.current) {
-              scannerRef.current
-                .clear()
-                .catch(() => {})
-                .finally(() => onClose());
-            } else {
-              onClose();
-            }
-          }}
-        >
-          Close
-        </Button>
-      </Box>
-    </>
-  );
+  return <div id={mountId} className={styles.scannerBox} />;
 }

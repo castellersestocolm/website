@@ -28,6 +28,7 @@ from comunicat.rest.serializers.admin import (
     AdminOrderSerializer,
     AdminRegistrationRequestSerializer,
     AdminRegistrationSerializer,
+    AdminSearchRegistrationSerializer,
     AdminTowersEventSerializer,
     AdminTowersStatsPositionSerializer,
     AdminUserRequestSerializer,
@@ -313,6 +314,31 @@ class AdminRegistrationAPI(ComuniCatViewSet):
             registration_obj, context={"module": self.module}
         )
         return Response(serializer.data)
+
+    @swagger_auto_schema(
+        query_serializer=AdminSearchRegistrationSerializer(),
+        responses={200: AdminRegistrationSerializer(many=True)},
+    )
+    @action(methods=["get"], detail=False, url_path="search", url_name="search")
+    @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
+    def search(self, request):
+        serializer = AdminSearchRegistrationSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        registration_objs = event.api.registration.get_list(
+            event_ids=[serializer.validated_data["event_id"]],
+            module=self.module,
+            for_admin=True,
+            search=serializer.validated_data["search"],
+        )
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(registration_objs, request)
+        serializer = self.serializer_class(
+            result_page, context={"module": self.module}, many=True
+        )
+        return paginator.get_paginated_response(serializer.data)
 
 
 class AdminTowersEventAPI(ComuniCatViewSet):
