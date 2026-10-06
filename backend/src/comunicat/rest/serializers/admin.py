@@ -292,6 +292,11 @@ class AdminListRegistrationSerializer(s.Serializer):
     event_id = s.UUIDField(required=True)
 
 
+class AdminSearchRegistrationSerializer(s.Serializer):
+    event_id = s.UUIDField(required=True)
+    search = s.CharField(required=True)
+
+
 class AdminRegistrationSerializer(s.ModelSerializer):
     entity = AdminEntitySerializer(read_only=True)
     owner = AdminEntitySerializer(read_only=True)

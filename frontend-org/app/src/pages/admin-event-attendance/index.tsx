@@ -4,22 +4,55 @@ import { useParams } from "react-router-dom";
 import {
   apiAdminEventGet,
   apiAdminEventRegistrationsGet,
+  apiAdminEventRegistrationsSearch,
   apiAdminEventRegistrationUpdate,
 } from "../../api";
 import styles from "./styles.module.css";
 import { useTranslation } from "react-i18next";
 import Grid from "@mui/material/Grid";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Card, Divider, Typography, Stack, Button } from "@mui/material";
+import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
+import {
+  Card,
+  Divider,
+  Typography,
+  Stack,
+  Button,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Collapse,
+  ListItem,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import { RegistrationStatus, getEnumLabel } from "../../enums";
 import { getEventQuestionAnswer } from "../../utils/event";
+import { isMobile } from "react-device-detect";
+import IconQrCode from "@mui/icons-material/QrCode";
+import IconExpandLess from "@mui/icons-material/ExpandLess";
+import IconExpandMore from "@mui/icons-material/ExpandMore";
+import ScannerQR from "../../components/ScannerQR/ScannerQR";
+import FormLabel from "@mui/material/FormLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import { styled } from "@mui/material/styles";
+import IconAccountCircle from "@mui/icons-material/AccountCircle";
+
+const FormGrid = styled(Grid)(() => ({
+  display: "flex",
+  flexDirection: "column",
+}));
 
 function AdminEventAttendancePage() {
   const { id } = useParams();
 
   const [event, setEvent] = React.useState(undefined);
   const [registrations, setRegistrations] = React.useState(undefined);
+  const [foundRegistrations, setFoundRegistrations] = React.useState(undefined);
+  const [searchLoading, setSearchLoading] = React.useState(false);
+
+  const [scannerOpen, setScannerOpen] = React.useState(false);
+  const [searchText, setSearchText] = React.useState(undefined);
 
   const [t, i18n] = useTranslation("common");
 
@@ -43,6 +76,16 @@ function AdminEventAttendancePage() {
     }
   }, [id, setRegistrations]);
 
+  React.useEffect(() => {
+    setSearchLoading(true);
+    apiAdminEventRegistrationsSearch(id, searchText).then((response) => {
+      if (response.status === 200) {
+        setFoundRegistrations(response.data);
+      }
+      setSearchLoading(false);
+    });
+  }, [id, searchText, setFoundRegistrations, setSearchLoading]);
+
   function handleSetAttendance(registrationId: string, hasAttended: boolean) {
     apiAdminEventRegistrationUpdate(registrationId, hasAttended).then(
       (response) => {
@@ -59,6 +102,11 @@ function AdminEventAttendancePage() {
         }
       },
     );
+  }
+
+  function scannerOnDetected(text: string) {
+    setSearchText(text);
+    setScannerOpen(false);
   }
 
   const columns: GridColDef[] = [
@@ -247,6 +295,102 @@ function AdminEventAttendancePage() {
 
   const content = (
     <Grid container spacing={4} className={styles.adminGrid}>
+      {isMobile && (
+        <Card variant="outlined" className={styles.adminCard}>
+          <Box className={styles.adminTopBox}>
+            <Typography variant="h6" fontWeight="600" component="div">
+              {t("pages.admin-event-attendance.scan.title")}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box>
+            <List className={styles.userFamilyList}>
+              <ListItemButton
+                onClick={() => setScannerOpen(!scannerOpen)}
+                dense
+              >
+                <ListItemIcon>
+                  <IconQrCode />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="body2" component="span">
+                      {t("pages.admin-event-attendance.scan.action")}
+                    </Typography>
+                  }
+                />
+                {scannerOpen ? <IconExpandLess /> : <IconExpandMore />}
+              </ListItemButton>
+              <Collapse in={scannerOpen} timeout="auto" unmountOnExit>
+                <Divider />
+                <ScannerQR onDetected={scannerOnDetected} />
+              </Collapse>
+              <Divider />
+              <Box className={styles.adminSearchBox}>
+                <FormGrid size={12}>
+                  <FormLabel htmlFor="firstname" required>
+                    {t("pages.admin-event-attendance.scan.search")}
+                  </FormLabel>
+                  <OutlinedInput
+                    id="search"
+                    name="search"
+                    type="text"
+                    placeholder="Test Testsson"
+                    size="small"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                  />
+                </FormGrid>
+              </Box>
+              {((foundRegistrations &&
+                foundRegistrations.results &&
+                foundRegistrations.results.length > 0) ||
+                searchLoading) && (
+                <>
+                  <Divider />
+                  {searchLoading ? (
+                    <Box className={styles.providerLoader}>
+                      <LoaderClip />
+                    </Box>
+                  ) : (
+                    foundRegistrations &&
+                    foundRegistrations.results &&
+                    foundRegistrations.results.length > 0 && (
+                      <Box>
+                        {foundRegistrations.results.map(
+                          (registration: any, i: number, row: any) => {
+                            return (
+                              <>
+                                <Box className={styles.registrationsDetailsBox}>
+                                  <List className={styles.userFamilyList}>
+                                    <ListItemButton disableTouchRipple dense>
+                                      <ListItemIcon>
+                                        <IconAccountCircle />
+                                      </ListItemIcon>
+                                      <ListItemText
+                                        primary={
+                                          registration.entity.firstname +
+                                          " " +
+                                          registration.entity.lastname
+                                        }
+                                      />
+                                    </ListItemButton>
+                                  </List>
+                                </Box>
+                                {i + 1 < row.length && <Divider />}
+                              </>
+                            );
+                          },
+                        )}
+                      </Box>
+                    )
+                  )}
+                </>
+              )}
+            </List>
+          </Box>
+        </Card>
+      )}
       <Card variant="outlined" className={styles.adminCard}>
         <Box className={styles.adminTopBox}>
           <Typography variant="h6" fontWeight="600" component="div">
@@ -274,9 +418,15 @@ function AdminEventAttendancePage() {
                     : {}),
                 },
               },
+              density: "compact",
               sorting: {
                 sortModel: [{ field: "sort", sort: "asc" }],
               },
+            }}
+            autosizeOptions={{
+              columns: ["actions"],
+              includeOutliers: true,
+              includeHeaders: false,
             }}
             columnHeaderHeight={40}
             getRowHeight={() => "auto"}

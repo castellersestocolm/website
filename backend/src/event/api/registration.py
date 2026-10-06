@@ -5,6 +5,7 @@ from django.db import transaction
 from django.db.models import Prefetch, Q
 from django.utils import timezone
 
+import comunicat.utils.string
 import notify.tasks
 import payment.api.entity
 from comunicat.enums import Module
@@ -23,6 +24,7 @@ def get_list(
     user_id: UUID | None = None,
     event_ids: list[UUID] | None = None,
     for_admin: bool = False,
+    search: str | None = None,
 ) -> list[Registration]:
     if not for_admin and not user_id and not registration_id:
         return []
@@ -39,6 +41,19 @@ def get_list(
         registration_filter &= Q(
             entity__user_id=user_id, status=RegistrationStatus.ACTIVE
         )
+
+    if search:
+        registration_search_filter = Q(
+            Q(owner__user__membership_number=search)
+            | Q(entity__user__membership_number=search)
+        )
+
+        search_is_valid_uuid = comunicat.utils.string.is_valid_uuid(text=search)
+
+        if search_is_valid_uuid:
+            registration_search_filter |= Q(Q(id=search))
+
+        registration_filter &= registration_search_filter
 
     registration_queryset = Registration.objects.filter(registration_filter)
 

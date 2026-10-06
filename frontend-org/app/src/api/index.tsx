@@ -920,6 +920,24 @@ export const apiAdminEventRegistrationsGet = async (eventId: string) => {
   }
 };
 
+export const apiAdminEventRegistrationsSearch = async (
+  eventId: string,
+  search: string,
+) => {
+  try {
+    return await instance.get(
+      "/admin/event/registration/search/?event_id=" +
+        eventId +
+        "&search=" +
+        search,
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiAdminEventRegistrationUpdate = async (
   registrationId: string,
   hasAttended: boolean = undefined,

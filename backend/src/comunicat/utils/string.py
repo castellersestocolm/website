@@ -1,3 +1,6 @@
+import uuid
+
+
 def edit_distance(s1: str, s2: str) -> int:
     s1 = s1.lower()
     s2 = s2.lower()
@@ -22,3 +25,11 @@ def edit_distance(s1: str, s2: str) -> int:
             prev = temp
 
     return curr[n]
+
+
+def is_valid_uuid(text: str, version: int = 4):
+    try:
+        uuid.UUID(text, version=version)
+    except ValueError:
+        return False
+    return True
