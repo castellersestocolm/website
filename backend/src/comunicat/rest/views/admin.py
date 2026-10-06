@@ -290,6 +290,13 @@ class AdminRegistrationAPI(ComuniCatViewSet):
             for_admin=True,
         )
 
+        registration_objs = (
+            registration_objs
+            + registration_objs
+            + registration_objs
+            + registration_objs
+        )
+
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(registration_objs, request)
         serializer = self.serializer_class(

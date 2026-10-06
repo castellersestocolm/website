@@ -57,6 +57,11 @@ function AdminEventAttendancePage() {
   const [scannerOpen, setScannerOpen] = React.useState(false);
   const [searchText, setSearchText] = React.useState(undefined);
 
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: 10,
+    page: 0,
+  });
+
   const [t, i18n] = useTranslation("common");
 
   React.useEffect(() => {
@@ -71,13 +76,17 @@ function AdminEventAttendancePage() {
 
   React.useEffect(() => {
     if (id) {
-      apiAdminEventRegistrationsGet(id).then((response) => {
+      apiAdminEventRegistrationsGet(
+        paginationModel.page + 1,
+        paginationModel.pageSize,
+        id,
+      ).then((response) => {
         if (response.status === 200) {
           setRegistrations(response.data);
         }
       });
     }
-  }, [id, setRegistrations]);
+  }, [id, paginationModel, setRegistrations]);
 
   React.useEffect(() => {
     if (searchText) {
@@ -510,10 +519,14 @@ function AdminEventAttendancePage() {
           <DataGrid
             rows={rows}
             columns={columns}
+            rowCount={registrations && registrations.count}
+            paginationModel={paginationModel}
+            paginationMode="server"
+            onPaginationModelChange={setPaginationModel}
             initialState={{
               pagination: {
                 paginationModel: {
-                  pageSize: 100,
+                  pageSize: 10,
                 },
               },
               columns: {

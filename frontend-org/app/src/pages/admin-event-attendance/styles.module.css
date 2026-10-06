@@ -114,6 +114,7 @@
   align-items: center;
   button {
     height: fit-content;
+    margin: 8px 0 !important;
   }
 }
 

@@ -6,15 +6,18 @@ export default function ScannerQR({ onDetected }: any) {
   const mountId = "html5qr-reader";
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
 
-  const fps = 10;
-  const qrbox = 250;
-
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner(
-      mountId,
-      { fps, qrbox: { width: qrbox, height: qrbox } },
-      false,
-    );
+    const config = {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+      rememberLastUsedCamera: true,
+      supportedScanTypes: [0],
+      videoConstraints: {
+        facingMode: "environment",
+      },
+    };
+
+    const scanner = new Html5QrcodeScanner(mountId, config, false);
 
     scanner.render(
       (decodedText: string) => {
@@ -38,7 +41,7 @@ export default function ScannerQR({ onDetected }: any) {
           });
       }
     };
-  }, [fps, qrbox, onDetected]);
+  }, [onDetected]);
 
   return <div id={mountId} className={styles.scannerBox} />;
 }
