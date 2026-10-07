@@ -911,13 +911,9 @@ export const apiOrderEventCreate = async (
   }
 };
 
-export const apiAdminStatsEventGet = async (
-  eventId: string,
-) => {
+export const apiAdminStatsEventGet = async (eventId: string) => {
   try {
-    return await instance.get(
-      "/admin/stats/event/" + eventId + "/"
-    );
+    return await instance.get("/admin/stats/event/" + eventId + "/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

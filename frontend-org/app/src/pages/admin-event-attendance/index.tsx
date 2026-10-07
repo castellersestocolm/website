@@ -5,7 +5,8 @@ import {
   apiAdminEventGet,
   apiAdminEventRegistrationsGet,
   apiAdminEventRegistrationsSearch,
-  apiAdminEventRegistrationUpdate, apiAdminStatsEventGet,
+  apiAdminEventRegistrationUpdate,
+  apiAdminStatsEventGet,
 } from "../../api";
 import styles from "./styles.module.css";
 import { useTranslation } from "react-i18next";
@@ -40,11 +41,11 @@ import ScannerQR from "../../components/ScannerQR/ScannerQR";
 import FormLabel from "@mui/material/FormLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
-import IconGroups from '@mui/icons-material/Groups';
-import IconEscalatorWarning from '@mui/icons-material/EscalatorWarning';
-import IconEmojiPeople from '@mui/icons-material/EmojiPeople';
-import IconArrowCircleDownOutlined from '@mui/icons-material/ArrowCircleDownOutlined';
-import IconArrowCircleUpOutlined from '@mui/icons-material/ArrowCircleUpOutlined';
+import IconGroups from "@mui/icons-material/Groups";
+import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
+import IconEmojiPeople from "@mui/icons-material/EmojiPeople";
+import IconArrowCircleDownOutlined from "@mui/icons-material/ArrowCircleDownOutlined";
+import IconArrowCircleUpOutlined from "@mui/icons-material/ArrowCircleUpOutlined";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -446,16 +447,17 @@ function AdminEventAttendancePage() {
                                                 "pages.admin-event-attendance.scan.table.owner",
                                               )
                                             : !registration.entity.can_manage &&
-                                              registration.entity.birthday &&
-                                              (registration.amount &&
-                                              registration.amount.amount > 0
-                                                ? " · "
-                                                : "") +
+                                                registration.entity.birthday
+                                              ? (registration.amount &&
+                                                registration.amount.amount > 0
+                                                  ? " · "
+                                                  : "") +
                                                 getAge(
                                                   registration.entity.birthday,
                                                 ) +
                                                 " " +
-                                                t("common.integer.years"))
+                                                t("common.integer.years")
+                                              : "")
                                         }
                                         sx={{
                                           textDecoration:
@@ -496,7 +498,9 @@ function AdminEventAttendancePage() {
                                       </Stack>
                                     </ListItemButton>
                                     <Box
-                                      className={styles.registrationQuestionsBox}
+                                      className={
+                                        styles.registrationQuestionsBox
+                                      }
                                     >
                                       {event &&
                                         event.questions &&
@@ -557,44 +561,62 @@ function AdminEventAttendancePage() {
             </Typography>
           </Box>
           <Divider />
-          {eventStats ? <Box className={styles.adminStatsBox}>
-            <Stack direction="row" spacing={{ xs: 1, md: 3 }} className={styles.adminStatsStack}>
-              <Box className={styles.adminStatsCount}>
-                <IconGroups className={styles.adminStatsIcon} />
-                <Typography variant="h5">
-                  {eventStats.registrations.count_total}
-                </Typography>
-              </Box>
-              <Box className={styles.adminStatsCount}>
-                <IconEmojiPeople className={styles.adminStatsIcon} />
-                <Typography variant="h5">
-                  {eventStats.registrations.count_can_manage}
-                </Typography>
-              </Box>
-              <Box className={styles.adminStatsCount}>
-                <IconEscalatorWarning className={styles.adminStatsIcon} />
-                <Typography variant="h5">
-                  {eventStats.registrations.count_cannot_manage}
-                </Typography>
-              </Box>
-            </Stack>
-            <Stack direction="row" spacing={{ xs: 1, md: 3 }} className={styles.adminStatsStack}>
-              <Box className={styles.adminStatsCount}>
-                <IconArrowCircleUpOutlined className={styles.adminStatsIcon} />
-                <Typography variant="h5">
-                  {eventStats.economy.amount_earned_total.amount}{" "}{eventStats.economy.amount_earned_total.currency}
-                </Typography>
-              </Box>
-              <Box className={styles.adminStatsCount}>
-                <IconArrowCircleDownOutlined className={styles.adminStatsIcon} />
-                <Typography variant="h5">
-                  {eventStats.economy.amount_spent_total.amount}{" "}{eventStats.economy.amount_spent_total.currency}
-                </Typography>
-              </Box>
-            </Stack>
-          </Box> : <Box className={styles.providerLoader}>
-                      <LoaderClip />
-                    </Box>}
+          {eventStats ? (
+            <Box className={styles.adminStatsBox}>
+              <Stack
+                direction="row"
+                spacing={{ xs: 1, md: 3 }}
+                className={styles.adminStatsStack}
+              >
+                <Box className={styles.adminStatsCount}>
+                  <IconGroups className={styles.adminStatsIcon} />
+                  <Typography variant="h5">
+                    {eventStats.registrations.count_total}
+                  </Typography>
+                </Box>
+                <Box className={styles.adminStatsCount}>
+                  <IconEmojiPeople className={styles.adminStatsIcon} />
+                  <Typography variant="h5">
+                    {eventStats.registrations.count_can_manage}
+                  </Typography>
+                </Box>
+                <Box className={styles.adminStatsCount}>
+                  <IconEscalatorWarning className={styles.adminStatsIcon} />
+                  <Typography variant="h5">
+                    {eventStats.registrations.count_cannot_manage}
+                  </Typography>
+                </Box>
+              </Stack>
+              <Stack
+                direction="row"
+                spacing={{ xs: 1, md: 3 }}
+                className={styles.adminStatsStack}
+              >
+                <Box className={styles.adminStatsCount}>
+                  <IconArrowCircleUpOutlined
+                    className={styles.adminStatsIcon}
+                  />
+                  <Typography variant="h5">
+                    {eventStats.economy.amount_earned_total.amount}{" "}
+                    {eventStats.economy.amount_earned_total.currency}
+                  </Typography>
+                </Box>
+                <Box className={styles.adminStatsCount}>
+                  <IconArrowCircleDownOutlined
+                    className={styles.adminStatsIcon}
+                  />
+                  <Typography variant="h5">
+                    {eventStats.economy.amount_spent_total.amount}{" "}
+                    {eventStats.economy.amount_spent_total.currency}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
+          ) : (
+            <Box className={styles.providerLoader}>
+              <LoaderClip />
+            </Box>
+          )}
         </Card>
       </Grid>
       <Card variant="outlined" className={styles.adminCard}>
