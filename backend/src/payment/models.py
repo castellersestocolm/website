@@ -237,7 +237,7 @@ class Entity(StandardModel, Timestamps):
         if self.user:
             return self.user.can_manage
 
-        return self.is_adult and "+" not in self.email
+        return self.is_adult and (not self.email or "+" not in self.email)
 
     @cached_property
     def age(self) -> int | None:
