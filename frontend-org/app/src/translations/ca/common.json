@@ -395,6 +395,7 @@
   "pages.admin-event-attendance.scan.action": "Escaneja un QR",
   "pages.admin-event-attendance.scan.search": "Nom o codi",
   "pages.admin-event-attendance.scan.table.owner": "Responsable",
+  "pages.admin-event-attendance.stats.title": "Estadístiques",
   "swish.payment.membership": "Quota",
   "swish.payment.order": "Comanda",
   "swish.payment.course": "Activitat",

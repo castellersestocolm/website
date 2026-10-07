@@ -29,6 +29,7 @@ from comunicat.rest.serializers.admin import (
     AdminRegistrationRequestSerializer,
     AdminRegistrationSerializer,
     AdminSearchRegistrationSerializer,
+    AdminStatsEventSerializer,
     AdminTowersEventSerializer,
     AdminTowersStatsPositionSerializer,
     AdminUserRequestSerializer,
@@ -63,6 +64,12 @@ class AdminRegistrationResultsSetPagination(PageNumberPagination):
 
 
 class AdminTowersStatsResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class AdminStatsEventResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -290,13 +297,6 @@ class AdminRegistrationAPI(ComuniCatViewSet):
             for_admin=True,
         )
 
-        registration_objs = (
-            registration_objs
-            + registration_objs
-            + registration_objs
-            + registration_objs
-        )
-
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(registration_objs, request)
         serializer = self.serializer_class(
@@ -363,6 +363,27 @@ class AdminTowersEventAPI(ComuniCatViewSet):
 
         serializer = self.serializer_class(
             {"towers": event_towers}, context={"module": self.module}
+        )
+        return Response(serializer.data)
+
+
+class AdminStatsEventAPI(ComuniCatViewSet):
+    permission_classes = (AllowLevelAdmin,)
+    pagination_class = AdminStatsEventResultsSetPagination
+
+    @swagger_auto_schema(
+        responses={
+            200: AdminStatsEventSerializer(),
+            403: Serializer(),
+        },
+    )
+    @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
+    def retrieve(self, request, pk):
+        event_stats = event.api.get_stats(event_id=pk)
+
+        serializer = AdminStatsEventSerializer(
+            event_stats, context={"module": self.module}
         )
         return Response(serializer.data)
 

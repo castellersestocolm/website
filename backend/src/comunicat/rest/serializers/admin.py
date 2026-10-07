@@ -354,6 +354,22 @@ class AdminTowersStatsPositionSerializer(s.Serializer):
     users = AdminTowersStatsUserPositionSerializer(many=True, read_only=True)
 
 
+class AdminStatsEventRegistrationSerializer(s.Serializer):
+    count_total = s.IntegerField(read_only=True)
+    count_can_manage = s.IntegerField(read_only=True)
+    count_cannot_manage = s.IntegerField(read_only=True)
+
+
+class AdminStatsEventEconomySerializer(s.Serializer):
+    amount_earned_total = MoneyField(read_only=True)
+    amount_spent_total = MoneyField(read_only=True)
+
+
+class AdminStatsEventSerializer(s.Serializer):
+    registrations = AdminStatsEventRegistrationSerializer(read_only=True)
+    economy = AdminStatsEventEconomySerializer(read_only=True)
+
+
 class AdminHistoryEventSerializer(s.ModelSerializer):
     class Meta:
         model = HistoryEvent

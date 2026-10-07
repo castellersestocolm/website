@@ -490,7 +490,7 @@ class PaymentLine(StandardModel, Timestamps):
         null=True,
         blank=True,
         related_name="credit_lines",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
     )
 
     receipt = models.ForeignKey(
@@ -498,7 +498,15 @@ class PaymentLine(StandardModel, Timestamps):
         related_name="payment_lines",
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+    )
+
+    event = models.ForeignKey(
+        "event.Event",
+        related_name="payment_lines",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     objects = PaymentLineQuerySet.as_manager()

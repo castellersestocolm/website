@@ -1,10 +1,15 @@
+import datetime
+
 from django.apps import apps
+from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import (
     BooleanField,
     CharField,
+    Count,
     ExpressionWrapper,
     F,
+    IntegerField,
     OuterRef,
     Q,
     QuerySet,
@@ -18,10 +23,119 @@ from django.utils import timezone, translation
 
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
+from event.enums import RegistrationStatus
+from payment.enums import PaymentType
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 
 
 class EventQuerySet(QuerySet):
+    def with_stats(self):
+        Registration = apps.get_model("event", "Registration")
+        PaymentLine = apps.get_model("payment", "PaymentLine")
+
+        date_today = timezone.localdate()
+        date_minimum_age = datetime.date(
+            date_today.year - settings.MODULE_ALL_USER_MINIMUM_AGE,
+            date_today.month,
+            date_today.day,
+        )
+
+        return self.annotate(
+            registrations_count_total=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        event_id=OuterRef("id"),
+                        status__in=(
+                            RegistrationStatus.ACTIVE,
+                            RegistrationStatus.ATTENDED,
+                        ),
+                    )
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            registrations_count_can_manage=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        Q(
+                            (
+                                Q(entity__birthday__isnull=True)
+                                | Q(entity__birthday__lte=date_minimum_age)
+                            )
+                            & ~Q(entity__email__contains="+")
+                        ),
+                        event_id=OuterRef("id"),
+                        status__in=(
+                            RegistrationStatus.ACTIVE,
+                            RegistrationStatus.ATTENDED,
+                        ),
+                    )
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            registrations_count_cannot_manage=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        ~Q(
+                            (
+                                Q(entity__birthday__isnull=True)
+                                | Q(entity__birthday__lte=date_minimum_age)
+                            )
+                            & ~Q(entity__email__contains="+")
+                        ),
+                        event_id=OuterRef("id"),
+                        status__in=(
+                            RegistrationStatus.ACTIVE,
+                            RegistrationStatus.ATTENDED,
+                        ),
+                    )
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            ),
+            # TODO: Include actual earned via payments
+            economy_amount_earned_total=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        event_id=OuterRef("id"),
+                        price__isnull=False,
+                        status__in=(
+                            RegistrationStatus.ACTIVE,
+                            RegistrationStatus.ATTENDED,
+                        ),
+                    )
+                    .values("event_id")
+                    .annotate(amount=Sum("price__amount"))
+                    .values("amount")[:1],
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            economy_amount_spent_total=Coalesce(
+                Subquery(
+                    PaymentLine.objects.filter(
+                        event_id=OuterRef("id"),
+                        payment__type=PaymentType.CREDIT,
+                    )
+                    .values("event_id")
+                    .annotate(amount=Sum("amount"))
+                    .values("amount")[:1],
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+        )
+
     def with_module_information(self, module: Module):
         EventModule = apps.get_model("event", "EventModule")
 
