@@ -144,7 +144,13 @@ def get_list(  # noqa: C901
             ),
         )
         .with_amount()
-        .order_by("-event__time_from", "created_at")
+        .order_by(
+            "-event__time_from",
+            "owner__firstname",
+            "owner__lastname",
+            "entity__firstname",
+            "entity__lastname",
+        )
     )
 
 

@@ -304,6 +304,7 @@ class AdminRegistrationSerializer(s.ModelSerializer):
     owner = AdminEntitySerializer(read_only=True)
     user = UserSuperSlimSerializer(read_only=True, source="entity.user")
     status = s.SerializerMethodField(read_only=True)
+    amount = MoneyField(read_only=True)
 
     class Meta:
         model = Registration
@@ -313,6 +314,7 @@ class AdminRegistrationSerializer(s.ModelSerializer):
             "entity",
             "owner",
             "status",
+            "amount",
             "data",
             "created_at",
         )
@@ -322,6 +324,7 @@ class AdminRegistrationSerializer(s.ModelSerializer):
             "entity",
             "owner",
             "status",
+            "amount",
             "data",
             "created_at",
         )
