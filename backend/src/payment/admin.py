@@ -177,7 +177,7 @@ class PaymentLineForPaymentForm(forms.ModelForm):
 class PaymentLineForPaymentInline(admin.TabularInline):
     model = PaymentLine
     ordering = ("-created_at",)
-    raw_id_fields = ("receipt", "debit_line")
+    raw_id_fields = ("receipt", "debit_line", "event")
     extra = 0
 
     form = PaymentLineForPaymentForm
@@ -410,7 +410,7 @@ class PaymentLineAdmin(admin.ModelAdmin):
     # TODO: Unused, if used limit to "allow_transactions"
     # list_editable = ("account",)
     list_filter = ("vat",)
-    raw_id_fields = ("receipt", "debit_line")
+    raw_id_fields = ("receipt", "debit_line", "event")
     list_per_page = 25
     form = PaymentLineForm
 
