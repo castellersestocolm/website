@@ -5,7 +5,7 @@ import {
   apiAdminEventGet,
   apiAdminEventRegistrationsGet,
   apiAdminEventRegistrationsSearch,
-  apiAdminEventRegistrationUpdate,
+  apiAdminEventRegistrationUpdate, apiAdminStatsEventGet,
 } from "../../api";
 import styles from "./styles.module.css";
 import { useTranslation } from "react-i18next";
@@ -40,6 +40,11 @@ import ScannerQR from "../../components/ScannerQR/ScannerQR";
 import FormLabel from "@mui/material/FormLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
+import IconGroups from '@mui/icons-material/Groups';
+import IconEscalatorWarning from '@mui/icons-material/EscalatorWarning';
+import IconEmojiPeople from '@mui/icons-material/EmojiPeople';
+import IconArrowCircleDownOutlined from '@mui/icons-material/ArrowCircleDownOutlined';
+import IconArrowCircleUpOutlined from '@mui/icons-material/ArrowCircleUpOutlined';
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -50,6 +55,7 @@ function AdminEventAttendancePage() {
   const { id } = useParams();
 
   const [event, setEvent] = React.useState(undefined);
+  const [eventStats, setEventStats] = React.useState(undefined);
   const [registrations, setRegistrations] = React.useState(undefined);
   const [foundRegistrations, setFoundRegistrations] = React.useState(undefined);
   const [searchLoading, setSearchLoading] = React.useState(false);
@@ -73,6 +79,16 @@ function AdminEventAttendancePage() {
       });
     }
   }, [id, setEvent]);
+
+  React.useEffect(() => {
+    if (id) {
+      apiAdminStatsEventGet(id).then((response) => {
+        if (response.status === 200) {
+          setEventStats(response.data);
+        }
+      });
+    }
+  }, [id, setEventStats]);
 
   React.useEffect(() => {
     if (id) {
@@ -314,223 +330,273 @@ function AdminEventAttendancePage() {
 
   const content = (
     <Grid container spacing={4} className={styles.adminGrid}>
-      <Card variant="outlined" className={styles.adminCard}>
-        <Box className={styles.adminTopBox}>
-          <Typography variant="h6" fontWeight="600" component="div">
-            {t("pages.admin-event-attendance.scan.title")}
-          </Typography>
-        </Box>
-        <Divider />
-        <Box>
-          <List className={styles.userFamilyList}>
-            {isMobile && (
-              <>
-                <ListItemButton
-                  onClick={() => setScannerOpen(!scannerOpen)}
-                  dense
-                >
-                  <ListItemIcon>
-                    <IconQrCode />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography variant="body2" component="span">
-                        {t("pages.admin-event-attendance.scan.action")}
-                      </Typography>
-                    }
-                  />
-                  {scannerOpen ? <IconExpandLess /> : <IconExpandMore />}
-                </ListItemButton>
-                <Collapse in={scannerOpen} timeout="auto" unmountOnExit>
+      <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminCard}>
+          <Box className={styles.adminTopBox}>
+            <Typography variant="h6" fontWeight="600" component="div">
+              {t("pages.admin-event-attendance.scan.title")}
+            </Typography>
+          </Box>
+          <Divider />
+          <Box>
+            <List className={styles.userFamilyList}>
+              {isMobile && (
+                <>
+                  <ListItemButton
+                    onClick={() => setScannerOpen(!scannerOpen)}
+                    dense
+                  >
+                    <ListItemIcon>
+                      <IconQrCode />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Typography variant="body2" component="span">
+                          {t("pages.admin-event-attendance.scan.action")}
+                        </Typography>
+                      }
+                    />
+                    {scannerOpen ? <IconExpandLess /> : <IconExpandMore />}
+                  </ListItemButton>
+                  <Collapse in={scannerOpen} timeout="auto" unmountOnExit>
+                    <Divider />
+                    <ScannerQR onDetected={scannerOnDetected} />
+                  </Collapse>
                   <Divider />
-                  <ScannerQR onDetected={scannerOnDetected} />
-                </Collapse>
-                <Divider />
-              </>
-            )}
-            <Box className={styles.adminSearchBox}>
-              <FormGrid size={12}>
-                <FormLabel htmlFor="firstname" required>
-                  {t("pages.admin-event-attendance.scan.search")}
-                </FormLabel>
-                <OutlinedInput
-                  id="search"
-                  name="search"
-                  type="text"
-                  placeholder="Test Testsson"
-                  size="small"
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                />
-              </FormGrid>
-            </Box>
-            {((foundRegistrations &&
-              foundRegistrations.results &&
-              foundRegistrations.results.length > 0) ||
-              searchLoading) && (
-              <>
-                <Divider />
-                {searchLoading ? (
-                  <Box className={styles.providerLoader}>
-                    <LoaderClip />
-                  </Box>
-                ) : (
-                  foundRegistrations &&
-                  foundRegistrations.results &&
-                  foundRegistrations.results.length > 0 && (
-                    <Box>
-                      {foundRegistrations.results.map(
-                        (registration: any, i: number, row: any) => {
-                          return (
-                            <>
-                              <Box className={styles.registrationsDetailsBox}>
-                                <List className={styles.userFamilyList}>
-                                  <ListItemButton disableTouchRipple dense>
-                                    <ListItemIcon
-                                      className={
-                                        registration.status ===
-                                        RegistrationStatus.ATTENDED
-                                          ? styles.adminIconRegistrationAttended
-                                          : registration.status ===
-                                              RegistrationStatus.ACTIVE
-                                            ? styles.adminIconRegistrationAttending
-                                            : registration.status ===
-                                                RegistrationStatus.CANCELLED
-                                              ? styles.adminIconRegistrationNotAttending
-                                              : styles.adminIconRegistrationUnknown
-                                      }
-                                    >
-                                      {
-                                        REGISTRATION_STATUS_ICON[
-                                          registration.status
-                                        ]
-                                      }
-                                    </ListItemIcon>
-                                    <ListItemText
-                                      primary={
-                                        registration.entity.firstname +
-                                        " " +
-                                        registration.entity.lastname
-                                      }
-                                      secondary={
-                                        (registration.amount &&
-                                        registration.amount.amount > 0
-                                          ? registration.amount.amount +
-                                            " " +
-                                            registration.amount.currency
-                                          : "") +
-                                        (registration.entity.id ===
-                                        registration.owner.id
-                                          ? (registration.amount &&
-                                            registration.amount.amount > 0
-                                              ? " · "
-                                              : "") +
-                                            t(
-                                              "pages.admin-event-attendance.scan.table.owner",
-                                            )
-                                          : !registration.entity.can_manage &&
-                                            registration.entity.birthday &&
-                                            (registration.amount &&
-                                            registration.amount.amount > 0
-                                              ? " · "
-                                              : "") +
-                                              getAge(
-                                                registration.entity.birthday,
-                                              ) +
-                                              " " +
-                                              t("common.integer.years"))
-                                      }
-                                      sx={{
-                                        textDecoration:
-                                          registration.status !==
-                                            RegistrationStatus.ACTIVE &&
-                                          registration.status !==
-                                            RegistrationStatus.ATTENDED
-                                            ? "line-through"
-                                            : "none",
-                                      }}
-                                    />
-                                    <Stack
-                                      direction="row"
-                                      spacing={2}
-                                      className={styles.buttons}
-                                    >
-                                      <Button
-                                        variant="contained"
-                                        type="button"
-                                        onClick={() =>
-                                          handleSetAttendance(
-                                            registration.id,
-                                            registration.status !==
-                                              RegistrationStatus.ATTENDED,
-                                          )
-                                        }
-                                        disableElevation
-                                      >
-                                        {registration.status ===
-                                        RegistrationStatus.ATTENDED
-                                          ? t(
-                                              "pages.admin-event-attendance.table.actions.button-not-attend",
-                                            )
-                                          : t(
-                                              "pages.admin-event-attendance.table.actions.button-attend",
-                                            )}
-                                      </Button>
-                                    </Stack>
-                                  </ListItemButton>
-                                  <Box
-                                    className={styles.registrationQuestionsBox}
-                                  >
-                                    {event &&
-                                      event.questions &&
-                                      event.questions.length > 0 &&
-                                      event.questions.map(
-                                        (eventQuestion: any) => {
-                                          const registrationAnswer =
-                                            registration.data.questions &&
-                                            registration.data.questions[
-                                              eventQuestion.order.toString()
-                                            ];
-                                          const eventQuestionAnswer =
-                                            getEventQuestionAnswer(
-                                              t,
-                                              i18n.resolvedLanguage,
-                                              eventQuestion,
-                                              registrationAnswer,
-                                            );
-                                          return (
-                                            eventQuestionAnswer != null && (
-                                              <Box pb={1}>
-                                                <Typography
-                                                  variant="body2"
-                                                  fontWeight={600}
-                                                >
-                                                  {eventQuestion.title}
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                  {eventQuestionAnswer}
-                                                </Typography>
-                                              </Box>
-                                            )
-                                          );
-                                        },
-                                      )}
-                                  </Box>
-                                </List>
-                              </Box>
-                              {i + 1 < row.length && <Divider />}
-                            </>
-                          );
-                        },
-                      )}
+                </>
+              )}
+              <Box className={styles.adminSearchBox}>
+                <FormGrid size={12}>
+                  <FormLabel htmlFor="firstname" required>
+                    {t("pages.admin-event-attendance.scan.search")}
+                  </FormLabel>
+                  <OutlinedInput
+                    id="search"
+                    name="search"
+                    type="text"
+                    placeholder="Test Testsson"
+                    size="small"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                  />
+                </FormGrid>
+              </Box>
+              {((foundRegistrations &&
+                foundRegistrations.results &&
+                foundRegistrations.results.length > 0) ||
+                searchLoading) && (
+                <>
+                  <Divider />
+                  {searchLoading ? (
+                    <Box className={styles.providerLoader}>
+                      <LoaderClip />
                     </Box>
-                  )
-                )}
-              </>
-            )}
-          </List>
-        </Box>
-      </Card>
+                  ) : (
+                    foundRegistrations &&
+                    foundRegistrations.results &&
+                    foundRegistrations.results.length > 0 && (
+                      <Box>
+                        {foundRegistrations.results.map(
+                          (registration: any, i: number, row: any) => {
+                            return (
+                              <>
+                                <Box className={styles.registrationsDetailsBox}>
+                                  <List className={styles.userFamilyList}>
+                                    <ListItemButton disableTouchRipple dense>
+                                      <ListItemIcon
+                                        className={
+                                          registration.status ===
+                                          RegistrationStatus.ATTENDED
+                                            ? styles.adminIconRegistrationAttended
+                                            : registration.status ===
+                                                RegistrationStatus.ACTIVE
+                                              ? styles.adminIconRegistrationAttending
+                                              : registration.status ===
+                                                  RegistrationStatus.CANCELLED
+                                                ? styles.adminIconRegistrationNotAttending
+                                                : styles.adminIconRegistrationUnknown
+                                        }
+                                      >
+                                        {
+                                          REGISTRATION_STATUS_ICON[
+                                            registration.status
+                                          ]
+                                        }
+                                      </ListItemIcon>
+                                      <ListItemText
+                                        primary={
+                                          registration.entity.firstname +
+                                          " " +
+                                          registration.entity.lastname
+                                        }
+                                        secondary={
+                                          (registration.amount &&
+                                          registration.amount.amount > 0
+                                            ? registration.amount.amount +
+                                              " " +
+                                              registration.amount.currency
+                                            : "") +
+                                          (registration.entity.id ===
+                                          registration.owner.id
+                                            ? (registration.amount &&
+                                              registration.amount.amount > 0
+                                                ? " · "
+                                                : "") +
+                                              t(
+                                                "pages.admin-event-attendance.scan.table.owner",
+                                              )
+                                            : !registration.entity.can_manage &&
+                                              registration.entity.birthday &&
+                                              (registration.amount &&
+                                              registration.amount.amount > 0
+                                                ? " · "
+                                                : "") +
+                                                getAge(
+                                                  registration.entity.birthday,
+                                                ) +
+                                                " " +
+                                                t("common.integer.years"))
+                                        }
+                                        sx={{
+                                          textDecoration:
+                                            registration.status !==
+                                              RegistrationStatus.ACTIVE &&
+                                            registration.status !==
+                                              RegistrationStatus.ATTENDED
+                                              ? "line-through"
+                                              : "none",
+                                        }}
+                                      />
+                                      <Stack
+                                        direction="row"
+                                        spacing={2}
+                                        className={styles.buttons}
+                                      >
+                                        <Button
+                                          variant="contained"
+                                          type="button"
+                                          onClick={() =>
+                                            handleSetAttendance(
+                                              registration.id,
+                                              registration.status !==
+                                                RegistrationStatus.ATTENDED,
+                                            )
+                                          }
+                                          disableElevation
+                                        >
+                                          {registration.status ===
+                                          RegistrationStatus.ATTENDED
+                                            ? t(
+                                                "pages.admin-event-attendance.table.actions.button-not-attend",
+                                              )
+                                            : t(
+                                                "pages.admin-event-attendance.table.actions.button-attend",
+                                              )}
+                                        </Button>
+                                      </Stack>
+                                    </ListItemButton>
+                                    <Box
+                                      className={styles.registrationQuestionsBox}
+                                    >
+                                      {event &&
+                                        event.questions &&
+                                        event.questions.length > 0 &&
+                                        event.questions.map(
+                                          (eventQuestion: any) => {
+                                            const registrationAnswer =
+                                              registration.data.questions &&
+                                              registration.data.questions[
+                                                eventQuestion.order.toString()
+                                              ];
+                                            const eventQuestionAnswer =
+                                              getEventQuestionAnswer(
+                                                t,
+                                                i18n.resolvedLanguage,
+                                                eventQuestion,
+                                                registrationAnswer,
+                                              );
+                                            return (
+                                              eventQuestionAnswer != null && (
+                                                <Box pb={1}>
+                                                  <Typography
+                                                    variant="body2"
+                                                    fontWeight={600}
+                                                  >
+                                                    {eventQuestion.title}
+                                                  </Typography>
+                                                  <Typography variant="body2">
+                                                    {eventQuestionAnswer}
+                                                  </Typography>
+                                                </Box>
+                                              )
+                                            );
+                                          },
+                                        )}
+                                    </Box>
+                                  </List>
+                                </Box>
+                                {i + 1 < row.length && <Divider />}
+                              </>
+                            );
+                          },
+                        )}
+                      </Box>
+                    )
+                  )}
+                </>
+              )}
+            </List>
+          </Box>
+        </Card>
+      </Grid>
+      <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
+        <Card variant="outlined" className={styles.adminStatsCard}>
+          <Box className={styles.adminTopBox}>
+            <Typography variant="h6" fontWeight="600" component="div">
+              {t("pages.admin-event-attendance.stats.title")}
+            </Typography>
+          </Box>
+          <Divider />
+          {eventStats ? <Box className={styles.adminStatsBox}>
+            <Stack direction="row" spacing={{ xs: 1, md: 3 }} className={styles.adminStatsStack}>
+              <Box className={styles.adminStatsCount}>
+                <IconGroups className={styles.adminStatsIcon} />
+                <Typography variant="h5">
+                  {eventStats.registrations.count_total}
+                </Typography>
+              </Box>
+              <Box className={styles.adminStatsCount}>
+                <IconEmojiPeople className={styles.adminStatsIcon} />
+                <Typography variant="h5">
+                  {eventStats.registrations.count_can_manage}
+                </Typography>
+              </Box>
+              <Box className={styles.adminStatsCount}>
+                <IconEscalatorWarning className={styles.adminStatsIcon} />
+                <Typography variant="h5">
+                  {eventStats.registrations.count_cannot_manage}
+                </Typography>
+              </Box>
+            </Stack>
+            <Stack direction="row" spacing={{ xs: 1, md: 3 }} className={styles.adminStatsStack}>
+              <Box className={styles.adminStatsCount}>
+                <IconArrowCircleUpOutlined className={styles.adminStatsIcon} />
+                <Typography variant="h5">
+                  {eventStats.economy.amount_earned_total.amount}{" "}{eventStats.economy.amount_earned_total.currency}
+                </Typography>
+              </Box>
+              <Box className={styles.adminStatsCount}>
+                <IconArrowCircleDownOutlined className={styles.adminStatsIcon} />
+                <Typography variant="h5">
+                  {eventStats.economy.amount_spent_total.amount}{" "}{eventStats.economy.amount_spent_total.currency}
+                </Typography>
+              </Box>
+            </Stack>
+          </Box> : <Box className={styles.providerLoader}>
+                      <LoaderClip />
+                    </Box>}
+        </Card>
+      </Grid>
       <Card variant="outlined" className={styles.adminCard}>
         <Box className={styles.adminTopBox}>
           <Typography variant="h6" fontWeight="600" component="div">

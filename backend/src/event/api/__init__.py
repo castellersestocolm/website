@@ -14,6 +14,7 @@ import user.api.event
 from comunicat.enums import Module
 from consent.enums import ConsentType
 from event.enums import EventStatus, EventType, RegistrationStatus
+from event.fields import EventEconomyStats, EventRegistrationsStats, EventStats
 from event.models import (
     AgendaItem,
     Connection,
@@ -537,3 +538,19 @@ def get_event_data_by_event_registration_token(token: str) -> dict | None:
         return None
 
     return data
+
+
+def get_stats(event_id: UUID) -> EventStats:
+    event_obj = Event.objects.filter(id=event_id).with_stats().first()
+
+    return EventStats(
+        registrations=EventRegistrationsStats(
+            count_total=event_obj.registrations_count_total,
+            count_can_manage=event_obj.registrations_count_can_manage,
+            count_cannot_manage=event_obj.registrations_count_cannot_manage,
+        ),
+        economy=EventEconomyStats(
+            amount_earned_total=event_obj.economy_amount_earned_total,
+            amount_spent_total=event_obj.economy_amount_spent_total,
+        ),
+    )

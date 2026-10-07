@@ -9,6 +9,12 @@
   width: 100%;
 }
 
+.adminStatsCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .adminTopBox {
   padding: 12px 16px;
   background-color: var(--mui-palette-primary-main);
@@ -17,6 +23,34 @@
 .adminSearchBox {
   padding: 8px 16px 16px 16px;
   flex: 1 1 auto;
+}
+
+.adminStatsBox {
+  padding: 16px 16px 16px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  justify-content: center;
+  gap: 16px;
+}
+
+.adminStatsStack {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+}
+
+.adminStatsCount {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.adminStatsIcon {
+  width: auto;
+  height: 32px;
 }
 
 .adminTableRowLast {
@@ -143,7 +177,11 @@
 }
 
 .providerLoader {
-  height: calc(100% - 56px - 48px);
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  justify-content: center;
   padding: 24px;
 }
 
