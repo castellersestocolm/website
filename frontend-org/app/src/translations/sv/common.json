@@ -299,6 +299,7 @@
   "pages.calendar-event.register.button-add": "Lägg till",
   "pages.calendar-event.register.button-pay": "Betala",
   "pages.calendar-event.register.alert.payment-pending": "Din registrering har ännu inte slutförts. För att bekräfta den måste du göra betalningen. Om du inte gör betalningen kommer registreringen automatiskt att avregistreras och det kommer inte vara möjligt att delta i evenemanget.",
+  "pages.calendar-event.agenda.title": "Agenda",
   "pages.membership.title": "Ditt medlemskap",
   "pages.membership.title-renew": "Betala eller förnya ditt medlemskap",
   "pages.membership.renew.option": "Val",
