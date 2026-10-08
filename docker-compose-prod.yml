@@ -245,6 +245,10 @@ services:
     image: redis:7-alpine
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 750M
     volumes:
       - redis-data:/data
     ports:
