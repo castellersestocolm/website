@@ -56,6 +56,7 @@ function HomePage() {
   const [wpMediaById, setWpMediaById] = React.useState<any>({});
 
   const [highligtedEvent, setHighlightedEvent] = React.useState(undefined);
+  const [otherHighligtedEvents, setOtherHighlightedEvents] = React.useState(undefined);
 
   const [slideshowImageIndex, setSlideshowImageIndex] = React.useState(0);
 
@@ -91,6 +92,25 @@ function HomePage() {
     );
   }
 
+  function handleEventClick(year: string, month: string, day: string, code: string, module: Module) {
+    window.location.href = (module === Module.TOWERS
+                          ? TOWERS_BASE_URL
+                          : "") + ROUTES["calendar-event"].path
+                          .replace(
+                            ":year",
+                            year,
+                          )
+                          .replace(
+                            ":month",
+                            month,
+                          )
+                          .replace(
+                            ":day",
+                            day,
+                          )
+                          .replace(":code", code);
+  }
+
   React.useEffect(() => {
     wpApiPostList(i18n.resolvedLanguage, wpPostsPage).then((response) => {
       if (response.status === 200) {
@@ -115,7 +135,7 @@ function HomePage() {
   }, [setWpPosts, wpPostsPage, setWpMediaById, i18n.resolvedLanguage]);
 
   React.useEffect(() => {
-    apiEventList(1, 1, undefined, undefined, undefined, undefined, undefined, [
+    apiEventList(1, 10, undefined, undefined, undefined, undefined, undefined, [
       EventType.GENERAL,
       EventType.TALK,
       EventType.GATHERING,
@@ -123,10 +143,25 @@ function HomePage() {
       EventType.PERFORMANCE,
     ]).then((response) => {
       if (response.status === 200 && response.data.results.length > 0) {
-        setHighlightedEvent(response.data.results[0]);
+        const paidEvent = response.data.results.find((event: any) => event.prices && event.prices.length > 0);
+        if (paidEvent != null){
+          setHighlightedEvent(paidEvent);
+          setOtherHighlightedEvents(response.data.results.filter((event: any) => event.id !== paidEvent.id).slice(0, 2));
+        }
+        else{
+          const signupEvent = response.data.results.find((event: any) => event.signups && event.signups.length > 0);
+          if (signupEvent != null){
+            setHighlightedEvent(signupEvent);
+            setOtherHighlightedEvents(response.data.results.filter((event: any) => event.id !== signupEvent.id).slice(0, 2));
+          }
+          else{
+            setHighlightedEvent(response.data.results[0]);
+            setOtherHighlightedEvents(response.data.results.slice(1, 3));
+          }
+        }
       }
     });
-  }, [setHighlightedEvent, i18n.resolvedLanguage]);
+  }, [setHighlightedEvent, setOtherHighlightedEvents, i18n.resolvedLanguage]);
 
   const hero = (
     <>
@@ -334,6 +369,97 @@ function HomePage() {
 
   const content = (
     <>
+      <Collapse in={otherHighligtedEvents} timeout="auto" unmountOnExit>
+        <Box component="section" className={styles.eventsGrid}>
+          <Container maxWidth="lg">
+            <Typography
+              variant="h4"
+              fontWeight="700"
+              className={styles.postsTitle}
+            >
+              {t("pages.home-events.title")}
+            </Typography>
+            {otherHighligtedEvents && (
+              <>
+                <Grid container spacing={4} className={styles.postsInnerGrid}>
+                  {otherHighligtedEvents &&
+                    otherHighligtedEvents.length > 0 &&
+                    otherHighligtedEvents.map((otherHighligtedEvent: any) => {
+                      return (
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <Card
+                            className={styles.postCard}
+                            elevation={0}
+                            onClick={() =>
+                              handleEventClick(
+                                otherHighligtedEvent.time_from.slice(0, 4),
+                                otherHighligtedEvent.time_from.slice(5, 7),
+                                otherHighligtedEvent.time_from.slice(8, 10),
+                                otherHighligtedEvent.code,
+                                otherHighligtedEvent.module,
+                              )
+                            }
+                          >
+                            <CardActionArea>
+                              {otherHighligtedEvent.picture ? (
+                                <CardMedia
+                                  component="img"
+                                  height="300"
+                                  image={otherHighligtedEvent.picture && BACKEND_BASE_URL + otherHighligtedEvent.picture.medium}
+                                />
+                              ) : undefined}
+                              <CardContent className={styles.postCardContent}>
+                                <Typography
+                                  gutterBottom
+                                  variant="h5"
+                                  fontWeight={700}
+                                  mb={1}
+                                  lineHeight={1.2}
+                                >
+                                  {otherHighligtedEvent.title}
+                                </Typography>
+                                <Typography gutterBottom variant="body2" mb={0}>
+                                  {datetimeToLongString(
+                                    i18n.resolvedLanguage,
+                                    otherHighligtedEvent.time_from,
+                                  )}
+                                </Typography>
+                                <Stack direction="column" spacing={1} mt={2} mb={1}>
+                                  <Link
+                                    onClick={() =>
+                              handleEventClick(
+                                otherHighligtedEvent.time_from.slice(0, 4),
+                                otherHighligtedEvent.time_from.slice(5, 7),
+                                otherHighligtedEvent.time_from.slice(8, 10),
+                                otherHighligtedEvent.code,
+                                otherHighligtedEvent.module,
+                              )
+                                    }
+                                    color="secondary"
+                                    underline="none"
+                                    className={styles.link}
+                                  >
+                                    <Typography
+                                      variant="body1"
+                                      component="span"
+                                    >
+                                      {t("pages.home-posts.link-more")}
+                                    </Typography>
+                                    <IconEast className={styles.iconEast} />
+                                  </Link>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        </Grid>
+                      );
+                    })}
+                </Grid>
+              </>
+            )}
+          </Container>
+        </Box>
+      </Collapse>
       <Collapse in={wpPosts} timeout="auto" unmountOnExit>
         <Box component="section" className={styles.postsGrid}>
           <Container maxWidth="lg">
