@@ -33,6 +33,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1G
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
       interval: 30s
@@ -58,7 +62,7 @@ services:
     env_file:
       - ./envs/local-org.env
   backend-towers:
-    image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-live}
     build:
       context: backend
       args:
@@ -89,6 +93,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1G
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
       interval: 30s
@@ -114,7 +122,7 @@ services:
     env_file:
       - ./envs/local-towers.env
   frontend-org:
-    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/frontend-org:${BUILD_TAG:-live}
     build:
       context: frontend-org
       dockerfile: Dockerfile-prod
@@ -147,6 +155,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
       interval: 60s
@@ -162,7 +174,7 @@ services:
       - target: 80
         protocol: tcp
   frontend-towers:
-    image: ghcr.io/castellersestocolm/frontend-towers:${BUILD_TAG:-dev}
+    image: ghcr.io/castellersestocolm/frontend-towers:${BUILD_TAG:-live}
     build:
       context: frontend-towers
       dockerfile: Dockerfile-prod
@@ -191,6 +203,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost"]
       interval: 60s
@@ -209,6 +225,10 @@ services:
     image: postgres:17.2
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 750M
     ports:
       - 5432:5432
     networks:
@@ -225,6 +245,10 @@ services:
     image: redis:7-alpine
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 750M
     volumes:
       - redis-data:/data
     ports:
@@ -235,6 +259,10 @@ services:
     image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 500M
     stdin_open: true
     tty: true
     entrypoint: [ "celery" ]
@@ -254,6 +282,10 @@ services:
     image: ghcr.io/castellersestocolm/backend:${BUILD_TAG:-dev}
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 250M
     entrypoint: [ "celery" ]
     command:
       [ "-A", "comunicat", "beat", "--pidfile=", "-s", "/data/celerybeat-schedule", "-l", "debug" ]
@@ -272,6 +304,10 @@ services:
       dockerfile: Dockerfile-prod
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 500M
     stdin_open: true
     tty: true
     restart: on-failure
@@ -291,6 +327,10 @@ services:
     build: php
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 500M
     stdin_open: true
     tty: true
     restart: on-failure
@@ -308,6 +348,10 @@ services:
     image: mysql:8.4.4
     deploy:
       replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
     ports:
       - 3306:3306
     networks:
@@ -336,6 +380,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 500M
     restart: on-failure
     ports:
       - target: 8080
