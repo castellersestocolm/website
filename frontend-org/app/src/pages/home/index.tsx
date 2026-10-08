@@ -56,7 +56,8 @@ function HomePage() {
   const [wpMediaById, setWpMediaById] = React.useState<any>({});
 
   const [highligtedEvent, setHighlightedEvent] = React.useState(undefined);
-  const [otherHighligtedEvents, setOtherHighlightedEvents] = React.useState(undefined);
+  const [otherHighligtedEvents, setOtherHighlightedEvents] =
+    React.useState(undefined);
 
   const [slideshowImageIndex, setSlideshowImageIndex] = React.useState(0);
 
@@ -92,23 +93,20 @@ function HomePage() {
     );
   }
 
-  function handleEventClick(year: string, month: string, day: string, code: string, module: Module) {
-    window.location.href = (module === Module.TOWERS
-                          ? TOWERS_BASE_URL
-                          : "") + ROUTES["calendar-event"].path
-                          .replace(
-                            ":year",
-                            year,
-                          )
-                          .replace(
-                            ":month",
-                            month,
-                          )
-                          .replace(
-                            ":day",
-                            day,
-                          )
-                          .replace(":code", code);
+  function handleEventClick(
+    year: string,
+    month: string,
+    day: string,
+    code: string,
+    module: Module,
+  ) {
+    window.location.href =
+      (module === Module.TOWERS ? TOWERS_BASE_URL : "") +
+      ROUTES["calendar-event"].path
+        .replace(":year", year)
+        .replace(":month", month)
+        .replace(":day", day)
+        .replace(":code", code);
   }
 
   React.useEffect(() => {
@@ -143,18 +141,28 @@ function HomePage() {
       EventType.PERFORMANCE,
     ]).then((response) => {
       if (response.status === 200 && response.data.results.length > 0) {
-        const paidEvent = response.data.results.find((event: any) => event.prices && event.prices.length > 0);
-        if (paidEvent != null){
+        const paidEvent = response.data.results.find(
+          (event: any) => event.prices && event.prices.length > 0,
+        );
+        if (paidEvent != null) {
           setHighlightedEvent(paidEvent);
-          setOtherHighlightedEvents(response.data.results.filter((event: any) => event.id !== paidEvent.id).slice(0, 2));
-        }
-        else{
-          const signupEvent = response.data.results.find((event: any) => event.signups && event.signups.length > 0);
-          if (signupEvent != null){
+          setOtherHighlightedEvents(
+            response.data.results
+              .filter((event: any) => event.id !== paidEvent.id)
+              .slice(0, 2),
+          );
+        } else {
+          const signupEvent = response.data.results.find(
+            (event: any) => event.signups && event.signups.length > 0,
+          );
+          if (signupEvent != null) {
             setHighlightedEvent(signupEvent);
-            setOtherHighlightedEvents(response.data.results.filter((event: any) => event.id !== signupEvent.id).slice(0, 2));
-          }
-          else{
+            setOtherHighlightedEvents(
+              response.data.results
+                .filter((event: any) => event.id !== signupEvent.id)
+                .slice(0, 2),
+            );
+          } else {
             setHighlightedEvent(response.data.results[0]);
             setOtherHighlightedEvents(response.data.results.slice(1, 3));
           }
@@ -405,7 +413,11 @@ function HomePage() {
                                 <CardMedia
                                   component="img"
                                   height="300"
-                                  image={otherHighligtedEvent.picture && BACKEND_BASE_URL + otherHighligtedEvent.picture.medium}
+                                  image={
+                                    otherHighligtedEvent.picture &&
+                                    BACKEND_BASE_URL +
+                                      otherHighligtedEvent.picture.medium
+                                  }
                                 />
                               ) : undefined}
                               <CardContent className={styles.postCardContent}>
@@ -424,16 +436,30 @@ function HomePage() {
                                     otherHighligtedEvent.time_from,
                                   )}
                                 </Typography>
-                                <Stack direction="column" spacing={1} mt={2} mb={1}>
+                                <Stack
+                                  direction="column"
+                                  spacing={1}
+                                  mt={2}
+                                  mb={1}
+                                >
                                   <Link
                                     onClick={() =>
-                              handleEventClick(
-                                otherHighligtedEvent.time_from.slice(0, 4),
-                                otherHighligtedEvent.time_from.slice(5, 7),
-                                otherHighligtedEvent.time_from.slice(8, 10),
-                                otherHighligtedEvent.code,
-                                otherHighligtedEvent.module,
-                              )
+                                      handleEventClick(
+                                        otherHighligtedEvent.time_from.slice(
+                                          0,
+                                          4,
+                                        ),
+                                        otherHighligtedEvent.time_from.slice(
+                                          5,
+                                          7,
+                                        ),
+                                        otherHighligtedEvent.time_from.slice(
+                                          8,
+                                          10,
+                                        ),
+                                        otherHighligtedEvent.code,
+                                        otherHighligtedEvent.module,
+                                      )
                                     }
                                     color="secondary"
                                     underline="none"
