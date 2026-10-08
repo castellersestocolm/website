@@ -541,8 +541,43 @@ class EventSerializer(EventSlimSerializer):
         return getattr(obj, "has_token", False)
 
 
+class EventSeriesSlimSerializer(s.ModelSerializer):
+    title = s.SerializerMethodField(read_only=True)
+    description = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = EventSeries
+        fields = (
+            "id",
+            "title",
+            "description",
+            "code",
+            "type",
+            "module",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "description",
+            "code",
+            "type",
+            "module",
+            "created_at",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_title(self, obj):
+        return obj.title.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
+
+
 class EventWithRegistrationsSerializer(EventSerializer):
     registrations = RegistrationWithAmountSerializer(many=True, read_only=True)
+    series = EventSeriesSlimSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -569,6 +604,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "google_event",
             "google_album",
             "has_token",
+            "series",
             "created_at",
         )
         read_only_fields = (
@@ -594,6 +630,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "google_event",
             "google_album",
             "has_token",
+            "series",
             "created_at",
         )
 
@@ -820,9 +857,7 @@ class DestroyRegistrationSerializer(s.Serializer):
     token = s.CharField(required=False)
 
 
-class EventSeriesSerializer(s.ModelSerializer):
-    title = s.SerializerMethodField(read_only=True)
-    description = s.SerializerMethodField(read_only=True)
+class EventSeriesSerializer(EventSeriesSlimSerializer):
     events = EventSlimSerializer(read_only=True, many=True)
 
     class Meta:
@@ -847,11 +882,3 @@ class EventSeriesSerializer(s.ModelSerializer):
             "events",
             "created_at",
         )
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_title(self, obj):
-        return obj.title.get(translation.get_language())
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_description(self, obj):
-        return obj.description.get(translation.get_language())

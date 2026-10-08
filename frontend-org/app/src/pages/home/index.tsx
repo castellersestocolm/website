@@ -99,14 +99,23 @@ function HomePage() {
     day: string,
     code: string,
     module: Module,
+    seriesCode: string,
   ) {
-    window.location.href =
-      (module === Module.TOWERS ? TOWERS_BASE_URL : "") +
-      ROUTES["calendar-event"].path
-        .replace(":year", year)
-        .replace(":month", month)
-        .replace(":day", day)
-        .replace(":code", code);
+    if (seriesCode === "sopars") {
+      navigate(ROUTES["activity-dinners"].path);
+    }
+    else if (seriesCode === "dinars") {
+      navigate(ROUTES["activity-lunches"].path);
+    }
+    else {
+      window.location.href =
+          (module === Module.TOWERS ? TOWERS_BASE_URL : "") +
+          ROUTES["calendar-event"].path
+              .replace(":year", year)
+              .replace(":month", month)
+              .replace(":day", day)
+              .replace(":code", code);
+    }
   }
 
   React.useEffect(() => {
@@ -405,6 +414,7 @@ function HomePage() {
                                 otherHighligtedEvent.time_from.slice(8, 10),
                                 otherHighligtedEvent.code,
                                 otherHighligtedEvent.module,
+                                otherHighligtedEvent.series && otherHighligtedEvent.series.code,
                               )
                             }
                           >
@@ -459,6 +469,7 @@ function HomePage() {
                                         ),
                                         otherHighligtedEvent.code,
                                         otherHighligtedEvent.module,
+                                        otherHighligtedEvent.series && otherHighligtedEvent.series.code,
                                       )
                                     }
                                     color="secondary"
@@ -469,7 +480,7 @@ function HomePage() {
                                       variant="body1"
                                       component="span"
                                     >
-                                      {t("pages.home-posts.link-more")}
+                                      {t("pages.home-highlight.button-info")}
                                     </Typography>
                                     <IconEast className={styles.iconEast} />
                                   </Link>
