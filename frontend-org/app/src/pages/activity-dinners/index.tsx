@@ -13,7 +13,6 @@ import {
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
-import { useAppContext } from "../../components/AppContext/AppContext";
 import ImageHeroDinners from "../../assets/images/heros/dinners.jpg";
 import styles from "./styles.module.css";
 import { useState } from "react";
