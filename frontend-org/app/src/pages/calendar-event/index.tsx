@@ -177,7 +177,11 @@ function CalendarEventPage() {
                         <ListItem className={styles.calendarEventListItem}>
                           <ListItemText
                             primary={
-                              <Typography variant="body1" fontWeight={700}>
+                              <Typography
+                                variant="body1"
+                                fontWeight={700}
+                                align="center"
+                              >
                                 {new Date(
                                   agendaItem.time_from,
                                 ).toLocaleTimeString(i18n.resolvedLanguage, {
@@ -190,7 +194,11 @@ function CalendarEventPage() {
                               </Typography>
                             }
                             secondary={
-                              <Typography variant="body2" component="div">
+                              <Typography
+                                variant="body2"
+                                component="div"
+                                align="center"
+                              >
                                 <div
                                   dangerouslySetInnerHTML={{
                                     __html: markdown(
@@ -307,7 +315,7 @@ function CalendarEventPage() {
                   </>
                 )
               ) : (
-                <Typography variant="body2">
+                <Typography variant="body2" align="center">
                   {t("pages.calendar-event.register-closed")}
                 </Typography>
               )}
