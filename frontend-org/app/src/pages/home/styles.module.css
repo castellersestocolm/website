@@ -101,6 +101,13 @@
   align-items: center;
 }
 
+.eventsGrid {
+  display: flex;
+  flex-basis: 0;
+  align-items: center;
+  padding-bottom: 32px;
+}
+
 .postsInnerGrid {
   margin-bottom: 32px;
 }
