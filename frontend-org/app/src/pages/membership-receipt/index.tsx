@@ -70,7 +70,9 @@ function MembershipReceiptPage() {
     <>
       <Grid container spacing={4} className={styles.orderGrid}>
         <Typography variant="body1" textAlign="center">
-          {t("pages.membership-receipt.membership.message-processing")}
+          {order.status === OrderStatus.COMPLETED
+            ? t("pages.membership-receipt.membership.message-completed")
+            : t("pages.membership-receipt.membership.message-processing")}
         </Typography>
       </Grid>
       {order && order.logs && (

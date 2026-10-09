@@ -66,7 +66,9 @@ function RequestReceiptPage() {
     <>
       <Grid container spacing={4} className={styles.orderGrid}>
         <Typography variant="body1" textAlign="center">
-          {t("pages.request-receipt.course.message-processing")}
+          {order.status === OrderStatus.COMPLETED
+            ? t("pages.request-receipt.request.message-completed")
+            : t("pages.request-receipt.request.message-processing")}
         </Typography>
       </Grid>
       {order && order.logs && (
