@@ -66,7 +66,7 @@ function CourseReceiptPage() {
     <>
       <Grid container spacing={4} className={styles.orderGrid}>
         <Typography variant="body1" textAlign="center">
-          {order.status === OrderStatus.COMPLETED
+          {order && order.status === OrderStatus.COMPLETED
             ? t("pages.course-receipt.course.message-completed")
             : t("pages.course-receipt.course.message-processing")}
         </Typography>
