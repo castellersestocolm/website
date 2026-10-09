@@ -354,6 +354,7 @@ def create_or_update_event(  # noqa: C901
                 ),
             )
             .with_title()
+            .with_description()
             .first()
         )
 
@@ -466,7 +467,12 @@ def create_or_update_event(  # noqa: C901
                         "timeZone": settings.TIME_ZONE,
                     },
                     "description": "\n\n".join(
-                        [
+                        (
+                            [event_obj.description_locale]
+                            if event_obj.description_locale
+                            else []
+                        )
+                        + [
                             f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}</b>\n{agenda_item_obj.description_locale}"
                             for agenda_item_obj in event_obj.agenda_items.all()
                         ]
