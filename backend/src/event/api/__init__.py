@@ -161,7 +161,9 @@ def get_list(  # noqa: C901
                 (
                     EventSignup.objects.with_is_open(
                         is_open=event_data.get("signup_is_open")
-                    ).order_by("module", "time_from", "time_to")
+                    )
+                    .with_is_full(is_full=event_data.get("signup_is_full"))
+                    .order_by("module", "time_from", "time_to")
                 ),
             ),
             Prefetch(
@@ -517,13 +519,18 @@ def get_event_price(entity_id: UUID, event_id: UUID) -> EventPrice | None:
 
 
 def get_event_registration_token(
-    event_id: UUID, signup_is_open: bool | None = None
+    event_id: UUID,
+    signup_is_open: bool | None = None,
+    signup_is_full: bool | None = None,
 ) -> str:
     return signing.dumps(
         {
             "event_id": str(event_id),
             **(
                 {"signup_is_open": signup_is_open} if signup_is_open is not None else {}
+            ),
+            **(
+                {"signup_is_full": signup_is_full} if signup_is_full is not None else {}
             ),
         },
         salt="events-registration",

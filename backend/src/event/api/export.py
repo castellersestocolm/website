@@ -15,6 +15,7 @@ from event.utils.event_question import get_event_question_answer
 
 
 def export_event(event_id: UUID) -> BytesIO:
+    # TODO: Use the real paid amount here for registrations
     event_obj = (
         Event.objects.filter(id=event_id)
         .prefetch_related(

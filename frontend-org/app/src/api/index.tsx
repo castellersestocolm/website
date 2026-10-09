@@ -994,11 +994,14 @@ export const apiAdminEventGet = async (eventId: string) => {
 export const apiAdminEventTokenGet = async (
   eventId: string,
   signupIsOpen: boolean = undefined,
+  signupIsFull: boolean = undefined,
 ) => {
   try {
     return await instance.get("/admin/event/" + eventId + "/token/", {
       params: {
-        ...(signupIsOpen !== undefined ? { signup_is_open: signupIsOpen } : {}),
+        ...(signupIsOpen !== undefined
+          ? { signup_is_open: signupIsOpen, signup_is_full: signupIsFull }
+          : {}),
       },
     });
   } catch (error) {
