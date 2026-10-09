@@ -66,7 +66,9 @@ function CalendarEventReceiptPage() {
     <>
       <Grid container spacing={4} className={styles.orderGrid}>
         <Typography variant="body1" textAlign="center">
-          {t("pages.course-receipt.course.message-processing")}
+          {order.status === OrderStatus.COMPLETED
+            ? t("pages.calendar-event-receipt.event.message-completed")
+            : t("pages.calendar-event-receipt.event.message-processing")}
         </Typography>
       </Grid>
       {order && order.logs && (
