@@ -2,7 +2,7 @@
 {% load i18n comunicat_tags %}
 
 {% block email_body %}
-    <p>{% trans "Your membership has been paid! You will find a summary right below." %}</p>
+    <p>{% trans "Your membership has been paid. You can now also add your member card to your Google or Apple Wallet." %}</p>
     {% if membership_obj.all_membership_users %}
         <p>{% trans "The following members are included in your membership." %}</p>
         <ul>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-02 19:43+0200\n"
+"POT-Creation-Date: 2026-10-09 14:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,36 +21,36 @@ msgstr ""
 #: activity/admin.py:56 activity/admin.py:150 data/admin.py:38 data/admin.py:69
 #: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
 #: notify/admin.py:272 order/admin.py:589 payment/admin.py:681
-#: payment/admin.py:1135 product/admin.py:110
+#: payment/admin.py:1152 product/admin.py:110
 msgid "name"
 msgstr "nom"
 
-#: activity/admin.py:125 event/admin.py:373 event/admin.py:396
+#: activity/admin.py:125 event/admin.py:379 event/admin.py:402
 #: history/admin.py:31 media/admin.py:35
 msgid "title"
 msgstr "títol"
 
-#: activity/api/export.py:60 event/api/export.py:44
+#: activity/api/export.py:60 event/api/export.py:45
 msgid "Registrations"
 msgstr "Inscripcions"
 
 #: activity/api/export.py:64 comunicat/templates/pdf/org/registration.html:77
-#: comunicat/templates/pdf/towers/registration.html:77 event/api/export.py:48
+#: comunicat/templates/pdf/towers/registration.html:77 event/api/export.py:49
 #: membership/api/export.py:51
 msgid "First name"
 msgstr "Nom"
 
 #: activity/api/export.py:65 comunicat/templates/pdf/org/registration.html:80
-#: comunicat/templates/pdf/towers/registration.html:80 event/api/export.py:49
+#: comunicat/templates/pdf/towers/registration.html:80 event/api/export.py:50
 #: membership/api/export.py:52
 msgid "Last name"
 msgstr "Cognom"
 
-#: activity/api/export.py:66 event/api/export.py:50
+#: activity/api/export.py:66 event/api/export.py:51
 msgid "Age"
 msgstr "Edat"
 
-#: activity/api/export.py:67 event/api/export.py:51 membership/api/export.py:55
+#: activity/api/export.py:67 event/api/export.py:52 membership/api/export.py:55
 msgid "Family"
 msgstr "Família"
 
@@ -68,12 +68,12 @@ msgstr "Telèfons"
 
 #: activity/api/export.py:71 comunicat/templates/pdf/org/registration.html:86
 #: comunicat/templates/pdf/towers/order.html:86
-#: comunicat/templates/pdf/towers/registration.html:86 event/api/export.py:54
+#: comunicat/templates/pdf/towers/registration.html:86 event/api/export.py:55
 #: membership/api/export.py:59
 msgid "Status"
 msgstr "Estat"
 
-#: activity/api/export.py:72 event/api/export.py:55 membership/api/export.py:60
+#: activity/api/export.py:72 event/api/export.py:56 membership/api/export.py:60
 msgid "Price"
 msgstr "Preu"
 
@@ -101,7 +101,7 @@ msgstr "Esplai"
 msgid "Teaching"
 msgstr "Ensenyament"
 
-#: activity/enums.py:28 event/enums.py:42 membership/enums.py:14
+#: activity/enums.py:28 event/enums.py:43 membership/enums.py:14
 #: order/enums.py:17
 msgid "Requested"
 msgstr "Sol·licitat"
@@ -110,7 +110,7 @@ msgstr "Sol·licitat"
 msgid "Processing"
 msgstr "Processant"
 
-#: activity/enums.py:30 event/enums.py:43 membership/enums.py:16
+#: activity/enums.py:30 event/enums.py:44 membership/enums.py:16
 msgid "Active"
 msgstr "Actiu"
 
@@ -118,7 +118,7 @@ msgstr "Actiu"
 msgid "Expired"
 msgstr "Caducat"
 
-#: activity/enums.py:32 event/enums.py:44 order/enums.py:20
+#: activity/enums.py:32 event/enums.py:45 order/enums.py:20
 msgid "Cancelled"
 msgstr "Cancel·lat"
 
@@ -134,20 +134,20 @@ msgstr "actualitzat"
 msgid "The entity is required for non-logged in users."
 msgstr ""
 
-#: comunicat/rest/serializers/event.py:689
+#: comunicat/rest/serializers/event.py:741
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The entity must be provided if no user or entity is given."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: comunicat/rest/serializers/event.py:793
-#: comunicat/rest/serializers/event.py:796
+#: comunicat/rest/serializers/event.py:845
+#: comunicat/rest/serializers/event.py:848
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The date and code must be provided if no token is given."
 msgstr "L'hora de fi ha de ser més gran que l'hora d'inici."
 
-#: comunicat/rest/serializers/event.py:812
+#: comunicat/rest/serializers/event.py:864
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The code must be provided if no token is given."
@@ -244,7 +244,7 @@ msgstr "Assaig de músics"
 msgid "The amount of children you entered is incorrect."
 msgstr "El nombre de nens que has introduït és incorrecte."
 
-#: comunicat/template_tags/comunicat_tags.py:381
+#: comunicat/template_tags/comunicat_tags.py:391
 #: comunicat/templates/email/org/membership/check.html:8
 #: comunicat/templates/email/org/membership/check.html:10
 #: comunicat/templates/email/org/membership/check.html:12
@@ -356,7 +356,7 @@ msgstr "per"
 
 #: comunicat/templates/email/org/contact/message.html:22
 #: comunicat/templates/email/towers/contact/message.html:22
-#: event/api/export.py:52 membership/api/export.py:53
+#: event/api/export.py:53 membership/api/export.py:53
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -555,8 +555,11 @@ msgstr ""
 
 #: comunicat/templates/email/org/membership/paid.html:5
 #: comunicat/templates/email/towers/membership/paid.html:5
-msgid "Your membership has been paid! You will find a summary right below."
-msgstr "La teva quota s'ha pagat! En trobaràs un resum a continuació."
+msgid ""
+"Your membership has been paid. You can now also add your member card to your "
+"Google or Apple Wallet."
+msgstr "La teva quota s'ha pagat. Ara també pots afegir la teva targeta de "
+" membre a la teva cartera de Google o Apple."
 
 #: comunicat/templates/email/org/membership/renew.html:5
 #: comunicat/templates/email/towers/membership/renew.html:5
@@ -642,8 +645,18 @@ msgstr "Hem rebut el teu pagament! En trobaràs un resum a continuació."
 
 #: comunicat/templates/email/org/registration/paid.html:5
 #: comunicat/templates/email/towers/registration/paid.html:5
-msgid "Your registration has been paid! You will find a summary right below."
-msgstr "La teva inscripció s'ha pagat! En trobaràs un resum a continuació."
+msgid "Your registration has been paid. Save this email and"
+msgstr "La teva inscripció s'ha pagat. Desa aquest correu electrònic i"
+
+#: comunicat/templates/email/org/registration/paid.html:5
+#: comunicat/templates/email/towers/registration/paid.html:5
+msgid "bring the QR code you will find below to the event"
+msgstr "porta el codi QR que trobaràs a continuació a l'esdeveniment"
+
+#: comunicat/templates/email/org/registration/paid.html:5
+#: comunicat/templates/email/towers/registration/paid.html:5
+msgid "you can also save it on your Google or Apple Wallet."
+msgstr "també el pots desar a la teva cartera de Google o Apple."
 
 #: comunicat/templates/email/org/registration/paid.html:34
 #: comunicat/templates/email/towers/registration/paid.html:34
@@ -925,7 +938,7 @@ msgid "Yes"
 msgstr ""
 
 #: comunicat/templates/pdf/org/registration.html:83
-#: comunicat/templates/pdf/towers/registration.html:83 event/api/export.py:53
+#: comunicat/templates/pdf/towers/registration.html:83 event/api/export.py:54
 #: membership/api/export.py:54 payment/consts.py:47
 msgid "Phone"
 msgstr "Telèfon"
@@ -956,26 +969,32 @@ msgstr ""
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:374 order/admin.py:590 payment/admin.py:1136
+#: event/admin.py:380 order/admin.py:590 payment/admin.py:1153
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
 msgid "accounts"
 msgstr "Quantitat"
 
-#: event/admin.py:567
+#: event/admin.py:573
 msgid "time from"
 msgstr ""
 
-#: event/consts.py:51
+#: event/consts.py:52
 msgid "Choices"
 msgstr ""
 
-#: event/enums.py:45
+#: event/enums.py:46
 #, fuzzy
 #| msgid "active"
 msgid "Tentative"
 msgstr "actiu"
+
+#: event/enums.py:47
+#, fuzzy
+#| msgid "Attendance"
+msgid "Attended"
+msgstr "Assistència"
 
 #: event/models.py:112 event/models.py:113
 msgid "event series"
@@ -1025,7 +1044,7 @@ msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:438 payment/models.py:320
+#: event/models.py:438 payment/models.py:334
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
@@ -1037,15 +1056,15 @@ msgstr ""
 msgid "No"
 msgstr "No"
 
-#: integration/api/google/wallet.py:204
+#: integration/api/google/wallet.py:206
 msgid "EXPIRED"
 msgstr "CADUCAT"
 
-#: integration/api/google/wallet.py:456
+#: integration/api/google/wallet.py:463
 msgid "CANCELLED"
 msgstr "CANCEL·LAT"
 
-#: integration/api/google/wallet.py:456
+#: integration/api/google/wallet.py:467
 msgid "UNPAID"
 msgstr "NO PAGAT"
 
@@ -1069,7 +1088,7 @@ msgstr ""
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:116 user/admin.py:324 user/models.py:225
+#: membership/admin.py:116 user/admin.py:324 user/models.py:236
 msgid "family"
 msgstr "família"
 
@@ -1221,7 +1240,7 @@ msgid "The Google group is mandatory for Google newsletters."
 msgstr ""
 
 #: order/admin.py:129 order/admin.py:223 order/admin.py:277
-#: payment/admin.py:468 payment/models.py:271 user/admin.py:323
+#: payment/admin.py:468 payment/models.py:285 user/admin.py:323
 msgid "entity"
 msgstr "entitat"
 
@@ -1306,7 +1325,7 @@ msgid "date"
 msgstr "data"
 
 #: payment/admin.py:365 payment/admin.py:470 payment/admin.py:678
-#: payment/admin.py:838
+#: payment/admin.py:855
 msgid "balance"
 msgstr "saldo"
 
@@ -1320,22 +1339,22 @@ msgstr "Quantitat"
 msgid "trend"
 msgstr ""
 
-#: payment/admin.py:679 payment/admin.py:680 payment/admin.py:839
-#: payment/admin.py:840
+#: payment/admin.py:679 payment/admin.py:680 payment/admin.py:856
+#: payment/admin.py:857
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:837
+#: payment/admin.py:854
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:918
+#: payment/admin.py:935
 msgid "diff."
 msgstr ""
 
-#: payment/admin.py:974
+#: payment/admin.py:991
 msgid "file"
 msgstr "fitxer"
 
@@ -1411,41 +1430,41 @@ msgstr "Despesa"
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:200
+#: payment/models.py:214
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: payment/models.py:272
+#: payment/models.py:286
 #, fuzzy
 #| msgid "entity"
 msgid "entities"
 msgstr "entitat"
 
-#: payment/models.py:288
+#: payment/models.py:302
 #, fuzzy
 #| msgid "entity"
 msgid "entity alias"
 msgstr "entitat"
 
-#: payment/models.py:289
+#: payment/models.py:303
 #, fuzzy
 #| msgid "entity"
 msgid "entity aliases"
 msgstr "entitat"
 
-#: payment/models.py:336
+#: payment/models.py:350
 msgid "entity payment method"
 msgstr ""
 
-#: payment/models.py:337
+#: payment/models.py:351
 msgid "entity payment methods"
 msgstr ""
 
-#: payment/models.py:573
+#: payment/models.py:595
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:666 payment/models.py:667
+#: payment/models.py:688 payment/models.py:689
 #, fuzzy
 #| msgid "delivery"
 msgid "payment provider accounts"
@@ -1507,15 +1526,19 @@ msgstr "personal"
 msgid "active"
 msgstr "actiu"
 
-#: user/models.py:195
+#: user/models.py:206
 #, fuzzy, python-format
 #| msgid "Category must be set for accounts with parent."
 msgid "Order must be set for source %s."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: user/models.py:226
+#: user/models.py:237
 msgid "families"
 msgstr "famílies"
+
+#~ msgid ""
+#~ "Your registration has been paid! You will find a summary right below."
+#~ msgstr "La teva inscripció s'ha pagat! En trobaràs un resum a continuació."
 
 #~ msgid "Your payment request has been processed"
 #~ msgstr "El vostre pagament s'ha processat"
