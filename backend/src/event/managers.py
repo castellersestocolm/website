@@ -209,17 +209,57 @@ class EventSeriesQuerySet(QuerySet):
 
 
 class EventSignupQuerySet(QuerySet):
+    # TODO: Add counts by module according to membership
+    def with_registration_count(self):
+        Registration = apps.get_model("event", "Registration")
+
+        return self.annotate(
+            registration_count=Coalesce(
+                Subquery(
+                    Registration.objects.filter(
+                        event_id=OuterRef("event_id"),
+                        status__in=(
+                            RegistrationStatus.ACTIVE,
+                            RegistrationStatus.ATTENDED,
+                        ),
+                    )
+                    .values("event_id")
+                    .annotate(count=Count("id"))
+                    .values("count")[:1],
+                ),
+                Value(0),
+                output_field=IntegerField(),
+            )
+        )
+
     # TODO: Account for registration limits and also event in the past
-    def with_is_open(self, is_open: bool = False):
+    def with_is_open(self, is_open: bool | None = None):
         time_now = timezone.now()
 
         return self.annotate(
             is_open=(
                 Value(is_open)
-                if is_open
+                if is_open is not None
                 else ExpressionWrapper(
                     Q(Q(time_from__isnull=True) | Q(time_from__lte=time_now))
                     & Q(Q(time_to__isnull=True) | Q(time_to__gte=time_now)),
+                    output_field=BooleanField(),
+                )
+            ),
+        )
+
+    # TODO: Account for registration limits by module
+    def with_is_full(self, is_full: bool | None = None):
+        return self.with_registration_count().annotate(
+            is_full=(
+                Value(is_full)
+                if is_full is not None
+                else ExpressionWrapper(
+                    Q(
+                        event__max_registrations__isnull=False,
+                        event__max_registrations__gt=0,
+                        registration_count__gte=F("event__max_registrations"),
+                    ),
                     output_field=BooleanField(),
                 )
             ),

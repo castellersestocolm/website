@@ -17,7 +17,7 @@ function AdminEventTokenPage() {
 
   React.useEffect(() => {
     if (id) {
-      apiAdminEventTokenGet(id, true).then((response) => {
+      apiAdminEventTokenGet(id, true, false).then((response) => {
         if (response.status === 200) {
           setToken(response.data);
         }

@@ -21,7 +21,9 @@ class TestEventRegistrationToken(NumOperationsMixin, TestCase):
         self.assertIsNotNone(token)
 
         with self.assertNumOperations(num=0):
-            token = get_event_registration_token(event_id=event_id, signup_is_open=True)
+            token = get_event_registration_token(
+                event_id=event_id, signup_is_open=True, signup_is_full=False
+            )
 
         self.assertIsNotNone(token)
 
@@ -36,8 +38,11 @@ class TestEventRegistrationToken(NumOperationsMixin, TestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data["event_id"], str(event_id))
         self.assertNotIn("signup_is_open", data)
+        self.assertNotIn("signup_is_full", data)
 
-        token = get_event_registration_token(event_id=event_id, signup_is_open=True)
+        token = get_event_registration_token(
+            event_id=event_id, signup_is_open=True, signup_is_full=False
+        )
 
         with self.assertNumOperations(num=0):
             data = get_event_data_by_event_registration_token(token=token)
@@ -45,3 +50,4 @@ class TestEventRegistrationToken(NumOperationsMixin, TestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data["event_id"], str(event_id))
         self.assertEqual(data["signup_is_open"], True)
+        self.assertEqual(data["signup_is_full"], False)

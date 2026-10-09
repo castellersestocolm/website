@@ -253,62 +253,71 @@ function CalendarEventPage() {
                 ) : (
                   <>
                     <Typography variant="body1" align="center" mb={1}>
-                      {eventSignup.time_from && eventSignup.time_to
-                        ? t("pages.calendar-event.register-opening-dates-1") +
-                          " " +
-                          datetimeToLongString(
-                            i18n.resolvedLanguage,
-                            new Date(eventSignup.time_from),
-                          ) +
-                          " " +
-                          t("pages.calendar-event.register-opening-dates-2") +
-                          " " +
-                          datetimeToLongString(
-                            i18n.resolvedLanguage,
-                            new Date(eventSignup.time_to),
-                          ) +
-                          "."
-                        : eventSignup.time_from
-                          ? t(
-                              "pages.calendar-event.register-opening-future-1",
-                            ) +
+                      {eventSignup.is_full
+                        ? t("pages.calendar-event.register-closed-full")
+                        : eventSignup.time_from && eventSignup.time_to
+                          ? t("pages.calendar-event.register-opening-dates-1") +
                             " " +
                             datetimeToLongString(
                               i18n.resolvedLanguage,
                               new Date(eventSignup.time_from),
                             ) +
+                            " " +
+                            t("pages.calendar-event.register-opening-dates-2") +
+                            " " +
+                            datetimeToLongString(
+                              i18n.resolvedLanguage,
+                              new Date(eventSignup.time_to),
+                            ) +
                             "."
-                          : eventSignup.time_to
+                          : eventSignup.time_from
                             ? t(
-                                "pages.calendar-event.register-opening-past-1",
+                                "pages.calendar-event.register-opening-future-1",
                               ) +
                               " " +
                               datetimeToLongString(
                                 i18n.resolvedLanguage,
-                                new Date(eventSignup.time_to),
+                                new Date(eventSignup.time_from),
                               ) +
                               "."
-                            : t("pages.calendar-event.register-closed")}{" "}
-                      {t("pages.calendar-event.register-opening-login")}
+                            : eventSignup.time_to
+                              ? t(
+                                  "pages.calendar-event.register-opening-past-1",
+                                ) +
+                                " " +
+                                datetimeToLongString(
+                                  i18n.resolvedLanguage,
+                                  new Date(eventSignup.time_to),
+                                ) +
+                                "."
+                              : t("pages.calendar-event.register-closed")}{" "}
+                      {!eventSignup.is_full &&
+                        t("pages.calendar-event.register-opening-login")}
                     </Typography>
                     <Typography variant="body1" align="center">
                       <Link
                         color="secondary"
                         underline="none"
                         href={
-                          user
-                            ? ROUTES.membership.path
-                            : ROUTES["user-login"].path
+                          eventSignup.is_full
+                            ? ROUTES["about-contact"].path
+                            : user
+                              ? ROUTES.membership.path
+                              : ROUTES["user-login"].path
                         }
                         className={styles.link}
                       >
-                        {user
+                        {eventSignup.is_full
                           ? t(
-                              "pages.calendar-event.register-opening-login.text-login-membership",
+                              "pages.calendar-event.register-opening-login.text-contact",
                             )
-                          : t(
-                              "pages.activity-kids.content.section-register.text-login-link",
-                            )}
+                          : user
+                            ? t(
+                                "pages.calendar-event.register-opening-login.text-login-membership",
+                              )
+                            : t(
+                                "pages.activity-kids.content.section-register.text-login-link",
+                              )}
                         <IconEast className={styles.iconEast} />
                       </Link>
                     </Typography>

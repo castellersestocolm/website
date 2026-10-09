@@ -284,6 +284,7 @@ class AdminEventSerializer(s.ModelSerializer):
 
 class AdminEventTokenRequestSerializer(s.Serializer):
     signup_is_open = s.BooleanField(required=False)
+    signup_is_full = s.BooleanField(required=False)
 
 
 class AdminEventTokenSerializer(s.Serializer):

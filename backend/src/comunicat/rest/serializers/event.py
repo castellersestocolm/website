@@ -319,6 +319,7 @@ class EventModuleSerializer(s.ModelSerializer):
 
 class EventSignupSerializer(s.ModelSerializer):
     is_open = s.SerializerMethodField(read_only=True)
+    is_full = s.SerializerMethodField(read_only=True)
 
     class Meta:
         model = EventSignup
@@ -328,6 +329,7 @@ class EventSignupSerializer(s.ModelSerializer):
             "time_from",
             "time_to",
             "is_open",
+            "is_full",
         )
         read_only_fields = (
             "id",
@@ -335,10 +337,14 @@ class EventSignupSerializer(s.ModelSerializer):
             "time_from",
             "time_to",
             "is_open",
+            "is_full",
         )
 
     @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
     def get_is_open(self, obj):
+        if hasattr(obj, "is_full") and obj.is_full:
+            return False
+
         # TODO: Add check for registrations limit here too
         # TODO: Perhaps also regarding user membership
         if hasattr(obj, "is_open"):
@@ -347,6 +353,15 @@ class EventSignupSerializer(s.ModelSerializer):
         return (not obj.time_from or timezone.localtime() >= obj.time_from) and (
             not obj.time_to or timezone.localtime() < obj.time_to
         )
+
+    @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
+    def get_is_full(self, obj):
+        # TODO: Add check for registrations limit here too
+        # TODO: Perhaps also regarding user membership
+        if hasattr(obj, "is_full"):
+            return obj.is_full
+
+        return False
 
 
 class EventQuestionSerializer(s.ModelSerializer):

@@ -9,7 +9,7 @@ from django.db.models import JSONField, Prefetch, Q
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.urls import path, reverse
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
@@ -18,7 +18,7 @@ from weasyprint import HTML
 import event.tasks
 import notify.tasks
 from activity.models import ProgramCourse
-from comunicat.consts import TEMPLATE_PDF_BY_MODULE
+from comunicat.consts import LOCALE_BY_MODULE, TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import FIELD_LOCALE, beautify_dict
 from event.api.export import export_event
@@ -322,32 +322,38 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
         response["Content-Disposition"] = f"attachment; filename=Event_{object_id}.pdf"
         response["Content-Transfer-Encoding"] = "binary"
 
-        event_obj = (
-            Event.objects.filter(id=object_id)
-            .prefetch_related(
-                Prefetch(
-                    "registrations",
-                    Registration.objects.select_related("entity", "entity__user")
-                    .with_amount()
-                    .order_by(
-                        "status", "entity__lastname", "entity__firstname", "-created_at"
-                    ),
-                    to_attr="all_registrations",
-                ),
-            )
-            .with_title()
-            .first()
-        )
+        event_obj = Event.objects.filter(id=object_id).first()
 
-        context = {"event_obj": event_obj}
-        html_string = render_to_string(
-            template_name=TEMPLATE_PDF_BY_MODULE[event_obj.module][
-                PDFType.REGISTRATION
-            ]["pdf"],
-            context=context,
-        )
-        html = HTML(string=html_string)
-        result = html.write_pdf()
+        with translation.override(LOCALE_BY_MODULE[event_obj.module]):
+            event_obj = (
+                Event.objects.filter(id=object_id)
+                .prefetch_related(
+                    Prefetch(
+                        "registrations",
+                        Registration.objects.select_related("entity", "entity__user")
+                        .with_amount()
+                        .order_by(
+                            "status",
+                            "entity__lastname",
+                            "entity__firstname",
+                            "-created_at",
+                        ),
+                        to_attr="all_registrations",
+                    ),
+                )
+                .with_title()
+                .first()
+            )
+
+            context = {"event_obj": event_obj}
+            html_string = render_to_string(
+                template_name=TEMPLATE_PDF_BY_MODULE[event_obj.module][
+                    PDFType.REGISTRATION
+                ]["pdf"],
+                context=context,
+            )
+            html = HTML(string=html_string)
+            result = html.write_pdf()
 
         with tempfile.NamedTemporaryFile(delete=True) as output:
             output.write(result)
