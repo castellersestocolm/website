@@ -38,7 +38,7 @@ class GoogleWalletLoyalty:
         self.auth()
 
         # Set the initial module, will be reset if the user has an active membership
-        self.module = module if module else settings.MODULE_DEFAULT
+        self.module = Module(module if module else settings.MODULE_DEFAULT)
         self.user_obj = None
         self.membership_obj = None
 
