@@ -88,7 +88,7 @@ class GoogleWalletLoyalty:
             for membership_module_obj in self.membership_obj.all_modules
         ]
 
-        self.module = (
+        self.module = Module(
             module if module and module in modules else settings.MODULE_DEFAULT
         )
 
@@ -303,7 +303,7 @@ class GoogleWalletEvent:
         self.registration_key = str(self.registration_obj.id).replace("-", "").lower()
         self.event_key = str(self.event_obj.id).replace("-", "").lower()
 
-        self.module = self.registration_obj.event.module
+        self.module = Module(self.registration_obj.event.module)
 
     def auth(self):
         self.credentials = Credentials.from_service_account_file(
