@@ -13,7 +13,7 @@ from comunicat.enums import Module
 from event.api import get_event_price
 from event.consts import REGISTRATION_CLEAN_STATUS_REQUESTED_HOURS
 from event.enums import RegistrationStatus
-from event.models import Event, Registration
+from event.models import Event, Registration, RegistrationLog
 from event.utils.event import get_registration_initial_status
 from notify.enums import EmailType
 from user.models import FamilyMember
@@ -314,11 +314,22 @@ def complete(registration_ids: list[UUID], with_notify: bool = True) -> bool:
     if not registration_objs or len(event_objs) != 1:
         return False
 
+    registration_log_creates = []
+
     # TODO: Check if this goes above the limit for the event
     for registration_obj in registration_objs:
+        if registration_obj.status != RegistrationStatus.ACTIVE:
+            registration_log_creates.append(
+                RegistrationLog(
+                    registration=registration_obj, status=RegistrationStatus.ACTIVE
+                )
+            )
         registration_obj.status = RegistrationStatus.ACTIVE
 
     Registration.objects.bulk_update(registration_objs, fields=("status",))
+
+    if registration_log_creates:
+        RegistrationLog.objects.bulk_create(registration_log_creates)
 
     if with_notify:
         for (
