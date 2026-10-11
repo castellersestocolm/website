@@ -135,6 +135,10 @@ def import_events() -> None:  # noqa: C901
                                 event_obj.time_to = time_to
                                 event_updates.append(event_obj)
 
+                            # Don't update anything if the event requires approval
+                            if event_obj.require_approve:
+                                continue
+
                             for attendee in event.get("attendees", []):
                                 if attendee["email"] in entity_by_email:
                                     registration_obj = registration_by_key.get(
@@ -430,6 +434,7 @@ def create_or_update_event(  # noqa: C901
                             "responseStatus": attendee_status_by_email[user_obj.email],
                         }
                     )
+
                     if user_obj.id in registration_by_user_id:
                         registration_obj = registration_by_user_id[user_obj.id]
                         registration_status = (
@@ -437,6 +442,11 @@ def create_or_update_event(  # noqa: C901
                                 attendee_status_by_email[user_obj.email]
                             ]
                         )
+
+                        # Don't update anything if the event requires approval
+                        if event_obj.require_approve:
+                            continue
+
                         if (
                             registration_obj.status != registration_status
                             and registration_status
@@ -542,7 +552,7 @@ def create_or_update_event(  # noqa: C901
     except HttpError:
         pass
 
-    if registration_updates:
+    if registration_updates and not event_obj.require_approval:
         Registration.objects.bulk_update(registration_updates, fields=("status",))
 
 
