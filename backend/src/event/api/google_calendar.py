@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import transaction
 from django.db.models import Prefetch, Q
 from django.utils import timezone, translation
+from django.utils.translation import gettext_lazy as _
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -362,6 +363,8 @@ def create_or_update_event(  # noqa: C901
             .first()
         )
 
+        text_info = str(_("More information"))
+
     event_modules = list(
         set(settings.MODULE_ALL_GOOGLE_CALENDAR_INVITE_MODULES).intersection(
             event_obj.modules.values_list("module", flat=True)
@@ -486,6 +489,11 @@ def create_or_update_event(  # noqa: C901
                             f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}</b>\n{agenda_item_obj.description_locale}"
                             for agenda_item_obj in event_obj.agenda_items.all()
                         ]
+                        + (
+                            [f"<b>{text_info}</b>\n{event_obj.frontend_url}"]
+                            if event_obj.frontend_url
+                            else []
+                        )
                     ),
                     "attendees": attendees,
                     "guestsCanInviteOthers": False,

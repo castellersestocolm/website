@@ -201,6 +201,21 @@ class Event(StandardModel, Timestamps):
             self.title.get(translation.get_language()) or list(self.title.values())[0]
         )
 
+    @cached_property
+    def frontend_url(self) -> str | None:
+        from comunicat.template_tags.comunicat_tags import full_url
+
+        if self.series:
+            return None
+
+        if self.type in (EventType.REHEARSAL, EventType.WORKSHOP):
+            return None
+
+        return full_url(
+            path=f"calendar/event/{self.time_from.strftime('%Y/%m/%d')}/{self.code}",
+            module=self.module,
+        )
+
     def __str__(self) -> str:
         return f"{self.time_from.strftime('%Y-%m-%d')} - {self.title_locale}"
 
