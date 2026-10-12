@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 14:40+0200\n"
+"POT-Creation-Date: 2026-10-12 11:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -554,8 +554,9 @@ msgstr ""
 msgid ""
 "Your membership has been paid. You can now also add your member card to your "
 "Google or Apple Wallet."
-msgstr "Ditt medlemskap har betalats. Du kan nu även lägga till ditt "
-"medlemskort i din Google- eller Apple-plånbok."
+msgstr ""
+"Ditt medlemskap har betalats. Du kan nu även lägga till ditt medlemskort i "
+"din Google- eller Apple-plånbok."
 
 #: comunicat/templates/email/org/membership/renew.html:5
 #: comunicat/templates/email/towers/membership/renew.html:5
@@ -975,21 +976,21 @@ msgstr "Belopp"
 msgid "time from"
 msgstr ""
 
+#: event/api/google_calendar.py:367
+msgid "More information"
+msgstr "Mer information"
+
 #: event/consts.py:52
 msgid "Choices"
-msgstr ""
+msgstr "Val"
 
 #: event/enums.py:46
-#, fuzzy
-#| msgid "active"
 msgid "Tentative"
-msgstr "aktiv"
+msgstr "Frivillig"
 
 #: event/enums.py:47
-#, fuzzy
-#| msgid "Attendance"
 msgid "Attended"
-msgstr "Deltagande"
+msgstr "Deltog"
 
 #: event/models.py:112 event/models.py:113
 msgid "event series"
@@ -997,53 +998,53 @@ msgstr ""
 
 #: event/models.py:179
 msgid "poster"
-msgstr ""
+msgstr "poster"
 
 #: event/models.py:185
 msgid "image"
-msgstr ""
+msgstr "bild"
 
-#: event/models.py:211
+#: event/models.py:223
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The end time must be greater than start time."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: event/models.py:216
+#: event/models.py:228
 msgid "The module must match the course program module."
 msgstr ""
 
-#: event/models.py:219
+#: event/models.py:231
 msgid "The type must be COURSE."
 msgstr ""
 
-#: event/models.py:226
+#: event/models.py:238
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The start time must be within the course dates."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:231
+#: event/models.py:243
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The module must match the series module."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:234
+#: event/models.py:246
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The type must match the series type."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:350 product/models.py:142 product/models.py:147
+#: event/models.py:362 product/models.py:142 product/models.py:147
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:438 payment/models.py:334
+#: event/models.py:450 payment/models.py:334
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
-#: event/models.py:521 event/models.py:522
+#: event/models.py:533 event/models.py:534
 msgid "event accounts"
 msgstr ""
 
