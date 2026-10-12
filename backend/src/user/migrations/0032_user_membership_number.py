@@ -2,11 +2,11 @@
 
 from django.db import migrations, models
 
-from user.utils import generate_membership_number
-
 
 def generate_user_membership_number(apps, schema_editor):
     User = apps.get_model("user", "User")
+
+    from user.utils import generate_membership_number
 
     for user_obj in User.objects.all():
         user_obj.membership_number = generate_membership_number()
