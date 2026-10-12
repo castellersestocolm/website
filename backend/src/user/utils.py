@@ -3,6 +3,7 @@ import random
 import string
 
 from django.conf import settings
+from django.db import ProgrammingError
 from django.utils import timezone
 
 
@@ -32,10 +33,13 @@ def get_default_consent_pictures(birthday: datetime.date) -> bool:
     return is_over_minimum_age(date=birthday)
 
 
-def generate_membership_number() -> str:
+def generate_membership_number() -> str | None:
     from user.models import User
 
-    membership_numbers = User.objects.values_list("membership_number", flat=True)
+    try:
+        membership_numbers = list(User.objects.values_list("membership_number", flat=True))
+    except ProgrammingError:
+        return None
 
     membership_number = "".join(random.choices(string.digits, k=12))
     while membership_number in membership_numbers:
