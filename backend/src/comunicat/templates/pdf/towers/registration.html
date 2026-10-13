@@ -104,7 +104,7 @@ section .data-t4 {
                 <p class="data-t3">{{ "RegistrationStatus"|labels_event|get_value:registration_obj.status }}</p>
               </td>
               <td class="data-td1">
-                <p class="data-t4">{{ registration_obj.amount|format_money_2f }}</p>
+                <p class="data-t4">{% if registration_obj.price %}{{ registration_obj.price.amount|format_money_2f }}{% endif %}</p>
               </td>
             </tr>
           {% endfor %}
