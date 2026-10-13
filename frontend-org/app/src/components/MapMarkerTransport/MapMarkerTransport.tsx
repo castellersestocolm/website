@@ -6,9 +6,10 @@ import { Typography } from "@mui/material";
 
 function MapMarkerTransport({ name, transportType }: any) {
   return (
-    <Box className={styles.iconMarker}><Box className={styles.iconTransport}>
-      {TRANSPORT_MODE_ICON[transportType]}
-    </Box>
+    <Box className={styles.iconMarker}>
+      <Box className={styles.iconTransport}>
+        {TRANSPORT_MODE_ICON[transportType]}
+      </Box>
       <Typography variant="body2" className={styles.iconText}>
         {name}
       </Typography>

@@ -59,7 +59,10 @@ export default function Map({
                     .focus();
                 }}
               >
-                <MapMarkerTransport name={connection.name} transportType={connection.type} />
+                <MapMarkerTransport
+                  name={connection.name}
+                  transportType={connection.type}
+                />
               </RMarker>
             </>
           );
