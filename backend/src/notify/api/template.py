@@ -529,6 +529,7 @@ def get_registration_email_renders(
     registration_objs = list(
         Registration.objects.filter(id__in=registration_ids)
         .select_related("entity", "entity__user", "event", "line")
+        # TODO: Translation fix title
         .with_event_title()
         .order_by(
             "-line__amount",

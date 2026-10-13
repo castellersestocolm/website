@@ -575,7 +575,7 @@ def complete(  # noqa: C901
 ) -> Order | None:
     order_obj = (
         Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
-        .prefetch_related("registrations", "memberships", "courses", "registrations")
+        .prefetch_related("registrations", "memberships", "courses", "requests")
         .with_amount()
         .first()
     )

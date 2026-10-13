@@ -337,7 +337,7 @@ def format_text(text: str) -> str:
 @register.filter
 def format_phone(phone: str) -> str:
     if not phone:
-        return phone
+        return ""
 
     try:
         phone_field = PhoneNumberField().to_internal_value(phone)

@@ -18,6 +18,7 @@ from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 
 import comunicat.utils.crypto
+from activity.enums import ProgramType
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE, LOCALE_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
@@ -206,7 +207,30 @@ class Event(StandardModel, Timestamps):
         from comunicat.template_tags.comunicat_tags import full_url
 
         if self.series:
+            # TODO: Hardcoded temporarily
+            if self.module == Module.ORG:
+                if self.series.code == "sopars":
+                    full_url(
+                        path="activity/dinners",
+                        module=self.module,
+                    )
+                if self.series.code == "dinars":
+                    full_url(
+                        path="activity/lunches",
+                        module=self.module,
+                    )
             return None
+
+        if (
+            self.type == EventType.COURSE
+            and self.module == Module.ORG
+            and self.course
+            and self.course.program.type == ProgramType.ESPLAI
+        ):
+            full_url(
+                path="activity/kids",
+                module=self.module,
+            )
 
         if self.type in (EventType.REHEARSAL, EventType.WORKSHOP):
             return None
