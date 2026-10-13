@@ -1,0 +1,17 @@
+.iconTransport {
+  background-color: #007bb5;
+  border-radius: 50%;
+  height: 32px !important;
+  width: 32px !important;
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--mui-palette-secondary-contrastText);
+  color: var(--mui-palette-secondary-contrastText);
+  cursor: pointer;
+
+  svg {
+    width: 24px !important;
+    margin: 0 !important;
+    margin: 4px !important;
+  }
+}
