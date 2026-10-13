@@ -37,7 +37,9 @@ def generate_membership_number() -> str | None:
     from user.models import User
 
     try:
-        membership_numbers = list(User.objects.values_list("membership_number", flat=True))
+        membership_numbers = list(
+            User.objects.values_list("membership_number", flat=True)
+        )
     except ProgrammingError:
         return None
 

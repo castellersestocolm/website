@@ -77,9 +77,9 @@ class LocationAdmin(admin.ModelAdmin):
 #         self.fields["line"].queryset = PaymentLine.objects.filter(payment__entity__user_id=self.instance.user_id).order_by("-created_at") if self.instance else PaymentLine.objects.none()
 
 
-class RegistrationInlineForm(forms.ModelForm):
+class RegistrationForm(forms.ModelForm):
     class Meta:
-        model = EventPrice
+        model = Registration
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
@@ -99,7 +99,7 @@ class RegistrationInline(inline_actions.admin.InlineActionsMixin, admin.TabularI
     readonly_fields = ("data_nice",)
     raw_id_fields = ("entity", "owner", "line")
     exclude = ("data", "token")
-    form = RegistrationInlineForm
+    form = RegistrationForm
     extra = 0
 
     inline_actions = []
@@ -505,8 +505,12 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_display = ("id", "event", "entity", "status")
     list_filter = ("status",)
     ordering = ("-created_at",)
+    raw_id_fields = ("event", "entity", "owner", "line")
+    readonly_fields = ("created_at",)
+    exclude = ("token",)
     inlines = (RegistrationLogInline,)
     actions = (send_registration_paid_email,)
+    form = RegistrationForm
 
 
 class GoogleCalendarDefaultInline(admin.TabularInline):

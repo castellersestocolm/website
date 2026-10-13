@@ -199,7 +199,7 @@ class UserAdmin(admin.ModelAdmin):
         "entity_link",
         "family_link",
     )
-    exclude = ("password", "user_permissions")
+    exclude = ("password", "user_permissions", "token")
     ordering = ("-created_at",)
     filter_horizontal = ("groups", "user_permissions")
     inlines = (
