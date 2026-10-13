@@ -4,6 +4,19 @@ import IconCheckCircle from "@mui/icons-material/CheckCircle";
 import IconCancel from "@mui/icons-material/Cancel";
 import IconPending from "@mui/icons-material/Pending";
 import IconDeleteForeverRounded from "@mui/icons-material/DeleteForeverRounded";
+import IconTbana from "./components/IconTbana/IconTbana.jsx";
+import IconBus from "./components/IconBus/IconBus.jsx";
+import IconTrolleybus from "./components/IconTrolleybus/IconTrolleybus.jsx";
+import IconRail from "./components/IconRail/IconRail.jsx";
+import IconWater from "./components/IconWater/IconWater.jsx";
+import IconEvent from "@mui/icons-material/Event";
+import IconSportsGymnastics from "@mui/icons-material/SportsGymnastics";
+import IconLocalActivity from "@mui/icons-material/LocalActivity";
+import IconWavingHand from "@mui/icons-material/WavingHand";
+import IconSpeakerNotes from "@mui/icons-material/SpeakerNotes";
+import IconLock from "@mui/icons-material/Lock";
+import IconSchool from "@mui/icons-material/School";
+import IconGroups from "@mui/icons-material/Groups";
 
 export enum Language {
   ENGLISH = "en",
@@ -94,6 +107,17 @@ export enum EventType {
   COURSE = 70,
   WORKSHOP = 80,
 }
+
+export const EVENT_TYPE_ICON: any = {
+  10: <IconEvent />,
+  20: <IconLock />,
+  30: <IconSpeakerNotes />,
+  40: <IconWavingHand />,
+  50: <IconSportsGymnastics />,
+  60: <IconLocalActivity />,
+  70: <IconSchool />,
+  80: <IconGroups />,
+};
 
 export function getEnumLabel(t: any, enumName: string, value: any) {
   return t("enums." + enumName + "." + value);
@@ -223,3 +247,23 @@ export enum GoogleLocaleCountry {
   ca = "ca",
   sv = "se",
 }
+
+export enum TransportMode {
+  BUS = 10,
+  TROLLEYBUS = 20,
+  TRAM = 30,
+  METRO = 40,
+  RAIL = 50,
+  WATER = 60,
+  FERRY = 70,
+}
+
+export const TRANSPORT_MODE_ICON: any = {
+  10: <IconBus />,
+  20: <IconTrolleybus />,
+  30: <IconRail />,
+  40: <IconTbana />,
+  50: <IconRail />,
+  60: <IconWater />,
+  70: <IconWater />,
+};

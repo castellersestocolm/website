@@ -30,37 +30,57 @@ export default function Map({
   ];*/
 
   return (
-      <RMap
+    <RMap
       minZoom={6}
       initialCenter={[coordinates[1], coordinates[0]]}
       initialZoom={zoom ? zoom : 15}
       mapStyle="https://tiles.versatiles.org/assets/styles/colorful/style.json"
     >
-        <RNavigationControl position="top-right" visualizePitch={true} />
-        <RMarker longitude={coordinates[1]} latitude={coordinates[0]} initialAnchor="center" onClick={() => {
-      window
-        .open("http://google.com/maps/place/" + coordinates.join(","), "_blank")
-        .focus();
-    }}>
-          <MapMarkerEvent eventType={eventType} />
-        </RMarker>
-        {connections &&
+      <RNavigationControl position="top-right" visualizePitch={true} />
+      {connections &&
         connections.length > 0 &&
         connections.map((connection: any) => {
           return (
-              <>
-                <RMarker longitude={connection.coordinate_lon} latitude={connection.coordinate_lat} initialAnchor="center" onClick={() => {
-      window
-        .open("http://google.com/maps/place/" + [connection.coordinate_lat, connection.coordinate_lon].join(","), "_blank")
-        .focus();
-    }}>
-                  <MapMarkerTransport transportType={connection.type} />
-                </RMarker>
-              </>
+            <>
+              <RMarker
+                longitude={connection.coordinate_lon}
+                latitude={connection.coordinate_lat}
+                initialAnchor="center"
+                onClick={() => {
+                  window
+                    .open(
+                      "http://google.com/maps/place/" +
+                        [
+                          connection.coordinate_lat,
+                          connection.coordinate_lon,
+                        ].join(","),
+                      "_blank",
+                    )
+                    .focus();
+                }}
+              >
+                <MapMarkerTransport transportType={connection.type} />
+              </RMarker>
+            </>
           );
         })}
-      </RMap>
-  /*<MapContainer
+      <RMarker
+        longitude={coordinates[1]}
+        latitude={coordinates[0]}
+        initialAnchor="center"
+        onClick={() => {
+          window
+            .open(
+              "http://google.com/maps/place/" + coordinates.join(","),
+              "_blank",
+            )
+            .focus();
+        }}
+      >
+        <MapMarkerEvent eventType={eventType} />
+      </RMarker>
+    </RMap>
+    /*<MapContainer
       key={coordinates}
       // @ts-ignore
       center={coordinatesCentre}

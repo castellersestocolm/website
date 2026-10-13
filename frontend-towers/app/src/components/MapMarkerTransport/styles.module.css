@@ -12,5 +12,6 @@
   svg {
     width: 32px !important;
     margin: 0 !important;
+    padding: 4px !important;
   }
 }
