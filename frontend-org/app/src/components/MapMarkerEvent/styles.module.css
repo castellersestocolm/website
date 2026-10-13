@@ -1,0 +1,16 @@
+.iconEvent {
+  background-color: var(--mui-palette-primary-contrastText);
+  border-radius: 50%;
+  height: 42px !important;
+  width: 42px !important;
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--mui-palette-secondary-contrastText);
+  color: var(--mui-palette-secondary-contrastText);
+  cursor: pointer;
+
+  svg {
+    width: 42px !important;
+    margin: 0 !important;
+  }
+}

@@ -17,6 +17,7 @@ import { useAppContext } from "../../components/AppContext/AppContext";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import FormEventPrices from "../../components/FormEventPrices/FormEventPrices";
 import FormEventRegister from "../../components/FormEventRegister/FormEventRegister";
+import Map from "../../components/Map/Map";
 import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -366,30 +367,19 @@ function CalendarEventPage() {
                       sx={{
                         minHeight:
                           event.poster && event.poster.large
-                            ? "300px"
+                            ? "400px"
                             : "500px !important",
                       }}
                     >
-                      <iframe
-                        src={
-                          "https://maps.google.com/maps?q=" +
-                          event.location.coordinate_lat +
-                          "," +
-                          event.location.coordinate_lon +
-                          "&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                        }
-                        width="100%"
-                        height="300"
-                        loading="lazy"
-                        frameBorder="0"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        style={{
-                          minHeight:
-                            event.poster && event.poster.large
-                              ? "300px"
-                              : "500px !important",
-                        }}
-                      ></iframe>
+                      <Map
+                        location={event.location}
+                        coordinates={[
+                          event.location.coordinate_lat,
+                          event.location.coordinate_lon,
+                        ]}
+                        connections={event.location.connections}
+                        eventType={event.type}
+                      />
                     </Card>
                   </Grid>
                 )}
