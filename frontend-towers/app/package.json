@@ -29,6 +29,8 @@
     "js-cookie": "^3.0.5",
     "konva": "^10.2.0",
     "leaflet": "^1.9.4",
+    "maplibre-gl": "^5.24.0",
+    "maplibre-react-components": "^0.2.6",
     "material-ui-popup-state": "^5.3.6",
     "mdast-util-gfm-autolink-literal": "2.0.0",
     "prop-types": "^15.8.1",

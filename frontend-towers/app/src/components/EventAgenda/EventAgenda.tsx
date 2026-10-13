@@ -714,6 +714,7 @@ export default function EventAgenda({
                     event.location.coordinate_lon,
                   ]}
                   connections={event.location.connections}
+                  eventType={event.type}
                 />
               </Box>
             </Collapse>
