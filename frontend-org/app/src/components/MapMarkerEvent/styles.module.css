@@ -1,3 +1,10 @@
+.iconMarker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
 .iconEvent {
   background-color: var(--mui-palette-primary-contrastText);
   border-radius: 50%;
@@ -13,4 +20,10 @@
     width: 42px !important;
     margin: 0 !important;
   }
+}
+
+.iconText {
+  background-color: var(--mui-palette-secondary-contrastText);
+  padding: 0 4px;
+  border-radius: 8px;
 }

@@ -33,7 +33,7 @@ export default function Map({
     <RMap
       minZoom={6}
       initialCenter={[coordinates[1], coordinates[0]]}
-      initialZoom={zoom ? zoom : 15}
+      initialZoom={zoom ? zoom : 14}
       mapStyle="https://tiles.versatiles.org/assets/styles/colorful/style.json"
     >
       <RNavigationControl position="top-right" visualizePitch={true} />
@@ -80,7 +80,7 @@ export default function Map({
             .focus();
         }}
       >
-        <MapMarkerEvent eventType={eventType} />
+        <MapMarkerEvent name={location.name} eventType={eventType} />
       </RMarker>
     </RMap>
     /*<MapContainer
