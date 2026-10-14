@@ -80,7 +80,10 @@ export default function Map({
             .focus();
         }}
       >
-        <MapMarkerEvent name={location.name} eventType={eventType} />
+        <MapMarkerEvent
+          name={location && location.name}
+          eventType={eventType}
+        />
       </RMarker>
     </RMap>
     /*<MapContainer

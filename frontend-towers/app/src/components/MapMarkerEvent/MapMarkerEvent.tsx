@@ -8,9 +8,11 @@ function MapMarkerEvent({ name, eventType }: any) {
   return (
     <Box className={styles.iconMarker}>
       <Box className={styles.iconEvent}>{EVENT_TYPE_ICON[eventType]}</Box>
-      <Typography variant="body2" className={styles.iconText}>
-        {name}
-      </Typography>
+      {name && (
+        <Typography variant="body2" className={styles.iconText}>
+          {name}
+        </Typography>
+      )}
     </Box>
   );
 }
