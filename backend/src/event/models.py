@@ -232,7 +232,7 @@ class Event(StandardModel, Timestamps):
                 module=self.module,
             )
 
-        if self.type in (EventType.REHEARSAL, EventType.WORKSHOP):
+        if self.type in (EventType.REHEARSAL, EventType.WORKSHOP, EventType.COURSE):
             return None
 
         return full_url(
