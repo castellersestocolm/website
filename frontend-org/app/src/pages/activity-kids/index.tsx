@@ -22,7 +22,10 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import { useAppContext } from "../../components/AppContext/AppContext";
+import Map from "../../components/Map/Map";
 import ImageHeroKids from "../../assets/images/heros/kids.jpg";
+import IconExpandMore from "@mui/icons-material/ExpandMore";
+import IconExpandLess from "@mui/icons-material/ExpandLess";
 import styles from "./styles.module.css";
 import {
   getEnumLabel,
@@ -57,12 +60,28 @@ function ActivityKidsPage() {
   const [membership, setMembership] = useState(undefined);
   const [programCourses, setProgramCourses] = useState(undefined);
 
+  const [eventsMapOpen, setEventsMapOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
   const userFamilyMemberCannotManage =
     user &&
     user.family &&
     user.family.members &&
     user.family.members.length > 0 &&
     user.family.members.filter((member: any) => !member.user.can_manage);
+
+  const handleEventMapClick = React.useCallback(
+    (eventId: string) => {
+      setEventsMapOpen((eventsMapOpen) => ({
+        ...Object.fromEntries(
+          Object.entries(eventsMapOpen).map(([k, v], i) => [k, false]),
+        ),
+        [eventId]: !eventsMapOpen[eventId],
+      }));
+    },
+    [setEventsMapOpen],
+  );
 
   React.useEffect(() => {
     apiActivityProgramCourseList([ProgramType.ESPLAI]).then((response) => {
@@ -451,10 +470,20 @@ function ActivityKidsPage() {
                                       <>
                                         <Box key={event.id}>
                                           <ListItemButton
-                                            disableTouchRipple
+                                            onClick={() => {
+                                              if (!eventsMapOpen[event.id]) {
+                                                handleEventMapClick(event.id);
+                                              } else {
+                                                setEventsMapOpen({});
+                                              }
+                                            }}
                                             dense
                                           >
-                                            <ListItemIcon>
+                                            <ListItemIcon
+                                              className={
+                                                styles.userFamilyListIcon
+                                              }
+                                            >
                                               <IconCalendarMonth />
                                             </ListItemIcon>
                                             <ListItemText
@@ -474,8 +503,36 @@ function ActivityKidsPage() {
                                                 event.location.name
                                               }
                                             ></ListItemText>
+                                            {event.location &&
+                                              (eventsMapOpen[event.id] ? (
+                                                <IconExpandLess />
+                                              ) : (
+                                                <IconExpandMore />
+                                              ))}
                                           </ListItemButton>
                                         </Box>
+                                        {event.location && (
+                                          <Collapse
+                                            in={eventsMapOpen[event.id]}
+                                            timeout="auto"
+                                            unmountOnExit
+                                          >
+                                            <Divider />
+                                            <Box className={styles.calendarMap}>
+                                              <Map
+                                                location={event.location}
+                                                coordinates={[
+                                                  event.location.coordinate_lat,
+                                                  event.location.coordinate_lon,
+                                                ]}
+                                                connections={
+                                                  event.location.connections
+                                                }
+                                                eventType={event.type}
+                                              />
+                                            </Box>
+                                          </Collapse>
+                                        )}
                                         {i + 1 < row.length && <Divider />}
                                       </>
                                     ),

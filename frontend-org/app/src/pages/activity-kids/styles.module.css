@@ -60,9 +60,10 @@
   padding: 0 !important;
   display: flex;
   flex-direction: column;
-  div:first-of-type {
-    min-width: 36px !important;
-  }
+}
+
+.userFamilyListIcon {
+  min-width: 36px !important;
 }
 
 .userFamilyListInner {
@@ -86,4 +87,8 @@
 
 .alert {
   margin-top: 16px;
+}
+
+.calendarMap {
+  height: 300px;
 }

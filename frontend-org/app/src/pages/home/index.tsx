@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { wpApiMediaRetrieve, wpApiPostList } from "../../api/wp";
 import Page from "../../components/Page/Page";
 import Alerts from "../../components/Alerts/Alerts";
+import Map from "../../components/Map/Map";
 import IconLogo from "../../components/IconLogo/IconLogo.jsx";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +21,7 @@ import {
   Button,
   Link,
   Collapse,
+  Divider,
 } from "@mui/material";
 import { datetimeToLongString } from "../../utils/datetime";
 import { useAppContext } from "../../components/AppContext/AppContext";

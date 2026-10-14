@@ -9,6 +9,7 @@ import {
   ListItemIcon,
   ListItemButton,
   Link,
+  Collapse,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -21,11 +22,30 @@ import { datetimeToLongString } from "../../utils/datetime";
 import IconCalendarMonth from "@mui/icons-material/CalendarMonth";
 import { ROUTES } from "../../routes";
 import IconEast from "@mui/icons-material/East";
+import IconExpandMore from "@mui/icons-material/ExpandMore";
+import IconExpandLess from "@mui/icons-material/ExpandLess";
+import Map from "../../components/Map/Map";
 
 function ActivityLunchesPage() {
   const [t, i18n] = useTranslation("common");
 
   const [eventSeries, setEventSeries] = useState(undefined);
+
+  const [eventsMapOpen, setEventsMapOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const handleEventMapClick = React.useCallback(
+    (eventId: string) => {
+      setEventsMapOpen((eventsMapOpen) => ({
+        ...Object.fromEntries(
+          Object.entries(eventsMapOpen).map(([k, v], i) => [k, false]),
+        ),
+        [eventId]: !eventsMapOpen[eventId],
+      }));
+    },
+    [setEventsMapOpen],
+  );
 
   React.useEffect(() => {
     apiEventSeriesPage("dinars").then((response) => {
@@ -57,8 +77,17 @@ function ActivityLunchesPage() {
                   {eventSeries.events.map((event: any, i: number, row: any) => (
                     <>
                       <Box key={event.id}>
-                        <ListItemButton disableTouchRipple dense>
-                          <ListItemIcon>
+                        <ListItemButton
+                          onClick={() => {
+                            if (!eventsMapOpen[event.id]) {
+                              handleEventMapClick(event.id);
+                            } else {
+                              setEventsMapOpen({});
+                            }
+                          }}
+                          dense
+                        >
+                          <ListItemIcon className={styles.userFamilyListIcon}>
                             <IconCalendarMonth />
                           </ListItemIcon>
                           <ListItemText
@@ -72,8 +101,34 @@ function ActivityLunchesPage() {
                             }
                             secondary={event.location && event.location.name}
                           ></ListItemText>
+                          {event.location &&
+                            (eventsMapOpen[event.id] ? (
+                              <IconExpandLess />
+                            ) : (
+                              <IconExpandMore />
+                            ))}
                         </ListItemButton>
                       </Box>
+                      {event.location && (
+                        <Collapse
+                          in={eventsMapOpen[event.id]}
+                          timeout="auto"
+                          unmountOnExit
+                        >
+                          <Divider />
+                          <Box className={styles.calendarMap}>
+                            <Map
+                              location={event.location}
+                              coordinates={[
+                                event.location.coordinate_lat,
+                                event.location.coordinate_lon,
+                              ]}
+                              connections={event.location.connections}
+                              eventType={event.type}
+                            />
+                          </Box>
+                        </Collapse>
+                      )}
                       {i + 1 < row.length && <Divider />}
                     </>
                   ))}
