@@ -10,7 +10,7 @@ function MapMarkerTransport({ name, transportType }: any) {
       <Box className={styles.iconTransport}>
         {TRANSPORT_MODE_ICON[transportType]}
       </Box>
-      <Typography variant="body2" className={styles.iconText}>
+      <Typography variant="caption" className={styles.iconText}>
         {name}
       </Typography>
     </Box>
