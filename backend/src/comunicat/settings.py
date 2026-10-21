@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     "inline_actions",
     "comunicat",
     "data",
+    "theme",
     "user",
     "activity",
     "integration",

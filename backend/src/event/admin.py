@@ -47,6 +47,7 @@ from event.models import (
 from notify.enums import EmailType
 from payment.enums import PaymentType
 from payment.models import Account, AccountEvent
+from theme.models import Theme
 
 
 class ConnectionInline(admin.TabularInline):
@@ -236,6 +237,9 @@ class EventForm(forms.ModelForm):
         self.fields["course"].queryset = ProgramCourse.objects.filter(
             program_course_filter
         ).order_by("-date_from", "-date_to")
+        self.fields["theme"].queryset = Theme.objects.filter(
+            module=self.instance.module
+        ).order_by("module", "name", "-created_at")
 
 
 @admin.action(description=_("Publish selected events"))
@@ -402,6 +406,18 @@ class EventInline(admin.TabularInline):
     title_locale.short_description = _("title")
 
 
+class EventSeriesForm(forms.ModelForm):
+    class Meta:
+        model = EventSeries
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["theme"].queryset = Theme.objects.filter(
+            module=self.instance.module
+        ).order_by("module", "name", "-created_at")
+
+
 @admin.register(EventSeries)
 class EventSeriesAdmin(admin.ModelAdmin):
     search_fields = ("id", "title")
@@ -413,6 +429,7 @@ class EventSeriesAdmin(admin.ModelAdmin):
     list_filter = ("type", "module")
     ordering = ("-created_at",)
     inlines = (EventInline,)
+    form = EventSeriesForm
 
     formfield_overrides = {
         JSONField: {"widget": JSONEditor},

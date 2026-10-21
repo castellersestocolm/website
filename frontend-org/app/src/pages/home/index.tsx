@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 import { wpApiMediaRetrieve, wpApiPostList } from "../../api/wp";
 import Page from "../../components/Page/Page";
 import Alerts from "../../components/Alerts/Alerts";
-import Map from "../../components/Map/Map";
 import IconLogo from "../../components/IconLogo/IconLogo.jsx";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
+import { DynamicIcon } from "../../components/DynamicIcon/DynamicIcon";
 import {
   Container,
   Card,
@@ -21,7 +21,6 @@ import {
   Button,
   Link,
   Collapse,
-  Divider,
 } from "@mui/material";
 import { datetimeToLongString } from "../../utils/datetime";
 import { useAppContext } from "../../components/AppContext/AppContext";
@@ -42,6 +41,7 @@ import { apiEventList } from "../../api";
 import { EventType, Module } from "../../enums";
 import Hero from "../../components/Hero/Hero";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
@@ -52,6 +52,9 @@ function HomePage() {
   const { user, messages } = useAppContext();
 
   let navigate = useNavigate();
+
+  const theme = useTheme();
+  const calendarMatchesMd = useMediaQuery(theme.breakpoints.up("md"));
 
   const [wpPostsPage, setWpPostsPage] = React.useState(1);
   const [wpPosts, setWpPosts] = React.useState(undefined);
@@ -398,7 +401,7 @@ function HomePage() {
             </Typography>
             {otherHighligtedEvents && (
               <>
-                <Grid container spacing={4} className={styles.postsInnerGrid}>
+                <Grid container spacing={4}>
                   {otherHighligtedEvents &&
                     otherHighligtedEvents.length > 0 &&
                     otherHighligtedEvents.map((otherHighligtedEvent: any) => {
@@ -419,19 +422,60 @@ function HomePage() {
                               )
                             }
                           >
-                            <CardActionArea>
-                              {otherHighligtedEvent.picture ? (
-                                <CardMedia
-                                  component="img"
-                                  height="300"
-                                  image={
-                                    otherHighligtedEvent.picture &&
-                                    BACKEND_BASE_URL +
-                                      otherHighligtedEvent.picture.medium
-                                  }
-                                />
+                            <CardActionArea className={styles.postCardArea}>
+                              {otherHighligtedEvent.theme ||
+                              otherHighligtedEvent.picture ? (
+                                otherHighligtedEvent.theme ? (
+                                  <Box
+                                    sx={{
+                                      height: calendarMatchesMd
+                                        ? "300px"
+                                        : "200px",
+                                      backgroundColor:
+                                        otherHighligtedEvent.theme
+                                          ? otherHighligtedEvent.theme
+                                              .colour_primary
+                                          : theme.palette.primary.main,
+                                    }}
+                                    className={styles.postThemeCard}
+                                  >
+                                    {otherHighligtedEvent.theme &&
+                                      otherHighligtedEvent.theme.icon && (
+                                        <Box
+                                          className={styles.postsInnerIcon}
+                                          sx={{
+                                            color: otherHighligtedEvent.theme
+                                              .colour_icon
+                                              ? otherHighligtedEvent.theme
+                                                  .colour_icon
+                                              : theme.palette.primary
+                                                  .contrastText,
+                                          }}
+                                        >
+                                          <DynamicIcon
+                                            iconName={
+                                              otherHighligtedEvent.theme.icon
+                                                .code
+                                            }
+                                          />
+                                        </Box>
+                                      )}
+                                  </Box>
+                                ) : (
+                                  <CardMedia
+                                    component="img"
+                                    height="300"
+                                    image={
+                                      otherHighligtedEvent.picture &&
+                                      BACKEND_BASE_URL +
+                                        otherHighligtedEvent.picture.medium
+                                    }
+                                  />
+                                )
                               ) : undefined}
-                              <CardContent className={styles.postCardContent}>
+                              <CardContent
+                                className={styles.postCardThemeContent}
+                              >
                                 <Typography
                                   gutterBottom
                                   variant="h5"
@@ -447,46 +491,6 @@ function HomePage() {
                                     otherHighligtedEvent.time_from,
                                   )}
                                 </Typography>
-                                <Stack
-                                  direction="column"
-                                  spacing={1}
-                                  mt={2}
-                                  mb={1}
-                                >
-                                  <Link
-                                    onClick={() =>
-                                      handleEventClick(
-                                        otherHighligtedEvent.time_from.slice(
-                                          0,
-                                          4,
-                                        ),
-                                        otherHighligtedEvent.time_from.slice(
-                                          5,
-                                          7,
-                                        ),
-                                        otherHighligtedEvent.time_from.slice(
-                                          8,
-                                          10,
-                                        ),
-                                        otherHighligtedEvent.code,
-                                        otherHighligtedEvent.module,
-                                        otherHighligtedEvent.series &&
-                                          otherHighligtedEvent.series.code,
-                                      )
-                                    }
-                                    color="secondary"
-                                    underline="none"
-                                    className={styles.link}
-                                  >
-                                    <Typography
-                                      variant="body1"
-                                      component="span"
-                                    >
-                                      {t("pages.home-highlight.button-info")}
-                                    </Typography>
-                                    <IconEast className={styles.iconEast} />
-                                  </Link>
-                                </Stack>
                               </CardContent>
                             </CardActionArea>
                           </Card>
@@ -529,13 +533,17 @@ function HomePage() {
                               )
                             }
                           >
-                            <CardActionArea>
+                            <CardActionArea className={styles.postCardArea}>
                               {wpMediaById &&
                               wpPost.featured_media &&
                               wpPost.featured_media in wpMediaById ? (
                                 <CardMedia
+                                  sx={{
+                                    height: calendarMatchesMd
+                                      ? "300px"
+                                      : "200px",
+                                  }}
                                   component="img"
-                                  height="300"
                                   image={
                                     wpMediaById[wpPost.featured_media].data
                                       .source_url
@@ -569,7 +577,12 @@ function HomePage() {
                                     }}
                                   ></div>
                                 </Typography>
-                                <Stack direction="column" spacing={1} mb={1}>
+                                <Stack
+                                  direction="column"
+                                  spacing={1}
+                                  mb={1}
+                                  mt="auto"
+                                >
                                   <Link
                                     onClick={() =>
                                       handleWpPostClick(

@@ -91,6 +91,14 @@ class EventSeries(StandardModel, Timestamps):
         blank=True,
     )
 
+    theme = models.ForeignKey(
+        "theme.Theme",
+        null=True,
+        blank=True,
+        related_name="event_series",
+        on_delete=models.SET_NULL,
+    )
+
     objects = EventSeriesQuerySet.as_manager()
 
     @cached_property
@@ -184,6 +192,14 @@ class Event(StandardModel, Timestamps):
         null=True,
         upload_to=get_event_picture_name,
         verbose_name=_("image"),
+    )
+
+    theme = models.ForeignKey(
+        "theme.Theme",
+        null=True,
+        blank=True,
+        related_name="events",
+        on_delete=models.SET_NULL,
     )
 
     __title = None
@@ -283,13 +299,15 @@ class Event(StandardModel, Timestamps):
                 self.title = self.series.title
             if not any(self.description.values()):
                 self.description = self.series.description
-            if not self.module:
+            if not self.module and self.module != self.series.module:
                 self.module = self.series.module
+            if not self.theme or self.series.theme and self.theme != self.series.theme:
+                self.theme = self.series.theme
 
         if self.course:
             if not any(self.title.values()):
                 self.title = self.course.program.name
-            if not self.module:
+            if not self.module and self.module != self.course.program.module:
                 self.module = self.course.program.module
             self.type = EventType.COURSE
 

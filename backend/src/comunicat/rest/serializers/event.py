@@ -10,6 +10,7 @@ from comunicat.rest.serializers.payment import (
     CreateEntitySerializer,
     EntitySuperSlimSerializer,
 )
+from comunicat.rest.serializers.theme import ThemeSerializer
 from comunicat.rest.serializers.user import UserSuperSlimSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from event.enums import EventType, RegistrationStatus
@@ -492,6 +493,7 @@ class EventSerializer(EventSlimSerializer):
         ],
         read_only=True,
     )
+    theme = ThemeSerializer(required=False)
     google_event = GoogleEventSerializer(required=False, read_only=True)
     google_album = GoogleAlbumSerializer(required=False, read_only=True)
     has_token = s.SerializerMethodField(read_only=True)
@@ -518,6 +520,7 @@ class EventSerializer(EventSlimSerializer):
             "agenda_items",
             "poster",
             "picture",
+            "theme",
             "google_event",
             "google_album",
             "has_token",
@@ -543,6 +546,7 @@ class EventSerializer(EventSlimSerializer):
             "agenda_items",
             "poster",
             "picture",
+            "theme",
             "google_event",
             "google_album",
             "has_token",
@@ -616,6 +620,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "agenda_items",
             "poster",
             "picture",
+            "theme",
             "google_event",
             "google_album",
             "has_token",
@@ -642,6 +647,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "agenda_items",
             "poster",
             "picture",
+            "theme",
             "google_event",
             "google_album",
             "has_token",
