@@ -113,6 +113,8 @@ class MemberAdmin(admin.ModelAdmin):
         "user",
         "team",
         "role",
+        "date_from",
+        "date_to",
         "created_at",
     )
     list_filter = ("team", "role", "created_at")
