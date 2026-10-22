@@ -125,16 +125,18 @@
 }
 
 .postCardArea {
-  display: flex;
+  display: flex !important;
   height: 100%;
   flex-direction: column;
-  justify-content: start;
+  justify-content: start !important;
 }
 
 .postThemeCard {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  height: 100%;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: stretch !important;
 }
 
 .postsInnerIcon {
@@ -157,7 +159,6 @@
 
 .postCardThemeContent {
   padding: 20px 24px 20px 24px !important;
-  height: calc(100% - 40px);
   display: flex;
   flex-direction: column;
   width: calc(100% - 48px);
