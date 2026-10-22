@@ -715,6 +715,7 @@ export default function EventAgenda({
                   ]}
                   connections={event.location.connections}
                   eventType={event.type}
+                  eventTheme={event.theme}
                 />
               </Box>
             </Collapse>

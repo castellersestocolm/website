@@ -389,30 +389,28 @@ function HomePage() {
                   </Box>
                 </CardContent>
               </React.Fragment>
-              <React.Fragment>
-                <CardContent className={styles.mapCard}>
-                  <Map
-                    location={
-                      rehearsal && rehearsal.location
-                        ? rehearsal.location
-                        : undefined
-                    }
-                    coordinates={
-                      rehearsal && rehearsal.location
-                        ? [
-                            rehearsal.location.coordinate_lat,
-                            rehearsal.location.coordinate_lon,
-                          ]
-                        : [59.3576, 17.9941]
-                    }
-                    connections={
-                      rehearsal &&
-                      rehearsal.location &&
-                      rehearsal.location.connections
-                    }
-                  />
-                </CardContent>
-              </React.Fragment>
+              {rehearsal && (
+                <React.Fragment>
+                  <CardContent className={styles.mapCard}>
+                    <Map
+                      location={rehearsal.location}
+                      coordinates={
+                        rehearsal.location
+                          ? [
+                              rehearsal.location.coordinate_lat,
+                              rehearsal.location.coordinate_lon,
+                            ]
+                          : [59.3576, 17.9941]
+                      }
+                      connections={
+                        rehearsal.location && rehearsal.location.connections
+                      }
+                      eventType={rehearsal.type}
+                      eventTheme={rehearsal.theme}
+                    />
+                  </CardContent>
+                </React.Fragment>
+              )}
             </Grid>
             <Grid
               size={{ xs: 12, md: 7 }}

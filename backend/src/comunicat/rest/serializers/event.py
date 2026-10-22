@@ -432,6 +432,7 @@ class EventSuperSlimSerializer(s.ModelSerializer):
 
 class EventSlimSerializer(EventSuperSlimSerializer):
     location = LocationSerializer(read_only=True)
+    theme = ThemeSerializer(required=False)
 
     class Meta:
         model = Event
@@ -445,6 +446,7 @@ class EventSlimSerializer(EventSuperSlimSerializer):
             "description",
             "type",
             "module",
+            "theme",
             "created_at",
         )
         read_only_fields = (
@@ -457,6 +459,7 @@ class EventSlimSerializer(EventSuperSlimSerializer):
             "description",
             "type",
             "module",
+            "theme",
             "created_at",
         )
 
@@ -493,7 +496,6 @@ class EventSerializer(EventSlimSerializer):
         ],
         read_only=True,
     )
-    theme = ThemeSerializer(required=False)
     google_event = GoogleEventSerializer(required=False, read_only=True)
     google_album = GoogleAlbumSerializer(required=False, read_only=True)
     has_token = s.SerializerMethodField(read_only=True)

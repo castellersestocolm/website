@@ -379,6 +379,7 @@ function CalendarEventPage() {
                         ]}
                         connections={event.location.connections}
                         eventType={event.type}
+                        eventTheme={event.theme}
                       />
                     </Card>
                   </Grid>

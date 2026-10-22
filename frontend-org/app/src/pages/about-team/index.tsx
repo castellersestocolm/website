@@ -31,6 +31,7 @@ function AboutTeamPage() {
 
   function handleChangeGroupsPage(value: number) {
     setIsReady(false);
+    setGroups(undefined);
     setGroupsPage(value);
   }
 
@@ -80,12 +81,12 @@ function AboutTeamPage() {
                         className={styles.aboutTeamBoxTitle}
                       >
                         {team.name}
-                        {isReady &&
-                          groupsPage !== 1 &&
-                          " " +
+                        {isReady && groupsPage !== 1
+                          ? " " +
                             teamYearFrom +
                             (teamYearFrom !== teamYearTo &&
-                              "/" + teamYearTo.slice(2, 4))}
+                              "/" + teamYearTo.slice(2, 4))
+                          : ""}
                       </Typography>
                       <Grid
                         container

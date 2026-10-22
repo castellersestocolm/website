@@ -11,6 +11,7 @@ export default function Map({
   showConnectionLines,
   zoom,
   eventType = undefined,
+  eventTheme = undefined,
 }: any) {
   return (
     <RMap
@@ -66,6 +67,7 @@ export default function Map({
         <MapMarkerEvent
           name={location && location.name}
           eventType={eventType}
+          eventTheme={eventTheme}
         />
       </RMarker>
     </RMap>
