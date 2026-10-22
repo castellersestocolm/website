@@ -125,6 +125,7 @@ function ActivityLunchesPage() {
                               ]}
                               connections={event.location.connections}
                               eventType={event.type}
+                              eventTheme={event.theme}
                             />
                           </Box>
                         </Collapse>

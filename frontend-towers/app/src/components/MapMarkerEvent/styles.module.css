@@ -6,7 +6,6 @@
 }
 
 .iconEvent {
-  background-color: var(--mui-palette-primary-contrastText);
   border-radius: 50%;
   height: 42px !important;
   width: 42px !important;
