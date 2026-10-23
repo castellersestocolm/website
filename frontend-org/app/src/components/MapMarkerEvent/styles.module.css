@@ -12,7 +12,6 @@
   display: flex;
   align-items: center;
   border: 2px solid var(--mui-palette-secondary-contrastText);
-  color: var(--mui-palette-secondary-contrastText);
   cursor: pointer;
 
   svg {

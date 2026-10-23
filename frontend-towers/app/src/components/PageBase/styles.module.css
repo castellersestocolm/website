@@ -4,10 +4,26 @@
   align-items: center;
 }
 
+.pageHeader {
+  text-align: center;
+  padding-bottom: 32px;
+}
+
 .pageTitle {
   text-align: center;
   color: #1d1d1d;
   text-wrap: balance;
+}
+
+.pageSubtitle {
+  text-align: center;
+  color: #1d1d1d !important;
+  text-wrap: balance;
+  padding-top: 16px;
+
+  * {
+    color: #1d1d1d !important;
+  }
 }
 
 .pageForm {

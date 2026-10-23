@@ -6,6 +6,7 @@ import { Typography, useTheme } from "@mui/material";
 import IconPushPin from "@mui/icons-material/PushPin";
 import { DynamicIcon } from "../DynamicIcon/DynamicIcon";
 import * as React from "react";
+import { getColour } from "../../utils/colour";
 
 function MapMarkerEvent({ name, eventType, eventTheme = undefined }: any) {
   const theme = useTheme();
@@ -17,8 +18,12 @@ function MapMarkerEvent({ name, eventType, eventTheme = undefined }: any) {
         sx={{
           backgroundColor:
             eventTheme && eventTheme.colour_primary
-              ? eventTheme.colour_primary
+              ? getColour(theme, eventTheme.colour_primary)
               : theme.palette.primary.contrastText,
+          color:
+            eventTheme && eventTheme.colour_icon
+              ? getColour(theme, eventTheme.colour_icon)
+              : theme.palette.secondary.contrastText,
         }}
       >
         {eventTheme && eventTheme.icon ? (

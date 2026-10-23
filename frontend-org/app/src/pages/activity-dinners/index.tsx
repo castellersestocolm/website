@@ -48,7 +48,9 @@ function ActivityDinnersPage() {
   );
 
   React.useEffect(() => {
-    apiEventSeriesPage("sopars").then((response) => {
+    apiEventSeriesPage("sopars", new Date().toISOString().slice(0, 10), null, [
+      "time_from",
+    ]).then((response) => {
       if (response.status === 200) {
         setEventSeries(response.data);
       }

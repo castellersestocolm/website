@@ -391,12 +391,13 @@ function CalendarEventPage() {
     </>
   );
 
-  return event && event.picture ? (
+  return event && event.picture && event.picture.medium ? (
     <PageImageHero
       title={event.title}
       subtitle={eventSubtitle}
       content={content}
       hero={event.picture && BACKEND_BASE_URL + event.picture.medium}
+      eventTheme={event.theme}
     />
   ) : (
     <PageBase

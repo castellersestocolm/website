@@ -1047,11 +1047,22 @@ export const apiIntegrationAppleWalletPassLoyaltyGet = async () => {
   }
 };
 
-export const apiEventSeriesPage = async (code: string = undefined) => {
+export const apiEventSeriesPage = async (
+  code: string = undefined,
+  eventsDateFrom: string = undefined,
+  eventsDateTo: string = undefined,
+  eventsOrderBy: string[] = undefined,
+) => {
   try {
     return await instance.get("/event/series/page/", {
       params: {
         code: code,
+        events_date_from:
+          eventsDateFrom !== undefined
+            ? eventsDateFrom
+            : new Date().toISOString().substring(0, 10),
+        events_date_to: eventsDateTo,
+        events_order_by: eventsOrderBy && eventsOrderBy.join(","),
       },
     });
   } catch (error) {

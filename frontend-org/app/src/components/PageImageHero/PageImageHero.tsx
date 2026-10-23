@@ -15,6 +15,7 @@ export default function PageImageHero({
   hero,
   loading = false,
   mobileFull = false,
+  eventTheme = undefined,
 }: any) {
   return (
     <>
@@ -56,7 +57,12 @@ export default function PageImageHero({
               : {}
           }
         >
-          <Hero title={title} subtitle={subtitle} hero={hero} />
+          <Hero
+            title={title}
+            subtitle={subtitle}
+            hero={hero}
+            eventTheme={eventTheme}
+          />
           {content && (
             <Container
               maxWidth="xl"

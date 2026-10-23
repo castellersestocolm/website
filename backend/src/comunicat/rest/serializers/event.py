@@ -864,6 +864,9 @@ class PageEventSerializer(s.Serializer):
 class EventSeriesPageSerializer(s.Serializer):
     code = s.CharField(required=False)
     token = s.CharField(required=False)
+    events_date_from = s.DateField(required=False)
+    events_date_to = s.DateField(required=False)
+    events_order_by = s.ListSerializer(child=s.CharField(), required=False)
 
     def validate(self, data):
         if "code" not in data and "token" not in data:

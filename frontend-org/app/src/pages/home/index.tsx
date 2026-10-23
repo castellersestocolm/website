@@ -42,6 +42,7 @@ import { EventType, Module } from "../../enums";
 import Hero from "../../components/Hero/Hero";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import { useTheme, useMediaQuery } from "@mui/material";
+import { getColour } from "../../utils/colour";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
@@ -432,9 +433,14 @@ function HomePage() {
                                         ? "300px"
                                         : "200px",
                                       backgroundColor:
+                                        otherHighligtedEvent.theme &&
                                         otherHighligtedEvent.theme
-                                          ? otherHighligtedEvent.theme
-                                              .colour_primary
+                                          .colour_primary
+                                          ? getColour(
+                                              theme,
+                                              otherHighligtedEvent.theme
+                                                .colour_primary,
+                                            )
                                           : theme.palette.primary.main,
                                     }}
                                     className={styles.postThemeCard}
@@ -446,8 +452,11 @@ function HomePage() {
                                           sx={{
                                             color: otherHighligtedEvent.theme
                                               .colour_icon
-                                              ? otherHighligtedEvent.theme
-                                                  .colour_icon
+                                              ? getColour(
+                                                  theme,
+                                                  otherHighligtedEvent.theme
+                                                    .colour_icon,
+                                                )
                                               : theme.palette.primary
                                                   .contrastText,
                                           }}

@@ -48,7 +48,9 @@ function ActivityLunchesPage() {
   );
 
   React.useEffect(() => {
-    apiEventSeriesPage("dinars").then((response) => {
+    apiEventSeriesPage("dinars", new Date().toISOString().slice(0, 10), null, [
+      "time_from",
+    ]).then((response) => {
       if (response.status === 200) {
         setEventSeries(response.data);
       }

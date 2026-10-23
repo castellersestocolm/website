@@ -82,17 +82,17 @@ class EventAPI(ComuniCatViewSet):
         )
 
         with_counts = serializer.validated_data.get("with_counts", False)
-        filter_is_registered = serializer.validated_data.get(
-            "filter_is_registered", None
-        )
-        filter_types = serializer.validated_data.get("filter_types", None)
-        order_by = serializer.validated_data.get("order_by", None)
+        filter_is_registered = serializer.validated_data.get("filter_is_registered")
+        filter_types = serializer.validated_data.get("filter_types")
+        order_by = serializer.validated_data.get("order_by")
+        date_from = serializer.validated_data.get("date_from")
+        date_to = serializer.validated_data.get("date_to")
 
         event_objs = event.api.get_list(
             request_user_id=user_obj.id if user_obj else None,
             module=self.module,
-            date_from=serializer.validated_data.get("date_from"),
-            date_to=serializer.validated_data.get("date_to"),
+            date_from=date_from,
+            date_to=date_to,
             with_counts=with_counts,
             for_musicians=for_musicians,
             filter_types=filter_types,
@@ -169,9 +169,16 @@ class EventSeriesAPI(ComuniCatViewSet):
         serializer = EventSeriesPageSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
+        events_order_by = serializer.validated_data.get("events_order_by")
+        events_date_from = serializer.validated_data.get("events_date_from")
+        events_date_to = serializer.validated_data.get("events_date_to")
+
         event_series_obj = event.api.event_series.get(
             code=serializer.validated_data.get("code"),
             module=self.module,
+            events_order_by=events_order_by,
+            events_date_from=events_date_from,
+            events_date_to=events_date_to,
         )
 
         if not event_series_obj:

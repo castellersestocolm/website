@@ -10,12 +10,20 @@
 }
 
 .pageTitle {
+  text-align: center;
   color: var(--mui-palette-secondary-main);
   text-wrap: balance;
 }
 
 .pageSubtitle {
+  text-align: center;
+  color: var(--mui-palette-secondary-main);
+  text-wrap: balance;
   padding-top: 16px;
+
+  * {
+    color: var(--mui-palette-secondary-main) !important;
+  }
 }
 
 .pageTitleBox {
