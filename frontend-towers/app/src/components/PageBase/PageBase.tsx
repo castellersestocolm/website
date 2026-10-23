@@ -11,6 +11,7 @@ import { isRegistrationFinished } from "../../utils/user";
 
 export default function PageBase({
   title,
+  subtitle = undefined,
   content,
   finishedRegistration = false,
   loading = false,
@@ -80,13 +81,28 @@ export default function PageBase({
               </>
             ) : (
               <>
-                <Typography
-                  variant="h3"
-                  fontWeight="700"
-                  className={styles.pageTitle}
-                >
-                  {title}
-                </Typography>
+                {(title || subtitle) && (
+                  <Box className={styles.pageHeader}>
+                    {title && (
+                      <Typography
+                        variant="h3"
+                        fontWeight="700"
+                        className={styles.pageTitle}
+                      >
+                        {title}
+                      </Typography>
+                    )}
+                    {subtitle && (
+                      <Typography
+                        variant="h6"
+                        fontWeight="700"
+                        className={styles.pageSubtitle}
+                      >
+                        {subtitle}
+                      </Typography>
+                    )}
+                  </Box>
+                )}
                 {content}
               </>
             )}

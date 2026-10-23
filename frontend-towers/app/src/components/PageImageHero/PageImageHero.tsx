@@ -19,6 +19,7 @@ export default function PageImageHero({
   hero,
   finishedRegistration = false,
   loading = false,
+  eventTheme = undefined,
 }: any) {
   const { t } = useTranslation("common");
 
@@ -64,7 +65,12 @@ export default function PageImageHero({
               : {}
           }
         >
-          <Hero title={title} subtitle={subtitle} hero={hero} />
+          <Hero
+            title={title}
+            subtitle={subtitle}
+            hero={hero}
+            eventTheme={eventTheme}
+          />
           {content && (
             <Container
               maxWidth="xl"
