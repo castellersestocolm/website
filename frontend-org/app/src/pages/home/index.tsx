@@ -193,8 +193,8 @@ function HomePage() {
           sx={{
             marginTop: { xs: "56px", md: "65px" },
             padding: {
-              xs: messages ? "32px 0 64px 0" : "64px 0",
-              md: messages ? "64px 0 132px 0" : "132px 0",
+              xs: messages ? "32px 16px 64px 16px" : "64px 16px",
+              md: messages ? "64px 16px 132px 16px" : "132px 16px",
             },
           }}
         >
@@ -207,7 +207,7 @@ function HomePage() {
             <Alerts />
             <Grid
               container
-              spacing={2}
+              spacing={{ xs: 2, md: 4 }}
               sx={{ textAlign: { xs: "center", md: "left" } }}
               className={styles.heroGrid}
             >
