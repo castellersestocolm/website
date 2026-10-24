@@ -412,7 +412,7 @@ function CalendarEventPage() {
   return event && event.picture && event.picture.medium ? (
     <PageImageHero
       title={event.title}
-      subtitle={eventSubtitle}
+      description={eventSubtitle}
       content={content}
       loading={!event}
       hero={event.picture && BACKEND_BASE_URL + event.picture.medium}
@@ -421,7 +421,7 @@ function CalendarEventPage() {
   ) : (
     <PageBase
       title={event && event.title}
-      subtitle={eventSubtitle}
+      description={eventSubtitle}
       content={content}
       loading={!event}
     />

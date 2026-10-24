@@ -12,6 +12,7 @@ import { isRegistrationFinished } from "../../utils/user";
 export default function PageBase({
   title,
   subtitle = undefined,
+  description = undefined,
   content,
   finishedRegistration = false,
   loading = false,
@@ -70,6 +71,9 @@ export default function PageBase({
                 >
                   {subtitle}
                 </Typography>
+              )}
+              {description && (
+                <Box className={styles.pageDescription}>{description}</Box>
               )}
             </Box>
           )}
