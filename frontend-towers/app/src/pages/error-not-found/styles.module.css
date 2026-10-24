@@ -1,0 +1,12 @@
+.boxError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconError {
+  width: 64px !important;
+  height: auto !important;
+  color: var(--mui-palette-warning-main);
+}

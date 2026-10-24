@@ -76,65 +76,67 @@ function ActivityLunchesPage() {
               <Divider />
               <Box className={styles.userFamilyBox}>
                 <List className={styles.userFamilyList}>
-                  {eventSeries.events.map((event: any, i: number, row: any) => (
-                    <>
-                      <Box key={event.id}>
-                        <ListItemButton
-                          onClick={() => {
-                            if (!eventsMapOpen[event.id]) {
-                              handleEventMapClick(event.id);
-                            } else {
-                              setEventsMapOpen({});
-                            }
-                          }}
-                          dense
-                        >
-                          <ListItemIcon className={styles.userFamilyListIcon}>
-                            <IconCalendarMonth />
-                          </ListItemIcon>
-                          <ListItemText
-                            primary={
-                              <Typography variant="body2" component="span">
-                                {datetimeToLongString(
-                                  i18n.resolvedLanguage,
-                                  event.time_from,
-                                )}
-                              </Typography>
-                            }
-                            secondary={event.location && event.location.name}
-                          ></ListItemText>
-                          {event.location &&
-                            (eventsMapOpen[event.id] ? (
-                              <IconExpandLess />
-                            ) : (
-                              <IconExpandMore />
-                            ))}
-                        </ListItemButton>
-                      </Box>
-                      {event.location && (
-                        <Collapse
-                          in={eventsMapOpen[event.id]}
-                          timeout="auto"
-                          unmountOnExit
-                        >
-                          <Divider />
-                          <Box className={styles.calendarMap}>
-                            <Map
-                              location={event.location}
-                              coordinates={[
-                                event.location.coordinate_lat,
-                                event.location.coordinate_lon,
-                              ]}
-                              connections={event.location.connections}
-                              eventType={event.type}
-                              eventTheme={event.theme}
-                            />
-                          </Box>
-                        </Collapse>
-                      )}
-                      {i + 1 < row.length && <Divider />}
-                    </>
-                  ))}
+                  {eventSeries.events
+                    .slice(0, 5)
+                    .map((event: any, i: number, row: any) => (
+                      <>
+                        <Box key={event.id}>
+                          <ListItemButton
+                            onClick={() => {
+                              if (!eventsMapOpen[event.id]) {
+                                handleEventMapClick(event.id);
+                              } else {
+                                setEventsMapOpen({});
+                              }
+                            }}
+                            dense
+                          >
+                            <ListItemIcon className={styles.userFamilyListIcon}>
+                              <IconCalendarMonth />
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={
+                                <Typography variant="body2" component="span">
+                                  {datetimeToLongString(
+                                    i18n.resolvedLanguage,
+                                    event.time_from,
+                                  )}
+                                </Typography>
+                              }
+                              secondary={event.location && event.location.name}
+                            ></ListItemText>
+                            {event.location &&
+                              (eventsMapOpen[event.id] ? (
+                                <IconExpandLess />
+                              ) : (
+                                <IconExpandMore />
+                              ))}
+                          </ListItemButton>
+                        </Box>
+                        {event.location && (
+                          <Collapse
+                            in={eventsMapOpen[event.id]}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <Divider />
+                            <Box className={styles.calendarMap}>
+                              <Map
+                                location={event.location}
+                                coordinates={[
+                                  event.location.coordinate_lat,
+                                  event.location.coordinate_lon,
+                                ]}
+                                connections={event.location.connections}
+                                eventType={event.type}
+                                eventTheme={event.theme}
+                              />
+                            </Box>
+                          </Collapse>
+                        )}
+                        {i + 1 < row.length && <Divider />}
+                      </>
+                    ))}
                 </List>
               </Box>
             </Card>

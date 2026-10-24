@@ -206,6 +206,7 @@ function HomePage() {
               highligtedEvent.picture &&
               BACKEND_BASE_URL + highligtedEvent.picture.medium
             }
+            eventTheme={highligtedEvent.theme}
             content={
               <Box>
                 <Typography

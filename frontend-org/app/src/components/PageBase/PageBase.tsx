@@ -12,6 +12,7 @@ export default function PageBase({
   finishedRegistration = false,
   loading = false,
   screenFull = false,
+  heightFull = false,
 }: any) {
   // const { user } = useAppContext();
 
@@ -19,18 +20,47 @@ export default function PageBase({
   const hasFinishedRegistration = finishedRegistration; // && !isRegistrationFinished(user);
   const isLoading = hasFinishedRegistration && loading;
 
+  const pageContent = isLoading ? (
+    <LoaderClip />
+  ) : (
+    <>
+      <Alerts />
+      {(title || subtitle) && (
+        <Box className={styles.pageHeader}>
+          {title && (
+            <Typography
+              variant="h3"
+              fontWeight="700"
+              className={styles.pageTitle}
+            >
+              {title}
+            </Typography>
+          )}
+          {subtitle && (
+            <Typography
+              variant="h6"
+              fontWeight="700"
+              className={styles.pageSubtitle}
+            >
+              {subtitle}
+            </Typography>
+          )}
+        </Box>
+      )}
+      {content}
+    </>
+  );
+
   return (
     <>
-      {isLoading ? (
+      {isLoading || heightFull ? (
         <Box
           className={styles.pageLoader}
           sx={{
             marginTop: { xs: "56px", md: "65px" },
           }}
         >
-          <Box className={styles.boxLoader}>
-            <LoaderClip />
-          </Box>
+          <Box className={styles.boxLoader}>{pageContent}</Box>
         </Box>
       ) : (
         <Box
@@ -74,30 +104,7 @@ export default function PageBase({
                 : {}),
             }}
           >
-            <Alerts />
-            {(title || subtitle) && (
-              <Box className={styles.pageHeader}>
-                {title && (
-                  <Typography
-                    variant="h3"
-                    fontWeight="700"
-                    className={styles.pageTitle}
-                  >
-                    {title}
-                  </Typography>
-                )}
-                {subtitle && (
-                  <Typography
-                    variant="h6"
-                    fontWeight="700"
-                    className={styles.pageSubtitle}
-                  >
-                    {subtitle}
-                  </Typography>
-                )}
-              </Box>
-            )}
-            {content}
+            {pageContent}
           </Container>
         </Box>
       )}

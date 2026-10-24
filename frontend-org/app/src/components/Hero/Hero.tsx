@@ -8,7 +8,7 @@ export default function Hero({
   title,
   subtitle = undefined,
   content,
-  hero,
+  hero = undefined,
   eventTheme = undefined,
 }: any) {
   const theme = useTheme();
@@ -19,7 +19,7 @@ export default function Hero({
       sx={{
         minHeight: { xs: "300px", md: "500px" },
         backgroundColor:
-          eventTheme && eventTheme.colour_primary
+          eventTheme && eventTheme.colour_primary && !hero
             ? getColour(theme, eventTheme.colour_primary)
             : theme.palette.grey["700"],
       }}
@@ -40,10 +40,12 @@ export default function Hero({
         )}
         {content}
       </Box>
-      <Box
-        className={styles.heroImage}
-        style={{ backgroundImage: "url(" + hero + ")" }}
-      />
+      {hero && (
+        <Box
+          className={styles.heroImage}
+          style={{ backgroundImage: "url(" + hero + ")" }}
+        />
+      )}
     </Container>
   );
 }

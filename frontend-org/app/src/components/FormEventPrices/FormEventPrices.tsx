@@ -29,7 +29,7 @@ export default function FormEventPrices({ event }: any) {
   return (
     <>
       {event.prices && event.prices.length > 0 && (
-        <Grid container gap={3} justifyContent="center">
+        <Grid container spacing={3} justifyContent="center">
           {eventPriceModules.map((module: any) => {
             return (
               <Grid size={{ xs: 12, sm: 5, md: 4, lg: 3 }}>
