@@ -8,6 +8,7 @@ import Alerts from "../Alerts/Alerts";
 export default function PageBase({
   title = undefined,
   subtitle = undefined,
+  description = undefined,
   content,
   finishedRegistration = false,
   loading = false,
@@ -44,6 +45,9 @@ export default function PageBase({
             >
               {subtitle}
             </Typography>
+          )}
+          {description && (
+            <Box className={styles.pageDescription}>{description}</Box>
           )}
         </Box>
       )}

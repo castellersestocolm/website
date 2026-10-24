@@ -14,6 +14,7 @@ import { isRegistrationFinished } from "../../utils/user";
 export default function PageImageHero({
   title,
   subtitle = undefined,
+  description = undefined,
   content,
   contentPost,
   hero,
@@ -68,6 +69,7 @@ export default function PageImageHero({
           <Hero
             title={title}
             subtitle={subtitle}
+            description={description}
             hero={hero}
             eventTheme={eventTheme}
           />

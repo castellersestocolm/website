@@ -7,6 +7,7 @@ import { getColour } from "../../utils/colour";
 export default function Hero({
   title,
   subtitle = undefined,
+  description = undefined,
   content,
   hero = undefined,
   eventTheme = undefined,
@@ -37,6 +38,9 @@ export default function Hero({
           >
             {subtitle}
           </Typography>
+        )}
+        {description && (
+          <Box className={styles.heroDescription}>{description}</Box>
         )}
         {content}
       </Box>

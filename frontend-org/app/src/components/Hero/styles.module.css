@@ -2,6 +2,14 @@
   color: var(--mui-palette-secondary-contrastText);
 }
 
+.heroDescription {
+  color: var(--mui-palette-secondary-contrastText);
+
+  * {
+    color: var(--mui-palette-secondary-contrastText) !important;
+  }
+}
+
 .heroTitleBox {
   text-align: center;
   padding: 24px;
