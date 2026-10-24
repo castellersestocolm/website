@@ -48,6 +48,7 @@ import CalendarEventReceiptPage from "./pages/calendar-event-receipt";
 import AdminEventTokenPage from "./pages/admin-event-token";
 import AdminEventAttendancePage from "./pages/admin-event-attendance";
 import PaymentRequestPage from "./pages/payment-request";
+import ErrorNotFoundPage from "./pages/error-not-found";
 
 i18next.use(LngDetector).init({
   interpolation: { escapeValue: false },
@@ -255,6 +256,7 @@ const App = () => {
                     path={ROUTES["admin-event-attendance"].path}
                     element={<AdminEventAttendancePage />}
                   />
+                  <Route path="*" element={<ErrorNotFoundPage />} />
                 </Routes>
               </Box>
               <Footer />

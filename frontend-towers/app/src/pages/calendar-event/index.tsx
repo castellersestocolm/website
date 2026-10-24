@@ -6,6 +6,7 @@ import {
   List,
   ListItemText,
   CardContent,
+  Stack,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -155,76 +156,93 @@ function CalendarEventPage() {
     </>
   );
 
+  const hasContentDescription =
+    event &&
+    !token &&
+    (event.description ||
+      (event.agenda_items && event.agenda_items.length > 0));
+  const hasContentPrices =
+    event && !token && event.prices && event.prices.length > 0;
+  const hasContentSignup =
+    event && event.require_signup && event.require_approve;
+  const hasContentPoster =
+    event && !token && ((event.poster && event.poster.large) || event.location);
+
+  const hasContent =
+    event &&
+    (hasContentDescription ||
+      hasContentPrices ||
+      hasContentSignup ||
+      hasContentPoster);
+
   const content = (
     <>
-      {event && (
-        <Box className={styles.pressContainerBox}>
-          {!token &&
-            (event.description ||
-              (event.agenda_items && event.agenda_items.length > 0)) && (
-              <Box>
-                <Typography
-                  variant="body1"
-                  component="div"
-                  className={styles.calendarEventDescription}
-                >
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: markdown(event.description).toString(),
-                    }}
-                  ></div>
-                </Typography>
-                {event.agenda_items && event.agenda_items.length > 0 && (
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      fontWeight={700}
-                      textAlign="center"
-                    >
-                      {t("pages.calendar-event.agenda.title")}
-                    </Typography>
+      {hasContent ? (
+        <Stack
+          spacing={6}
+          direction="column"
+          className={styles.pressContainerBox}
+        >
+          {hasContentDescription && (
+            <Box>
+              <Typography
+                variant="body1"
+                component="div"
+                className={styles.calendarEventDescription}
+              >
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: markdown(event.description).toString(),
+                  }}
+                ></div>
+              </Typography>
+              {event.agenda_items && event.agenda_items.length > 0 && (
+                <Box>
+                  <Typography variant="h6" fontWeight={700} textAlign="center">
+                    {t("pages.calendar-event.agenda.title")}
+                  </Typography>
 
-                    <List dense={true}>
-                      {event.agenda_items.map((agendaItem: any) => (
-                        <ListItem className={styles.calendarEventListItem}>
-                          <ListItemText
-                            primary={
-                              <Typography variant="body1" fontWeight={700}>
-                                {new Date(
-                                  agendaItem.time_from,
-                                ).toLocaleTimeString(i18n.resolvedLanguage, {
-                                  hour12: false,
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }) +
-                                  " — " +
-                                  agendaItem.name}
-                              </Typography>
-                            }
-                            secondary={
-                              <Typography variant="body2" component="div">
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: markdown(
-                                      agendaItem.description,
-                                    ).toString(),
-                                  }}
-                                ></div>
-                              </Typography>
-                            }
-                          />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Box>
-                )}
-              </Box>
-            )}
+                  <List dense={true}>
+                    {event.agenda_items.map((agendaItem: any) => (
+                      <ListItem className={styles.calendarEventListItem}>
+                        <ListItemText
+                          primary={
+                            <Typography variant="body1" fontWeight={700}>
+                              {new Date(
+                                agendaItem.time_from,
+                              ).toLocaleTimeString(i18n.resolvedLanguage, {
+                                hour12: false,
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }) +
+                                " — " +
+                                agendaItem.name}
+                            </Typography>
+                          }
+                          secondary={
+                            <Typography variant="body2" component="div">
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: markdown(
+                                    agendaItem.description,
+                                  ).toString(),
+                                }}
+                              ></div>
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )}
+            </Box>
+          )}
 
-          {!token && event.prices && event.prices.length > 0 && (
-            <Box mt={5}>
+          {hasContentPrices && (
+            <Box>
               <Box mb={3}>
-                <Typography variant="h5" fontWeight="600" align="center" mb={1}>
+                <Typography variant="h4" fontWeight="700" align="center" mb={1}>
                   {t("pages.calendar-event.register.prices.title")}
                 </Typography>
                 <Typography variant="body1" align="center">
@@ -235,8 +253,8 @@ function CalendarEventPage() {
             </Box>
           )}
 
-          {event.require_signup && event.require_approve && (
-            <Box mt={token ? 0 : 5}>
+          {hasContentSignup && (
+            <Box>
               <Box mb={3}>
                 <Typography variant="h4" fontWeight="700" align="center">
                   {t("pages.calendar-event.register")}
@@ -326,60 +344,67 @@ function CalendarEventPage() {
             </Box>
           )}
 
-          {!token &&
-            ((event.poster && event.poster.large) || event.location) && (
-              <Grid container spacing={{ xs: 3, md: 4 }} mt={6}>
-                {event.poster && event.poster.large && (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      sm: 6,
-                      md: 4,
-                    }}
-                  >
-                    <Link href={BACKEND_BASE_URL + event.poster.large}>
-                      <img
-                        src={BACKEND_BASE_URL + event.poster.large}
-                        className={styles.calendarEventPoster}
-                        alt="poster"
-                      />
-                    </Link>
-                  </Grid>
-                )}
+          {hasContentPoster && (
+            <Grid container spacing={{ xs: 3, md: 4 }}>
+              {event.poster && event.poster.large && (
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4,
+                  }}
+                >
+                  <Link href={BACKEND_BASE_URL + event.poster.large}>
+                    <img
+                      src={BACKEND_BASE_URL + event.poster.large}
+                      className={styles.calendarEventPoster}
+                      alt="poster"
+                    />
+                  </Link>
+                </Grid>
+              )}
 
-                {event.location && (
-                  <Grid
-                    size={{
-                      xs: 12,
-                      sm: event.poster && event.poster.large ? 6 : 12,
-                      md: event.poster && event.poster.large ? 8 : 12,
+              {event.location && (
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: event.poster && event.poster.large ? 6 : 12,
+                    md: event.poster && event.poster.large ? 8 : 12,
+                  }}
+                >
+                  <CardContent
+                    className={styles.mapCard}
+                    sx={{
+                      minHeight:
+                        event.poster && event.poster.large
+                          ? "300px"
+                          : "500px !important",
                     }}
                   >
-                    <CardContent
-                      className={styles.mapCard}
-                      sx={{
-                        minHeight:
-                          event.poster && event.poster.large
-                            ? "300px"
-                            : "500px !important",
-                      }}
-                    >
-                      <Map
-                        location={event.location}
-                        coordinates={[
-                          event.location.coordinate_lat,
-                          event.location.coordinate_lon,
-                        ]}
-                        connections={event.location.connections}
-                        zoom={16}
-                        eventTheme={event.theme}
-                      />
-                    </CardContent>
-                  </Grid>
-                )}
-              </Grid>
-            )}
-        </Box>
+                    <Map
+                      location={event.location}
+                      coordinates={[
+                        event.location.coordinate_lat,
+                        event.location.coordinate_lon,
+                      ]}
+                      connections={event.location.connections}
+                      zoom={16}
+                      eventTheme={event.theme}
+                    />
+                  </CardContent>
+                </Grid>
+              )}
+            </Grid>
+          )}
+        </Stack>
+      ) : (
+        <Typography
+          variant="body1"
+          component="div"
+          className={styles.calendarEventDescription}
+        >
+          {t("pages.calendar-event.empty")}
+        </Typography>
       )}
     </>
   );
@@ -389,6 +414,7 @@ function CalendarEventPage() {
       title={event.title}
       subtitle={eventSubtitle}
       content={content}
+      loading={!event}
       hero={event.picture && BACKEND_BASE_URL + event.picture.medium}
       eventTheme={event.theme}
     />

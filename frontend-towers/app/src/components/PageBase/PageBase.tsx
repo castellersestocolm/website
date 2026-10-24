@@ -15,6 +15,7 @@ export default function PageBase({
   content,
   finishedRegistration = false,
   loading = false,
+  heightFull = false,
 }: any) {
   const { t } = useTranslation("common");
 
@@ -24,18 +25,70 @@ export default function PageBase({
     finishedRegistration && !isRegistrationFinished(user);
   const isLoading = hasFinishedRegistration && loading;
 
+  const pageContent = isLoading ? (
+    <LoaderClip />
+  ) : (
+    <>
+      <Alerts />
+      {hasFinishedRegistration ? (
+        <>
+          <Typography
+            variant="h3"
+            fontWeight="700"
+            className={styles.pageTitle}
+          >
+            {t("pages.user-registration.title")}
+          </Typography>
+          {user ? (
+            <Box className={styles.pageForm}>
+              <FormUpdate />
+            </Box>
+          ) : (
+            <Box className={styles.pageLoader}>
+              <LoaderClip />
+            </Box>
+          )}
+        </>
+      ) : (
+        <>
+          {(title || subtitle) && (
+            <Box className={styles.pageHeader}>
+              {title && (
+                <Typography
+                  variant="h3"
+                  fontWeight="700"
+                  className={styles.pageTitle}
+                >
+                  {title}
+                </Typography>
+              )}
+              {subtitle && (
+                <Typography
+                  variant="h6"
+                  fontWeight="700"
+                  className={styles.pageSubtitle}
+                >
+                  {subtitle}
+                </Typography>
+              )}
+            </Box>
+          )}
+          {content}
+        </>
+      )}
+    </>
+  );
+
   return (
     <>
-      {isLoading ? (
+      {isLoading || heightFull ? (
         <Box
           className={styles.pageLoader}
           sx={{
             marginTop: { xs: "56px", md: "65px" },
           }}
         >
-          <Box className={styles.boxLoader}>
-            <LoaderClip />
-          </Box>
+          <Box className={styles.boxLoader}>{pageContent}</Box>
         </Box>
       ) : (
         <Box
@@ -59,53 +112,7 @@ export default function PageBase({
                 : {}),
             }}
           >
-            <Alerts />
-            {hasFinishedRegistration ? (
-              <>
-                <Typography
-                  variant="h3"
-                  fontWeight="700"
-                  className={styles.pageTitle}
-                >
-                  {t("pages.user-registration.title")}
-                </Typography>
-                {user ? (
-                  <Box className={styles.pageForm}>
-                    <FormUpdate />
-                  </Box>
-                ) : (
-                  <Box className={styles.pageLoader}>
-                    <LoaderClip />
-                  </Box>
-                )}
-              </>
-            ) : (
-              <>
-                {(title || subtitle) && (
-                  <Box className={styles.pageHeader}>
-                    {title && (
-                      <Typography
-                        variant="h3"
-                        fontWeight="700"
-                        className={styles.pageTitle}
-                      >
-                        {title}
-                      </Typography>
-                    )}
-                    {subtitle && (
-                      <Typography
-                        variant="h6"
-                        fontWeight="700"
-                        className={styles.pageSubtitle}
-                      >
-                        {subtitle}
-                      </Typography>
-                    )}
-                  </Box>
-                )}
-                {content}
-              </>
-            )}
+            {pageContent}
           </Container>
         </Box>
       )}
