@@ -47,7 +47,7 @@ export default function PageBase({
             </Typography>
           )}
           {description && (
-            <Box className={styles.pageDescription}>{subtitle}</Box>
+            <Box className={styles.pageDescription}>{description}</Box>
           )}
         </Box>
       )}
