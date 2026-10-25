@@ -14,7 +14,7 @@
   display: flex;
   flex: 1;
   border: var(--mui-palette-divider) solid 1px;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 0 !important;
   margin-bottom: 0;
   height: calc(100% - 4px);

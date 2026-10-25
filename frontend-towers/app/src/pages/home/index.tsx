@@ -262,8 +262,8 @@ function HomePage() {
         className={styles.rehearsals}
         pt={{ xs: 5, md: 8 }}
         pb={{ xs: 5, md: 8 }}
-        pl={{ xs: 2, lg: 0 }}
-        pr={{ xs: 2, lg: 0 }}
+        pl={{ xs: 1, lg: 0 }}
+        pr={{ xs: 1, lg: 0 }}
       >
         <Container maxWidth="lg">
           <Typography
@@ -353,7 +353,10 @@ function HomePage() {
                           <>
                             {rehearsal.location.name}
                             {rehearsal.location.connections.length > 0 && (
-                              <>
+                              <Box
+                                component="span"
+                                className={styles.rehearsalsCardTransportText}
+                              >
                                 {" ("}
                                 {
                                   TRANSPORT_MODE_ICON[
@@ -362,7 +365,7 @@ function HomePage() {
                                 }
                                 {rehearsal.location.connections[0].name}
                                 {")"}
-                              </>
+                              </Box>
                             )}
                           </>
                         ) : (

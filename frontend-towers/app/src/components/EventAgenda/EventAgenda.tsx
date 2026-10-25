@@ -760,7 +760,20 @@ export default function EventAgenda({
                   }}
                 >
                   {castlesPublishedModal.map((castle: any) => (
-                    <Tab label={castle.name} className={styles.modalTabLabel} />
+                    <Tab
+                      label={
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="span"
+                          className={styles.tabLabelText}
+                        >
+                          {castle.name}
+                          {!castle.is_published && <IconVisibilityOff />}
+                        </Typography>
+                      }
+                      className={styles.modalTabLabel}
+                    />
                   ))}
                   <Button
                     variant="contained"
