@@ -19,12 +19,7 @@ function CalendarPage() {
 
   const content = (
     <>
-      <Typography
-        variant="h4"
-        fontWeight="700"
-        align="center"
-        marginBottom="48px"
-      >
+      <Typography variant="h4" fontWeight="700" align="center" mb={4}>
         {t("pages.calendar.subtitle")}
       </Typography>
       <Grid

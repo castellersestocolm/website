@@ -20,6 +20,21 @@ export const appTheme = responsiveFontSizes(
         700: "#1d1d1d",
       },
     },
+    shape: {
+      borderRadius: 8,
+    },
+    /*components: {
+      MuiContainer: {
+        styleOverrides: {
+          root: {
+            "@media (max-width: 1536px)": {
+              paddingLeft: "calc(3 * var(--mui-spacing))",
+              paddingRight: "calc(3 * var(--mui-spacing))",
+            },
+          },
+        },
+      },
+    },*/
     cssVariables: true,
     typography: {
       fontFamily: [
