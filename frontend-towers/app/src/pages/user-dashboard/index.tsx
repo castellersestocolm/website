@@ -949,7 +949,11 @@ function UserDashboardPage() {
                 <List className={styles.userFamilyList}>
                   <ListItemButton disableTouchRipple dense>
                     <ListItemIcon>
-                      {get_event_icon(rehearsal.type, rehearsal.modules)}
+                      {get_event_icon(
+                        rehearsal.type,
+                        rehearsal.modules,
+                        rehearsal.theme,
+                      )}
                     </ListItemIcon>
                     <Box
                       className={styles.userFamilyListInner}

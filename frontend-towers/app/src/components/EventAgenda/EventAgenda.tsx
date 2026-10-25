@@ -358,7 +358,7 @@ export default function EventAgenda({
             dense
           >
             <ListItemIcon className={styles.eventCardIcon}>
-              {get_event_icon(event.type, event.modules)}
+              {get_event_icon(event.type, event.modules, event.theme)}
             </ListItemIcon>
             <Box
               className={styles.eventCardInner}

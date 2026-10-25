@@ -315,7 +315,7 @@ class Event(StandardModel, Timestamps):
             locale = (
                 LOCALE_BY_MODULE[self.module] if self.module else settings.LANGUAGE_CODE
             )
-            self.code = unicodedata.normalize(
+            code_normalized = unicodedata.normalize(
                 "NFKD",
                 re.sub(
                     r"[^\w\-]",
@@ -323,6 +323,9 @@ class Event(StandardModel, Timestamps):
                     self.title.get(locale).replace(" ", "-"),
                 ),
             ).lower()
+            self.code = "".join(
+                [c for c in code_normalized if unicodedata.category(c) != "Mn"]
+            )
 
         if self.module and self.status == EventStatus.PUBLISHED:
             if GOOGLE_ENABLED_BY_MODULE[self.module]["calendar"]:
