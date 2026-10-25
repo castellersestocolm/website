@@ -1,8 +1,15 @@
 import { EVENT_TYPE_ICON, EventType, Module, TeamType } from "../enums";
 import IconMusicNote from "@mui/icons-material/MusicNote";
+import { DynamicIcon } from "../components/DynamicIcon/DynamicIcon";
 
-export function get_event_icon(eventType: EventType, eventModules: any[]) {
-  if (
+export function get_event_icon(
+  eventType: EventType,
+  eventModules: any[],
+  eventTheme: any = undefined,
+) {
+  if (eventTheme && eventTheme.icon) {
+    return <DynamicIcon iconName={eventTheme.icon.code} />;
+  } else if (
     eventModules &&
     eventModules.filter(
       (eventModule: any) =>

@@ -274,7 +274,11 @@ export default function EventCalendar({
                               }
                             >
                               <Icon className={styles.calendarIcon}>
-                                {get_event_icon(event.type, event.modules)}
+                                {get_event_icon(
+                                  event.type,
+                                  event.modules,
+                                  event.theme,
+                                )}
                               </Icon>
                               <Typography variant="caption" fontWeight={600}>
                                 {event.title}

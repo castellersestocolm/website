@@ -203,7 +203,11 @@ function AdminPage() {
                     <>
                       <ListItemButton disableTouchRipple dense>
                         <ListItemIcon className={styles.eventCardIcon}>
-                          {get_event_icon(event.type, event.modules)}
+                          {get_event_icon(
+                            event.type,
+                            event.modules,
+                            event.theme,
+                          )}
                         </ListItemIcon>
                         <Box
                           className={styles.userFamilyListInner}
@@ -511,7 +515,11 @@ function AdminPage() {
                     <>
                       <ListItemButton disableTouchRipple dense>
                         <ListItemIcon className={styles.eventCardIcon}>
-                          {get_event_icon(event.type, event.modules)}
+                          {get_event_icon(
+                            event.type,
+                            event.modules,
+                            event.theme,
+                          )}
                         </ListItemIcon>
                         <Box
                           className={styles.userFamilyListInner}
