@@ -27,10 +27,18 @@ export default function PageBase({
     <>
       <Alerts />
       {(title || subtitle) && (
-        <Box className={styles.pageHeader}>
+        <Box
+          className={styles.pageHeader}
+          sx={{
+            paddingBottom: {
+              xs: "calc(4 * var(--mui-spacing))",
+              md: "calc(6 * var(--mui-spacing))",
+            },
+          }}
+        >
           {title && (
             <Typography
-              variant="h3"
+              variant="h4"
               fontWeight="700"
               className={styles.pageTitle}
             >
@@ -105,7 +113,16 @@ export default function PageBase({
                     flexDirection: "column",
                     flexGrow: 1,
                   }
-                : {}),
+                : {
+                    paddingLeft: {
+                      xs: "calc(3 * var(--mui-spacing)) !important",
+                      md: "calc(6 * var(--mui-spacing)) !important",
+                    },
+                    paddingRight: {
+                      xs: "calc(3 * var(--mui-spacing)) !important",
+                      md: "calc(6 * var(--mui-spacing)) !important",
+                    },
+                  }),
             }}
           >
             {pageContent}

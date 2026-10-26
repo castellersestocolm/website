@@ -1,4 +1,3 @@
-import { Container } from "@mui/material";
 import * as React from "react";
 import ImageHeroAboutContact from "../../assets/images/heros/about-contact.jpg";
 import { useTranslation } from "react-i18next";
@@ -9,11 +8,7 @@ import { ContactMessageType } from "../../enums";
 function AboutContactPage() {
   const { t } = useTranslation("common");
 
-  const content = (
-    <Container maxWidth="xl">
-      <FormContactMessage type={ContactMessageType.CONTACT} />
-    </Container>
-  );
+  const content = <FormContactMessage type={ContactMessageType.CONTACT} />;
 
   return (
     <PageImageHero

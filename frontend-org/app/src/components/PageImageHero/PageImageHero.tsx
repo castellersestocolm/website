@@ -69,15 +69,24 @@ export default function PageImageHero({
             <Container
               maxWidth="xl"
               sx={{
-                marginTop: { xs: mobileFull ? "0" : "16px", md: "32px" },
-                paddingTop: { xs: mobileFull ? "0" : "32px", md: "64px" },
-                paddingBottom: { xs: mobileFull ? "0" : "24px", md: "32px" },
-                paddingLeft: {
-                  xs: mobileFull ? "0" : "calc(2 * var(--mui-spacing))",
-                },
-                paddingRight: {
-                  xs: mobileFull ? "0" : "calc(2 * var(--mui-spacing))",
-                },
+                paddingTop: mobileFull
+                  ? "0"
+                  : {
+                      xs: "calc(4 * var(--mui-spacing))",
+                      md: "calc(8 * var(--mui-spacing))",
+                    },
+                paddingLeft: mobileFull
+                  ? "0"
+                  : {
+                      xs: "calc(3 * var(--mui-spacing))",
+                      md: "calc(6 * var(--mui-spacing))",
+                    },
+                paddingRight: mobileFull
+                  ? "0"
+                  : {
+                      xs: "calc(3 * var(--mui-spacing))",
+                      md: "calc(6 * var(--mui-spacing))",
+                    },
                 position: "relative",
                 ...(loading
                   ? {

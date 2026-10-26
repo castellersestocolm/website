@@ -45,7 +45,16 @@ export default function Page({
                   flexDirection: "column",
                   flexGrow: 1,
                 }
-              : {}),
+              : {
+                  paddingLeft: {
+                    xs: "calc(3 * var(--mui-spacing)) !important",
+                    md: "calc(6 * var(--mui-spacing)) !important",
+                  },
+                  paddingRight: {
+                    xs: "calc(3 * var(--mui-spacing)) !important",
+                    md: "calc(6 * var(--mui-spacing)) !important",
+                  },
+                }),
           }}
         >
           {loading ? (

@@ -77,9 +77,18 @@ export default function PageImageHero({
             <Container
               maxWidth="xl"
               sx={{
-                marginTop: { xs: "16px", md: "32px" },
-                paddingTop: { xs: "32px", md: "64px" },
-                paddingBottom: { xs: "24px", md: "32px" },
+                paddingTop: {
+                  xs: "calc(6 * var(--mui-spacing))",
+                  md: "calc(8 * var(--mui-spacing))",
+                },
+                paddingLeft: {
+                  xs: "calc(3 * var(--mui-spacing))",
+                  md: "calc(6 * var(--mui-spacing))",
+                },
+                paddingRight: {
+                  xs: "calc(3 * var(--mui-spacing))",
+                  md: "calc(6 * var(--mui-spacing))",
+                },
                 position: "relative",
                 ...(loading
                   ? {

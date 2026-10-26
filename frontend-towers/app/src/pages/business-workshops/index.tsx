@@ -37,7 +37,7 @@ function BusinessWorkshopsPage() {
 
   const content = (
     <>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" className={styles.sectionContainer}>
         <Grid container spacing={5} mb={{ xs: "40px", md: "64px" }}>
           <Grid size={{ xs: 12, md: 4 }} order={{ xs: 2, md: 1 }}>
             <img
@@ -60,7 +60,7 @@ function BusinessWorkshopsPage() {
       </Container>
 
       <Box component="section" className={styles.workshopsBoxGrey}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box mb={5}>
             <Typography variant="h5" fontWeight={700} mb={1}>
               {t("pages.workshops.who-card.title")}
@@ -160,7 +160,7 @@ function BusinessWorkshopsPage() {
       </Box>
 
       <Box component="section" className={styles.workshopsBox}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box mb={5}>
             <Typography variant="h5" fontWeight={700} mb={1}>
               {t("pages.workshops.offer-card.title")}
@@ -200,7 +200,7 @@ function BusinessWorkshopsPage() {
       </Box>
 
       <Box component="section" className={styles.workshopsBoxGrey}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box mb={5}>
             <Typography variant="h5" fontWeight={700} mb={1}>
               {t("pages.workshops.expectations-card.title")}
@@ -293,7 +293,7 @@ function BusinessWorkshopsPage() {
       </Box>
 
       <Box component="section" className={styles.workshopsBox}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box mb={5}>
             <Typography variant="h5" fontWeight={700} mb={1}>
               {t("pages.workshops.pricing-card.title")}
