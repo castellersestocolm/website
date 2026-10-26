@@ -8,6 +8,7 @@ from notify.api.slack.chat import (
     send_contact_message,
     send_order_message,
     send_registration_message,
+    send_user_message,
 )
 from notify.api.template import (
     get_contact_message_email_render,
@@ -357,3 +358,11 @@ def send_registration_message_slack(
     registration_id: UUID,
 ) -> None:
     send_registration_message(registration_id=registration_id)
+
+
+@shared_task
+def send_user_message_slack(
+    user_id: UUID,
+    module: Module,
+) -> None:
+    send_user_message(user_id=user_id, module=module)

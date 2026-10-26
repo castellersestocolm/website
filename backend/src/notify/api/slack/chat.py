@@ -8,7 +8,8 @@ from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
 from comunicat.enums import Module
-from comunicat.template_tags.comunicat_tags import full_media, full_url
+from comunicat.template_tags.comunicat_tags import format_phone, full_media, full_url
+from consent.enums import ConsentType
 from event.enums import RegistrationStatus
 from event.models import Registration
 from notify.api.slack import get_client
@@ -17,6 +18,7 @@ from notify.models import ContactMessage, MessageSlack
 from order.enums import OrderStatus
 from order.models import Order, OrderLog, OrderProduct
 from product.models import ProductSize
+from user.models import User
 
 
 def post_message(
@@ -184,6 +186,7 @@ def send_order_message(order_id: UUID) -> MessageSlack | None:
         module=order_obj.origin_module,
         locale=translation.get_language(),
         blocks=blocks,
+        item=order_obj,
     )
 
 
@@ -267,6 +270,7 @@ def send_contact_message(contact_message_id: UUID) -> MessageSlack | None:
         module=contact_message_obj.module,
         locale=translation.get_language(),
         blocks=blocks,
+        item=contact_message_obj,
     )
 
 
@@ -358,4 +362,123 @@ def send_registration_message(registration_id: UUID) -> MessageSlack | None:
         module=registration_obj.event.module,
         locale=translation.get_language(),
         blocks=blocks,
+        item=registration_obj,
+    )
+
+
+def send_user_message(user_id: UUID, module: Module) -> MessageSlack | None:
+    user_obj = (
+        User.objects.filter(id=user_id)
+        .select_related("entity")
+        .with_family_name()
+        .with_consents(consent_types=[ConsentType.MEDIA], module=module)
+        .first()
+    )
+
+    if not user_obj:
+        return None
+
+    channel_id = getattr(
+        settings,
+        f"SLACK_{Module(module).name}_CHANNEL_USERS",
+    )
+
+    if not channel_id:
+        return None
+
+    blocks = [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{_('A new user just registered!')}\n*<{full_url(
+                        path="admin/user",
+                        module=module,
+                    )}|{user_obj.name} — {timezone.localtime(user_obj.created_at).strftime('%Y-%m-%d %H:%M')}>*",
+            },
+        },
+        {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Name*\n{user_obj.name}",
+                },
+                *(
+                    [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"*Phone*\n{format_phone(user_obj.phone)}",
+                        }
+                    ]
+                    if user_obj.phone and user_obj.can_manage
+                    else []
+                ),
+                *(
+                    [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"*Family*\n{user_obj.family_name}",
+                        }
+                    ]
+                    if not user_obj.is_adult and user_obj.family_name
+                    else []
+                ),
+                *(
+                    [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"*Age*\n{user_obj.age}",
+                        }
+                    ]
+                    if not user_obj.is_adult and user_obj.age is not None
+                    else []
+                ),
+                *(
+                    [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"*Consent media*\n{'Yes' if getattr(user_obj, f'has_active_consent_{Module(module).name.lower()}_{ConsentType.MEDIA.name.lower()}') else 'No'}",
+                        }
+                    ]
+                    if not user_obj.is_adult
+                    else []
+                ),
+            ],
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": str(_("View user")),
+                        "emoji": True,
+                    },
+                    "url": full_url(
+                        path="admin/user",
+                        module=module,
+                    ),
+                }
+            ],
+        },
+    ]
+
+    message_id = post_message(
+        channel_id=channel_id,
+        blocks=blocks,
+        module=module,
+        unfurl_links=False,
+        unfurl_media=False,
+    )
+
+    return MessageSlack.objects.create(
+        channel_id=channel_id,
+        message_id=message_id,
+        type=MessageSlackType.REGISTRATION_UPDATED,
+        module=module,
+        locale=translation.get_language(),
+        blocks=blocks,
+        item=user_obj,
     )

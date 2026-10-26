@@ -257,7 +257,7 @@ class TestUpdate(NumOperationsMixin, TestCase):
 
     def test_update__registration_finished(self, *args, **kwargs):
         with self.assertNumOperations(
-            num=0, num_selects=11, num_inserts=3, num_updates=1
+            num=0, num_selects=12, num_inserts=3, num_updates=1
         ):
             user_obj = update(
                 user_id=self.user_2_obj.id,
