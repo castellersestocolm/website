@@ -17,6 +17,7 @@ from rest_framework.exceptions import AuthenticationFailed
 
 import consent.api
 import membership.api
+import notify.tasks
 import payment.api.entity
 import user.api.family_member_request
 from comunicat.enums import Module
@@ -25,7 +26,6 @@ from consent.models import EntityConsent
 from legal.enums import TeamType
 from legal.models import Member
 from notify.enums import EmailType
-from notify.tasks import send_user_email
 from order.enums import OrderStatus
 from order.models import Order
 from user.enums import FamilyMemberRole, FamilyMemberStatus
@@ -465,9 +465,14 @@ def update(
         )
 
     if not had_registration_finished and user_obj.registration_finished(module=module):
-        send_user_email.delay(
+        notify.tasks.send_user_email.delay(
             user_id=user_obj.id,
             email_type=EmailType.WELCOME,
+            module=module,
+        )
+
+        notify.tasks.send_user_message_slack.delay(
+            user_id=user_obj.id,
             module=module,
         )
 
@@ -486,7 +491,7 @@ def request_password(email: str, module: Module, locale: str | None = None) -> N
         salt="forgot-password",
     )
 
-    send_user_email.delay(
+    notify.tasks.send_user_email.delay(
         user_id=user_obj.id,
         email_type=EmailType.PASSWORD,
         module=module,
@@ -535,7 +540,7 @@ def request_verify(email: str, module: Module, locale: str | None = None) -> Non
         salt="verify-email",
     )
 
-    send_user_email.delay(
+    notify.tasks.send_user_email.delay(
         user_id=user_obj.id,
         email_type=EmailType.REGISTER,
         module=module,
@@ -562,9 +567,14 @@ def set_verify(token: str, module: Module, request: HttpRequest) -> User | None:
     user_obj.save(update_fields=("email_verified",))
 
     if user_obj.registration_finished(module=module):
-        send_user_email.delay(
+        notify.tasks.send_user_email.delay(
             user_id=user_obj.id,
             email_type=EmailType.WELCOME,
+            module=module,
+        )
+
+        notify.tasks.send_user_message_slack.delay(
+            user_id=user_obj.id,
             module=module,
         )
 

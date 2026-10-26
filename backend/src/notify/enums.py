@@ -33,6 +33,7 @@ class EmailStatus(enum.IntEnum):
 
 
 class MessageSlackType(enum.IntEnum):
+    WELCOME = 12
     ORDER_CREATED = 50
     CONTACT_MESSAGE_CREATED = 60
     REGISTRATION_UPDATED = 71
