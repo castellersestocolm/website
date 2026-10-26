@@ -651,7 +651,7 @@ function HomePage() {
                           style={{ boxShadow: "none" }}
                           className={styles.timetableIcon}
                         >
-                          <DynamicIcon iconName={historyEvent.icon} />
+                          <DynamicIcon iconName={historyEvent.icon.code} />
                         </TimelineDot>
                         <TimelineConnector />
                       </TimelineSeparator>
