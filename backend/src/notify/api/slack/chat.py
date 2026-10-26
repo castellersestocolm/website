@@ -1,4 +1,3 @@
-import datetime
 from typing import Optional
 from uuid import UUID
 
@@ -10,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from comunicat.enums import Module
 from comunicat.template_tags.comunicat_tags import format_phone, full_media, full_url
+from consent.enums import ConsentType
 from event.enums import RegistrationStatus
 from event.models import Registration
 from notify.api.slack import get_client
@@ -367,7 +367,13 @@ def send_registration_message(registration_id: UUID) -> MessageSlack | None:
 
 
 def send_user_message(user_id: UUID, module: Module) -> MessageSlack | None:
-    user_obj = User.objects.filter(id=user_id).select_related("entity").first()
+    user_obj = (
+        User.objects.filter(id=user_id)
+        .select_related("entity")
+        .with_family_name()
+        .with_consents(consent_types=[ConsentType.MEDIA], module=module)
+        .first()
+    )
 
     if not user_obj:
         return None
@@ -412,10 +418,30 @@ def send_user_message(user_id: UUID, module: Module) -> MessageSlack | None:
                     [
                         {
                             "type": "mrkdwn",
+                            "text": f"*Family*\n{user_obj.family_name}",
+                        }
+                    ]
+                    if not user_obj.is_adult and user_obj.family_name
+                    else []
+                ),
+                *(
+                    [
+                        {
+                            "type": "mrkdwn",
                             "text": f"*Age*\n{user_obj.age}",
                         }
                     ]
                     if not user_obj.is_adult and user_obj.age is not None
+                    else []
+                ),
+                *(
+                    [
+                        {
+                            "type": "mrkdwn",
+                            "text": f"*Consent media*\n{'Yes' if getattr(user_obj, f'has_active_consent_{Module(module).name.lower()}_{ConsentType.MEDIA.name.lower()}') else 'No'}",
+                        }
+                    ]
+                    if not user_obj.is_adult
                     else []
                 ),
             ],
