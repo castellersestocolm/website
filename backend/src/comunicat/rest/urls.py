@@ -92,6 +92,7 @@ router.register("admin/towers/stats", admin.AdminTowersStatsAPI, "admin_towers_s
 router.register(
     "admin/history/event", admin.AdminHistoryEventAPI, "admin_history_event"
 )
+router.register("admin/theme/icon", admin.AdminIconAPI, "admin_theme_icon")
 router.register("admin/stats/event", admin.AdminStatsEventAPI, "admin_stats")
 
 

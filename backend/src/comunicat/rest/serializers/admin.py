@@ -25,6 +25,8 @@ from membership.enums import MembershipStatus
 from order.enums import OrderStatus
 from order.models import Order
 from payment.models import Entity
+from theme.enums import IconType
+from theme.models import Icon
 from towers.enums import PositionType
 from user.enums import UserProductSource
 from user.models import TowersUser, User, UserProduct
@@ -371,7 +373,26 @@ class AdminStatsEventSerializer(s.Serializer):
     economy = AdminStatsEventEconomySerializer(read_only=True)
 
 
+class AdminIconSerializer(s.ModelSerializer):
+    class Meta:
+        model = Icon
+        fields = (
+            "id",
+            "code",
+            "type",
+            "created_at",
+        )
+        read_only_fields = (
+            "id",
+            "code",
+            "type",
+            "created_at",
+        )
+
+
 class AdminHistoryEventSerializer(s.ModelSerializer):
+    icon = AdminIconSerializer(read_only=True)
+
     class Meta:
         model = HistoryEvent
         fields = (
@@ -395,11 +416,25 @@ class AdminHistoryEventSerializer(s.ModelSerializer):
 
 
 class AdminHistoryEventUpdateSerializer(s.ModelSerializer):
+    icon_id = s.UUIDField()
+
     class Meta:
         model = HistoryEvent
         fields = (
             "title",
             "description",
             "date",
-            "icon",
+            "icon_id",
         )
+
+
+class AdminListIconSerializer(s.Serializer):
+    filter_types = s.ListSerializer(child=IntEnumField(IconType), required=False)
+
+    def to_internal_value(self, data):
+        data = {k: v for k, v in data.items()}
+        data["filter_types"] = (
+            data["filter_types"].split(",") if data.get("filter_types", False) else []
+        )
+        data = super().to_internal_value(data)
+        return data

@@ -13,6 +13,7 @@ class HistoryEventAdmin(admin.ModelAdmin):
         "title_locale",
         "module",
         "date",
+        "icon",
         "created_at",
     )
     list_filter = ("module", "date", "created_at")
