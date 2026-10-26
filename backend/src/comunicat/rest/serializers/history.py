@@ -2,12 +2,14 @@ from django.utils import translation
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers as s
 
+from comunicat.rest.serializers.theme import IconSerializer
 from history.models import HistoryEvent
 
 
 class HistoryEventSerializer(s.ModelSerializer):
     title = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
+    icon = IconSerializer(read_only=True)
 
     class Meta:
         model = HistoryEvent
