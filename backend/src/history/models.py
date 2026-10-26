@@ -17,7 +17,13 @@ class HistoryEvent(StandardModel, Timestamps):
         choices=((m.value, m.name) for m in Module),
     )
 
-    icon = models.CharField(max_length=255, blank=True, null=True)
+    icon = models.ForeignKey(
+        "theme.Icon",
+        related_name="history_events",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
 
     objects = HistoryEventQuerySet.as_manager()
 

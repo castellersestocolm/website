@@ -22,7 +22,9 @@ def get_list(
         HistoryEvent.objects.filter(
             history_event_filter,
             module=module,
-        ).order_by("-date", "created_at")
+        )
+        .select_related("icon")
+        .order_by("-date", "created_at")
     )
 
 
@@ -31,7 +33,7 @@ def update(
     date: datetime.date,
     title: dict[str, str],
     description: dict[str, str],
-    icon: str,
+    icon_id: UUID,
     module: Module,
 ) -> HistoryEvent:
     history_event_obj = HistoryEvent.objects.get(id=history_event_id)
@@ -39,9 +41,9 @@ def update(
     history_event_obj.date = date
     history_event_obj.title = title
     history_event_obj.description = description
-    history_event_obj.icon = icon
+    history_event_obj.icon_id = icon_id
 
-    history_event_obj.save(update_fields=("date", "title", "description", "icon"))
+    history_event_obj.save(update_fields=("date", "title", "description", "icon_id"))
 
     return history_event_obj
 
@@ -50,11 +52,11 @@ def create(
     date: datetime.date,
     title: dict[str, str],
     description: dict[str, str],
-    icon: str,
+    icon_id: UUID,
     module: Module,
 ) -> HistoryEvent:
     return HistoryEvent.objects.create(
-        date=date, title=title, description=description, icon=icon, module=module
+        date=date, title=title, description=description, icon_id=icon_id, module=module
     )
 
 

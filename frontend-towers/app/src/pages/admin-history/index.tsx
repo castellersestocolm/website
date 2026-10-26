@@ -7,6 +7,7 @@ import {
   apiAdminHistoryEventDelete,
   apiAdminHistoryEventList,
   apiAdminHistoryEventUpdate,
+  apiAdminThemeIconList,
 } from "../../api";
 import {
   Button,
@@ -31,6 +32,8 @@ import IconCheck from "@mui/icons-material/Check";
 import { TransitionGroup } from "react-transition-group";
 import IconAdd from "@mui/icons-material/Add";
 import IconRemoveCircleOutline from "@mui/icons-material/RemoveCircleOutline";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -47,10 +50,22 @@ interface UpdateFormElement extends HTMLFormElement {
   readonly elements: UpdateFormElements;
 }
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 function AdminHistoryPage() {
   const [t, i18n] = useTranslation("common");
 
   const [loading, setLoading] = React.useState(true);
+  const [icons, setIcons] = React.useState(undefined);
   const [historyEvents, setHistoryEvents] = React.useState(undefined);
   const [historyEventsPage, setHistoryEventsPage] = React.useState(1);
   const [successById, setSuccessById] = React.useState<{
@@ -67,6 +82,14 @@ function AdminHistoryPage() {
     [id: string]: boolean;
   }>({});
   const [isAdding, setIsAdding] = React.useState(false);
+
+  React.useEffect(() => {
+    apiAdminThemeIconList().then((response) => {
+      if (response.status === 200) {
+        setIcons(response.data);
+      }
+    });
+  }, [setIcons]);
 
   React.useEffect(() => {
     setLoading(true);
@@ -273,7 +296,7 @@ function AdminHistoryPage() {
                       <FormLabel htmlFor="icon" required>
                         {t("pages.admin-history.event-table.icon")}
                       </FormLabel>
-                      <OutlinedInput
+                      <Select
                         id="icon"
                         name="icon"
                         type="text"
@@ -285,7 +308,20 @@ function AdminHistoryPage() {
                           validationErrors.icon &&
                           validationErrors.icon[0].detail
                         }
-                      />
+                        input={<OutlinedInput />}
+                        MenuProps={MenuProps}
+                        variant="standard"
+                      >
+                        {icons &&
+                          icons.results.length > 0 &&
+                          icons.results.map((icon: any, i: number) => {
+                            return (
+                              <MenuItem key={i} value={icon.id}>
+                                {icon.code}
+                              </MenuItem>
+                            );
+                          })}
+                      </Select>
                       {validationErrors && validationErrors.icon && (
                         <FormHelperText error>
                           {validationErrors.icon[0].detail}
@@ -483,7 +519,7 @@ function AdminHistoryPage() {
                           <Alert
                             icon={<IconCheck fontSize="inherit" />}
                             severity="success"
-                            className={styles.alert}
+                            className={styles.alertInner}
                           >
                             {t("pages.admin-history.event-table.success")}
                           </Alert>
@@ -530,21 +566,34 @@ function AdminHistoryPage() {
                             <FormLabel htmlFor="icon" required>
                               {t("pages.admin-history.event-table.icon")}
                             </FormLabel>
-                            <OutlinedInput
+
+                            <Select
                               id="icon"
                               name="icon"
                               type="text"
                               autoComplete="icon"
                               required
                               size="small"
-                              defaultValue={historyEvent.icon}
+                              defaultValue={historyEvent.icon.id}
                               error={
-                                validationErrorsById[historyEvent.id] &&
-                                validationErrorsById[historyEvent.id].icon &&
-                                validationErrorsById[historyEvent.id].icon[0]
-                                  .detail
+                                validationErrors &&
+                                validationErrors.icon &&
+                                validationErrors.icon[0].detail
                               }
-                            />
+                              input={<OutlinedInput />}
+                              MenuProps={MenuProps}
+                              variant="standard"
+                            >
+                              {icons &&
+                                icons.results.length > 0 &&
+                                icons.results.map((icon: any, i: number) => {
+                                  return (
+                                    <MenuItem key={i} value={icon.id}>
+                                      {icon.code}
+                                    </MenuItem>
+                                  );
+                                })}
+                            </Select>
                             {validationErrorsById[historyEvent.id] &&
                               validationErrorsById[historyEvent.id].icon && (
                                 <FormHelperText error>

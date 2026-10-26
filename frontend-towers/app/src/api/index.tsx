@@ -21,8 +21,14 @@ import {
   API_PROGRAM_COURSE_REGISTRATIONS_LIST_PAGE_SIZE,
   API_NEWSLETTER_LIST_PAGE_SIZE,
   API_CONSENT_ENTITY_LIST_PAGE_SIZE,
+  API_ADMIN_THEME_ICON_PAGE_SIZE,
 } from "../consts";
-import { ContactMessageType, RegistrationStatus, OrderType } from "../enums";
+import {
+  ContactMessageType,
+  RegistrationStatus,
+  OrderType,
+  IconType,
+} from "../enums";
 
 const API_BASE_URL = process.env.REACT_APP_TOWERS_API_URL;
 
@@ -1031,14 +1037,14 @@ export const apiAdminHistoryEventUpdate = async (
   date: string,
   title: Object,
   description: Object,
-  icon: string,
+  iconId: string,
 ) => {
   try {
     return await instance.patch("/admin/history/event/" + id + "/", {
       date: date,
       title: title,
       description: description,
-      icon: icon,
+      icon_id: iconId,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -1051,14 +1057,14 @@ export const apiAdminHistoryEventCreate = async (
   date: string,
   title: Object,
   description: Object,
-  icon: string,
+  iconId: string,
 ) => {
   try {
     return await instance.post("/admin/history/event/", {
       date: date,
       title: title,
       description: description,
-      icon: icon,
+      icon_id: iconId,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -1070,6 +1076,25 @@ export const apiAdminHistoryEventCreate = async (
 export const apiAdminHistoryEventDelete = async (id: string) => {
   try {
     return await instance.delete("/admin/history/event/" + id + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminThemeIconList = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+) => {
+  try {
+    return await instance.get("/admin/theme/icon", {
+      params: {
+        page_size: pageSize ? pageSize : API_ADMIN_THEME_ICON_PAGE_SIZE,
+        page: page,
+        filter_types: IconType.MUI_MATERIAL_ICON,
+      },
+    });
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

@@ -10,6 +10,7 @@ import event.api
 import event.api.registration
 import history.api.history_event
 import order.api
+import theme.api.icon
 import towers.api
 import towers.api.statistics
 import user.api
@@ -23,7 +24,9 @@ from comunicat.rest.serializers.admin import (
     AdminEventTokenSerializer,
     AdminHistoryEventSerializer,
     AdminHistoryEventUpdateSerializer,
+    AdminIconSerializer,
     AdminListEventSerializer,
+    AdminListIconSerializer,
     AdminListRegistrationSerializer,
     AdminOrderSerializer,
     AdminRegistrationRequestSerializer,
@@ -76,6 +79,12 @@ class AdminStatsEventResultsSetPagination(PageNumberPagination):
 
 
 class AdminHistoryEventResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class AdminIconResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -474,3 +483,28 @@ class AdminHistoryEventAPI(ComuniCatViewSet):
         history.api.history_event.delete(history_event_id=id, module=self.module)
 
         return Response(status=204)
+
+
+class AdminIconAPI(ComuniCatViewSet):
+    permission_classes = (AllowLevelAdmin,)
+    pagination_class = AdminIconResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        query_serializer=AdminListIconSerializer(),
+        responses={200: AdminIconSerializer(many=True), 403: Serializer()},
+    )
+    @method_decorator(cache_page(1))
+    @method_decorator(cache_control(private=True))
+    def list(self, request):
+        serializer = AdminListIconSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        icon_objs = theme.api.icon.get_list(**serializer.validated_data)
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(icon_objs, request)
+        serializer = AdminIconSerializer(
+            result_page, many=True, context={"module": self.module}
+        )
+        return paginator.get_paginated_response(serializer.data)

@@ -327,3 +327,7 @@ export enum ColourType {
   PALETTE_TEXT_PRIMARY = 120,
   PALETTE_TEXT_SECONDARY = 130,
 }
+
+export enum IconType {
+  MUI_MATERIAL_ICON = 10,
+}
