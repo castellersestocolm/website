@@ -42,7 +42,7 @@ function ResourcesReportsPage() {
   }
 
   const content = (
-    <Box mt={3}>
+    <>
       {documents && documents.results.length > 0 && (
         <>
           {!isReady ? (
@@ -118,7 +118,7 @@ function ResourcesReportsPage() {
           )}
         </>
       )}
-    </Box>
+    </>
   );
 
   return (

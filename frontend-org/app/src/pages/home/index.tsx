@@ -392,7 +392,7 @@ function HomePage() {
     <>
       <Collapse in={otherHighligtedEvents} timeout="auto" unmountOnExit>
         <Box component="section" className={styles.eventsGrid}>
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" disableGutters>
             <Typography
               variant="h4"
               fontWeight="700"
@@ -514,7 +514,7 @@ function HomePage() {
       </Collapse>
       <Collapse in={wpPosts} timeout="auto" unmountOnExit>
         <Box component="section" className={styles.postsGrid}>
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" disableGutters>
             <Typography
               variant="h4"
               fontWeight="700"

@@ -267,7 +267,7 @@ function HomePage() {
       >
         <Container maxWidth="lg">
           <Typography
-            variant="h3"
+            variant="h4"
             fontWeight="700"
             className={styles.rehearsalsTitle}
           >
@@ -446,7 +446,7 @@ function HomePage() {
             </Grid>
             <Grid size={{ xs: 12, md: 8 }}>
               <Typography
-                variant="h3"
+                variant="h4"
                 fontWeight="700"
                 className={styles.joinTitle}
               >
@@ -601,7 +601,7 @@ function HomePage() {
       >
         <Container maxWidth="lg">
           <Typography
-            variant="h3"
+            variant="h4"
             fontWeight="700"
             className={styles.timelineTitle}
           >

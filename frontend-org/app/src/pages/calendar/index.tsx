@@ -37,7 +37,7 @@ function CalendarPage() {
       title={t("pages.calendar.title")}
       content={content}
       hero={ImageHeroCalendar}
-      mobileFull={true}
+      mobileFull={!calendarMatchesMd}
     />
   );
 }

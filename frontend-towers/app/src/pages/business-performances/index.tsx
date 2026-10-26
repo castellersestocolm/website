@@ -37,7 +37,7 @@ function BusinessPerformancesPage() {
 
   const content = (
     <>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" className={styles.sectionContainer}>
         <Grid container spacing={5} mb={{ xs: "40px", md: "64px" }}>
           <Grid size={{ xs: 12, md: 4 }} order={{ xs: 2, md: 1 }}>
             <img
@@ -69,7 +69,7 @@ function BusinessPerformancesPage() {
       </Container>
 
       <Box component="section" className={styles.workshopsBoxGrey}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box>
             <Typography variant="h5" fontWeight={700} mb={1}>
               {t("pages.workshops.who-card.title")}
@@ -85,7 +85,7 @@ function BusinessPerformancesPage() {
       </Box>
 
       <Box component="section" className={styles.workshopsBox}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box>
             <Grid container spacing={4}>
               <Grid container size={{ xs: 12, md: 6 }} direction="row">
@@ -113,7 +113,7 @@ function BusinessPerformancesPage() {
       </Box>
 
       <Box component="section" className={styles.workshopsBoxGrey}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box>
             <Typography variant="h5" fontWeight={700} mb={1}>
               {t("pages.performances.choose-card.title")}
@@ -190,7 +190,7 @@ function BusinessPerformancesPage() {
       </Box>
 
       <Box component="section" className={styles.workshopsBox}>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={styles.sectionContainer}>
           <Box>
             <Typography variant="h5" fontWeight={700} mb={1}>
               {t("pages.performances.pricing-card.title")}

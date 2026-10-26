@@ -105,7 +105,11 @@
   display: flex;
   flex-basis: 0;
   align-items: center;
-  padding-bottom: 64px;
+  padding-bottom: calc(6 * var(--mui-spacing));
+
+  @media screen and (max-width: 900px) {
+    padding-bottom: calc(4 * var(--mui-spacing));
+  }
 }
 
 .postsInnerGrid {
@@ -115,7 +119,11 @@
 .postsTitle {
   text-align: center;
   color: var(--mui-palette-secondary-main);
-  margin-bottom: 32px !important;
+  margin-bottom: calc(4 * var(--mui-spacing)) !important;
+
+  @media screen and (max-width: 900px) {
+    margin-bottom: calc(3 * var(--mui-spacing)) !important;
+  }
 }
 
 .postCard {

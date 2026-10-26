@@ -13,8 +13,8 @@
 
 .heroTitleBox {
   text-align: center;
-  padding: 24px;
-  max-width: calc(100% - 24px);
+  padding: calc(3 * var(--mui-spacing));
+  max-width: calc(100% - (6 * var(--mui-spacing)));
   z-index: 100;
 }
 

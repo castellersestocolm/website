@@ -6,6 +6,11 @@
   background-size: cover;
 }
 
+.sectionContainer {
+  padding-left: calc(3 * var(--mui-spacing)) !important;
+  padding-right: calc(3 * var(--mui-spacing)) !important;
+}
+
 .workshopsContainer {
   margin-bottom: 32px;
 }
@@ -14,17 +19,25 @@
   display: flex;
   flex-basis: 0;
   align-items: center;
-  padding: 56px 0;
+  padding: calc(6 * var(--mui-spacing)) 0;
   background-color: #f8f8f8;
   border-top: 1px solid var(--mui-palette-grey-200);
   border-bottom: 1px solid var(--mui-palette-grey-200);
+
+  @media screen and (max-width: 900px) {
+    padding: calc(4 * var(--mui-spacing)) 0;
+  }
 }
 
 .workshopsBox {
   display: flex;
   flex-basis: 0;
   align-items: center;
-  padding: 56px 0;
+  padding: calc(6 * var(--mui-spacing)) 0;
+
+  @media screen and (max-width: 900px) {
+    padding: calc(4 * var(--mui-spacing)) 0;
+  }
 }
 
 .workshopsImage {

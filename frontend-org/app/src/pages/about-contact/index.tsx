@@ -1,4 +1,3 @@
-import { Container } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import PageBase from "../../components/PageBase/PageBase";
@@ -8,11 +7,7 @@ import { ContactMessageType } from "../../enums";
 function AboutContactPage() {
   const { t } = useTranslation("common");
 
-  const content = (
-    <Container maxWidth="xl">
-      <FormContactMessage type={ContactMessageType.CONTACT} />
-    </Container>
-  );
+  const content = <FormContactMessage type={ContactMessageType.CONTACT} />;
 
   return <PageBase title={t("pages.about-contact.title")} content={content} />;
 }
