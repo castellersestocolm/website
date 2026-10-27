@@ -688,6 +688,7 @@ class EventWithCountsSerializer(EventWithRegistrationsSerializer):
             "modules",
             "registration_counts",
             "agenda_items",
+            "theme",
             "created_at",
         )
         read_only_fields = (
@@ -703,6 +704,7 @@ class EventWithCountsSerializer(EventWithRegistrationsSerializer):
             "modules",
             "registration_counts",
             "agenda_items",
+            "theme",
             "created_at",
         )
 

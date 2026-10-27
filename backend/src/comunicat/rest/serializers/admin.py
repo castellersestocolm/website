@@ -11,6 +11,7 @@ from comunicat.rest.serializers.event import (
 from comunicat.rest.serializers.legal import RoleSerializer, TeamSlimSerializer
 from comunicat.rest.serializers.order import OrderProductSerializer, OrderSlimSerializer
 from comunicat.rest.serializers.product import ProductSerializer
+from comunicat.rest.serializers.theme import ThemeSerializer
 from comunicat.rest.serializers.towers import TowerWithPlacesSerializer
 from comunicat.rest.serializers.user import (
     UserExtraSlimWithFamilySerializer,
@@ -247,6 +248,7 @@ class AdminEventSerializer(s.ModelSerializer):
     require_approve = s.BooleanField(read_only=True)
     modules = EventModuleSerializer(many=True, read_only=True)
     questions = EventQuestionSerializer(read_only=True, many=True)
+    theme = ThemeSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -262,6 +264,7 @@ class AdminEventSerializer(s.ModelSerializer):
             "require_approve",
             "modules",
             "questions",
+            "theme",
             "created_at",
         )
         read_only_fields = (
@@ -276,6 +279,7 @@ class AdminEventSerializer(s.ModelSerializer):
             "require_approve",
             "modules",
             "questions",
+            "theme",
             "created_at",
         )
 

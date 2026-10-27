@@ -219,7 +219,7 @@ class AdminEventAPI(ComuniCatViewSet):
     lookup_field = "id"
 
     @swagger_auto_schema(
-        query_serializer=AdminListEventSerializer,
+        query_serializer=AdminListEventSerializer(),
         responses={200: AdminEventSerializer(many=True), 403: Serializer()},
     )
     @method_decorator(cache_page(1))
