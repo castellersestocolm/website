@@ -86,7 +86,7 @@ def update(
     module: Module,
     towers: dict | None,
     organisation: dict | None,
-    consent_types: list[ConsentType] = list,
+    consent_types: list[ConsentType] | None = None,
 ) -> FamilyMember | None:
     user_obj = User.objects.filter(id=user_id).select_related("family_member").first()
 

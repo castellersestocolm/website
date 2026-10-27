@@ -1,5 +1,5 @@
 import styles from "./styles.module.css";
-import { Link, Typography } from "@mui/material";
+import { Link, Typography, Divider } from "@mui/material";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import Box from "@mui/material/Box";
 import LanguageChip from "../../components/LanguageChip/LanguageChip";
 import { DocumentType } from "../../enums";
+import Masonry from "@mui/lab/Masonry";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
@@ -30,49 +31,49 @@ function ResourcesPage() {
   }, [setDocuments, i18n.resolvedLanguage]);
 
   const content = (
-    <>
-      <Grid container spacing={4} className={styles.resourcesGrid}>
-        {documents &&
-          documents.results.length > 0 &&
-          documents.results.map((document: any) => {
-            return (
-              <Grid
-                size={{ xs: 12, sm: 6, md: 3 }}
-                className={styles.resourcesGridItem}
+    <Masonry
+      columns={{ xs: 1, sm: 2, md: 4 }}
+      spacing={4}
+      className={styles.resourcesGrid}
+    >
+      {documents &&
+        documents.results.length > 0 &&
+        documents.results.map((document: any) => {
+          return (
+            <Box key={document.id} className={styles.resourcesGridItem}>
+              <Link
+                href={BACKEND_BASE_URL + document.file}
+                underline="none"
+                color="textPrimary"
               >
-                <Link
-                  href={BACKEND_BASE_URL + document.file}
-                  underline="none"
-                  color="textPrimary"
-                >
-                  <img
-                    src={BACKEND_BASE_URL + document.preview.medium}
-                    className={styles.resourcesFileImage}
-                    alt={document.name}
-                  />
-                  <Box className={styles.resourcesFileTitle}>
-                    <Box>
-                      <Typography
-                        variant="body2"
-                        fontWeight="600"
-                        component="span"
-                        paddingRight="8px"
-                      >
-                        {document.name}
-                      </Typography>
-                      <LanguageChip
-                        language={document.language}
-                        size="small"
-                        marginLeft={0}
-                      />
-                    </Box>
+                <img
+                  src={BACKEND_BASE_URL + document.preview.medium}
+                  className={styles.resourcesFileImage}
+                  alt={document.name}
+                />
+                <Divider />
+                <Box className={styles.resourcesFileTitle}>
+                  <Box>
+                    <Typography
+                      variant="body2"
+                      fontWeight="600"
+                      component="span"
+                      paddingRight="8px"
+                    >
+                      {document.name}
+                    </Typography>
+                    <LanguageChip
+                      language={document.language}
+                      size="small"
+                      marginLeft={0}
+                    />
                   </Box>
-                </Link>
-              </Grid>
-            );
-          })}
-      </Grid>
-    </>
+                </Box>
+              </Link>
+            </Box>
+          );
+        })}
+    </Masonry>
   );
 
   return (
