@@ -1,14 +1,12 @@
 .resourcesGrid {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
+  width: calc(100% + 4 * var(--mui-spacing)) !important;
+  margin-left: calc(-2 * var(--mui-spacing)) !important;
+  margin-right: calc(-2 * var(--mui-spacing)) !important;
 }
 
 .resourcesGridItem {
-  background-color: var(--mui-palette-grey-100);
   border: 1px solid var(--mui-palette-divider);
-  border-radius: 8px;
+  border-radius: calc(2 * var(--mui-spacing));
   display: flex;
 
   a {
@@ -18,15 +16,15 @@
 }
 
 .resourcesFileImage {
-  border-radius: 4px 4px 0 0;
+  border-radius: calc(2 * var(--mui-spacing)) calc(2 * var(--mui-spacing)) 0 0;
   width: 100%;
   color: var(--mui-palette-text-primary) !important;
   text-decoration: none !important;
 }
 
 .resourcesFileTitle {
-  border-radius: 0 0 4px 4px;
-  padding: 8px 12px;
+  border-radius: 0 0 calc(2 * var(--mui-spacing)) calc(2 * var(--mui-spacing));
+  padding: calc(1 * var(--mui-spacing)) calc(1.5 * var(--mui-spacing));
   flex: 1;
   align-content: end;
 }

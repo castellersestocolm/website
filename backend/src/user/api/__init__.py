@@ -292,7 +292,7 @@ def create(
     module: Module,
     towers: dict | None,
     organisation: dict | None,
-    consent_types: list[ConsentType] = list,
+    consent_types: list[ConsentType] | None = None,
     preferred_language: str | None = None,
     with_family: bool = True,
 ) -> User:
@@ -403,7 +403,7 @@ def update(
     preferred_language: str | None = None,
     towers: dict | None = None,
     organisation: dict | None = None,
-    consent_types: list[ConsentType] = list,
+    consent_types: list[ConsentType] | None = None,
 ) -> User:
     user_obj = (
         User.objects.filter(id=user_id).select_related("towers", "entity").first()
