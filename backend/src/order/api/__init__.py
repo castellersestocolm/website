@@ -17,7 +17,7 @@ import membership.api
 import notify.tasks
 import payment.api.payment_provider
 import payment.api.payment_request
-import payment.tasks
+import payment.api.websocket
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
@@ -591,7 +591,8 @@ def complete(  # noqa: C901
     )(order_id=order_id)
     payment_status = payment_class.capture()
 
-    payment.tasks.send_websocket_order_message.delay(
+    # Send a message via websocket
+    payment.api.websocket.send_order_message(
         order_id=order_id, payment_status=payment_status
     )
 

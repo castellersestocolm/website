@@ -63,7 +63,7 @@ function PaymentRequestPage() {
   const content = (
     <>
       {paymentRequest && (
-        <Grid container gap={3} mt={4} mb={4} justifyContent="center">
+        <Grid container gap={3} justifyContent="center">
           <Grid size={{ xs: 12, sm: 10, md: 7, lg: 6 }}>
             <Card variant="outlined">
               <Box className={styles.userTopBox}>
