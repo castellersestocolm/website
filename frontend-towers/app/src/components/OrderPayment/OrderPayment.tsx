@@ -238,7 +238,7 @@ export default function OrderPayment({
   );
 
   React.useEffect(() => {
-    if (paymentProvider && paymentProvider.code === "TRANSFER") {
+    if (paymentProvider && paymentProvider.code === "SE_SWISH") {
       paymentWaitSwish({
         wsurl: WEBSOCKET_URL,
         channel: "order-" + id,
