@@ -4,6 +4,8 @@ import Grid from "@mui/material/Grid";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../AppContext/AppContext";
 import Box from "@mui/material/Box";
+// @ts-ignore
+import { Socker } from "socker.js";
 import QRCode from "qrcode";
 import {
   Card,
@@ -24,7 +26,7 @@ import {
   apiOrderProviderUpdate,
   apiOrderComplete,
 } from "../../api";
-import { OrderStatus, OrderType } from "../../enums";
+import { OrderStatus, OrderType, PaymentStatus } from "../../enums";
 import { amountToString } from "../../utils/money";
 import { LoaderBar } from "../LoaderBar/LoaderBar";
 import IconAccountBalance from "@mui/icons-material/AccountBalance";
@@ -49,6 +51,8 @@ declare global {
 }
 
 window.SumUpCard = window.SumUpCard || {};
+
+const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL;
 
 export default function OrderPayment({
   id,
@@ -217,6 +221,32 @@ export default function OrderPayment({
     },
     [id, navigate, setMessages, setOrder, t, orderReceiptPath],
   );
+
+  const paymentWaitSwish = useCallback(({ wsurl, channel, onMessage }: any) => {
+    const socker = new Socker(wsurl);
+    socker.on(channel, onMessage);
+  }, []);
+
+  const handlePaymentSwishMessage = useCallback(
+    async (data: any) => {
+      const paymentStatus = data.status;
+
+      if (paymentStatus === PaymentStatus.COMPLETED) {
+        await handleCompleteOrder();
+      }
+    },
+    [handleCompleteOrder],
+  );
+
+  React.useEffect(() => {
+    if (paymentProvider && paymentProvider.code === "SE_SWISH") {
+      paymentWaitSwish({
+        wsurl: WEBSOCKET_URL,
+        channel: "order-" + id,
+        onMessage: handlePaymentSwishMessage,
+      });
+    }
+  }, [id, paymentProvider, paymentWaitSwish, handlePaymentSwishMessage]);
 
   React.useEffect(() => {
     if (order && order.payment_order) {

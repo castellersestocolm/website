@@ -17,6 +17,7 @@ import membership.api
 import notify.tasks
 import payment.api.payment_provider
 import payment.api.payment_request
+import payment.tasks
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
@@ -589,6 +590,10 @@ def complete(  # noqa: C901
         provider_id=payment_order_obj.provider_id
     )(order_id=order_id)
     payment_status = payment_class.capture()
+
+    payment.tasks.send_websocket_order_message.delay(
+        order_id=order_id, payment_status=payment_status
+    )
 
     if payment_status in (
         PaymentStatus.PENDING,

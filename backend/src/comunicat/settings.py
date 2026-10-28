@@ -750,6 +750,10 @@ SLACK_TOWERS_ATTENDANCE_TIME = (
     else 24
 )
 
+# Websocket
+
+WEBSOCKET_URL = os.getenv("WEBSOCKET_URL", "0.0.0.0:8765")
+
 # Django money
 
 CURRENCIES = MODULE_ALL_CURRENCIES

@@ -49,6 +49,7 @@ coverage:
     --cov-config=../setup.cfg \
     --cov=. \
 	--cov-report=xml \
+	--cov-report=html \
 	--cov-report=term \
     --cov-fail-under=70 \
 	$(coverage)
