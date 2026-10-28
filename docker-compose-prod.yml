@@ -140,6 +140,7 @@ services:
         - REACT_APP_ORG_WP_API_PASSWORD=${REACT_APP_ORG_WP_API_PASSWORD:-admin}
         - REACT_APP_ORG_WP_CATEGORIES_CA=${REACT_APP_ORG_WP_CATEGORIES_CA}
         - REACT_APP_ORG_WP_CATEGORIES_SV=${REACT_APP_ORG_WP_CATEGORIES_SV}
+        - REACT_APP_WEBSOCKET_URL=${REACT_APP_ORG_WEBSOCKET_URL:-http://localhost:8765}
     deploy:
       replicas: 2
       update_config:
@@ -188,6 +189,7 @@ services:
         - REACT_APP_TOWERS_INFO_EMAIL=${REACT_APP_TOWERS_INFO_EMAIL:-info@castellersestocolm.se}
         - REACT_APP_PINYATOR_BASE_URL=${REACT_APP_PINYATOR_BASE_URL:-http://localhost:8100}
         - REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID=${REACT_APP_PAYMENT_PROVIDER_PAYPAL_CLIENT_ID}
+        - REACT_APP_WEBSOCKET_URL=${REACT_APP_TOWERS_WEBSOCKET_URL:-http://localhost:8765}
     deploy:
       replicas: 2
       update_config:
@@ -253,6 +255,21 @@ services:
       - redis-data:/data
     ports:
       - 6390:6379
+    networks:
+      - comunicat
+  socker:
+    image: 5monkeys/socker:2.2.0
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 250M
+    depends_on:
+      - redis
+    command: "-v --redis-host=redis -i 0.0.0.0"
+    ports:
+      - 8765:8765
     networks:
       - comunicat
   worker:

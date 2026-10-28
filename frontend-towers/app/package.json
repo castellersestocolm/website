@@ -45,6 +45,7 @@
     "react-scripts": "^5.0.1",
     "react-spinners": "^0.17.0",
     "save": "^2.9.0",
+    "socker.js": "^2.0.0",
     "typescript-cookie": "^1.0.6",
     "typescript-plugin-css-modules": "^5.1.0"
   },

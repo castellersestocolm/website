@@ -28,6 +28,7 @@
     "react-router-dom": "7.1.3",
     "react-scripts": "^5.0.1",
     "react-spinners": "^0.17.0",
+    "socker.js": "^2.0.0",
     "typescript-cookie": "^1.0.6"
   },
   "scripts": {
