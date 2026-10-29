@@ -120,6 +120,9 @@ export const ROUTES = {
       ORG_BASE_URL +
       "/user/dashboard",
   },
+  "external-wordpress": {
+    path: ORG_BASE_URL + "/wp-admin",
+  },
   "external-website": {
     path: "https://lesquatrebarres.org",
   },

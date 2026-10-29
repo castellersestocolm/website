@@ -302,6 +302,7 @@
   "pages.admin.title": "Administratörssida",
   "pages.admin.attendance-table.title": "Deltagande",
   "pages.admin.events-table.title": "Evenemang",
+  "pages.admin.events-table.attendance": "Deltagande",
   "pages.admin.users-table.title": "Medlemmar",
   "pages.admin.users-table.membership": "Medlemskap",
   "pages.admin.orders-table.title": "Beställningar",

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Grid from "@mui/material/Grid";
 import {
+  Button,
   Card,
   Divider,
   Link,
@@ -47,6 +48,8 @@ import IconShoppingCart from "@mui/icons-material/ShoppingCart";
 import IconInventory from "@mui/icons-material/Inventory";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import { filterProductsForUser } from "../../utils/product";
+import Pagination from "@mui/material/Pagination";
+import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
@@ -58,6 +61,7 @@ function AdminPage() {
   const { user } = useAppContext();
   let navigate = useNavigate();
 
+  const [eventPage, setEventPage] = React.useState(1);
   const [events, setEvents] = React.useState(undefined);
   const [towersByEventId, setTowersByEventId] = React.useState<any>({});
   const [userEvents, setUserEvents] = React.useState(undefined);
@@ -67,14 +71,16 @@ function AdminPage() {
   const [orders, setOrders] = React.useState(undefined);
 
   React.useEffect(() => {
-    apiAdminEventList(1, 5, new Date().toISOString().substring(0, 10)).then(
-      (response) => {
-        if (response.status === 200) {
-          setEvents(response.data);
-        }
-      },
-    );
-  }, [setEvents]);
+    apiAdminEventList(
+      eventPage,
+      5,
+      new Date().toISOString().substring(0, 10),
+    ).then((response) => {
+      if (response.status === 200) {
+        setEvents(response.data);
+      }
+    });
+  }, [eventPage, setEvents]);
 
   React.useEffect(() => {
     if (events) {
@@ -491,7 +497,13 @@ function AdminPage() {
           )}
         </Card>
       </Grid>
-      <Grid container size={{ xs: 12, md: 12 }} spacing={4} direction="row">
+      <Grid
+        container
+        size={{ xs: 12, md: 12 }}
+        spacing={2}
+        direction="column"
+        justifyContent="center"
+      >
         <Card variant="outlined" className={styles.adminCard}>
           <Link
             color="textPrimary"
@@ -562,38 +574,61 @@ function AdminPage() {
                               </Typography>
                             }
                           ></ListItemText>
+
+                          {towersByEventId && event.id in towersByEventId && (
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              marginLeft={{ xs: "0", lg: "8px" }}
+                              marginTop={{ xs: "8px", lg: "0" }}
+                              marginBottom={{ xs: "8px", lg: "0" }}
+                              whiteSpace="nowrap"
+                              display={{ xs: "none", md: "flex" }}
+                            >
+                              {towersByEventId[event.id].map((tower: any) => {
+                                return (
+                                  <Box className={styles.towerBox}>
+                                    <Typography
+                                      variant="body1"
+                                      color={
+                                        tower.is_published
+                                          ? "success"
+                                          : "textSecondary"
+                                      }
+                                      fontWeight={
+                                        tower.is_published ? "600" : undefined
+                                      }
+                                    >
+                                      {tower.name}
+                                    </Typography>
+                                  </Box>
+                                );
+                              })}
+                            </Stack>
+                          )}
+                          {event.require_signup && event.require_approve && (
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              marginLeft={{ xs: "0", lg: "16px" }}
+                              marginTop={{ xs: "8px", lg: "0" }}
+                              marginBottom={{ xs: "8px", lg: "0" }}
+                              whiteSpace="nowrap"
+                            >
+                              <Button
+                                variant="contained"
+                                type="submit"
+                                style={{ width: "auto" }}
+                                disableElevation
+                                href={ROUTES[
+                                  "admin-event-attendance"
+                                ].path.replace(":id", event.id)}
+                              >
+                                {t("pages.admin.events-table.attendance")}
+                              </Button>
+                            </Stack>
+                          )}
                         </Box>
-                        {towersByEventId && event.id in towersByEventId && (
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            marginLeft={{ xs: "0", lg: "8px" }}
-                            marginTop={{ xs: "8px", lg: "0" }}
-                            marginBottom={{ xs: "8px", lg: "0" }}
-                            whiteSpace="nowrap"
-                            display={{ xs: "none", md: "flex" }}
-                          >
-                            {towersByEventId[event.id].map((tower: any) => {
-                              return (
-                                <Box className={styles.towerBox}>
-                                  <Typography
-                                    variant="body1"
-                                    color={
-                                      tower.is_published
-                                        ? "success"
-                                        : "textSecondary"
-                                    }
-                                    fontWeight={
-                                      tower.is_published ? "600" : undefined
-                                    }
-                                  >
-                                    {tower.name}
-                                  </Typography>
-                                </Box>
-                              );
-                            })}
-                          </Stack>
-                        )}
                       </ListItemButton>
                       {i + 1 < row.length && <Divider />}
                     </>
@@ -607,6 +642,16 @@ function AdminPage() {
             </Box>
           )}
         </Card>
+        {events &&
+          events.results.length > 0 &&
+          (eventPage !== 1 || events.count > events.results.length) && (
+            <Stack alignItems="center">
+              <Pagination
+                count={Math.ceil(events.count / 5)}
+                onChange={(e: any, value: number) => setEventPage(value)}
+              />
+            </Stack>
+          )}
       </Grid>
       <Grid container size={{ xs: 12, md: 6 }} spacing={4} direction="row">
         <Card variant="outlined" className={styles.adminCard}>

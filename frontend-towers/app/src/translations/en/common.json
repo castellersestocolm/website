@@ -302,6 +302,7 @@
   "pages.admin.title": "Admin dashboard",
   "pages.admin.attendance-table.title": "Attendance",
   "pages.admin.events-table.title": "Events",
+  "pages.admin.events-table.attendance": "Attendance",
   "pages.admin.users-table.title": "Members",
   "pages.admin.users-table.membership": "Membership",
   "pages.admin.orders-table.title": "Orders",
