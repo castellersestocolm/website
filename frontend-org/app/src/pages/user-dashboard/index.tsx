@@ -450,6 +450,10 @@ function UserDashboardPage() {
     }
   }
 
+  function handleWordpressSubmit() {
+    window.location.href = ROUTES["external-wordpress"].path;
+  }
+
   const contentSidebarProfile = user && (
     <Grid>
       <Card variant="outlined">
@@ -524,6 +528,25 @@ function UserDashboardPage() {
             </Box>
           </Collapse>
         </Box>
+        {user.permission_level >= PermissionLevel.ADMIN && (
+          <>
+            <Divider />
+            <Box className={styles.userLogoutBox}>
+              <Link
+                color="secondary"
+                underline="none"
+                component="button"
+                onClick={handleWordpressSubmit}
+                className={styles.link}
+              >
+                <Typography variant="body1" component="span">
+                  {t("pages.user-dashboard.link-wordpress")}
+                </Typography>
+                <IconEast className={styles.iconEast} />
+              </Link>
+            </Box>
+          </>
+        )}
         <Divider />
         <Box className={styles.userLogoutBox}>
           <Link
