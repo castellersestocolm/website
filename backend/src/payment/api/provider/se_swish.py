@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from requests import HTTPError
 from swish import Environment, SwishClient
 
-from comunicat.template_tags.comunicat_tags import full_url
+from comunicat.template_tags.comunicat_tags import full_api_url
 from order.enums import OrderStatus, OrderType
 from payment.api.provider import PaymentProviderBase
 from payment.enums import PaymentStatus
@@ -67,7 +67,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
         try:
             payment = self.client.create_payment(
                 payee_payment_reference=self.order_obj.reference,
-                callback_url=full_url(
+                callback_url=full_api_url(
                     path=reverse(
                         "comunicat:1.0:order-complete", args=(str(self.order_obj.id),)
                     ),
@@ -123,7 +123,7 @@ class PaymentProviderSESwish(PaymentProviderBase):
                     rounding=decimal.ROUND_UP
                 ),
                 currency=str(self.order_obj.amount.currency),
-                callback_url=full_url(
+                callback_url=full_api_url(
                     path=reverse(
                         "comunicat:1.0:order-complete", args=(str(self.order_obj.id),)
                     ),
