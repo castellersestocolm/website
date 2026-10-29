@@ -125,7 +125,7 @@ function CalendarEventPage() {
           fontWeight={700}
           color="white"
           align="center"
-          mb={3}
+          mb={0}
         >
           <Link
             color="white"
