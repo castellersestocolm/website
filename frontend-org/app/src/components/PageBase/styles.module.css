@@ -15,13 +15,13 @@
 }
 
 .pageSubtitle {
-  text-align: center;
-  color: var(--mui-palette-secondary-main);
   text-wrap: balance;
+  color: var(--mui-palette-primary-contrastText);
   padding-top: 16px;
+  text-align: center;
 
   * {
-    color: var(--mui-palette-secondary-main) !important;
+    color: var(--mui-palette-primary-contrastText) !important;
   }
 }
 
