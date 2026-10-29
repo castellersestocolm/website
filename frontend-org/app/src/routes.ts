@@ -107,6 +107,9 @@ export const ROUTES = {
   "payment-request": {
     path: "/payment/request/:id",
   },
+  admin: {
+    path: "/admin",
+  },
   "admin-event-token": {
     path: "/admin/event/token/:id",
   },

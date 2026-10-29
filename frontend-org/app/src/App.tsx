@@ -45,6 +45,7 @@ import RequestPaymentPage from "./pages/request-payment";
 import RequestReceiptPage from "./pages/request-receipt";
 import CalendarEventPaymentPage from "./pages/calendar-event-payment";
 import CalendarEventReceiptPage from "./pages/calendar-event-receipt";
+import AdminPage from "./pages/admin";
 import AdminEventTokenPage from "./pages/admin-event-token";
 import AdminEventAttendancePage from "./pages/admin-event-attendance";
 import PaymentRequestPage from "./pages/payment-request";
@@ -248,6 +249,7 @@ const App = () => {
                     path={ROUTES["policy-purchase"].path}
                     element={<PolicyPurchasePage />}
                   />
+                  <Route path={ROUTES.admin.path} element={<AdminPage />} />
                   <Route
                     path={ROUTES["admin-event-token"].path}
                     element={<AdminEventTokenPage />}

@@ -228,7 +228,7 @@ function MembershipPage() {
                             i18n.resolvedLanguage,
                             membership.date_from,
                           ) +
-                          " → " +
+                          " ➔ " +
                           dateToString(
                             i18n.resolvedLanguage,
                             membership.date_to,

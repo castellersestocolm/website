@@ -392,7 +392,7 @@ function ActivityKidsPage() {
                       i18n.resolvedLanguage,
                       programCourse.date_from,
                     ) +
-                      " → " +
+                      " ➔ " +
                       dateToString(
                         i18n.resolvedLanguage,
                         programCourse.date_to,

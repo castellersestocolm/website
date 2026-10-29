@@ -38,7 +38,7 @@ import { useCallback } from "react";
 import Pagination from "@mui/material/Pagination";
 import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
 import Map from "../../components/Map/Map";
-import { get_event_icon, getEventUsers } from "../../utils/event";
+import { getEventIcon, getEventUsers } from "../../utils/event";
 import CastleBase from "../../components/CastleBase/CastleBase";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import { LoaderClip } from "../LoaderClip/LoaderClip";
@@ -358,7 +358,7 @@ export default function EventAgenda({
             dense
           >
             <ListItemIcon className={styles.eventCardIcon}>
-              {get_event_icon(event.type, event.modules, event.theme)}
+              {getEventIcon(event.type, event.modules, event.theme)}
             </ListItemIcon>
             <Box
               className={styles.eventCardInner}
@@ -393,7 +393,7 @@ export default function EventAgenda({
                       ) +
                         " " +
                         new Date(event.time_from).toTimeString().slice(0, 5) +
-                        " → " +
+                        " ➔ " +
                         new Date(event.time_to).toTimeString().slice(0, 5)}
                     </Typography>
                     {castles && castles.length > 0 && (

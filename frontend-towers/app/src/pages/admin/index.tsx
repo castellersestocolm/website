@@ -43,7 +43,7 @@ import { useNavigate } from "react-router-dom";
 import IcconPerson from "@mui/icons-material/Person";
 import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
 import { LineChart } from "@mui/x-charts";
-import { get_event_icon } from "../../utils/event";
+import { getEventIcon } from "../../utils/event";
 import IconShoppingCart from "@mui/icons-material/ShoppingCart";
 import IconInventory from "@mui/icons-material/Inventory";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
@@ -209,11 +209,7 @@ function AdminPage() {
                     <>
                       <ListItemButton disableTouchRipple dense>
                         <ListItemIcon className={styles.eventCardIcon}>
-                          {get_event_icon(
-                            event.type,
-                            event.modules,
-                            event.theme,
-                          )}
+                          {getEventIcon(event.type, event.modules, event.theme)}
                         </ListItemIcon>
                         <Box
                           className={styles.userFamilyListInner}
@@ -249,7 +245,7 @@ function AdminPage() {
                                   new Date(event.time_from)
                                     .toTimeString()
                                     .slice(0, 5) +
-                                  " → " +
+                                  " ➔ " +
                                   new Date(event.time_to)
                                     .toTimeString()
                                     .slice(0, 5)}
@@ -527,11 +523,7 @@ function AdminPage() {
                     <>
                       <ListItemButton disableTouchRipple dense>
                         <ListItemIcon className={styles.eventCardIcon}>
-                          {get_event_icon(
-                            event.type,
-                            event.modules,
-                            event.theme,
-                          )}
+                          {getEventIcon(event.type, event.modules, event.theme)}
                         </ListItemIcon>
                         <Box
                           className={styles.userFamilyListInner}
@@ -567,7 +559,7 @@ function AdminPage() {
                                   new Date(event.time_from)
                                     .toTimeString()
                                     .slice(0, 5) +
-                                  " → " +
+                                  " ➔ " +
                                   new Date(event.time_to)
                                     .toTimeString()
                                     .slice(0, 5)}
