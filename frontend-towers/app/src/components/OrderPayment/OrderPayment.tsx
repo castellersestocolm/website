@@ -231,10 +231,12 @@ export default function OrderPayment({
       const paymentStatus = data.status;
 
       if (paymentStatus === PaymentStatus.COMPLETED) {
-        await handleCompleteOrder();
+        localStorage.removeItem("orderId");
+        localStorage.removeItem("order");
+        navigate(orderReceiptPath);
       }
     },
-    [handleCompleteOrder],
+    [navigate, orderReceiptPath],
   );
 
   React.useEffect(() => {
