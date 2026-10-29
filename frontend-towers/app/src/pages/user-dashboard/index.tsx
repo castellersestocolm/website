@@ -94,7 +94,7 @@ import {
 import IconButton from "@mui/material/IconButton";
 import IconHowToReg from "@mui/icons-material/HowToReg";
 
-import { get_event_icon, getEventUsers } from "../../utils/event";
+import { getEventIcon, getEventUsers } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import FormDashboardEmails from "../../components/FormDashboardEmails/FormDashboardEmails";
 import EventAgenda from "../../components/EventAgenda/EventAgenda";
@@ -751,7 +751,7 @@ function UserDashboardPage() {
                 <ListItemText
                   primary={
                     dateToString(i18n.resolvedLanguage, membership.date_from) +
-                    " → " +
+                    " ➔ " +
                     dateToString(i18n.resolvedLanguage, membership.date_to)
                   }
                 />
@@ -832,7 +832,7 @@ function UserDashboardPage() {
                           i18n.resolvedLanguage,
                           programCourse.date_from,
                         ) +
-                        " → " +
+                        " ➔ " +
                         dateToString(
                           i18n.resolvedLanguage,
                           programCourse.date_to,
@@ -949,7 +949,7 @@ function UserDashboardPage() {
                 <List className={styles.userFamilyList}>
                   <ListItemButton disableTouchRipple dense>
                     <ListItemIcon>
-                      {get_event_icon(
+                      {getEventIcon(
                         rehearsal.type,
                         rehearsal.modules,
                         rehearsal.theme,
@@ -989,7 +989,7 @@ function UserDashboardPage() {
                                 new Date(rehearsal.time_from)
                                   .toTimeString()
                                   .slice(0, 5) +
-                                " → " +
+                                " ➔ " +
                                 new Date(rehearsal.time_to)
                                   .toTimeString()
                                   .slice(0, 5)}

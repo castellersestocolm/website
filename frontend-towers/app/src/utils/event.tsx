@@ -8,7 +8,7 @@ import {
 import IconMusicNote from "@mui/icons-material/MusicNote";
 import { DynamicIcon } from "../components/DynamicIcon/DynamicIcon";
 
-export function get_event_icon(
+export function getEventIcon(
   eventType: EventType,
   eventModules: any[],
   eventTheme: any = undefined,

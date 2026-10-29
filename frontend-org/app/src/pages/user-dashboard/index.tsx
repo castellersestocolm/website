@@ -454,6 +454,10 @@ function UserDashboardPage() {
     window.location.href = ROUTES["external-wordpress"].path;
   }
 
+  function handleAdminSubmit() {
+    navigate(ROUTES.admin.path);
+  }
+
   const contentSidebarProfile = user && (
     <Grid>
       <Card variant="outlined">
@@ -541,6 +545,21 @@ function UserDashboardPage() {
               >
                 <Typography variant="body1" component="span">
                   {t("pages.user-dashboard.link-wordpress")}
+                </Typography>
+                <IconEast className={styles.iconEast} />
+              </Link>
+            </Box>
+            <Divider />
+            <Box className={styles.userLogoutBox}>
+              <Link
+                color="secondary"
+                underline="none"
+                component="button"
+                onClick={handleAdminSubmit}
+                className={styles.link}
+              >
+                <Typography variant="body1" component="span">
+                  {t("pages.user-dashboard.link-admin")}
                 </Typography>
                 <IconEast className={styles.iconEast} />
               </Link>
@@ -679,7 +698,7 @@ function UserDashboardPage() {
                 <ListItemText
                   primary={
                     dateToString(i18n.resolvedLanguage, membership.date_from) +
-                    " → " +
+                    " ➔ " +
                     dateToString(i18n.resolvedLanguage, membership.date_to)
                   }
                 />
@@ -760,7 +779,7 @@ function UserDashboardPage() {
                           i18n.resolvedLanguage,
                           programCourse.date_from,
                         ) +
-                        " → " +
+                        " ➔ " +
                         dateToString(
                           i18n.resolvedLanguage,
                           programCourse.date_to,

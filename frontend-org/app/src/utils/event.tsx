@@ -1,4 +1,33 @@
-import { EventQuestionType, Module } from "../enums";
+import {
+  EVENT_TYPE_ICON,
+  EventType,
+  Module,
+  TeamType,
+  EventQuestionType,
+} from "../enums";
+import IconMusicNote from "@mui/icons-material/MusicNote";
+import { DynamicIcon } from "../components/DynamicIcon/DynamicIcon";
+
+export function getEventIcon(
+  eventType: EventType,
+  eventModules: any[],
+  eventTheme: any = undefined,
+) {
+  if (eventTheme && eventTheme.icon) {
+    return <DynamicIcon iconName={eventTheme.icon.code} />;
+  } else if (
+    eventModules &&
+    eventModules.filter(
+      (eventModule: any) =>
+        eventModule.module === Module.TOWERS &&
+        eventModule.team &&
+        eventModule.team.type === TeamType.MUSICIANS,
+    ).length > 0
+  ) {
+    return <IconMusicNote />;
+  }
+  return EVENT_TYPE_ICON[eventType];
+}
 
 export function getEventUsers(event: any, users: any[]) {
   if (
