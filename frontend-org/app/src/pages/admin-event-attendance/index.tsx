@@ -79,7 +79,7 @@ function AdminEventAttendancePage() {
         }
       });
     }
-  }, [id, setEvent]);
+  }, [id, setEvent, i18n.resolvedLanguage]);
 
   React.useEffect(() => {
     if (id) {
@@ -131,14 +131,16 @@ function AdminEventAttendancePage() {
                 : registration,
             ),
           });
-          setFoundRegistrations({
-            ...foundRegistrations,
-            results: foundRegistrations.results.map((registration: any) =>
-              registration.id === response.data.id
-                ? response.data
-                : registration,
-            ),
-          });
+          if (foundRegistrations) {
+            setFoundRegistrations({
+              ...foundRegistrations,
+              results: foundRegistrations.results.map((registration: any) =>
+                registration.id === response.data.id
+                  ? response.data
+                  : registration,
+              ),
+            });
+          }
         }
       },
     );
@@ -153,24 +155,13 @@ function AdminEventAttendancePage() {
     { field: "id", headerName: "ID", cellClassName: styles.adminCell },
     { field: "sort", headerName: "ST", cellClassName: styles.adminCell },
     {
-      field: "firstname",
-      headerName: t("pages.admin-event-attendance.table.firstname"),
-      minWidth: 150,
+      field: "name",
+      headerName: t("pages.admin-event-attendance.table.name"),
+      minWidth: 200,
       cellClassName: styles.adminCell,
       renderHeader: () => (
         <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin-event-attendance.table.firstname")}
-        </Typography>
-      ),
-    },
-    {
-      field: "lastname",
-      headerName: t("pages.admin-attendance.events-table.lastname"),
-      minWidth: 150,
-      cellClassName: styles.adminCell,
-      renderHeader: () => (
-        <Typography variant="body2" fontWeight={600}>
-          {t("pages.admin-event-attendance.table.lastname")}
+          {t("pages.admin-event-attendance.table.name")}
         </Typography>
       ),
     },
@@ -305,8 +296,10 @@ function AdminEventAttendancePage() {
       ? registrations.results.map((registration: any) => {
           return {
             id: registration.id,
-            firstname: registration.entity.firstname,
-            lastname: registration.entity.lastname,
+            name:
+              registration.entity.firstname +
+              " " +
+              registration.entity.lastname,
             owner: registration.owner
               ? registration.owner.firstname + " " + registration.owner.lastname
               : registration.entity.firstname +
@@ -368,7 +361,7 @@ function AdminEventAttendancePage() {
               )}
               <Box className={styles.adminSearchBox}>
                 <FormGrid size={12}>
-                  <FormLabel htmlFor="firstname" required>
+                  <FormLabel htmlFor="search" required>
                     {t("pages.admin-event-attendance.scan.search")}
                   </FormLabel>
                   <OutlinedInput

@@ -144,6 +144,12 @@ export const ROUTES = {
   "admin-stats": {
     path: "/admin/stats",
   },
+  "admin-event-token": {
+    path: "/admin/event/token/:id",
+  },
+  "admin-event-attendance": {
+    path: "/admin/event/attendance/:id",
+  },
   "external-form-equipment": {
     path: "https://docs.google.com/forms/d/e/1FAIpQLSc1ZoTANdTVTpeZ_jqxvGVm1KXpjNZQLBD4m6pkCtugkBAWqg/viewform",
   },

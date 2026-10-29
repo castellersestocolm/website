@@ -48,6 +48,8 @@ import PressArticlePage from "./pages/press-articles";
 import AdminStatsPage from "./pages/admin-stats";
 import AdminHistoryPage from "./pages/admin-history";
 import AdminUserIdPage from "./pages/admin-user-id";
+import AdminEventTokenPage from "./pages/admin-event-token";
+import AdminEventAttendancePage from "./pages/admin-event-attendance";
 import AboutContactPage from "./pages/about-contact";
 import PolicyPurchasePage from "./pages/policy-purchase";
 import MembershipPage from "./pages/membership";
@@ -275,6 +277,14 @@ const App = () => {
                   <Route
                     path={ROUTES["admin-stats"].path}
                     element={<AdminStatsPage />}
+                  />
+                  <Route
+                    path={ROUTES["admin-event-token"].path}
+                    element={<AdminEventTokenPage />}
+                  />
+                  <Route
+                    path={ROUTES["admin-event-attendance"].path}
+                    element={<AdminEventAttendancePage />}
                   />
                   <Route
                     path={

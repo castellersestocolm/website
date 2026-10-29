@@ -16,6 +16,7 @@ export default function PageBase({
   content,
   finishedRegistration = false,
   loading = false,
+  screenFull = false,
   heightFull = false,
 }: any) {
   const { t } = useTranslation("common");
@@ -97,7 +98,8 @@ export default function PageBase({
         <Box
           className={styles.pageLoader}
           sx={{
-            marginTop: { xs: "56px", md: "65px" },
+            xs: screenFull ? "0" : "56px",
+            md: screenFull ? "0" : "65px",
           }}
         >
           <Box className={styles.boxLoader}>{pageContent}</Box>
@@ -112,9 +114,9 @@ export default function PageBase({
           }}
         >
           <Container
-            maxWidth="lg"
+            maxWidth={screenFull ? false : "lg"}
             sx={{
-              position: "relative",
+              position: screenFull ? "unset" : "relative",
               ...(loading
                 ? {
                     display: "flex",
