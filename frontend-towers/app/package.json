@@ -24,6 +24,7 @@
     "cra-template": "1.2.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.7",
+    "html5-qrcode": "^2.3.8",
     "i18next-browser-languagedetector": "^8.0.2",
     "iframe-resizer-react": "^5.1.5",
     "js-cookie": "^3.0.5",

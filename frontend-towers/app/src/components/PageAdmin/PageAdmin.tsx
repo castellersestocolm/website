@@ -10,6 +10,7 @@ export default function PageAdmin({
   content,
   finishedRegistration = false,
   loading = false,
+  screenFull = false,
 }: any) {
   let navigate = useNavigate();
 
@@ -28,6 +29,7 @@ export default function PageAdmin({
       content={content}
       finishedRegistration={finishedRegistration}
       loading={loading}
+      screenFull={screenFull}
     />
   );
 }

@@ -22,6 +22,7 @@ import {
   API_NEWSLETTER_LIST_PAGE_SIZE,
   API_CONSENT_ENTITY_LIST_PAGE_SIZE,
   API_ADMIN_THEME_ICON_PAGE_SIZE,
+  API_ADMIN_EVENT_REGISTRATION_PAGE_SIZE,
 } from "../consts";
 import {
   ContactMessageType,
@@ -1292,6 +1293,86 @@ export const apiIntegrationAppleWalletPassLoyaltyGet = async () => {
     return await instance.get("integration/apple/wallet/pass/loyalty/", {
       responseType: "blob",
     });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminStatsEventGet = async (eventId: string) => {
+  try {
+    return await instance.get("/admin/stats/event/" + eventId + "/");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventRegistrationsGet = async (
+  page: number = undefined,
+  pageSize: number = undefined,
+  eventId: string,
+) => {
+  try {
+    return await instance.get(
+      "/admin/event/registration/?event_id=" + eventId,
+      {
+        params: {
+          page_size: pageSize
+            ? pageSize
+            : API_ADMIN_EVENT_REGISTRATION_PAGE_SIZE,
+          page: page,
+        },
+      },
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventRegistrationsSearch = async (
+  eventId: string,
+  search: string,
+) => {
+  try {
+    return await instance.get(
+      "/admin/event/registration/search/?event_id=" +
+        eventId +
+        "&search=" +
+        search,
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventRegistrationUpdate = async (
+  registrationId: string,
+  hasAttended: boolean = undefined,
+) => {
+  try {
+    return await instance.patch(
+      "/admin/event/registration/" + registrationId + "/",
+      {
+        ...(hasAttended !== undefined ? { has_attended: hasAttended } : {}),
+      },
+    );
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiAdminEventGet = async (eventId: string) => {
+  try {
+    return await instance.get("/admin/event/" + eventId + "/");
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called
