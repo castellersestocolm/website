@@ -190,69 +190,77 @@ export default function NavBar() {
             >
               <IconMenu />
             </IconButton>
-            {pages.map((page: any) => (
-              <>
-                {page &&
-                  (page.children ? (
-                    <PopupState variant="popover" popupId="demo-popup-menu">
-                      {(popupState) => (
-                        <React.Fragment>
-                          <Button
-                            key={page.name}
-                            disableTouchRipple
-                            className={styles.navMenuItem}
-                            component={Link}
-                            sx={{ display: { xs: "none", md: "flex" } }}
-                            {...bindTrigger(popupState)}
-                          >
-                            <Typography fontWeight={600}>
-                              {page.name}
-                            </Typography>
-                          </Button>
-                          <Menu
-                            {...bindMenu(popupState)}
-                            className={styles.nestedNavMenu}
-                          >
-                            {page.children.map((childrenPage: any) => (
-                              <MenuItem
-                                key={childrenPage.name}
-                                className={styles.nestedNavButton}
-                                component={Link}
-                                href={childrenPage.path}
-                                target={childrenPage.target}
-                              >
-                                <Typography fontWeight={600}>
-                                  {childrenPage.name}
-                                </Typography>
-                                {childrenPage.path.startsWith("http") && (
-                                  <IconArrowOutward
-                                    className={styles.externalIcon}
-                                  />
-                                )}
-                              </MenuItem>
-                            ))}
-                          </Menu>
-                        </React.Fragment>
-                      )}
-                    </PopupState>
-                  ) : (
-                    <MenuItem
-                      key={page.name}
-                      disableTouchRipple
-                      className={styles.navMenuItem}
-                      component={Link}
-                      href={page.path}
-                      target={page.target}
-                      sx={{ display: { xs: "none", md: "flex" } }}
-                    >
-                      <Typography fontWeight={600}>{page.name}</Typography>
-                      {page.path.startsWith("http") && (
-                        <IconArrowOutward className={styles.externalIcon} />
-                      )}
-                    </MenuItem>
-                  ))}
-              </>
-            ))}
+            {pages
+              .filter(
+                (page: any) =>
+                  page &&
+                  (!page.permission ||
+                    page.permission === PermissionLevel.NONE ||
+                    (user && user.permission_level >= PermissionLevel.ADMIN)),
+              )
+              .map((page: any) => (
+                <>
+                  {page &&
+                    (page.children ? (
+                      <PopupState variant="popover" popupId="demo-popup-menu">
+                        {(popupState) => (
+                          <React.Fragment>
+                            <Button
+                              key={page.name}
+                              disableTouchRipple
+                              className={styles.navMenuItem}
+                              component={Link}
+                              sx={{ display: { xs: "none", md: "flex" } }}
+                              {...bindTrigger(popupState)}
+                            >
+                              <Typography fontWeight={600}>
+                                {page.name}
+                              </Typography>
+                            </Button>
+                            <Menu
+                              {...bindMenu(popupState)}
+                              className={styles.nestedNavMenu}
+                            >
+                              {page.children.map((childrenPage: any) => (
+                                <MenuItem
+                                  key={childrenPage.name}
+                                  className={styles.nestedNavButton}
+                                  component={Link}
+                                  href={childrenPage.path}
+                                  target={childrenPage.target}
+                                >
+                                  <Typography fontWeight={600}>
+                                    {childrenPage.name}
+                                  </Typography>
+                                  {childrenPage.path.startsWith("http") && (
+                                    <IconArrowOutward
+                                      className={styles.externalIcon}
+                                    />
+                                  )}
+                                </MenuItem>
+                              ))}
+                            </Menu>
+                          </React.Fragment>
+                        )}
+                      </PopupState>
+                    ) : (
+                      <MenuItem
+                        key={page.name}
+                        disableTouchRipple
+                        className={styles.navMenuItem}
+                        component={Link}
+                        href={page.path}
+                        target={page.target}
+                        sx={{ display: { xs: "none", md: "flex" } }}
+                      >
+                        <Typography fontWeight={600}>{page.name}</Typography>
+                        {page.path.startsWith("http") && (
+                          <IconArrowOutward className={styles.externalIcon} />
+                        )}
+                      </MenuItem>
+                    ))}
+                </>
+              ))}
           </Box>
           <Box sx={{ display: "flex", alignItems: "end", px: 0 }}>
             <Box sx={{ display: "flex" }}>
