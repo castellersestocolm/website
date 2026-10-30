@@ -149,7 +149,8 @@ function CalendarEventPage() {
     event &&
     !token &&
     (event.description ||
-      (event.agenda_items && event.agenda_items.length > 0));
+      (event.agenda_items && event.agenda_items.length > 0) ||
+      (event.links && event.links.length > 0));
   const hasContentPrices =
     event && !token && event.prices && event.prices.length > 0;
   const hasContentSignup =
@@ -168,12 +169,12 @@ function CalendarEventPage() {
     <>
       {hasContent ? (
         <Stack
-          spacing={{ xs: 4, lg: 6 }}
+          spacing={6}
           direction="column"
           className={styles.pressContainerBox}
         >
           {hasContentDescription && (
-            <Box>
+            <Stack spacing={2} direction="column">
               <Typography
                 variant="body1"
                 component="div"
@@ -233,13 +234,34 @@ function CalendarEventPage() {
                   </List>
                 </Box>
               )}
-            </Box>
+              {event.links && event.links.length > 0 && (
+                <Box>
+                  <Stack direction="column" spacing={1} justifyContent="center">
+                    {event.links.map((eventLink: any) => {
+                      return (
+                        <Link
+                          href={eventLink.external_url}
+                          color="secondary"
+                          underline="none"
+                          className={styles.link}
+                        >
+                          <Typography variant="body1" component="span">
+                            {eventLink.title}
+                          </Typography>
+                          <IconEast className={styles.iconEast} />
+                        </Link>
+                      );
+                    })}
+                  </Stack>
+                </Box>
+              )}
+            </Stack>
           )}
 
           {hasContentPrices && (
-            <Box mt={5}>
+            <Box>
               <Box mb={3}>
-                <Typography variant="h4" fontWeight="700" align="center" mb={1}>
+                <Typography variant="h5" fontWeight="700" align="center" mb={1}>
                   {t("pages.calendar-event.register.prices.title")}
                 </Typography>
                 <Typography variant="body1" align="center">
@@ -251,9 +273,9 @@ function CalendarEventPage() {
           )}
 
           {hasContentSignup && (
-            <Box mt={token ? 0 : 5}>
+            <Box>
               <Box mb={3}>
-                <Typography variant="h4" fontWeight="700" align="center">
+                <Typography variant="h5" fontWeight="700" align="center">
                   {t("pages.calendar-event.register")}
                 </Typography>
                 {event.has_token && (

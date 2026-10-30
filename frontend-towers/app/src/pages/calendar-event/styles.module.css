@@ -21,6 +21,7 @@
 
 .calendarEventListItem {
   padding: 0 !important;
+  text-align: center !important;
 
   p {
     margin: 0 !important;

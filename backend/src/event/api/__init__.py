@@ -19,6 +19,7 @@ from event.models import (
     AgendaItem,
     Connection,
     Event,
+    EventLink,
     EventModule,
     EventPrice,
     EventQuestion,
@@ -152,6 +153,14 @@ def get_list(  # noqa: C901
                 "questions",
                 (
                     EventQuestion.objects.order_by(
+                        "order",
+                    )
+                ),
+            ),
+            Prefetch(
+                "links",
+                (
+                    EventLink.objects.order_by(
                         "order",
                     )
                 ),

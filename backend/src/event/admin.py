@@ -28,6 +28,7 @@ from event.models import (
     Connection,
     Event,
     EventAccounts,
+    EventLink,
     EventModule,
     EventPrice,
     EventQuestion,
@@ -204,6 +205,16 @@ class EventRequirementInline(admin.TabularInline):
         return super().get_queryset(request=request).select_related("event")
 
 
+class EventLinkInline(admin.TabularInline):
+    model = EventLink
+    ordering = ("order",)
+    extra = 0
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+
 class AccountEventInline(admin.TabularInline):
     model = AccountEvent
     ordering = ("event__time_from",)
@@ -278,7 +289,9 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
         EventPriceInline,
         EventRequirementInline,
         EventQuestionInline,
+        EventLinkInline,
         AgendaItemInline,
+        AccountEventInline,
         AccountEventInline,
         RegistrationInline,
     )

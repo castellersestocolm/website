@@ -224,6 +224,7 @@
   "pages.calendar-event.register.form.underaged": "És menor d'edat (16 anys)?",
   "pages.calendar-event.register.form.price": "Preu",
   "pages.calendar-event.register.form.price-login": "Recorda que per pagar preu de membre has d'iniciar sessió i només pots inscriure a membres de la teva família.",
+  "pages.calendar-event.register.links.title": "Enllaços externs",
   "pages.calendar-event.register.prices.title": "Preus",
   "pages.calendar-event.register.prices.description": "Aquest esdeveniment és de pagament, els preus es mostren en funció de la quota.",
   "pages.calendar-event.register.prices.non-members": "No membres",

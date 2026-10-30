@@ -7,6 +7,7 @@ import {
   ListItemText,
   CardContent,
   Stack,
+  Button,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -17,7 +18,7 @@ import { useAppContext } from "../../components/AppContext/AppContext";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import FormEventPrices from "../../components/FormEventPrices/FormEventPrices";
 import FormEventRegister from "../../components/FormEventRegister/FormEventRegister";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { datetimeToLongString } from "../../utils/datetime";
@@ -28,6 +29,7 @@ import { ROUTES } from "../../routes";
 import IconEast from "@mui/icons-material/East";
 import Alert from "@mui/material/Alert";
 import Map from "../../components/Map/Map";
+import IconGoogle from "@mui/icons-material/Google";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 const ORG_BASE_URL = new URL(process.env.REACT_APP_ORG_BASE_URL).origin;
@@ -40,8 +42,6 @@ function CalendarEventPage() {
   const [membership, setMembership] = React.useState(undefined);
 
   const { user } = useAppContext();
-
-  let navigate = useNavigate();
 
   React.useEffect(() => {
     if (token) {
@@ -160,7 +160,8 @@ function CalendarEventPage() {
     event &&
     !token &&
     (event.description ||
-      (event.agenda_items && event.agenda_items.length > 0));
+      (event.agenda_items && event.agenda_items.length > 0) ||
+      (event.links && event.links.length > 0));
   const hasContentPrices =
     event && !token && event.prices && event.prices.length > 0;
   const hasContentSignup =
@@ -184,7 +185,7 @@ function CalendarEventPage() {
           className={styles.pressContainerBox}
         >
           {hasContentDescription && (
-            <Box>
+            <Stack spacing={2} direction="column">
               <Typography
                 variant="body1"
                 component="div"
@@ -236,13 +237,34 @@ function CalendarEventPage() {
                   </List>
                 </Box>
               )}
-            </Box>
+              {event.links && event.links.length > 0 && (
+                <Box>
+                  <Stack direction="column" spacing={1} justifyContent="center">
+                    {event.links.map((eventLink: any) => {
+                      return (
+                        <Link
+                          href={eventLink.external_url}
+                          color="secondary"
+                          underline="none"
+                          className={styles.link}
+                        >
+                          <Typography variant="body1" component="span">
+                            {eventLink.title}
+                          </Typography>
+                          <IconEast className={styles.iconEast} />
+                        </Link>
+                      );
+                    })}
+                  </Stack>
+                </Box>
+              )}
+            </Stack>
           )}
 
           {hasContentPrices && (
             <Box>
               <Box mb={3}>
-                <Typography variant="h4" fontWeight="700" align="center" mb={1}>
+                <Typography variant="h5" fontWeight="700" align="center" mb={1}>
                   {t("pages.calendar-event.register.prices.title")}
                 </Typography>
                 <Typography variant="body1" align="center">
@@ -256,7 +278,7 @@ function CalendarEventPage() {
           {hasContentSignup && (
             <Box>
               <Box mb={3}>
-                <Typography variant="h4" fontWeight="700" align="center">
+                <Typography variant="h5" fontWeight="700" align="center">
                   {t("pages.calendar-event.register")}
                 </Typography>
                 {event.has_token && (

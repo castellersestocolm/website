@@ -287,6 +287,7 @@
   "pages.calendar-event.register.form.underaged": "Är de minderårig (16 år)?",
   "pages.calendar-event.register.form.price": "Pris",
   "pages.calendar-event.register.form.price-login": "Kom ihåg att du måste vara inloggad för att välja medlemspris och att du kan bara registrera medlemmar i din familj.",
+  "pages.calendar-event.register.links.title": "Externa länkar",
   "pages.calendar-event.register.prices.title": "Priser",
   "pages.calendar-event.register.prices.description": "Detta evenemang är betalt, nedan hittar ni priserna baserade på medlemskap.",
   "pages.calendar-event.register.prices.non-members": "Ej medlemmar",

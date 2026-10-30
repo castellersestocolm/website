@@ -232,14 +232,6 @@ def import_events() -> None:  # noqa: C901
                                             require_approve=False,
                                         )
                                     )
-                                    event_module_creates.append(
-                                        EventModule(
-                                            event=event_obj,
-                                            module=Module.ORG,
-                                            require_signup=False,
-                                            require_approve=False,
-                                        )
-                                    )
                             for attendee in event.get("attendees", []):
                                 if attendee["email"] in entity_by_email:
                                     registration_status = (
