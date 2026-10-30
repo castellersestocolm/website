@@ -99,9 +99,6 @@ function HomePage() {
 
   React.useEffect(() => {
     apiEventList(1, 1, undefined, undefined, undefined, undefined, undefined, [
-      EventType.GENERAL,
-      EventType.TALK,
-      EventType.GATHERING,
       EventType.PERFORMANCE,
     ]).then((response) => {
       if (response.status === 200 && response.data.results.length > 0) {

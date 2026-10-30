@@ -157,6 +157,43 @@
   }
 }
 
+.postEventCardArea {
+  display: flex !important;
+  height: 100%;
+  flex-direction: row;
+  justify-content: start !important;
+}
+
+.postEventThemeCard {
+  display: flex !important;
+  height: 100%;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: stretch !important;
+  min-height: calc(16 * var(--mui-spacing));
+  min-width: calc(16 * var(--mui-spacing));
+
+  @media screen and (max-width: 900px) {
+    min-height: calc(12 * var(--mui-spacing));
+    min-width: calc(12 * var(--mui-spacing));
+  }
+}
+
+.postsEventInnerIcon {
+  width: calc(6 * var(--mui-spacing));
+  height: calc(6 * var(--mui-spacing));
+
+  @media screen and (max-width: 900px) {
+    width: calc(4 * var(--mui-spacing));
+    height: calc(4 * var(--mui-spacing));
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
 .postCardContent {
   padding: 20px 24px 8px 24px !important;
   height: calc(100% - 28px);
