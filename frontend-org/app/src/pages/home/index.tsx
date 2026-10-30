@@ -8,7 +8,6 @@ import Alerts from "../../components/Alerts/Alerts";
 import IconLogo from "../../components/IconLogo/IconLogo.jsx";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
-import { DynamicIcon } from "../../components/DynamicIcon/DynamicIcon";
 import {
   Container,
   Card,
@@ -22,7 +21,11 @@ import {
   Link,
   Collapse,
 } from "@mui/material";
-import { datetimeToLongString } from "../../utils/datetime";
+import {
+  datetimeToLongString,
+  dateToLongString,
+  timeToString,
+} from "../../utils/datetime";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import { ROUTES } from "../../routes";
 import ImageHero1 from "../../assets/images/hero/hero1.jpg";
@@ -43,6 +46,7 @@ import Hero from "../../components/Hero/Hero";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { getColour } from "../../utils/colour";
+import { getEventIcon } from "../../utils/event";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_ORG_API_URL).origin;
 const TOWERS_BASE_URL = new URL(process.env.REACT_APP_TOWERS_BASE_URL).origin;
@@ -62,7 +66,7 @@ function HomePage() {
   const [wpMediaById, setWpMediaById] = React.useState<any>({});
 
   const [highligtedEvent, setHighlightedEvent] = React.useState(undefined);
-  const [otherHighligtedEvents, setOtherHighlightedEvents] =
+  const [otherHighlightedEvents, setOtherHighlightedEvents] =
     React.useState(undefined);
 
   const [slideshowImageIndex, setSlideshowImageIndex] = React.useState(0);
@@ -162,7 +166,7 @@ function HomePage() {
           setOtherHighlightedEvents(
             response.data.results
               .filter((event: any) => event.id !== paidEvent.id)
-              .slice(0, 2),
+              .slice(0, 4),
           );
         } else {
           const signupEvent = response.data.results.find(
@@ -173,7 +177,7 @@ function HomePage() {
             setOtherHighlightedEvents(
               response.data.results
                 .filter((event: any) => event.id !== signupEvent.id)
-                .slice(0, 2),
+                .slice(0, 4),
             );
           } else {
             setHighlightedEvent(response.data.results[0]);
@@ -390,7 +394,7 @@ function HomePage() {
 
   const content = (
     <>
-      <Collapse in={otherHighligtedEvents} timeout="auto" unmountOnExit>
+      <Collapse in={otherHighlightedEvents} timeout="auto" unmountOnExit>
         <Box component="section" className={styles.eventsGrid}>
           <Container maxWidth="lg" disableGutters>
             <Typography
@@ -400,14 +404,17 @@ function HomePage() {
             >
               {t("pages.home-events.title")}
             </Typography>
-            {otherHighligtedEvents && (
+            {otherHighlightedEvents && (
               <>
-                <Grid container spacing={4}>
-                  {otherHighligtedEvents &&
-                    otherHighligtedEvents.length > 0 &&
-                    otherHighligtedEvents.map((otherHighligtedEvent: any) => {
+                <Grid container spacing={4} justifyContent="center">
+                  {otherHighlightedEvents &&
+                    otherHighlightedEvents.length > 0 &&
+                    otherHighlightedEvents.map((otherHighligtedEvent: any) => {
                       return (
-                        <Grid size={{ xs: 12, md: 6 }}>
+                        <Grid
+                          size={{ xs: 12, md: 6 }}
+                          key={otherHighligtedEvent.id}
+                        >
                           <Card
                             className={styles.postCard}
                             elevation={0}
@@ -423,65 +430,44 @@ function HomePage() {
                               )
                             }
                           >
-                            <CardActionArea className={styles.postCardArea}>
-                              {otherHighligtedEvent.theme ||
-                              otherHighligtedEvent.picture ? (
-                                otherHighligtedEvent.theme ? (
-                                  <Box
-                                    sx={{
-                                      height: calendarMatchesMd
-                                        ? "300px"
-                                        : "200px",
-                                      backgroundColor:
-                                        otherHighligtedEvent.theme &&
-                                        otherHighligtedEvent.theme
-                                          .colour_primary
-                                          ? getColour(
-                                              theme,
-                                              otherHighligtedEvent.theme
-                                                .colour_primary,
-                                            )
-                                          : theme.palette.primary.main,
-                                    }}
-                                    className={styles.postThemeCard}
-                                  >
-                                    {otherHighligtedEvent.theme &&
-                                      otherHighligtedEvent.theme.icon && (
-                                        <Box
-                                          className={styles.postsInnerIcon}
-                                          sx={{
-                                            color: otherHighligtedEvent.theme
-                                              .colour_icon
-                                              ? getColour(
-                                                  theme,
-                                                  otherHighligtedEvent.theme
-                                                    .colour_icon,
-                                                )
-                                              : theme.palette.primary
-                                                  .contrastText,
-                                          }}
-                                        >
-                                          <DynamicIcon
-                                            iconName={
-                                              otherHighligtedEvent.theme.icon
-                                                .code
-                                            }
-                                          />
-                                        </Box>
-                                      )}
-                                  </Box>
-                                ) : (
-                                  <CardMedia
-                                    component="img"
-                                    height="300"
-                                    image={
-                                      otherHighligtedEvent.picture &&
-                                      BACKEND_BASE_URL +
-                                        otherHighligtedEvent.picture.medium
-                                    }
-                                  />
-                                )
-                              ) : undefined}
+                            <CardActionArea
+                              className={styles.postEventCardArea}
+                            >
+                              <Box
+                                sx={{
+                                  backgroundColor:
+                                    otherHighligtedEvent.theme &&
+                                    otherHighligtedEvent.theme.colour_primary
+                                      ? getColour(
+                                          theme,
+                                          otherHighligtedEvent.theme
+                                            .colour_primary,
+                                        )
+                                      : theme.palette.secondary.main,
+                                }}
+                                className={styles.postEventThemeCard}
+                              >
+                                <Box
+                                  className={styles.postsEventInnerIcon}
+                                  sx={{
+                                    color:
+                                      otherHighligtedEvent.theme &&
+                                      otherHighligtedEvent.theme.colour_icon
+                                        ? getColour(
+                                            theme,
+                                            otherHighligtedEvent.theme
+                                              .colour_icon,
+                                          )
+                                        : theme.palette.secondary.contrastText,
+                                  }}
+                                >
+                                  {getEventIcon(
+                                    otherHighligtedEvent.type,
+                                    otherHighligtedEvent.modules,
+                                    otherHighligtedEvent.theme,
+                                  )}
+                                </Box>
+                              </Box>
                               <CardContent
                                 className={styles.postCardThemeContent}
                               >
@@ -494,10 +480,21 @@ function HomePage() {
                                 >
                                   {otherHighligtedEvent.title}
                                 </Typography>
-                                <Typography gutterBottom variant="body2" mb={0}>
-                                  {datetimeToLongString(
+                                <Typography gutterBottom variant="body1" mb={0}>
+                                  {dateToLongString(
                                     i18n.resolvedLanguage,
                                     otherHighligtedEvent.time_from,
+                                  )}
+                                </Typography>
+                                <Typography gutterBottom variant="body1" mb={0}>
+                                  {timeToString(
+                                    i18n.resolvedLanguage,
+                                    otherHighligtedEvent.time_from,
+                                  )}
+                                  {" ➔ "}
+                                  {timeToString(
+                                    i18n.resolvedLanguage,
+                                    otherHighligtedEvent.time_to,
                                   )}
                                 </Typography>
                               </CardContent>
