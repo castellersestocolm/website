@@ -478,7 +478,7 @@ def create_or_update_event(  # noqa: C901
                             else []
                         )
                         + [
-                            f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}</b>\n{agenda_item_obj.description_locale}"
+                            f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}</b>{'\n' + agenda_item_obj.description_locale if agenda_item_obj.description_locale else ''}"
                             for agenda_item_obj in event_obj.agenda_items.all()
                         ]
                         + (
