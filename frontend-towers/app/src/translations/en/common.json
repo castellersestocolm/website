@@ -223,6 +223,7 @@
   "pages.calendar-event.register.form.underaged": "Are they underage (16 years old)?",
   "pages.calendar-event.register.form.price": "Price",
   "pages.calendar-event.register.form.price-login": "Remember that you must be logged in to select a member price and that you can only register members of your family.",
+  "pages.calendar-event.register.links.title": "External links",
   "pages.calendar-event.register.prices.title": "Prices",
   "pages.calendar-event.register.prices.description": "This event is paid, below you will find the prices based on membership.",
   "pages.calendar-event.register.prices.non-members": "Non-members",

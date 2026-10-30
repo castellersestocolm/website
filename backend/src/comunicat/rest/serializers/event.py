@@ -392,6 +392,34 @@ class EventQuestionSerializer(s.ModelSerializer):
         return obj.title.get(translation.get_language())
 
 
+class EventLinkSerializer(s.ModelSerializer):
+    title = s.SerializerMethodField(read_only=True)
+    external_url = s.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = EventQuestion
+        fields = (
+            "id",
+            "title",
+            "external_url",
+            "order",
+        )
+        read_only_fields = (
+            "id",
+            "title",
+            "external_url",
+            "order",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_title(self, obj):
+        return obj.title.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.URLField(read_only=True))
+    def get_external_url(self, obj):
+        return obj.external_url.get(translation.get_language())
+
+
 class EventSuperSlimSerializer(s.ModelSerializer):
     title = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
@@ -471,6 +499,7 @@ class EventSerializer(EventSlimSerializer):
     signups = EventSignupSerializer(read_only=True, many=True)
     prices = EventPriceSerializer(read_only=True, many=True)
     questions = EventQuestionSerializer(read_only=True, many=True)
+    links = EventLinkSerializer(read_only=True, many=True)
     agenda_items = AgendaItemSerializer(many=True, read_only=True)
     poster = VersatileImageFieldSerializer(
         allow_null=True,
@@ -519,6 +548,7 @@ class EventSerializer(EventSlimSerializer):
             "signups",
             "prices",
             "questions",
+            "links",
             "agenda_items",
             "poster",
             "picture",
@@ -543,6 +573,7 @@ class EventSerializer(EventSlimSerializer):
             "signups",
             "prices",
             "questions",
+            "links",
             "registrations",
             "modules",
             "agenda_items",
@@ -619,6 +650,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "signups",
             "prices",
             "questions",
+            "links",
             "agenda_items",
             "poster",
             "picture",
@@ -644,6 +676,7 @@ class EventWithRegistrationsSerializer(EventSerializer):
             "signups",
             "prices",
             "questions",
+            "links",
             "registrations",
             "modules",
             "agenda_items",

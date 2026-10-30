@@ -582,6 +582,22 @@ class EventAccounts(StandardModel, Timestamps):
         verbose_name_plural = _("event accounts")
 
 
+class EventLink(StandardModel, Timestamps):
+    event = models.ForeignKey(Event, related_name="links", on_delete=models.CASCADE)
+
+    title = JSONField(default=language_field_default)
+    external_url = JSONField(default=language_field_default)
+
+    order = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self) -> str:
+        return f"{self.title} - {self.event}"
+
+    class Meta:
+        verbose_name = _("event link")
+        verbose_name_plural = _("event links")
+
+
 # TODO: Handle registrations without users (external)
 class Registration(StandardModel, Timestamps):
     event = models.ForeignKey(
