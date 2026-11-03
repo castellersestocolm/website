@@ -1194,7 +1194,7 @@ msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
 #: notify/consts.py:48 notify/consts.py:131
 msgid "Welcome information and WhatsApp community"
-msgstr ""
+msgstr "Informació de benvinguda i comunitat de WhatsApp"
 
 #: notify/consts.py:52 notify/consts.py:135
 msgid "You have been invited to join a family"
