@@ -44,6 +44,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Welcome to Les Quatre Barres new website"),
                 "html": "email/org/user/imported.html",
             },
+            EmailType.JOIN: {
+                "subject": _("Welcome information and WhatsApp community"),
+                "html": "email/org/user/imported.html",
+            },
             EmailType.FAMILY_INVITE: {
                 "subject": _("You have been invited to join a family"),
                 "html": "email/org/user/invite.html",
@@ -121,6 +125,10 @@ TEMPLATE_BY_MODULE = {
             },
             EmailType.IMPORTED: {
                 "subject": _("Welcome to Castellers d'Estocolm new website"),
+                "html": "email/towers/user/imported.html",
+            },
+            EmailType.JOIN: {
+                "subject": _("Welcome information and WhatsApp community"),
                 "html": "email/towers/user/imported.html",
             },
             EmailType.FAMILY_INVITE: {

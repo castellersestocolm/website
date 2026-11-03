@@ -1,0 +1,14 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_message_pre %}
+    <p>{% trans "We want to invite you to our WhatsApp community where you can discuss with other people and plan activities together. In this community you will find different groups with topics ranging from families to activities and newcomers." %}</p>
+{% endblock %}
+
+{% block email_closing %}
+    <p style="margin:0;">{% trans "See you around!" %}</p>
+{% endblock %}
+
+{% block email_button_url %}https://chat.whatsapp.com/JWdvMoxYPJr9DKb9HXJCRw{% endblock %}
+
+{% block email_button_text %}{% trans "Join the community" %}{% endblock %}

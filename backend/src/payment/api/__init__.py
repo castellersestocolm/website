@@ -214,7 +214,7 @@ def create_for_order(  # noqa: C901
 
         transaction_obj, __ = Transaction.objects.update_or_create(
             source=source_obj,
-            external_id=external_id,
+            external_id=external_id or payment_order_obj.external_id,
             reference=reference,
             method=payment_order_obj.provider.method,
             amount=order_obj.amount,
@@ -222,7 +222,11 @@ def create_for_order(  # noqa: C901
             date_accounting=date_accounting,
             # TODO: Check if this is OK
             date_interest=date_accounting,
-            defaults={"text": text, "sender": order_obj.entity.name.upper()},
+            text=text,
+            sender=order_obj.entity.name.upper(),
+            defaults={
+                "extra": payment_order_obj.extra,
+            },
         )
 
         payment_obj, __ = Payment.objects.update_or_create(
@@ -230,8 +234,8 @@ def create_for_order(  # noqa: C901
             method=transaction_obj.method,
             transaction=transaction_obj,
             entity=order_obj.entity,
+            text=text,
             defaults={
-                "text": text,
                 "status": status,
             },
         )
