@@ -590,5 +590,8 @@
   "enums.towers-position-relative-placement.60": "A sobre de",
   "enums.towers-position-relative-placement.70": "A sota de",
   "enums.towers-position-relative-placement.80": "Prop de",
-  "enums.towers-position-relative-placement.90": "Entremig de"
+  "enums.towers-position-relative-placement.90": "Entremig de",
+  "common.boolean.yes": "Sí",
+  "common.boolean.no": "No",
+  "common.integer.years": "any/s"
 }

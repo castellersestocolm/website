@@ -113,6 +113,31 @@ def get_list(  # noqa: C901
         registration_queryset = registration_queryset.filter_with_user()
         event_registration_filter |= Q(owner__user_id=user_id)
 
+    if for_admin:
+        if search:
+            order_by = (
+                "owner__firstname",
+                "owner__lastname",
+                "-is_owner",
+                "entity__firstname",
+                "entity__lastname",
+            )
+        else:
+            order_by = (
+                "owner__firstname",
+                "owner__lastname",
+                "entity__firstname",
+                "entity__lastname",
+            )
+    else:
+        order_by = (
+            "-event__time_from",
+            "owner__firstname",
+            "owner__lastname",
+            "entity__firstname",
+            "entity__lastname",
+        )
+
     return list(
         # TODO: Allow non-user registrations but add support for entity on serializer instead before
         registration_queryset.select_related(
@@ -144,13 +169,8 @@ def get_list(  # noqa: C901
             ),
         )
         .with_amount()
-        .order_by(
-            "-event__time_from",
-            "owner__firstname",
-            "owner__lastname",
-            "entity__firstname",
-            "entity__lastname",
-        )
+        .with_is_owner()
+        .order_by(*order_by)
     )
 
 

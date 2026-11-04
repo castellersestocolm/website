@@ -24,6 +24,7 @@ import { ROUTES } from "../../routes";
 import { getEventIcon } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import Pagination from "@mui/material/Pagination";
+import IconQrCode from "@mui/icons-material/QrCode";
 
 function AdminPage() {
   const [t, i18n] = useTranslation("common");
@@ -139,6 +140,18 @@ function AdminPage() {
                                 ].path.replace(":id", event.id)}
                               >
                                 {t("pages.admin.events-table.attendance")}
+                              </Button>
+                              <Button
+                                variant="contained"
+                                type="submit"
+                                style={{ width: "auto" }}
+                                disableElevation
+                                href={ROUTES["admin-event-token"].path.replace(
+                                  ":id",
+                                  event.id,
+                                )}
+                              >
+                                <IconQrCode />
                               </Button>
                             </Stack>
                           )}

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import (
     BooleanField,
+    Case,
     CharField,
     Count,
     ExpressionWrapper,
@@ -17,6 +18,7 @@ from django.db.models import (
     Sum,
     UUIDField,
     Value,
+    When,
 )
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone, translation
@@ -285,6 +287,15 @@ class AgendaItemQuerySet(QuerySet):
 class RegistrationQuerySet(QuerySet):
     def filter_with_user(self):
         return self.filter(entity__user__isnull=False)
+
+    def with_is_owner(self):
+        return self.annotate(
+            is_owner=Case(
+                When(entity_id=F("owner_id"), then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField(),
+            ),
+        )
 
     def with_event_title(self, locale: str | None = None):
         locale = locale or translation.get_language()

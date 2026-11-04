@@ -180,6 +180,7 @@ export const REGISTRATION_STATUS_ICON: any = {
   20: <IconCheckCircleOutlined />,
   30: <IconCancelOutlined />,
   40: <IconCheckCircleOutlined />,
+  50: <IconCheckCircleOutlined />,
 };
 
 export enum Weekday {
