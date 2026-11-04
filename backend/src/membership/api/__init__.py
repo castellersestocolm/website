@@ -287,15 +287,15 @@ def complete(
     membership_module_objs = list(
         MembershipModule.objects.filter(
             id__in=membership_module_ids, status__lte=MembershipStatus.PROCESSING
-        )
-        .select_related("membership")
-        .prefetch_related(
-            "membership__membership_users", "membership__membership_users__user"
-        )
+        ).select_related("membership")
     )
 
-    membership_objs = {
+    membership_objs: set[Membership] = {
         membership_module_obj.membership
+        for membership_module_obj in membership_module_objs
+    }
+    modules: set[Module] = {
+        Module(membership_module_obj.module)
         for membership_module_obj in membership_module_objs
     }
 
@@ -303,6 +303,12 @@ def complete(
         return False
 
     membership_obj = list(membership_objs)[0]
+
+    membership_user_objs = list(
+        MembershipUser.objects.filter(membership=membership_obj)
+        .with_is_first_membership(modules=modules)
+        .select_related("user")
+    )
 
     for membership_module_obj in membership_module_objs:
         membership_module_obj.status = (
@@ -318,7 +324,7 @@ def complete(
         membership_obj.save(update_fields=("status",))
 
     if with_notify:
-        for membership_user_obj in membership_obj.membership_users.all():
+        for membership_user_obj in membership_user_objs:
             if not membership_user_obj.user.can_manage:
                 continue
 
@@ -329,6 +335,22 @@ def complete(
                     module=membership_user_obj.user.origin_module,
                 )
             )
+
+            if not is_completed:
+                continue
+
+            for module in modules:
+                # Send the user the welcome information only if it's the first time they pay for the module
+                if getattr(
+                    membership_user_obj, f"is_first_membership_{module.name.lower()}"
+                ):
+                    transaction.on_commit(
+                        lambda: notify.tasks.send_user_email.delay(
+                            user_id=membership_user_obj.user_id,
+                            email_type=EmailType.JOIN,
+                            module=module,
+                        )
+                    )
 
     return True
 

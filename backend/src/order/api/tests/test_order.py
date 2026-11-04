@@ -499,15 +499,31 @@ class TestComplete(NumOperationsMixin, TestCase):
             amount=Money(200, "SEK"),
         )
 
-        cls.membership_1_obj = MembershipFactory(status=MembershipStatus.REQUESTED)
+        cls.membership_1_obj = MembershipFactory(
+            status=MembershipStatus.ACTIVE,
+            date_from=timezone.localdate() - timezone.timedelta(days=365),
+            date_to=timezone.localdate(),
+        )
+        cls.membership_2_obj = MembershipFactory(
+            status=MembershipStatus.REQUESTED,
+            date_from=timezone.localdate(),
+            date_to=timezone.localdate() + timezone.timedelta(days=365),
+        )
+
         cls.membership_module_1_obj = MembershipModuleFactory(
             membership=cls.membership_1_obj,
+            module=Module.ORG,
+            status=MembershipStatus.ACTIVE,
+            amount=Money(300, "SEK"),
+        )
+        cls.membership_module_2_obj = MembershipModuleFactory(
+            membership=cls.membership_2_obj,
             module=Module.ORG,
             status=MembershipStatus.REQUESTED,
             amount=Money(300, "SEK"),
         )
-        cls.membership_module_2_obj = MembershipModuleFactory(
-            membership=cls.membership_1_obj,
+        cls.membership_module_3_obj = MembershipModuleFactory(
+            membership=cls.membership_2_obj,
             module=Module.TOWERS,
             status=MembershipStatus.REQUESTED,
             amount=Money(200, "SEK"),
@@ -520,23 +536,28 @@ class TestComplete(NumOperationsMixin, TestCase):
         )
         MembershipUserFactory(
             family=cls.family_1_obj,
+            user=cls.user_member_1_obj,
+            membership=cls.membership_2_obj,
+        )
+        MembershipUserFactory(
+            family=cls.family_1_obj,
             user=cls.user_member_2_obj,
-            membership=cls.membership_1_obj,
+            membership=cls.membership_2_obj,
         )
         MembershipUserFactory(
             family=cls.family_1_obj,
             user=cls.user_member_3_obj,
-            membership=cls.membership_1_obj,
+            membership=cls.membership_2_obj,
         )
 
         OrderMembershipFactory(
             order=cls.order_4_obj,
-            module=cls.membership_module_1_obj,
+            module=cls.membership_module_2_obj,
             amount=Money(300, "SEK"),
         )
         OrderMembershipFactory(
             order=cls.order_4_obj,
-            module=cls.membership_module_2_obj,
+            module=cls.membership_module_3_obj,
             amount=Money(200, "SEK"),
         )
 
@@ -930,7 +951,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=59, num_inserts=8, num_updates=8
+                num=0, num_selects=65, num_inserts=8, num_updates=8
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -974,14 +995,21 @@ class TestComplete(NumOperationsMixin, TestCase):
 
         run_commit_hooks()
 
-        self.assertEqual(len(mail.outbox), 1)
+        # One order paid confirmation and one welcome (join) email for one of the modules only
+        self.assertEqual(len(mail.outbox), 2)
 
-        email_subject = mail.outbox[0].subject
-        email_text = mail.outbox[0].body
+        email_subject_1 = mail.outbox[0].subject
+        email_text_1 = mail.outbox[0].body
 
-        self.assertEqual(email_subject, "Your membership is now paid")
-        self.assertIn("firstname-1 lastname-1", email_text)
-        self.assertIn("paid", email_text)
+        self.assertEqual(email_subject_1, "Your membership is now paid")
+        self.assertIn("firstname-1 lastname-1", email_text_1)
+        self.assertIn("paid", email_text_1)
+
+        email_subject_2 = mail.outbox[1].subject
+        email_text_2 = mail.outbox[1].body
+
+        self.assertIn("Welcome information", email_subject_2)
+        self.assertIn("information", email_text_2)
 
     def test_complete__order_course(self, *args, **kwargs):
         date_paid = timezone.localdate() + timezone.timedelta(days=1)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 21:25+0100\n"
+"POT-Creation-Date: 2026-11-04 10:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -778,8 +778,8 @@ msgid ""
 "newcomers."
 msgstr ""
 "Vi vill bjuda in dig till vår WhatsApp-community, där du kan diskutera med "
-"andra och planera aktiviteter tillsammans. I denna community hittar du "
-"olika grupper med teman som sträcker sig från familjer till aktiviteter och "
+"andra och planera aktiviteter tillsammans. I denna community hittar du olika "
+"grupper med teman som sträcker sig från familjer till aktiviteter och "
 "nyanlända."
 
 #: comunicat/templates/email/org/user/join.html:14
@@ -1122,7 +1122,7 @@ msgstr "moduler"
 msgid "Members"
 msgstr "Medlemmar"
 
-#: membership/api/export.py:56 payment/api/__init__.py:195
+#: membership/api/export.py:56 payment/api/__init__.py:194
 #: payment/api/provider/se_swish.py:49 payment/managers.py:210
 #: payment/managers.py:567 payment/managers.py:592
 msgid "Membership"
@@ -1188,9 +1188,9 @@ msgstr "Välkomen till Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Välkommen till Les Quatre Barres ny hemsida"
 
-#: notify/consts.py:48 notify/consts.py:131
-msgid "Welcome information and WhatsApp community"
-msgstr "Välkomstinformation och WhatsApp-community"
+#: notify/consts.py:48
+msgid "Welcome information from Les Quatre Barres and WhatsApp community"
+msgstr "Välkomstinformation från Les Quatre Barres och WhatsApp-community"
 
 #: notify/consts.py:52 notify/consts.py:135
 msgid "You have been invited to join a family"
@@ -1260,6 +1260,10 @@ msgstr "Välkommen till Castellers d'Estocolm"
 #: notify/consts.py:127
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
+
+#: notify/consts.py:131
+msgid "Welcome information from Castellers d'Estocolm and WhatsApp community"
+msgstr "Välkomstinformation från Castellers d'Estocolm och WhatsApp-community"
 
 #: notify/consts.py:139
 msgid "Sign-up for the upcoming events and rehearsals"
@@ -1388,29 +1392,29 @@ msgstr ""
 msgid "file"
 msgstr "fil"
 
-#: payment/api/__init__.py:206 payment/api/provider/se_swish.py:61
+#: payment/api/__init__.py:205 payment/api/provider/se_swish.py:61
 #: payment/managers.py:233
 msgid "Payment"
 msgstr "Betalning"
 
-#: payment/api/__init__.py:208
+#: payment/api/__init__.py:207
 #, fuzzy
 #| msgid "Payment"
 msgid "Payment fee"
 msgstr "Betalning"
 
-#: payment/api/__init__.py:211 payment/api/provider/se_swish.py:64
+#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:64
 #: payment/managers.py:223 payment/managers.py:228
 msgid "Order"
 msgstr "Beställning"
 
-#: payment/api/__init__.py:213
+#: payment/api/__init__.py:212
 #, fuzzy
 #| msgid "Order"
 msgid "Order fee"
 msgstr "Beställning"
 
-#: payment/api/__init__.py:341 payment/managers.py:735
+#: payment/api/__init__.py:340 payment/managers.py:735
 msgid "Delivery"
 msgstr "Leverans"
 
