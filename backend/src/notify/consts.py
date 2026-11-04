@@ -44,6 +44,12 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Welcome to Les Quatre Barres new website"),
                 "html": "email/org/user/imported.html",
             },
+            EmailType.JOIN: {
+                "subject": _(
+                    "Welcome information from Les Quatre Barres and WhatsApp community"
+                ),
+                "html": "email/org/user/join.html",
+            },
             EmailType.FAMILY_INVITE: {
                 "subject": _("You have been invited to join a family"),
                 "html": "email/org/user/invite.html",
@@ -123,6 +129,12 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Welcome to Castellers d'Estocolm new website"),
                 "html": "email/towers/user/imported.html",
             },
+            EmailType.JOIN: {
+                "subject": _(
+                    "Welcome information from Castellers d'Estocolm and WhatsApp community"
+                ),
+                "html": "email/towers/user/join.html",
+            },
             EmailType.FAMILY_INVITE: {
                 "subject": _("You have been invited to join a family"),
                 "html": "email/towers/user/invite.html",
@@ -189,6 +201,7 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
     EmailType.PASSWORD: ("get_user_email_render", tuple()),
     EmailType.WELCOME: ("get_user_email_render", tuple()),
     EmailType.IMPORTED: ("get_user_email_render", tuple()),
+    EmailType.JOIN: ("get_user_email_render", tuple()),
     EmailType.FAMILY_INVITE: ("get_user_email_render", tuple()),
     EmailType.EVENT_SIGNUP: ("get_user_email_render", tuple()),
     EmailType.MEMBERSHIP_RENEW: ("get_user_email_render", tuple()),

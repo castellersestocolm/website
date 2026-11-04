@@ -3,6 +3,7 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import (
     Case,
     CharField,
+    Exists,
     F,
     IntegerField,
     OuterRef,
@@ -15,7 +16,9 @@ from django.db.models import (
 )
 from django.db.models.functions import Cast, Coalesce
 
+from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
+from membership.enums import MembershipStatus
 from order.enums import OrderStatus
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 
@@ -64,6 +67,28 @@ class MembershipModuleQuerySet(QuerySet):
 
 
 class MembershipUserQuerySet(QuerySet):
+    def with_is_first_membership(
+        self,
+        modules: list[Module] | None = None,
+    ):
+        MembershipModule = apps.get_model("membership", "MembershipModule")
+
+        return self.annotate(
+            **{
+                f"is_first_membership_{module.name.lower()}": ~Exists(
+                    MembershipModule.objects.filter(
+                        membership__date_from__lt=OuterRef("membership__date_from"),
+                        module=module,
+                        status=MembershipStatus.ACTIVE,
+                        membership__status=MembershipStatus.ACTIVE,
+                        membership__membership_users__user_id=OuterRef("user_id"),
+                    ).exclude(membership_id=OuterRef("membership_id"))
+                )
+                for module in Module
+                if not modules or module in modules
+            },
+        )
+
     def with_membership_amount(self):
         MembershipModule = apps.get_model("membership", "MembershipModule")
 

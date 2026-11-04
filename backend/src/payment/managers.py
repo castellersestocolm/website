@@ -901,8 +901,6 @@ class EntityQuerySet(QuerySet):
                         membership__date_to__gte=date_today,
                         membership__membership_users__user_id=OuterRef("user_id"),
                     )
-                    .order_by("-membership__date_to")
-                    .values_list("membership_id", flat=True)[:1]
                 )
                 for module in Module
                 if not modules or module in modules

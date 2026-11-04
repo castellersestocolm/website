@@ -11,6 +11,7 @@ class EmailType(enum.IntEnum):
     PASSWORD = 11
     WELCOME = 12
     IMPORTED = 13
+    JOIN = 14
     FAMILY_INVITE = 20
     EVENT_SIGNUP = 30
     MEMBERSHIP_RENEW = 40
