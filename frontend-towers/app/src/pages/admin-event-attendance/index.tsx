@@ -46,6 +46,7 @@ import IconEscalatorWarning from "@mui/icons-material/EscalatorWarning";
 import IconEmojiPeople from "@mui/icons-material/EmojiPeople";
 import IconArrowCircleDownOutlined from "@mui/icons-material/ArrowCircleDownOutlined";
 import IconArrowCircleUpOutlined from "@mui/icons-material/ArrowCircleUpOutlined";
+import { useDebounce } from "../../utils/form";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -63,6 +64,14 @@ function AdminEventAttendancePage() {
 
   const [scannerOpen, setScannerOpen] = React.useState(false);
   const [searchText, setSearchText] = React.useState(undefined);
+  const [searchTextDebounced, setSearchTextDebounced] =
+    React.useState(undefined);
+
+  const searchTextDebouncedValue = useDebounce(searchText, 500);
+
+  React.useEffect(() => {
+    setSearchTextDebounced(searchText);
+  }, [searchTextDebouncedValue]); // Missing dependency here "searchText" on purpose
 
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: 10,
@@ -106,18 +115,20 @@ function AdminEventAttendancePage() {
   }, [id, paginationModel, setRegistrations]);
 
   React.useEffect(() => {
-    if (searchText) {
+    if (searchTextDebounced) {
       setSearchLoading(true);
-      apiAdminEventRegistrationsSearch(id, searchText).then((response) => {
-        if (response.status === 200) {
-          setFoundRegistrations(response.data);
-        }
-        setSearchLoading(false);
-      });
+      apiAdminEventRegistrationsSearch(id, searchTextDebounced).then(
+        (response) => {
+          if (response.status === 200) {
+            setFoundRegistrations(response.data);
+          }
+          setSearchLoading(false);
+        },
+      );
     } else {
       setFoundRegistrations(undefined);
     }
-  }, [id, searchText, setFoundRegistrations, setSearchLoading]);
+  }, [id, searchTextDebounced, setFoundRegistrations, setSearchLoading]);
 
   function handleSetAttendance(registrationId: string, hasAttended: boolean) {
     apiAdminEventRegistrationUpdate(registrationId, hasAttended).then(

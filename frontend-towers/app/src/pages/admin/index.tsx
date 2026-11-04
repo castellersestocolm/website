@@ -49,7 +49,7 @@ import IconInventory from "@mui/icons-material/Inventory";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import { filterProductsForUser } from "../../utils/product";
 import Pagination from "@mui/material/Pagination";
-import { API_EVENTS_LIST_PAGE_SIZE } from "../../consts";
+import IconQrCode from "@mui/icons-material/QrCode";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
@@ -617,6 +617,18 @@ function AdminPage() {
                                 ].path.replace(":id", event.id)}
                               >
                                 {t("pages.admin.events-table.attendance")}
+                              </Button>
+                              <Button
+                                variant="contained"
+                                type="submit"
+                                style={{ width: "auto" }}
+                                disableElevation
+                                href={ROUTES["admin-event-token"].path.replace(
+                                  ":id",
+                                  event.id,
+                                )}
+                              >
+                                <IconQrCode />
                               </Button>
                             </Stack>
                           )}

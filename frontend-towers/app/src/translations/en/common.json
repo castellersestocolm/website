@@ -638,5 +638,8 @@
   "enums.towers-position-relative-placement.60": "On top of",
   "enums.towers-position-relative-placement.70": "Below",
   "enums.towers-position-relative-placement.80": "Close to",
-  "enums.towers-position-relative-placement.90": "Between"
+  "enums.towers-position-relative-placement.90": "Between",
+  "common.boolean.yes": "Yes",
+  "common.boolean.no": "No",
+  "common.integer.years": "year/s"
 }

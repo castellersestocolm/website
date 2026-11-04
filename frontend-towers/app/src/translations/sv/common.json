@@ -638,5 +638,8 @@
   "enums.towers-position-relative-placement.60": "Ovanpå",
   "enums.towers-position-relative-placement.70": "Nedan",
   "enums.towers-position-relative-placement.80": "Nära till",
-  "enums.towers-position-relative-placement.90": "Mellan"
+  "enums.towers-position-relative-placement.90": "Mellan",
+  "common.boolean.yes": "Ja",
+  "common.boolean.no": "Nej",
+  "common.integer.years": "år"
 }
