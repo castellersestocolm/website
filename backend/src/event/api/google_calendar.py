@@ -46,6 +46,14 @@ def import_events() -> None:  # noqa: C901
             event__time_to__gte=time_now
         ).select_related("google_calendar")
     }
+    event_ids: set[UUID] = {
+        google_event_obj.event_id for google_event_obj in google_event_by_key.values()
+    }
+    # TODO: Consider "team" here too
+    event_module_by_key = {
+        (event_module_obj.event_id, event_module_obj.module): event_module_obj
+        for event_module_obj in EventModule.objects.filter(event_id__in=event_ids)
+    }
 
     location_objs = list(Location.objects.all())
 
@@ -121,6 +129,10 @@ def import_events() -> None:  # noqa: C901
                         updated_at = datetime.datetime.fromisoformat(event["updated"])
                         if event_key in google_event_by_key:
                             event_obj = google_event_by_key[event_key].event
+                            # TODO: Check if using the calendar module is good enough
+                            event_module_obj = event_module_by_key.get(
+                                (event_obj.id, google_integration_obj.module)
+                            )
 
                             time_from = datetime.datetime.fromisoformat(
                                 event["start"]["dateTime"]
@@ -136,9 +148,9 @@ def import_events() -> None:  # noqa: C901
                                 event_obj.time_to = time_to
                                 event_updates.append(event_obj)
 
-                            # TODO: Don't update anything if the event requires approval
-                            # if event_obj.require_approve:
-                            #     continue
+                            # Don't update anything if the event requires approval
+                            if event_module_obj and event_module_obj.require_approve:
+                                continue
 
                             for attendee in event.get("attendees", []):
                                 if attendee["email"] in entity_by_email:
@@ -232,6 +244,7 @@ def import_events() -> None:  # noqa: C901
                                             require_approve=False,
                                         )
                                     )
+
                             for attendee in event.get("attendees", []):
                                 if attendee["email"] in entity_by_email:
                                     registration_status = (
@@ -255,6 +268,7 @@ def import_events() -> None:  # noqa: C901
                                                 status=registration_status,
                                             )
                                         )
+
                             google_event_creates.append(
                                 GoogleEvent(
                                     event=event_obj,
@@ -307,10 +321,13 @@ def import_events() -> None:  # noqa: C901
 def create_or_update_event(  # noqa: C901
     event_id: UUID, registration_id: UUID | None = None
 ) -> GoogleEvent | None:
-    event_obj = Event.objects.filter(id=event_id).first()
+    event_obj = Event.objects.filter(id=event_id).prefetch_related("modules").first()
 
     if not event_obj or not event_obj.module:
         return None
+
+    # TODO: Check if using the event module is good enough
+    event_module_obj = event_obj.modules.filter(module=event_obj.module)
 
     if not GOOGLE_ENABLED_BY_MODULE[event_obj.module]["calendar"]:
         return None
@@ -438,9 +455,9 @@ def create_or_update_event(  # noqa: C901
                             ]
                         )
 
-                        # TODO: Don't update anything if the event requires approval
-                        # if event_obj.require_approve:
-                        #     continue
+                        # Don't update anything if the event requires approval
+                        if event_module_obj and event_module_obj.require_approve:
+                            continue
 
                         if (
                             registration_obj.status != registration_status
