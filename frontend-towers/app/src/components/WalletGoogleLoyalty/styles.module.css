@@ -1,4 +1,6 @@
 .walletBox {
+  cursor: pointer;
+
   button {
     padding: 0 !important;
   }
