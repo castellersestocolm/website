@@ -23,7 +23,7 @@ export default function WalletGoogleEvent({ registrationId }: any) {
       apiIntegrationGoogleWalletPassEventGet(registrationId).then(
         (response) => {
           if (response.status === 200) {
-            window.location.href = response.data;
+            window.location.href = response.data.url;
           }
         },
       );

@@ -22,7 +22,7 @@ export default function WalletGoogleLoyalty() {
     if (user) {
       apiIntegrationGoogleWalletPassLoyaltyGet().then((response) => {
         if (response.status === 200) {
-          window.location.href = response.data;
+          window.location.href = response.data.url;
         }
       });
     }
