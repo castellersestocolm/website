@@ -656,6 +656,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                     json={
                         "id": "transaction-2",
                         "amount": 400,
+                        "fee_amount": 50,
                         "transaction_events": [{"event_type": "PAYOUT", "amount": 350}],
                     },
                 ),
@@ -719,6 +720,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                     json={
                         "id": "transaction-2",
                         "amount": 400,
+                        "fee_amount": 50,
                         "transaction_events": [{"event_type": "PAYOUT", "amount": 350}],
                     },
                 ),
@@ -869,6 +871,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                     json={
                         "id": "transaction-1",
                         "amount": 500,
+                        "fee_amount": 50,
                         "transaction_events": [{"event_type": "PAYOUT", "amount": 450}],
                     },
                 ),
@@ -945,6 +948,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                     json={
                         "id": "transaction-1",
                         "amount": 500,
+                        "fee_amount": 50,
                         "transaction_events": [{"event_type": "PAYOUT", "amount": 450}],
                     },
                 ),
@@ -1037,6 +1041,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                     json={
                         "id": "transaction-1",
                         "amount": 500,
+                        "fee_amount": 50,
                         "transaction_events": [{"event_type": "PAYOUT", "amount": 450}],
                     },
                 ),
@@ -1130,6 +1135,7 @@ class TestComplete(NumOperationsMixin, TestCase):
                     json={
                         "id": "transaction-1",
                         "amount": 500,
+                        "fee_amount": 50,
                         "transaction_events": [{"event_type": "PAYOUT", "amount": 450}],
                     },
                 ),

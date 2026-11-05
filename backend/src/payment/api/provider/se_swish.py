@@ -56,7 +56,10 @@ class PaymentProviderSESwish(PaymentProviderBase):
                 text = f"{program_course_obj.program.name_locale} {program_course_obj.date_from.year}"
             elif self.order_obj.type == OrderType.REGISTRATION:
                 event_obj = self.order_obj.all_registrations[0].registration.event
-                text = f"{event_obj.title_locale} {event_obj.time_from.year}"
+                if event_obj.title_locale.endswith(str(event_obj.time_from.year)[-2:]):
+                    text = event_obj.title_locale
+                else:
+                    text = f"{event_obj.title_locale} {event_obj.time_from.year}"
             elif self.order_obj.type == OrderType.REQUEST:
                 text_order = _("Payment")
                 text = f"{text_order} {self.order_obj.reference}"
