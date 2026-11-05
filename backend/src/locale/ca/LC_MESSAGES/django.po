@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-04 10:23+0100\n"
+"POT-Creation-Date: 2026-11-05 16:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -779,15 +779,15 @@ msgstr "Fes-te membre"
 
 #: comunicat/templates/email/org/user/join.html:5
 msgid ""
-"We want to invite you to our WhatsApp community where you can discuss with "
-"other people and plan activities together. In this community you will find "
-"different groups with topics ranging from families to activities and "
-"newcomers."
+"We want to invite you to the WhatsApp community in Catalan from Les Quatre "
+"Barres where you can discuss with other people and plan activities together. "
+"In this community you will find different groups with topics ranging from "
+"families to activities and information for newcomers."
 msgstr ""
-"Et volem convidar a la nostra comunitat de WhatsApp, on podràs conversar amb "
-"altres persones i planificar activitats plegats. En aquesta comunitat "
-"trobaràs diversos grups amb temàtiques que van des de famílies fins a "
-"activitats i persones nouvingudes."
+"Et volem convidar a la comunitat de WhatsApp en català de Les Quatre Barres, "
+"on podràs conversar amb altres persones i planificar activitats plegats. En "
+"aquesta comunitat trobaràs diversos grups amb temàtiques que van des de "
+"famílies fins a activitats i informació per persones nouvingudes."
 
 #: comunicat/templates/email/org/user/join.html:14
 #: comunicat/templates/email/towers/user/join.html:14
@@ -999,7 +999,7 @@ msgstr "Quantitat"
 msgid "time from"
 msgstr ""
 
-#: event/api/google_calendar.py:358
+#: event/api/google_calendar.py:375
 msgid "More information"
 msgstr "Més informació"
 
@@ -1177,11 +1177,11 @@ msgstr "Confirma l'assistència a les properes actuacions"
 msgid "receipt"
 msgstr "rebut"
 
-#: notify/consts.py:32 notify/consts.py:115
+#: notify/consts.py:32 notify/consts.py:117
 msgid "Confirm your email to finish your registration"
 msgstr "Confirma el teu correu per finalitzar el registre"
 
-#: notify/consts.py:36 notify/consts.py:119
+#: notify/consts.py:36 notify/consts.py:121
 msgid "Reset your password to login"
 msgstr "Reinicia la teva contrasenya per entrar"
 
@@ -1193,84 +1193,85 @@ msgstr "Benvingut a Les Quatre Barres"
 msgid "Welcome to Les Quatre Barres new website"
 msgstr "Benvingut/da a la nova web de Les Quatre Barres"
 
-#: notify/consts.py:48
+#: notify/consts.py:49
 msgid "Welcome information from Les Quatre Barres and WhatsApp community"
 msgstr "Informació de benvinguda de Les Quatre Barres i comunitat de WhatsApp"
 
-#: notify/consts.py:52 notify/consts.py:135
+#: notify/consts.py:54 notify/consts.py:139
 msgid "You have been invited to join a family"
 msgstr "Has estat convidat a unir-te a una família"
 
-#: notify/consts.py:56
+#: notify/consts.py:58
 msgid "Sign-up for the upcoming events"
 msgstr "Confirma l'assistència als propers esdeveniments"
 
-#: notify/consts.py:60 notify/consts.py:143
+#: notify/consts.py:62 notify/consts.py:147
 msgid "Time to renew your membership"
 msgstr "La teva quota caduca aviat"
 
-#: notify/consts.py:64 notify/consts.py:147
+#: notify/consts.py:66 notify/consts.py:151
 msgid "Your membership has expired"
 msgstr "La teva quota ha caducat"
 
-#: notify/consts.py:68 notify/consts.py:151
+#: notify/consts.py:70 notify/consts.py:155
 msgid "Your membership is now paid"
 msgstr "La teva quota s'ha pagat"
 
-#: notify/consts.py:72 notify/consts.py:155
+#: notify/consts.py:74 notify/consts.py:159
 msgid "Your membership status"
 msgstr "L'estat de la teva quota"
 
-#: notify/consts.py:76 notify/consts.py:159
+#: notify/consts.py:78 notify/consts.py:163
 msgid "Thank you for your order"
 msgstr "Gràcies per la teva comanda"
 
-#: notify/consts.py:80 notify/consts.py:163
+#: notify/consts.py:82 notify/consts.py:167
 #, python-format
 msgid "Your order %s is now paid"
 msgstr "La teva comanda %s s'ha pagat"
 
-#: notify/consts.py:84 notify/consts.py:167
+#: notify/consts.py:86 notify/consts.py:171
 #, python-format
 msgid "Your registration for %s is now paid"
 msgstr "La teva inscripció per %s s'ha pagat"
 
-#: notify/consts.py:88 notify/consts.py:171
+#: notify/consts.py:90 notify/consts.py:175
 #, python-format
 msgid "Contact form — %s"
 msgstr "Formulari de contacte — %s"
 
-#: notify/consts.py:92 notify/consts.py:175
+#: notify/consts.py:94 notify/consts.py:179
 #, python-format
 msgid "Your payment has been processed — %s"
 msgstr "El vostre pagament s'ha processat — %s"
 
-#: notify/consts.py:96 notify/consts.py:179
+#: notify/consts.py:98 notify/consts.py:183
 #, python-format
 msgid "Your registration is now paid — %s"
 msgstr "La teva inscripció s'ha pagat — %s"
 
-#: notify/consts.py:100 notify/consts.py:183
+#: notify/consts.py:102 notify/consts.py:187
 msgid "You have a new payment request"
 msgstr "Teniu una sol·licitud de pagament nova"
 
-#: notify/consts.py:104 notify/consts.py:187
+#: notify/consts.py:106 notify/consts.py:191
 msgid "Your payment has been processed"
 msgstr "El vostre pagament s'ha processat"
 
-#: notify/consts.py:123
+#: notify/consts.py:125
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Benvingut/da als Castellers d'Estocolm"
 
-#: notify/consts.py:127
+#: notify/consts.py:129
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
 
-#: notify/consts.py:131
+#: notify/consts.py:134
 msgid "Welcome information from Castellers d'Estocolm and WhatsApp community"
-msgstr "Informació de benvinguda dels Castellers d'Estocolm i comunitat de WhatsApp"
+msgstr ""
+"Informació de benvinguda dels Castellers d'Estocolm i comunitat de WhatsApp"
 
-#: notify/consts.py:139
+#: notify/consts.py:143
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Confirma l'assistència als propers esdeveniments i assajos"
 
@@ -1397,7 +1398,7 @@ msgstr ""
 msgid "file"
 msgstr "fitxer"
 
-#: payment/api/__init__.py:205 payment/api/provider/se_swish.py:61
+#: payment/api/__init__.py:205 payment/api/provider/se_swish.py:64
 #: payment/managers.py:233
 msgid "Payment"
 msgstr "Pagament"
@@ -1408,7 +1409,7 @@ msgstr "Pagament"
 msgid "Payment fee"
 msgstr "Pagament"
 
-#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:64
+#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:67
 #: payment/managers.py:223 payment/managers.py:228
 msgid "Order"
 msgstr "Comanda"

@@ -170,6 +170,9 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         amount_fee = ZERO_MONEY
         for transaction in transactions:
+            if not transaction.fee_amount:
+                continue
+
             amount_fee += Money(
                 abs(transaction.fee_amount), settings.MODULE_ALL_CURRENCY
             )
