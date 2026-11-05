@@ -5,14 +5,11 @@ import { apiIntegrationGoogleWalletPassEventGet } from "../../api";
 import { Box, Link } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY } from "../../consts";
-import { useNavigate } from "react-router-dom";
 
 export default function WalletGoogleEvent({ registrationId }: any) {
   const { i18n } = useTranslation("common");
 
   const { user } = useAppContext();
-
-  let navigate = useNavigate();
 
   const googleLocaleCountry = (LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY as any)[
     i18n.resolvedLanguage
@@ -26,7 +23,7 @@ export default function WalletGoogleEvent({ registrationId }: any) {
       apiIntegrationGoogleWalletPassEventGet(registrationId).then(
         (response) => {
           if (response.status === 200) {
-            navigate(response.data);
+            window.location.href = response.data;
           }
         },
       );
