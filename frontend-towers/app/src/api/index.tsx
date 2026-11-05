@@ -1300,6 +1300,18 @@ export const apiIntegrationAppleWalletPassLoyaltyGet = async () => {
   }
 };
 
+export const apiIntegrationAppleWalletPassEventGet = async () => {
+  try {
+    return await instance.get("integration/apple/wallet/pass/loyalty/", {
+      responseType: "blob",
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiAdminStatsEventGet = async (eventId: string) => {
   try {
     return await instance.get("/admin/stats/event/" + eventId + "/");

@@ -1,4 +1,8 @@
 .walletBox {
+  button {
+    padding: 0 !important;
+  }
+
   img {
     height: 42px;
   }

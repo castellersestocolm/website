@@ -1,6 +1,10 @@
 .walletBox {
   cursor: pointer;
 
+  button {
+    padding: 0 !important;
+  }
+
   img {
     height: 42px;
   }

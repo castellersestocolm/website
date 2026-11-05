@@ -11,30 +11,6 @@ export default function WalletAppleLoyalty() {
 
   const { user } = useAppContext();
 
-  const [appleWalletPassLoyalty, setAppleWalletPassLoyalty] =
-    React.useState(undefined);
-
-  React.useEffect(() => {
-    if (user) {
-      apiIntegrationAppleWalletPassLoyaltyGet().then((response) => {
-        if (response.status === 200) {
-          setAppleWalletPassLoyalty(response.data);
-        }
-      });
-    }
-  }, [user, setAppleWalletPassLoyalty]);
-
-  const onDownload = () => {
-    const href = URL.createObjectURL(appleWalletPassLoyalty);
-    const link = document.createElement("a");
-    link.href = href;
-    link.setAttribute("download", "loyalty.pkpass");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(href);
-  };
-
   const appleFile = (LANGUAGE_TO_APPLE_WALLET_FILE as any)[
     i18n.resolvedLanguage
   ];
@@ -42,11 +18,28 @@ export default function WalletAppleLoyalty() {
     `../../assets/images/integration/apple/wallet/${appleFile[0]}/RGB/${appleFile[1]}.svg`,
   );
 
+  function handleApplePassLoyaltyButton() {
+    if (user) {
+      apiIntegrationAppleWalletPassLoyaltyGet().then((response) => {
+        if (response.status === 200) {
+          const href = URL.createObjectURL(response.data);
+          const link = document.createElement("a");
+          link.href = href;
+          link.setAttribute("download", "loyalty.pkpass");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(href);
+        }
+      });
+    }
+  }
+
   return (
     <>
-      {appleWalletPassLoyalty && (
+      {user && (
         <Box className={styles.walletBox}>
-          <Link onClick={onDownload} variant="button">
+          <Link onClick={handleApplePassLoyaltyButton} variant="button">
             <img src={backgroundImage} alt="Apple Wallet" />
           </Link>
         </Box>

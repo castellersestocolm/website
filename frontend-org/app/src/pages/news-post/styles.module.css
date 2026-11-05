@@ -15,7 +15,7 @@
   width: 100%;
 
   a {
-    color: var(--mui-palette-secondary-main) !important;
+    color: var(--mui-palette-secondary-main);
     text-decoration: none !important;
   }
 }
