@@ -26,6 +26,7 @@ from django.utils import timezone, translation
 from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
 from event.enums import RegistrationStatus
+from order.consts import ORDER_STATUS_DELETED
 from payment.enums import PaymentType
 from user.enums import FamilyMemberRole, FamilyMemberStatus
 
@@ -305,10 +306,27 @@ class RegistrationQuerySet(QuerySet):
         )
 
     def with_amount(self):
+        OrderRegistration = apps.get_model("order", "OrderRegistration")
         PaymentLine = apps.get_model("payment", "PaymentLine")
 
         return self.annotate(
-            amount=Coalesce(
+            amount_order=Coalesce(
+                Subquery(
+                    OrderRegistration.objects.filter(
+                        registration_id=OuterRef("id"),
+                    )
+                    .exclude(
+                        order__status__in=ORDER_STATUS_DELETED,
+                    )
+                    .values("registration_id")
+                    .annotate(sum=Sum("amount"))
+                    .values_list("sum", flat=True)[:1],
+                ),
+                Value(0),
+                output_field=MoneyOutput(),
+            ),
+            # TODO: Remove this, kept for backwards compatibility for now
+            amount_line=Coalesce(
                 Subquery(
                     PaymentLine.objects.filter(
                         item_type__app_label="event",
@@ -324,7 +342,15 @@ class RegistrationQuerySet(QuerySet):
                 ),
                 Value(0),
                 output_field=MoneyOutput(),
-            )
+            ),
+            amount=Case(
+                When(
+                    amount_order__gte=0,
+                    then=F("amount_order"),
+                ),
+                default=F("amount_line"),
+                output_field=MoneyOutput(),
+            ),
         )
 
     def with_family_name(self):
