@@ -345,7 +345,7 @@ class RegistrationQuerySet(QuerySet):
             ),
             amount=Case(
                 When(
-                    amount_order__gte=0,
+                    amount_order__gt=0,
                     then=F("amount_order"),
                 ),
                 default=F("amount_line"),
