@@ -62,7 +62,9 @@ class UserAPI(ComuniCatViewSet):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        validated_data.pop("password2")
+        if "password2" in validated_data:
+            validated_data.pop("password2")
+
         user.api.register(**validated_data, module=self.module)
 
         return Response(status=201)

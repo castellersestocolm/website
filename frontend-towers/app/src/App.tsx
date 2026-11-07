@@ -3,6 +3,7 @@ import HomePage from "./pages/home";
 import ResourcesPage from "./pages/resources";
 import UserLoginPage from "./pages/user-login";
 import UserJoinPage from "./pages/user-join";
+import UserTryoutPage from "./pages/user-tryout";
 import UserPasswordPage from "./pages/user-password";
 import { ThemeProvider } from "@mui/material";
 import { appTheme } from "./themes/theme";
@@ -167,6 +168,10 @@ const App = () => {
                   <Route
                     path={ROUTES["user-join"].path}
                     element={<UserJoinPage />}
+                  />
+                  <Route
+                    path={ROUTES["user-tryout"].path}
+                    element={<UserTryoutPage />}
                   />
                   <Route
                     path={ROUTES["user-password"].path}

@@ -14,6 +14,9 @@ export const ROUTES = {
   "user-join": {
     path: "/user/join",
   },
+  "user-tryout": {
+    path: "/user/tryout",
+  },
   "user-password": {
     path: "/user/password",
   },
