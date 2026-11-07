@@ -368,8 +368,8 @@ class BaseSerializer(s.Serializer):
 
 class CreateSerializer(BaseSerializer):
     email = s.EmailField(required=True)
-    password = s.CharField(required=True, min_length=8, trim_whitespace=False)
-    password2 = s.CharField(required=True, min_length=8, trim_whitespace=False)
+    password = s.CharField(required=False, min_length=8, trim_whitespace=False)
+    password2 = s.CharField(required=False, min_length=8, trim_whitespace=False)
     consent_types = s.ListSerializer(
         child=IntEnumField(ConsentType, required=True), required=True
     )
@@ -379,7 +379,9 @@ class CreateSerializer(BaseSerializer):
         return re.sub(r"^([^+]*)(\+.*)?(@.*)$", r"\1\3", email)
 
     def validate(self, data):
-        if data["password"] != data["password2"]:
+        if "password" in data and (
+            "password2" not in data or data["password"] != data["password2"]
+        ):
             raise ValidationError({"password2": _("The passwords do not match.")})
         return data
 

@@ -105,8 +105,12 @@ export const apiUserCreate = async (
       lastname: lastname,
       email: email,
       phone: phone,
-      password: password,
-      password2: password2,
+      ...(password && password2
+        ? {
+            password: password,
+            password2: password2,
+          }
+        : {}),
       birthday: birthday,
       consent_pictures: consent_pictures,
       preferred_language: preferred_language,

@@ -62,6 +62,10 @@ export default function FormJoin() {
   const [submitted, setSubmitted] = useState(false);
   let navigate = useNavigate();
 
+  const [consentMedia, setConsentMedia] = useState(false);
+  const [consentHealth, setConsentHealth] = useState(false);
+  const [consentGeneral, setConsentGeneral] = useState(false);
+
   function handleSubmit(event: React.FormEvent<CreateFormElement>) {
     event.preventDefault();
     apiUserCreate(
@@ -103,169 +107,170 @@ export default function FormJoin() {
         </Box>
       ) : (
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="firstname" required>
-                {t("pages.user-join.form.first-name")}
-              </FormLabel>
-              <OutlinedInput
-                id="firstname"
-                name="firstname"
-                type="text"
-                placeholder="Namn"
-                autoComplete="first name"
-                required
-                size="small"
-                error={validationErrors && validationErrors.firstname}
-              />
-              {validationErrors && validationErrors.firstname && (
-                <FormHelperText error>
-                  {validationErrors.firstname[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="lastname" required>
-                {t("pages.user-join.form.last-name")}
-              </FormLabel>
-              <OutlinedInput
-                id="lastname"
-                name="lastname"
-                type="text"
-                placeholder="Namnsson"
-                autoComplete="last name"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.lastname &&
-                  validationErrors.lastname[0].detail
-                }
-              />
-              {validationErrors && validationErrors.lastname && (
-                <FormHelperText error>
-                  {validationErrors.lastname[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="email" required>
-                {t("pages.user-join.form.email")}
-              </FormLabel>
-              <OutlinedInput
-                id="email"
-                name="email"
-                type="email"
-                placeholder="namn@namnsson.se"
-                autoComplete="email"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.email &&
-                  validationErrors.email[0].detail
-                }
-              />
-              {validationErrors && validationErrors.email && (
-                <FormHelperText error>
-                  {validationErrors.email[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 3 }}>
-              <FormLabel htmlFor="phone" required>
-                {t("pages.user-join.form.phone")}
-              </FormLabel>
-              <OutlinedInput
-                id="phone"
-                name="phone"
-                type="phone"
-                placeholder="+4687461000"
-                autoComplete="phone"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.phone &&
-                  validationErrors.phone[0].detail
-                }
-              />
-              {validationErrors && validationErrors.phone && (
-                <FormHelperText error>
-                  {validationErrors.phone[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 3 }}>
-              <FormLabel htmlFor="birthday" required>
-                {t("pages.user-join.form.birthday")}
-              </FormLabel>
-              <OutlinedInput
-                id="birthday"
-                name="birthday"
-                type="date"
-                autoComplete="birthday"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.birthday &&
-                  validationErrors.birthday[0].detail
-                }
-              />
-              {validationErrors && validationErrors.birthday && (
-                <FormHelperText error>
-                  {validationErrors.birthday[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="password" required>
-                {t("pages.user-join.form.password")}
-              </FormLabel>
-              <OutlinedInput
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="password"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.password &&
-                  validationErrors.password[0].detail
-                }
-              />
-              {validationErrors && validationErrors.password && (
-                <FormHelperText error>
-                  {validationErrors.password[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            <FormGrid size={{ xs: 12, md: 6 }}>
-              <FormLabel htmlFor="password2" required>
-                {t("pages.user-join.form.password-repeat")}
-              </FormLabel>
-              <OutlinedInput
-                id="password2"
-                name="password2"
-                type="password"
-                autoComplete="password"
-                required
-                size="small"
-                error={
-                  validationErrors &&
-                  validationErrors.password2 &&
-                  validationErrors.password2[0].detail
-                }
-              />
-              {validationErrors && validationErrors.password2 && (
-                <FormHelperText error>
-                  {validationErrors.password2[0].detail}
-                </FormHelperText>
-              )}
-            </FormGrid>
-            {/*<FormGrid size={{ xs: 12, md: 3 }}>
+          <Grid container spacing={3} justifyContent="center">
+            <Grid container size={{ xs: 12, md: 10, lg: 8 }}>
+              <FormGrid size={{ xs: 12, md: 6 }}>
+                <FormLabel htmlFor="firstname" required>
+                  {t("pages.user-join.form.first-name")}
+                </FormLabel>
+                <OutlinedInput
+                  id="firstname"
+                  name="firstname"
+                  type="text"
+                  placeholder="Namn"
+                  autoComplete="first name"
+                  required
+                  size="small"
+                  error={validationErrors && validationErrors.firstname}
+                />
+                {validationErrors && validationErrors.firstname && (
+                  <FormHelperText error>
+                    {validationErrors.firstname[0].detail}
+                  </FormHelperText>
+                )}
+              </FormGrid>
+              <FormGrid size={{ xs: 12, md: 6 }}>
+                <FormLabel htmlFor="lastname" required>
+                  {t("pages.user-join.form.last-name")}
+                </FormLabel>
+                <OutlinedInput
+                  id="lastname"
+                  name="lastname"
+                  type="text"
+                  placeholder="Namnsson"
+                  autoComplete="last name"
+                  required
+                  size="small"
+                  error={
+                    validationErrors &&
+                    validationErrors.lastname &&
+                    validationErrors.lastname[0].detail
+                  }
+                />
+                {validationErrors && validationErrors.lastname && (
+                  <FormHelperText error>
+                    {validationErrors.lastname[0].detail}
+                  </FormHelperText>
+                )}
+              </FormGrid>
+              <FormGrid size={{ xs: 12, md: 6 }}>
+                <FormLabel htmlFor="email" required>
+                  {t("pages.user-join.form.email")}
+                </FormLabel>
+                <OutlinedInput
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="namn@namnsson.se"
+                  autoComplete="email"
+                  required
+                  size="small"
+                  error={
+                    validationErrors &&
+                    validationErrors.email &&
+                    validationErrors.email[0].detail
+                  }
+                />
+                {validationErrors && validationErrors.email && (
+                  <FormHelperText error>
+                    {validationErrors.email[0].detail}
+                  </FormHelperText>
+                )}
+              </FormGrid>
+              <FormGrid size={{ xs: 12, md: 3 }}>
+                <FormLabel htmlFor="phone" required>
+                  {t("pages.user-join.form.phone")}
+                </FormLabel>
+                <OutlinedInput
+                  id="phone"
+                  name="phone"
+                  type="phone"
+                  placeholder="+4687461000"
+                  autoComplete="phone"
+                  required
+                  size="small"
+                  error={
+                    validationErrors &&
+                    validationErrors.phone &&
+                    validationErrors.phone[0].detail
+                  }
+                />
+                {validationErrors && validationErrors.phone && (
+                  <FormHelperText error>
+                    {validationErrors.phone[0].detail}
+                  </FormHelperText>
+                )}
+              </FormGrid>
+              <FormGrid size={{ xs: 12, md: 3 }}>
+                <FormLabel htmlFor="birthday" required>
+                  {t("pages.user-join.form.birthday")}
+                </FormLabel>
+                <OutlinedInput
+                  id="birthday"
+                  name="birthday"
+                  type="date"
+                  autoComplete="birthday"
+                  required
+                  size="small"
+                  error={
+                    validationErrors &&
+                    validationErrors.birthday &&
+                    validationErrors.birthday[0].detail
+                  }
+                />
+                {validationErrors && validationErrors.birthday && (
+                  <FormHelperText error>
+                    {validationErrors.birthday[0].detail}
+                  </FormHelperText>
+                )}
+              </FormGrid>
+              <FormGrid size={{ xs: 12, md: 6 }}>
+                <FormLabel htmlFor="password" required>
+                  {t("pages.user-join.form.password")}
+                </FormLabel>
+                <OutlinedInput
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="password"
+                  required
+                  size="small"
+                  error={
+                    validationErrors &&
+                    validationErrors.password &&
+                    validationErrors.password[0].detail
+                  }
+                />
+                {validationErrors && validationErrors.password && (
+                  <FormHelperText error>
+                    {validationErrors.password[0].detail}
+                  </FormHelperText>
+                )}
+              </FormGrid>
+              <FormGrid size={{ xs: 12, md: 6 }}>
+                <FormLabel htmlFor="password2" required>
+                  {t("pages.user-join.form.password-repeat")}
+                </FormLabel>
+                <OutlinedInput
+                  id="password2"
+                  name="password2"
+                  type="password"
+                  autoComplete="password"
+                  required
+                  size="small"
+                  error={
+                    validationErrors &&
+                    validationErrors.password2 &&
+                    validationErrors.password2[0].detail
+                  }
+                />
+                {validationErrors && validationErrors.password2 && (
+                  <FormHelperText error>
+                    {validationErrors.password2[0].detail}
+                  </FormHelperText>
+                )}
+              </FormGrid>
+              {/*<FormGrid size={{ xs: 12, md: 3 }}>
               <FormLabel htmlFor="height_shoulders" required>
                 {t("pages.user-join.form.height-shoulders")}
               </FormLabel>
@@ -315,6 +320,7 @@ export default function FormJoin() {
                 </FormHelperText>
               )}
             </FormGrid>*/}
+            </Grid>
             <FormGrid size={12} className={styles.pricesSection}>
               <Typography variant="h5" fontWeight={600}>
                 {t("pages.user-join.prices.title")}
@@ -453,6 +459,8 @@ export default function FormJoin() {
                 control={<Checkbox name="consent_pictures" value="yes" />}
                 label={t("pages.user-join.form.checkbox-image")}
                 required={true}
+                value={consentMedia}
+                onChange={() => setConsentMedia(!consentMedia)}
               />
             </FormGrid>
             <FormGrid size={{ xs: 12 }}>
@@ -460,6 +468,8 @@ export default function FormJoin() {
                 control={<Checkbox name="confirmCasal" value="yes" />}
                 label={t("pages.user-join.form.checkbox-responsibility")}
                 required={true}
+                value={consentHealth}
+                onChange={() => setConsentHealth(!consentHealth)}
               />
             </FormGrid>
             <FormGrid size={{ xs: 12 }}>
@@ -467,6 +477,8 @@ export default function FormJoin() {
                 control={<Checkbox name="confirmCasal" value="yes" />}
                 label={t("pages.user-join.form.checkbox-processing")}
                 required={true}
+                value={consentGeneral}
+                onChange={() => setConsentGeneral(!consentGeneral)}
               />
             </FormGrid>
             <FormGrid size={{ xs: 12 }}>
@@ -490,21 +502,23 @@ export default function FormJoin() {
                   variant="contained"
                   type="submit"
                   name="join-backend"
+                  disabled={!consentMedia || !consentHealth || !consentGeneral}
                   disableElevation
                 >
                   {t("pages.user-join.form.button-join")}
                 </Button>
-                <Button
+                {/*<Button
                   variant="contained"
                   color="secondary"
                   type="submit"
                   name="join-google"
+                  disabled={!consentMedia || !consentHealth || !consentGeneral}
                   disableElevation
                   href={ROUTES["external-login-google"].path}
                 >
                   {t("pages.user-join.form.button-join-google")}
                   <IconGoogle className={styles.iconGoogle} />
-                </Button>
+                </Button>*/}
               </Stack>
             </FormGrid>
             {validationErrors && validationErrors.throttle && (

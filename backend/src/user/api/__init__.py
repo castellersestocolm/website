@@ -286,12 +286,12 @@ def create(
     lastname: str,
     email: str,
     phone: str | None,
-    password: str | None,
     birthday: datetime.date | None,
     consent_pictures: bool,
     module: Module,
     towers: dict | None,
     organisation: dict | None,
+    password: str | None = None,
     consent_types: list[ConsentType] | None = None,
     preferred_language: str | None = None,
     with_family: bool = True,
@@ -352,13 +352,13 @@ def register(
     email: str,
     phone: str | None,
     birthday: datetime.date | None,
-    password: str | None,
     consent_pictures: bool,
     preferred_language: str,
     module: Module,
     towers: dict | None,
     organisation: dict | None,
-    consent_types: list[ConsentType] = list,
+    password: str | None = None,
+    consent_types: list[ConsentType] | None = None,
     with_family: bool = True,
     with_membership: bool = True,
     with_notify: bool = True,
@@ -380,7 +380,7 @@ def register(
             with_family=with_family,
         )
 
-        if with_notify:
+        if with_notify and password:
             request_verify(email=user_obj.email, module=module)
 
         if with_membership:
