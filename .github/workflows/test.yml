@@ -21,7 +21,7 @@ concurrency:
 jobs:
   build-backend:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
+    # environment: ${{ github.ref_name }}
     name: Build backend
     
     steps:
@@ -37,7 +37,7 @@ jobs:
   lint-backend:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment: ${{ github.ref_name }}
+    # environment: ${{ github.ref_name }}
     needs: [ build-backend ]
     name: Lint backend
 
