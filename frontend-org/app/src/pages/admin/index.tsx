@@ -13,6 +13,7 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -25,6 +26,7 @@ import { getEventIcon } from "../../utils/event";
 import { LoaderClip } from "../../components/LoaderClip/LoaderClip";
 import Pagination from "@mui/material/Pagination";
 import IconQrCode from "@mui/icons-material/QrCode";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 function AdminPage() {
   const [t, i18n] = useTranslation("common");
@@ -33,18 +35,22 @@ function AdminPage() {
 
   const [eventPage, setEventPage] = React.useState(1);
   const [events, setEvents] = React.useState(undefined);
+  const [showPast, setShowPast] = React.useState(false);
 
   React.useEffect(() => {
     apiAdminEventList(
       eventPage,
       5,
-      new Date().toISOString().substring(0, 10),
+      showPast ? null : new Date().toISOString().substring(0, 10),
+      showPast ? new Date().toISOString().substring(0, 10) : null,
+      undefined,
+      showPast ? ["-time_from"] : ["time_from"],
     ).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
       }
     });
-  }, [eventPage, setEvents]);
+  }, [eventPage, setEvents, showPast]);
 
   const content = user && (
     <Grid container spacing={4} className={styles.adminGrid}>
@@ -68,6 +74,21 @@ function AdminPage() {
                 {t("pages.admin.events-table.title")}
               </Typography>
               {/* <IconKeyboardArrowRight className={styles.adminTitleIcon} /> */}
+              <FormControlLabel
+                className={styles.adminTopBoxLabel}
+                control={
+                  <Switch
+                    color="default"
+                    value={showPast}
+                    onChange={() => setShowPast(!showPast)}
+                  />
+                }
+                label={
+                  <Typography variant="body1" component="div">
+                    {t("pages.admin-event-attendance.table.show-past")}
+                  </Typography>
+                }
+              />
             </Box>
           </Link>
           {events && events.results.length > 0 ? (

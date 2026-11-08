@@ -492,6 +492,7 @@
   "pages.contact.form.button-send": "Envia",
   "pages.contact.success": "El teu missatge s'ha enviat correctament.",
   "pages.admin-event-attendance.table.title": "Assistència",
+  "pages.admin-event-attendance.table.show-past": "Mostra antics",
   "pages.admin-event-attendance.table.name": "Nom",
   "pages.admin-event-attendance.table.owner": "Responsable",
   "pages.admin-event-attendance.table.status": "Estat",

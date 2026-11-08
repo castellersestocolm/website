@@ -83,7 +83,13 @@ def send_email(modeladmin, request, queryset):
 
 @admin.register(Email)
 class EmailAdmin(admin.ModelAdmin):
-    search_fields = ("id", "entity", "subject")
+    search_fields = (
+        "id",
+        "entity__firstname",
+        "entity__lastname",
+        "entity__email",
+        "subject",
+    )
     list_display = ("entity", "type", "status", "subject", "created_at")
     list_filter = ("type", "created_at")
     raw_id_fields = ("entity",)

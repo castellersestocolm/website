@@ -394,6 +394,7 @@
   "pages.admin.events-table.title": "Esdeveniments",
   "pages.admin.events-table.attendance": "Assistència",
   "pages.admin-event-attendance.table.title": "Assistència",
+  "pages.admin-event-attendance.table.show-past": "Mostra antics",
   "pages.admin-event-attendance.table.name": "Nom",
   "pages.admin-event-attendance.table.owner": "Responsable",
   "pages.admin-event-attendance.table.status": "Estat",

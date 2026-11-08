@@ -15,9 +15,11 @@ import {
   Stack,
   Typography,
   useTheme,
+  Switch,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import PageAdmin from "../../components/PageAdmin/PageAdmin";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import {
   apiAdminEventList,
   apiAdminOrderList,
@@ -69,18 +71,22 @@ function AdminPage() {
   const [products, setProducts] = React.useState(undefined);
   const [users, setUsers] = React.useState(undefined);
   const [orders, setOrders] = React.useState(undefined);
+  const [showPast, setShowPast] = React.useState(false);
 
   React.useEffect(() => {
     apiAdminEventList(
       eventPage,
       5,
-      new Date().toISOString().substring(0, 10),
+      showPast ? null : new Date().toISOString().substring(0, 10),
+      showPast ? new Date().toISOString().substring(0, 10) : null,
+      undefined,
+      showPast ? ["-time_from"] : ["time_from"],
     ).then((response) => {
       if (response.status === 200) {
         setEvents(response.data);
       }
     });
-  }, [eventPage, setEvents]);
+  }, [eventPage, setEvents, showPast]);
 
   React.useEffect(() => {
     if (events) {
@@ -513,6 +519,21 @@ function AdminPage() {
                 {t("pages.admin.events-table.title")}
               </Typography>
               {/* <IconKeyboardArrowRight className={styles.adminTitleIcon} /> */}
+              <FormControlLabel
+                className={styles.adminTopBoxLabel}
+                control={
+                  <Switch
+                    color="default"
+                    value={showPast}
+                    onChange={() => setShowPast(!showPast)}
+                  />
+                }
+                label={
+                  <Typography variant="body1" component="div">
+                    {t("pages.admin-event-attendance.table.show-past")}
+                  </Typography>
+                }
+              />
             </Box>
           </Link>
           {events && events.results.length > 0 ? (

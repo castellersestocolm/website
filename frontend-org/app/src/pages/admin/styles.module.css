@@ -31,6 +31,10 @@
   justify-content: space-between;
 }
 
+.adminTopBoxLabel {
+  margin-right: 0 !important;
+}
+
 .adminTitleIcon {
   margin-top: 4px;
 }
