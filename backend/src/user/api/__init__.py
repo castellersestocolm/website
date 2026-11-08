@@ -380,7 +380,7 @@ def register(
             with_family=with_family,
         )
 
-        if with_notify and password:
+        if with_notify:
             request_verify(email=user_obj.email, module=module)
 
         if with_membership:
