@@ -10,6 +10,7 @@ import event.tasks
 import notify.tasks
 import user.api
 import user.tasks
+from comunicat.consts import SHORT_NAME_BY_MODULE
 from comunicat.enums import Module
 from comunicat.utils.admin import FIELD_LOCALE
 from membership.enums import MembershipStatus
@@ -81,7 +82,7 @@ def send_welcome_email(modeladmin, request, queryset):
             )
 
 
-@admin.action(description=_("Send join %s email") % (NAME_BY_MODULE[Module.ORG],))
+@admin.action(description=_("Send join %s email") % (SHORT_NAME_BY_MODULE[Module.ORG],))
 def send_join_org_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership(
         modules=[Module.ORG], only_check=True
@@ -93,7 +94,7 @@ def send_join_org_email(modeladmin, request, queryset):
         )
 
 
-@admin.action(description=_("Send join %s email") % (NAME_BY_MODULE[Module.TOWERS],))
+@admin.action(description=_("Send join %s email") % (SHORT_NAME_BY_MODULE[Module.TOWERS],))
 def send_join_towers_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership(
         modules=[Module.TOWERS], only_check=True
