@@ -65,7 +65,15 @@ class UserAPI(ComuniCatViewSet):
         if "password2" in validated_data:
             validated_data.pop("password2")
 
-        user.api.register(**validated_data, module=self.module)
+        with_notify = "password" in validated_data
+        with_membership = "password" in validated_data
+
+        user.api.register(
+            **validated_data,
+            module=self.module,
+            with_notify=with_notify,
+            with_membership=with_membership,
+        )
 
         return Response(status=201)
 

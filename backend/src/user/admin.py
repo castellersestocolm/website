@@ -10,6 +10,7 @@ import event.tasks
 import notify.tasks
 import user.api
 import user.tasks
+from comunicat.enums import Module
 from comunicat.utils.admin import FIELD_LOCALE
 from membership.enums import MembershipStatus
 from notify.enums import EmailType
@@ -50,26 +51,26 @@ class UserProductInline(admin.TabularInline):
     raw_id_fields = ("order",)
 
 
-@admin.action(description="Send event sign-up email")
+@admin.action(description=_("Send event sign-up email"))
 def send_signup_email(modeladmin, request, queryset):
     event.tasks.send_events_signup(user_ids=list(queryset.values_list("id", flat=True)))
 
 
-@admin.action(description="Send performance sign-up email")
+@admin.action(description=_("Send performance sign-up email"))
 def send_signup_performances_email(modeladmin, request, queryset):
     event.tasks.send_event_performances_signup(
         user_ids=list(queryset.values_list("id", flat=True))
     )
 
 
-@admin.action(description="Send verification email")
+@admin.action(description=_("Send verification email"))
 def send_verification_email(modeladmin, request, queryset):
     for user_obj in queryset:
         if not user_obj.email_verified:
             user.api.request_verify(email=user_obj.email, module=user_obj.origin_module)
 
 
-@admin.action(description="Send welcome email")
+@admin.action(description=_("Send welcome email"))
 def send_welcome_email(modeladmin, request, queryset):
     for user_obj in queryset:
         if user_obj.registration_finished(module=user_obj.origin_module):
@@ -80,7 +81,31 @@ def send_welcome_email(modeladmin, request, queryset):
             )
 
 
-@admin.action(description="Send imported email")
+@admin.action(description=_("Send join %s email") % (NAME_BY_MODULE[Module.ORG],))
+def send_join_org_email(modeladmin, request, queryset):
+    for user_obj in queryset.with_has_active_membership(
+        modules=[Module.ORG], only_check=True
+    ).filter(has_active_membership=True):
+        notify.tasks.send_user_email.delay(
+            user_id=user_obj.id,
+            email_type=EmailType.JOIN,
+            module=Module.ORG,
+        )
+
+
+@admin.action(description=_("Send join %s email") % (NAME_BY_MODULE[Module.TOWERS],))
+def send_join_towers_email(modeladmin, request, queryset):
+    for user_obj in queryset.with_has_active_membership(
+        modules=[Module.TOWERS], only_check=True
+    ).filter(has_active_membership=True):
+        notify.tasks.send_user_email.delay(
+            user_id=user_obj.id,
+            email_type=EmailType.JOIN,
+            module=Module.TOWERS,
+        )
+
+
+@admin.action(description=_("Send imported email"))
 def send_imported_email(modeladmin, request, queryset):
     for user_obj in queryset:
         notify.tasks.send_user_email.delay(
@@ -90,7 +115,7 @@ def send_imported_email(modeladmin, request, queryset):
         )
 
 
-@admin.action(description="Send membership paid email")
+@admin.action(description=_("Send membership paid email"))
 def send_membership_paid_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership(only_check=True).filter(
         has_active_membership=True
@@ -102,7 +127,7 @@ def send_membership_paid_email(modeladmin, request, queryset):
         )
 
 
-@admin.action(description="Send membership renew email")
+@admin.action(description=_("Send membership renew email"))
 def send_membership_renew_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership(only_check=True).filter(
         has_active_membership=True
@@ -114,7 +139,7 @@ def send_membership_renew_email(modeladmin, request, queryset):
         )
 
 
-@admin.action(description="Send membership expired email")
+@admin.action(description=_("Send membership expired email"))
 def send_membership_expired_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership(only_check=True).filter(
         has_active_membership=False
@@ -211,6 +236,8 @@ class UserAdmin(admin.ModelAdmin):
     actions = (
         send_verification_email,
         send_welcome_email,
+        send_join_org_email,
+        send_join_towers_email,
         send_imported_email,
         send_signup_email,
         send_signup_performances_email,

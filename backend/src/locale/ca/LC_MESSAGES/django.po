@@ -1187,11 +1187,11 @@ msgstr "Reinicia la teva contrasenya per entrar"
 
 #: notify/consts.py:40
 msgid "Welcome to Les Quatre Barres"
-msgstr "Benvingut a Les Quatre Barres"
+msgstr "Et donem la benvinguda a Les Quatre Barres"
 
 #: notify/consts.py:44
 msgid "Welcome to Les Quatre Barres new website"
-msgstr "Benvingut/da a la nova web de Les Quatre Barres"
+msgstr "Et donem la benvinguda a la nova web de Les Quatre Barres"
 
 #: notify/consts.py:49
 msgid "Welcome information from Les Quatre Barres and WhatsApp community"
@@ -1260,11 +1260,11 @@ msgstr "El vostre pagament s'ha processat"
 
 #: notify/consts.py:125
 msgid "Welcome to Castellers d'Estocolm"
-msgstr "Benvingut/da als Castellers d'Estocolm"
+msgstr "Et donem la benvinguda als Castellers d'Estocolm"
 
 #: notify/consts.py:129
 msgid "Welcome to Castellers d'Estocolm new website"
-msgstr "Benvingut/da a la nova web dels Castellers d'Estocolm"
+msgstr "Et donem la benvinguda a la nova web dels Castellers d'Estocolm"
 
 #: notify/consts.py:134
 msgid "Welcome information from Castellers d'Estocolm and WhatsApp community"
