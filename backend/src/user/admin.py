@@ -94,7 +94,9 @@ def send_join_org_email(modeladmin, request, queryset):
         )
 
 
-@admin.action(description=_("Send join %s email") % (SHORT_NAME_BY_MODULE[Module.TOWERS],))
+@admin.action(
+    description=_("Send join %s email") % (SHORT_NAME_BY_MODULE[Module.TOWERS],)
+)
 def send_join_towers_email(modeladmin, request, queryset):
     for user_obj in queryset.with_has_active_membership(
         modules=[Module.TOWERS], only_check=True

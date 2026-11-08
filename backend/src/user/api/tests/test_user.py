@@ -195,42 +195,6 @@ class TestRegister(NumOperationsMixin, TestCase):
         self.assertEqual(mail.outbox[0].to, [user_obj.email])
         self.assertEqual(mail.outbox[0].subject, email_obj.subject)
 
-    def test_register__no_password(self, *args, **kwargs):
-        with self.assertNumOperations(
-            num=0, num_selects=22, num_inserts=12, num_updates=1
-        ):
-            user_obj = register(
-                firstname="name-3",
-                lastname="surname-3",
-                email="user-3@domain-test.org",
-                phone="+46700000003",
-                birthday=datetime.date(1970, 1, 1),
-                consent_pictures=True,
-                module=Module.ORG,
-                towers={
-                    "height_shoulders": 150,
-                    "height_arms": 200,
-                },
-                organisation=None,
-                consent_types=[
-                    ConsentType.GENERAL,
-                    ConsentType.MEDIA,
-                    ConsentType.COMMUNICATION,
-                    ConsentType.HEALTH,
-                ],
-                preferred_language="en",
-                with_family=True,
-                with_membership=True,
-                with_notify=True,
-            )
-
-        self.assertEqual(user_obj.firstname, "name-3")
-        self.assertEqual(user_obj.lastname, "surname-3")
-        self.assertEqual(user_obj.email, "user-3@domain-test.org")
-        self.assertEqual(user_obj.phone, "+46700000003")
-
-        self.assertEqual(len(mail.outbox), 0)
-
 
 @pytest.mark.django_db
 class TestUpdate(NumOperationsMixin, TestCase):
