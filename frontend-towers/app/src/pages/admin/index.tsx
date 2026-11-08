@@ -523,6 +523,7 @@ function AdminPage() {
                 className={styles.adminTopBoxLabel}
                 control={
                   <Switch
+                    className={styles.adminTopBoxSwitch}
                     color="default"
                     value={showPast}
                     onChange={() => setShowPast(!showPast)}

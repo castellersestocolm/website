@@ -35,6 +35,10 @@
   margin-right: 0 !important;
 }
 
+.adminTopBoxSwitch {
+  margin: -12px 0;
+}
+
 .adminTitleIcon {
   margin-top: 4px;
 }
