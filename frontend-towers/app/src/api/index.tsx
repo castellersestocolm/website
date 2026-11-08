@@ -930,6 +930,7 @@ export const apiAdminEventList = async (
   dateFrom: string = undefined,
   dateTo: string = undefined,
   forMusicians: boolean = undefined,
+  orderBy: string[] = undefined,
 ) => {
   try {
     return await instance.get("/admin/event/", {
@@ -939,6 +940,7 @@ export const apiAdminEventList = async (
         date_from: dateFrom,
         date_to: dateTo,
         for_musicians: forMusicians,
+        order_by: orderBy && orderBy.join(","),
       },
     });
   } catch (error) {

@@ -327,7 +327,7 @@ def create_or_update_event(  # noqa: C901
         return None
 
     # TODO: Check if using the event module is good enough
-    event_module_obj = event_obj.modules.filter(module=event_obj.module)
+    event_module_obj = event_obj.modules.filter(module=event_obj.module).first()
 
     if not GOOGLE_ENABLED_BY_MODULE[event_obj.module]["calendar"]:
         return None

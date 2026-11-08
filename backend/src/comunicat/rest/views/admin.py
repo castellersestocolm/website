@@ -238,6 +238,7 @@ class AdminEventAPI(ComuniCatViewSet):
             module=self.module,
             date_from=serializer.validated_data.get("date_from"),
             date_to=serializer.validated_data.get("date_to"),
+            order_by=serializer.validated_data.get("order_by"),
             with_counts=False,
             for_musicians=for_musicians,
         )

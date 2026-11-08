@@ -239,6 +239,15 @@ class AdminUserRequestSerializer(s.ModelSerializer):
 class AdminListEventSerializer(s.Serializer):
     date_from = s.DateField(required=False)
     date_to = s.DateField(required=False)
+    order_by = s.ListSerializer(child=s.CharField(), required=False)
+
+    def to_internal_value(self, data):
+        data = {k: v for k, v in data.items()}
+        data["order_by"] = (
+            data["order_by"].split(",") if data.get("order_by", False) else []
+        )
+        data = super().to_internal_value(data)
+        return data
 
 
 class AdminEventSerializer(s.ModelSerializer):

@@ -540,6 +540,7 @@
   "pages.contact.form.button-send": "Send",
   "pages.contact.success": "Your message has been sent successfully.",
   "pages.admin-event-attendance.table.title": "Attendance",
+  "pages.admin-event-attendance.table.show-past": "Show past",
   "pages.admin-event-attendance.table.name": "Name",
   "pages.admin-event-attendance.table.owner": "Responsible",
   "pages.admin-event-attendance.table.status": "Status",
