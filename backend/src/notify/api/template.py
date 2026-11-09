@@ -130,7 +130,8 @@ def get_user_email_render(  # noqa: C901
 
         if modules:
             # This works for now as we want to get the "specific" module for email branding
-            module = sorted(modules)[-1]
+            if email_type != EmailType.JOIN:
+                module = sorted(modules)[-1]
         else:
             modules = [module]
     else:
