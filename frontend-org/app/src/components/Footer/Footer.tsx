@@ -8,6 +8,7 @@ import IconLogoGencatSv from "../../components/IconLogoGencatSv/IconLogoGencatSv
 import { useTranslation } from "react-i18next";
 import IconFacebook from "@mui/icons-material/Facebook";
 import IconInstagram from "@mui/icons-material/Instagram";
+import IconX from '@mui/icons-material/X';
 import IconButton from "@mui/material/IconButton";
 import { ROUTES } from "../../routes";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
@@ -123,7 +124,7 @@ export default function Footer() {
               </Link>
             </Typography>
             <IconButton
-              href="https://www.facebook.com/les4barres"
+              href="https://facebook.com/les4barres"
               target="_blank"
               rel="nofollow"
               aria-label="facebook"
@@ -131,12 +132,20 @@ export default function Footer() {
               <IconFacebook />
             </IconButton>
             <IconButton
-              href="https://www.instagram.com/les4barrescasal"
+              href="https://instagram.com/lqbcasal"
               target="_blank"
               rel="nofollow"
               aria-label="instagram"
             >
               <IconInstagram />
+            </IconButton>
+            <IconButton
+              href="https://x.com/lqbcasal"
+              target="_blank"
+              rel="nofollow"
+              aria-label="twitter"
+            >
+              <IconX />
             </IconButton>
           </Box>
         </Box>
