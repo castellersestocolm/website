@@ -194,6 +194,10 @@ export default function FormEventRegister({ event }: any) {
         setFormDataEmpty();
         setExtraOpen(false);
         setValidationErrors(undefined);
+      } else if (response.status === 403) {
+        setValidationErrors({
+          forbidden: t("pages.calendar-event.register.error-forbidden"),
+        });
       } else if (response.status === 429) {
         setValidationErrors({ throttle: response.data.detail });
       } else {
@@ -1267,13 +1271,21 @@ export default function FormEventRegister({ event }: any) {
             </Stack>
           </Grid>
         </Collapse>
-        {validationErrors && validationErrors.throttle && (
-          <FormGrid size={{ xs: 12 }}>
-            <FormHelperText error className={styles.error}>
-              {validationErrors.throttle}
-            </FormHelperText>
-          </FormGrid>
-        )}
+        {validationErrors &&
+          (validationErrors.throttle || validationErrors.forbidden) && (
+            <FormGrid size={{ xs: 12 }}>
+              {validationErrors.throttle && (
+                <FormHelperText error className={styles.error}>
+                  {validationErrors.throttle}
+                </FormHelperText>
+              )}
+              {validationErrors.forbidden && (
+                <FormHelperText error className={styles.error}>
+                  {validationErrors.forbidden}
+                </FormHelperText>
+              )}
+            </FormGrid>
+          )}
       </Grid>
     </>
   );

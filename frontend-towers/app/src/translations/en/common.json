@@ -248,6 +248,7 @@
   "pages.calendar-event.register.button-add": "Add",
   "pages.calendar-event.register.button-pay": "Pay",
   "pages.calendar-event.register.alert.payment-pending": "Your registration has not yet been completed. To confirm it, you must make the payment. If you do not make the payment, the registration will be automatically cancelled and it will not be possible to participate in the event.",
+  "pages.calendar-event.register.error-forbidden": "We couldn't save the registration details, please check that you have entered the right information and that you haven't already used the same email address.",
   "pages.activity-kids.content.section-register.status-active-free": "Registered",
   "pages.activity-kids.content.section-register.status-active": "Registered and paid",
   "pages.activity-kids.content.section-register.status-processing": "Processing registration",
