@@ -229,6 +229,7 @@ def create(  # noqa: C901
     owner_id: UUID | None = None,
     request_user_id: UUID | None = None,
     data: dict | None = None,
+    update: bool = True,
 ) -> Registration | None:
     event_obj = (
         Event.objects.filter(id=event_id).with_module_information(module=module).first()
@@ -257,6 +258,9 @@ def create(  # noqa: C901
     registration_obj = Registration.objects.filter(
         entity_id=entity_id, event_id=event_id
     ).first()
+
+    if registration_obj and not update:
+        return None
 
     if event_obj.require_approve:
         event_price_obj = get_event_price(

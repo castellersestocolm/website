@@ -8,7 +8,7 @@ import IconLogoGencatSv from "../../components/IconLogoGencatSv/IconLogoGencatSv
 import { useTranslation } from "react-i18next";
 import IconFacebook from "@mui/icons-material/Facebook";
 import IconInstagram from "@mui/icons-material/Instagram";
-import IconX from '@mui/icons-material/X';
+import IconX from "@mui/icons-material/X";
 import IconButton from "@mui/material/IconButton";
 import { ROUTES } from "../../routes";
 import IconArrowOutward from "@mui/icons-material/ArrowOutward";
