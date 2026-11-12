@@ -273,10 +273,12 @@ class RegistrationAPI(ComuniCatViewSet):
             entity_obj = payment.api.entity.get_entity_by_key(
                 user_id=validated_data["user_id"]
             )
+            regisration_update = True
         elif "entity_id" in validated_data:
             entity_obj = payment.api.entity.get_entity_by_key(
                 entity_id=validated_data["entity_id"]
             )
+            regisration_update = True
         else:
             entity_obj = payment.api.entity.get_entity_by_key(
                 email=validated_data["entity"].get("email"),
@@ -289,7 +291,9 @@ class RegistrationAPI(ComuniCatViewSet):
                 ),
                 birthday=validated_data["entity"].get("birthday"),
                 preferred_language=validated_data["entity"].get("preferred_language"),
+                update=False,
             )
+            regisration_update = False
 
         registration_obj = event.api.registration.create(
             event_id=validated_data["event_id"],
@@ -299,6 +303,7 @@ class RegistrationAPI(ComuniCatViewSet):
             module=self.module,
             status=validated_data.get("status"),
             data=validated_data.get("data"),
+            update=regisration_update,
         )
 
         if not registration_obj:

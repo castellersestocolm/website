@@ -249,6 +249,7 @@
   "pages.calendar-event.register.button-add": "Afegir",
   "pages.calendar-event.register.button-pay": "Paga",
   "pages.calendar-event.register.alert.payment-pending": "La teva inscripció no s'ha completat encara, per confirmar-la cal realitzar el pagament. Si no fas el pagament la inscripció es cancel·larà automàticament i no serà possible assistir a l'esdeveniment.",
+  "pages.calendar-event.register.error-forbidden": "No hem pogut desar les dades, si us plau, reviseu que heu introduït les dades correctament, sense repetir cap correu electrònic.",
   "pages.activity-kids.content.section-register.status-active-free": "Registrat",
   "pages.activity-kids.content.section-register.status-active": "Registrat i pagat",
   "pages.activity-kids.content.section-register.status-processing": "Processant la inscripció",
