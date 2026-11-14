@@ -155,8 +155,8 @@ def create_for_order(  # noqa: C901
 
     payment_order_obj = order_obj.payment_order
 
-    # assert payment_order_obj.provider.source is not None
-    source_obj = Source.objects.first()  # payment_order_obj.provider.source
+    assert payment_order_obj.provider.source is not None
+    source_obj = payment_order_obj.provider.source
 
     order_product_updates = []
     order_registration_updates = []
