@@ -11,7 +11,7 @@ services:
     tty: true
     restart: on-failure
     entrypoint: ["wait-for-it", "database:5432", "--", "python", "manage.py"]
-    command: ["runserver", "0.0.0.0:8000", "--nothreading"]
+    command: ["runserver", "0.0.0.0:8000"]
     networks:
       - comunicat
     volumes:
