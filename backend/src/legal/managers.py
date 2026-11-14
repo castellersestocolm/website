@@ -1,7 +1,8 @@
 from uuid import UUID
 
 from django.apps import apps
-from django.db.models import Count, F, IntegerField, OuterRef, QuerySet, Subquery, Value
+from django.db.models import Count, IntegerField, OuterRef, QuerySet, Subquery, Value
+from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Coalesce
 from django.utils import translation
 
@@ -11,7 +12,7 @@ class TeamQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
 
@@ -20,7 +21,7 @@ class RoleQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
     def with_member_amount(self, team_id: UUID):

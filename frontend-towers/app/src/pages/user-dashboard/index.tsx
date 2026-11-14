@@ -786,7 +786,9 @@ function UserDashboardPage() {
               )}
             </List>
           )}
-          {(!membership || membership.status < MembershipStatus.PROCESSING) && (
+          {(!membership ||
+            membership.status < MembershipStatus.PROCESSING ||
+            membership.can_renew) && (
             <>
               <Stack
                 direction="row"
@@ -805,12 +807,14 @@ function UserDashboardPage() {
             </>
           )}
         </Box>
-        {membership && membership.status === MembershipStatus.ACTIVE && (
-          <Box className={styles.userWalletBox}>
-            <WalletAppleLoyalty />
-            <WalletGoogleLoyalty />
-          </Box>
-        )}
+        {membership &&
+          membership.status === MembershipStatus.ACTIVE &&
+          !membership.can_renew && (
+            <Box className={styles.userWalletBox}>
+              <WalletAppleLoyalty />
+              <WalletGoogleLoyalty />
+            </Box>
+          )}
         <Divider />
         {programCourses && (
           <>

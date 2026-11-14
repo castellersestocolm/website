@@ -323,6 +323,7 @@ class PaymentAdmin(admin.ModelAdmin):
             "text_short",
             "amount",
             "entity",
+            "order",
             "method",
             "balance",
         ]
@@ -335,7 +336,7 @@ class PaymentAdmin(admin.ModelAdmin):
         return list_display
 
     def get_readonly_fields(self, request, obj=None):
-        readonly_fields = ["debit_payment", "transaction"]
+        readonly_fields = ["debit_payment", "transaction", "order"]
 
         if obj is None:
             return []

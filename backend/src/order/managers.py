@@ -11,6 +11,7 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce, Concat
 from django.utils import translation
 
@@ -212,14 +213,14 @@ class OrderProductQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"size__product__name__{locale}"),
+            name_locale=KeyTextTransform(locale, "size__product__name"),
         )
 
     def with_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            description_locale=F(f"size__product__description__{locale}"),
+            description_locale=KeyTextTransform(locale, "size__product__description"),
         )
 
 

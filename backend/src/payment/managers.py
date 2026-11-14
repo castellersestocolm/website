@@ -29,6 +29,7 @@ from comunicat.enums import Module
 from comunicat.utils.managers import MoneyOutput
 from consent.enums import ConsentType
 from membership.enums import MembershipStatus
+from order.enums import OrderType
 from payment.enums import PaymentStatus, PaymentType, SourceType
 
 
@@ -122,37 +123,16 @@ class PaymentQuerySet(QuerySet):
 
     def with_description(self):
         Membership = apps.get_model("membership", "Membership")
-        Order = apps.get_model("order", "Order")
+        Program = apps.get_model("activity", "Program")
         PaymentLine = apps.get_model("payment", "PaymentLine")
 
         return self.annotate(
-            type_membership=Case(
-                When(
-                    Q(
-                        lines__item_type__app_label="membership",
-                        lines__item_type__model="membershipmodule",
-                    ),
-                    then=Value(True),
-                ),
-                output_field=BooleanField(),
-                default=Value(False),
-            ),
-            type_order=Case(
-                When(
-                    Q(
-                        lines__item_type__app_label="order",
-                    ),
-                    then=Value(True),
-                ),
-                output_field=BooleanField(),
-                default=Value(False),
-            ),
             membership_year_str=Case(
                 When(
-                    type_membership=True,
+                    order__type=OrderType.MEMBERSHIP,
                     then=Subquery(
                         Membership.objects.filter(
-                            modules__payment_lines__payment_id=OuterRef("id"),
+                            modules__order_memberships__order_id=OuterRef("order_id"),
                         )
                         .annotate(
                             membership_year_str=Substr(
@@ -165,23 +145,9 @@ class PaymentQuerySet(QuerySet):
                 output_field=CharField(),
                 default=Value(None),
             ),
-            order_reference=Case(
-                When(
-                    type_order=True,
-                    then=Subquery(
-                        Order.objects.filter(
-                            Q(products__line__payment_id=OuterRef("id"))
-                            | Q(registrations__line__payment_id=OuterRef("id"))
-                            | Q(delivery__line__payment_id=OuterRef("id"))
-                        ).values("reference")[:1]
-                    ),
-                ),
-                output_field=CharField(),
-                default=Value(None),
-            ),
             is_update=Case(
                 When(
-                    type_membership=True,
+                    order__type=OrderType.MEMBERSHIP,
                     then=Exists(
                         PaymentLine.objects.filter(
                             item_id=OuterRef("lines__item_id"),
@@ -196,7 +162,8 @@ class PaymentQuerySet(QuerySet):
             ),
             description=Case(
                 When(
-                    type_membership=True,
+                    order__isnull=False,
+                    order__type=OrderType.MEMBERSHIP,
                     then=Case(
                         When(
                             is_update=True,
@@ -215,18 +182,24 @@ class PaymentQuerySet(QuerySet):
                     ),
                 ),
                 When(
-                    type_order=True,
-                    then=Case(
-                        When(
-                            order_reference__isnull=False,
-                            then=Concat(
-                                Value(str(_("Order"))),
-                                Value(" #"),
-                                F("order_reference"),
+                    order__isnull=False,
+                    order__type=OrderType.COURSE,
+                    then=Subquery(
+                        Program.objects.filter(
+                            courses__registrations__order_courses__order_id=OuterRef(
+                                "order_id"
                             ),
-                        ),
-                        default=Value(str(_("Order"))),
-                        output_field=CharField(),
+                        )
+                        .with_name()
+                        .values("name_locale")[:1]
+                    ),
+                ),
+                When(
+                    order__isnull=False,
+                    then=Concat(
+                        Value(str(_("Order"))),
+                        Value(" #"),
+                        F("order__reference"),
                     ),
                 ),
                 When(Q(text__isnull=False), then=F("text")),
@@ -395,334 +368,36 @@ class PaymentLineQuerySet(QuerySet):
             balance=Coalesce(balance_sum, Value(0), output_field=MoneyOutput()),
         )
 
+    def with_is_delivery(self):
+        return self.annotate(
+            is_delivery=Case(
+                When(
+                    Q(
+                        item_type__app_label="order",
+                        item_type__model="orderdelivery",
+                    ),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        )
+
     def with_description(self):
-        PaymentLine = apps.get_model("payment", "PaymentLine")
+        ProductSize = apps.get_model("product", "ProductSize")
         Registration = apps.get_model("event", "Registration")
+        MembershipModule = apps.get_model("membership", "MembershipModule")
         ProgramCourseRegistration = apps.get_model(
             "activity", "ProgramCourseRegistration"
         )
-        OrderProduct = apps.get_model("order", "OrderProduct")
-        OrderRegistration = apps.get_model("order", "OrderRegistration")
-        OrderMembership = apps.get_model("order", "OrderMembership")
+        PaymentRequestLine = apps.get_model("payment", "PaymentRequestLine")
         OrderDelivery = apps.get_model("order", "OrderDelivery")
 
         locale = translation.get_language()
 
-        entity_name_annotation = Case(
-            When(
-                Q(
-                    entity__user__isnull=False,
-                    entity__user__firstname__isnull=False,
-                    entity__user__lastname__isnull=False,
-                ),
-                then=Concat(
-                    F("entity__user__firstname"),
-                    Value(" "),
-                    F("entity__user__lastname"),
-                ),
-            ),
-            When(
-                Q(
-                    entity__user__isnull=False,
-                    entity__user__firstname__isnull=False,
-                ),
-                then=F("entity__user__firstname"),
-            ),
-            When(
-                Q(
-                    entity__firstname__isnull=False,
-                    entity__lastname__isnull=False,
-                ),
-                then=Concat(
-                    F("entity__firstname"),
-                    Value(" "),
-                    F("entity__lastname"),
-                ),
-            ),
-            When(
-                Q(
-                    entity__firstname__isnull=False,
-                ),
-                then=F("entity__firstname"),
-            ),
-            default=Value(None),
-            output_field=CharField(),
-        )
-
         return self.annotate(
-            is_update=Exists(
-                PaymentLine.objects.filter(
-                    item_id=OuterRef("item_id"),
-                    created_at__lt=OuterRef("created_at"),
-                ).exclude(
-                    id=OuterRef("id"),
-                )
-            ),
             item_uuid=Cast(F("item_id"), output_field=UUIDField()),
-            entity_name=Case(
-                When(
-                    Q(
-                        item_type__app_label="event",
-                        item_type__model="registration",
-                    ),
-                    then=Subquery(
-                        Registration.objects.filter(id=OuterRef("item_uuid"))
-                        .annotate(entity_name=entity_name_annotation)
-                        .values_list("entity_name", flat=True)[:1]
-                    ),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="activity",
-                        item_type__model="programcourseregistration",
-                    ),
-                    then=Subquery(
-                        ProgramCourseRegistration.objects.filter(
-                            id=OuterRef("item_uuid")
-                        )
-                        .annotate(entity_name=entity_name_annotation)
-                        .values_list("entity_name", flat=True)[:1]
-                    ),
-                ),
-                default=Value(None),
-                output_field=CharField(),
-            ),
-            event_title_locale=Case(
-                When(
-                    Q(
-                        item_type__app_label="event",
-                        item_type__model="registration",
-                    ),
-                    then=Subquery(
-                        Registration.objects.filter(id=OuterRef("item_uuid"))
-                        .annotate(
-                            event_title_locale=Cast(
-                                KeyTextTransform(locale, "event__title"),
-                                output_field=CharField(),
-                            )
-                        )
-                        .values_list("event_title_locale", flat=True)[:1]
-                    ),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="order",
-                        item_type__model="orderregistration",
-                    ),
-                    then=Subquery(
-                        OrderRegistration.objects.filter(id=OuterRef("item_uuid"))
-                        .annotate(
-                            event_title_locale=Cast(
-                                KeyTextTransform(locale, "registration__event__title"),
-                                output_field=CharField(),
-                            )
-                        )
-                        .values_list("event_title_locale", flat=True)[:1]
-                    ),
-                ),
-                default=Value(None),
-                output_field=CharField(),
-            ),
-            membership_description_locale=Case(
-                When(
-                    Q(
-                        item_type__app_label="membership",
-                        item_type__model="membershipmodule",
-                    ),
-                    then=Case(
-                        When(
-                            membership_module__module=Module.ORG,
-                            then=Case(
-                                When(
-                                    is_update=True,
-                                    then=Value(
-                                        f"{str(_('Membership update'))} {settings.MODULE_ORG_SHORT_NAME}"
-                                    ),
-                                ),
-                                default=Value(
-                                    f"{str(_('Membership'))} {settings.MODULE_ORG_SHORT_NAME}"
-                                ),
-                                output_field=CharField(),
-                            ),
-                        ),
-                        When(
-                            membership_module__module=Module.TOWERS,
-                            then=Case(
-                                When(
-                                    is_update=True,
-                                    then=Value(
-                                        f"{str(_('Membership update'))} {settings.MODULE_TOWERS_SHORT_NAME}"
-                                    ),
-                                ),
-                                default=Value(
-                                    f"{str(_('Membership'))} {settings.MODULE_TOWERS_SHORT_NAME}"
-                                ),
-                                output_field=CharField(),
-                            ),
-                        ),
-                        When(
-                            is_update=True,
-                            then=Value(str(_("Membership update"))),
-                        ),
-                        default=Value(str(_("Membership"))),
-                        output_field=CharField(),
-                    ),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="order",
-                        item_type__model="ordermembership",
-                    ),
-                    then=Subquery(
-                        OrderMembership.objects.filter(id=OuterRef("item_uuid"))
-                        .annotate(
-                            membership_description_locale=Case(
-                                When(
-                                    module__module=Module.ORG,
-                                    then=Value(
-                                        f"{str(_('Membership'))} {settings.MODULE_ORG_SHORT_NAME}"
-                                    ),
-                                ),
-                                When(
-                                    module__module=Module.TOWERS,
-                                    then=Value(
-                                        f"{str(_('Membership'))} {settings.MODULE_TOWERS_SHORT_NAME}"
-                                    ),
-                                ),
-                                default=Value(str(_("Membership"))),
-                                output_field=CharField(),
-                            )
-                        )
-                        .values_list("membership_description_locale", flat=True)[:1]
-                    ),
-                ),
-                default=Value(None),
-                output_field=CharField(),
-            ),
-            program_name_locale=Case(
-                When(
-                    Q(
-                        item_type__app_label="activity",
-                        item_type__model="programcourseregistration",
-                    ),
-                    then=Subquery(
-                        ProgramCourseRegistration.objects.filter(
-                            id=OuterRef("item_uuid")
-                        )
-                        .annotate(
-                            program_name_locale=Cast(
-                                KeyTextTransform(locale, "course__program__name"),
-                                output_field=CharField(),
-                            )
-                        )
-                        .values_list("program_name_locale", flat=True)[:1]
-                    ),
-                ),
-                default=Value(None),
-                output_field=CharField(),
-            ),
-            product_name_locale=Case(
-                When(
-                    Q(
-                        item_type__app_label="order",
-                        item_type__model="orderproduct",
-                    ),
-                    then=Subquery(
-                        OrderProduct.objects.filter(id=OuterRef("item_uuid"))
-                        .annotate(
-                            product_name_locale=Cast(
-                                KeyTextTransform(locale, "size__product__name"),
-                                output_field=CharField(),
-                            )
-                        )
-                        .values_list("product_name_locale", flat=True)[:1]
-                    ),
-                ),
-                default=Value(None),
-                output_field=CharField(),
-            ),
-            description=Case(
-                When(
-                    Q(
-                        item_type__app_label="membership",
-                        item_type__model="membershipmodule",
-                    ),
-                    then=F("membership_description_locale"),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="event",
-                        item_type__model="registration",
-                    ),
-                    then=Case(
-                        When(
-                            entity_name__isnull=False,
-                            then=Concat(
-                                F("event_title_locale"), Value(" — "), F("entity_name")
-                            ),
-                        ),
-                        default=F("event_title_locale"),
-                        output_field=CharField(),
-                    ),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="activity",
-                        item_type__model="programcourseregistration",
-                    ),
-                    then=Case(
-                        When(
-                            entity_name__isnull=False,
-                            then=Concat(
-                                F("program_name_locale"), Value(" — "), F("entity_name")
-                            ),
-                        ),
-                        default=F("program_name_locale"),
-                        output_field=CharField(),
-                    ),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="order",
-                        item_type__model="orderproduct",
-                    ),
-                    then=Subquery(
-                        OrderProduct.objects.filter(id=OuterRef("item_uuid"))
-                        .annotate(
-                            name_locale=Concat(
-                                Cast(F("quantity"), output_field=CharField()),
-                                Value(" x "),
-                                OuterRef("product_name_locale"),
-                                Value(" — "),
-                                F("size__size"),
-                            )
-                        )
-                        .values_list("name_locale", flat=True)[:1]
-                    ),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="order",
-                        item_type__model="orderregistration",
-                    ),
-                    then=Case(
-                        When(
-                            entity_name__isnull=False,
-                            then=Concat(
-                                F("event_title_locale"), Value(" — "), F("entity_name")
-                            ),
-                        ),
-                        default=F("program_name_locale"),
-                        output_field=CharField(),
-                    ),
-                ),
-                When(
-                    Q(
-                        item_type__app_label="order",
-                        item_type__model="ordermembership",
-                    ),
-                    then=F("membership_description_locale"),
-                ),
+            description_base=Case(
                 When(
                     Q(
                         item_type__app_label="order",
@@ -743,9 +418,117 @@ class PaymentLineQuerySet(QuerySet):
                         .values_list("name_locale", flat=True)[:1]
                     ),
                 ),
+                When(
+                    item_type__app_label="order",
+                    item_type__model="orderproduct",
+                    then=Subquery(
+                        ProductSize.objects.filter(
+                            order_products__line_id=OuterRef("id")
+                        )
+                        .with_product_name()
+                        .annotate(
+                            product_name=Concat(
+                                Cast(
+                                    F("product_name_locale"), output_field=CharField()
+                                ),
+                                Value(" — "),
+                                F("size"),
+                            )
+                        )
+                        .values("product_name")[:1]
+                    ),
+                ),
+                When(
+                    item_type__app_label="order",
+                    item_type__model="orderregistration",
+                    then=Subquery(
+                        Registration.objects.filter(
+                            order_registrations__line_id=OuterRef("id")
+                        )
+                        .with_event_title()
+                        .annotate(
+                            registration_name=Concat(
+                                Cast(F("event_title_locale"), output_field=CharField()),
+                                Value(" — "),
+                                F("entity__firstname"),
+                                Value(" "),
+                                F("entity__firstname"),
+                            )
+                        )
+                        .values("registration_name")[:1]
+                    ),
+                ),
+                When(
+                    item_type__app_label="order",
+                    item_type__model="ordermembership",
+                    then=Subquery(
+                        MembershipModule.objects.filter(
+                            order_memberships__line_id=OuterRef("id")
+                        )
+                        .annotate(
+                            membership_description_locale=Case(
+                                When(
+                                    module=Module.ORG,
+                                    then=Value(
+                                        f"{str(_('Membership'))} {settings.MODULE_ORG_SHORT_NAME}"
+                                    ),
+                                ),
+                                When(
+                                    module=Module.TOWERS,
+                                    then=Value(
+                                        f"{str(_('Membership'))} {settings.MODULE_TOWERS_SHORT_NAME}"
+                                    ),
+                                ),
+                                default=Value(str(_("Membership"))),
+                                output_field=CharField(),
+                            )
+                        )
+                        .values_list("membership_description_locale", flat=True)[:1]
+                    ),
+                ),
+                When(
+                    item_type__app_label="order",
+                    item_type__model="ordercourse",
+                    then=Subquery(
+                        ProgramCourseRegistration.objects.filter(
+                            order_courses__line_id=OuterRef("id")
+                        )
+                        .with_course_program_name()
+                        .annotate(
+                            registration_name=Concat(
+                                Cast(
+                                    F("course_program_name_locale"),
+                                    output_field=CharField(),
+                                ),
+                                Value(" — "),
+                                F("entity__firstname"),
+                                Value(" "),
+                                F("entity__firstname"),
+                            )
+                        )
+                        .values("registration_name")[:1]
+                    ),
+                ),
+                When(
+                    item_type__app_label="order",
+                    item_type__model="orderrequest",
+                    then=Subquery(
+                        PaymentRequestLine.objects.filter(
+                            order_requests__line_id=OuterRef("id")
+                        ).values("text")[:1]
+                    ),
+                ),
                 When(Q(receipt__isnull=False), then=F("receipt__description")),
                 When(Q(text__isnull=False), then=F("text")),
                 When(Q(payment__text__isnull=False), then=F("payment__text")),
+                default=Value(None),
+                output_field=CharField(),
+            ),
+            description=Case(
+                When(
+                    ~Q(description_base=None) & Q(description_base__isnull=False),
+                    then=F("description_base"),
+                ),
                 default=Value(str(_("Unspecified"))),
                 output_field=CharField(),
             ),
@@ -838,7 +621,7 @@ class PaymentProviderQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
 

@@ -83,6 +83,14 @@ class Payment(StandardModel, Timestamps):
         on_delete=models.PROTECT,
     )
 
+    order = models.ForeignKey(
+        "order.Order",
+        null=True,
+        blank=True,
+        related_name="payments",
+        on_delete=models.CASCADE,
+    )
+
     objects = PaymentQuerySet.as_manager()
 
     __status = None

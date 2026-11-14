@@ -20,6 +20,7 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce
 from django.utils import timezone, translation
 
@@ -179,14 +180,14 @@ class EventQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            title_locale=F(f"title__{locale}"),
+            title_locale=KeyTextTransform(locale, "title"),
         )
 
     def with_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            description_locale=F(f"description__{locale}"),
+            description_locale=KeyTextTransform(locale, "description"),
         )
 
     def with_has_token(self, has_token: bool = False):
@@ -200,14 +201,14 @@ class EventSeriesQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            title_locale=F(f"title__{locale}"),
+            title_locale=KeyTextTransform(locale, "title"),
         )
 
     def with_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            description_locale=F(f"description__{locale}"),
+            description_locale=KeyTextTransform(locale, "description"),
         )
 
 
@@ -274,14 +275,14 @@ class AgendaItemQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
     def with_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            description_locale=F(f"description__{locale}"),
+            description_locale=KeyTextTransform(locale, "description"),
         )
 
 
@@ -302,7 +303,7 @@ class RegistrationQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            event_title_locale=F(f"event__title__{locale}"),
+            event_title_locale=KeyTextTransform(locale, "event__title"),
         )
 
     def with_amount(self):

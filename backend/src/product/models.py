@@ -59,6 +59,13 @@ class ProductSize(StandardModel, Timestamps):
     def __str__(self) -> str:
         return f"{str(self.product)} - {self.size}"
 
+    @cached_property
+    def description_locale(self) -> str:
+        return (
+            self.description.get(translation.get_language())
+            or list(self.description.values())[0]
+        )
+
     class Meta:
         ordering = ("product__type", "order", "category", "size")
 

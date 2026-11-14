@@ -337,10 +337,10 @@ class OrderAdmin(admin.ModelAdmin):
         "reference",
         "entity",
         "type",
+        "status",
         "notes",
         "delivery_type",
         "payment_type",
-        "status",
         "products_pending",
         "created_at",
     )

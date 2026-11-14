@@ -13,6 +13,7 @@ from django.db.models import (
     Value,
     When,
 )
+from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Coalesce
 from django.utils import timezone, translation
 
@@ -148,7 +149,7 @@ class ProductQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
 
@@ -157,7 +158,14 @@ class ProductSizeQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"description__{locale}"),
+            description_locale=KeyTextTransform(locale, "description"),
+        )
+
+    def with_product_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            product_name_locale=KeyTextTransform(locale, "product__name"),
         )
 
     def with_stock(self, date: datetime.date | None = None):

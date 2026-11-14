@@ -1,4 +1,5 @@
-from django.db.models import F, QuerySet
+from django.db.models import QuerySet
+from django.db.models.fields.json import KeyTextTransform
 from django.utils import translation
 
 
@@ -7,7 +8,7 @@ class ZoneQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
 
@@ -16,7 +17,7 @@ class CountryQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
 
@@ -25,5 +26,5 @@ class RegionQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )

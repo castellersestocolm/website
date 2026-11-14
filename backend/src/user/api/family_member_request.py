@@ -133,15 +133,31 @@ def get_list_sent(
 ) -> List[FamilyMemberRequest]:
     return list(
         FamilyMemberRequest.objects.filter(user_sender_id=user_id)
-        .select_related("user_sender", "user_receiver", "family")
+        .select_related(
+            "user_sender",
+            "user_sender__entity",
+            "user_receiver",
+            "user_receiver__entity",
+            "family",
+        )
         .prefetch_related(
             "family__members",
             "family__members__user",
             "family__members__user__towers",
             "family__members__user__emails",
+            "family__members__user__entity",
+            "family__members__user__entity__consents",
             "family__members__user__members",
             "family__members__user__members__team",
             "family__members__user__members__role",
+            "user_sender__members",
+            "user_sender__members__team",
+            "user_sender__members__role",
+            "user_sender__entity__consents",
+            "user_receiver__members",
+            "user_receiver__members__team",
+            "user_receiver__members__role",
+            "user_receiver__entity__consents",
         )
         .order_by("status", "created_at")
     )
@@ -153,15 +169,31 @@ def get_list_received(
 ) -> List[FamilyMemberRequest]:
     return list(
         FamilyMemberRequest.objects.filter(user_receiver_id=user_id)
-        .select_related("user_sender", "user_receiver", "family")
+        .select_related(
+            "user_sender",
+            "user_sender__entity",
+            "user_receiver",
+            "user_receiver__entity",
+            "family",
+        )
         .prefetch_related(
             "family__members",
             "family__members__user",
             "family__members__user__towers",
             "family__members__user__emails",
+            "family__members__user__entity",
+            "family__members__user__entity__consents",
             "family__members__user__members",
             "family__members__user__members__team",
             "family__members__user__members__role",
+            "user_sender__members",
+            "user_sender__members__team",
+            "user_sender__members__role",
+            "user_sender__entity__consents",
+            "user_receiver__members",
+            "user_receiver__members__team",
+            "user_receiver__members__role",
+            "user_receiver__entity__consents",
         )
         .order_by("status", "created_at")
     )

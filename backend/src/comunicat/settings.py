@@ -877,5 +877,9 @@ if DEBUG and DEBUG_SILK:
     INSTALLED_APPS += ["silk"]
     MIDDLEWARE = ["silk.middleware.SilkyMiddleware"] + MIDDLEWARE
 
-    SILKY_PYTHON_PROFILER = False
-    SILKY_PYTHON_PROFILER_BINARY = False
+    SILKY_PYTHON_PROFILER = (
+        os.getenv("SILKY_PYTHON_PROFILER", "false").lower() == "true"
+    )
+    SILKY_PYTHON_PROFILER_BINARY = (
+        os.getenv("SILKY_PYTHON_PROFILER_BINARY", "false").lower() == "true"
+    )

@@ -130,6 +130,7 @@ export default function OrderPayment({
       }
     });
   }, [
+    orderPath,
     setOrder,
     setPaymentProvider,
     id,

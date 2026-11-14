@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import CharField, F, OuterRef, Q, QuerySet, Subquery
+from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Coalesce
 from django.utils import translation
 
@@ -12,14 +13,14 @@ class ProgramQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            name_locale=F(f"name__{locale}"),
+            name_locale=KeyTextTransform(locale, "name"),
         )
 
     def with_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            description_locale=F(f"description__{locale}"),
+            name_locale=KeyTextTransform(locale, "description"),
         )
 
 
@@ -28,14 +29,14 @@ class ProgramCourseQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            program_name_locale=F(f"program__name__{locale}"),
+            program_name_locale=KeyTextTransform(locale, "program__name"),
         )
 
     def with_program_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            program_description_locale=F(f"program__description__{locale}"),
+            program_description_locale=KeyTextTransform(locale, "program__description"),
         )
 
 
@@ -47,15 +48,17 @@ class ProgramCourseRegistrationQuerySet(QuerySet):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            course_program_name_locale=F(f"course__program__name__{locale}"),
+            course_program_name_locale=KeyTextTransform(
+                locale, "course__program__name"
+            ),
         )
 
     def with_course_program_description(self, locale: str | None = None):
         locale = locale or translation.get_language()
 
         return self.annotate(
-            course_program_description_locale=F(
-                f"course__program__description__{locale}"
+            course_program_description_locale=KeyTextTransform(
+                locale, "course__program__description"
             ),
         )
 

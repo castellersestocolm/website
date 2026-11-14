@@ -4,18 +4,7 @@ from uuid import UUID
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
-from django.db.models import (
-    BooleanField,
-    Case,
-    DateField,
-    Exists,
-    F,
-    OuterRef,
-    Prefetch,
-    Q,
-    Value,
-    When,
-)
+from django.db.models import Case, DateField, Exists, F, OuterRef, Prefetch, Q, When
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
@@ -31,7 +20,7 @@ from order.models import (
     OrderRequest,
 )
 from payment.enums import PaymentStatus, PaymentType
-from payment.models import Payment, PaymentLine, PaymentLog, Transaction
+from payment.models import Payment, PaymentLine, PaymentLog, Source, Transaction
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 
@@ -76,22 +65,10 @@ def get_list(user_id: UUID, module: Module) -> list[Payment]:
         .prefetch_related(
             Prefetch(
                 "lines",
-                PaymentLine.objects.with_description()
-                .annotate(
-                    is_delivery=Case(
-                        When(
-                            Q(
-                                item_type__app_label="order",
-                                item_type__model="orderdelivery",
-                            ),
-                            then=Value(True),
-                        ),
-                        default=Value(False),
-                        output_field=BooleanField(),
-                    )
-                )
-                .order_by("is_delivery", "amount", "product_name_locale")
-                .select_related("receipt"),
+                PaymentLine.objects.with_is_delivery()
+                .with_description()
+                .select_related("receipt")
+                .order_by("is_delivery", "amount", "description"),
             ),
             Prefetch("logs", PaymentLog.objects.all().order_by("-created_at")),
             # Prefetch(
@@ -178,8 +155,8 @@ def create_for_order(  # noqa: C901
 
     payment_order_obj = order_obj.payment_order
 
-    assert payment_order_obj.provider.source is not None
-    source_obj = payment_order_obj.provider.source
+    # assert payment_order_obj.provider.source is not None
+    source_obj = Source.objects.first()  # payment_order_obj.provider.source
 
     order_product_updates = []
     order_registration_updates = []
