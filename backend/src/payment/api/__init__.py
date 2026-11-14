@@ -20,7 +20,7 @@ from order.models import (
     OrderRequest,
 )
 from payment.enums import PaymentStatus, PaymentType
-from payment.models import Payment, PaymentLine, PaymentLog, Source, Transaction
+from payment.models import Payment, PaymentLine, PaymentLog, Transaction
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember
 
