@@ -1,4 +1,5 @@
 import itertools
+import logging
 import tempfile
 
 from django import forms
@@ -15,6 +16,7 @@ from jsoneditor.forms import JSONEditor
 from weasyprint import HTML
 
 import notify.tasks
+import order.api
 from comunicat.consts import TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import FIELD_LOCALE
@@ -40,6 +42,9 @@ from order.models import (
 )
 from payment.enums import PaymentType
 from payment.models import Account
+
+_log = logging.getLogger(__name__)
+
 
 # class OrderProductInlineFormAdmin(forms.ModelForm):
 #     class Meta:
@@ -316,6 +321,18 @@ def send_paid_email(modeladmin, request, queryset):
         )
 
 
+@admin.action(description=_("Capture selected orders"))
+def capture_selected_orders(modeladmin, request, queryset):
+    for order_obj in queryset:
+        try:
+            order.api.complete(
+                order_id=order_obj.id,
+                module=order_obj.origin_module,
+            )
+        except Exception as e:
+            _log.exception(e)
+
+
 class OrderAdminForm(forms.ModelForm):
     origin_language = FIELD_LOCALE(required=False)
 
@@ -350,7 +367,7 @@ class OrderAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     form = OrderAdminForm
     inlines = (OrderLogInline,)
-    actions = (send_created_email, send_paid_email)
+    actions = (send_created_email, send_paid_email, capture_selected_orders)
 
     def get_queryset(self, request):
         return (

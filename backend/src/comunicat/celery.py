@@ -20,6 +20,11 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute="*/5"),
     },
     # Run every 10 minutes
+    "order.complete_pending_orders": {
+        "task": "order.tasks.complete_pending_orders",
+        "schedule": crontab(minute="*/5"),
+    },
+    # Run every 10 minutes
     "order.clean_pending_orders": {
         "task": "order.tasks.clean_pending_orders",
         "schedule": crontab(minute="*/10"),

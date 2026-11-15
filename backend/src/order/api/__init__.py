@@ -1,5 +1,6 @@
 import datetime
 import decimal
+import logging
 from uuid import UUID
 
 from django.conf import settings
@@ -28,6 +29,7 @@ from notify.enums import EmailType
 from order.consts import (
     ORDER_CLEAN_STATUS_CREATED_HOURS,
     ORDER_CLEAN_STATUS_PROCESSING_HOURS,
+    ORDER_COMPLETE_PAYMENT_METHODS,
 )
 from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
@@ -49,6 +51,8 @@ from payment.models import Entity, PaymentOrder, PaymentRequestLine
 from product.models import ProductSize
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
+
+_log = logging.getLogger(__name__)
 
 
 def get_list(
@@ -536,6 +540,30 @@ def update_provider(
     payment_order_obj.save(update_fields=("provider_id", "external_id"))
 
     return get(order_id=order_id, user_id=user_id, module=module)
+
+
+def complete_pending_orders() -> None:
+    # TODO: Check what happens when payment order and order are out of sync
+    order_objs = list(
+        Order.objects.filter(
+            status=OrderStatus.CREATED,
+            created_at__lte=timezone.now() - timezone.timedelta(minutes=5),
+            created_at__gte=timezone.now()
+            - timezone.timedelta(hours=ORDER_CLEAN_STATUS_CREATED_HOURS)
+            - timezone.timedelta(minutes=5),
+            payment_order__isnull=False,
+            payment_order__provider__method__in=ORDER_COMPLETE_PAYMENT_METHODS,
+        )
+    )
+
+    for order_obj in order_objs:
+        try:
+            complete(
+                order_id=order_obj.id,
+                module=order_obj.origin_module,
+            )
+        except Exception as e:
+            _log.exception(e)
 
 
 def clean_pending_orders() -> None:
