@@ -123,6 +123,7 @@ class PaymentQuerySet(QuerySet):
 
     def with_description(self):
         Membership = apps.get_model("membership", "Membership")
+        Event = apps.get_model("event", "Event")
         Program = apps.get_model("activity", "Program")
         PaymentLine = apps.get_model("payment", "PaymentLine")
 
@@ -183,6 +184,19 @@ class PaymentQuerySet(QuerySet):
                 ),
                 When(
                     order__isnull=False,
+                    order__type=OrderType.REGISTRATION,
+                    then=Subquery(
+                        Event.objects.filter(
+                            registrations__order_registrations__order_id=OuterRef(
+                                "order_id"
+                            ),
+                        )
+                        .with_title()
+                        .values("title_locale")[:1]
+                    ),
+                ),
+                When(
+                    order__isnull=False,
                     order__type=OrderType.COURSE,
                     then=Subquery(
                         Program.objects.filter(
@@ -192,6 +206,15 @@ class PaymentQuerySet(QuerySet):
                         )
                         .with_name()
                         .values("name_locale")[:1]
+                    ),
+                ),
+                When(
+                    order__isnull=False,
+                    order__type=OrderType.REQUEST,
+                    then=Concat(
+                        Value(str(_("Payment request"))),
+                        Value(" #"),
+                        F("order__reference"),
                     ),
                 ),
                 When(

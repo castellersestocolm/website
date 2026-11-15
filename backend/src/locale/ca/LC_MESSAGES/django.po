@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 16:35+0100\n"
+"POT-Creation-Date: 2026-11-15 10:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,8 @@ msgstr ""
 
 #: activity/admin.py:56 activity/admin.py:150 data/admin.py:38 data/admin.py:69
 #: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
-#: notify/admin.py:272 order/admin.py:589 payment/admin.py:681
-#: payment/admin.py:1152 product/admin.py:110
+#: notify/admin.py:278 order/admin.py:589 payment/admin.py:682
+#: payment/admin.py:1153 product/admin.py:110
 msgid "name"
 msgstr "nom"
 
@@ -189,24 +189,24 @@ msgid "Only the following languages are allowed: %s."
 msgstr "Només els següents idiomes estan permesos: %s."
 
 #: comunicat/rest/serializers/user.py:361
-#: comunicat/rest/serializers/user.py:431
-#: comunicat/rest/serializers/user.py:477
+#: comunicat/rest/serializers/user.py:433
+#: comunicat/rest/serializers/user.py:479
 #, python-format
 msgid "Members over %s must consent in order to become members."
 msgstr ""
 "Membres majors de %s han de donar consentiment per tal d'esdevenir membres."
 
-#: comunicat/rest/serializers/user.py:383
-#: comunicat/rest/serializers/user.py:504
+#: comunicat/rest/serializers/user.py:385
+#: comunicat/rest/serializers/user.py:506
 msgid "The passwords do not match."
 msgstr "Les contrasenyes no són iguals."
 
-#: comunicat/rest/serializers/user.py:416
+#: comunicat/rest/serializers/user.py:418
 #, python-format
 msgid "The family member must be below %s to update."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo actualitzar."
 
-#: comunicat/rest/serializers/user.py:462
+#: comunicat/rest/serializers/user.py:464
 #, python-format
 msgid "The family member must be below %s to create."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
@@ -988,7 +988,7 @@ msgstr ""
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:397 order/admin.py:590 payment/admin.py:1153
+#: event/admin.py:397 order/admin.py:590 payment/admin.py:1154
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
@@ -1059,11 +1059,11 @@ msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 msgid "The type must match the series type."
 msgstr "El membre familiar ha de ser menor de %s per poder-lo crear."
 
-#: event/models.py:410 product/models.py:142 product/models.py:147
+#: event/models.py:410 product/models.py:149 product/models.py:154
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:498 payment/models.py:334
+#: event/models.py:498 payment/models.py:342
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
@@ -1115,7 +1115,7 @@ msgstr ""
 msgid "users"
 msgstr "usuaris"
 
-#: membership/admin.py:116 user/admin.py:324 user/models.py:236
+#: membership/admin.py:116 user/admin.py:354 user/models.py:236
 msgid "family"
 msgstr "família"
 
@@ -1127,9 +1127,9 @@ msgstr "mòduls"
 msgid "Members"
 msgstr "Membres"
 
-#: membership/api/export.py:56 payment/api/__init__.py:194
-#: payment/api/provider/se_swish.py:49 payment/managers.py:210
-#: payment/managers.py:567 payment/managers.py:592
+#: membership/api/export.py:56 payment/api/__init__.py:171
+#: payment/api/provider/se_swish.py:49 payment/managers.py:178
+#: payment/managers.py:505
 msgid "Membership"
 msgstr "Quota"
 
@@ -1145,11 +1145,11 @@ msgstr "Data fins a"
 msgid "Send email"
 msgstr "Envia el correu"
 
-#: notify/admin.py:140 notify/admin.py:201
+#: notify/admin.py:146 notify/admin.py:207
 msgid "preview"
 msgstr ""
 
-#: notify/admin.py:200
+#: notify/admin.py:206
 msgid "subject"
 msgstr ""
 
@@ -1169,11 +1169,11 @@ msgstr "Mostra l'assistència"
 msgid "View user"
 msgstr ""
 
-#: notify/api/template.py:257
+#: notify/api/template.py:258
 msgid "Sign-up for the upcoming performances"
 msgstr "Confirma l'assistència a les properes actuacions"
 
-#: notify/api/template.py:431
+#: notify/api/template.py:432
 msgid "receipt"
 msgstr "rebut"
 
@@ -1280,7 +1280,7 @@ msgid "The Google group is mandatory for Google newsletters."
 msgstr ""
 
 #: order/admin.py:129 order/admin.py:223 order/admin.py:277
-#: payment/admin.py:468 payment/models.py:285 user/admin.py:323
+#: payment/admin.py:469 payment/models.py:293 user/admin.py:353
 msgid "entity"
 msgstr "entitat"
 
@@ -1316,7 +1316,7 @@ msgstr "pendent"
 msgid "delivery"
 msgstr "entrega"
 
-#: order/admin.py:501 payment/admin.py:490
+#: order/admin.py:501 payment/admin.py:491
 msgid "payment"
 msgstr "pagament"
 
@@ -1352,75 +1352,75 @@ msgstr ""
 msgid "delivery accounts"
 msgstr "entrega"
 
-#: payment/admin.py:174 payment/admin.py:397
+#: payment/admin.py:174 payment/admin.py:398
 msgid "This item does not exist."
 msgstr ""
 
-#: payment/admin.py:363 payment/admin.py:467
+#: payment/admin.py:364 payment/admin.py:468
 msgid "text"
 msgstr "text"
 
-#: payment/admin.py:364 payment/admin.py:469
+#: payment/admin.py:365 payment/admin.py:470
 msgid "date"
 msgstr "data"
 
-#: payment/admin.py:365 payment/admin.py:470 payment/admin.py:678
-#: payment/admin.py:855
+#: payment/admin.py:366 payment/admin.py:471 payment/admin.py:679
+#: payment/admin.py:856
 msgid "balance"
 msgstr "saldo"
 
-#: payment/admin.py:489
+#: payment/admin.py:490
 #, fuzzy
 #| msgid "Amount"
 msgid "amount"
 msgstr "Quantitat"
 
-#: payment/admin.py:677
+#: payment/admin.py:678
 msgid "trend"
 msgstr ""
 
-#: payment/admin.py:679 payment/admin.py:680 payment/admin.py:856
-#: payment/admin.py:857
+#: payment/admin.py:680 payment/admin.py:681 payment/admin.py:857
+#: payment/admin.py:858
 #, fuzzy, python-format
 #| msgid "balance"
 msgid "balance %s"
 msgstr "saldo"
 
-#: payment/admin.py:854
+#: payment/admin.py:855
 msgid "last imported"
 msgstr ""
 
-#: payment/admin.py:935
+#: payment/admin.py:936
 msgid "diff."
 msgstr ""
 
-#: payment/admin.py:991
+#: payment/admin.py:992
 msgid "file"
 msgstr "fitxer"
 
-#: payment/api/__init__.py:205 payment/api/provider/se_swish.py:64
-#: payment/managers.py:233
+#: payment/api/__init__.py:182 payment/api/provider/se_swish.py:64
+#: payment/managers.py:229
 msgid "Payment"
 msgstr "Pagament"
 
-#: payment/api/__init__.py:207
+#: payment/api/__init__.py:184
 #, fuzzy
 #| msgid "Payment"
 msgid "Payment fee"
 msgstr "Pagament"
 
-#: payment/api/__init__.py:210 payment/api/provider/se_swish.py:67
-#: payment/managers.py:223 payment/managers.py:228
+#: payment/api/__init__.py:187 payment/api/provider/se_swish.py:67
+#: payment/managers.py:223
 msgid "Order"
 msgstr "Comanda"
 
-#: payment/api/__init__.py:212
+#: payment/api/__init__.py:189
 #, fuzzy
 #| msgid "Order"
 msgid "Order fee"
 msgstr "Comanda"
 
-#: payment/api/__init__.py:340 payment/managers.py:735
+#: payment/api/__init__.py:317 payment/managers.py:433
 msgid "Delivery"
 msgstr "Entrega"
 
@@ -1448,63 +1448,67 @@ msgstr "Número de compte"
 msgid "Clearing number"
 msgstr "Número d’autorització"
 
-#: payment/managers.py:204 payment/managers.py:565
+#: payment/managers.py:172
 msgid "Membership update"
 msgstr "Actualització quota"
 
-#: payment/managers.py:749
+#: payment/managers.py:215
+msgid "Payment request"
+msgstr "Petició de pagament"
+
+#: payment/managers.py:555
 msgid "Unspecified"
 msgstr "Sense especificar"
 
-#: payment/managers.py:781
+#: payment/managers.py:587
 msgid "(and more)"
 msgstr "(i més)"
 
-#: payment/managers.py:784
+#: payment/managers.py:590
 msgid "Expense"
 msgstr "Despesa"
 
-#: payment/models.py:105
+#: payment/models.py:113
 #, fuzzy
 #| msgid "Category must be set for accounts with parent."
 msgid "Transaction must be set for completed payments."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:214
+#: payment/models.py:222
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: payment/models.py:286
+#: payment/models.py:294
 #, fuzzy
 #| msgid "entity"
 msgid "entities"
 msgstr "entitat"
 
-#: payment/models.py:302
+#: payment/models.py:310
 #, fuzzy
 #| msgid "entity"
 msgid "entity alias"
 msgstr "entitat"
 
-#: payment/models.py:303
+#: payment/models.py:311
 #, fuzzy
 #| msgid "entity"
 msgid "entity aliases"
 msgstr "entitat"
 
-#: payment/models.py:350
+#: payment/models.py:358
 msgid "entity payment method"
 msgstr ""
 
-#: payment/models.py:351
+#: payment/models.py:359
 msgid "entity payment methods"
 msgstr ""
 
-#: payment/models.py:595
+#: payment/models.py:603
 msgid "Category must be set for accounts with parent."
 msgstr "La categoria és obligatòria per comptes amb matrius."
 
-#: payment/models.py:688 payment/models.py:689
+#: payment/models.py:696 payment/models.py:697
 #, fuzzy
 #| msgid "delivery"
 msgid "payment provider accounts"
@@ -1526,15 +1530,65 @@ msgstr ""
 msgid "product name"
 msgstr "Nom"
 
-#: product/models.py:111
+#: product/models.py:118
 msgid "Product size must match product."
 msgstr ""
 
-#: product/models.py:185 product/models.py:186
+#: product/models.py:192 product/models.py:193
 msgid "product accounts"
 msgstr ""
 
-#: user/admin.py:155
+#: user/admin.py:55
+msgid "Send event sign-up email"
+msgstr ""
+
+#: user/admin.py:60
+msgid "Send performance sign-up email"
+msgstr ""
+
+#: user/admin.py:67
+#, fuzzy
+#| msgid "Send email"
+msgid "Send verification email"
+msgstr "Envia el correu"
+
+#: user/admin.py:74
+#, fuzzy
+#| msgid "Send email"
+msgid "Send welcome email"
+msgstr "Envia el correu"
+
+#: user/admin.py:85 user/admin.py:98
+#, fuzzy, python-format
+#| msgid "Send email"
+msgid "Send join %s email"
+msgstr "Envia el correu"
+
+#: user/admin.py:111
+#, fuzzy
+#| msgid "Send email"
+msgid "Send imported email"
+msgstr "Envia el correu"
+
+#: user/admin.py:121
+#, fuzzy
+#| msgid "Renew membership"
+msgid "Send membership paid email"
+msgstr "Renova la quota"
+
+#: user/admin.py:133
+#, fuzzy
+#| msgid "Your membership is now paid"
+msgid "Send membership renew email"
+msgstr "La teva quota s'ha pagat"
+
+#: user/admin.py:145
+#, fuzzy
+#| msgid "Your membership expired on"
+msgid "Send membership expired email"
+msgstr "La teva quota va caducar el"
+
+#: user/admin.py:183
 msgid "Another user already has the same alias."
 msgstr "Un altre usuari ja té el mateix sobrenom."
 
