@@ -475,7 +475,7 @@ class PaymentLineQuerySet(QuerySet):
                                 Value(" — "),
                                 F("entity__firstname"),
                                 Value(" "),
-                                F("entity__firstname"),
+                                F("entity__lastname"),
                             )
                         )
                         .values("registration_name")[:1]
@@ -526,7 +526,7 @@ class PaymentLineQuerySet(QuerySet):
                                 Value(" — "),
                                 F("entity__firstname"),
                                 Value(" "),
-                                F("entity__firstname"),
+                                F("entity__lastname"),
                             )
                         )
                         .values("registration_name")[:1]
