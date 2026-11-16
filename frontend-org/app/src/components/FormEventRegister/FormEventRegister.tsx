@@ -65,7 +65,7 @@ interface CreateFormElement extends HTMLFormElement {
   readonly elements: FormElements;
 }
 
-export default function FormEventRegister({ event }: any) {
+export default function FormEventRegister({ event, family, userToken }: any) {
   const [t, i18n] = useTranslation("common");
 
   const { user, setMessages } = useAppContext();
@@ -120,17 +120,19 @@ export default function FormEventRegister({ event }: any) {
   };
 
   React.useEffect(() => {
-    if (user && user.family && user.family.members) {
+    if (family && family.members) {
       setEntityUsers(
-        user.family.members.map((member: any) => [
+        family.members.map((member: any) => [
           member.user.entity,
           member.user,
         ]),
       );
-      setOwnerEntity(user.entity);
+      if (user) {
+        setOwnerEntity(user.entity);
+      }
     }
     setIsLoadingUsers(false);
-  }, [user, setEntityUsers, setIsLoadingUsers, setOwnerEntity]);
+  }, [user, family, setEntityUsers, setIsLoadingUsers, setOwnerEntity]);
 
   React.useEffect(() => {
     if (!isLoadingUsers && event && event.registrations) {
@@ -166,7 +168,7 @@ export default function FormEventRegister({ event }: any) {
       formData.isUnderage ? undefined : formData.phone,
       formData.birthday,
       i18n.resolvedLanguage,
-      undefined,
+      userToken,
       undefined,
       { questions: formData.questions },
     ).then((response) => {
@@ -281,6 +283,13 @@ export default function FormEventRegister({ event }: any) {
         undefined,
         ownerEntity && ownerEntity.id,
         eventId,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          userToken
       ).then((response) => {
         if (response.status === 200) {
           setRegistrations([
@@ -307,6 +316,13 @@ export default function FormEventRegister({ event }: any) {
         entityId,
         ownerEntity && ownerEntity.id,
         eventId,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          userToken
       ).then((response) => {
         if (response.status === 200) {
           setRegistrations([
@@ -324,7 +340,7 @@ export default function FormEventRegister({ event }: any) {
   }
 
   function handleRegistrationDelete(registrationId: string) {
-    apiEventRegistrationDelete(registrationId).then((response) => {
+    apiEventRegistrationDelete(registrationId, userToken).then((response) => {
       if (response.status === 200) {
         setRegistrations(
           registrations.map((registration: any) =>
@@ -517,6 +533,7 @@ export default function FormEventRegister({ event }: any) {
                                           </Typography>
                                           {registration &&
                                             registration.price &&
+                                            registration.price.amount.amount > 0 &&
                                             registration.status !==
                                               RegistrationStatus.CANCELLED && (
                                               <Typography

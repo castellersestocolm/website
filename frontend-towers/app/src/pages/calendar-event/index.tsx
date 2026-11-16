@@ -7,7 +7,6 @@ import {
   ListItemText,
   CardContent,
   Stack,
-  Button,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -29,7 +28,6 @@ import { ROUTES } from "../../routes";
 import IconEast from "@mui/icons-material/East";
 import Alert from "@mui/material/Alert";
 import Map from "../../components/Map/Map";
-import IconGoogle from "@mui/icons-material/Google";
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 const ORG_BASE_URL = new URL(process.env.REACT_APP_ORG_BASE_URL).origin;
@@ -163,7 +161,7 @@ function CalendarEventPage() {
       (event.agenda_items && event.agenda_items.length > 0) ||
       (event.links && event.links.length > 0));
   const hasContentPrices =
-    event && !token && event.prices && event.prices.length > 0;
+    event && !token && event.prices && event.prices.filter((eventPrice: any) => eventPrice.amount.amount > 0).length > 0;
   const hasContentSignup =
     event && event.require_signup && event.require_approve;
   const hasContentPoster =

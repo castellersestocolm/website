@@ -524,9 +524,15 @@ export const apiEventRegistrationCreate = async (
   }
 };
 
-export const apiEventRegistrationDelete = async (id: string) => {
+export const apiEventRegistrationDelete = async (
+  registrationId: string,
+  token: string = undefined,
+) => {
   try {
-    return await instance.delete("/event/registration/" + id + "/");
+    return await instance.delete(
+      "/event/registration/" + registrationId + "/",
+      { params: { token: token } },
+    );
   } catch (error) {
     console.error("Error fetching data: ", error);
     // Handle errors here or throw them to be handled where the function is called

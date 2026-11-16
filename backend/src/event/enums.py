@@ -56,3 +56,10 @@ class TransportMode(enum.IntEnum):
     RAIL = 50
     WATER = 60
     FERRY = 70
+
+
+class EventReminderStatus(enum.IntEnum):
+    SCHEDULED = 10
+    SENT = 20
+    ERRORED = 30
+    SKIPPED = 40

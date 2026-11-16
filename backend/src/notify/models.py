@@ -16,6 +16,7 @@ from notify.enums import (
     EmailType,
     MessageSlackType,
     NewsletterType,
+    EmailTemplateType,
 )
 from notify.managers import EmailTemplateQuerySet, NewsletterQuerySet
 
@@ -23,9 +24,16 @@ from notify.managers import EmailTemplateQuerySet, NewsletterQuerySet
 class EmailTemplate(StandardModel, Timestamps):
     subject = JSONField(default=language_field_default)
     body = JSONField(default=language_field_default)
+
+    type = models.PositiveSmallIntegerField(
+        choices=((ett.value, ett.name) for ett in EmailTemplateType),
+        default=EmailType.GENERAL,
+    )
+
     module = models.PositiveSmallIntegerField(
         choices=((m.value, m.name) for m in Module),
     )
+
     button_text = JSONField(default=language_field_default)
     button_url = JSONField(default=language_field_default)
 

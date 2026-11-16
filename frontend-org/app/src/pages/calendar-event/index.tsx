@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { apiEventPage, apiMembershipList } from "../../api";
+import { apiEventPage, apiMembershipList, apiUserFamily } from "../../api";
 import { Module } from "../../enums";
 import markdown from "@wcj/markdown-to-html";
 import PageBase from "../../components/PageBase/PageBase";
@@ -19,7 +19,7 @@ import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import FormEventPrices from "../../components/FormEventPrices/FormEventPrices";
 import FormEventRegister from "../../components/FormEventRegister/FormEventRegister";
 import Map from "../../components/Map/Map";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { datetimeToLongString } from "../../utils/datetime";
@@ -35,10 +35,26 @@ function CalendarEventPage() {
   const [t, i18n] = useTranslation("common");
   const { year, month, day, code, token } = useParams();
 
+  const [searchParams] = useSearchParams();
+  const userToken = searchParams.get("userToken");
+
   const [event, setEvent] = React.useState(undefined);
   const [membership, setMembership] = React.useState(undefined);
+  const [family, setFamily] = React.useState(undefined);
 
   const { user } = useAppContext();
+
+  React.useEffect(() => {
+    if (user) {
+      setFamily(user.family);
+    } else if (userToken !== undefined) {
+      apiUserFamily(userToken).then((response) => {
+        if (response.status === 200) {
+          setFamily(response.data);
+        }
+      });
+    }
+  }, [user, setFamily, userToken]);
 
   React.useEffect(() => {
     if (token) {
@@ -152,7 +168,7 @@ function CalendarEventPage() {
       (event.agenda_items && event.agenda_items.length > 0) ||
       (event.links && event.links.length > 0));
   const hasContentPrices =
-    event && !token && event.prices && event.prices.length > 0;
+    event && !token && event.prices && event.prices.filter((eventPrice: any) => eventPrice.amount.amount > 0).length > 0;
   const hasContentSignup =
     event && event.require_signup && event.require_approve;
   const hasContentPoster =
@@ -290,7 +306,7 @@ function CalendarEventPage() {
               </Box>
               {eventSignup ? (
                 eventSignup.is_open ? (
-                  <FormEventRegister event={event} />
+                  <FormEventRegister event={event} family={family} userToken={userToken} />
                 ) : (
                   <>
                     <Typography variant="body1" align="center" mb={1}>

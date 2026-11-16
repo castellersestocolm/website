@@ -56,3 +56,8 @@ class ContactMessageStatus(enum.IntEnum):
 class NewsletterType(enum.IntEnum):
     INTERNAL = 10
     GOOGLE = 20
+
+
+class EmailTemplateType(enum.IntEnum):
+    GENERAL = 5
+    EVENT_REMINDER = 10

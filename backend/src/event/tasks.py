@@ -4,6 +4,7 @@ from uuid import UUID
 from celery import shared_task
 
 import event.api
+import event.api.event_reminder
 import event.api.google_album
 import event.api.google_calendar
 import event.api.google_drive
@@ -15,6 +16,11 @@ from event.enums import EventType
 @shared_task
 def import_events() -> None:
     event.api.google_calendar.import_events()
+
+
+@shared_task
+def send_event_reminders() -> None:
+    event.api.event_reminder.send_event_reminders()
 
 
 @shared_task

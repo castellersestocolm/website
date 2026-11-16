@@ -30,7 +30,7 @@ from event.enums import (
     EventStatus,
     EventType,
     RegistrationStatus,
-    TransportMode,
+    TransportMode, EventReminderStatus,
 )
 from event.managers import (
     AgendaItemQuerySet,
@@ -40,6 +40,7 @@ from event.managers import (
     RegistrationQuerySet,
 )
 from event.utils.event import get_event_title
+from notify.enums import EmailTemplateType
 
 
 # TODO: Split address into fields, add coordinates
@@ -76,8 +77,9 @@ class Connection(StandardModel, Timestamps):
 
 class EventSeries(StandardModel, Timestamps):
     title = JSONField(default=language_field_default)
-
     description = JSONField(default=language_field_default)
+
+    event_title = JSONField(default=language_field_default)
 
     code = models.CharField(max_length=255)
 
@@ -132,6 +134,118 @@ def get_event_picture_name(instance, filename):
     return os.path.join(
         "event/event/picture/", f"{instance.id}.{filename.split('.')[-1]}"
     )
+
+
+class EventSeriesModule(StandardModel, Timestamps):
+    series = models.ForeignKey(
+        EventSeries, related_name="modules", on_delete=models.PROTECT
+    )
+    # This is the module where the event is offered for registration, not who can register based on membership
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+    )
+    team = models.ForeignKey(
+        "legal.Team",
+        related_name="event_series_modules",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
+
+    require_signup = models.BooleanField(default=True)
+    require_approve = models.BooleanField(default=False)
+    require_user = models.BooleanField(default=True)
+
+    def clean(self):
+        if self.team and self.module != self.team.group.module:
+            raise ValidationError({"size": _("Team's module must match module.")})
+
+    class Meta:
+        unique_together = ("series", "module", "team")
+
+
+class EventSeriesSignup(StandardModel, Timestamps):
+    series = models.ForeignKey(
+        EventSeries, related_name="signups", on_delete=models.PROTECT
+    )
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+        null=True,
+        blank=True,
+    )
+
+    days_before_from = models.PositiveSmallIntegerField(blank=True, null=True)
+    days_before_to = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    max_registrations = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    objects = EventSignupQuerySet.as_manager()
+
+    def __str__(self) -> str:
+        if self.module:
+            return f"{Module(self.module).name} - {self.series}"
+
+        return str(self.series)
+
+    class Meta:
+        unique_together = ("series", "module")
+
+
+class EventSeriesReminder(StandardModel, Timestamps):
+    series = models.ForeignKey(
+        EventSeries, related_name="reminders", on_delete=models.PROTECT
+    )
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+        null=True,
+        blank=True,
+    )
+
+    newsletter = models.ForeignKey(
+        "notify.Newsletter",
+        blank=True,
+        null=True,
+        related_name="event_series_reminders",
+        on_delete=models.CASCADE,
+    )
+
+    template = models.ForeignKey(
+        "notify.EmailTemplate",
+        related_name="event_series_reminders",
+        on_delete=models.CASCADE,
+    )
+
+    days_before = models.PositiveSmallIntegerField()
+
+    def __str__(self) -> str:
+        if self.module:
+            return f"{Module(self.module).name} - {self.series}"
+
+        return str(self.series)
+
+    def clean(self):
+        validation_errors = {}
+        if self.template.type != EmailTemplateType.EVENT_REMINDER:
+            validation_errors["template"] = _(
+                "The email template type must be EVENT_REMINDER."
+            )
+        if self.module:
+            if self.template.module != self.module:
+                validation_errors["template"] = _(
+                    "The email template module must match the event series reminder module."
+                )
+        elif self.template.module != self.series.module:
+            validation_errors["template"] = _(
+                "The email template module must match the event series module."
+            )
+
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+    class Meta:
+        unique_together = ("series", "module", "newsletter")
 
 
 # TODO: Add event status
@@ -385,13 +499,11 @@ class Event(StandardModel, Timestamps):
         ]
 
 
-# TODO: Automatically create other event modules for events in series
 class EventModule(StandardModel, Timestamps):
     event = models.ForeignKey(Event, related_name="modules", on_delete=models.CASCADE)
+    # This is the module where the event is offered for registration, not who can register based on membership
     module = models.PositiveSmallIntegerField(
         choices=((m.value, m.name) for m in Module),
-        # TODO: For registrations by externals
-        # null=True, blank=True,
     )
     team = models.ForeignKey(
         "legal.Team",
@@ -538,6 +650,65 @@ class EventSignup(StandardModel, Timestamps):
 
     class Meta:
         unique_together = ("event", "module")
+
+
+class EventReminder(StandardModel, Timestamps):
+    event = models.ForeignKey(Event, related_name="reminders", on_delete=models.PROTECT)
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+        null=True,
+        blank=True,
+    )
+
+    newsletter = models.ForeignKey(
+        "notify.Newsletter",
+        blank=True,
+        null=True,
+        related_name="event_reminders",
+        on_delete=models.CASCADE,
+    )
+
+    template = models.ForeignKey(
+        "notify.EmailTemplate",
+        related_name="event_reminders",
+        on_delete=models.CASCADE,
+    )
+
+    status = models.PositiveSmallIntegerField(
+        choices=((ers.value, ers.name) for ers in EventReminderStatus),
+        default=EventReminderStatus.SCHEDULED,
+    )
+
+    time = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        if self.module:
+            return f"{Module(self.module).name} - {self.event}"
+
+        return str(self.event)
+
+    def clean(self):
+        validation_errors = {}
+        if self.template.type != EmailTemplateType.EVENT_REMINDER:
+            validation_errors["template"] = _(
+                "The email template type must be EVENT_REMINDER."
+            )
+        if self.module:
+            if self.template.module != self.module:
+                validation_errors["template"] = _(
+                    "The email template module must match the event reminder module."
+                )
+        elif self.template.module != self.event.module:
+            validation_errors["template"] = _(
+                "The email template module must match the event module."
+            )
+
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+    class Meta:
+        unique_together = ("event", "module", "newsletter")
 
 
 # TODO: Multilanguage support

@@ -21,6 +21,7 @@ from activity.models import ProgramCourse
 from comunicat.consts import LOCALE_BY_MODULE, TEMPLATE_PDF_BY_MODULE
 from comunicat.enums import PDFType
 from comunicat.utils.admin import FIELD_LOCALE, beautify_dict
+from event.api import get_create_from_event_series
 from event.api.export import export_event
 from event.enums import EventStatus, RegistrationStatus
 from event.models import (
@@ -32,8 +33,10 @@ from event.models import (
     EventModule,
     EventPrice,
     EventQuestion,
+    EventReminder,
     EventRequirement,
     EventSeries,
+    EventSeriesReminder,
     EventSignup,
     GoogleAlbum,
     GoogleCalendar,
@@ -43,7 +46,7 @@ from event.models import (
     GooglePhotosAlbum,
     Location,
     Registration,
-    RegistrationLog,
+    RegistrationLog, EventSeriesSignup, EventSeriesModule,
 )
 from notify.enums import EmailType
 from payment.enums import PaymentType
@@ -182,6 +185,16 @@ class EventSignupInline(admin.TabularInline):
         return super().get_queryset(request=request).select_related("event")
 
 
+class EventReminderInline(admin.TabularInline):
+    model = EventReminder
+    ordering = ("module",)
+    readonly_fields = ("status",)
+    extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("event")
+
+
 class EventQuestionInline(admin.StackedInline):
     model = EventQuestion
     ordering = ("order",)
@@ -286,6 +299,7 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
     inlines = (
         EventModuleInline,
         EventSignupInline,
+        EventReminderInline,
         EventPriceInline,
         EventRequirementInline,
         EventQuestionInline,
@@ -401,22 +415,73 @@ class EventInline(admin.TabularInline):
     model = Event
     ordering = ("time_from", "time_to")
     fields = (
-        "title_locale",
+        "event_link",
         "time_from",
         "time_to",
         "location",
         "status",
     )
-    readonly_fields = ("title_locale",)
+    readonly_fields = ("event_link",)
     extra = 0
+
+    def has_add_permission(self, request, obj=None):
+        return False
 
     def get_queryset(self, request):
         return super().get_queryset(request).with_title()
 
-    def title_locale(self, obj):
-        return obj.title_locale
+    def event_link(self, obj):
+        event_url = reverse("admin:event_event_change", args=(obj.id,))
+        return mark_safe(f'<a href="{event_url}">{obj.title_locale}</a>')
 
-    title_locale.short_description = _("title")
+    event_link.short_description = _("title")
+
+
+class EventAddInlineForm(forms.ModelForm):
+    def __init__(self, *args, parent_obj: EventSeries, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent_obj = parent_obj
+
+    def clean(self):
+        self.instance = get_create_from_event_series(
+            event_series_id=self.parent_obj.id,
+            time_from=self.cleaned_data["time_from"],
+            time_to=self.cleaned_data["time_to"],
+            status=self.cleaned_data["status"],
+            location=self.cleaned_data["location"],
+        )
+
+    class Meta:
+        model = Event
+        fields = "__all__"
+
+
+class EventAddInline(admin.TabularInline):
+    model = Event
+    fields = (
+        "time_from",
+        "time_to",
+        "location",
+        "status",
+    )
+    form = EventAddInlineForm
+    extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).none()
+
+    def get_formset(self, request, obj=None, **kwargs):
+        BaseFormSet = kwargs.pop("formset", self.formset)
+
+        # Now make a custom subclass with an overridden “get_form_kwargs()”
+        class WithParentFormSet(BaseFormSet):
+            def get_form_kwargs(self, index):
+                kwargs = super().get_form_kwargs(index)
+                kwargs["parent_obj"] = obj
+                return kwargs
+
+        kwargs["formset"] = WithParentFormSet
+        return super().get_formset(request, obj, **kwargs)
 
 
 class EventSeriesForm(forms.ModelForm):
@@ -431,6 +496,37 @@ class EventSeriesForm(forms.ModelForm):
         ).order_by("module", "name", "-created_at")
 
 
+class EventSeriesModuleInline(admin.TabularInline):
+    model = EventSeriesModule
+    ordering = ("module",)
+    extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("series")
+
+
+class EventSeriesSignupInline(admin.TabularInline):
+    model = EventSeriesSignup
+    ordering = ("module",)
+    extra = 0
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("series")
+
+
+class EventSeriesReminderInline(admin.TabularInline):
+    model = EventSeriesReminder
+    ordering = ("module",)
+    extra = 0
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("series")
+
+
 @admin.register(EventSeries)
 class EventSeriesAdmin(admin.ModelAdmin):
     search_fields = ("id", "title")
@@ -441,7 +537,7 @@ class EventSeriesAdmin(admin.ModelAdmin):
     )
     list_filter = ("type", "module")
     ordering = ("-created_at",)
-    inlines = (EventInline,)
+    inlines = (EventSeriesModuleInline, EventSeriesSignupInline, EventSeriesReminderInline, EventInline, EventAddInline)
     form = EventSeriesForm
 
     formfield_overrides = {

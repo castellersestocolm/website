@@ -34,6 +34,11 @@ app.conf.beat_schedule = {
         "task": "event.tasks.clean_pending_registrations",
         "schedule": crontab(minute="*/10"),
     },
+    # Run every 30 minutes
+    "event.send_event_reminders": {
+        "task": "event.tasks.send_event_reminders",
+        "schedule": crontab(minute="*/30"),
+    },
     # Run once a day
     "membership.expire_old_memberships": {
         "task": "membership.tasks.expire_old_memberships",

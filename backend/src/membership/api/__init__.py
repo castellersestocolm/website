@@ -294,10 +294,12 @@ def complete(
         membership_module_obj.membership
         for membership_module_obj in membership_module_objs
     }
-    modules: set[Module] = {
-        Module(membership_module_obj.module)
-        for membership_module_obj in membership_module_objs
-    }
+    modules: list[Module] = list(
+        {
+            Module(membership_module_obj.module)
+            for membership_module_obj in membership_module_objs
+        }
+    )
 
     if not membership_module_objs or len(membership_objs) != 1:
         return False
