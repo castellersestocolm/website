@@ -595,7 +595,7 @@ def get_create_from_event_series(
 ) -> Event:
     event_series_obj = (
         EventSeries.objects.filter(id=event_series_id)
-        .prefetch_related("modules", "signups", "reminders")
+        .prefetch_related("modules", "signups", "reminders", "prices")
         .first()
     )
 
@@ -651,6 +651,16 @@ def get_create_from_event_series(
                 else EventReminderStatus.SKIPPED
             ),
             time=event_reminder_time,
+        )
+
+    for event_series_price_obj in event_series_obj.prices.all():
+        EventPrice.objects.create(
+            event=event_obj,
+            module=event_series_price_obj.module,
+            age_from=event_series_price_obj.age_from,
+            age_to=event_series_price_obj.age_to,
+            min_registrations=event_series_price_obj.min_registrations,
+            amount=event_series_price_obj.amount,
         )
 
     return event_obj

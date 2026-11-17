@@ -165,6 +165,36 @@ class EventSeriesModule(StandardModel, Timestamps):
         unique_together = ("series", "module", "team")
 
 
+class EventSeriesPrice(StandardModel, Timestamps):
+    series = models.ForeignKey(
+        EventSeries, related_name="prices", on_delete=models.PROTECT
+    )
+
+    module = models.PositiveSmallIntegerField(
+        choices=((m.value, m.name) for m in Module),
+        null=True,
+        blank=True,
+    )
+
+    age_from = models.PositiveSmallIntegerField(blank=True, null=True)
+    age_to = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    min_registrations = models.PositiveSmallIntegerField(default=0)
+
+    amount = MoneyField(
+        max_digits=7, decimal_places=2, null=True, blank=True, default_currency="SEK"
+    )
+
+    def __str__(self) -> str:
+        if self.module:
+            return f"{Module(self.module).name} - {self.series} - {self.amount}"
+
+        return f"{self.series} - {self.amount}"
+
+    class Meta:
+        unique_together = ("series", "module", "age_from", "age_to")
+
+
 class EventSeriesSignup(StandardModel, Timestamps):
     series = models.ForeignKey(
         EventSeries, related_name="signups", on_delete=models.PROTECT

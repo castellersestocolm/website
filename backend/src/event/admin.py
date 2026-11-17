@@ -37,6 +37,7 @@ from event.models import (
     EventRequirement,
     EventSeries,
     EventSeriesModule,
+    EventSeriesPrice,
     EventSeriesReminder,
     EventSeriesSignup,
     EventSignup,
@@ -507,6 +508,25 @@ class EventSeriesModuleInline(admin.TabularInline):
         return super().get_queryset(request=request).select_related("series")
 
 
+class EventSeriesPriceInline(admin.TabularInline):
+    model = EventSeriesPrice
+    ordering = (
+        "module",
+        "-amount",
+        "min_registrations",
+        "age_from",
+        "age_to",
+    )
+    extra = 0
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request=request).select_related("series")
+
+
 class EventSeriesSignupInline(admin.TabularInline):
     model = EventSeriesSignup
     ordering = ("module",)
@@ -543,6 +563,7 @@ class EventSeriesAdmin(admin.ModelAdmin):
         EventSeriesModuleInline,
         EventSeriesSignupInline,
         EventSeriesReminderInline,
+        EventSeriesPriceInline,
         EventInline,
         EventAddInline,
     )
