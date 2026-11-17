@@ -24,6 +24,11 @@ def send_event_reminders() -> None:
 
 
 @shared_task
+def send_event_reminder(event_reminder_id: UUID) -> None:
+    event.api.event_reminder.send_event_reminder(event_reminder_id=event_reminder_id)
+
+
+@shared_task
 def send_events_signup(
     user_ids: List[UUID] | None = None, module: Module | None = None
 ) -> None:

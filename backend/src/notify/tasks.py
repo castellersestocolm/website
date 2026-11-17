@@ -12,6 +12,7 @@ from notify.api.slack.chat import (
 )
 from notify.api.template import (
     get_contact_message_email_render,
+    get_email_template_renders,
     get_generic_email_render,
     get_order_email_render,
     get_payment_email_render,
@@ -251,6 +252,55 @@ def send_program_course_registration_email(
         registration_ids=registration_ids,
         email_type=email_type,
         module=module,
+        email=email,
+        context=context,
+        locale=locale,
+    )
+    email_objs = []
+
+    for email_render in email_renders:
+        email_objs.append(
+            Email.objects.create(
+                entity=email_render.entity_obj,
+                type=email_type,
+                subject=email_render.subject,
+                context=email_render.context,
+                module=module,
+                locale=email_render.locale,
+                status=EmailStatus.SENT,
+            )
+        )
+
+        send_email(
+            subject=email_render.subject,
+            body=email_render.body,
+            from_email=email_render.from_email,
+            to=email_render.to_email,
+            reply_to=email_render.from_email,
+            attachments=[],
+            module=module,
+        )
+
+    return email_objs
+
+
+@shared_task
+def send_event_reminder_email(
+    email_template_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    entity_ids: list[UUID] | None = None,
+    event_id: UUID | None = None,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> list[Email]:
+    email_renders = get_email_template_renders(
+        email_template_id=email_template_id,
+        email_type=email_type,
+        module=module,
+        entity_ids=entity_ids,
+        event_id=event_id,
         email=email,
         context=context,
         locale=locale,

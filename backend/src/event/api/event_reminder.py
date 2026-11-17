@@ -1,7 +1,12 @@
+from uuid import UUID
+
 from django.utils import timezone
 
+import notify.api.newsletter
+import notify.tasks
 from event.enums import EventReminderStatus
 from event.models import EventReminder
+from notify.enums import EmailType
 
 
 def send_event_reminders() -> None:
@@ -23,3 +28,34 @@ def send_event_reminders() -> None:
 
     if event_reminder_updates:
         EventReminder.objects.bulk_update(event_reminder_updates, fields=("status",))
+
+
+def send_event_reminder(event_reminder_id: UUID) -> None:
+    event_reminder_obj = (
+        EventReminder.objects.filter(id=event_reminder_id)
+        .select_related("event", "newsletter")
+        .first()
+    )
+
+    if not event_reminder_obj:
+        return None
+
+    if event_reminder_obj.newsletter:
+        entity_objs = notify.api.newsletter.get_entities_by_newsletter(
+            newsletter_id=event_reminder_obj.newsletter.id
+        )
+    else:
+        # TODO: Non-newsletter reminders
+        entity_objs = []
+
+    entity_ids = [entity_obj.id for entity_obj in entity_objs]
+
+    notify.tasks.send_event_reminder_email.delay(
+        email_template_id=event_reminder_obj.template_id,
+        email_type=EmailType.TEMPLATE_EVENT_REGISTER,
+        module=event_reminder_obj.event.module,
+        entity_ids=entity_ids,
+        event_id=event_reminder_obj.event_id,
+    )
+
+    return None

@@ -14,6 +14,7 @@ from factory.fuzzy import FuzzyChoice
 
 from comunicat.enums import Module
 from comunicat.utils.factories import fake_string, fake_telephone
+from payment.tests.factories import EntityFactory
 from user.enums import FamilyMemberRequestStatus, FamilyMemberRole, FamilyMemberStatus
 from user.models import (
     Family,
@@ -138,9 +139,11 @@ class GoogleGroupModuleFactory(DjangoModelFactory):
 
 class GoogleGroupUserFactory(DjangoModelFactory):
     group = SubFactory(GoogleGroupFactory)
-    user = SubFactory(UserFactory)
 
-    email = SelfAttribute("user.email")
+    entity = SubFactory(EntityFactory)
+    user = SelfAttribute("entity.user")
+
+    email = SelfAttribute("entity.email")
 
     force_member = False
 

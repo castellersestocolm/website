@@ -1,0 +1,21 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_body %}
+    {{ body | format_text }}
+    <div style="margin-bottom: 12px;">
+        {% with event_obj.time_from|date:"Y/m/d" as event_date_url %}
+            {% with "calendar/event/"|add:event_date_url|add:"/"|add:event_obj.code|add:"?entityToken="|add:token as event_signup_link %}
+                <table>
+                    <tr>
+                        <td align="center">
+                            <p>
+                                <a href="{% full_org_url event_signup_link %}" target="_blank" class="email-button">{% trans "Register now" %}</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            {% endwith %}
+        {% endwith %}
+    </div>
+{% endblock %}

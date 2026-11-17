@@ -106,6 +106,9 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Your payment has been processed"),
                 "html": "email/org/payment/request_paid.html",
             },
+            EmailType.TEMPLATE_EVENT_REGISTER: {
+                "html": "email/org/event/register.html",
+            },
         }
     },
     Module.TOWERS: {
@@ -189,7 +192,10 @@ TEMPLATE_BY_MODULE = {
             },
             EmailType.PAYMENT_REQUEST_PAID: {
                 "subject": _("Your payment has been processed"),
-                "html": "email/org/payment/request_paid.html",
+                "html": "email/towers/payment/request_paid.html",
+            },
+            EmailType.TEMPLATE_EVENT_REGISTER: {
+                "html": "email/towers/event/register.html",
             },
         }
     },
@@ -233,6 +239,10 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
     EmailType.PAYMENT_REQUEST_PAID: (
         "get_payment_request_email_render",
         ("payment_request_id",),
+    ),
+    EmailType.TEMPLATE_EVENT_REGISTER: (
+        "get_email_template_renders",
+        ("email_template_id", "entity_ids", "event_id"),
     ),
 }
 

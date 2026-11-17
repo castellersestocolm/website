@@ -118,6 +118,7 @@ class ContactMessage(StandardModel, Timestamps):
     context = JSONField(default=dict)
 
 
+# TODO: Allow non-Google newsletters
 class Newsletter(StandardModel, Timestamps):
     name = JSONField(default=language_field_default)
     description = JSONField(default=language_field_default)

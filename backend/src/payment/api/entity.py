@@ -128,7 +128,7 @@ def get_entity_by_key(
     update: bool = True,
 ) -> Entity:
     if email:
-        user_obj = User.objects.filter(email=email).first()
+        user_obj = User.objects.filter(Q(email=email) | Q(emails__email=email)).first()
     elif user_id:
         user_obj = User.objects.get(id=user_id)
     else:

@@ -284,6 +284,15 @@ def sync_events_google_drive(modeladmin, request, queryset):
         )
 
 
+@admin.action(description="Send reminder emails")
+def send_reminder_emails(modeladmin, request, queryset):
+    for event_obj in queryset.prefetch_related("reminders"):
+        for event_reminder_obj in event_obj.reminders.all():
+            event.tasks.send_event_reminder.delay(
+                event_reminder_id=event_reminder_obj.id
+            )
+
+
 @admin.register(Event)
 class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelAdmin):
     search_fields = ("id", "title")
@@ -312,7 +321,7 @@ class EventAdmin(inline_actions.admin.InlineActionsModelAdminMixin, admin.ModelA
         AccountEventInline,
         RegistrationInline,
     )
-    actions = (publish_events, sync_events_google_drive)
+    actions = (publish_events, sync_events_google_drive, send_reminder_emails)
     readonly_fields = ("accounts_link", "google_event", "google_album")
     raw_id_fields = ("course",)
     form = EventForm

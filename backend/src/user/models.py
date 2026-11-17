@@ -355,6 +355,8 @@ class GoogleGroupUser(StandardModel, Timestamps):
     group = models.ForeignKey(
         GoogleGroup, related_name="users", on_delete=models.CASCADE
     )
+
+    # TODO: Deprecate user and use entity always instead
     user = models.ForeignKey(
         User,
         blank=True,
@@ -362,6 +364,14 @@ class GoogleGroupUser(StandardModel, Timestamps):
         related_name="google_groups",
         on_delete=models.CASCADE,
     )
+    entity = models.ForeignKey(
+        "payment.Entity",
+        blank=True,
+        null=True,
+        related_name="google_groups",
+        on_delete=models.CASCADE,
+    )
+
     email = models.EmailField()
 
     role = models.PositiveSmallIntegerField(

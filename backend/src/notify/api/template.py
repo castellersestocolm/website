@@ -26,7 +26,7 @@ from notify.consts import (
     TEMPLATE_BY_MODULE,
 )
 from notify.enums import ContactMessageType, EmailType, NotificationType
-from notify.models import ContactMessage, Email
+from notify.models import ContactMessage, Email, EmailTemplate
 from order.models import Order, OrderLog, OrderProduct
 from payment.models import (
     Entity,
@@ -552,7 +552,7 @@ def get_registration_email_renders(
         entity_obj = registration_obj.entity
         user_obj = entity_obj.user
 
-        if user_obj and not user_obj.can_manage:
+        if not entity_obj.can_manage:
             continue
 
         current_email = email or user_obj.email if user_obj else entity_obj.email
@@ -679,7 +679,7 @@ def get_program_course_registration_email_renders(
         user_obj = entity_obj.user
 
         # TODO: This can be an issue with email_index if the first user on the list with index 0 is skipped
-        if user_obj and not user_obj.can_manage:
+        if not entity_obj.can_manage:
             continue
 
         current_email = email or user_obj.email if user_obj else entity_obj.email
@@ -799,6 +799,102 @@ def get_generic_email_render(email_id: UUID) -> EmailRender:
     )
 
 
+def get_email_template_renders(
+    email_template_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    entity_ids: list[UUID] | None = None,
+    event_id: UUID | None = None,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> list[EmailRender]:
+    if email_type == EmailType.TEMPLATE_EVENT_REGISTER:
+        if not entity_ids or not event_id:
+            return []
+
+        import user.api.event
+        from event.models import Event
+
+        email_renders = []
+
+        entity_objs = list(
+            Entity.objects.filter(id__in=entity_ids).select_related("user")
+        )
+
+        for entity_i, entity_obj in enumerate(entity_objs):
+            user_obj = entity_obj.user
+
+            # TODO: This can be an issue with email_index if the first user on the list with index 0 is skipped
+            if not entity_obj.can_manage:
+                continue
+
+            current_email = email or user_obj.email if user_obj else entity_obj.email
+            current_locale = (
+                locale
+                or (user_obj.preferred_language if user_obj else None)
+                or (entity_obj.preferred_language if entity_obj else None)
+                or settings.LANGUAGE_CODE
+            )
+
+            entity_obj = payment.api.entity.get_entity_by_key(email=current_email)
+
+            if not current_email:
+                continue
+
+            token = user.api.event.get_events_signup_token(entity_id=entity_obj.id)
+
+            with translation.override(current_locale):
+                email_template_obj = (
+                    EmailTemplate.objects.filter(id=email_template_id)
+                    .with_subject()
+                    .with_body()
+                    .first()
+                )
+                event_obj = Event.objects.filter(id=event_id).with_title().first()
+
+                context = {
+                    **SETTINGS_BY_MODULE[module],
+                    **(context or {}),
+                    "email_index": entity_i,
+                    "email_template_id": str(email_template_id),
+                    "entity_ids": [str(entity_id) for entity_id in entity_ids],
+                    "event_id": str(event_id),
+                }
+                context_full = {
+                    **context,
+                    "event_obj": event_obj,
+                    "entity_obj": entity_obj,
+                    "user_obj": user_obj,
+                    "body": email_template_obj.body_locale,
+                    "token": token,
+                }
+
+                template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][
+                    email_type
+                ]
+                from_email = EMAIL_BY_MODULE[module]
+                body = render_to_string(template["html"], context_full)
+                subject = email_template_obj.subject_locale
+
+            email_renders.append(
+                EmailRender(
+                    subject=subject,
+                    body=body,
+                    to_email=current_email,
+                    from_email=from_email,
+                    context=context,
+                    module=module,
+                    locale=current_locale,
+                    entity_obj=entity_obj,
+                )
+            )
+
+        return email_renders
+
+    return []
+
+
 def get_contact_message_email_render(
     contact_message_id: UUID,
 ) -> EmailRender:
@@ -862,8 +958,6 @@ def get_email_render(email_id: UUID) -> EmailRender | None:
         return get_generic_email_render(email_id=email_id)
 
     function, params = EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE[email_obj.type]
-
-    print(email_obj.context)
 
     if not all([param in email_obj.context for param in params]):
         return None
