@@ -137,11 +137,33 @@ class EventAPI(ComuniCatViewSet):
         serializer = PageEventSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
 
+        # TODO: Separate token perhaps, this is used to identify user/entity and to skip registration constraints
+        entity_token = serializer.validated_data.get("entity_token")
+        request_user_obj = (
+            request.user
+            if request.user.is_authenticated
+            else (
+                user.api.event.get_user_by_events_signup_token(token=entity_token)
+                if entity_token
+                else None
+            )
+        )
+
+        request_entity_obj = (
+            hasattr(request_user_obj, "entity") and request_user_obj.entity
+        )
+
+        if not request_entity_obj and entity_token:
+            request_entity_obj = user.api.event.get_entity_by_events_signup_token(
+                token=entity_token
+            )
+
         event_obj = event.api.get(
             date=serializer.validated_data.get("date"),
             code=serializer.validated_data.get("code"),
             token=serializer.validated_data.get("token"),
-            request_user_id=request.user.id if request.user.is_authenticated else None,
+            request_user_id=request_user_obj and request_user_obj.id,
+            request_entity_id=request_entity_obj and request_entity_obj.id,
             module=self.module,
         )
 
@@ -259,7 +281,7 @@ class RegistrationAPI(ComuniCatViewSet):
         validated_data = serializer.validated_data
 
         token = validated_data.get("token")
-        user_obj = (
+        request_user_obj = (
             request.user
             if request.user.is_authenticated
             else (
@@ -268,6 +290,15 @@ class RegistrationAPI(ComuniCatViewSet):
                 else None
             )
         )
+
+        request_entity_obj = (
+            hasattr(request_user_obj, "entity") and request_user_obj.entity
+        )
+
+        if not request_entity_obj and token:
+            request_entity_obj = user.api.event.get_entity_by_events_signup_token(
+                token=token
+            )
 
         if "user_id" in validated_data:
             entity_obj = payment.api.entity.get_entity_by_key(
@@ -299,7 +330,8 @@ class RegistrationAPI(ComuniCatViewSet):
             event_id=validated_data["event_id"],
             entity_id=entity_obj.id,
             owner_id=validated_data.get("owner_id"),
-            request_user_id=user_obj.id if user_obj else None,
+            request_user_id=request_user_obj and request_user_obj.id,
+            request_entity_id=request_entity_obj and request_entity_obj.id,
             module=self.module,
             status=validated_data.get("status"),
             data=validated_data.get("data"),
@@ -323,7 +355,7 @@ class RegistrationAPI(ComuniCatViewSet):
         serializer.is_valid(raise_exception=True)
 
         token = serializer.validated_data.get("token")
-        user_obj = (
+        request_user_obj = (
             request.user
             if request.user.is_authenticated
             else (
@@ -333,11 +365,23 @@ class RegistrationAPI(ComuniCatViewSet):
             )
         )
 
-        if not user_obj:
+        request_entity_obj = (
+            hasattr(request_user_obj, "entity") and request_user_obj.entity
+        )
+
+        if not request_entity_obj and token:
+            request_entity_obj = user.api.event.get_entity_by_events_signup_token(
+                token=token
+            )
+
+        if not request_user_obj and not request_entity_obj:
             return Response(status=401)
 
         registration_obj = event.api.registration.delete(
-            registration_id=id, request_user_id=user_obj.id, module=self.module
+            registration_id=id,
+            request_user_id=request_user_obj and request_user_obj.id,
+            request_entity_id=request_entity_obj and request_entity_obj.id,
+            module=self.module,
         )
 
         if not registration_obj:

@@ -517,7 +517,8 @@ export default function FormEventRegister({ event }: any) {
                                           </Typography>
                                           {registration &&
                                             registration.price &&
-                                            registration.price.amount.amount > 0 &&
+                                            registration.price.amount.amount >
+                                              0 &&
                                             registration.status !==
                                               RegistrationStatus.CANCELLED && (
                                               <Typography

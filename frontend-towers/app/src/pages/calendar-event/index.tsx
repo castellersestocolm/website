@@ -161,7 +161,11 @@ function CalendarEventPage() {
       (event.agenda_items && event.agenda_items.length > 0) ||
       (event.links && event.links.length > 0));
   const hasContentPrices =
-    event && !token && event.prices && event.prices.filter((eventPrice: any) => eventPrice.amount.amount > 0).length > 0;
+    event &&
+    !token &&
+    event.prices &&
+    event.prices.filter((eventPrice: any) => eventPrice.amount.amount > 0)
+      .length > 0;
   const hasContentSignup =
     event && event.require_signup && event.require_approve;
   const hasContentPoster =

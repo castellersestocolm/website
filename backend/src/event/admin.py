@@ -36,7 +36,9 @@ from event.models import (
     EventReminder,
     EventRequirement,
     EventSeries,
+    EventSeriesModule,
     EventSeriesReminder,
+    EventSeriesSignup,
     EventSignup,
     GoogleAlbum,
     GoogleCalendar,
@@ -46,7 +48,7 @@ from event.models import (
     GooglePhotosAlbum,
     Location,
     Registration,
-    RegistrationLog, EventSeriesSignup, EventSeriesModule,
+    RegistrationLog,
 )
 from notify.enums import EmailType
 from payment.enums import PaymentType
@@ -537,7 +539,13 @@ class EventSeriesAdmin(admin.ModelAdmin):
     )
     list_filter = ("type", "module")
     ordering = ("-created_at",)
-    inlines = (EventSeriesModuleInline, EventSeriesSignupInline, EventSeriesReminderInline, EventInline, EventAddInline)
+    inlines = (
+        EventSeriesModuleInline,
+        EventSeriesSignupInline,
+        EventSeriesReminderInline,
+        EventInline,
+        EventAddInline,
+    )
     form = EventSeriesForm
 
     formfield_overrides = {

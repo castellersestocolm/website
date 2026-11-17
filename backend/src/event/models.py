@@ -26,11 +26,12 @@ from comunicat.utils.models import language_field_default
 from event.consts import EVENT_QUESTION_TYPE_FIELDS
 from event.enums import (
     EventQuestionType,
+    EventReminderStatus,
     EventRequirementType,
     EventStatus,
     EventType,
     RegistrationStatus,
-    TransportMode, EventReminderStatus,
+    TransportMode,
 )
 from event.managers import (
     AgendaItemQuerySet,

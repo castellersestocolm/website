@@ -879,6 +879,7 @@ class PageEventSerializer(s.Serializer):
     date = s.DateField(required=False)
     code = s.CharField(required=False)
     token = s.CharField(required=False)
+    entity_token = s.CharField(required=False)
 
     def validate(self, data):
         if ("date" not in data or "code" not in data) and "token" not in data:

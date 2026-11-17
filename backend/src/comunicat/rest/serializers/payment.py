@@ -163,6 +163,10 @@ class EntitySerializer(EntitySlimSerializer):
         return obj.user.birthday if obj.user else obj.birthday
 
 
+class EntityListRequestSerializer(s.Serializer):
+    token = s.CharField(required=False)
+
+
 class PaymentLogSerializer(s.ModelSerializer):
     class Meta:
         model = PaymentLog

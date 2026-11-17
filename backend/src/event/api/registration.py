@@ -188,7 +188,10 @@ def get(
 
 
 def delete(
-    registration_id: UUID, request_user_id: UUID, module: Module
+    registration_id: UUID,
+    request_user_id: UUID,
+    request_entity_id: UUID,
+    module: Module,
 ) -> Registration | None:
     registration_obj = (
         Registration.objects.filter(id=registration_id)
@@ -204,7 +207,20 @@ def delete(
     ]
 
     if not registration_obj or (
-        registration_obj.entity.user and registration_obj.entity.user_id not in user_ids
+        (
+            not request_user_id
+            or (
+                registration_obj.entity.user
+                and registration_obj.entity.user_id not in user_ids
+            )
+        )
+        and (
+            not request_entity_id
+            or (
+                registration_obj.entity_id != request_entity_id
+                and registration_obj.owner_id != request_entity_id
+            )
+        )
     ):
         return None
 
@@ -228,6 +244,7 @@ def create(  # noqa: C901
     status: RegistrationStatus | None = None,
     owner_id: UUID | None = None,
     request_user_id: UUID | None = None,
+    request_entity_id: UUID | None = None,
     data: dict | None = None,
     update: bool = True,
 ) -> Registration | None:
@@ -283,6 +300,8 @@ def create(  # noqa: C901
 
     if request_user_id:
         owner_id = payment.api.entity.get_entity_by_key(user_id=request_user_id).id
+    elif request_entity_id:
+        owner_id = payment.api.entity.get_entity_by_key(entity_id=request_entity_id).id
 
     if not owner_id:
         owner_id = entity_id

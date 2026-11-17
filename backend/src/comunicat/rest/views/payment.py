@@ -2,6 +2,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control, cache_page
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
@@ -10,7 +11,10 @@ import payment.api
 import payment.api.expense
 import payment.api.payment_provider
 import payment.api.payment_request
+import user.api.event
 from comunicat.rest.serializers.payment import (
+    EntityListRequestSerializer,
+    EntitySerializer,
     ExpenseSerializer,
     PaymentProviderSerializer,
     PaymentRequestSerializer,
@@ -26,6 +30,12 @@ class PaymentResultsSetPagination(PageNumberPagination):
 
 
 class PaymentRequestResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
+class EntityResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
@@ -138,4 +148,41 @@ class PaymentRequestAPI(ComuniCatViewSet):
             return Response(status=404)
 
         serializer = self.serializer_class(payment_obj, context={"module": self.module})
+        return Response(serializer.data)
+
+
+class EntityAPI(ComuniCatViewSet):
+    serializer_class = EntitySerializer
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = EntityResultsSetPagination
+    lookup_field = "id"
+
+    @swagger_auto_schema(
+        query_serializer=EntityListRequestSerializer(),
+        responses={200: EntitySerializer(), 404: Serializer()},
+    )
+    @action(methods=["get"], detail=False, url_path="me", url_name="me")
+    @method_decorator(cache_page(60))
+    @method_decorator(cache_control(private=True))
+    def me(self, request):
+        serializer = EntityListRequestSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        token = serializer.validated_data.get("token")
+        entity_obj = (
+            request.user.entity
+            if request.user.is_authenticated and hasattr(request.user, "entity")
+            else (
+                user.api.event.get_entity_by_events_signup_token(token=token)
+                if token
+                else None
+            )
+        )
+
+        if not entity_obj:
+            return Response(status=401)
+
+        serializer = self.serializer_class(
+            entity_obj, context={"module": self.module, "user": request.user}
+        )
         return Response(serializer.data)

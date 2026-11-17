@@ -13,10 +13,10 @@ from notify.enums import (
     ContactMessageStatus,
     ContactMessageType,
     EmailStatus,
+    EmailTemplateType,
     EmailType,
     MessageSlackType,
     NewsletterType,
-    EmailTemplateType,
 )
 from notify.managers import EmailTemplateQuerySet, NewsletterQuerySet
 
