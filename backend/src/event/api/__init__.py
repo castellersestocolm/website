@@ -636,8 +636,10 @@ def get_create_from_event_series(
         )
 
     for event_series_reminder_obj in event_series_obj.reminders.all():
-        event_reminder_time = event_obj.time_from - timezone.timedelta(
-            days=event_series_reminder_obj.days_before
+        event_reminder_time = (
+            event_series_reminder_obj.days_before is not None
+            and event_obj.time_from
+            - timezone.timedelta(days=event_series_reminder_obj.days_before)
         )
 
         EventReminder.objects.create(
@@ -647,7 +649,7 @@ def get_create_from_event_series(
             template=event_series_reminder_obj.template,
             status=(
                 EventReminderStatus.SCHEDULED
-                if event_reminder_time >= time_now
+                if event_reminder_time and event_reminder_time >= time_now
                 else EventReminderStatus.SKIPPED
             ),
             time=event_reminder_time,

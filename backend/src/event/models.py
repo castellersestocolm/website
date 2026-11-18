@@ -248,7 +248,7 @@ class EventSeriesReminder(StandardModel, Timestamps):
         on_delete=models.CASCADE,
     )
 
-    days_before = models.PositiveSmallIntegerField()
+    days_before = models.PositiveSmallIntegerField(blank=True, null=True)
 
     def __str__(self) -> str:
         if self.module:
