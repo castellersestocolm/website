@@ -194,10 +194,14 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         )
 
         cls.google_group_board_user_board_1_obj = GoogleGroupUserFactory(
-            group=cls.google_group_board_obj, user=cls.user_board_3_obj
+            group=cls.google_group_board_obj,
+            entity=cls.entity_board_3_obj,
+            user=cls.user_board_3_obj,
         )
         cls.google_group_board_user_member_1_obj = GoogleGroupUserFactory(
-            group=cls.google_group_board_obj, user=cls.user_member_1_obj
+            group=cls.google_group_board_obj,
+            entity=cls.entity_member_1_obj,
+            user=cls.user_member_1_obj,
         )
 
         cls.newsletter_obj = NewsletterFactory(
@@ -246,7 +250,7 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         ):
             with self.assertNumOperations(
                 num=0,
-                num_selects=12,
+                num_selects=18,
                 num_inserts=3,
                 num_deletes=4,
             ):
@@ -310,7 +314,7 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         ):
             with self.assertNumOperations(
                 num=0,
-                num_selects=12,
+                num_selects=16,
                 num_inserts=2,
             ):
                 user.api.google_group.sync_users(
@@ -366,7 +370,7 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         ):
             with self.assertNumOperations(
                 num=0,
-                num_selects=11,
+                num_selects=13,
                 num_inserts=1,
             ):
                 user.api.google_group.sync_users(
@@ -404,7 +408,7 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         ):
             with self.assertNumOperations(
                 num=0,
-                num_selects=19,
+                num_selects=37,
                 num_inserts=9,
             ):
                 user.api.google_group.sync_users(
@@ -453,7 +457,7 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         ):
             with self.assertNumOperations(
                 num=0,
-                num_selects=8,
+                num_selects=10,
                 num_inserts=1,
             ):
                 user.api.google_group.sync_users(
@@ -491,8 +495,9 @@ class TestGoogleGroupSyncUsers(NumOperationsMixin, TestCase):
         ):
             with self.assertNumOperations(
                 num=0,
-                num_selects=10,
+                num_selects=15,
                 num_inserts=2,
+                num_updates=1,
             ):
                 user.api.google_group.sync_users(
                     group_id=self.google_group_newsletter_obj.id
@@ -544,11 +549,14 @@ class TestGoogleGroupSyncFromConsent(NumOperationsMixin, TestCase):
         )
 
         cls.google_group_user_member_1_obj = GoogleGroupUserFactory(
-            group=cls.google_group_newsletter_obj, user=cls.user_member_1_obj
+            group=cls.google_group_newsletter_obj,
+            entity=cls.entity_member_1_obj,
+            user=cls.user_member_1_obj,
         )
         cls.google_group_external_1_obj = GoogleGroupUserFactory(
             group=cls.google_group_newsletter_obj,
             user=None,
+            entity=None,
             email=cls.entity_external_1_obj.email,
         )
 

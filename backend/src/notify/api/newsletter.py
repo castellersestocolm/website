@@ -1,9 +1,11 @@
 from typing import List
 from uuid import UUID
 
+from django.db.models import Prefetch
+
 from comunicat.enums import Module
+from consent.models import EntityConsent
 from legal.models import Team
-from notify.enums import NewsletterType
 from notify.models import Newsletter
 from payment.models import Entity
 
@@ -24,7 +26,11 @@ def get_entities_by_newsletter(newsletter_id: UUID) -> list[Entity]:
         Newsletter.objects.filter(id=newsletter_id)
         .select_related("google_group")
         .prefetch_related(
-            "google_group__users", "google_group__users__entity", "consents"
+            Prefetch(
+                "consents",
+                EntityConsent.objects.filter_is_active(),
+                to_attr="all_consents",
+            )
         )
         .first()
     )
@@ -32,15 +38,8 @@ def get_entities_by_newsletter(newsletter_id: UUID) -> list[Entity]:
     if not newsletter_obj:
         return []
 
-    # TODO: Perhaps use entity consents only
-    if newsletter_obj.type == NewsletterType.GOOGLE:
-        return [
-            google_group_user_obj.entity
-            for google_group_user_obj in newsletter_obj.google_group.users.all()
-        ]
-
     return [
         entity_consent_obj.entity
-        for entity_consent_obj in newsletter_obj.consents
+        for entity_consent_obj in newsletter_obj.all_consents
         if not entity_consent_obj.deleted_at
     ]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-17 21:37+0100\n"
+"POT-Creation-Date: 2026-11-18 13:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "name"
 msgstr "namn"
 
-#: activity/admin.py:125 event/admin.py:420 event/admin.py:447
+#: activity/admin.py:125 event/admin.py:422 event/admin.py:449
 #: history/admin.py:32 media/admin.py:35
 msgid "title"
 msgstr "titel"
@@ -407,8 +407,24 @@ msgstr "Översikt"
 msgid "Total"
 msgstr "Summa"
 
-#: comunicat/templates/email/org/event/register.html:13
-#: comunicat/templates/email/towers/event/register.html:13
+#: comunicat/templates/email/org/event/register.html:7
+msgid "Here's a summary of the details for the event."
+msgstr "Här kommer en sammanfattning av evenemangsuppgifter."
+
+#: comunicat/templates/email/org/event/register.html:9
+msgid "Date"
+msgstr "Datum"
+
+#: comunicat/templates/email/org/event/register.html:11
+msgid "Location"
+msgstr "Plats"
+
+#: comunicat/templates/email/org/event/register.html:17
+msgid "The last day to register is"
+msgstr "Sista dagen för att anmäla sig är"
+
+#: comunicat/templates/email/org/event/register.html:27
+#: comunicat/templates/email/towers/event/register.html:16
 msgid "Register now"
 msgstr "Anmäl dig nu"
 
@@ -838,6 +854,10 @@ msgstr ""
 msgid "Pay the membership"
 msgstr "Betala medlemskapet"
 
+#: comunicat/templates/email/towers/event/register.html:7
+msgid "TEST"
+msgstr ""
+
 #: comunicat/templates/email/towers/membership/check.html:48
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -988,14 +1008,14 @@ msgstr ""
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:421 order/admin.py:607 payment/admin.py:1154
+#: event/admin.py:423 order/admin.py:607 payment/admin.py:1154
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
 msgid "accounts"
 msgstr "Belopp"
 
-#: event/admin.py:739
+#: event/admin.py:741
 msgid "time from"
 msgstr ""
 

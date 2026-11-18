@@ -241,8 +241,8 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
         ("payment_request_id",),
     ),
     EmailType.TEMPLATE_EVENT_REGISTER: (
-        "get_email_template_renders",
-        ("email_template_id", "entity_ids", "event_id"),
+        "get_email_template_render",
+        ("email_template_id", "entity_id", "event_id", "event_reminder_id"),
     ),
 }
 

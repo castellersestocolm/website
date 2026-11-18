@@ -48,14 +48,14 @@ def send_event_reminder(event_reminder_id: UUID) -> None:
         # TODO: Non-newsletter reminders
         entity_objs = []
 
-    entity_ids = [entity_obj.id for entity_obj in entity_objs]
-
-    notify.tasks.send_event_reminder_email.delay(
-        email_template_id=event_reminder_obj.template_id,
-        email_type=EmailType.TEMPLATE_EVENT_REGISTER,
-        module=event_reminder_obj.event.module,
-        entity_ids=entity_ids,
-        event_id=event_reminder_obj.event_id,
-    )
+    for entity_obj in entity_objs:
+        notify.tasks.send_event_reminder_email.delay(
+            email_template_id=event_reminder_obj.template_id,
+            email_type=EmailType.TEMPLATE_EVENT_REGISTER,
+            module=event_reminder_obj.event.module,
+            entity_id=entity_obj.id,
+            event_id=event_reminder_obj.event_id,
+            event_reminder_id=event_reminder_obj.id,
+        )
 
     return None

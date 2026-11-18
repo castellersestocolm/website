@@ -1,21 +1,30 @@
 {% extends "email/towers/base.html" %}
 {% load i18n comunicat_tags %}
 
-{% block email_body %}
+{% block email_message_pre %}
     {{ body | format_text }}
-    <div style="margin-bottom: 12px;">
-        {% with event_obj.time_from|date:"Y/m/d" as event_date_url %}
-            {% with "calendar/event/"|add:event_date_url|add:"/"|add:event_obj.code|add:"?entityToken="|add:token as event_signup_link %}
-                <table>
-                    <tr>
-                        <td align="center">
-                            <p>
-                                <a href="{% full_org_url event_signup_link %}" target="_blank" class="email-button">{% trans "Register now" %}</a>
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            {% endwith %}
-        {% endwith %}
-    </div>
+    {% if event_obj %}
+        <p>{% trans "Here's a summary of the details for the event." %}</p>
+        <ul>
+            <li>{% trans "Date" %}: {{ event_obj.time_from|date:"DATETIME_FORMAT" }}</li>
+            {% if event_obj.location %}
+                <li>{% trans "Location" %}: {{ event_obj.location.name }}</li>
+            {% endif %}
+        </ul>
+    {% endif %}
+    {% if event_reminder_obj %}
+        {% if event_signup_obj and event_signup_obj.time_to %}
+            <p>{% trans "The last day to register is" %} <strong>{{ event_signup_obj.time_to|date:"DATETIME_FORMAT" }}</strong>.</p>
+        {% endif %}
+    {% endif %}
 {% endblock %}
+
+{% block email_button_url %}
+    {% with event_obj.time_from|date:"Y/m/d" as event_date_url %}
+        {% with "calendar/event/"|add:event_date_url|add:"/"|add:event_obj.code|add:"?entityToken="|add:token as event_signup_link %}
+            {% full_org_url event_signup_link %}
+        {% endwith %}
+    {% endwith %}
+{% endblock %}
+
+{% block email_button_text %}{% trans "Register now" %}{% endblock %}

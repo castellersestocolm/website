@@ -7,6 +7,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+import payment.api.entity
 import user.api
 from comunicat.utils.email import get_module_emails_from_user
 from consent.models import EntityConsent

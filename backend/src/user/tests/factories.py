@@ -140,8 +140,8 @@ class GoogleGroupModuleFactory(DjangoModelFactory):
 class GoogleGroupUserFactory(DjangoModelFactory):
     group = SubFactory(GoogleGroupFactory)
 
-    entity = SubFactory(EntityFactory)
     user = SelfAttribute("entity.user")
+    entity = SubFactory(EntityFactory)
 
     email = SelfAttribute("entity.email")
 

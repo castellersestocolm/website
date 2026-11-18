@@ -26,3 +26,20 @@ class EntityConsentQuerySet(QuerySet):
                 output_field=BooleanField(),
             ),
         )
+
+    def with_is_active(self):
+        return self.annotate(
+            is_active=Case(
+                When(
+                    deleted_at__isnull=True,
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            ),
+        )
+
+    def filter_is_active(self):
+        return self.with_is_active().filter(
+            is_active=True,
+        )
