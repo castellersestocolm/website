@@ -14,7 +14,7 @@ def send_event_reminders() -> None:
 
     event_reminder_objs = list(
         EventReminder.objects.filter(
-            time__lte=time_now, status=EventReminderStatus.SCHEDULED
+            time__isnull=False, time__lte=time_now, status=EventReminderStatus.SCHEDULED
         ).order_by("time", "module", "newsletter")
     )
 
