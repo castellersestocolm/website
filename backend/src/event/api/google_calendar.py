@@ -311,11 +311,12 @@ def import_events() -> None:  # noqa: C901
     if event_module_creates:
         EventModule.objects.bulk_create(event_module_creates)
 
-    if registration_creates:
-        Registration.objects.bulk_create(registration_creates)
+    # TODO: Issues with the sync, skip for now
+    # if registration_creates:
+    #     Registration.objects.bulk_create(registration_creates)
 
-    if registration_updates:
-        Registration.objects.bulk_update(registration_updates, fields=("status",))
+    # if registration_updates:
+    #     Registration.objects.bulk_update(registration_updates, fields=("status",))
 
 
 def create_or_update_event(  # noqa: C901
