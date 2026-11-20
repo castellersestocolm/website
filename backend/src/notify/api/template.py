@@ -530,9 +530,7 @@ def get_registration_email_renders(
 ) -> list[EmailRender]:
     registration_objs = list(
         Registration.objects.filter(id__in=registration_ids)
-        .select_related("entity", "entity__user", "event", "line")
-        # TODO: Translation fix title
-        .with_event_title()
+        .select_related("entity", "entity__user")
         .order_by(
             "-line__amount",
             "entity__user__firstname",
@@ -568,10 +566,19 @@ def get_registration_email_renders(
             continue
 
         with translation.override(current_locale):
+            registration_obj = (
+                Registration.objects.filter(id=registration_obj.id)
+                .select_related("entity", "entity__user", "event", "line")
+                .with_event_title()
+                .first()
+            )
+
             context = {
                 **SETTINGS_BY_MODULE[module],
                 **(context or {}),
                 "email_index": registration_i,
+                "event_id": str(registration_obj.event_id),
+                "registration_id": str(registration_obj.id),
                 "registration_ids": [
                     str(current_registration_id)
                     for current_registration_id in registration_ids
