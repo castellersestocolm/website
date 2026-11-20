@@ -326,9 +326,17 @@ class GoogleWalletEvent:
             path=FILE_LOGO_BY_MODULE[self.module],
             module=self.module,
         )
-        file_hero = self.event_obj.picture and full_api_url(
-            path=self.event_obj.picture.url,
-            module=self.module,
+        file_hero = (
+            full_api_url(
+                path=self.event_obj.poster.url,
+                module=self.module,
+            )
+            if self.event_obj.poster
+            else self.event_obj.picture
+            and full_api_url(
+                path=self.event_obj.picture.url,
+                module=self.module,
+            )
         )
         event_name = {
             "defaultValue": {
