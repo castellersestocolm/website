@@ -10,6 +10,8 @@ import {
   ListItemButton,
   Link,
   Collapse,
+  Stack,
+  Button,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -25,6 +27,7 @@ import IconEast from "@mui/icons-material/East";
 import IconExpandMore from "@mui/icons-material/ExpandMore";
 import IconExpandLess from "@mui/icons-material/ExpandLess";
 import Map from "../../components/Map/Map";
+import IconQrCode from "@mui/icons-material/QrCode";
 
 function ActivityDinnersPage() {
   const [t, i18n] = useTranslation("common");
@@ -94,23 +97,61 @@ function ActivityDinnersPage() {
                             <ListItemIcon className={styles.userFamilyListIcon}>
                               <IconCalendarMonth />
                             </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                <Typography variant="body2" component="span">
-                                  {datetimeToLongString(
-                                    i18n.resolvedLanguage,
-                                    event.time_from,
-                                  )}
-                                </Typography>
-                              }
-                              secondary={event.location && event.location.name}
-                            ></ListItemText>
-                            {event.location &&
-                              (eventsMapOpen[event.id] ? (
-                                <IconExpandLess />
-                              ) : (
-                                <IconExpandMore />
-                              ))}
+                            <Box
+                              className={styles.userFamilyListInner}
+                              flexDirection={{ xs: "column", lg: "row" }}
+                              alignItems={{ xs: "start", lg: "center" }}
+                            >
+                              <ListItemText
+                                primary={
+                                  <Typography variant="body2" component="span">
+                                    {datetimeToLongString(
+                                      i18n.resolvedLanguage,
+                                      event.time_from,
+                                    )}
+                                  </Typography>
+                                }
+                                secondary={
+                                  event.location && event.location.name
+                                }
+                              ></ListItemText>
+                              {event.require_signup &&
+                                event.require_approve && (
+                                  <Stack
+                                    direction="row"
+                                    spacing={2}
+                                    marginLeft={{ xs: "0", lg: "16px" }}
+                                    marginTop={{ xs: "8px", lg: "0" }}
+                                    marginBottom={{ xs: "8px", lg: "0" }}
+                                    whiteSpace="nowrap"
+                                  >
+                                    <Button
+                                      variant="contained"
+                                      type="submit"
+                                      style={{ width: "auto" }}
+                                      disableElevation
+                                      href={ROUTES["calendar-event"].path
+                                        .replace(
+                                          ":year",
+                                          event.time_from.slice(0, 4),
+                                        )
+                                        .replace(
+                                          ":month",
+                                          event.time_from.slice(5, 7),
+                                        )
+                                        .replace(
+                                          ":day",
+                                          event.time_from.slice(8, 10),
+                                        )
+                                        .replace(":code", event.code)}
+                                    >
+                                      {t(
+                                        "pages.activity-dinners.content.events.register",
+                                      )}
+                                    </Button>
+                                  </Stack>
+                                )}
+                            </Box>
                           </ListItemButton>
                         </Box>
                         {event.location && (

@@ -586,8 +586,6 @@ class EventSerializer(EventSlimSerializer):
             "created_at",
         )
 
-    is_open_token = s.SerializerMethodField(read_only=True)
-
     @swagger_serializer_method(serializer_or_field=s.BooleanField(read_only=True))
     def get_has_token(self, obj):
         return getattr(obj, "has_token", False)
@@ -920,7 +918,7 @@ class DestroyRegistrationSerializer(s.Serializer):
 
 
 class EventSeriesSerializer(EventSeriesSlimSerializer):
-    events = EventSlimSerializer(read_only=True, many=True)
+    events = EventSerializer(read_only=True, many=True)
 
     class Meta:
         model = EventSeries

@@ -4,7 +4,8 @@ from django.db.models import Prefetch, Q
 
 from comunicat.enums import Module
 from event.enums import EventStatus
-from event.models import Event, EventModule, EventSeries
+from event.models import Event, EventModule, EventSeries, EventPrice, EventQuestion, EventLink, EventSignup, AgendaItem, \
+    Connection
 
 
 def get_list(  # noqa: C901
@@ -56,6 +57,49 @@ def get_list(  # noqa: C901
                                     "module", "team__type"
                                 )
                             ),
+                        ),
+                        Prefetch(
+                            "prices",
+                            (
+                                EventPrice.objects.order_by(
+                                    "module",
+                                    "-amount",
+                                    "min_registrations",
+                                    "age_from",
+                                    "age_to",
+                                )
+                            ),
+                        ),
+                        Prefetch(
+                            "questions",
+                            (
+                                EventQuestion.objects.order_by(
+                                    "order",
+                                )
+                            ),
+                        ),
+                        Prefetch(
+                            "links",
+                            (
+                                EventLink.objects.order_by(
+                                    "order",
+                                )
+                            ),
+                        ),
+                        Prefetch(
+                            "signups",
+                            (
+                                EventSignup.objects.with_is_full()
+                                .order_by("module", "time_from", "time_to")
+                            ),
+                        ),
+                        Prefetch(
+                            "agenda_items",
+                            (AgendaItem.objects.order_by("time_from")),
+                        ),
+                        Prefetch(
+                            "location__connections",
+                            (Connection.objects.order_by("-type")),
                         ),
                     )
                     .with_module_information(module=module)
