@@ -447,7 +447,7 @@ function CalendarEventPage() {
       title={event && event.title}
       description={eventSubtitle}
       content={content}
-      loading={!event}
+      loading={!event || !hasContent}
     />
   );
 }
