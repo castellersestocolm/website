@@ -4,8 +4,17 @@ from django.db.models import Prefetch, Q
 
 from comunicat.enums import Module
 from event.enums import EventStatus
-from event.models import Event, EventModule, EventSeries, EventPrice, EventQuestion, EventLink, EventSignup, AgendaItem, \
-    Connection
+from event.models import (
+    AgendaItem,
+    Connection,
+    Event,
+    EventLink,
+    EventModule,
+    EventPrice,
+    EventQuestion,
+    EventSeries,
+    EventSignup,
+)
 
 
 def get_list(  # noqa: C901
@@ -89,8 +98,9 @@ def get_list(  # noqa: C901
                         Prefetch(
                             "signups",
                             (
-                                EventSignup.objects.with_is_full()
-                                .order_by("module", "time_from", "time_to")
+                                EventSignup.objects.with_is_full().order_by(
+                                    "module", "time_from", "time_to"
+                                )
                             ),
                         ),
                         Prefetch(
