@@ -3,6 +3,7 @@ from typing import Any, List
 from urllib.parse import urljoin
 from uuid import UUID
 
+import markdown
 from django.conf import settings
 from django.template.defaulttags import register
 from django.urls import reverse
@@ -330,12 +331,16 @@ def format_enum(enum: str, value):
 @register.filter
 def format_text(text: str) -> str:
     return mark_safe(
-        format_html("".join([f"<p>{text_line}</p>" for text_line in text.split("\n")]))
+        format_html(
+            "".join(
+                [markdown.markdown(text=text_line) for text_line in text.split("\n")]
+            )
+        )
     )
 
 
 @register.filter
-def format_phone(phone: str) -> str:
+def format_phone(phone: str | None) -> str:
     if not phone:
         return ""
 

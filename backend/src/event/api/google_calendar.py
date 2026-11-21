@@ -14,6 +14,7 @@ from googleapiclient.errors import HttpError
 import payment.api.entity
 from comunicat.consts import GOOGLE_ENABLED_BY_MODULE
 from comunicat.enums import Module
+from comunicat.template_tags.comunicat_tags import format_text
 from comunicat.utils.models import language_field_default
 from event.consts import (
     GOOGLE_CALENDAR_SCOPES,
@@ -491,12 +492,12 @@ def create_or_update_event(  # noqa: C901
                     },
                     "description": "\n\n".join(
                         (
-                            [event_obj.description_locale]
+                            [format_text(text=event_obj.description_locale)]
                             if event_obj.description_locale
                             else []
                         )
                         + [
-                            f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}</b>{'\n' + agenda_item_obj.description_locale if agenda_item_obj.description_locale else ''}"
+                            f"<b>{timezone.localtime(agenda_item_obj.time_from).strftime('%H:%M')} — {agenda_item_obj.name_locale}</b>{'\n' + format_text(text=agenda_item_obj.description_locale) if agenda_item_obj.description_locale else ''}"
                             for agenda_item_obj in event_obj.agenda_items.all()
                         ]
                         + (
