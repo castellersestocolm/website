@@ -39,6 +39,7 @@ from order.models import (
     OrderProduct,
     OrderRegistration,
     OrderRequest,
+    OrderSponsorship,
 )
 from payment.enums import PaymentType
 from payment.models import Account
@@ -283,6 +284,56 @@ class OrderRequestInline(admin.TabularInline):
     request_link.short_description = _("request")
 
 
+class OrderSponsorshipInline(admin.TabularInline):
+    model = OrderSponsorship
+    raw_id_fields = ("entity_tier", "line")
+    readonly_fields = ("entity_link", "entity_tier_link")
+    extra = 0
+    ordering = ("amount",)
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related(
+                "entity_tier",
+                "entity_tier__entity",
+                "entity_tier__entity__user",
+                "entity_tier__tier",
+                "entity_tier__tier__sponsorship",
+            )
+        )
+
+    def has_add_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_change_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def has_delete_permission(self, request, obj=None):
+        return obj and obj.status <= OrderStatus.PROCESSING
+
+    def entity_link(self, obj):
+        if hasattr(obj, "entity_tier"):
+            entity_link = reverse(
+                "admin:payment_entity_change", args=(obj.entity_tier.entity_id,)
+            )
+            return mark_safe(f'<a href="{entity_link}">{obj.entity_tier.entity}</a>')
+        return "-"
+
+    def entity_tier_link_link(self, obj):
+        if hasattr(obj, "entity_link"):
+            entity_tier_link = reverse(
+                "admin:sponsorship__entitytier_change",
+                args=(obj.entity_tier_id,),
+            )
+            return mark_safe(f'<a href="{entity_tier_link}">{obj.entity_tier}</a>')
+        return "-"
+
+    entity_link.short_description = _("entity")
+    entity_tier_link_link.short_description = _("entity tier")
+
+
 class OrderLogInline(admin.TabularInline):
     model = OrderLog
     readonly_fields = ("status", "created_at")
@@ -404,6 +455,8 @@ class OrderAdmin(admin.ModelAdmin):
                 inlines = (OrderCourseInline,) + inlines
             elif obj.type == OrderType.REQUEST:
                 inlines = (OrderRequestInline,) + inlines
+            elif obj.type == OrderType.SPONSORSHIP:
+                inlines = (OrderSponsorshipInline,) + inlines
 
         return inlines
 

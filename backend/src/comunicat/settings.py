@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     "legal",
     "history",
     "media",
+    "sponsorship",
     "notify",
     "towers",
     "pinyator",

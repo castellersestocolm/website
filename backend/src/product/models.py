@@ -32,7 +32,7 @@ class Product(StandardModel, Timestamps):
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
     def __str__(self) -> str:
-        return self.name.get(translation.get_language()) or list(self.name.values())[0]
+        return self.name_locale
 
     class Meta:
         ordering = ("type", "created_at")

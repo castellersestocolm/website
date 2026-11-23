@@ -21,6 +21,7 @@ from comunicat.rest.views import (
     org,
     payment,
     product,
+    sponsorship,
     towers,
     user,
 )
@@ -49,6 +50,7 @@ router.register("legal/group", legal.GroupAPI, "legal_group")
 router.register("legal/bylaws", legal.BylawsAPI, "legal_bylaws")
 router.register("towers/castle", towers.TowersCastleAPI, "towers_castle")
 router.register("order", order.OrderAPI, "order")
+router.register("sponsorship", sponsorship.SponsorshipAPI, "sponsorship")
 router.register(
     "order/delivery/provider", order.DeliveryProviderAPI, "order_delivery_provider"
 )

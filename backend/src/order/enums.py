@@ -34,3 +34,4 @@ class OrderType(IntEnum):
     MEMBERSHIP = 30
     COURSE = 40
     REQUEST = 50
+    SPONSORSHIP = 60
