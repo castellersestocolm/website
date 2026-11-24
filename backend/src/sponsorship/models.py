@@ -20,7 +20,12 @@ from sponsorship.enums import (
     SponsorshipStatus,
     SponsorshipType,
 )
-from sponsorship.managers import EntityTierQuerySet, SponsorshipQuerySet, TierQuerySet
+from sponsorship.managers import (
+    EntityTierQuerySet,
+    RewardQuerySet,
+    SponsorshipQuerySet,
+    TierQuerySet,
+)
 
 
 class Sponsorship(StandardModel, Timestamps):
@@ -140,6 +145,18 @@ class TierPrice(StandardModel, Timestamps):
 class Reward(StandardModel, Timestamps):
     type = models.PositiveSmallIntegerField(
         choices=((rt.value, rt.name) for rt in RewardType),
+        default=RewardType.GENERAL,
+    )
+
+    name = JSONField(default=language_field_default)
+    description = JSONField(default=language_field_default)
+
+    icon = models.ForeignKey(
+        "theme.Icon",
+        related_name="awards",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
     )
 
     product = models.ForeignKey(
@@ -157,11 +174,19 @@ class Reward(StandardModel, Timestamps):
         on_delete=models.PROTECT,
     )
 
+    objects = RewardQuerySet.as_manager()
+
+    @cached_property
+    def name_locale(self) -> str:
+        return self.name.get(translation.get_language()) or list(self.name.values())[0]
+
     def __str__(self) -> str:
-        if self.type == RewardType.PRODUCT:
+        if self.type == RewardType.PRODUCT and self.product:
             return self.product.name_locale
-        elif self.type == RewardType.NEWSLETTER:
+        elif self.type == RewardType.NEWSLETTER and self.newsletter:
             return self.newsletter.name_locale
+
+        return self.name_locale
 
     def clean(self):
         validation_errors = {}
@@ -186,6 +211,8 @@ class RewardGroup(StandardModel, Timestamps):
 
     min_rewards = models.PositiveSmallIntegerField(default=1)
     max_rewards = models.PositiveSmallIntegerField(default=1)
+
+    order = models.PositiveSmallIntegerField(default=0)
 
     rewards = models.ManyToManyField(Reward, related_name="reward_groups")
 

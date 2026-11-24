@@ -1318,6 +1318,20 @@ export const apiIntegrationAppleWalletPassEventGet = async () => {
   }
 };
 
+export const apiSponsorshipPageGet = async (code: string) => {
+  try {
+    return await instance.get("/sponsorship/page/", {
+      params: {
+        code: code,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiAdminStatsEventGet = async (eventId: string) => {
   try {
     return await instance.get("/admin/stats/event/" + eventId + "/");

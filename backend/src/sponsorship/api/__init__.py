@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from comunicat.enums import Module
 from sponsorship.enums import SponsorshipStatus
-from sponsorship.models import Sponsorship, Tier, TierPrice
+from sponsorship.models import Reward, RewardGroup, Sponsorship, Tier, TierPrice
 
 
 def get_list(
@@ -46,6 +46,21 @@ def get_list(
                                     "module",
                                     "-amount",
                                 )
+                            ),
+                        ),
+                        Prefetch(
+                            "reward_groups",
+                            (
+                                RewardGroup.objects.prefetch_related(
+                                    Prefetch(
+                                        "rewards",
+                                        (
+                                            Reward.objects.order_by(
+                                                "type",
+                                            )
+                                        ),
+                                    ),
+                                ).order_by("order")
                             ),
                         ),
                     )

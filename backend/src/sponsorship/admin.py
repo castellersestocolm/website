@@ -96,19 +96,31 @@ class RewardGroupAdmin(admin.ModelAdmin):
         "tier__sponsorship__name",
         "tier__sponsorship__code",
     )
-    list_display = ("id", "tier", "min_rewards", "max_rewards")
+    list_display = ("id", "tier", "order", "min_rewards", "max_rewards")
     list_filter = ("tier",)
     raw_id_fields = ("tier",)
-    ordering = ("tier", "min_rewards", "max_rewards")
+    ordering = ("tier", "order")
 
 
 @admin.register(Reward)
 class RewardAdmin(admin.ModelAdmin):
-    search_fields = ("id", "product__name", "newsletter__name")
-    list_display = ("id", "product", "newsletter")
+    search_fields = ("id", "name", "product__name", "newsletter__name")
+    list_display = ("id", "type", "name_locale", "product", "newsletter")
     list_filter = ("type",)
     raw_id_fields = ("product", "newsletter")
     ordering = ("type", "product", "newsletter")
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditor},
+    }
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).with_name()
+
+    def name_locale(self, obj):
+        return obj.name_locale
+
+    name_locale.short_description = _("name")
 
 
 @admin.register(EntityTier)

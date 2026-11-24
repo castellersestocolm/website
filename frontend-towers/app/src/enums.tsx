@@ -23,6 +23,9 @@ import IconFile from "@mui/icons-material/FilePresent";
 import IconDeleteForeverRounded from "@mui/icons-material/DeleteForeverRounded";
 import IconSchool from "@mui/icons-material/School";
 import IconGroups from "@mui/icons-material/Groups";
+import IconCheck from "@mui/icons-material/Check";
+import IconCategory from "@mui/icons-material/Category";
+import IconAttachEmail from "@mui/icons-material/AttachEmail";
 
 export enum Language {
   ENGLISH = "en",
@@ -332,3 +335,15 @@ export enum ColourType {
 export enum IconType {
   MUI_MATERIAL_ICON = 10,
 }
+
+export enum RewardType {
+  GENERAL = 10,
+  PRODUCT = 20,
+  NEWSLETTER = 30,
+}
+
+export const REWARD_TYPE_ICON: any = {
+  10: <IconCheck />,
+  20: <IconCategory />,
+  30: <IconAttachEmail />,
+};

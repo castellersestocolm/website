@@ -56,6 +56,7 @@ import PolicyPurchasePage from "./pages/policy-purchase";
 import MembershipPage from "./pages/membership";
 import CalendarEventPaymentPage from "./pages/calendar-event-payment";
 import CalendarEventReceiptPage from "./pages/calendar-event-receipt";
+import SponsorshipDonatePage from "./pages/sponsorship-donate";
 import ErrorNotFoundPage from "./pages/error-not-found";
 
 i18next.use(LngDetector).init({
@@ -326,6 +327,10 @@ const App = () => {
                   <Route
                     path={ROUTES["policy-purchase"].path}
                     element={<PolicyPurchasePage />}
+                  />
+                  <Route
+                    path={ROUTES["sponsorship-donate"].path}
+                    element={<SponsorshipDonatePage />}
                   />
                   <Route path="*" element={<ErrorNotFoundPage />} />
                 </Routes>

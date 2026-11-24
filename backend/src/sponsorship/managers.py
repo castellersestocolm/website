@@ -35,6 +35,22 @@ class TierQuerySet(QuerySet):
         )
 
 
+class RewardQuerySet(QuerySet):
+    def with_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            name_locale=KeyTextTransform(locale, "name"),
+        )
+
+    def with_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            description_locale=KeyTextTransform(locale, "description"),
+        )
+
+
 class EntityTierQuerySet(QuerySet):
     def with_is_active(self):
         date_today = timezone.localdate()

@@ -6,10 +6,79 @@ from rest_framework.exceptions import ValidationError
 
 from comunicat.enums import Module
 from comunicat.rest.serializers.event import EventSlimSerializer
+from comunicat.rest.serializers.notify import NewsletterSlimSerializer
 from comunicat.rest.serializers.payment import EntitySlimSerializer
+from comunicat.rest.serializers.product import ProductSlimSerializer
+from comunicat.rest.serializers.theme import IconSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
-from sponsorship.enums import SponsorshipStatus, SponsorshipType
-from sponsorship.models import EntityTier, Sponsorship, Tier, TierPrice
+from sponsorship.enums import RewardType, SponsorshipStatus, SponsorshipType
+from sponsorship.models import (
+    EntityTier,
+    Reward,
+    RewardGroup,
+    Sponsorship,
+    Tier,
+    TierPrice,
+)
+
+
+class RewardSerializer(s.ModelSerializer):
+    type = IntEnumField(RewardType, read_only=True)
+    name = s.SerializerMethodField(read_only=True)
+    description = s.SerializerMethodField(read_only=True)
+    icon = IconSerializer(read_only=True)
+    product = ProductSlimSerializer(read_only=True)
+    newsletter = NewsletterSlimSerializer(read_only=True)
+
+    class Meta:
+        model = Reward
+        fields = (
+            "id",
+            "type",
+            "name",
+            "description",
+            "icon",
+            "product",
+            "newsletter",
+        )
+        read_only_fields = (
+            "id",
+            "type",
+            "name",
+            "description",
+            "icon",
+            "product",
+            "newsletter",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_name(self, obj):
+        return obj.name.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
+
+
+class RewardGroupSerializer(s.ModelSerializer):
+    rewards = RewardSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = RewardGroup
+        fields = (
+            "id",
+            "min_rewards",
+            "max_rewards",
+            "order",
+            "rewards",
+        )
+        read_only_fields = (
+            "id",
+            "min_rewards",
+            "max_rewards",
+            "order",
+            "rewards",
+        )
 
 
 class TierPriceSerializer(s.ModelSerializer):
@@ -33,6 +102,7 @@ class TierSlimSerializer(s.ModelSerializer):
     name = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
     prices = TierPriceSerializer(read_only=True, many=True)
+    reward_groups = RewardGroupSerializer(read_only=True, many=True)
 
     class Meta:
         model = Tier
@@ -45,6 +115,7 @@ class TierSlimSerializer(s.ModelSerializer):
             "length_years",
             "order",
             "prices",
+            "reward_groups",
             "created_at",
         )
         read_only_fields = (
@@ -56,6 +127,7 @@ class TierSlimSerializer(s.ModelSerializer):
             "length_years",
             "order",
             "prices",
+            "reward_groups",
             "created_at",
         )
 
@@ -164,6 +236,7 @@ class TierSerializer(TierSlimSerializer):
             "length_years",
             "order",
             "prices",
+            "reward_groups",
             "created_at",
         )
         read_only_fields = (
@@ -176,6 +249,7 @@ class TierSerializer(TierSlimSerializer):
             "length_years",
             "order",
             "prices",
+            "reward_groups",
             "created_at",
         )
 

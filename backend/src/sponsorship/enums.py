@@ -13,8 +13,9 @@ class SponsorshipStatus(IntEnum):
 
 
 class RewardType(IntEnum):
-    PRODUCT = 10
-    NEWSLETTER = 20
+    GENERAL = 10
+    PRODUCT = 20
+    NEWSLETTER = 30
 
 
 class EntityTierStatus(IntEnum):

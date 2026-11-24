@@ -123,6 +123,9 @@ export const ROUTES = {
   "business-performances": {
     path: "/business/performances",
   },
+  "sponsorship-donate": {
+    path: "/sponsorship/donate",
+  },
   admin: {
     path: "/admin",
   },
