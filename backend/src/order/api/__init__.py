@@ -194,7 +194,6 @@ def get_list(
                     "entity_tier__tier__sponsorship",
                 ).order_by(
                     "amount",
-                    "request__text",
                 ),
             ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
