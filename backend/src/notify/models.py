@@ -132,6 +132,7 @@ class Newsletter(StandardModel, Timestamps):
         choices=((nt.value, nt.name) for nt in NewsletterType),
         default=NewsletterType.INTERNAL,
     )
+    is_public = models.BooleanField(default=True)
 
     google_group = models.ForeignKey(
         "user.GoogleGroup",

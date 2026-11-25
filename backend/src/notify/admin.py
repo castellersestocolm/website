@@ -260,8 +260,8 @@ class NewsletterAdmin(admin.ModelAdmin):
         "name",
         "description",
     )
-    list_display = ("name_locale", "type", "module", "created_at")
-    list_filter = ("type", "module")
+    list_display = ("name_locale", "type", "module", "is_public", "created_at")
+    list_filter = ("type", "module", "is_public")
     ordering = ("-created_at",)
     inlines = (EntityConsentInline,)
 
