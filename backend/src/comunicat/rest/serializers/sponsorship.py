@@ -7,7 +7,10 @@ from rest_framework.exceptions import ValidationError
 from comunicat.enums import Module
 from comunicat.rest.serializers.event import EventSlimSerializer
 from comunicat.rest.serializers.notify import NewsletterSlimSerializer
-from comunicat.rest.serializers.payment import EntitySlimSerializer
+from comunicat.rest.serializers.payment import (
+    CreateEntitySerializer,
+    EntitySlimSerializer,
+)
 from comunicat.rest.serializers.product import ProductSlimSerializer
 from comunicat.rest.serializers.theme import IconSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
@@ -82,7 +85,7 @@ class RewardGroupSerializer(s.ModelSerializer):
 
 
 class TierPriceSerializer(s.ModelSerializer):
-    amount = MoneyField(read_only=True)
+    amount = MoneyField(with_exchange=True, read_only=True)
 
     class Meta:
         model = TierPrice
@@ -291,3 +294,24 @@ class SponsorshipPageSerializer(s.Serializer):
             )
 
         return data
+
+
+class CreateEntityRewardSerializer(s.Serializer):
+    id = s.UUIDField()
+
+
+class CreateEntityTierSerializer(s.Serializer):
+    entity = CreateEntitySerializer(required=False)
+    tier_id = s.UUIDField()
+    rewards = CreateEntityRewardSerializer(many=True, required=False)
+    is_public = s.BooleanField(required=False)
+
+    def validate_entity(self, value: str | None):
+        user_obj = self.context.get("user")
+
+        if not user_obj and not value:
+            raise ValidationError(
+                {"entity": _("The entity is required for non-logged in users.")}
+            )
+
+        return value

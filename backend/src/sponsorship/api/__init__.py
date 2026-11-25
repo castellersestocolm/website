@@ -55,9 +55,9 @@ def get_list(
                                     Prefetch(
                                         "rewards",
                                         (
-                                            Reward.objects.order_by(
-                                                "type",
-                                            )
+                                            Reward.objects.with_name()
+                                            .with_description()
+                                            .order_by("type", "name_locale")
                                         ),
                                     ),
                                 ).order_by("order")

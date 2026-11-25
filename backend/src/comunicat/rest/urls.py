@@ -51,6 +51,7 @@ router.register("legal/bylaws", legal.BylawsAPI, "legal_bylaws")
 router.register("towers/castle", towers.TowersCastleAPI, "towers_castle")
 router.register("order", order.OrderAPI, "order")
 router.register("sponsorship", sponsorship.SponsorshipAPI, "sponsorship")
+router.register("sponsorship/entity", sponsorship.EntityTierAPI, "sponsorship_entity")
 router.register(
     "order/delivery/provider", order.DeliveryProviderAPI, "order_delivery_provider"
 )

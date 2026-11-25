@@ -1,5 +1,4 @@
 import datetime
-import decimal
 import logging
 from uuid import UUID
 
@@ -8,8 +7,6 @@ from django.db import transaction
 from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
 import activity.api.course
@@ -22,6 +19,7 @@ import payment.api.websocket
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
+from comunicat.utils.money import get_amount_in_currency
 from data.models import Country, Region
 from event.models import Registration
 from membership.models import MembershipModule
@@ -334,16 +332,9 @@ def create(  # noqa: C901
             if not delivery_price_obj:
                 return None
 
-            delivery_amount = delivery_price_obj.price
+            delivery_amount = get_amount_in_currency(amount=delivery_price_obj.price)
             delivery_vat = delivery_price_obj.vat
 
-            if delivery_amount.currency != settings.MODULE_ALL_CURRENCY:
-                delivery_amount = Money(
-                    convert_money(
-                        delivery_amount, settings.MODULE_ALL_CURRENCY
-                    ).amount.to_integral(rounding=decimal.ROUND_UP),
-                    settings.MODULE_ALL_CURRENCY,
-                )
         else:
             delivery_amount = ZERO_MONEY
             delivery_vat = 0
@@ -764,10 +755,11 @@ def complete(  # noqa: C901
                     with_notify=with_notify,
                 )
             elif order_obj.type == OrderType.SPONSORSHIP:
-                entity_tier_ids = [
-                    entity_tier_obj.entity_tier_id
-                    for entity_tier_obj in order_obj.sponsorships.all()
-                ]
+                pass
+                # entity_tier_ids = [
+                #     entity_tier_obj.entity_tier_id
+                #     for entity_tier_obj in order_obj.sponsorships.all()
+                # ]
                 # TODO: SPONSORSHIP FINISH PAYMENT
                 # payment.api.payment_request.complete_lines(
                 #     request_line_ids=payment_request_line_ids,

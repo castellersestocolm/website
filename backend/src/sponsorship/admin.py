@@ -72,7 +72,7 @@ class TierAdmin(admin.ModelAdmin):
     )
     list_filter = ("sponsorship",)
     raw_id_fields = ("sponsorship",)
-    ordering = ("sponsorship__name", "name")
+    ordering = ("sponsorship__name", "order", "name")
     inlines = (TierPriceInline,)
 
     formfield_overrides = {
@@ -99,7 +99,7 @@ class RewardGroupAdmin(admin.ModelAdmin):
     list_display = ("id", "tier", "order", "min_rewards", "max_rewards")
     list_filter = ("tier",)
     raw_id_fields = ("tier",)
-    ordering = ("tier", "order")
+    ordering = ("tier__order", "order")
 
 
 @admin.register(Reward)

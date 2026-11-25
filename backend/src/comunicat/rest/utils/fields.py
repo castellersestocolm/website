@@ -5,9 +5,10 @@ from typing import Any, Collection, Optional, TypeVar
 
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from rest_framework import serializers
+
+from comunicat.utils.money import get_amount_in_currency
 
 EnumT = TypeVar("EnumT", bound=Enum)
 
@@ -83,8 +84,13 @@ class MoneyField(serializers.DictField):
         "not_money": _("Not money."),
         "missing_data": _("Missing amount or currency."),
     }
+    with_exchange: bool = False
 
-    def to_representation(self, obj):
+    def __init__(self, with_exchange: bool = False, **kwargs):
+        self.with_exchange = with_exchange
+        super().__init__(**kwargs)
+
+    def to_representation(self, obj, skip_conversion: bool = False):
         if isinstance(obj, int):
             obj = Money(amount=obj, currency=settings.MODULE_ALL_CURRENCY)
         if isinstance(obj, Decimal):
@@ -92,14 +98,34 @@ class MoneyField(serializers.DictField):
         if not isinstance(obj, Money):
             self.fail("not_money")
 
-        if obj.currency != settings.MODULE_ALL_CURRENCY:
-            obj = convert_money(obj, settings.MODULE_ALL_CURRENCY)
+        if not skip_conversion:
+            obj = get_amount_in_currency(amount=obj)
 
         rounded_money = Money(
             obj.amount.to_integral(rounding=decimal.ROUND_UP), obj.currency
         )
+
         return super().to_representation(
-            {"amount": rounded_money.amount, "currency": rounded_money.currency.code}
+            {
+                "amount": rounded_money.amount,
+                "currency": rounded_money.currency.code,
+                **(
+                    {
+                        "exchange": {
+                            currency: MoneyField().to_representation(
+                                obj=get_amount_in_currency(
+                                    amount=obj, currency=currency
+                                ),
+                                skip_conversion=True,
+                            )
+                            for currency in settings.MODULE_ALL_CURRENCIES
+                            if currency != rounded_money.currency.code
+                        }
+                    }
+                    if self.with_exchange
+                    else {}
+                ),
+            }
         )
 
     def to_internal_value(self, data):

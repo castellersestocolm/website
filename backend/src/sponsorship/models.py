@@ -234,6 +234,8 @@ class EntityTier(StandardModel, Timestamps):
 
     amount = MoneyField(max_digits=7, decimal_places=2, default_currency="SEK")
 
+    is_public = models.BooleanField(default=True)
+
     objects = EntityTierQuerySet.as_manager()
 
     def __str__(self) -> str:
