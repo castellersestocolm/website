@@ -16,6 +16,7 @@ PAYMENT_LINE_CONTENT_TYPES = (
     ("order", "ordermembership"),
     ("order", "ordercourse"),
     ("order", "orderrequest"),
+    ("order", "ordersponsorship"),
     ("event", "registration"),
 )
 

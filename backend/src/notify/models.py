@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import JSONField
 from django.utils import translation
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from comunicat.db.mixins import StandardModel, Timestamps
@@ -142,6 +143,13 @@ class Newsletter(StandardModel, Timestamps):
 
     objects = NewsletterQuerySet.as_manager()
 
+    @cached_property
+    def name_locale(self) -> str:
+        return self.name.get(translation.get_language()) or list(self.name.values())[0]
+
+    def __str__(self) -> str:
+        return f"{Module(self.module).name} - {self.name_locale}"
+
     def clean(self):
         validation_errors = {}
         if self.type == NewsletterType.GOOGLE and not self.google_group:
@@ -151,9 +159,3 @@ class Newsletter(StandardModel, Timestamps):
 
         if validation_errors:
             raise ValidationError(validation_errors)
-
-    def __str__(self) -> str:
-        return f"{Module(self.module).name} - {
-        self.name.get(translation.get_language())
-        or list(self.name.values())[0]
-        }"

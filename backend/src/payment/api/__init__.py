@@ -18,6 +18,7 @@ from order.models import (
     OrderProduct,
     OrderRegistration,
     OrderRequest,
+    OrderSponsorship,
 )
 from payment.enums import PaymentStatus, PaymentType
 from payment.models import Payment, PaymentLine, PaymentLog, Transaction
@@ -147,6 +148,17 @@ def create_for_order(  # noqa: C901
                 ),
                 to_attr="all_requests",
             ),
+            Prefetch(
+                "sponsorships",
+                OrderSponsorship.objects.select_related(
+                    "entity_tier",
+                    "entity_tier__entity",
+                    "entity_tier__entity__user",
+                    "entity_tier__tier",
+                    "entity_tier__tier__sponsorship",
+                ),
+                to_attr="all_sponsorships",
+            ),
         )
         .first()
     )
@@ -163,6 +175,7 @@ def create_for_order(  # noqa: C901
     order_membership_updates = []
     order_course_updates = []
     order_request_updates = []
+    order_sponsorship_updates = []
 
     with translation.override(
         language=order_obj.origin_language or settings.LANGUAGE_CODE
@@ -183,6 +196,11 @@ def create_for_order(  # noqa: C901
             text = f"{text_order} #{order_obj.reference}"
             text_order_fee = _("Payment fee")
             text_fee = f"{text_order_fee} #{order_obj.reference}"
+        elif order_obj.type == OrderType.SPONSORSHIP:
+            text = order_obj.all_sponsorships[
+                0
+            ].entity_tier.tier.sponsorship.name_locale
+            text_fee = f"{text} fee"
         else:
             text_order = _("Order")
             text = f"{text_order} #{order_obj.reference}"
@@ -231,6 +249,9 @@ def create_for_order(  # noqa: C901
         )
         item_type_order_request = ContentType.objects.get_by_natural_key(
             "order", "orderrequest"
+        )
+        item_type_order_sponsorship = ContentType.objects.get_by_natural_key(
+            "order", "ordersponsorship"
         )
         item_type_order_delivery = ContentType.objects.get_by_natural_key(
             "order", "orderdelivery"
@@ -313,6 +334,18 @@ def create_for_order(  # noqa: C901
             order_request_obj.line = payment_line_obj
             order_request_updates.append(order_request_obj)
 
+        for order_sponsorship_obj in order_obj.all_sponsorships:
+            payment_line_obj, __ = PaymentLine.objects.update_or_create(
+                payment=payment_obj,
+                amount=order_sponsorship_obj.amount,
+                vat=order_sponsorship_obj.vat,
+                text=f"{order_sponsorship_obj.entity_tier.tier.sponsorship.name_locale} — {order_sponsorship_obj.entity_tier.tier.name_locale}",
+                item_type=item_type_order_sponsorship,
+                item_id=order_sponsorship_obj.id,
+            )
+            order_sponsorship_obj.line = payment_line_obj
+            order_sponsorship_updates.append(order_sponsorship_obj)
+
         if order_obj.delivery:
             text_delivery = _("Delivery")
             account_delivery_obj = (
@@ -352,6 +385,11 @@ def create_for_order(  # noqa: C901
 
         if order_request_updates:
             OrderRequest.objects.bulk_update(order_request_updates, fields=("line",))
+
+        if order_sponsorship_updates:
+            OrderSponsorship.objects.bulk_update(
+                order_sponsorship_updates, fields=("line",)
+            )
 
         if fee_amount:
             account_fees_obj = (

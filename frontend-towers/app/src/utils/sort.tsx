@@ -84,3 +84,12 @@ export function compareEventSignup(a: any, b: any) {
   }
   return 1;
 }
+
+export function compareTierPrice(a: any, b: any) {
+  if (a.amount.amount < b.amount.amount) {
+    return -1;
+  } else if (a.amount.amount > b.amount.amount) {
+    return 1;
+  }
+  return 0;
+}

@@ -23,6 +23,7 @@ from comunicat.rest.serializers.payment import (
     PaymentRequestSerializer,
 )
 from comunicat.rest.serializers.product import ProductSizeSerializer
+from comunicat.rest.serializers.sponsorship import EntityTierSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from order.enums import OrderDeliveryType, OrderStatus, OrderType
 from order.models import (
@@ -36,6 +37,7 @@ from order.models import (
     OrderProduct,
     OrderRegistration,
     OrderRequest,
+    OrderSponsorship,
 )
 from user.models import User
 
@@ -291,6 +293,29 @@ class OrderRequestSerializer(s.ModelSerializer):
         read_only_fields = (
             "id",
             "request",
+            "line",
+            "amount",
+            "vat",
+        )
+
+
+class OrderSponsorshipSerializer(s.ModelSerializer):
+    entity_tier = EntityTierSerializer(read_only=True)
+    line = PaymentLineSerializer(read_only=True)
+    amount = MoneyField(read_only=True)
+
+    class Meta:
+        model = OrderSponsorship
+        fields = (
+            "id",
+            "entity_tier",
+            "line",
+            "amount",
+            "vat",
+        )
+        read_only_fields = (
+            "id",
+            "entity_tier",
             "line",
             "amount",
             "vat",

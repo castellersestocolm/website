@@ -82,11 +82,41 @@ class ProductModuleSerializer(s.ModelSerializer):
         )
 
 
-class ProductSerializer(s.ModelSerializer):
+class ProductSlimSerializer(s.ModelSerializer):
     name = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
-    sizes = ProductSizeWithStockSerializer(many=True, read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "name",
+            "description",
+            "type",
+            "weight_grams",
+            "images",
+        )
+        read_only_fields = (
+            "id",
+            "name",
+            "description",
+            "type",
+            "weight_grams",
+            "images",
+        )
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_name(self, obj):
+        return obj.name.get(translation.get_language())
+
+    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
+    def get_description(self, obj):
+        return obj.description.get(translation.get_language())
+
+
+class ProductSerializer(ProductSlimSerializer):
+    sizes = ProductSizeWithStockSerializer(many=True, read_only=True)
     price = s.SerializerMethodField(required=False, read_only=True)
     modules = ProductModuleSerializer(many=True, read_only=True)
 
@@ -114,14 +144,6 @@ class ProductSerializer(s.ModelSerializer):
             "price",
             "modules",
         )
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_name(self, obj):
-        return obj.name.get(translation.get_language())
-
-    @swagger_serializer_method(serializer_or_field=s.CharField(read_only=True))
-    def get_description(self, obj):
-        return obj.description.get(translation.get_language())
 
     @swagger_serializer_method(
         serializer_or_field=ProductPriceSerializer(required=False, read_only=True)

@@ -406,10 +406,12 @@ class Event(StandardModel, Timestamps):
 
     def clean(self):
         validation_errors = {}
+
         if self.time_to < self.time_from:
             validation_errors["time_to"] = _(
                 "The end time must be greater than start time."
             )
+
         if self.course:
             if self.course.program.module != self.module:
                 validation_errors["module"] = _(
@@ -425,6 +427,7 @@ class Event(StandardModel, Timestamps):
                 validation_errors["time_from"] = _(
                     "The start time must be within the course dates."
                 )
+
         if self.series:
             if self.series.module != self.module:
                 validation_errors["module"] = _(
@@ -623,7 +626,7 @@ class EventQuestion(StandardModel, Timestamps):
         )
 
     def __str__(self) -> str:
-        return f"{self.event} - {self.title.get(translation.get_language()) or list(self.title.values())[0]}"
+        return f"{self.event} - {self.title_locale}"
 
     def clean(self):
         validation_errors = {}

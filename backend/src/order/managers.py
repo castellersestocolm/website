@@ -265,6 +265,11 @@ class OrderRequestQuerySet(QuerySet):
         return self.annotate(amount_vat=F("vat") * F("amount") / 100)
 
 
+class OrderSponsorshipQuerySet(QuerySet):
+    def with_amount(self):
+        return self.annotate(amount_vat=F("vat") * F("amount") / 100)
+
+
 class DeliveryPriceQuerySet(QuerySet):
     def with_price(self):
         return self.annotate(

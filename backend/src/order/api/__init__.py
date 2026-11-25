@@ -1,5 +1,4 @@
 import datetime
-import decimal
 import logging
 from uuid import UUID
 
@@ -8,8 +7,6 @@ from django.db import transaction
 from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
 from rest_framework.exceptions import ValidationError
 
 import activity.api.course
@@ -22,6 +19,7 @@ import payment.api.websocket
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
+from comunicat.utils.money import get_amount_in_currency
 from data.models import Country, Region
 from event.models import Registration
 from membership.models import MembershipModule
@@ -43,12 +41,14 @@ from order.models import (
     OrderProduct,
     OrderRegistration,
     OrderRequest,
+    OrderSponsorship,
 )
 from order.utils.delivery import get_delivery_price
 from payment.consts import PAYMENT_CODE_REQUIRE_SOURCE
 from payment.enums import PaymentStatus
 from payment.models import Entity, PaymentOrder, PaymentRequestLine
 from product.models import ProductSize
+from sponsorship.models import EntityTier
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 
@@ -184,6 +184,18 @@ def get_list(
                     "request__text",
                 ),
             ),
+            Prefetch(
+                "sponsorships",
+                OrderSponsorship.objects.select_related(
+                    "entity_tier",
+                    "entity_tier__entity",
+                    "entity_tier__entity__user",
+                    "entity_tier__tier",
+                    "entity_tier__tier__sponsorship",
+                ).order_by(
+                    "amount",
+                ),
+            ),
             Prefetch("logs", OrderLog.objects.all().order_by("-created_at")),
         )
         .with_amount()
@@ -211,6 +223,7 @@ def create(  # noqa: C901
     cart_course_registrations: list[dict] | None = None,
     cart_event_registrations: list[dict] | None = None,
     cart_request_lines: list[dict] | None = None,
+    cart_entity_tiers: list[dict] | None = None,
     user_id: UUID | None = None,
     user: dict | None = None,
     delivery: dict | None = None,
@@ -261,6 +274,7 @@ def create(  # noqa: C901
     program_course_registration_by_id = {}
     registration_obj_by_id = {}
     payment_request_line_obj_by_id = {}
+    entity_tier_obj_by_id = {}
 
     if order_type == OrderType.PRODUCT:
         delivery_provider_obj = DeliveryProvider.objects.get(
@@ -317,16 +331,9 @@ def create(  # noqa: C901
             if not delivery_price_obj:
                 return None
 
-            delivery_amount = delivery_price_obj.price
+            delivery_amount = get_amount_in_currency(amount=delivery_price_obj.price)
             delivery_vat = delivery_price_obj.vat
 
-            if delivery_amount.currency != settings.MODULE_ALL_CURRENCY:
-                delivery_amount = Money(
-                    convert_money(
-                        delivery_amount, settings.MODULE_ALL_CURRENCY
-                    ).amount.to_integral(rounding=decimal.ROUND_UP),
-                    settings.MODULE_ALL_CURRENCY,
-                )
         else:
             delivery_amount = ZERO_MONEY
             delivery_vat = 0
@@ -378,6 +385,15 @@ def create(  # noqa: C901
                     cart_request_line["id"] for cart_request_line in cart_request_lines
                 ]
             ).select_related("request", "request__entity", "request__entity__user")
+        }
+    elif order_type == OrderType.SPONSORSHIP:
+        entity_tier_obj_by_id = {
+            entity_tier_obj.id: entity_tier_obj
+            for entity_tier_obj in EntityTier.objects.filter(
+                id__in=[
+                    cart_entity_tier["id"] for cart_entity_tier in cart_entity_tiers
+                ]
+            ).select_related("entity", "entity__user", "tier", "tier__sponsorship")
         }
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
@@ -474,6 +490,18 @@ def create(  # noqa: C901
                 defaults={
                     "amount": payment_request_line_obj.amount,
                     "vat": payment_request_line_obj.vat,
+                },
+            )
+    elif order_type == OrderType.SPONSORSHIP:
+        for cart_entity_tier in cart_entity_tiers:
+            entity_tier_obj = entity_tier_obj_by_id[cart_entity_tier["id"]]
+
+            OrderSponsorship.objects.update_or_create(
+                order=order_obj,
+                entity_tier=entity_tier_obj,
+                defaults={
+                    "amount": entity_tier_obj.amount,
+                    "vat": entity_tier_obj.vat,
                 },
             )
 
@@ -604,7 +632,14 @@ def complete(  # noqa: C901
 ) -> Order | None:
     order_obj = (
         Order.objects.filter(id=order_id, status__lte=OrderStatus.REQUESTED)
-        .prefetch_related("registrations", "memberships", "courses", "requests")
+        .prefetch_related(
+            "products",
+            "registrations",
+            "memberships",
+            "courses",
+            "requests",
+            "sponsorships",
+        )
         .with_amount()
         .first()
     )
@@ -718,6 +753,18 @@ def complete(  # noqa: C901
                     is_completed=payment_status == PaymentStatus.COMPLETED,
                     with_notify=with_notify,
                 )
+            elif order_obj.type == OrderType.SPONSORSHIP:
+                pass
+                # entity_tier_ids = [
+                #     entity_tier_obj.entity_tier_id
+                #     for entity_tier_obj in order_obj.sponsorships.all()
+                # ]
+                # TODO: SPONSORSHIP FINISH PAYMENT
+                # payment.api.payment_request.complete_lines(
+                #     request_line_ids=payment_request_line_ids,
+                #     is_completed=payment_status == PaymentStatus.COMPLETED,
+                #     with_notify=with_notify,
+                # )
 
         return get(order_id=order_id, user_id=user_id, module=module)
 
