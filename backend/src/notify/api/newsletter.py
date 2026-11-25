@@ -14,6 +14,7 @@ def get_list(module: Module) -> List[Team]:
     return list(
         Newsletter.objects.filter(
             module=module,
+            is_public=True,
         )
         .with_name()
         .with_description()
