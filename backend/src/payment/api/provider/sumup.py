@@ -3,11 +3,9 @@ import logging
 from uuid import UUID
 
 from django.conf import settings
-from djmoney.money import Money
 from sumup import Sumup
 from sumup._exceptions import APIError
 
-from comunicat.consts import ZERO_MONEY
 from order.enums import OrderStatus
 from payment.api.provider import PaymentProviderBase
 from payment.enums import PaymentStatus
