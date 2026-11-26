@@ -78,7 +78,7 @@ function SponsorshipDonatePage() {
   }, [user, i18n.resolvedLanguage, setMembership, t]);
 
   React.useEffect(() => {
-    apiSponsorshipPageGet("help-us").then((response) => {
+    apiSponsorshipPageGet("donate").then((response) => {
       if (response.status === 200) {
         setSponsorship(response.data);
       }
@@ -204,14 +204,23 @@ function SponsorshipDonatePage() {
 
   const content = (
     <>
-      {/*<Box mb={5}>
-          <Typography variant="h5" fontWeight={700} mb={1}>
-            {t("pages.sponsorship-donate.section-1.title")}
-          </Typography>
-          <Typography variant="body1">
-            <MarkdownText text={t("pages.sponsorship-donate.section-1.body-1")}/>
-          </Typography>
-        </Box>*/}
+      <Box mb={5}>
+        <Typography variant="h5" fontWeight={700} mb={1}>
+          {t("pages.sponsorship-donate.section-1.title")}
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          <MarkdownText text={t("pages.sponsorship-donate.section-1.body-1")} />
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          <MarkdownText text={t("pages.sponsorship-donate.section-1.body-2")} />
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          <MarkdownText text={t("pages.sponsorship-donate.section-1.body-3")} />
+        </Typography>
+        <Typography variant="body1" mb={1}>
+          <MarkdownText text={t("pages.sponsorship-donate.section-1.body-4")} />
+        </Typography>
+      </Box>
       <Box mb={5}>
         <Typography variant="h5" fontWeight={700} mb={1}>
           {t("pages.sponsorship-donate.tiers.title")}
@@ -227,7 +236,7 @@ function SponsorshipDonatePage() {
             className={styles.tierGrid}
           >
             <FormGrid>
-              <FormLabel htmlFor="currency" required>
+              <FormLabel htmlFor="currency">
                 {t("pages.sponsorship-donate.tiers.currency-select.label")}
               </FormLabel>
               <Select
@@ -235,7 +244,6 @@ function SponsorshipDonatePage() {
                 name="currency"
                 type="text"
                 autoComplete="currency"
-                required
                 size="small"
                 input={<OutlinedInput />}
                 value={currency}
@@ -246,8 +254,12 @@ function SponsorshipDonatePage() {
                 {currencies &&
                   currencies.map((currencyCurrent: any, i: number) => {
                     return (
-                      <MenuItem key={currencyCurrent} value={currencyCurrent}>
-                        {currencyCurrent}
+                      <MenuItem
+                        key={currencyCurrent}
+                        value={currencyCurrent}
+                        selected={currency === currencyCurrent}
+                      >
+                        {currency === currencyCurrent}
                       </MenuItem>
                     );
                   })}
