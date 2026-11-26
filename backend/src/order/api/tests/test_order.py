@@ -663,7 +663,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=62, num_inserts=9, num_updates=6
+                num=0, num_selects=58, num_inserts=6, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -692,9 +692,9 @@ class TestComplete(NumOperationsMixin, TestCase):
             ).order_by("payment__type")
         )
 
-        self.assertEqual(len(transaction_objs), 2)
-        self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 4)
+        self.assertEqual(len(transaction_objs), 1)
+        self.assertEqual(len(payment_objs), 1)
+        self.assertEqual(len(payment_line_objs), 3)
 
         with mock.patch(
             "httpx._client.Client.get",
@@ -727,7 +727,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=62, num_inserts=3, num_updates=12
+                num=0, num_selects=58, num_inserts=2, num_updates=9
             ):
                 order_obj = complete(
                     order_id=self.order_1_obj.id,
@@ -756,18 +756,15 @@ class TestComplete(NumOperationsMixin, TestCase):
             ).order_by("payment__type")
         )
 
-        self.assertEqual(len(transaction_objs), 2)
-        self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 4)
+        self.assertEqual(len(transaction_objs), 1)
+        self.assertEqual(len(payment_objs), 1)
+        self.assertEqual(len(payment_line_objs), 3)
 
         transaction_debit_obj = transaction_objs[0]
-        transaction_credit_obj = transaction_objs[1]
 
         payment_debit_obj = payment_objs[0]
-        payment_credit_obj = payment_objs[1]
 
         payment_line_debit_objs = payment_line_objs[:-1]
-        payment_line_credit_objs = payment_line_objs[-1:]
 
         self.assertEqual(transaction_debit_obj.external_id, "external-order-1")
         self.assertEqual(transaction_debit_obj.reference, "ORDER-1")
@@ -776,30 +773,13 @@ class TestComplete(NumOperationsMixin, TestCase):
             transaction_debit_obj.text, f"Order #{self.order_1_obj.reference}"
         )
 
-        self.assertEqual(transaction_credit_obj.external_id, "external-order-1")
-        self.assertEqual(transaction_credit_obj.reference, "ORDER-1")
-        self.assertEqual(transaction_credit_obj.amount, Money(-50, "SEK"))
-        self.assertEqual(
-            transaction_credit_obj.text, f"Order fee #{self.order_1_obj.reference}"
-        )
-
         self.assertEqual(payment_debit_obj.type, PaymentType.DEBIT)
         self.assertEqual(payment_debit_obj.transaction, transaction_debit_obj)
         self.assertEqual(payment_debit_obj.text, f"Order #{self.order_1_obj.reference}")
 
-        self.assertEqual(payment_credit_obj.type, PaymentType.CREDIT)
-        self.assertEqual(payment_credit_obj.transaction, transaction_credit_obj)
-        self.assertEqual(
-            payment_credit_obj.text, f"Order fee #{self.order_1_obj.reference}"
-        )
-
         for payment_line_debit_obj in payment_line_debit_objs:
             self.assertGreaterEqual(payment_line_debit_obj.amount, Money(0, "SEK"))
             self.assertEqual(payment_line_debit_obj.payment, payment_debit_obj)
-
-        for payment_line_credit_obj in payment_line_credit_objs:
-            self.assertEqual(payment_line_credit_obj.amount, Money(50, "SEK"))
-            self.assertEqual(payment_line_credit_obj.payment, payment_credit_obj)
 
         run_commit_hooks()
 
@@ -878,7 +858,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=64, num_inserts=8, num_updates=5
+                num=0, num_selects=60, num_inserts=5, num_updates=5
             ):
                 order_obj = complete(
                     order_id=self.order_3_obj.id,
@@ -907,9 +887,9 @@ class TestComplete(NumOperationsMixin, TestCase):
             ).order_by("payment__type")
         )
 
-        self.assertEqual(len(transaction_objs), 2)
-        self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 3)
+        self.assertEqual(len(transaction_objs), 1)
+        self.assertEqual(len(payment_objs), 1)
+        self.assertEqual(len(payment_line_objs), 2)
 
         transaction_debit_obj = transaction_objs[0]
 
@@ -955,7 +935,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=63, num_inserts=8, num_updates=8
+                num=0, num_selects=59, num_inserts=5, num_updates=8
             ):
                 order_obj = complete(
                     order_id=self.order_4_obj.id,
@@ -984,9 +964,9 @@ class TestComplete(NumOperationsMixin, TestCase):
             ).order_by("payment__type")
         )
 
-        self.assertEqual(len(transaction_objs), 2)
-        self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 3)
+        self.assertEqual(len(transaction_objs), 1)
+        self.assertEqual(len(payment_objs), 1)
+        self.assertEqual(len(payment_line_objs), 2)
 
         transaction_debit_obj = transaction_objs[0]
 
@@ -1048,7 +1028,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=73, num_inserts=8, num_updates=6
+                num=0, num_selects=69, num_inserts=5, num_updates=6
             ):
                 order_obj = complete(
                     order_id=self.order_5_obj.id,
@@ -1077,9 +1057,9 @@ class TestComplete(NumOperationsMixin, TestCase):
             ).order_by("payment__type")
         )
 
-        self.assertEqual(len(transaction_objs), 2)
-        self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 3)
+        self.assertEqual(len(transaction_objs), 1)
+        self.assertEqual(len(payment_objs), 1)
+        self.assertEqual(len(payment_line_objs), 2)
 
         transaction_debit_obj = transaction_objs[0]
 
@@ -1142,7 +1122,7 @@ class TestComplete(NumOperationsMixin, TestCase):
             ),
         ):
             with self.assertNumOperations(
-                num=0, num_selects=56, num_inserts=8, num_updates=7
+                num=0, num_selects=52, num_inserts=5, num_updates=7
             ):
                 order_obj = complete(
                     order_id=self.order_6_obj.id,
@@ -1171,9 +1151,9 @@ class TestComplete(NumOperationsMixin, TestCase):
             ).order_by("payment__type")
         )
 
-        self.assertEqual(len(transaction_objs), 2)
-        self.assertEqual(len(payment_objs), 2)
-        self.assertEqual(len(payment_line_objs), 3)
+        self.assertEqual(len(transaction_objs), 1)
+        self.assertEqual(len(payment_objs), 1)
+        self.assertEqual(len(payment_line_objs), 2)
 
         transaction_debit_obj = transaction_objs[0]
 

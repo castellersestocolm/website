@@ -3,11 +3,9 @@ import logging
 from uuid import UUID
 
 from django.conf import settings
-from djmoney.money import Money
 from sumup import Sumup
 from sumup._exceptions import APIError
 
-from comunicat.consts import ZERO_MONEY
 from order.enums import OrderStatus
 from payment.api.provider import PaymentProviderBase
 from payment.enums import PaymentStatus
@@ -140,41 +138,42 @@ class PaymentProviderSumUp(PaymentProviderBase):
 
         return False
 
-    def fees(self, *args, **kwargs) -> Money:  # noqa: C901
-        if not self.payment_order_obj.external_id:
-            return ZERO_MONEY
-
-        try:
-            checkout = self.client.checkouts.get(
-                checkout_id=self.payment_order_obj.external_id,
-            )
-        except APIError as e:
-            _log.exception(e)
-            return ZERO_MONEY
-
-        if not checkout or not checkout.transactions:
-            return ZERO_MONEY
-
-        transactions = []
-
-        for checkout_transaction in checkout.transactions:
-            if checkout_transaction.status not in ("FAILED", "CANCELLED"):
-                try:
-                    transaction = self.client.transactions.get(
-                        id=checkout_transaction.id,
-                        merchant_code=checkout.merchant_code,
-                    )
-                    transactions.append(transaction)
-                except APIError as e:
-                    _log.exception(e)
-
-        amount_fee = ZERO_MONEY
-        for transaction in transactions:
-            if not transaction.fee_amount:
-                continue
-
-            amount_fee += Money(
-                abs(transaction.fee_amount), settings.MODULE_ALL_CURRENCY
-            )
-
-        return amount_fee
+    # TODO: Disable for now, collect fees when reconciling for now
+    # def fees(self, *args, **kwargs) -> Money:  # noqa: C901
+    #     if not self.payment_order_obj.external_id:
+    #         return ZERO_MONEY
+    #
+    #     try:
+    #         checkout = self.client.checkouts.get(
+    #             checkout_id=self.payment_order_obj.external_id,
+    #         )
+    #     except APIError as e:
+    #         _log.exception(e)
+    #         return ZERO_MONEY
+    #
+    #     if not checkout or not checkout.transactions:
+    #         return ZERO_MONEY
+    #
+    #     transactions = []
+    #
+    #     for checkout_transaction in checkout.transactions:
+    #         if checkout_transaction.status not in ("FAILED", "CANCELLED"):
+    #             try:
+    #                 transaction = self.client.transactions.get(
+    #                     id=checkout_transaction.id,
+    #                     merchant_code=checkout.merchant_code,
+    #                 )
+    #                 transactions.append(transaction)
+    #             except APIError as e:
+    #                 _log.exception(e)
+    #
+    #     amount_fee = ZERO_MONEY
+    #     for transaction in transactions:
+    #         if not transaction.fee_amount:
+    #             continue
+    #
+    #         amount_fee += Money(
+    #             abs(transaction.fee_amount), settings.MODULE_ALL_CURRENCY
+    #         )
+    #
+    #     return amount_fee
