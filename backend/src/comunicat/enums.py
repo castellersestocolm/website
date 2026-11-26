@@ -10,3 +10,4 @@ class PDFType(IntEnum):
     EXPENSE = 10
     REGISTRATION = 20
     ORDER = 30
+    SPONSORSHIP_DIPLOMA = 110

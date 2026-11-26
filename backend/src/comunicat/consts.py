@@ -675,6 +675,9 @@ TEMPLATE_PDF_BY_MODULE = {
         PDFType.ORDER: {
             "pdf": "pdf/org/order.html",
         },
+        PDFType.SPONSORSHIP_DIPLOMA: {
+            "pdf": "pdf/towers/sponsorship/diploma.html",
+        },
     },
     Module.TOWERS: {
         PDFType.EXPENSE: {
@@ -685,6 +688,9 @@ TEMPLATE_PDF_BY_MODULE = {
         },
         PDFType.ORDER: {
             "pdf": "pdf/towers/order.html",
+        },
+        PDFType.SPONSORSHIP_DIPLOMA: {
+            "pdf": "pdf/towers/sponsorship/diploma.html",
         },
     },
 }

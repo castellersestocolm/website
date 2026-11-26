@@ -1,8 +1,17 @@
+import tempfile
+from uuid import UUID
+
 from django.contrib import admin
 from django.db.models import JSONField
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.urls import path
 from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
+from weasyprint import HTML
 
+from comunicat.consts import TEMPLATE_PDF_BY_MODULE
+from comunicat.enums import PDFType
 from sponsorship.models import (
     EntityTier,
     Reward,
@@ -146,3 +155,46 @@ class EntityTierAdmin(admin.ModelAdmin):
     list_filter = ("date_from", "date_to", "tier", "status")
     raw_id_fields = ("entity",)
     ordering = ("-created_at",)
+
+    def get_urls(self):
+        urls = super().get_urls()
+
+        return [
+            path(
+                "<path:object_id>/diploma/",
+                self.diploma,
+                name="sponsorship_entitytier_diploma",
+            )
+        ] + urls
+
+    def diploma(self, request, object_id: UUID):
+        response = HttpResponse(content_type="aplication/pdf")
+        response["Content-Disposition"] = "attachment; filename=Diploma.pdf"
+        response["Content-Transfer-Encoding"] = "binary"
+
+        entity_tier_obj = (
+            EntityTier.objects.filter(id=object_id)
+            .select_related("tier", "tier__sponsorship", "entity", "entity__user")
+            .first()
+        )
+
+        context = {
+            "entity_tier_obj": entity_tier_obj,
+        }
+        html_string = render_to_string(
+            template_name=TEMPLATE_PDF_BY_MODULE[request.module][
+                PDFType.SPONSORSHIP_DIPLOMA
+            ]["pdf"],
+            context=context,
+        )
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+
+        with tempfile.NamedTemporaryFile(delete=True) as output:
+            output.write(result)
+            output.flush()
+
+            output = open(output.name, "rb")
+            response.write(output.read())
+
+        return response
