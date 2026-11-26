@@ -259,7 +259,7 @@ function SponsorshipDonatePage() {
                         value={currencyCurrent}
                         selected={currency === currencyCurrent}
                       >
-                        {currency === currencyCurrent}
+                        {currencyCurrent}
                       </MenuItem>
                     );
                   })}
