@@ -111,6 +111,14 @@ class Tier(StandardModel, Timestamps):
 
     order = models.PositiveSmallIntegerField(default=0)
 
+    theme = models.ForeignKey(
+        "theme.Theme",
+        null=True,
+        blank=True,
+        related_name="tiers",
+        on_delete=models.SET_NULL,
+    )
+
     objects = TierQuerySet.as_manager()
 
     @cached_property

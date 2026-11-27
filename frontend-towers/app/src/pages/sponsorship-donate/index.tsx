@@ -10,6 +10,7 @@ import {
   Stack,
   Button,
   FormHelperText,
+  useTheme,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -31,6 +32,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
+import { getColour } from "../../utils/colour";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -61,6 +63,8 @@ function SponsorshipDonatePage() {
   const [validationErrors, setValidationErrors] = useState(undefined);
 
   const { user } = useAppContext();
+
+  const theme = useTheme();
 
   React.useEffect(() => {
     if (user) {
@@ -419,6 +423,15 @@ function SponsorshipDonatePage() {
                         (userMembershipModules &&
                           userMembershipModules.includes(tierPrice.module)),
                     );
+                const themeColourBackground =
+                  sponsorshipTier.theme && sponsorshipTier.theme.colour_primary
+                    ? getColour(theme, sponsorshipTier.theme.colour_primary)
+                    : theme.palette.primary.main;
+                const themeColourText =
+                  sponsorshipTier.theme &&
+                  sponsorshipTier.theme.colour_secondary
+                    ? getColour(theme, sponsorshipTier.theme.colour_secondary)
+                    : theme.palette.text.primary;
 
                 return (
                   <Grid
@@ -429,7 +442,13 @@ function SponsorshipDonatePage() {
                     className={styles.tierGrid}
                   >
                     <Card variant="outlined" className={styles.tierCard}>
-                      <Box className={styles.tierTopBox}>
+                      <Box
+                        className={styles.tierTopBox}
+                        sx={{
+                          backgroundColor: themeColourBackground,
+                          color: themeColourText,
+                        }}
+                      >
                         <Typography variant="h6" fontWeight={600} flexGrow={1}>
                           <MarkdownText text={sponsorshipTier.name} />
                         </Typography>
@@ -456,7 +475,13 @@ function SponsorshipDonatePage() {
                         {rewardGroups && (
                           <>
                             <Divider />
-                            <Box className={styles.tierMidBox}>
+                            <Box
+                              className={styles.tierMidBox}
+                              sx={{
+                                backgroundColor: themeColourBackground,
+                                color: themeColourText,
+                              }}
+                            >
                               <Typography variant="body1" fontWeight={600}>
                                 {t(
                                   "pages.sponsorship-donate.tiers.rewards-title",

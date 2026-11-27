@@ -12,7 +12,7 @@ from comunicat.rest.serializers.payment import (
     EntitySlimSerializer,
 )
 from comunicat.rest.serializers.product import ProductSlimSerializer
-from comunicat.rest.serializers.theme import IconSerializer
+from comunicat.rest.serializers.theme import IconSerializer, ThemeSerializer
 from comunicat.rest.utils.fields import IntEnumField, MoneyField
 from sponsorship.enums import RewardType, SponsorshipStatus, SponsorshipType
 from sponsorship.models import (
@@ -104,6 +104,7 @@ class TierPriceSerializer(s.ModelSerializer):
 class TierSlimSerializer(s.ModelSerializer):
     name = s.SerializerMethodField(read_only=True)
     description = s.SerializerMethodField(read_only=True)
+    theme = ThemeSerializer(read_only=True)
     prices = TierPriceSerializer(read_only=True, many=True)
     reward_groups = RewardGroupSerializer(read_only=True, many=True)
 
@@ -117,6 +118,7 @@ class TierSlimSerializer(s.ModelSerializer):
             "length_months",
             "length_years",
             "order",
+            "theme",
             "prices",
             "reward_groups",
             "created_at",
@@ -129,6 +131,7 @@ class TierSlimSerializer(s.ModelSerializer):
             "length_months",
             "length_years",
             "order",
+            "theme",
             "prices",
             "reward_groups",
             "created_at",
@@ -238,6 +241,7 @@ class TierSerializer(TierSlimSerializer):
             "length_months",
             "length_years",
             "order",
+            "theme",
             "prices",
             "reward_groups",
             "created_at",
@@ -251,6 +255,7 @@ class TierSerializer(TierSlimSerializer):
             "length_months",
             "length_years",
             "order",
+            "theme",
             "prices",
             "reward_groups",
             "created_at",
