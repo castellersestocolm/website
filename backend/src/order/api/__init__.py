@@ -660,14 +660,10 @@ def complete(  # noqa: C901
         order_id=order_id, payment_status=payment_status
     )
 
-    if (
-        payment_status
-        in (
-            PaymentStatus.PENDING,
-            PaymentStatus.PROCESSING,
-            PaymentStatus.COMPLETED,
-        )
-        or True
+    if payment_status in (
+        PaymentStatus.PENDING,
+        PaymentStatus.PROCESSING,
+        PaymentStatus.COMPLETED,
     ):
         if payment_order_obj.provider.code in PAYMENT_CODE_REQUIRE_SOURCE:
             if (
@@ -703,7 +699,7 @@ def complete(  # noqa: C901
         )
         order_obj.save(update_fields=("status",))
 
-        if payment_status == PaymentStatus.COMPLETED or True:
+        if payment_status == PaymentStatus.COMPLETED:
             if order_obj.type == OrderType.PRODUCT:
                 if with_notify:
                     transaction.on_commit(
