@@ -59,7 +59,7 @@ function SponsorshipDonatePage() {
   const [membership, setMembership] = React.useState(undefined);
   const [rewardIdsSelected, setRewardIdsSelected] = React.useState<any>({});
   const [currencies, setCurrencies] = React.useState([]);
-  const [currency, setCurrency] = React.useState(undefined);
+  const [currency, setCurrency] = React.useState("SEK");
   const [validationErrors, setValidationErrors] = useState(undefined);
 
   const { user } = useAppContext();
