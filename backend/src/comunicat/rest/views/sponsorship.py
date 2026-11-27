@@ -38,7 +38,7 @@ class SponsorshipAPI(ComuniCatViewSet):
     @swagger_auto_schema(
         responses={200: SponsorshipSerializer(many=True)},
     )
-    # @method_decorator(cache_page(60))
+    @method_decorator(cache_page(60))
     # @method_decorator(cache_control(private=True))
     def list(self, request):
         sponsorship_objs = sponsorship.api.get_list(
