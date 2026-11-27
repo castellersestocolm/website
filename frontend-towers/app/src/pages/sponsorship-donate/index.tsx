@@ -11,6 +11,10 @@ import {
   Button,
   FormHelperText,
   useTheme,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -27,9 +31,7 @@ import { compareTierPrice } from "../../utils/sort";
 import { useAppContext } from "../../components/AppContext/AppContext";
 import Checkbox from "@mui/material/Checkbox";
 import FormLabel from "@mui/material/FormLabel";
-import Select from "@mui/material/Select";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
 import { getColour } from "../../utils/colour";
@@ -38,17 +40,6 @@ const FormGrid = styled(Grid)(() => ({
   display: "flex",
   flexDirection: "column",
 }));
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
 
 const BACKEND_BASE_URL = new URL(process.env.REACT_APP_TOWERS_API_URL).origin;
 
@@ -232,45 +223,27 @@ function SponsorshipDonatePage() {
         <Typography variant="body1" mb={2}>
           <MarkdownText text={t("pages.sponsorship-donate.tiers.body-1")} />
         </Typography>
-        <Grid container spacing={3}>
-          <Grid
-            container
-            size={{ xs: 12, md: 3, lg: 2 }}
-            direction="column"
-            className={styles.tierGrid}
-          >
-            <FormGrid>
-              <FormLabel htmlFor="currency">
-                {t("pages.sponsorship-donate.tiers.currency-select.label")}
-              </FormLabel>
-              <Select
-                id="currency"
-                name="currency"
-                type="text"
-                autoComplete="currency"
-                size="small"
-                input={<OutlinedInput />}
-                value={currency}
-                onChange={(event) => setCurrency(event.target.value)}
-                MenuProps={MenuProps}
-                variant="standard"
-              >
-                {currencies &&
-                  currencies.map((currencyCurrent: any, i: number) => {
-                    return (
-                      <MenuItem
-                        key={currencyCurrent}
-                        value={currencyCurrent}
-                        selected={currency === currencyCurrent}
-                      >
-                        {currencyCurrent}
-                      </MenuItem>
-                    );
-                  })}
-              </Select>
-            </FormGrid>
-          </Grid>
-        </Grid>
+        <FormControl component="fieldset">
+          <FormLabel component="legend" htmlFor="currency">
+            <Typography variant="body1">
+              {t("pages.sponsorship-donate.tiers.currency-select.label")}
+            </Typography>
+          </FormLabel>
+          <RadioGroup row id="currency" name="currency">
+            {currencies &&
+              currencies.map((currencyCurrent: any, i: number) => {
+                return (
+                  <FormControlLabel
+                    value={currencyCurrent}
+                    control={<Radio />}
+                    label={currencyCurrent}
+                    onChange={() => setCurrency(currencyCurrent)}
+                    checked={currency === currencyCurrent}
+                  />
+                );
+              })}
+          </RadioGroup>
+        </FormControl>
       </Box>
       <form
       // onSubmit={handleSubmit}
