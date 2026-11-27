@@ -27,6 +27,7 @@ class EmailType(enum.IntEnum):
     PAYMENT_REQUEST = 100
     PAYMENT_REQUEST_PAID = 101
     TEMPLATE_EVENT_REGISTER = 111
+    SPONSORSHIP_PAID = 121
 
 
 class EmailStatus(enum.IntEnum):
@@ -39,6 +40,7 @@ class MessageSlackType(enum.IntEnum):
     ORDER_CREATED = 50
     CONTACT_MESSAGE_CREATED = 60
     REGISTRATION_UPDATED = 71
+    DONATION_CREATED = 80
 
 
 class ContactMessageType(enum.IntEnum):

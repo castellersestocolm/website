@@ -18,6 +18,7 @@ from notify.models import ContactMessage, MessageSlack
 from order.enums import OrderStatus
 from order.models import Order, OrderLog, OrderProduct
 from product.models import ProductSize
+from sponsorship.models import EntityTier
 from user.models import User
 
 
@@ -481,4 +482,71 @@ def send_user_message(user_id: UUID, module: Module) -> MessageSlack | None:
         locale=translation.get_language(),
         blocks=blocks,
         item=user_obj,
+    )
+
+
+def send_donation_message(entity_tier_id: UUID) -> MessageSlack | None:
+    entity_tier_obj = (
+        EntityTier.objects.filter(id=entity_tier_id)
+        .with_tier_name()
+        .select_related("entity", "tier", "tier__sponsorship")
+        .first()
+    )
+
+    if not entity_tier_obj:
+        return None
+
+    module = entity_tier_obj.tier.sponsorship.module
+
+    channel_id = getattr(
+        settings,
+        f"SLACK_{Module(entity_tier_obj.tier.sponsorship.module).name}_CHANNEL_DONATIONS",
+    )
+
+    if not channel_id:
+        return None
+
+    blocks = [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"{_('A new patron just made a donation!')}",
+            },
+        },
+        {
+            "type": "section",
+            "fields": [
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Name*\n{entity_tier_obj.entity.name}",
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Tier*\n{entity_tier_obj.tier_name_locale}",
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": f"*Amount*\n{int(entity_tier_obj.price.amount)} {entity_tier_obj.price.currency}",
+                },
+            ],
+        },
+    ]
+
+    message_id = post_message(
+        channel_id=channel_id,
+        blocks=blocks,
+        module=module,
+        unfurl_links=False,
+        unfurl_media=False,
+    )
+
+    return MessageSlack.objects.create(
+        channel_id=channel_id,
+        message_id=message_id,
+        type=MessageSlackType.DONATION_CREATED,
+        module=module,
+        locale=translation.get_language(),
+        blocks=blocks,
+        item=entity_tier_obj,
     )

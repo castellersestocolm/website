@@ -321,7 +321,7 @@ class OrderSponsorshipInline(admin.TabularInline):
             return mark_safe(f'<a href="{entity_link}">{obj.entity_tier.entity}</a>')
         return "-"
 
-    def entity_tier_link_link(self, obj):
+    def entity_tier_link(self, obj):
         if hasattr(obj, "entity_link"):
             entity_tier_link = reverse(
                 "admin:sponsorship__entitytier_change",
@@ -331,7 +331,7 @@ class OrderSponsorshipInline(admin.TabularInline):
         return "-"
 
     entity_link.short_description = _("entity")
-    entity_tier_link_link.short_description = _("entity tier")
+    entity_tier_link.short_description = _("entity tier")
 
 
 class OrderLogInline(admin.TabularInline):

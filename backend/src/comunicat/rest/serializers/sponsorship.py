@@ -264,7 +264,7 @@ class TierSerializer(TierSlimSerializer):
 
 class EntityTierSerializer(s.ModelSerializer):
     entity = EntitySlimSerializer(read_only=True)
-    amount = MoneyField(read_only=True)
+    price = TierPriceSerializer(read_only=True)
 
     class Meta:
         model = EntityTier
@@ -273,7 +273,7 @@ class EntityTierSerializer(s.ModelSerializer):
             "entity",
             "date_from",
             "date_to",
-            "amount",
+            "price",
             "created_at",
         )
         read_only_fields = (
@@ -281,7 +281,7 @@ class EntityTierSerializer(s.ModelSerializer):
             "entity",
             "date_from",
             "date_to",
-            "amount",
+            "price",
             "created_at",
         )
 
@@ -305,10 +305,15 @@ class CreateEntityRewardSerializer(s.Serializer):
     id = s.UUIDField()
 
 
+class CreateEntityRewardGroupSerializer(s.Serializer):
+    id = s.UUIDField()
+    rewards = CreateEntityRewardSerializer(many=True, required=False)
+
+
 class CreateEntityTierSerializer(s.Serializer):
     entity = CreateEntitySerializer(required=False)
     tier_id = s.UUIDField()
-    rewards = CreateEntityRewardSerializer(many=True, required=False)
+    reward_groups = CreateEntityRewardGroupSerializer(many=True, required=False)
     is_public = s.BooleanField(required=False)
 
     def validate_entity(self, value: str | None):

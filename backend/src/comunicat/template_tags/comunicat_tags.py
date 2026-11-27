@@ -1,4 +1,6 @@
+import base64
 import importlib
+from io import BytesIO
 from typing import Any, List
 from urllib.parse import urljoin
 from uuid import UUID
@@ -13,6 +15,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from djmoney.money import Money
 from phonenumber_field.serializerfields import PhoneNumberField
+from PIL import Image
 from rest_framework.exceptions import ValidationError
 
 import activity.enums
@@ -31,6 +34,7 @@ from integration.consts import (
     LANGUAGE_TO_APPLE_WALLET_FILE,
     LANGUAGE_TO_GOOGLE_LOCALE_COUNTRY,
 )
+from legal.models import Member
 from membership.enums import MembershipStatus
 from membership.models import Membership
 from notify.consts import SETTINGS_BY_MODULE
@@ -465,3 +469,16 @@ def language_to_apple_wallet_file(locale: str) -> str:
 @register.simple_tag
 def current_language_to_apple_wallet_file() -> str:
     return language_to_apple_wallet_file(locale=translation.get_language())
+
+
+@register.filter
+def member_signature_base_64(member_obj: Member) -> str:
+    img = Image.open(member_obj.signature)
+
+    img_file = BytesIO()
+    img.save(img_file, format="PNG")
+
+    img_bytes = img_file.getvalue()
+    img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+
+    return f"data:image/png;base64,{img_b64}"

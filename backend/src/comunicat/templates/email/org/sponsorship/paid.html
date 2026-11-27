@@ -1,0 +1,14 @@
+{% extends "email/org/base.html" %}
+{% load i18n comunicat_tags %}
+
+{% block email_body %}
+    <p>{% trans "Your donation has been received! We want to thank you for your help again and give you our warmest regards all the way from Stockholm, Sweden." %}</p>
+    <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-hfk9{background:none;border:none;text-align:left;vertical-align:top}
+</style>
+{% endblock %}

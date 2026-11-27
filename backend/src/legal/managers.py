@@ -45,6 +45,13 @@ class RoleQuerySet(QuerySet):
 
 
 class MemberQuerySet(QuerySet):
+    def with_role_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            role_name_locale=KeyTextTransform(locale, "role__name"),
+        )
+
     def with_amount(self):
         Member = apps.get_model("legal", "Member")
 

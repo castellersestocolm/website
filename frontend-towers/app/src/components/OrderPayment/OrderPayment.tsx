@@ -87,14 +87,20 @@ export default function OrderPayment({
   const [paymentSESwishOrderQR, setPaymentSESwishOrderQR] =
     React.useState(undefined);
 
-  const orderPath =
-    order && order.type === OrderType.MEMBERSHIP
+  const orderPath = order
+    ? order.type === OrderType.MEMBERSHIP
       ? ROUTES.membership.path
-      : ROUTES.order.path;
-  const orderReceiptPath =
-    order && order.type === OrderType.MEMBERSHIP
+      : order.type === OrderType.SPONSORSHIP
+        ? ROUTES["sponsorship-donate"].path
+        : ROUTES.order.path
+    : ROUTES.order.path;
+  const orderReceiptPath = order
+    ? order.type === OrderType.MEMBERSHIP
       ? ROUTES["membership-receipt"].path.replace(":id", id)
-      : ROUTES["order-receipt"].path.replace(":id", id);
+      : order.type === OrderType.SPONSORSHIP
+        ? ROUTES["sponsorship-donate-receipt"].path.replace(":id", id)
+        : ROUTES["order-receipt"].path.replace(":id", id)
+    : ROUTES["order-receipt"].path.replace(":id", id);
 
   React.useEffect(() => {
     apiOrderRetrieve(id).then((response) => {

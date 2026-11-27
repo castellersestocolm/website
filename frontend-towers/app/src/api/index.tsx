@@ -798,6 +798,19 @@ export const apiOrderEventCreate = async (
   }
 };
 
+export const apiOrderSponsorshipCreate = async (entityTiers: any[]) => {
+  try {
+    return await instance.post("/order/", {
+      cart: { entity_tiers: entityTiers },
+      type: OrderType.SPONSORSHIP,
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
 export const apiOrderDelete = async (orderId: string) => {
   try {
     return await instance.delete("/order/" + orderId + "/");
@@ -1324,6 +1337,38 @@ export const apiSponsorshipPageGet = async (code: string) => {
       params: {
         code: code,
       },
+    });
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    // Handle errors here or throw them to be handled where the function is called
+    throw error;
+  }
+};
+
+export const apiSponsorshipEntityTierForEntityCreate = async (
+  userId: string = undefined,
+  entityId: string = undefined,
+  tierId: string,
+  entityFirstname: string = undefined,
+  entityLastname: string = undefined,
+  entityEmail: string = undefined,
+  entityPhone: string = undefined,
+) => {
+  try {
+    return await instance.post("/sponsorship/entity/", {
+      ...(userId
+        ? { user_id: userId }
+        : entityId
+          ? { entity_id: entityId }
+          : {
+              entity: {
+                firstname: entityFirstname,
+                lastname: entityLastname,
+                ...(entityEmail ? { email: entityEmail } : {}),
+                ...(entityPhone ? { phone: entityPhone } : {}),
+              },
+            }),
+      tier_id: tierId,
     });
   } catch (error) {
     console.error("Error fetching data: ", error);

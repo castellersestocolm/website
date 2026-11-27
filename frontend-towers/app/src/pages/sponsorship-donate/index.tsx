@@ -18,7 +18,13 @@ import {
 } from "@mui/material";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { apiMembershipList, apiSponsorshipPageGet } from "../../api";
+import {
+  apiMembershipList,
+  apiOrderEventCreate,
+  apiOrderSponsorshipCreate,
+  apiSponsorshipEntityTierForEntityCreate,
+  apiSponsorshipPageGet,
+} from "../../api";
 import PageImageHero from "../../components/PageImageHero/PageImageHero";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -35,6 +41,8 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
 import { getColour } from "../../utils/colour";
+import { ROUTES } from "../../routes";
+import { useNavigate } from "react-router-dom";
 
 const FormGrid = styled(Grid)(() => ({
   display: "flex",
@@ -53,7 +61,16 @@ function SponsorshipDonatePage() {
   const [currency, setCurrency] = React.useState("SEK");
   const [validationErrors, setValidationErrors] = useState(undefined);
 
-  const { user } = useAppContext();
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+  });
+
+  const { user, setMessages } = useAppContext();
+
+  let navigate = useNavigate();
 
   const theme = useTheme();
 
@@ -197,6 +214,47 @@ function SponsorshipDonatePage() {
     membership &&
     membership.modules.map((membershipModule: any) => membershipModule.module);
 
+  function handleSelectTier(tierId: string) {
+    apiSponsorshipEntityTierForEntityCreate(
+      user && user.id,
+      user && user.entity && user.entity.id,
+      tierId,
+      formData.firstname,
+      formData.lastname,
+      formData.email,
+      formData.phone,
+    ).then((response) => {
+      if (response.status === 200) {
+        const entityTier = response.data;
+        const cartEntityTiers = [{ id: entityTier.id }];
+
+        apiOrderSponsorshipCreate(cartEntityTiers).then((response) => {
+          if (response.status === 201) {
+            navigate(
+              ROUTES["sponsorship-donate-payment"].path.replace(
+                ":id",
+                response.data.id,
+              ),
+            );
+          } else {
+            setMessages([
+              { message: t("pages.order-cart.order.error"), type: "error" },
+            ]);
+            setTimeout(() => setMessages(undefined), 10000);
+          }
+        });
+      }
+    });
+  }
+
+  const infoChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const content = (
     <>
       <Box mb={5}>
@@ -245,416 +303,404 @@ function SponsorshipDonatePage() {
           </RadioGroup>
         </FormControl>
       </Box>
-      <form
-      // onSubmit={handleSubmit}
-      >
-        {!user && (
-          <Box mb={5}>
-            <Typography variant="h5" fontWeight={700} mb={1}>
-              {t("pages.sponsorship-donate.tiers.form.entity-title")}
-            </Typography>
-            <Grid container spacing={3}>
-              <FormGrid size={{ xs: 12, md: 3 }}>
-                <FormLabel htmlFor="firstname" required>
-                  {t("pages.user-join.form.first-name")}
-                </FormLabel>
-                <OutlinedInput
-                  id="firstname"
-                  name="firstname"
-                  type="text"
-                  placeholder="Namn"
-                  autoComplete="first name"
-                  required
-                  size="small"
-                  disabled={user}
-                  defaultValue={user && user.firstname}
-                  error={
-                    validationErrors &&
-                    validationErrors.entity &&
-                    validationErrors.entity.firstname
-                  }
-                />
-                {validationErrors &&
-                  validationErrors.entity &&
-                  validationErrors.entity.firstname && (
-                    <FormHelperText error>
-                      {validationErrors.entity.firstname[0].detail}
-                    </FormHelperText>
-                  )}
-              </FormGrid>
-              <FormGrid size={{ xs: 12, md: 3 }}>
-                <FormLabel htmlFor="lastname" required>
-                  {t("pages.user-join.form.last-name")}
-                </FormLabel>
-                <OutlinedInput
-                  id="lastname"
-                  name="lastname"
-                  type="text"
-                  placeholder="Namnsson"
-                  autoComplete="last name"
-                  required
-                  size="small"
-                  disabled={user}
-                  defaultValue={user && user.lastname}
-                  error={
-                    validationErrors &&
-                    validationErrors.entity &&
-                    validationErrors.entity.lastname
-                  }
-                />
-                {validationErrors &&
-                  validationErrors.entity &&
-                  validationErrors.entity.lastname && (
-                    <FormHelperText error>
-                      {validationErrors.entity.lastname[0].detail}
-                    </FormHelperText>
-                  )}
-              </FormGrid>
-              <FormGrid size={{ xs: 12, md: 3 }} className={styles.field}>
-                <FormLabel htmlFor="email" required>
-                  {t("pages.user-join.form.email")}
-                </FormLabel>
-                <OutlinedInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="namn@namnsson.se"
-                  autoComplete="email"
-                  disabled={user}
-                  defaultValue={user && user.email}
-                  error={
-                    validationErrors &&
-                    validationErrors.entity &&
-                    validationErrors.entity.email
-                  }
-                  required
-                  size="small"
-                />
-                {validationErrors &&
-                  validationErrors.entity &&
-                  validationErrors.entity.email && (
-                    <FormHelperText error>
-                      {validationErrors.entity.email[0].detail}
-                    </FormHelperText>
-                  )}
-              </FormGrid>
-              <FormGrid size={{ xs: 12, md: 3 }} className={styles.field}>
-                <FormLabel htmlFor="phone" required>
-                  {t("pages.user-join.form.phone")}
-                </FormLabel>
-                <OutlinedInput
-                  id="phone"
-                  name="phone"
-                  type="phone"
-                  placeholder="+4687461000"
-                  autoComplete="phone"
-                  disabled={user}
-                  defaultValue={user && user.phone}
-                  error={
-                    validationErrors &&
-                    validationErrors.entity &&
-                    validationErrors.entity.phone
-                  }
-                  required
-                  size="small"
-                />
-                {validationErrors &&
-                  validationErrors.entity &&
-                  validationErrors.entity.phone && (
-                    <FormHelperText error>
-                      {validationErrors.entity.phone[0].detail}
-                    </FormHelperText>
-                  )}
-              </FormGrid>
-            </Grid>
-          </Box>
-        )}
-        <Box>
-          <Typography variant="h5" fontWeight={700} mb={2}>
-            {t("pages.sponsorship-donate.tiers.form.tier-title")}
+      {!user && (
+        <Box mb={5}>
+          <Typography variant="h5" fontWeight={700} mb={1}>
+            {t("pages.sponsorship-donate.tiers.form.entity-title")}
           </Typography>
           <Grid container spacing={3}>
-            {sponsorship &&
-              sponsorship.tiers &&
-              sponsorship.tiers.length > 0 &&
-              sponsorship.tiers.map((sponsorshipTier: any) => {
-                const rewardGroups =
-                  sponsorshipTier.reward_groups &&
-                  sponsorshipTier.reward_groups.length > 0 &&
-                  sponsorshipTier.reward_groups.filter(
-                    (rewardGroup: any) =>
-                      rewardGroup.rewards && rewardGroup.rewards.length > 0,
+            <FormGrid size={{ xs: 12, md: 3 }}>
+              <FormLabel htmlFor="firstname" required>
+                {t("pages.user-join.form.first-name")}
+              </FormLabel>
+              <OutlinedInput
+                id="firstname"
+                name="firstname"
+                type="text"
+                placeholder="Namn"
+                autoComplete="first name"
+                required
+                size="small"
+                disabled={user}
+                defaultValue={user && user.firstname}
+                onChange={infoChange}
+                error={
+                  validationErrors &&
+                  validationErrors.entity &&
+                  validationErrors.entity.firstname
+                }
+              />
+              {validationErrors &&
+                validationErrors.entity &&
+                validationErrors.entity.firstname && (
+                  <FormHelperText error>
+                    {validationErrors.entity.firstname[0].detail}
+                  </FormHelperText>
+                )}
+            </FormGrid>
+            <FormGrid size={{ xs: 12, md: 3 }}>
+              <FormLabel htmlFor="lastname" required>
+                {t("pages.user-join.form.last-name")}
+              </FormLabel>
+              <OutlinedInput
+                id="lastname"
+                name="lastname"
+                type="text"
+                placeholder="Namnsson"
+                autoComplete="last name"
+                required
+                size="small"
+                disabled={user}
+                defaultValue={user && user.lastname}
+                onChange={infoChange}
+                error={
+                  validationErrors &&
+                  validationErrors.entity &&
+                  validationErrors.entity.lastname
+                }
+              />
+              {validationErrors &&
+                validationErrors.entity &&
+                validationErrors.entity.lastname && (
+                  <FormHelperText error>
+                    {validationErrors.entity.lastname[0].detail}
+                  </FormHelperText>
+                )}
+            </FormGrid>
+            <FormGrid size={{ xs: 12, md: 3 }} className={styles.field}>
+              <FormLabel htmlFor="email" required>
+                {t("pages.user-join.form.email")}
+              </FormLabel>
+              <OutlinedInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="namn@namnsson.se"
+                autoComplete="email"
+                disabled={user}
+                defaultValue={user && user.email}
+                onChange={infoChange}
+                error={
+                  validationErrors &&
+                  validationErrors.entity &&
+                  validationErrors.entity.email
+                }
+                required
+                size="small"
+              />
+              {validationErrors &&
+                validationErrors.entity &&
+                validationErrors.entity.email && (
+                  <FormHelperText error>
+                    {validationErrors.entity.email[0].detail}
+                  </FormHelperText>
+                )}
+            </FormGrid>
+            <FormGrid size={{ xs: 12, md: 3 }} className={styles.field}>
+              <FormLabel htmlFor="phone" required>
+                {t("pages.user-join.form.phone")}
+              </FormLabel>
+              <OutlinedInput
+                id="phone"
+                name="phone"
+                type="phone"
+                placeholder="+4687461000"
+                autoComplete="phone"
+                disabled={user}
+                defaultValue={user && user.phone}
+                onChange={infoChange}
+                error={
+                  validationErrors &&
+                  validationErrors.entity &&
+                  validationErrors.entity.phone
+                }
+                required
+                size="small"
+              />
+              {validationErrors &&
+                validationErrors.entity &&
+                validationErrors.entity.phone && (
+                  <FormHelperText error>
+                    {validationErrors.entity.phone[0].detail}
+                  </FormHelperText>
+                )}
+            </FormGrid>
+          </Grid>
+        </Box>
+      )}
+      <Box>
+        <Typography variant="h5" fontWeight={700} mb={2}>
+          {t("pages.sponsorship-donate.tiers.form.tier-title")}
+        </Typography>
+        <Grid container spacing={3}>
+          {sponsorship &&
+            sponsorship.tiers &&
+            sponsorship.tiers.length > 0 &&
+            sponsorship.tiers.map((sponsorshipTier: any) => {
+              const rewardGroups =
+                sponsorshipTier.reward_groups &&
+                sponsorshipTier.reward_groups.length > 0 &&
+                sponsorshipTier.reward_groups.filter(
+                  (rewardGroup: any) =>
+                    rewardGroup.rewards && rewardGroup.rewards.length > 0,
+                );
+              const tierPrice =
+                sponsorshipTier.prices &&
+                sponsorshipTier.prices.length > 0 &&
+                sponsorshipTier.prices
+                  .sort(compareTierPrice)
+                  .find(
+                    (tierPrice: any) =>
+                      !tierPrice.module ||
+                      (userMembershipModules &&
+                        userMembershipModules.includes(tierPrice.module)),
                   );
-                const tierPrice =
-                  sponsorshipTier.prices &&
-                  sponsorshipTier.prices.length > 0 &&
-                  sponsorshipTier.prices
-                    .sort(compareTierPrice)
-                    .find(
-                      (tierPrice: any) =>
-                        !tierPrice.module ||
-                        (userMembershipModules &&
-                          userMembershipModules.includes(tierPrice.module)),
-                    );
-                const themeColourBackground =
-                  sponsorshipTier.theme && sponsorshipTier.theme.colour_primary
-                    ? getColour(theme, sponsorshipTier.theme.colour_primary)
-                    : theme.palette.primary.main;
-                const themeColourText =
-                  sponsorshipTier.theme &&
-                  sponsorshipTier.theme.colour_secondary
-                    ? getColour(theme, sponsorshipTier.theme.colour_secondary)
-                    : theme.palette.text.primary;
+              const themeColourBackground =
+                sponsorshipTier.theme && sponsorshipTier.theme.colour_primary
+                  ? getColour(theme, sponsorshipTier.theme.colour_primary)
+                  : theme.palette.primary.main;
+              const themeColourText =
+                sponsorshipTier.theme && sponsorshipTier.theme.colour_secondary
+                  ? getColour(theme, sponsorshipTier.theme.colour_secondary)
+                  : theme.palette.text.primary;
 
-                return (
-                  <Grid
-                    container
-                    size={{ xs: 12, md: 6, lg: 4 }}
-                    gap={3}
-                    direction="column"
-                    className={styles.tierGrid}
-                  >
-                    <Card variant="outlined" className={styles.tierCard}>
-                      <Box
-                        className={styles.tierTopBox}
-                        sx={{
-                          backgroundColor: themeColourBackground,
-                          color: themeColourText,
-                        }}
-                      >
-                        <Typography variant="h6" fontWeight={600} flexGrow={1}>
-                          <MarkdownText text={sponsorshipTier.name} />
+              return (
+                <Grid
+                  container
+                  size={{ xs: 12, md: 6, lg: 4 }}
+                  gap={3}
+                  direction="column"
+                  className={styles.tierGrid}
+                >
+                  <Card variant="outlined" className={styles.tierCard}>
+                    <Box
+                      className={styles.tierTopBox}
+                      sx={{
+                        backgroundColor: themeColourBackground,
+                        color: themeColourText,
+                      }}
+                    >
+                      <Typography variant="h6" fontWeight={600} flexGrow={1}>
+                        <MarkdownText text={sponsorshipTier.name} />
+                      </Typography>
+                      {tierPrice && (
+                        <Typography variant="h6" fontWeight={600}>
+                          {!currency || currency === tierPrice.amount.currency
+                            ? tierPrice.amount.amount +
+                              " " +
+                              tierPrice.amount.currency
+                            : "~" +
+                              tierPrice.amount.exchange[currency].amount +
+                              " " +
+                              tierPrice.amount.exchange[currency].currency}
                         </Typography>
-                        {tierPrice && (
-                          <Typography variant="h6" fontWeight={600}>
-                            {!currency || currency === tierPrice.amount.currency
-                              ? tierPrice.amount.amount +
-                                " " +
-                                tierPrice.amount.currency
-                              : "~" +
-                                tierPrice.amount.exchange[currency].amount +
-                                " " +
-                                tierPrice.amount.exchange[currency].currency}
-                          </Typography>
-                        )}
+                      )}
+                    </Box>
+                    <Divider />
+                    <Box className={styles.rewardGroupBox}>
+                      <Box className={styles.tierBottomBox}>
+                        <Typography variant="body1" component="div">
+                          <MarkdownText text={sponsorshipTier.description} />
+                        </Typography>
                       </Box>
-                      <Divider />
-                      <Box className={styles.rewardGroupBox}>
-                        <Box className={styles.tierBottomBox}>
-                          <Typography variant="body1" component="div">
-                            <MarkdownText text={sponsorshipTier.description} />
-                          </Typography>
-                        </Box>
-                        {rewardGroups && (
-                          <>
-                            <Divider />
-                            <Box
-                              className={styles.tierMidBox}
-                              sx={{
-                                backgroundColor: themeColourBackground,
-                                color: themeColourText,
-                              }}
-                            >
-                              <Typography variant="body1" fontWeight={600}>
-                                {t(
-                                  "pages.sponsorship-donate.tiers.rewards-title",
-                                )}
-                              </Typography>
-                            </Box>
-                            <Divider />
-                            {rewardGroups.map((rewardGroup: any) => {
-                              const mustSelectAmount =
-                                rewardGroup.max_rewards <
-                                rewardGroup.rewards.length;
+                      {rewardGroups && (
+                        <>
+                          <Divider />
+                          <Box
+                            className={styles.tierMidBox}
+                            sx={{
+                              backgroundColor: themeColourBackground,
+                              color: themeColourText,
+                            }}
+                          >
+                            <Typography variant="body1" fontWeight={600}>
+                              {t(
+                                "pages.sponsorship-donate.tiers.rewards-title",
+                              )}
+                            </Typography>
+                          </Box>
+                          <Divider />
+                          {rewardGroups.map((rewardGroup: any) => {
+                            const mustSelectAmount =
+                              rewardGroup.max_rewards <
+                              rewardGroup.rewards.length;
 
-                              return (
-                                <Grid container direction="row">
-                                  {mustSelectAmount && (
-                                    <Grid
-                                      size="auto"
-                                      className={styles.rewardSelectGrid}
-                                    >
-                                      <IconRule />
-                                      <Typography
-                                        variant="body2"
-                                        component="div"
-                                      >
-                                        {t(
-                                          "pages.sponsorship-donate.tiers.rewards-max",
-                                        )}{" "}
-                                        {rewardGroup.max_rewards}
-                                      </Typography>
-                                    </Grid>
-                                  )}
-                                  <Grid size="grow">
-                                    <List className={styles.userFamilyList}>
-                                      {rewardGroup.rewards.map(
-                                        (reward: any, i: number, row: any) => {
-                                          const isRewardChecked =
-                                            sponsorshipTier.id in
-                                              rewardIdsSelected &&
-                                            Object.keys(
-                                              rewardIdsSelected[
-                                                sponsorshipTier.id
-                                              ],
-                                            ).includes(rewardGroup.id) &&
+                            return (
+                              <Grid container direction="row">
+                                {mustSelectAmount && (
+                                  <Grid
+                                    size="auto"
+                                    className={styles.rewardSelectGrid}
+                                  >
+                                    <IconRule />
+                                    <Typography variant="body2" component="div">
+                                      {t(
+                                        "pages.sponsorship-donate.tiers.rewards-max",
+                                      )}{" "}
+                                      {rewardGroup.max_rewards}
+                                    </Typography>
+                                  </Grid>
+                                )}
+                                <Grid size="grow">
+                                  <List className={styles.userFamilyList}>
+                                    {rewardGroup.rewards.map(
+                                      (reward: any, i: number, row: any) => {
+                                        const isRewardChecked =
+                                          sponsorshipTier.id in
+                                            rewardIdsSelected &&
+                                          Object.keys(
                                             rewardIdsSelected[
                                               sponsorshipTier.id
-                                            ][rewardGroup.id].includes(
-                                              reward.id,
-                                            );
+                                            ],
+                                          ).includes(rewardGroup.id) &&
+                                          rewardIdsSelected[sponsorshipTier.id][
+                                            rewardGroup.id
+                                          ].includes(reward.id);
 
-                                          return (
-                                            <>
-                                              <Box key={reward.id}>
-                                                <ListItemButton
-                                                  disableTouchRipple
-                                                  dense
-                                                >
-                                                  {mustSelectAmount && (
-                                                    <Checkbox
-                                                      className={
-                                                        styles.rewardCheckbox
-                                                      }
-                                                      checked={isRewardChecked}
-                                                      onChange={(e) =>
-                                                        handleRewardCheckbox(
-                                                          e,
-                                                          sponsorshipTier,
-                                                          rewardGroup,
-                                                          reward,
-                                                        )
-                                                      }
-                                                    />
-                                                  )}
-                                                  <ListItemIcon
+                                        return (
+                                          <>
+                                            <Box key={reward.id}>
+                                              <ListItemButton
+                                                disableTouchRipple
+                                                dense
+                                              >
+                                                {mustSelectAmount && (
+                                                  <Checkbox
                                                     className={
-                                                      styles.eventCardIcon
+                                                      styles.rewardCheckbox
                                                     }
-                                                  >
-                                                    {reward.type ===
-                                                      RewardType.PRODUCT &&
-                                                    reward.product &&
-                                                    reward.product.images &&
-                                                    reward.product.images
-                                                      .length > 0 ? (
-                                                      <img
-                                                        src={
-                                                          BACKEND_BASE_URL +
-                                                          reward.product
-                                                            .images[0].picture
-                                                        }
-                                                        alt={
-                                                          reward.product.name
-                                                        }
-                                                        className={
-                                                          styles.eventCardImage
-                                                        }
-                                                      />
-                                                    ) : reward.icon ? (
-                                                      <DynamicIcon
-                                                        iconName={
-                                                          reward.icon.code
-                                                        }
-                                                      />
-                                                    ) : (
-                                                      REWARD_TYPE_ICON[
-                                                        reward.type
-                                                      ]
-                                                    )}
-                                                  </ListItemIcon>
-                                                  <ListItemText
-                                                    primary={
-                                                      <Typography
-                                                        variant="body2"
-                                                        component="div"
-                                                      >
-                                                        {reward.type ===
-                                                          RewardType.PRODUCT &&
-                                                        reward.product ? (
-                                                          <Typography
-                                                            variant="body2"
-                                                            component="div"
-                                                          >
-                                                            {
-                                                              reward.product
-                                                                .name
-                                                            }
-                                                          </Typography>
-                                                        ) : reward.type ===
-                                                            RewardType.NEWSLETTER &&
-                                                          reward.newsletter ? (
-                                                          <Typography
-                                                            variant="body2"
-                                                            component="div"
-                                                          >
-                                                            {t(
-                                                              "pages.sponsorship-donate.tiers.rewards.newsletter",
-                                                            )}
-                                                            {' "'}
-                                                            {
-                                                              reward.newsletter
-                                                                .name
-                                                            }
-                                                            {'"'}
-                                                          </Typography>
-                                                        ) : (
-                                                          reward.name
-                                                        )}
-                                                      </Typography>
-                                                    }
-                                                    secondary={
-                                                      reward.description && (
-                                                        <Typography
-                                                          variant="body2"
-                                                          component="div"
-                                                          color="textSecondary"
-                                                        >
-                                                          {reward.description}
-                                                        </Typography>
+                                                    checked={isRewardChecked}
+                                                    onChange={(e) =>
+                                                      handleRewardCheckbox(
+                                                        e,
+                                                        sponsorshipTier,
+                                                        rewardGroup,
+                                                        reward,
                                                       )
                                                     }
                                                   />
-                                                </ListItemButton>
-                                              </Box>
-                                              <Divider />
-                                            </>
-                                          );
-                                        },
-                                      )}
-                                    </List>
-                                  </Grid>
+                                                )}
+                                                <ListItemIcon
+                                                  className={
+                                                    styles.eventCardIcon
+                                                  }
+                                                >
+                                                  {reward.type ===
+                                                    RewardType.PRODUCT &&
+                                                  reward.product &&
+                                                  reward.product.images &&
+                                                  reward.product.images.length >
+                                                    0 ? (
+                                                    <img
+                                                      src={
+                                                        BACKEND_BASE_URL +
+                                                        reward.product.images[0]
+                                                          .picture
+                                                      }
+                                                      alt={reward.product.name}
+                                                      className={
+                                                        styles.eventCardImage
+                                                      }
+                                                    />
+                                                  ) : reward.icon ? (
+                                                    <DynamicIcon
+                                                      iconName={
+                                                        reward.icon.code
+                                                      }
+                                                    />
+                                                  ) : (
+                                                    REWARD_TYPE_ICON[
+                                                      reward.type
+                                                    ]
+                                                  )}
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                  primary={
+                                                    <Typography
+                                                      variant="body2"
+                                                      component="div"
+                                                    >
+                                                      {reward.type ===
+                                                        RewardType.PRODUCT &&
+                                                      reward.product ? (
+                                                        <Typography
+                                                          variant="body2"
+                                                          component="div"
+                                                        >
+                                                          {reward.product.name}
+                                                        </Typography>
+                                                      ) : reward.type ===
+                                                          RewardType.NEWSLETTER &&
+                                                        reward.newsletter ? (
+                                                        <Typography
+                                                          variant="body2"
+                                                          component="div"
+                                                        >
+                                                          {t(
+                                                            "pages.sponsorship-donate.tiers.rewards.newsletter",
+                                                          )}
+                                                          {' "'}
+                                                          {
+                                                            reward.newsletter
+                                                              .name
+                                                          }
+                                                          {'"'}
+                                                        </Typography>
+                                                      ) : (
+                                                        reward.name
+                                                      )}
+                                                    </Typography>
+                                                  }
+                                                  secondary={
+                                                    reward.description && (
+                                                      <Typography
+                                                        variant="body2"
+                                                        component="div"
+                                                        color="textSecondary"
+                                                      >
+                                                        {reward.description}
+                                                      </Typography>
+                                                    )
+                                                  }
+                                                />
+                                              </ListItemButton>
+                                            </Box>
+                                            <Divider />
+                                          </>
+                                        );
+                                      },
+                                    )}
+                                  </List>
                                 </Grid>
-                              );
-                            })}
-                          </>
-                        )}
-                      </Box>
-                    </Card>
-                    <Stack
-                      direction="row"
-                      spacing={2}
-                      whiteSpace="nowrap"
-                      justifyContent="center"
+                              </Grid>
+                            );
+                          })}
+                        </>
+                      )}
+                    </Box>
+                  </Card>
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    whiteSpace="nowrap"
+                    justifyContent="center"
+                  >
+                    <Button
+                      variant="contained"
+                      type="submit"
+                      style={{ width: "auto" }}
+                      color="primary"
+                      disableElevation
+                      onClick={() => handleSelectTier(sponsorshipTier.id)}
                     >
-                      <Button
-                        variant="contained"
-                        type="submit"
-                        style={{ width: "auto" }}
-                        color="primary"
-                        disableElevation
-                        disabled
-                        // onClick={handleRegistrationProcess}
-                      >
-                        {t("pages.sponsorship-donate.tiers.button-choose")}
-                      </Button>
-                    </Stack>
-                  </Grid>
-                );
-              })}
-          </Grid>
-        </Box>
-      </form>
+                      {t("pages.sponsorship-donate.tiers.button-choose")}
+                    </Button>
+                  </Stack>
+                </Grid>
+              );
+            })}
+        </Grid>
+      </Box>
     </>
   );
 

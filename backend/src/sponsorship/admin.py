@@ -4,14 +4,14 @@ from uuid import UUID
 from django.contrib import admin
 from django.db.models import JSONField
 from django.http import HttpResponse
-from django.template.loader import render_to_string
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
 from jsoneditor.forms import JSONEditor
-from weasyprint import HTML
 
-from comunicat.consts import TEMPLATE_PDF_BY_MODULE
-from comunicat.enums import PDFType
+import notify.tasks
+from notify.enums import EmailType
+from sponsorship.api.entity_tier import get_diploma_pdf
+from sponsorship.enums import EntityTierStatus
 from sponsorship.models import (
     EntityTier,
     Reward,
@@ -132,6 +132,22 @@ class RewardAdmin(admin.ModelAdmin):
     name_locale.short_description = _("name")
 
 
+@admin.action(description="Send donation paid email")
+def send_donation_paid_email(modeladmin, request, queryset):
+    entity_tier_objs = list(
+        queryset.filter(status=EntityTierStatus.ACTIVE).select_related(
+            "tier", "tier__sponsorship"
+        )
+    )
+
+    for entity_tier_obj in entity_tier_objs:
+        notify.tasks.send_entity_tier_email.delay(
+            entity_tier_id=entity_tier_obj.id,
+            email_type=EmailType.SPONSORSHIP_PAID,
+            module=entity_tier_obj.tier.sponsorship.module,
+        )
+
+
 @admin.register(EntityTier)
 class EntityTierAdmin(admin.ModelAdmin):
     search_fields = (
@@ -148,13 +164,14 @@ class EntityTierAdmin(admin.ModelAdmin):
         "tier",
         "date_from",
         "date_to",
-        "amount",
+        "price",
         "status",
         "created_at",
     )
     list_filter = ("date_from", "date_to", "tier", "status")
     raw_id_fields = ("entity",)
     ordering = ("-created_at",)
+    actions = (send_donation_paid_email,)
 
     def get_urls(self):
         urls = super().get_urls()
@@ -172,23 +189,7 @@ class EntityTierAdmin(admin.ModelAdmin):
         response["Content-Disposition"] = "attachment; filename=Diploma.pdf"
         response["Content-Transfer-Encoding"] = "binary"
 
-        entity_tier_obj = (
-            EntityTier.objects.filter(id=object_id)
-            .select_related("tier", "tier__sponsorship", "entity", "entity__user")
-            .first()
-        )
-
-        context = {
-            "entity_tier_obj": entity_tier_obj,
-        }
-        html_string = render_to_string(
-            template_name=TEMPLATE_PDF_BY_MODULE[request.module][
-                PDFType.SPONSORSHIP_DIPLOMA
-            ]["pdf"],
-            context=context,
-        )
-        html = HTML(string=html_string)
-        result = html.write_pdf()
+        result = get_diploma_pdf(entity_tier_id=object_id)
 
         with tempfile.NamedTemporaryFile(delete=True) as output:
             output.write(result)

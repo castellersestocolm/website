@@ -22,6 +22,7 @@ from sponsorship.enums import (
 )
 from sponsorship.managers import (
     EntityTierQuerySet,
+    EntityTierRewardQuerySet,
     RewardQuerySet,
     SponsorshipQuerySet,
     TierQuerySet,
@@ -240,7 +241,13 @@ class EntityTier(StandardModel, Timestamps):
     date_from = models.DateField()
     date_to = models.DateField()
 
-    amount = MoneyField(max_digits=7, decimal_places=2, default_currency="SEK")
+    price = models.ForeignKey(
+        TierPrice,
+        blank=True,
+        null=True,
+        related_name="entity_tiers",
+        on_delete=models.PROTECT,
+    )
 
     is_public = models.BooleanField(default=True)
 
@@ -258,3 +265,5 @@ class EntityTierReward(StandardModel, Timestamps):
     reward = models.ForeignKey(
         Reward, related_name="entity_tier_rewards", on_delete=models.PROTECT
     )
+
+    objects = EntityTierRewardQuerySet.as_manager()
