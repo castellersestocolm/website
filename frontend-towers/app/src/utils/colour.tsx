@@ -6,6 +6,8 @@ export function getColour(theme: any, colour: any): string {
   }
 
   switch (colour.type) {
+    case ColourType.CUSTOM:
+      return colour.code;
     case ColourType.PALETTE_PRIMARY_MAIN:
       return theme.palette.primary.main;
     case ColourType.PALETTE_PRIMARY_CONTRAST_TEXT:
