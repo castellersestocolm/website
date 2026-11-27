@@ -1,4 +1,7 @@
+import os
+
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import JSONField
 from django.utils import translation
@@ -8,9 +11,10 @@ from versatileimagefield.fields import VersatileImageField
 from comunicat.consts import SHORT_NAME_BY_MODULE
 from comunicat.db.mixins import StandardModel, Timestamps
 from comunicat.enums import Module
+from comunicat.storage import signed_storage
 from comunicat.utils.models import language_field_default
 from legal.enums import TeamType
-from legal.managers import RoleQuerySet, TeamQuerySet
+from legal.managers import MemberQuerySet, RoleQuerySet, TeamQuerySet
 
 
 class Group(StandardModel, Timestamps):
@@ -51,6 +55,12 @@ class Role(StandardModel, Timestamps):
         return self.name.get(translation.get_language()) or list(self.name.values())[0]
 
 
+def get_member_signature_name(instance, filename):
+    return os.path.join(
+        "legal/member/signature/", str(instance.id) + "." + filename.split(".")[-1]
+    )
+
+
 class Member(StandardModel, Timestamps):
     user = models.ForeignKey(
         "user.User", related_name="members", on_delete=models.CASCADE
@@ -64,6 +74,16 @@ class Member(StandardModel, Timestamps):
     picture = VersatileImageField(
         "Image", blank=True, null=True, upload_to="legal/member/picture/"
     )
+
+    signature = models.FileField(
+        upload_to=get_member_signature_name,
+        null=True,
+        blank=True,
+        storage=signed_storage,
+        validators=[FileExtensionValidator(["png"])],
+    )
+
+    objects = MemberQuerySet.as_manager()
 
     def __str__(self) -> str:
         return f"{self.user.name} - {self.role} - {self.team}"

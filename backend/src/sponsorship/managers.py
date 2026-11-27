@@ -86,3 +86,33 @@ class EntityTierQuerySet(QuerySet):
         return self.with_is_active().filter(
             is_active=True,
         )
+
+    def with_tier_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            tier_name_locale=KeyTextTransform(locale, "tier__name"),
+        )
+
+    def with_tier_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            tier_description_locale=KeyTextTransform(locale, "tier__description"),
+        )
+
+
+class EntityTierRewardQuerySet(QuerySet):
+    def with_reward_name(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            reward_name_locale=KeyTextTransform(locale, "reward__name"),
+        )
+
+    def with_reward_description(self, locale: str | None = None):
+        locale = locale or translation.get_language()
+
+        return self.annotate(
+            reward_description_locale=KeyTextTransform(locale, "reward__description"),
+        )

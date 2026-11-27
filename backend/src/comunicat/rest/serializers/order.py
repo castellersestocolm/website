@@ -425,6 +425,10 @@ class CreateOrderRequestLineSerializer(s.Serializer):
     id = s.UUIDField()
 
 
+class CreateOrderEntityTierSerializer(s.Serializer):
+    id = s.UUIDField()
+
+
 class CreateCartSerializer(s.Serializer):
     sizes = s.ListSerializer(
         child=CreateOrderSizeSerializer(),
@@ -454,6 +458,12 @@ class CreateCartSerializer(s.Serializer):
         child=CreateOrderRequestLineSerializer(),
         min_length=0,
         max_length=10,
+        required=False,
+    )
+    entity_tiers = s.ListSerializer(
+        child=CreateOrderEntityTierSerializer(),
+        min_length=0,
+        max_length=1,
         required=False,
     )
 

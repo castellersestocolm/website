@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 13:16+0100\n"
+"POT-Creation-Date: 2026-11-27 21:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,9 @@ msgstr ""
 
 #: activity/admin.py:56 activity/admin.py:150 data/admin.py:38 data/admin.py:69
 #: data/admin.py:93 legal/admin.py:30 legal/admin.py:75 legal/admin.py:99
-#: notify/admin.py:278 order/admin.py:606 payment/admin.py:682
-#: payment/admin.py:1153 product/admin.py:110
+#: notify/admin.py:278 order/admin.py:659 payment/admin.py:682
+#: payment/admin.py:1153 product/admin.py:110 sponsorship/admin.py:67
+#: sponsorship/admin.py:102 sponsorship/admin.py:137
 msgid "name"
 msgstr "namn"
 
@@ -131,30 +132,31 @@ msgid "updated"
 msgstr "uppdaterad"
 
 #: comunicat/rest/serializers/consent.py:65
+#: comunicat/rest/serializers/sponsorship.py:324
 msgid "The entity is required for non-logged in users."
 msgstr ""
 
-#: comunicat/rest/serializers/event.py:784
+#: comunicat/rest/serializers/event.py:782
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The entity must be provided if no user or entity is given."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: comunicat/rest/serializers/event.py:889
-#: comunicat/rest/serializers/event.py:892
+#: comunicat/rest/serializers/event.py:887
+#: comunicat/rest/serializers/event.py:890
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The date and code must be provided if no token is given."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: comunicat/rest/serializers/event.py:911
+#: comunicat/rest/serializers/event.py:909
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The code must be provided if no token is given."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: comunicat/rest/serializers/order.py:488
-#: comunicat/rest/serializers/order.py:494
+#: comunicat/rest/serializers/order.py:523
+#: comunicat/rest/serializers/order.py:529
 msgid "This field is required."
 msgstr "Detta fält är obligatoriskt."
 
@@ -173,6 +175,12 @@ msgstr "E-postadressen krävs för icke-inloggade och mindreåriga användare."
 #: comunicat/rest/serializers/payment.py:70
 msgid "The phone is required for non-logged in and non-minor users."
 msgstr "Telefonen krävs för icke-inloggade och mindreåriga användare."
+
+#: comunicat/rest/serializers/sponsorship.py:297
+#, fuzzy
+#| msgid "End time must be greater than start time."
+msgid "The code must be provided if no event_id is given."
+msgstr "Sluttiden måste vara större än starttiden."
 
 #: comunicat/rest/serializers/user.py:341
 #, python-format
@@ -206,20 +214,20 @@ msgstr "Familjemedlemmen måste vara under %s för att uppdatera."
 msgid "The family member must be below %s to create."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: comunicat/rest/utils/fields.py:17 comunicat/rest/utils/fields.py:50
+#: comunicat/rest/utils/fields.py:18 comunicat/rest/utils/fields.py:51
 msgid "Invalid value."
 msgstr "Ogiltigt värde."
 
-#: comunicat/rest/utils/fields.py:18 comunicat/rest/utils/fields.py:51
+#: comunicat/rest/utils/fields.py:19 comunicat/rest/utils/fields.py:52
 #, python-brace-format
 msgid "\"{input}\" is not a valid choice."
 msgstr "\"{input}\" är inte ett giltigt val."
 
-#: comunicat/rest/utils/fields.py:83
+#: comunicat/rest/utils/fields.py:84
 msgid "Not money."
 msgstr "Inte ett betalningsmedel."
 
-#: comunicat/rest/utils/fields.py:84
+#: comunicat/rest/utils/fields.py:85
 msgid "Missing amount or currency."
 msgstr "Det saknas mängd eller valuta."
 
@@ -239,7 +247,7 @@ msgstr "Musikerns repetition"
 msgid "The amount of children you entered is incorrect."
 msgstr "Antalet barn du angav är felaktigt."
 
-#: comunicat/template_tags/comunicat_tags.py:391
+#: comunicat/template_tags/comunicat_tags.py:401
 #: comunicat/templates/email/org/membership/check.html:8
 #: comunicat/templates/email/org/membership/check.html:10
 #: comunicat/templates/email/org/membership/check.html:12
@@ -252,30 +260,35 @@ msgstr "och"
 #: comunicat/templates/admin/event/event/submit_line.html:5
 #: comunicat/templates/admin/payment/entity/submit_line.html:5
 #: comunicat/templates/admin/payment/expense/submit_line.html:5
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:5
 msgid "Save"
 msgstr ""
 
 #: comunicat/templates/admin/event/event/submit_line.html:6
 #: comunicat/templates/admin/payment/entity/submit_line.html:6
 #: comunicat/templates/admin/payment/expense/submit_line.html:6
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:6
 msgid "Save as new"
 msgstr ""
 
 #: comunicat/templates/admin/event/event/submit_line.html:7
 #: comunicat/templates/admin/payment/entity/submit_line.html:7
 #: comunicat/templates/admin/payment/expense/submit_line.html:7
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:7
 msgid "Save and add another"
 msgstr ""
 
 #: comunicat/templates/admin/event/event/submit_line.html:8
 #: comunicat/templates/admin/payment/entity/submit_line.html:8
 #: comunicat/templates/admin/payment/expense/submit_line.html:8
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:8
 msgid "Save and continue editing"
 msgstr ""
 
 #: comunicat/templates/admin/event/event/submit_line.html:8
 #: comunicat/templates/admin/payment/entity/submit_line.html:8
 #: comunicat/templates/admin/payment/expense/submit_line.html:8
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:8
 msgid "Save and view"
 msgstr ""
 
@@ -292,12 +305,14 @@ msgstr ""
 #: comunicat/templates/admin/event/event/submit_line.html:15
 #: comunicat/templates/admin/payment/entity/submit_line.html:14
 #: comunicat/templates/admin/payment/expense/submit_line.html:14
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:14
 msgid "Close"
 msgstr ""
 
 #: comunicat/templates/admin/event/event/submit_line.html:19
 #: comunicat/templates/admin/payment/entity/submit_line.html:18
 #: comunicat/templates/admin/payment/expense/submit_line.html:18
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:18
 msgid "Delete"
 msgstr ""
 
@@ -307,6 +322,10 @@ msgstr ""
 
 #: comunicat/templates/admin/payment/expense/submit_line.html:10
 msgid "Print file"
+msgstr ""
+
+#: comunicat/templates/admin/sponsorship/entitytier/submit_line.html:10
+msgid "Download diploma"
 msgstr ""
 
 #: comunicat/templates/email/org/base.html:31
@@ -408,23 +427,28 @@ msgid "Total"
 msgstr "Summa"
 
 #: comunicat/templates/email/org/event/register.html:7
+#: comunicat/templates/email/towers/event/register.html:7
 msgid "Here's a summary of the details for the event."
 msgstr "Här kommer en sammanfattning av evenemangsuppgifter."
 
 #: comunicat/templates/email/org/event/register.html:9
+#: comunicat/templates/email/towers/event/register.html:9
+#: comunicat/templates/pdf/towers/sponsorship/diploma.html:259
 msgid "Date"
 msgstr "Datum"
 
 #: comunicat/templates/email/org/event/register.html:11
+#: comunicat/templates/email/towers/event/register.html:11
 msgid "Location"
 msgstr "Plats"
 
 #: comunicat/templates/email/org/event/register.html:17
+#: comunicat/templates/email/towers/event/register.html:17
 msgid "The last day to register is"
 msgstr "Sista dagen för att anmäla sig är"
 
-#: comunicat/templates/email/org/event/register.html:27
-#: comunicat/templates/email/towers/event/register.html:16
+#: comunicat/templates/email/org/event/register.html:30
+#: comunicat/templates/email/towers/event/register.html:30
 msgid "Register now"
 msgstr "Anmäl dig nu"
 
@@ -680,6 +704,13 @@ msgstr "du kan också spara det i din Google- eller Apple-plånbok."
 msgid "Entrance ticket"
 msgstr "Entrébiljett"
 
+#: comunicat/templates/email/org/sponsorship/paid.html:5
+#: comunicat/templates/email/towers/sponsorship/paid.html:5
+msgid ""
+"Your donation has been received! We want to thank you for your help again "
+"and give you our warmest regards all the way from Stockholm, Sweden."
+msgstr ""
+
 #: comunicat/templates/email/org/user/imported.html:5
 msgid ""
 "We are very excited to introduce to you our new website, a new way of "
@@ -854,10 +885,6 @@ msgstr ""
 msgid "Pay the membership"
 msgstr "Betala medlemskapet"
 
-#: comunicat/templates/email/towers/event/register.html:7
-msgid "TEST"
-msgstr ""
-
 #: comunicat/templates/email/towers/membership/check.html:48
 #: comunicat/templates/email/towers/membership/renew.html:10
 msgid ""
@@ -980,13 +1007,29 @@ msgstr "Ja"
 
 #: comunicat/templates/pdf/org/registration.html:83
 #: comunicat/templates/pdf/towers/registration.html:83 event/api/export.py:54
-#: membership/api/export.py:54 payment/consts.py:47
+#: membership/api/export.py:54 payment/consts.py:48
 msgid "Phone"
 msgstr "Telefon"
 
 #: comunicat/templates/pdf/towers/order.html:89
 msgid "Quantity"
 msgstr "Antal"
+
+#: comunicat/templates/pdf/towers/sponsorship/diploma.html:267
+msgid ""
+"In recognition of their contribution to growing and keeping Catalan culture"
+msgstr ""
+"Som ett erkännande av deras insats för att utveckla och behålla katalanska kulturen"
+
+#: comunicat/templates/pdf/towers/sponsorship/diploma.html:270
+msgid ""
+"and human towers alive in Stockholm and Sweden through Castellers d'Estocolm."
+msgstr ""
+"och mänskliga tornen levande i Stockholm och Sverige genom Castellers d'Estocolm."
+
+#: comunicat/templates/pdf/towers/sponsorship/diploma.html:1034
+msgid "This diploma has been awarded to"
+msgstr "Detta diplom har tilldelats"
 
 #: consent/models.py:49
 msgid "The newsletter is mandatory for newsletter consents."
@@ -998,9 +1041,9 @@ msgstr ""
 
 #: event/admin.py:146
 msgid "Data"
-msgstr ""
+msgstr "Datum"
 
-#: event/admin.py:147 order/admin.py:313 payment/admin.py:210
+#: event/admin.py:147 order/admin.py:364 payment/admin.py:210
 msgid "Send paid email"
 msgstr ""
 
@@ -1008,7 +1051,7 @@ msgstr ""
 msgid "Publish selected events"
 msgstr ""
 
-#: event/admin.py:423 order/admin.py:607 payment/admin.py:1154
+#: event/admin.py:423 order/admin.py:660 payment/admin.py:1154
 #: product/admin.py:111
 #, fuzzy
 #| msgid "Amount"
@@ -1019,7 +1062,7 @@ msgstr "Belopp"
 msgid "time from"
 msgstr ""
 
-#: event/api/google_calendar.py:375
+#: event/api/google_calendar.py:377
 msgid "More information"
 msgstr "Mer information"
 
@@ -1039,12 +1082,12 @@ msgstr "Deltog"
 msgid "event series"
 msgstr ""
 
-#: event/models.py:162 event/models.py:553 product/models.py:149
+#: event/models.py:162 event/models.py:556 product/models.py:149
 #: product/models.py:154
 msgid "Team's module must match module."
 msgstr ""
 
-#: event/models.py:263 event/models.py:726
+#: event/models.py:263 event/models.py:729
 msgid "The email template type must be EVENT_REMINDER."
 msgstr ""
 
@@ -1068,63 +1111,63 @@ msgstr "poster"
 msgid "image"
 msgstr "bild"
 
-#: event/models.py:411
+#: event/models.py:412
 #, fuzzy
 #| msgid "End time must be greater than start time."
 msgid "The end time must be greater than start time."
 msgstr "Sluttiden måste vara större än starttiden."
 
-#: event/models.py:416
+#: event/models.py:418
 msgid "The module must match the course program module."
 msgstr ""
 
-#: event/models.py:419
+#: event/models.py:421
 msgid "The type must be COURSE."
 msgstr ""
 
-#: event/models.py:426
+#: event/models.py:428
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The start time must be within the course dates."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:431
+#: event/models.py:434
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The module must match the series module."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:434
+#: event/models.py:437
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The type must match the series type."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:641 payment/models.py:342
+#: event/models.py:644 payment/models.py:342
 msgid "The data field doesn't contain the required keys."
 msgstr ""
 
-#: event/models.py:731
+#: event/models.py:734
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The email template module must match the event reminder module."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:735
+#: event/models.py:738
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The email template module must match the event module."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: event/models.py:783 event/models.py:784
+#: event/models.py:786 event/models.py:787
 msgid "event accounts"
 msgstr ""
 
-#: event/models.py:799
+#: event/models.py:802
 msgid "event link"
 msgstr ""
 
-#: event/models.py:800
+#: event/models.py:803
 msgid "event links"
 msgstr ""
 
@@ -1136,27 +1179,27 @@ msgstr "Nej"
 msgid "EXPIRED"
 msgstr "UTGÅNGEN"
 
-#: integration/api/google/wallet.py:463
+#: integration/api/google/wallet.py:471
 msgid "CANCELLED"
 msgstr "AVBOKAD"
 
-#: integration/api/google/wallet.py:467
+#: integration/api/google/wallet.py:475
 msgid "UNPAID"
 msgstr "OBETALD"
 
-#: legal/models.py:78
+#: legal/models.py:98
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The from date must be within the team's dates."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: legal/models.py:85
+#: legal/models.py:105
 #, fuzzy
 #| msgid "The family member must be below %s to create."
 msgid "The to date must be within the team's dates."
 msgstr "Familjemedlemmen måste vara under %s för att skapa."
 
-#: legal/models.py:101 legal/models.py:102
+#: legal/models.py:121 legal/models.py:122
 msgid "bylaws"
 msgstr ""
 
@@ -1176,7 +1219,7 @@ msgstr "moduler"
 msgid "Members"
 msgstr "Medlemmar"
 
-#: membership/api/export.py:56 payment/api/__init__.py:171
+#: membership/api/export.py:56 payment/api/__init__.py:184
 #: payment/api/provider/se_swish.py:49 payment/managers.py:178
 #: payment/managers.py:505
 msgid "Membership"
@@ -1202,35 +1245,35 @@ msgstr ""
 msgid "subject"
 msgstr ""
 
-#: notify/api/slack/chat.py:167
+#: notify/api/slack/chat.py:168
 msgid "View order"
 msgstr ""
 
-#: notify/api/slack/chat.py:248
+#: notify/api/slack/chat.py:249
 msgid "View message"
 msgstr ""
 
-#: notify/api/slack/chat.py:338
+#: notify/api/slack/chat.py:339
 msgid "View attendance"
 msgstr "Visa närvaro"
 
-#: notify/api/slack/chat.py:456
+#: notify/api/slack/chat.py:457
 msgid "View user"
 msgstr ""
 
-#: notify/api/template.py:258
+#: notify/api/template.py:260
 msgid "Sign-up for the upcoming performances"
 msgstr "Registrera dig till kommande uppvisningar"
 
-#: notify/api/template.py:432
+#: notify/api/template.py:434
 msgid "receipt"
 msgstr "kvitto"
 
-#: notify/consts.py:32 notify/consts.py:120
+#: notify/consts.py:32 notify/consts.py:124
 msgid "Confirm your email to finish your registration"
 msgstr "Bekräfta din e-post för att slutföra din registrering"
 
-#: notify/consts.py:36 notify/consts.py:124
+#: notify/consts.py:36 notify/consts.py:128
 msgid "Reset your password to login"
 msgstr "Återställ ditt lösenord för att logga in"
 
@@ -1246,7 +1289,7 @@ msgstr "Välkommen till Les Quatre Barres ny hemsida"
 msgid "Welcome information from Les Quatre Barres and WhatsApp community"
 msgstr "Välkomstinformation från Les Quatre Barres och WhatsApp-community"
 
-#: notify/consts.py:54 notify/consts.py:142
+#: notify/consts.py:54 notify/consts.py:146
 msgid "You have been invited to join a family"
 msgstr "Du har blivit inbjuden att gå med i en familj"
 
@@ -1254,125 +1297,137 @@ msgstr "Du har blivit inbjuden att gå med i en familj"
 msgid "Sign-up for the upcoming events"
 msgstr "Registrera dig till kommande evenemang"
 
-#: notify/consts.py:62 notify/consts.py:150
+#: notify/consts.py:62 notify/consts.py:154
 msgid "Time to renew your membership"
 msgstr "Dags att förnya ditt medlemskap"
 
-#: notify/consts.py:66 notify/consts.py:154
+#: notify/consts.py:66 notify/consts.py:158
 msgid "Your membership has expired"
 msgstr "Ditt medlemskap har löpt ut"
 
-#: notify/consts.py:70 notify/consts.py:158
+#: notify/consts.py:70 notify/consts.py:162
 msgid "Your membership is now paid"
 msgstr "Ditt medlemskap är nu betalt"
 
-#: notify/consts.py:74 notify/consts.py:162
+#: notify/consts.py:74 notify/consts.py:166
 msgid "Your membership status"
 msgstr "Ditt medlemskap status"
 
-#: notify/consts.py:78 notify/consts.py:166
+#: notify/consts.py:78 notify/consts.py:170
 msgid "Thank you for your order"
 msgstr "Tack för din beställning"
 
-#: notify/consts.py:82 notify/consts.py:170
+#: notify/consts.py:82 notify/consts.py:174
 #, python-format
 msgid "Your order %s is now paid"
 msgstr "Din beställning %s är nu betald"
 
-#: notify/consts.py:86 notify/consts.py:174
+#: notify/consts.py:86 notify/consts.py:178
 #, python-format
 msgid "Your registration for %s is now paid"
 msgstr "Din registrering för %s är nu betald"
 
-#: notify/consts.py:90 notify/consts.py:178
+#: notify/consts.py:90 notify/consts.py:182
 #, python-format
 msgid "Contact form — %s"
 msgstr "Kontaktformulär — %s"
 
-#: notify/consts.py:94 notify/consts.py:182
+#: notify/consts.py:94 notify/consts.py:186
 #, python-format
 msgid "Your payment has been processed — %s"
 msgstr "Din betalning har behandlats — %s"
 
-#: notify/consts.py:98 notify/consts.py:186
+#: notify/consts.py:98 notify/consts.py:190
 #, python-format
 msgid "Your registration is now paid — %s"
 msgstr "Din registrering är nu betald — %s"
 
-#: notify/consts.py:102 notify/consts.py:190
+#: notify/consts.py:102 notify/consts.py:194
 msgid "You have a new payment request"
 msgstr "Du har en ny betalningsbegäran"
 
-#: notify/consts.py:106 notify/consts.py:194
+#: notify/consts.py:106 notify/consts.py:198
 msgid "Your payment has been processed"
 msgstr "Din betalning har behandlats"
 
-#: notify/consts.py:128
+#: notify/consts.py:110 notify/consts.py:202
+#, fuzzy
+#| msgid "Thank you for your order"
+msgid "Thank you for your donation"
+msgstr "Tack för din beställning"
+
+#: notify/consts.py:132
 msgid "Welcome to Castellers d'Estocolm"
 msgstr "Välkommen till Castellers d'Estocolm"
 
-#: notify/consts.py:132
+#: notify/consts.py:136
 msgid "Welcome to Castellers d'Estocolm new website"
 msgstr "Välkommen till Castellers d'Estocolms ny hemsida"
 
-#: notify/consts.py:137
+#: notify/consts.py:141
 msgid "Welcome information from Castellers d'Estocolm and WhatsApp community"
 msgstr "Välkomstinformation från Castellers d'Estocolm och WhatsApp-community"
 
-#: notify/consts.py:146
+#: notify/consts.py:150
 msgid "Sign-up for the upcoming events and rehearsals"
 msgstr "Registrera dig till kommande evenemang och repetitioner"
 
-#: notify/models.py:149
+#: notify/models.py:158
 msgid "The Google group is mandatory for Google newsletters."
 msgstr ""
 
-#: order/admin.py:134 order/admin.py:228 order/admin.py:282
+#: order/admin.py:135 order/admin.py:229 order/admin.py:283 order/admin.py:333
 #: payment/admin.py:469 payment/models.py:293 user/admin.py:353
 msgid "entity"
 msgstr "enhet"
 
-#: order/admin.py:135
+#: order/admin.py:136
 msgid "event"
 msgstr ""
 
-#: order/admin.py:175
+#: order/admin.py:176
 msgid "membership"
 msgstr "medlemskap"
 
-#: order/admin.py:229
+#: order/admin.py:230
 #, fuzzy
 #| msgid "Course"
 msgid "course"
 msgstr "Kurs"
 
-#: order/admin.py:283
+#: order/admin.py:284
 #, fuzzy
 #| msgid "Requested"
 msgid "request"
 msgstr "Begärt"
 
-#: order/admin.py:302
+#: order/admin.py:334
+#, fuzzy
+#| msgid "entity"
+msgid "entity tier"
+msgstr "enhet"
+
+#: order/admin.py:353
 msgid "Send created email"
 msgstr ""
 
-#: order/admin.py:324
+#: order/admin.py:375
 msgid "Capture selected orders"
 msgstr ""
 
-#: order/admin.py:516
+#: order/admin.py:569
 msgid "pending"
 msgstr "väntande"
 
-#: order/admin.py:517
+#: order/admin.py:570
 msgid "delivery"
 msgstr "leverans"
 
-#: order/admin.py:518 payment/admin.py:491
+#: order/admin.py:571 payment/admin.py:491
 msgid "payment"
 msgstr "betalning"
 
-#: order/api/__init__.py:414
+#: order/api/__init__.py:431
 msgid "The amount of some products exceed the available stock."
 msgstr ""
 
@@ -1390,15 +1445,15 @@ msgstr ""
 msgid "Abandoned"
 msgstr ""
 
-#: order/models.py:290
+#: order/models.py:291
 msgid "The quantity given must be equal or lower than the ordered quantity."
 msgstr ""
 
-#: order/models.py:640
+#: order/models.py:703
 msgid "Region's country must match country."
 msgstr ""
 
-#: order/models.py:670 order/models.py:671
+#: order/models.py:733 order/models.py:734
 #, fuzzy
 #| msgid "delivery"
 msgid "delivery accounts"
@@ -1450,29 +1505,29 @@ msgstr ""
 msgid "file"
 msgstr "fil"
 
-#: payment/api/__init__.py:182 payment/api/provider/se_swish.py:64
+#: payment/api/__init__.py:195 payment/api/provider/se_swish.py:64
 #: payment/managers.py:229
 msgid "Payment"
 msgstr "Betalning"
 
-#: payment/api/__init__.py:184
+#: payment/api/__init__.py:197
 #, fuzzy
 #| msgid "Payment"
 msgid "Payment fee"
 msgstr "Betalning"
 
-#: payment/api/__init__.py:187 payment/api/provider/se_swish.py:67
+#: payment/api/__init__.py:205 payment/api/provider/se_swish.py:67
 #: payment/managers.py:223
 msgid "Order"
 msgstr "Beställning"
 
-#: payment/api/__init__.py:189
+#: payment/api/__init__.py:207
 #, fuzzy
 #| msgid "Order"
 msgid "Order fee"
 msgstr "Beställning"
 
-#: payment/api/__init__.py:317 payment/managers.py:433
+#: payment/api/__init__.py:350 payment/managers.py:433
 msgid "Delivery"
 msgstr "Leverans"
 
@@ -1484,19 +1539,19 @@ msgstr "Betalningar"
 msgid "Receipts"
 msgstr "Kvitton"
 
-#: payment/consts.py:43
+#: payment/consts.py:44
 msgid "IBAN"
 msgstr "IBAN"
 
-#: payment/consts.py:44
+#: payment/consts.py:45
 msgid "Bank"
 msgstr "Bank"
 
-#: payment/consts.py:45
+#: payment/consts.py:46
 msgid "Account number"
 msgstr "Kontonummer"
 
-#: payment/consts.py:46
+#: payment/consts.py:47
 msgid "Clearing number"
 msgstr "Clearingnummer"
 
@@ -1590,6 +1645,18 @@ msgstr ""
 msgid "product accounts"
 msgstr ""
 
+#: sponsorship/models.py:75
+msgid "The event is mandatory for type EVENT."
+msgstr ""
+
+#: sponsorship/models.py:204
+msgid "The product is mandatory for type PRODUCT."
+msgstr ""
+
+#: sponsorship/models.py:208
+msgid "The newsletter is mandatory for type NEWSLETTER."
+msgstr ""
+
 #: user/admin.py:55
 msgid "Send event sign-up email"
 msgstr ""
@@ -1681,6 +1748,11 @@ msgstr "Kategorin måste vara inställd för konto med förälder."
 #: user/models.py:237
 msgid "families"
 msgstr "familjer"
+
+#~ msgid ""
+#~ "En reconeixement a la seva contribució per fer créixer i mantenir viva la "
+#~ "cultura"
+#~ msgstr "Som ett erkännande för deras bidrag till tillväxten"
 
 #~ msgid ""
 #~ "You have now completed the registration process and are part of the "

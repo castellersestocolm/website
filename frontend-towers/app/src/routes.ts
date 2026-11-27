@@ -126,6 +126,12 @@ export const ROUTES = {
   "sponsorship-donate": {
     path: "/sponsorship/donate",
   },
+  "sponsorship-donate-payment": {
+    path: "/sponsorship/donate/payment/:id",
+  },
+  "sponsorship-donate-receipt": {
+    path: "/sponsorship/donate/receipt/:id",
+  },
   admin: {
     path: "/admin",
   },

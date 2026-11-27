@@ -20,6 +20,7 @@ class RewardType(IntEnum):
 
 class EntityTierStatus(IntEnum):
     REQUESTED = 10
-    ACTIVE = 20
-    CANCELLED = 30
-    EXPIRED = 40
+    PROCESSING = 20
+    ACTIVE = 30
+    CANCELLED = 40
+    EXPIRED = 50

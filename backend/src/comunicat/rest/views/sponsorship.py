@@ -9,6 +9,7 @@ from rest_framework.serializers import Serializer
 
 import payment.api.entity
 import sponsorship.api
+import sponsorship.api.entity_tier
 from comunicat.rest.serializers.sponsorship import (
     CreateEntityTierSerializer,
     EntityTierSerializer,
@@ -89,9 +90,7 @@ class EntityTierAPI(ComuniCatViewSet):
 
     @swagger_auto_schema(
         request_body=CreateEntityTierSerializer,
-        responses={
-            201: Serializer(),
-        },
+        responses={200: EntityTierSerializer(), 403: Serializer()},
     )
     def create(self, request):
         serializer = CreateEntityTierSerializer(
@@ -116,19 +115,27 @@ class EntityTierAPI(ComuniCatViewSet):
 
             # If the entity is associated with a user but they are not logged in skip the changes
             if entity_obj.user:
-                return Response(status=201)
+                return Response(status=403)
 
-        # consent.api.update_consents(
-        #     entity_id=entity_obj.id,
-        #     consents=[
-        #         Consent(
-        #             consent_type=entity_consent["type"],
-        #             is_active=entity_consent["is_active"],
-        #             newsletter_id=entity_consent.get("newsletter_id"),
-        #         )
-        #         for entity_consent in validated_data["consents"]
-        #     ],
-        #     module=self.module,
-        # )
+        entity_tier_obj = sponsorship.api.entity_tier.create(
+            entity_id=entity_obj.id,
+            tier_id=validated_data["tier_id"],
+            reward_groups=validated_data.get("reward_groups"),
+            # consents=[
+            #     Consent(
+            #         consent_type=entity_consent["type"],
+            #         is_active=entity_consent["is_active"],
+            #         newsletter_id=entity_consent.get("newsletter_id"),
+            #     )
+            #     for entity_consent in validated_data["consents"]
+            # ],
+            module=self.module,
+        )
 
-        return Response(status=201)
+        if not entity_tier_obj:
+            return Response(status=403)
+
+        serializer = self.serializer_class(
+            entity_tier_obj, context={"module": self.module}
+        )
+        return Response(serializer.data)

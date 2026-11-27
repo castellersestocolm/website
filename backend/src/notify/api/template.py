@@ -1,3 +1,4 @@
+import tempfile
 from uuid import UUID
 
 from django.conf import settings
@@ -36,6 +37,8 @@ from payment.models import (
     PaymentRequest,
     PaymentRequestLine,
 )
+from sponsorship.api.entity_tier import get_diploma_pdf
+from sponsorship.models import EntityTier, EntityTierReward
 from user.enums import FamilyMemberStatus
 from user.models import FamilyMember, User
 
@@ -517,6 +520,95 @@ def get_payment_request_email_render(
         module=module,
         locale=locale,
         entity_obj=entity_obj,
+    )
+
+
+def get_entity_tier_email_render(
+    entity_tier_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> EmailRender:
+    entity_tier_obj = (
+        EntityTier.objects.filter(id=entity_tier_id)
+        .select_related("entity", "entity__user")
+        .first()
+    )
+
+    entity_obj = entity_tier_obj.entity
+    user_obj = entity_obj.user
+    email = email or (user_obj.email if user_obj else entity_obj.email)
+    locale = (
+        locale
+        or (user_obj.preferred_language if user_obj else None)
+        or (entity_obj.preferred_language if entity_obj else None)
+        or settings.LANGUAGE_CODE
+    )
+
+    with translation.override(locale):
+        entity_tier_obj = (
+            EntityTier.objects.filter(id=entity_tier_id)
+            .select_related("entity", "entity__user")
+            .prefetch_related(
+                # TODO: Perhaps annotate the product and newsletter name too
+                Prefetch(
+                    "rewards",
+                    EntityTierReward.objects.with_reward_name()
+                    .select_related("reward", "reward__product", "reward__newsletter")
+                    .order_by("reward_name_locale"),
+                ),
+            )
+            .first()
+        )
+
+        context = {
+            **SETTINGS_BY_MODULE[module],
+            **(context or {}),
+            "entity_tier_id": str(entity_tier_id),
+        }
+        context_full = {
+            **context,
+            "entity_tier_obj": entity_tier_obj,
+            "entity_obj": entity_obj,
+            "user_obj": user_obj,
+        }
+
+        template = TEMPLATE_BY_MODULE[module][NotificationType.EMAIL][email_type]
+        from_email = EMAIL_BY_MODULE[module]
+        body = render_to_string(template["html"], context_full)
+
+        subject = str(template["subject"])
+
+    entity_obj = payment.api.entity.get_entity_by_key(email=email or user_obj.email)
+
+    # TODO: Only run this if the tier has the diploma reward
+    diploma_pdf = get_diploma_pdf(entity_tier_id=entity_tier_id)
+
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(diploma_pdf)
+        output.flush()
+
+        output = open(output.name, "rb")
+
+        attachments = [
+            (
+                "Diploma.pdf",
+                output.read(),
+            )
+        ]
+
+    return EmailRender(
+        subject=subject,
+        body=body,
+        to_email=email or user_obj.email,
+        from_email=from_email,
+        context=context,
+        module=module,
+        locale=locale,
+        entity_obj=entity_obj,
+        attachments=attachments,
     )
 
 

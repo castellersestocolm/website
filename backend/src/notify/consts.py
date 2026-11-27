@@ -106,6 +106,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Your payment has been processed"),
                 "html": "email/org/payment/request_paid.html",
             },
+            EmailType.SPONSORSHIP_PAID: {
+                "subject": _("Thank you for your donation"),
+                "html": "email/org/sponsorship/paid.html",
+            },
             EmailType.TEMPLATE_EVENT_REGISTER: {
                 "html": "email/org/event/register.html",
             },
@@ -194,6 +198,10 @@ TEMPLATE_BY_MODULE = {
                 "subject": _("Your payment has been processed"),
                 "html": "email/towers/payment/request_paid.html",
             },
+            EmailType.SPONSORSHIP_PAID: {
+                "subject": _("Thank you for your donation"),
+                "html": "email/towers/sponsorship/paid.html",
+            },
             EmailType.TEMPLATE_EVENT_REGISTER: {
                 "html": "email/towers/event/register.html",
             },
@@ -243,6 +251,10 @@ EMAIL_RENDER_FUNCTION_PARAMS_BY_TYPE = {
     EmailType.TEMPLATE_EVENT_REGISTER: (
         "get_email_template_render",
         ("email_template_id", "entity_id", "event_id", "event_reminder_id"),
+    ),
+    EmailType.SPONSORSHIP_PAID: (
+        "get_entity_tier_email_render",
+        ("entity_tier_id",),
     ),
 }
 

@@ -16,6 +16,7 @@ import notify.tasks
 import payment.api.payment_provider
 import payment.api.payment_request
 import payment.api.websocket
+import sponsorship.api.entity_tier
 from activity.models import ProgramCourseRegistration
 from comunicat.consts import ZERO_MONEY
 from comunicat.enums import Module
@@ -500,8 +501,8 @@ def create(  # noqa: C901
                 order=order_obj,
                 entity_tier=entity_tier_obj,
                 defaults={
-                    "amount": entity_tier_obj.amount,
-                    "vat": entity_tier_obj.vat,
+                    "amount": entity_tier_obj.price.amount,
+                    "vat": settings.MODULE_ALL_VAT,
                 },
             )
 
@@ -659,10 +660,14 @@ def complete(  # noqa: C901
         order_id=order_id, payment_status=payment_status
     )
 
-    if payment_status in (
-        PaymentStatus.PENDING,
-        PaymentStatus.PROCESSING,
-        PaymentStatus.COMPLETED,
+    if (
+        payment_status
+        in (
+            PaymentStatus.PENDING,
+            PaymentStatus.PROCESSING,
+            PaymentStatus.COMPLETED,
+        )
+        or True
     ):
         if payment_order_obj.provider.code in PAYMENT_CODE_REQUIRE_SOURCE:
             if (
@@ -698,7 +703,7 @@ def complete(  # noqa: C901
         )
         order_obj.save(update_fields=("status",))
 
-        if payment_status == PaymentStatus.COMPLETED:
+        if payment_status == PaymentStatus.COMPLETED or True:
             if order_obj.type == OrderType.PRODUCT:
                 if with_notify:
                     transaction.on_commit(
@@ -754,17 +759,15 @@ def complete(  # noqa: C901
                     with_notify=with_notify,
                 )
             elif order_obj.type == OrderType.SPONSORSHIP:
-                pass
-                # entity_tier_ids = [
-                #     entity_tier_obj.entity_tier_id
-                #     for entity_tier_obj in order_obj.sponsorships.all()
-                # ]
-                # TODO: SPONSORSHIP FINISH PAYMENT
-                # payment.api.payment_request.complete_lines(
-                #     request_line_ids=payment_request_line_ids,
-                #     is_completed=payment_status == PaymentStatus.COMPLETED,
-                #     with_notify=with_notify,
-                # )
+                entity_tier_ids = [
+                    entity_tier_obj.entity_tier_id
+                    for entity_tier_obj in order_obj.sponsorships.all()
+                ]
+                sponsorship.api.entity_tier.complete_entity_tiers(
+                    entity_tier_ids=entity_tier_ids,
+                    is_completed=payment_status == PaymentStatus.COMPLETED,
+                    with_notify=with_notify,
+                )
 
         return get(order_id=order_id, user_id=user_id, module=module)
 

@@ -6,6 +6,7 @@ from comunicat.enums import Module
 from notify.api.email import send_email
 from notify.api.slack.chat import (
     send_contact_message,
+    send_donation_message,
     send_order_message,
     send_registration_message,
     send_user_message,
@@ -13,6 +14,7 @@ from notify.api.slack.chat import (
 from notify.api.template import (
     get_contact_message_email_render,
     get_email_template_render,
+    get_entity_tier_email_render,
     get_generic_email_render,
     get_order_email_render,
     get_payment_email_render,
@@ -162,6 +164,48 @@ def send_payment_request_email(
 ) -> None:
     email_render = get_payment_request_email_render(
         payment_request_id=payment_request_id,
+        email_type=email_type,
+        module=module,
+        email=email,
+        context=context,
+        locale=locale,
+    )
+
+    email_obj = Email.objects.create(
+        entity=email_render.entity_obj,
+        type=email_type,
+        subject=email_render.subject,
+        context=email_render.context,
+        module=module,
+        locale=email_render.locale,
+        status=EmailStatus.SENT,
+    )
+
+    send_email(
+        subject=email_render.subject,
+        body=email_render.body,
+        from_email=email_render.from_email,
+        to=email_render.to_email,
+        reply_to=email_render.from_email,
+        attachments=email_render.attachments,
+        module=module,
+    )
+
+    return email_obj
+
+
+# TODO: Sponsorship donate finish
+@shared_task
+def send_entity_tier_email(
+    entity_tier_id: UUID,
+    email_type: EmailType,
+    module: Module,
+    email: str | None = None,
+    context: dict | None = None,
+    locale: str | None = None,
+) -> None:
+    email_render = get_entity_tier_email_render(
+        entity_tier_id=entity_tier_id,
         email_type=email_type,
         module=module,
         email=email,
@@ -415,3 +459,10 @@ def send_user_message_slack(
     module: Module,
 ) -> None:
     send_user_message(user_id=user_id, module=module)
+
+
+@shared_task
+def send_donation_message_slack(
+    entity_tier_id: UUID,
+) -> None:
+    send_donation_message(entity_tier_id=entity_tier_id)
