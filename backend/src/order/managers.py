@@ -26,6 +26,7 @@ class OrderQuerySet(QuerySet):
         OrderMembership = apps.get_model("order", "OrderMembership")
         OrderCourse = apps.get_model("order", "OrderCourse")
         OrderRequest = apps.get_model("order", "OrderRequest")
+        OrderSponsorship = apps.get_model("order", "OrderSponsorship")
 
         return self.annotate(
             amount_items=Case(
@@ -86,6 +87,19 @@ class OrderQuerySet(QuerySet):
                     then=Coalesce(
                         Subquery(
                             OrderRequest.objects.filter(order_id=OuterRef("id"))
+                            .values("order_id")
+                            .annotate(amount=Sum("amount"))
+                            .values("amount")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
+                ),
+                When(
+                    type=OrderType.SPONSORSHIP,
+                    then=Coalesce(
+                        Subquery(
+                            OrderSponsorship.objects.filter(order_id=OuterRef("id"))
                             .values("order_id")
                             .annotate(amount=Sum("amount"))
                             .values("amount")[:1]
@@ -159,6 +173,20 @@ class OrderQuerySet(QuerySet):
                     then=Coalesce(
                         Subquery(
                             OrderRequest.objects.filter(order_id=OuterRef("id"))
+                            .with_amount()
+                            .values("order_id")
+                            .annotate(amount_vat=Sum("amount_vat"))
+                            .values("amount_vat")[:1]
+                        ),
+                        Value(0),
+                        output_field=MoneyOutput(),
+                    ),
+                ),
+                When(
+                    type=OrderType.SPONSORSHIP,
+                    then=Coalesce(
+                        Subquery(
+                            OrderSponsorship.objects.filter(order_id=OuterRef("id"))
                             .with_amount()
                             .values("order_id")
                             .annotate(amount_vat=Sum("amount_vat"))

@@ -20,6 +20,7 @@ class PaymentMethod(IntEnum):
     CASH = 10
     TRANSFER = 20
     CARD = 30
+    FREE = 40
 
     PAYPAL = 110
     SUMUP = 120
