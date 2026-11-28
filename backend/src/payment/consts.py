@@ -33,6 +33,7 @@ PAYMENT_METHOD_FIELDS = {
     ),
     PaymentMethod.CARD: None,
     PaymentMethod.PAYPAL: None,
+    PaymentMethod.FREE: None,
     # TODO SWISH: Verify phone on save entity payment details
     PaymentMethod.SE_SWISH: ("phone",),
     PaymentMethod.SE_PLUSGIRO: ("account",),
@@ -55,5 +56,6 @@ PAYMENT_PROVIDER_CLASS_BY_CODE = {
     "PAYPAL": ("paypal", "PaymentProviderPaypal"),
     "SUMUP": ("sumup", "PaymentProviderSumUp"),
     "TRANSFER": ("transfer", "PaymentProviderTransfer"),
+    "FREE": ("free", "PaymentProviderFree"),
     "SE_SWISH": ("se_swish", "PaymentProviderSESwish"),
 }

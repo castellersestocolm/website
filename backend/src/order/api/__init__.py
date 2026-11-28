@@ -46,7 +46,7 @@ from order.models import (
 )
 from order.utils.delivery import get_delivery_price
 from payment.consts import PAYMENT_CODE_REQUIRE_SOURCE
-from payment.enums import PaymentStatus
+from payment.enums import PaymentMethod, PaymentStatus
 from payment.models import Entity, PaymentOrder, PaymentRequestLine
 from product.models import ProductSize
 from sponsorship.models import EntityTier
@@ -399,11 +399,25 @@ def create(  # noqa: C901
 
     provider_objs = payment.api.payment_provider.get_list(module=module)
     if provider_objs:
-        payment_order_obj = PaymentOrder.objects.create(
-            provider=provider_objs[0],
-        )
+        provider_obj = (
+            [
+                provider_obj
+                for provider_obj in provider_objs
+                if provider_obj.method != PaymentMethod.FREE
+            ]
+            + [None]
+        )[0]
+        provider_free_obj = (
+            [
+                provider_obj
+                for provider_obj in provider_objs
+                if provider_obj.method == PaymentMethod.FREE
+            ]
+            + [None]
+        )[0]
     else:
-        payment_order_obj = None
+        provider_obj = None
+        provider_free_obj = None
 
     # TODO: Fix this
 
@@ -414,8 +428,9 @@ def create(  # noqa: C901
         delivery=order_delivery_obj,
         origin_module=module,
         origin_language=translation.get_language(),
-        defaults={"payment_order": payment_order_obj},
     )
+
+    amount_total = ZERO_MONEY
 
     if order_type == OrderType.PRODUCT:
         for cart_size in cart_sizes:
@@ -441,6 +456,7 @@ def create(  # noqa: C901
                 amount=cart_size["quantity"] * product_size_obj.price,
                 vat=product_size_obj.vat,
             )
+            amount_total += cart_size["quantity"] * product_size_obj.price
     elif order_type == OrderType.MEMBERSHIP:
         for cart_module in cart_modules:
             membership_module_obj = membership_module_obj_by_id[cart_module["id"]]
@@ -453,6 +469,7 @@ def create(  # noqa: C901
                     "vat": settings.MODULE_ALL_VAT,
                 },
             )
+            amount_total += membership_module_obj.amount_pending
     elif order_type == OrderType.COURSE:
         for cart_course_registration in cart_course_registrations:
             program_course_registration_obj = program_course_registration_by_id[
@@ -467,6 +484,7 @@ def create(  # noqa: C901
                     "vat": settings.MODULE_ALL_VAT,
                 },
             )
+            amount_total += program_course_registration_obj.amount
     elif order_type == OrderType.REGISTRATION:
         for cart_event_registration in cart_event_registrations:
             registration_obj = registration_obj_by_id[cart_event_registration["id"]]
@@ -479,6 +497,7 @@ def create(  # noqa: C901
                     "vat": settings.MODULE_ALL_VAT,
                 },
             )
+            amount_total += registration_obj.price.amount
     elif order_type == OrderType.REQUEST:
         for cart_request_line in cart_request_lines:
             payment_request_line_obj = payment_request_line_obj_by_id[
@@ -493,6 +512,7 @@ def create(  # noqa: C901
                     "vat": payment_request_line_obj.vat,
                 },
             )
+            amount_total += payment_request_line_obj.amount
     elif order_type == OrderType.SPONSORSHIP:
         for cart_entity_tier in cart_entity_tiers:
             entity_tier_obj = entity_tier_obj_by_id[cart_entity_tier["id"]]
@@ -505,14 +525,36 @@ def create(  # noqa: C901
                     "vat": settings.MODULE_ALL_VAT,
                 },
             )
+            amount_total += entity_tier_obj.price.amount
 
-    if payment_order_obj:
-        # Initialise external_id
-        update_provider(
-            order_id=order_obj.id,
-            provider_id=payment_order_obj.provider_id,
-            module=module,
-        )
+    if provider_objs:
+        is_free = amount_total == ZERO_MONEY
+        payment_order_obj = None
+
+        if is_free:
+            if provider_free_obj:
+                payment_order_obj = PaymentOrder.objects.create(
+                    provider=provider_free_obj,
+                )
+        else:
+            if provider_obj:
+                payment_order_obj = PaymentOrder.objects.create(
+                    provider=provider_obj,
+                )
+
+        if payment_order_obj:
+            # Initialise external_id
+            update_provider(
+                order_id=order_obj.id,
+                provider_id=payment_order_obj.provider_id,
+                module=module,
+            )
+
+        if is_free:
+            complete(
+                order_id=order_obj.id,
+                module=module,
+            )
 
     return order_obj
 

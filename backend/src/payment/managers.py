@@ -219,6 +219,15 @@ class PaymentQuerySet(QuerySet):
                 ),
                 When(
                     order__isnull=False,
+                    order__type=OrderType.SPONSORSHIP,
+                    then=Concat(
+                        Value(str(_("Donation"))),
+                        Value(" #"),
+                        F("order__reference"),
+                    ),
+                ),
+                When(
+                    order__isnull=False,
                     then=Concat(
                         Value(str(_("Order"))),
                         Value(" #"),

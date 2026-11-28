@@ -142,7 +142,9 @@ export default function OrderPayment({
   React.useEffect(() => {
     apiPaymentProviderList().then((response) => {
       if (response.status === 200) {
-        const paymentProviders = response.data;
+        const paymentProviders = response.data.filter(
+          (paymentProvider: any) => paymentProvider.code !== "FREE",
+        );
         setPaymentProviderById(
           Object.fromEntries(
             paymentProviders.map((paymentProvider: any) => [
